@@ -51,11 +51,11 @@ export class LegacyEngine {
     return 'Underground';
   }
 
-  static calculateLegacyScore(artist: Artist, totalHits: number, numberOfNo1s: number): number {
+  static calculateLegacyScore(artist: Artist, totalHits: number, numberOfNo1s: number, currentYear: number = 2026): number {
     let score = 0;
 
     // Career longevity
-    const yearsActive = Math.max(0, 2026 - artist.careerStartYear);
+    const yearsActive = Math.max(0, currentYear - artist.careerStartYear);
     score += Math.min(25, yearsActive * 1.0);
 
     // Streams & Popularity peak

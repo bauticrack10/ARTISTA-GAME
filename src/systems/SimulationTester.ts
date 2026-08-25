@@ -343,9 +343,9 @@ export class SimulationTester {
     const dist = batch.careerStagesEndDistribution;
     const total = batch.totalRuns || 1;
 
-    const breakthroughs = (dist['Mainstream'] || 0) + (dist['Superstar'] || 0) + (dist['Icon_Legend'] || 0);
-    const superstars = (dist['Superstar'] || 0) + (dist['Icon_Legend'] || 0);
-    const flops = (dist['Underground'] || 0) + (dist['OneHitWonder'] || 0);
+    const breakthroughs = (dist['Established'] || 0) + (dist['Mainstream'] || 0) + (dist['Superstar'] || 0) + (dist['Legend'] || 0) + (dist['Veteran'] || 0);
+    const superstars = (dist['Superstar'] || 0) + (dist['Legend'] || 0);
+    const flops = (dist['Underground'] || 0) + (dist['Declining'] || 0);
 
     return {
       breakthroughRate: Math.round((breakthroughs / total) * 100),

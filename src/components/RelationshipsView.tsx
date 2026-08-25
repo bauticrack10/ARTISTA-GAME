@@ -29,47 +29,55 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="bg-zinc-900/60 p-6 rounded-2xl border border-zinc-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[#f7f4ed] p-6 rounded-[16px] border border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <Network className="w-6 h-6 text-rose-500" />
+          <h1 className="text-2xl font-semibold text-[#1c1c1c] tracking-[-0.9px] flex items-center gap-2">
+            <Network className="w-5 h-5 text-[#1c1c1c]" />
             Red de Artistas, Vínculos & Rivalidades
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-[#5f5f5d] mt-1">
             Construí alianzas creativas, ganate el respeto de leyendas, gestioná rivalidades y colaborá en himnos generacionales.
           </p>
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex items-center gap-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs">
+        <div className="flex items-center gap-1 bg-[#fcfbf8] p-1 rounded-[8px] border border-[#eceae4] text-xs">
           <button
             onClick={() => setFilter('all')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-              filter === 'all' ? 'bg-rose-600 text-white shadow' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
+              filter === 'all'
+                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
+                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
             }`}
           >
             Todos ({otherArtists.length})
           </button>
           <button
             onClick={() => setFilter('friends')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-              filter === 'friends' ? 'bg-rose-600 text-white shadow' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
+              filter === 'friends'
+                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
+                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
             }`}
           >
             Aliados
           </button>
           <button
             onClick={() => setFilter('rivals')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-              filter === 'rivals' ? 'bg-rose-600 text-white shadow' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
+              filter === 'rivals'
+                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
+                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
             }`}
           >
             Rivales
           </button>
           <button
             onClick={() => setFilter('feuds')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-              filter === 'feuds' ? 'bg-rose-600 text-white shadow' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
+              filter === 'feuds'
+                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
+                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
             }`}
           >
             Feudos
@@ -89,68 +97,52 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             history: []
           };
 
-          const isSelected = selectedArtistId === artist.id;
-
           return (
             <div
               key={artist.id}
-              className={`bg-zinc-900/50 border rounded-2xl p-5 space-y-4 transition-all flex flex-col justify-between ${
-                rel.relationType === 'feud'
-                  ? 'border-rose-600/40 bg-rose-950/10'
-                  : rel.relationType === 'friend'
-                  ? 'border-emerald-600/40 bg-emerald-950/10'
-                  : 'border-zinc-800'
-              }`}
+              className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-5 space-y-4 flex flex-col justify-between"
             >
               {/* Header Info */}
               <div className="space-y-2">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-tr ${artist.avatarColor || 'from-zinc-700 to-zinc-900'} flex items-center justify-center text-white font-black text-lg border border-white/10 shadow`}>
+                    <div className={`w-11 h-11 rounded-[6px] bg-[#1c1c1c] flex items-center justify-center text-[#fcfbf8] font-semibold text-base`}>
                       {artist.name.charAt(0)}
                     </div>
                     <div>
-                      <h3 className="font-extrabold text-sm text-white flex items-center gap-1.5">
+                      <h3 className="font-semibold text-sm text-[#1c1c1c] flex items-center gap-1.5">
                         {artist.name}
                       </h3>
-                      <p className="text-[11px] text-zinc-400">
+                      <p className="text-[11px] text-[#5f5f5d]">
                         {artist.country} • {world.genres[artist.mainGenreId]?.name || artist.mainGenreId}
                       </p>
                     </div>
                   </div>
 
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${
-                    rel.relationType === 'feud'
-                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                      : rel.relationType === 'friend'
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                      : rel.relationType === 'mentor'
-                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                      : 'bg-zinc-800 text-zinc-400 border-zinc-700'
-                  }`}>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#eceae4] bg-[#fcfbf8] text-[#1c1c1c]">
                     {rel.relationType}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-zinc-400 font-mono pt-1">
-                  <span>Pop: <strong className="text-white">{artist.stats.popularity}</strong></span>
-                  <span>Oyentes: <strong className="text-emerald-400">{(artist.stats.monthlyListeners / 1000000).toFixed(1)}M</strong></span>
-                  <span>Etapa: <strong className="text-zinc-300">{artist.careerStage}</strong></span>
+                <div className="flex items-center justify-between text-xs text-[#5f5f5d] font-mono pt-1">
+                  <span>Pop: <strong className="text-[#1c1c1c] font-semibold">{artist.stats.popularity}</strong></span>
+                  <span>Oyentes: <strong className="text-[#1c1c1c] font-semibold">{(artist.stats.monthlyListeners / 1000000).toFixed(1)}M</strong></span>
+                  <span>Etapa: <strong className="text-[#5f5f5d]">{artist.careerStage}</strong></span>
                 </div>
               </div>
 
               {/* Relationship Meters */}
-              <div className="space-y-2 bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80 text-xs">
+              <div className="space-y-2 bg-[#fcfbf8] p-3 rounded-[8px] border border-[#eceae4] text-xs">
                 <div>
                   <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-zinc-400">Afinidad Mutua</span>
-                    <span className={`font-bold font-mono ${rel.affinity >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className="text-[#5f5f5d]">Afinidad Mutua</span>
+                    <span className="font-semibold font-mono text-[#1c1c1c]">
                       {rel.affinity > 0 ? `+${rel.affinity}` : rel.affinity}
                     </span>
                   </div>
-                  <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${rel.affinity >= 0 ? 'bg-emerald-500' : 'bg-rose-500'}`}
+                      className="h-full rounded-full bg-[#1c1c1c]"
                       style={{ width: `${Math.max(10, Math.abs(rel.affinity))}%` }}
                     />
                   </div>
@@ -158,16 +150,16 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                 <div>
                   <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-zinc-400">Respeto Profesional</span>
-                    <span className="font-bold text-indigo-300 font-mono">{rel.respect}%</span>
+                    <span className="text-[#5f5f5d]">Respeto Profesional</span>
+                    <span className="font-semibold text-[#1c1c1c] font-mono">{rel.respect}%</span>
                   </div>
-                  <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-indigo-500 h-full rounded-full" style={{ width: `${rel.respect}%` }} />
+                  <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-[#1c1c1c] h-full rounded-full" style={{ width: `${rel.respect}%` }} />
                   </div>
                 </div>
 
                 {rel.history.length > 0 && (
-                  <div className="pt-2 border-t border-zinc-900 text-[10px] text-zinc-400 italic">
+                  <div className="pt-2 border-t border-[#eceae4] text-[10px] text-[#5f5f5d] italic">
                     Último hito: "{rel.history[rel.history.length - 1]}"
                   </div>
                 )}
@@ -177,28 +169,28 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               <div className="grid grid-cols-3 gap-2 pt-1">
                 <button
                   onClick={() => onInteract(artist.id, 'collab_request')}
-                  className="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 font-bold text-[10px] uppercase py-2 rounded-lg transition-colors cursor-pointer flex flex-col items-center gap-1"
+                  className="btn-cream-surface !py-1.5 !px-2 !text-[11px] !font-medium flex flex-col items-center gap-1"
                   title="Proponer Colaboración"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#1c1c1c]" />
                   <span>Colab</span>
                 </button>
 
                 <button
                   onClick={() => onInteract(artist.id, 'shoutout')}
-                  className="bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 font-bold text-[10px] uppercase py-2 rounded-lg transition-colors cursor-pointer flex flex-col items-center gap-1"
+                  className="btn-cream-surface !py-1.5 !px-2 !text-[11px] !font-medium flex flex-col items-center gap-1"
                   title="Elogio Público / Mención"
                 >
-                  <Heart className="w-3.5 h-3.5" />
+                  <Heart className="w-3.5 h-3.5 text-[#1c1c1c]" />
                   <span>Elogio</span>
                 </button>
 
                 <button
                   onClick={() => onInteract(artist.id, 'diss')}
-                  className="bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 font-bold text-[10px] uppercase py-2 rounded-lg transition-colors cursor-pointer flex flex-col items-center gap-1"
+                  className="btn-cream-surface !py-1.5 !px-2 !text-[11px] !font-medium flex flex-col items-center gap-1"
                   title="Tiradera / Diss Track"
                 >
-                  <Swords className="w-3.5 h-3.5" />
+                  <Swords className="w-3.5 h-3.5 text-[#1c1c1c]" />
                   <span>Tiradera</span>
                 </button>
               </div>
@@ -209,3 +201,4 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     </div>
   );
 };
+

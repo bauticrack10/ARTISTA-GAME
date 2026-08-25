@@ -9,13 +9,15 @@ import {
   Flame,
   DollarSign,
   Users,
-  Building2,
-  Calendar,
   Radio,
   Music2,
   ArrowUpRight,
   ShieldCheck,
-  Heart
+  Heart,
+  Calendar,
+  AlertCircle,
+  Coffee,
+  ShoppingBag
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -42,65 +44,74 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const latestNews = world.news.slice(0, 5);
   const mainGenre = world.genres[player.mainGenreId]?.name || player.mainGenreId;
   const currentLabel = player.labelId ? world.labels[player.labelId] : null;
+  const isTourReady = player.stats.energy >= 85;
 
   return (
     <div className="space-y-6 pb-12">
       {/* Hero Profile Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-zinc-800 p-6 md:p-8 shadow-2xl">
-        {/* Background glow */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-rose-600/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
-
+      <div className="relative overflow-hidden rounded-[16px] bg-[#f7f4ed] border border-[#eceae4] p-6 md:p-8">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           {/* Avatar & Identifiers */}
           <div className="flex items-center gap-5">
-            <div className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-tr ${player.avatarColor || 'from-amber-500 to-rose-600'} flex items-center justify-center text-white font-black text-3xl shadow-2xl shadow-rose-500/20 border border-white/20`}>
+            <div
+              className={`w-20 h-20 md:w-22 md:h-22 rounded-[12px] bg-gradient-to-tr ${player.avatarColor || 'from-amber-500 to-rose-600'} flex items-center justify-center text-[#fcfbf8] font-semibold text-3xl border border-[#eceae4]`}
+              style={{
+                boxShadow:
+                  'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
+              }}
+            >
               {player.name.charAt(0)}
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white">
+                <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.9px] text-[#1c1c1c]">
                   {player.name}
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                {player.isProdigy && (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#1c1c1c] text-[#fcfbf8] flex items-center gap-1 shadow-sm">
+                    <Sparkles className="w-3 h-3 text-amber-300" />
+                    Promesa / Prodigio x3
+                  </span>
+                )}
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eceae4] text-[#1c1c1c] border border-[#eceae4]">
                   {player.careerStage}
                 </span>
                 {currentLabel && (
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-normal bg-[#f7f4ed] text-[#5f5f5d] border border-[#eceae4]">
                     {currentLabel.name}
                   </span>
                 )}
               </div>
 
-              <p className="text-sm text-zinc-400 font-medium">
+              <p className="text-sm text-[#5f5f5d] font-normal">
                 {player.realName ? `${player.realName} • ` : ''}{player.city}, {player.country} • {mainGenre}
               </p>
 
-              <div className="flex items-center gap-4 text-xs text-zinc-500 pt-1">
+              <div className="flex items-center gap-3 text-xs text-[#5f5f5d] pt-1 flex-wrap">
                 <span>Inició en {player.careerStartYear}</span>
                 <span>•</span>
                 <span>{playerSongs.length} Canciones</span>
                 <span>•</span>
                 <span>{playerAlbums.length} Álbumes</span>
                 <span>•</span>
-                <span>Legado: <strong className="text-amber-400 font-mono">{player.legacyScore}/100</strong></span>
+                <span>Legado: <strong className="text-[#1c1c1c] font-semibold">{player.legacyScore}/100</strong></span>
               </div>
             </div>
           </div>
 
           {/* Quick Primary Metric Box */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-4 flex gap-6 items-center w-full md:w-auto justify-around">
+          <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-4 flex gap-6 items-center w-full md:w-auto justify-around">
             <div className="text-center">
-              <span className="text-xs text-zinc-400 block font-medium">Oyentes Mensuales</span>
-              <span className="text-lg md:text-xl font-black text-white tracking-tight font-mono">
+              <span className="text-xs text-[#5f5f5d] block font-normal">Oyentes Mensuales</span>
+              <span className="text-lg md:text-xl font-semibold text-[#1c1c1c] tracking-tight">
                 {player.stats.monthlyListeners.toLocaleString()}
               </span>
             </div>
-            <div className="h-8 w-px bg-zinc-800" />
+            <div className="h-8 w-px bg-[#eceae4]" />
             <div className="text-center">
-              <span className="text-xs text-zinc-400 block font-medium">Streams Totales</span>
-              <span className="text-lg md:text-xl font-black text-emerald-400 tracking-tight font-mono">
+              <span className="text-xs text-[#5f5f5d] block font-normal">Streams Totales</span>
+              <span className="text-lg md:text-xl font-semibold text-[#1c1c1c] tracking-tight">
                 {(player.stats.totalStreams / 1000000).toFixed(1)}M
               </span>
             </div>
@@ -109,23 +120,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Current Era Sub-Banner */}
         {currentEra && (
-          <div className="mt-6 pt-5 border-t border-zinc-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-zinc-900/40 p-3.5 rounded-xl">
+          <div className="mt-6 pt-5 border-t border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#f7f4ed] p-3.5 rounded-[12px] border border-[#eceae4]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <div className="p-2 rounded-[6px] bg-[#eceae4] text-[#1c1c1c]">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400/90 block">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c] block">
                   Era Actual: {currentEra.name}
                 </span>
-                <p className="text-xs text-zinc-300">
+                <p className="text-xs text-[#5f5f5d]">
                   {currentEra.highlightSummary}
                 </p>
               </div>
             </div>
             <button
               onClick={() => onNavigate('career')}
-              className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 font-semibold transition-colors whitespace-nowrap cursor-pointer"
+              className="text-xs text-[#1c1c1c] hover:underline flex items-center gap-1 font-normal transition-colors whitespace-nowrap cursor-pointer"
             >
               Ver Cronología Completa <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
@@ -135,92 +146,128 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* Metrics Row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-3.5 space-y-1">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-medium">
+        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-3.5 space-y-1">
+          <div className="flex items-center justify-between text-[#5f5f5d] text-xs font-normal">
             <span>Popularidad</span>
-            <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+            <TrendingUp className="w-3.5 h-3.5 text-[#1c1c1c]" />
           </div>
-          <p className="text-xl font-extrabold text-white">{player.stats.popularity}<span className="text-xs text-zinc-500 font-normal">/100</span></p>
-          <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div className="bg-indigo-500 h-full rounded-full" style={{ width: `${player.stats.popularity}%` }} />
+          <p className="text-xl font-semibold text-[#1c1c1c]">{player.stats.popularity}<span className="text-xs text-[#5f5f5d] font-normal">/100</span></p>
+          <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+            <div className="bg-[#1c1c1c] h-full rounded-full" style={{ width: `${player.stats.popularity}%` }} />
           </div>
         </div>
 
-        <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-3.5 space-y-1">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-medium">
+        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-3.5 space-y-1">
+          <div className="flex items-center justify-between text-[#5f5f5d] text-xs font-normal">
             <span>Reputación</span>
-            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#1c1c1c]" />
           </div>
-          <p className="text-xl font-extrabold text-white">{player.stats.reputation}<span className="text-xs text-zinc-500 font-normal">/100</span></p>
-          <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div className="bg-cyan-500 h-full rounded-full" style={{ width: `${player.stats.reputation}%` }} />
+          <p className="text-xl font-semibold text-[#1c1c1c]">{player.stats.reputation}<span className="text-xs text-[#5f5f5d] font-normal">/100</span></p>
+          <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+            <div className="bg-[#1c1c1c] h-full rounded-full" style={{ width: `${player.stats.reputation}%` }} />
           </div>
         </div>
 
-        <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-3.5 space-y-1">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-medium">
+        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-3.5 space-y-1">
+          <div className="flex items-center justify-between text-[#5f5f5d] text-xs font-normal">
             <span>Credibilidad</span>
-            <Award className="w-3.5 h-3.5 text-purple-400" />
+            <Award className="w-3.5 h-3.5 text-[#1c1c1c]" />
           </div>
-          <p className="text-xl font-extrabold text-white">{player.stats.artisticCredibility}<span className="text-xs text-zinc-500 font-normal">/100</span></p>
-          <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div className="bg-purple-500 h-full rounded-full" style={{ width: `${player.stats.artisticCredibility}%` }} />
+          <p className="text-xl font-semibold text-[#1c1c1c]">{player.stats.artisticCredibility}<span className="text-xs text-[#5f5f5d] font-normal">/100</span></p>
+          <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+            <div className="bg-[#1c1c1c] h-full rounded-full" style={{ width: `${player.stats.artisticCredibility}%` }} />
           </div>
         </div>
 
-        <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-3.5 space-y-1">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-medium">
+        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-3.5 space-y-1">
+          <div className="flex items-center justify-between text-[#5f5f5d] text-xs font-normal">
             <span>Fidelidad Fans</span>
-            <Heart className="w-3.5 h-3.5 text-rose-400" />
+            <Heart className="w-3.5 h-3.5 text-[#1c1c1c]" />
           </div>
-          <p className="text-xl font-extrabold text-white">{player.stats.fanbaseLoyalty}<span className="text-xs text-zinc-500 font-normal">/100</span></p>
-          <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div className="bg-rose-500 h-full rounded-full" style={{ width: `${player.stats.fanbaseLoyalty}%` }} />
+          <p className="text-xl font-semibold text-[#1c1c1c]">{player.stats.fanbaseLoyalty}<span className="text-xs text-[#5f5f5d] font-normal">/100</span></p>
+          <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+            <div className="bg-[#1c1c1c] h-full rounded-full" style={{ width: `${player.stats.fanbaseLoyalty}%` }} />
           </div>
         </div>
 
-        <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-3.5 space-y-1">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-medium">
+        {/* Energy Card with Tour Requirement Note */}
+        <div className={`rounded-[12px] p-3.5 space-y-1 border transition-colors ${
+          isTourReady
+            ? 'bg-[#f7f4ed] border-[#eceae4]'
+            : 'bg-rose-50/70 border-rose-200'
+        }`}>
+          <div className="flex items-center justify-between text-[#5f5f5d] text-xs font-normal">
             <span>Energía</span>
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <Zap className={`w-3.5 h-3.5 ${isTourReady ? 'text-[#1c1c1c]' : 'text-rose-600'}`} />
           </div>
-          <p className="text-xl font-extrabold text-white">{player.stats.energy}<span className="text-xs text-zinc-500 font-normal">/100</span></p>
-          <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div className="bg-amber-400 h-full rounded-full" style={{ width: `${player.stats.energy}%` }} />
+          <div className="flex items-baseline justify-between">
+            <p className={`text-xl font-semibold ${isTourReady ? 'text-[#1c1c1c]' : 'text-rose-700'}`}>
+              {player.stats.energy}<span className="text-xs text-[#5f5f5d] font-normal">/100</span>
+            </p>
+            <span className={`text-[10px] font-semibold ${isTourReady ? 'text-emerald-700' : 'text-rose-700'}`}>
+              {isTourReady ? 'Giras: OK (≥85%)' : 'Giras: Bloq. (<85%)'}
+            </span>
+          </div>
+          <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full ${isTourReady ? 'bg-[#1c1c1c]' : 'bg-rose-600'}`}
+              style={{ width: `${player.stats.energy}%` }}
+            />
           </div>
         </div>
 
-        <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-3.5 space-y-1">
-          <div className="flex items-center justify-between text-zinc-400 text-xs font-medium">
+        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-3.5 space-y-1">
+          <div className="flex items-center justify-between text-[#5f5f5d] text-xs font-normal">
             <span>Hype Escénico</span>
-            <Flame className="w-3.5 h-3.5 text-orange-400" />
+            <Flame className="w-3.5 h-3.5 text-[#1c1c1c]" />
           </div>
-          <p className="text-xl font-extrabold text-white">{player.stats.hype}<span className="text-xs text-zinc-500 font-normal">/100</span></p>
-          <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div className="bg-orange-500 h-full rounded-full" style={{ width: `${player.stats.hype}%` }} />
+          <p className="text-xl font-semibold text-[#1c1c1c]">{player.stats.hype}<span className="text-xs text-[#5f5f5d] font-normal">/100</span></p>
+          <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+            <div className="bg-[#1c1c1c] h-full rounded-full" style={{ width: `${player.stats.hype}%` }} />
           </div>
         </div>
       </div>
 
       {/* Action Command Hub */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Studio Card */}
         <div
           onClick={() => onNavigate('studio')}
-          className="group bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-800 hover:border-rose-500/50 p-5 rounded-2xl transition-all cursor-pointer shadow-lg hover:shadow-rose-500/10 flex flex-col justify-between"
+          className="group bg-[#f7f4ed] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] p-5 rounded-[12px] transition-all cursor-pointer flex flex-col justify-between"
         >
           <div className="flex items-start justify-between">
-            <div className="p-3 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20 group-hover:scale-110 transition-transform">
-              <Disc3 className="w-6 h-6" />
+            <div className="p-3 bg-[#eceae4] text-[#1c1c1c] rounded-[6px]">
+              <Disc3 className="w-5 h-5" />
             </div>
-            <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-rose-400 transition-colors" />
+            <ArrowUpRight className="w-4 h-4 text-[#5f5f5d] group-hover:text-[#1c1c1c] transition-colors" />
           </div>
           <div className="mt-4">
-            <h3 className="text-base font-bold text-white group-hover:text-rose-300 transition-colors">
+            <h3 className="text-base font-semibold text-[#1c1c1c]">
               Estudio de Grabación
             </h3>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="text-xs text-[#5f5f5d] mt-1 font-normal">
               Componer singles, contratar beatmakers, grabar colaboraciones y lanzar álbumes completos.
+            </p>
+          </div>
+        </div>
+
+        {/* Lifestyle Shop Card */}
+        <div
+          onClick={() => onNavigate('lifestyle')}
+          className="group bg-[#f7f4ed] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] p-5 rounded-[12px] transition-all cursor-pointer flex flex-col justify-between"
+        >
+          <div className="flex items-start justify-between">
+            <div className="p-3 bg-[#eceae4] text-[#1c1c1c] rounded-[6px]">
+              <ShoppingBag className="w-5 h-5" />
+            </div>
+            <ArrowUpRight className="w-4 h-4 text-[#5f5f5d] group-hover:text-[#1c1c1c] transition-colors" />
+          </div>
+          <div className="mt-4">
+            <h3 className="text-base font-semibold text-[#1c1c1c]">
+              Tienda & Estilo de Vida
+            </h3>
+            <p className="text-xs text-[#5f5f5d] mt-1 font-normal">
+              Comprar micrófonos Neumann, consolas SSL, mansiones, autos de gira y coaching vocal.
             </p>
           </div>
         </div>
@@ -228,44 +275,73 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Tour Card */}
         <div
           onClick={() => onNavigate('tours')}
-          className="group bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-800 hover:border-amber-500/50 p-5 rounded-2xl transition-all cursor-pointer shadow-lg hover:shadow-amber-500/10 flex flex-col justify-between"
+          className={`group bg-[#f7f4ed] border p-5 rounded-[12px] transition-all cursor-pointer flex flex-col justify-between ${
+            isTourReady
+              ? 'border-[#eceae4] hover:border-[rgba(28,28,28,0.4)]'
+              : 'border-rose-200 hover:border-rose-300'
+          }`}
         >
           <div className="flex items-start justify-between">
-            <div className="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20 group-hover:scale-110 transition-transform">
-              <Sparkles className="w-6 h-6" />
+            <div className="p-3 bg-[#eceae4] text-[#1c1c1c] rounded-[6px]">
+              <Sparkles className="w-5 h-5" />
             </div>
-            <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 transition-colors" />
+            <span
+              className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border ${
+                isTourReady
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  : 'bg-rose-50 text-rose-800 border-rose-200'
+              }`}
+            >
+              {isTourReady ? 'Habilitado (≥85%)' : 'Bloqueado (<85%)'}
+            </span>
           </div>
           <div className="mt-4">
-            <h3 className="text-base font-bold text-white group-hover:text-amber-300 transition-colors">
+            <h3 className="text-base font-semibold text-[#1c1c1c]">
               Giras & Conciertos
             </h3>
-            <p className="text-xs text-zinc-400 mt-1">
-              Organizar presentaciones desde clubes underground hasta estadios masivos y world tours.
+            <p className="text-xs text-[#5f5f5d] mt-1 font-normal">
+              {isTourReady
+                ? 'Organizar fechas en vivo, vender tickets y generar grandes ganancias millonarias.'
+                : 'Se requiere un mínimo de 85% de Energía para iniciar giras. ¡Tomá un descanso antes!'}
             </p>
           </div>
         </div>
 
-        {/* Recharge Card */}
+        {/* Dedicated Vacation Card (Consumes 6M, +50 Energy) */}
         <div
-          onClick={onRest}
-          className="group bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-800 hover:border-emerald-500/50 p-5 rounded-2xl transition-all cursor-pointer shadow-lg hover:shadow-emerald-500/10 flex flex-col justify-between"
+          className="group bg-[#f7f4ed] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] p-5 rounded-[12px] transition-all flex flex-col justify-between"
         >
           <div className="flex items-start justify-between">
-            <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 group-hover:scale-110 transition-transform">
-              <Zap className="w-6 h-6" />
+            <div className="p-3 bg-[#eceae4] text-[#1c1c1c] rounded-[6px]">
+              <Coffee className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-800/40">
-              +40 Energía
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#1c1c1c] bg-[#eceae4] px-2 py-0.5 rounded-[4px] border border-[#eceae4]">
+              +50 Energía • 6 Meses
             </span>
           </div>
-          <div className="mt-4">
-            <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
-              Descansar & Desconectar
-            </h3>
-            <p className="text-xs text-zinc-400 mt-1">
-              Tomar un respiro, recargar energía creativa y evitar el agotamiento físico o mental.
-            </p>
+          <div className="mt-4 space-y-3">
+            <div>
+              <h3 className="text-base font-semibold text-[#1c1c1c]">
+                Descanso / Vacaciones
+              </h3>
+              <p className="text-xs text-[#5f5f5d] mt-1 font-normal">
+                Consume 6 meses del ciclo para desconectar de la industria, recargar +50 de energía y percibir regalías.
+              </p>
+            </div>
+
+            <button
+              id="btn-take-vacation"
+              onClick={onRest}
+              className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:opacity-90 active:opacity-80 text-[#fcfbf8] font-semibold text-xs py-2 px-3 rounded-[6px] transition-all cursor-pointer"
+              style={{
+                boxShadow:
+                  'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
+              }}
+              title="Tomar 6 meses de vacaciones y recuperar +50% de energía"
+            >
+              <Zap className="w-3.5 h-3.5 fill-current text-amber-300" />
+              <span>Tomar Vacaciones (+50 Energía)</span>
+            </button>
           </div>
         </div>
       </div>
@@ -273,24 +349,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Two Column Layout: Active Songs vs Breaking News */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Active Catalog Top Songs */}
-        <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 space-y-4">
+        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Music2 className="w-4 h-4 text-rose-400" />
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+              <Music2 className="w-4 h-4 text-[#1c1c1c]" />
+              <h2 className="text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider">
                 Catálogo Activo Destacado
               </h2>
             </div>
             <button
               onClick={() => onNavigate('studio')}
-              className="text-xs text-zinc-400 hover:text-white font-medium cursor-pointer"
+              className="text-xs text-[#5f5f5d] hover:text-[#1c1c1c] font-normal cursor-pointer hover:underline"
             >
               Ver Todas ({playerSongs.length})
             </button>
           </div>
 
           {topSongs.length === 0 ? (
-            <div className="text-center py-8 text-zinc-500 text-xs border border-dashed border-zinc-800 rounded-xl">
+            <div className="text-center py-8 text-[#5f5f5d] text-xs border border-dashed border-[#eceae4] rounded-[8px]">
               Aún no lanzaste ninguna canción. ¡Entrá al Estudio para grabar tu primer tema!
             </div>
           ) : (
@@ -298,37 +374,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {topSongs.map((song, i) => (
                 <div
                   key={song.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 transition-colors"
+                  className="flex items-center justify-between p-3 rounded-[8px] bg-[#f7f4ed] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold text-zinc-500 w-4 text-center">
+                    <span className="text-xs font-semibold text-[#5f5f5d] w-4 text-center">
                       #{i + 1}
                     </span>
                     <div>
-                      <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <h4 className="text-xs font-semibold text-[#1c1c1c] flex items-center gap-1.5">
                         {song.title}
                         {song.wentViral && (
-                          <span className="text-[9px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/30">
+                          <span className="text-[9px] bg-[#eceae4] text-[#1c1c1c] px-1.5 py-0.5 rounded-[4px] font-semibold">
                             Viral
                           </span>
                         )}
                         {song.isClassic && (
-                          <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">
+                          <span className="text-[9px] bg-[#eceae4] text-[#1c1c1c] px-1.5 py-0.5 rounded-[4px] font-semibold">
                             Clásico
                           </span>
                         )}
                       </h4>
-                      <p className="text-[10px] text-zinc-400">
+                      <p className="text-[10px] text-[#5f5f5d]">
                         {world.genres[song.genreId]?.name || song.genreId} • Calidad: {song.quality}%
                       </p>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <span className="font-mono text-xs font-extrabold text-emerald-400 block">
+                    <span className="text-xs font-semibold text-[#1c1c1c] block">
                       {song.streamsLastMonth.toLocaleString()} streams/mes
                     </span>
-                    <span className="text-[10px] text-zinc-500 font-mono">
+                    <span className="text-[10px] text-[#5f5f5d]">
                       Total: {(song.streamsTotal / 1000000).toFixed(2)}M
                     </span>
                   </div>
@@ -339,17 +415,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Press & Media Feed */}
-        <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 space-y-4">
+        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Radio className="w-4 h-4 text-indigo-400" />
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+              <Radio className="w-4 h-4 text-[#1c1c1c]" />
+              <h2 className="text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider">
                 Actualidad & Prensa Musical
               </h2>
             </div>
             <button
               onClick={() => onNavigate('news')}
-              className="text-xs text-zinc-400 hover:text-white font-medium cursor-pointer"
+              className="text-xs text-[#5f5f5d] hover:text-[#1c1c1c] font-normal cursor-pointer hover:underline"
             >
               Ver Periódico
             </button>
@@ -359,17 +435,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             {latestNews.map((news) => (
               <div
                 key={news.id}
-                className="p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 transition-colors text-xs space-y-1"
+                className="p-3 rounded-[8px] bg-[#f7f4ed] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] transition-colors text-xs space-y-1"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-zinc-200 line-clamp-1">
+                  <span className="font-semibold text-[#1c1c1c] line-clamp-1">
                     {news.headline}
                   </span>
-                  <span className="text-[10px] text-zinc-500 whitespace-nowrap font-mono">
+                  <span className="text-[10px] text-[#5f5f5d] whitespace-nowrap">
                     {news.year}
                   </span>
                 </div>
-                <p className="text-zinc-400 text-[11px] line-clamp-2">
+                <p className="text-[#5f5f5d] text-[11px] line-clamp-2">
                   {news.body}
                 </p>
               </div>

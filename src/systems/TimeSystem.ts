@@ -7,6 +7,15 @@ export class TimeSystem {
     return months[(month - 1) % 12] || 'Enero';
   }
 
+  static getSemesterName(month: number): string {
+    return month <= 6 ? '1er Semestre (Ene - Jun)' : '2do Semestre (Jul - Dic)';
+  }
+
+  static getCycleLabel(month: number, year: number): string {
+    const semester = month <= 6 ? 'S1' : 'S2';
+    return `${semester} ${year}`;
+  }
+
   static advanceTime(currentYear: number, currentMonth: number): { year: number; month: number; isNewYear: boolean } {
     let nextMonth = currentMonth + 1;
     let nextYear = currentYear;
@@ -22,6 +31,32 @@ export class TimeSystem {
       year: nextYear,
       month: nextMonth,
       isNewYear
+    };
+  }
+
+  static advanceMonths(
+    currentYear: number,
+    currentMonth: number,
+    count: number
+  ): { year: number; month: number; yearsPassed: number; isNewYearCrossed: boolean } {
+    let y = currentYear;
+    let m = currentMonth;
+    let isNewYearCrossed = false;
+
+    for (let i = 0; i < count; i++) {
+      m++;
+      if (m > 12) {
+        m = 1;
+        y++;
+        isNewYearCrossed = true;
+      }
+    }
+
+    return {
+      year: y,
+      month: m,
+      yearsPassed: y - currentYear,
+      isNewYearCrossed
     };
   }
 

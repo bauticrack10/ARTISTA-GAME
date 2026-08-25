@@ -77,6 +77,7 @@ export interface Artist {
   careerStage: CareerStage;
   labelId: string | null;
   managerId: string | null;
+  activeContract?: LabelContract | null;
   relationships: Record<string, ArtistRelationship>; // key: targetArtistId
   eras: CareerEra[];
   awardsWon: string[];
@@ -88,6 +89,34 @@ export interface Artist {
   historicalNotes: string[];
   generationIndex: number;
   influences: string[]; // artist IDs of inspirations
+  lifestyleUpgrades?: string[]; // purchased lifestyle item IDs
+  isProdigy?: boolean; // 1 in 100,000 rare prodigy trait
+  prodigyMultiplier?: number; // 3x multiplier on stat/exp gains
+}
+
+export type LifestyleCategory = 'studio' | 'real_estate' | 'vehicles' | 'coaching';
+
+export interface LifestyleItem {
+  id: string;
+  name: string;
+  category: LifestyleCategory;
+  price: number;
+  monthlyUpkeep: number;
+  description: string;
+  iconName: string;
+  buffDescription: string;
+  effects: {
+    qualityBonus?: number;
+    passiveEnergyPerMonth?: number;
+    hypeDecayReduction?: number; // percentage reduction in hype decay (e.g. 0.05)
+    tourFatigueReduction?: number; // percentage reduction in tour energy cost (e.g. 0.20)
+    skillBonus?: number;
+    creativityBonus?: number;
+    charismaBonus?: number;
+    disciplineBonus?: number;
+    reputationBonus?: number;
+    commercialAppealBonus?: number;
+  };
 }
 
 export type ReleaseType = 'single' | 'ep' | 'mixtape' | 'album' | 'deluxe' | 'collab_album';
@@ -138,9 +167,44 @@ export interface Album {
   peakChartPosition: Record<MusicRegion, number | null>;
   awards: string[];
   coverGradient: string;
+  criticalReviewText?: string;
+  productionBudget?: number;
+  marketingBudget?: number;
+  producerId?: string;
+  singlesIncludedCount?: number;
 }
 
 export type GenreLifecycle = 'underground' | 'surging' | 'mainstream' | 'oversaturated' | 'reviving' | 'niche' | 'classic';
+
+export interface SubgenreDetail {
+  id: string;
+  name: string;
+  parentGenreId: string;
+  description: string;
+  aestheticTone: string;
+  requiredTrait?: {
+    trait: keyof PersonalityTraits | keyof ArtistStats;
+    min: number;
+    label: string;
+  };
+  qualityBonus?: number;
+  commercialBonus?: number;
+  originalityBonus?: number;
+}
+
+export interface DerivedSonicStyle {
+  id: string;
+  name: string;
+  parentGenreId: string;
+  parentGenreName: string;
+  description: string;
+  aestheticTone: string;
+  isUnlocked: boolean;
+  lockReason?: string;
+  qualityBonus: number;
+  commercialBonus: number;
+  originalityBonus: number;
+}
 
 export interface Genre {
   id: string;
@@ -178,6 +242,8 @@ export interface LabelContract {
   albumsDelivered: number;
   creativeControl: number;   // 0 (none) to 100 (full)
   marketingPower: number;    // 0 - 100
+  marketingBudgetPerRelease?: number; // Presupuesto de marketing garantizado por lanzamiento
+  breakoutClause?: number;   // Cláusula de rescisión / compra de contrato
   durationYears: number;
   signedYear: number;
 }
@@ -194,16 +260,31 @@ export interface RecordLabel {
   rosterArtistIds: string[];
   favoredGenreIds: string[];
   ownerArtistId?: string;
+  scoutingCriteria?: string; // Descripción del perfil de artista buscado
+}
+
+export type ManagerTier = 'underground' | 'regional' | 'national' | 'elite_global';
+
+export interface ManagerRequirements {
+  minMonthlyListeners: number;
+  minReputation: number;
+  minFunds?: number;
+  hiringFee: number;
 }
 
 export interface Manager {
   id: string;
   name: string;
+  tier: ManagerTier;
   reputation: number;        // 0 - 100
-  negotiationSkill: number;  // 0 - 100
-  industryNetwork: number;   // 0 - 100
-  commissionFeePct: number;  // 10 - 25%
+  negotiationSkill: number;  // 0 - 100 (Mejora ingresos de giras y adelantos)
+  industryNetwork: number;   // 0 - 100 (Aumenta probabilidad de colaboraciones y eventos)
+  commissionFeePct: number;  // 10 - 25% (Porcentaje sobre ingresos brutos de giras/música)
+  monthlyMarketingBoost?: number; // 0 - 100 (Impulso constante al hype y alcance)
   specialties: string[];
+  requirements: ManagerRequirements;
+  bio?: string;
+  avatarGradient?: string;
 }
 
 export interface Producer {
@@ -342,6 +423,7 @@ export interface EventOutcome {
   triggerChainEventId?: string; // starts or advances a narrative chain
   triggerDelayMonths?: number;
   newContract?: LabelContract;
+  newManagerId?: string;
 }
 
 export interface EventDefinition {
@@ -406,3 +488,34 @@ export interface GameSaveState {
   playerId: string;
   world: WorldState;
 }
+
+export interface SubgenreDetail {
+  id: string;
+  name: string;
+  parentGenreId: string;
+  description: string;
+  aestheticTone: string;
+  requiredTrait?: {
+    trait: keyof PersonalityTraits | keyof ArtistStats;
+    min: number;
+    label: string;
+  };
+  qualityBonus?: number;
+  commercialBonus?: number;
+  originalityBonus?: number;
+}
+
+export interface DerivedSonicStyle {
+  id: string;
+  name: string;
+  parentGenreId: string;
+  parentGenreName: string;
+  description: string;
+  aestheticTone: string;
+  isUnlocked: boolean;
+  lockReason?: string;
+  qualityBonus: number;
+  commercialBonus: number;
+  originalityBonus: number;
+}
+

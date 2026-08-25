@@ -31,6 +31,9 @@ export class WorldSimulation {
       const legends = Object.values(world.artists).filter(a => a.legacyScore > 75 || a.careerStage === 'Legend' || a.careerStage === 'Superstar');
       const inspiration = legends[seedIdx % Math.max(1, legends.length)]?.id;
 
+      // 1 in 100,000 (0.001%) chance of spawning as a rare Prodigy
+      const isProdigy = Math.random() < 0.00001;
+
       const newArtist: Artist = {
         id: newArtistId,
         name: stageName,
@@ -42,29 +45,42 @@ export class WorldSimulation {
         careerStartYear: world.currentYear,
         mainGenreId,
         subGenreIds: [],
-        personality: {
-          creativity: 60 + Math.floor(Math.random() * 35),
-          ambition: 60 + Math.floor(Math.random() * 35),
-          discipline: 60 + Math.floor(Math.random() * 35),
-          charisma: 60 + Math.floor(Math.random() * 35),
-          skill: 60 + Math.floor(Math.random() * 35),
-          commercialAppeal: 60 + Math.floor(Math.random() * 35),
-          originality: 60 + Math.floor(Math.random() * 35),
-          riskTolerance: 50 + Math.floor(Math.random() * 45),
-          sociability: 50 + Math.floor(Math.random() * 45),
-          independence: 50 + Math.floor(Math.random() * 45)
-        },
+        personality: isProdigy
+          ? {
+              creativity: 95 + Math.floor(Math.random() * 6),
+              ambition: 95 + Math.floor(Math.random() * 6),
+              discipline: 95 + Math.floor(Math.random() * 6),
+              charisma: 95 + Math.floor(Math.random() * 6),
+              skill: 95 + Math.floor(Math.random() * 6),
+              commercialAppeal: 95 + Math.floor(Math.random() * 6),
+              originality: 95 + Math.floor(Math.random() * 6),
+              riskTolerance: 90 + Math.floor(Math.random() * 11),
+              sociability: 90 + Math.floor(Math.random() * 11),
+              independence: 90 + Math.floor(Math.random() * 11)
+            }
+          : {
+              creativity: 60 + Math.floor(Math.random() * 35),
+              ambition: 60 + Math.floor(Math.random() * 35),
+              discipline: 60 + Math.floor(Math.random() * 35),
+              charisma: 60 + Math.floor(Math.random() * 35),
+              skill: 60 + Math.floor(Math.random() * 35),
+              commercialAppeal: 60 + Math.floor(Math.random() * 35),
+              originality: 60 + Math.floor(Math.random() * 35),
+              riskTolerance: 50 + Math.floor(Math.random() * 45),
+              sociability: 50 + Math.floor(Math.random() * 45),
+              independence: 50 + Math.floor(Math.random() * 45)
+            },
         stats: {
-          popularity: 15 + Math.floor(Math.random() * 15),
-          reputation: 40 + Math.floor(Math.random() * 20),
-          artisticCredibility: 50 + Math.floor(Math.random() * 20),
+          popularity: isProdigy ? 30 : 15 + Math.floor(Math.random() * 15),
+          reputation: isProdigy ? 70 : 40 + Math.floor(Math.random() * 20),
+          artisticCredibility: isProdigy ? 90 : 50 + Math.floor(Math.random() * 20),
           energy: 95,
-          monthlyListeners: 15000 + Math.floor(Math.random() * 40000),
-          totalStreams: 50000,
-          funds: 5000 + Math.floor(Math.random() * 10000),
-          fansCount: 8000 + Math.floor(Math.random() * 12000),
-          fanbaseLoyalty: 60 + Math.floor(Math.random() * 20),
-          hype: 45 + Math.floor(Math.random() * 30)
+          monthlyListeners: isProdigy ? 60000 : 15000 + Math.floor(Math.random() * 40000),
+          totalStreams: isProdigy ? 150000 : 50000,
+          funds: isProdigy ? 25000 : 5000 + Math.floor(Math.random() * 10000),
+          fansCount: isProdigy ? 25000 : 8000 + Math.floor(Math.random() * 12000),
+          fanbaseLoyalty: isProdigy ? 85 : 60 + Math.floor(Math.random() * 20),
+          hype: isProdigy ? 80 : 45 + Math.floor(Math.random() * 30)
         },
         careerStage: 'Underground',
         labelId: null,
@@ -73,20 +89,28 @@ export class WorldSimulation {
         eras: [
           {
             id: `era_${newArtistId}_debut`,
-            name: 'Debut en la Escena',
+            name: isProdigy ? 'Aparición del Prodigio' : 'Debut en la Escena',
             startYear: world.currentYear,
             startMonth: world.currentMonth,
             genreFocus: mainGenreId,
             stage: 'Underground',
-            highlightSummary: `Aparición en la escena en el año ${world.currentYear}.`
+            highlightSummary: isProdigy
+              ? `Aparición fulgurante como talento generacional en ${world.currentYear}.`
+              : `Aparición en la escena en el año ${world.currentYear}.`
           }
         ],
         awardsWon: [],
-        legacyScore: 10,
+        legacyScore: isProdigy ? 25 : 10,
         isRetired: false,
-        historicalNotes: [`Inició su carrera musical en ${world.currentYear}.`],
+        historicalNotes: [
+          isProdigy
+            ? `Reconocido desde su debut como un prodigio generacional irrepetible (1 en 100.000).`
+            : `Inició su carrera musical en ${world.currentYear}.`
+        ],
         generationIndex: Math.floor((world.currentYear - 2026) / 10) + 1,
-        influences: inspiration ? [inspiration] : []
+        influences: inspiration ? [inspiration] : [],
+        isProdigy,
+        prodigyMultiplier: isProdigy ? 3 : 1
       };
 
       world.artists[newArtistId] = newArtist;
@@ -268,7 +292,8 @@ export class WorldSimulation {
       artist.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
         artistTotalMonthlyStreams,
         artist.stats.popularity,
-        artist.stats.fansCount
+        artist.stats.fansCount,
+        artist.stats.fanbaseLoyalty
       );
 
       // Slight popularity drift

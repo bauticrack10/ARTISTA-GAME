@@ -18,8 +18,9 @@ import {
   Building2,
   Newspaper,
   Network,
-  Home,
-  UserPlus
+  UserPlus,
+  ShoppingBag,
+  Crown
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -51,9 +52,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const yearsActive = TimeSystem.calculateCareerLengthYears(player.careerStartYear, world.currentYear);
 
   return (
-    <header className="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/80 text-zinc-100 shadow-xl">
+    <header className="sticky top-0 z-40 bg-[#f7f4ed]/95 backdrop-blur-md border-b border-[#eceae4] text-[#1c1c1c]">
       {/* Top Meta Bar */}
-      <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-900">
+      <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-[#eceae4]/70">
         {/* Brand & Date */}
         <div className="flex items-center gap-3">
           <button
@@ -61,28 +62,37 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer group"
             title="Volver al Menú Principal"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-rose-500/20 group-hover:scale-105 transition-transform">
-              <Disc3 className="w-5 h-5 text-white animate-spin-slow" />
+            <div
+              className="w-8 h-8 rounded-[6px] bg-[#1c1c1c] text-[#fcfbf8] flex items-center justify-center"
+              style={{
+                boxShadow:
+                  'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
+              }}
+            >
+              <Disc3 className="w-4 h-4 animate-spin-slow" />
             </div>
             <div className="text-left">
-              <span className="font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-indigo-300 text-base leading-none block">
+              <span
+                className="font-semibold tracking-[-0.4px] text-[#1c1c1c] text-sm leading-none block"
+                style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+              >
                 EL ARTISTA
               </span>
-              <span className="text-[9px] text-zinc-400 font-mono tracking-widest uppercase">
+              <span className="text-[10px] text-[#5f5f5d] tracking-normal uppercase">
                 Menú Principal
               </span>
             </div>
           </button>
 
-          <div className="h-6 w-px bg-zinc-800" />
+          <div className="h-5 w-px bg-[#eceae4]" />
 
           {/* Time indicator */}
-          <div className="flex items-center gap-2 bg-zinc-900/90 px-3 py-1 rounded-full border border-zinc-800">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-bold text-sm text-zinc-200">
+          <div className="flex items-center gap-2 bg-[#fcfbf8] px-3 py-1 rounded-[6px] border border-[#eceae4] text-xs shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-[#1c1c1c]" />
+            <span className="font-semibold text-[#1c1c1c]">
               {monthName} {world.currentYear}
             </span>
-            <span className="text-xs text-rose-400 font-mono font-bold">
+            <span className="text-[#5f5f5d] font-mono">
               (Año {yearsActive + 1})
             </span>
           </div>
@@ -90,37 +100,48 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Player Stats Pills */}
         <div className="flex items-center flex-wrap gap-2 text-xs">
+          {/* Prodigy Badge if active */}
+          {player.isProdigy && (
+            <div
+              className="flex items-center gap-1.5 bg-[#1c1c1c] text-[#fcfbf8] px-2.5 py-1 rounded-[6px] font-semibold text-xs shadow-sm"
+              title="Rasgo: Promesa / Prodigio (1 en 100.000) • x3 Progreso permanente"
+            >
+              <Crown className="w-3.5 h-3.5 text-amber-300" />
+              <span>Prodigio x3</span>
+            </div>
+          )}
+
           {/* Energy */}
-          <div className="flex items-center gap-1.5 bg-zinc-900/80 px-2.5 py-1 rounded-lg border border-zinc-800" title="Energía del Artista">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-zinc-400">Energía:</span>
-            <span className="font-bold text-amber-300">{player.stats.energy}%</span>
+          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Energía del Artista">
+            <Zap className="w-3.5 h-3.5 text-[#1c1c1c]" />
+            <span className="text-[#5f5f5d]">Energía:</span>
+            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.energy}%</span>
           </div>
 
           {/* Hype */}
-          <div className="flex items-center gap-1.5 bg-zinc-900/80 px-2.5 py-1 rounded-lg border border-zinc-800" title="Hype Actual en la Escena">
-            <Flame className="w-3.5 h-3.5 text-rose-400" />
-            <span className="text-zinc-400">Hype:</span>
-            <span className="font-bold text-rose-300">{player.stats.hype}</span>
+          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Hype Actual en la Escena">
+            <Flame className="w-3.5 h-3.5 text-[#1c1c1c]" />
+            <span className="text-[#5f5f5d]">Hype:</span>
+            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.hype}</span>
           </div>
 
           {/* Popularity */}
-          <div className="flex items-center gap-1.5 bg-zinc-900/80 px-2.5 py-1 rounded-lg border border-zinc-800" title="Popularidad General (0-100)">
-            <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="text-zinc-400">Pop:</span>
-            <span className="font-bold text-indigo-300">{player.stats.popularity}</span>
+          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Popularidad General (0-100)">
+            <TrendingUp className="w-3.5 h-3.5 text-[#1c1c1c]" />
+            <span className="text-[#5f5f5d]">Pop:</span>
+            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.popularity}</span>
           </div>
 
           {/* Fans */}
-          <div className="flex items-center gap-1.5 bg-zinc-900/80 px-2.5 py-1 rounded-lg border border-zinc-800" title="Comunidad de Fanáticos">
-            <Users className="w-3.5 h-3.5 text-teal-400" />
-            <span className="font-bold text-teal-300">{player.stats.fansCount.toLocaleString()}</span>
+          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Comunidad de Fanáticos">
+            <Users className="w-3.5 h-3.5 text-[#1c1c1c]" />
+            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.fansCount.toLocaleString()}</span>
           </div>
 
           {/* Funds */}
-          <div className="flex items-center gap-1.5 bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-800/60" title="Fondos Disponibles">
-            <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-bold text-emerald-300 font-mono">${player.stats.funds.toLocaleString()}</span>
+          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Fondos Disponibles">
+            <DollarSign className="w-3.5 h-3.5 text-[#1c1c1c]" />
+            <span className="font-semibold text-[#1c1c1c] font-mono">${player.stats.funds.toLocaleString()}</span>
           </div>
         </div>
 
@@ -129,7 +150,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="btn-advance-month"
             onClick={onAdvanceMonth}
-            className="flex items-center gap-2 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-lg shadow-lg shadow-rose-600/30 transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 bg-[#1c1c1c] text-[#fcfbf8] px-3.5 py-1.5 rounded-[6px] text-xs font-semibold cursor-pointer hover:opacity-80 active:opacity-75 transition-opacity"
+            style={{
+              boxShadow:
+                'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
+            }}
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Avanzar Mes</span>
@@ -138,27 +163,27 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="btn-nav-new-career"
             onClick={onOpenNewArtist}
-            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 hover:text-white px-2.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#fcfbf8] border border-[#eceae4] text-[#1c1c1c] px-3 py-1.5 rounded-[6px] text-xs shadow-sm hover:bg-[#eceae4] cursor-pointer transition-colors"
             title="Iniciar Nueva Carrera"
           >
-            <UserPlus className="w-3.5 h-3.5 text-rose-400" />
+            <UserPlus className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Nueva Carrera</span>
           </button>
 
           <button
             id="btn-open-sim-lab"
             onClick={onOpenSimLab}
-            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 hover:text-white px-2.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#fcfbf8] border border-[#eceae4] text-[#1c1c1c] px-3 py-1.5 rounded-[6px] text-xs shadow-sm hover:bg-[#eceae4] cursor-pointer transition-colors"
             title="Simulador de 10-100 Años y Tests"
           >
-            <FlaskConical className="w-3.5 h-3.5 text-cyan-400" />
+            <FlaskConical className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Sim Lab</span>
           </button>
 
           <button
             id="btn-export-save"
             onClick={onExportSave}
-            className="p-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 rounded-lg text-xs transition-colors cursor-pointer"
+            className="p-1.5 bg-[#fcfbf8] hover:bg-[#eceae4] border border-[#eceae4] text-[#1c1c1c] rounded-[6px] text-xs transition-colors cursor-pointer shadow-sm"
             title="Exportar Partida (JSON)"
           >
             <Save className="w-3.5 h-3.5" />
@@ -167,10 +192,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Navigation Tabs */}
-      <nav className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto py-1.5 scrollbar-none text-xs font-medium">
+      <nav className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto py-1.5 scrollbar-none text-xs font-normal">
         {[
           { id: 'dashboard', label: 'Inicio', icon: Compass },
           { id: 'studio', label: 'Estudio & Música', icon: Disc3 },
+          { id: 'lifestyle', label: 'Tienda & Estilo de Vida', icon: ShoppingBag },
           { id: 'charts', label: 'Charts & Rankings', icon: BarChart3 },
           { id: 'tours', label: 'Giras & Shows', icon: Sparkles },
           { id: 'industry', label: 'Sellos & Industria', icon: Building2 },
@@ -186,13 +212,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               key={tab.id}
               id={`nav-tab-${tab.id}`}
               onClick={() => onTabChange(tab.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-[6px] whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-zinc-800 text-white font-bold border border-zinc-700 shadow-sm'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60'
+                  ? 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold'
+                  : 'text-[#5f5f5d] hover:text-[#1c1c1c] hover:bg-[#eceae4]'
               }`}
+              style={
+                isActive
+                  ? {
+                      boxShadow:
+                        'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
+                    }
+                  : {}
+              }
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-rose-400' : 'text-zinc-500'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#fcfbf8]' : 'text-[#5f5f5d]'}`} />
               <span>{tab.label}</span>
             </button>
           );

@@ -1,11 +1,21 @@
-import { EventDefinition, EventContext, EventOutcome, EventChoice, WorldState, Artist } from '../types';
+import { EventDefinition, EventContext, EventOutcome, EventChoice, WorldState, Artist, RecordLabel, LabelContract } from '../types';
 import { CORE_EVENT_TEMPLATES } from '../data/eventTemplates';
+import { IndustryEngine } from './IndustryEngine';
 
 export class EventEngine {
   static selectNextEvent(
     context: EventContext,
     recentEventIds: Array<{ eventId: string; year: number; month: number }>
   ): EventDefinition | null {
+    // Si el artista no tiene sello y tiene >= 100k oyentes, probabilidad de evento de guerra de ofertas discográficas
+    if (context.player.stats.monthlyListeners >= IndustryEngine.MIN_MONTHLY_LISTENERS_FOR_MAJOR_SCOUTS && !context.player.labelId) {
+      const lastLabelEvent = recentEventIds.find(r => r.eventId.startsWith('evt_label_bidding_war_') || r.eventId === 'evt_major_label_bidding_war');
+      const monthsSince = lastLabelEvent ? (context.currentYear - lastLabelEvent.year) * 12 + (context.currentMonth - lastLabelEvent.month) : 99;
+      if (monthsSince >= 12 && Math.random() < 0.4) {
+        return this.synthesizeLabelBiddingWarEvent(context);
+      }
+    }
+
     const candidates: Array<{ event: EventDefinition; score: number }> = [];
 
     // Filter and score core handcrafted templates
@@ -130,5 +140,67 @@ export class EventEngine {
         ]
       };
     }
+  }
+
+  static synthesizeLabelBiddingWarEvent(context: EventContext): EventDefinition {
+    const biddingOffers = IndustryEngine.generateCompetitiveBiddingWar(context.player, context.world);
+    const eventId = `evt_label_bidding_war_${context.currentYear}_${context.currentMonth}_${Math.floor(Math.random() * 1000)}`;
+
+    return {
+      id: eventId,
+      title: '¡Guerra de Fichajes en los Despachos! Nuevas Ofertas de Sellos',
+      category: 'industry',
+      rarity: 'rare',
+      cooldownMonths: 18,
+      weight: 25,
+      condition: () => true,
+      getDescription: () => {
+        const labelsList = biddingOffers.map(o => o.label.name).join(' vs ');
+        return `Tus métricas de streaming (${context.player.stats.monthlyListeners.toLocaleString()} oyentes mensuales) han desatado una intensa puja entre directivos de sellos discográficos (${labelsList}). Han presentado propuestas contractuales formales para tu firma.`;
+      },
+      choices: () => {
+        const choices: EventChoice[] = biddingOffers.map(({ label, contract }) => ({
+          id: `c_sign_${label.id}`,
+          text: `Firmar con ${label.name}: $${contract.signingBonus.toLocaleString()} adelanto, ${contract.royaltyPercentage}% regalías, ${contract.albumsRequired} álbum(es)`,
+          consequencesDescription: `+$${contract.signingBonus.toLocaleString()} Anticipo, ${contract.royaltyPercentage}% Regalías, ${contract.marketingPower}% Marketing`,
+          apply: () => ({
+            narrativeText: `Has sellado tu acuerdo oficial con ${label.name}. La discográfica activa de inmediato tu presupuesto promocional.`,
+            fundsChange: contract.signingBonus,
+            popularityChange: label.type === 'major' ? 10 : 6,
+            hypeChange: 20,
+            newContract: contract,
+            newsGenerated: {
+              headline: `¡Fichaje Confirmado! ${context.player.name} firma con ${label.name}`,
+              body: `El acuerdo incluye un adelanto de $${contract.signingBonus.toLocaleString()} y un compromiso de ${contract.albumsRequired} álbumes de estudio.`,
+              sentiment: 'positive',
+              category: 'industry'
+            }
+          })
+        }));
+
+        choices.push({
+          id: 'c_stay_indie_proc',
+          text: 'Rechazar las propuestas y mantener la independencia total (100% regalías)',
+          consequencesDescription: '+Credibilidad artística (+6), +Fidelidad de fans (+6)',
+          apply: () => ({
+            narrativeText: 'Decidiste no comprometer tu autonomía y continuar como artista 100% independiente.',
+            statChanges: {
+              artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 6),
+              fanbaseLoyalty: Math.min(100, context.player.stats.fanbaseLoyalty + 6)
+            },
+            reputationChange: 5,
+            hypeChange: 10,
+            newsGenerated: {
+              headline: `${context.player.name} prioriza su independencia ante el asedio de los sellos`,
+              body: `El artista continúa operando de forma autogestionada sin ataduras corporativas.`,
+              sentiment: 'neutral',
+              category: 'industry'
+            }
+          })
+        });
+
+        return choices;
+      }
+    };
   }
 }

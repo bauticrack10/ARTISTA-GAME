@@ -70,40 +70,163 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
 };
 
 export const INITIAL_MANAGERS: Record<string, Manager> = {
+  // Tier 1: Underground / Barrio
+  mgr_marcelo_underground: {
+    id: 'mgr_marcelo_underground',
+    name: 'Marcelo "El Ruso"',
+    tier: 'underground',
+    reputation: 58,
+    negotiationSkill: 55,
+    industryNetwork: 48,
+    commissionFeePct: 10,
+    monthlyMarketingBoost: 5,
+    specialties: ['Fechas en Boliches', 'Videoclips Guerrilla', 'Comunidad y Calles'],
+    requirements: {
+      minMonthlyListeners: 5000,
+      minReputation: 15,
+      minFunds: 500,
+      hiringFee: 500
+    },
+    bio: 'Gestor del circuito callejero y clubes barriales. Ideal para dar los primeros pasos sin presiones corporativas.',
+    avatarGradient: 'from-amber-600 to-stone-700'
+  },
+  mgr_brenda_fuga: {
+    id: 'mgr_brenda_fuga',
+    name: 'Brenda "La Fuga"',
+    tier: 'underground',
+    reputation: 64,
+    negotiationSkill: 60,
+    industryNetwork: 56,
+    commissionFeePct: 12,
+    monthlyMarketingBoost: 8,
+    specialties: ['Plazas y Cyphers', 'Distribución Digital DIY', 'Identidad Visual'],
+    requirements: {
+      minMonthlyListeners: 15000,
+      minReputation: 25,
+      minFunds: 1200,
+      hiringFee: 1200
+    },
+    bio: 'Especialista en conectar artistas urbanos con beatmakers emergentes y festivales barriales.',
+    avatarGradient: 'from-stone-700 to-zinc-800'
+  },
+
+  // Tier 2: Regional & Indie Vanguard
+  mgr_clara_vanguard: {
+    id: 'mgr_clara_vanguard',
+    name: 'Clara Vanguardia',
+    tier: 'regional',
+    reputation: 82,
+    negotiationSkill: 78,
+    industryNetwork: 80,
+    commissionFeePct: 15,
+    monthlyMarketingBoost: 14,
+    specialties: ['Prensa Cultural', 'Giras por Teatros', 'Premios y Reconocimiento Crítico'],
+    requirements: {
+      minMonthlyListeners: 50000,
+      minReputation: 45,
+      minFunds: 4000,
+      hiringFee: 4000
+    },
+    bio: 'Prensa cultural de vanguardia y giras por teatros independientes de Latinoamérica y Europa.',
+    avatarGradient: 'from-teal-700 to-emerald-900'
+  },
+  mgr_nico_street: {
+    id: 'mgr_nico_street',
+    name: 'Nico "Street Pulse"',
+    tier: 'regional',
+    reputation: 79,
+    negotiationSkill: 75,
+    industryNetwork: 76,
+    commissionFeePct: 16,
+    monthlyMarketingBoost: 16,
+    specialties: ['Campañas de Hype', 'Festivales Regionales', 'Alianzas con Beatmakers'],
+    requirements: {
+      minMonthlyListeners: 75000,
+      minReputation: 50,
+      minFunds: 6000,
+      hiringFee: 6000
+    },
+    bio: 'Impulsor de tendencias virales en redes, colaboraciones regionales y festivales medianos.',
+    avatarGradient: 'from-blue-700 to-indigo-900'
+  },
+
+  // Tier 3: Nacional / Consagrado
   mgr_federico_lauria: {
     id: 'mgr_federico_lauria',
     name: 'Federico Lauria (Dale Play Management)',
+    tier: 'national',
     reputation: 94,
-    negotiationSkill: 95,
-    industryNetwork: 96,
-    commissionFeePct: 20,
-    specialties: ['Estadios y Giras Internacionales', 'Negociaciones de Majors', 'Festivales Masivos']
+    negotiationSkill: 92,
+    industryNetwork: 94,
+    commissionFeePct: 18,
+    monthlyMarketingBoost: 22,
+    specialties: ['Estadios y Giras Masivas', 'Negociaciones de Majors', 'Festivales Masivos'],
+    requirements: {
+      minMonthlyListeners: 250000,
+      minReputation: 65,
+      minFunds: 18000,
+      hiringFee: 18000
+    },
+    bio: 'El arquitecto detrás del auge de la música urbana argentina y giras monumentales en estadios.',
+    avatarGradient: 'from-purple-800 to-indigo-950'
   },
+  mgr_hernan_duque: {
+    id: 'mgr_hernan_duque',
+    name: 'Hernán "El Duque"',
+    tier: 'national',
+    reputation: 89,
+    negotiationSkill: 88,
+    industryNetwork: 90,
+    commissionFeePct: 20,
+    monthlyMarketingBoost: 20,
+    specialties: ['Arenas Internacionales', 'Patrocinios Corporativos', 'Giras España / México'],
+    requirements: {
+      minMonthlyListeners: 400000,
+      minReputation: 70,
+      minFunds: 25000,
+      hiringFee: 25000
+    },
+    bio: 'Estratega de rotación radial comercial, acuerdos de patrocinio y giras por arenas internacionales.',
+    avatarGradient: 'from-amber-800 to-rose-950'
+  },
+
+  // Tier 4: Élite / Global Visionary
   mgr_noah_assad: {
     id: 'mgr_noah_assad',
     name: 'Noah Assad (Rimas Visionary)',
+    tier: 'elite_global',
     reputation: 98,
+    negotiationSkill: 98,
+    industryNetwork: 99,
+    commissionFeePct: 22,
+    monthlyMarketingBoost: 30,
+    specialties: ['Dominio de Streaming Global', 'Marcas de Lujo', 'Independencia Estratégica'],
+    requirements: {
+      minMonthlyListeners: 1000000,
+      minReputation: 80,
+      minFunds: 60000,
+      hiringFee: 60000
+    },
+    bio: 'La mente maestra global detrás del fenómeno de estadios mundiales y control estratégico de másters.',
+    avatarGradient: 'from-rose-800 to-black'
+  },
+  mgr_max_thorne: {
+    id: 'mgr_max_thorne',
+    name: 'Max "Worldstar" Thorne',
+    tier: 'elite_global',
+    reputation: 99,
     negotiationSkill: 99,
     industryNetwork: 98,
-    commissionFeePct: 22,
-    specialties: ['Dominio de Streaming Global', 'Marcas de Lujo', 'Independencia Estratégica']
-  },
-  mgr_marcelo_underground: {
-    id: 'mgr_marcelo_underground',
-    name: 'Marcelo "El Ruso" (Manager de Barrio)',
-    reputation: 58,
-    negotiationSkill: 65,
-    industryNetwork: 52,
-    commissionFeePct: 12,
-    specialties: ['Fechas en Boliches', 'Producción de Videoclips Locales', 'Comunidad y Calles']
-  },
-  mgr_clara_vanguard: {
-    id: 'mgr_clara_vanguard',
-    name: 'Clara Vanguardia (Especialista en Festivales Indie)',
-    reputation: 84,
-    negotiationSkill: 86,
-    industryNetwork: 88,
-    commissionFeePct: 15,
-    specialties: ['Prensa Cultural', 'Giras por Teatros y Europa', 'Premios y Reconocimiento Crítico']
+    commissionFeePct: 25,
+    monthlyMarketingBoost: 35,
+    specialties: ['World Tours en Estadios', 'Sindicación Global', 'Grammys y Premios Mundiales'],
+    requirements: {
+      minMonthlyListeners: 2000000,
+      minReputation: 85,
+      minFunds: 100000,
+      hiringFee: 100000
+    },
+    bio: 'Representante de superestrellas mundiales en EE.UU. y Europa. Conexiones directas con la élite de la industria.',
+    avatarGradient: 'from-amber-700 via-zinc-900 to-black'
   }
 };

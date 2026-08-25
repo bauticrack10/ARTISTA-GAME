@@ -1,7 +1,19 @@
 import { Artist, Tour, TourTier, TourStop } from '../types';
 import { CITIES_BY_REGION } from '../data/proceduralNames';
 
+export const MIN_TOUR_ENERGY = 85;
+
 export class TourEngine {
+  static canStartTour(artist: Artist): { allowed: boolean; reason?: string } {
+    if (artist.stats.energy < MIN_TOUR_ENERGY) {
+      return {
+        allowed: false,
+        reason: `Tu artista tiene ${artist.stats.energy}% de energía. Se requiere un mínimo estricto de ${MIN_TOUR_ENERGY}% de energía para organizar y salir de gira debido al desgaste de viajes y conciertos continuos.`
+      };
+    }
+    return { allowed: true };
+  }
+
   static getAvailableTiersForArtist(artist: Artist): TourTier[] {
     const pop = artist.stats.popularity;
     const tiers: TourTier[] = ['club'];
@@ -22,6 +34,10 @@ export class TourEngine {
     currentYear: number,
     currentMonth: number
   ): Tour {
+    const validation = this.canStartTour(artist);
+    if (!validation.allowed) {
+      throw new Error(validation.reason || `Energía insuficiente para iniciar una gira (mínimo ${MIN_TOUR_ENERGY}%).`);
+    }
     const stops: TourStop[] = [];
     let ticketPrice = 25;
     let stopCount = 4;

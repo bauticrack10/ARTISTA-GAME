@@ -6,6 +6,7 @@ import { CharacterCreatorView } from './components/CharacterCreatorView';
 import { Navbar } from './components/Navbar';
 import { DashboardView } from './components/DashboardView';
 import { StudioView } from './components/StudioView';
+import { LifestyleShopView } from './components/LifestyleShopView';
 import { ChartsView } from './components/ChartsView';
 import { ToursView } from './components/ToursView';
 import { IndustryView } from './components/IndustryView';
@@ -125,12 +126,12 @@ export default function App() {
   };
 
   // In-Game actions
-  const handleAdvanceMonth = () => {
-    getEngine().advanceMonth();
+  const handleAdvanceCycle = (months: 6 | 12) => {
+    getEngine().advanceCycle(months);
   };
 
   const handleRest = () => {
-    getEngine().restAndRecharge();
+    getEngine().takeVacation();
   };
 
   const handleExportSave = () => {
@@ -166,7 +167,7 @@ export default function App() {
   // 1. START SCREEN
   if (appMode === 'start_screen') {
     return (
-      <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans">
+      <div className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c]">
         <StartScreen
           onNewCareer={handleStartNewCareer}
           onContinue={handleContinueSavedGame}
@@ -188,7 +189,7 @@ export default function App() {
   // 2. CHARACTER CREATOR
   if (appMode === 'character_creator') {
     return (
-      <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans">
+      <div className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c]">
         <CharacterCreatorView
           world={world}
           onBackToMenu={() => setAppMode('start_screen')}
@@ -200,14 +201,14 @@ export default function App() {
 
   // 3. ACTIVE GAME DASHBOARD & SYSTEMS
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-rose-500 selection:text-white">
+    <div className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c] flex flex-col selection:bg-[#1c1c1c] selection:text-[#fcfbf8]">
       {/* Top App Bar & Navigation */}
       <Navbar
         player={player}
         world={world}
         currentTab={currentTab}
         onTabChange={setCurrentTab}
-        onAdvanceMonth={handleAdvanceMonth}
+        onAdvanceCycle={handleAdvanceCycle}
         onOpenSimLab={() => setShowSimLab(true)}
         onOpenNewArtist={() => setAppMode('character_creator')}
         onReturnToTitle={() => setAppMode('start_screen')}
@@ -232,6 +233,14 @@ export default function App() {
             world={world}
             onReleaseSong={(params) => getEngine().releaseSong(params)}
             onReleaseAlbum={(params) => getEngine().releaseAlbum(params)}
+          />
+        )}
+
+        {currentTab === 'lifestyle' && (
+          <LifestyleShopView
+            player={player}
+            world={world}
+            onBuyItem={(id) => getEngine().buyLifestyleItem(id)}
           />
         )}
 

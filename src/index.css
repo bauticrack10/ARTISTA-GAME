@@ -1,1 +1,152 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-cream: #f7f4ed;
+    --text-charcoal: #1c1c1c;
+    --text-muted: #5f5f5d;
+    --border-light: #eceae4;
+    --border-interactive: rgba(28, 28, 28, 0.4);
+    --btn-text: #fcfbf8;
+  }
+
+  body {
+    background-color: #f7f4ed;
+    color: #1c1c1c;
+    font-family: 'Camera Plain Variable', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom Design System Utility Classes from design.md */
+.btn-primary-dark {
+  background-color: #1c1c1c;
+  color: #fcfbf8;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 400;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary-dark:hover {
+  opacity: 0.92;
+}
+
+.btn-primary-dark:active {
+  opacity: 0.8;
+  transform: translateY(0.5px);
+}
+
+.btn-ghost-outline {
+  background-color: transparent;
+  color: #1c1c1c;
+  border: 1px solid rgba(28, 28, 28, 0.4);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 400;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-ghost-outline:hover {
+  background-color: rgba(28, 28, 28, 0.04);
+}
+
+.btn-ghost-outline:active {
+  opacity: 0.8;
+}
+
+.btn-cream-surface {
+  background-color: #f7f4ed;
+  color: #1c1c1c;
+  border: 1px solid #eceae4;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 400;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-cream-surface:hover {
+  background-color: #eceae4;
+}
+
+.btn-cream-surface:active {
+  opacity: 0.8;
+}
+
+.btn-pill {
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 400;
+  border: 1px solid #eceae4;
+  background-color: #f7f4ed;
+  color: #1c1c1c;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-pill:hover {
+  background-color: #eceae4;
+}
+
+.card-cream {
+  background-color: #f7f4ed;
+  border: 1px solid #eceae4;
+  border-radius: 12px;
+}
+
+.card-cream-subtle {
+  background-color: #fcfbf8;
+  border: 1px solid #eceae4;
+  border-radius: 12px;
+}
+
+.display-hero {
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: #1c1c1c;
+}
+
+.section-heading {
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -1.2px;
+  color: #1c1c1c;
+}
+
+.sub-heading {
+  font-size: clamp(1.25rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.9px;
+  color: #1c1c1c;
+}

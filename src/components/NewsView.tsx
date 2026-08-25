@@ -14,33 +14,22 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
     return n.category === filter;
   });
 
-  const getBadgeColor = (cat: NewsItem['category']) => {
-    switch (cat) {
-      case 'release': return 'bg-rose-500/20 text-rose-300 border-rose-500/30';
-      case 'chart': return 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
-      case 'award': return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
-      case 'rivalry': return 'bg-red-500/20 text-red-300 border-red-500/30';
-      case 'trend': return 'bg-teal-500/20 text-teal-300 border-teal-500/30';
-      default: return 'bg-zinc-800 text-zinc-400 border-zinc-700';
-    }
-  };
-
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="bg-zinc-900/60 p-6 rounded-2xl border border-zinc-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[#f7f4ed] p-6 rounded-[16px] border border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <Newspaper className="w-6 h-6 text-rose-500" />
+          <h1 className="text-2xl font-semibold text-[#1c1c1c] tracking-[-0.9px] flex items-center gap-2">
+            <Newspaper className="w-5 h-5 text-[#1c1c1c]" />
             Prensa & Noticias Musicales
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-[#5f5f5d] mt-1">
             Cobertura periodística en tiempo real de lanzamientos, récords en los charts, polémicas y premiaciones internacionales.
           </p>
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1 overflow-x-auto bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs max-w-full">
+        <div className="flex items-center gap-1 overflow-x-auto bg-[#fcfbf8] p-1 rounded-[8px] border border-[#eceae4] text-xs max-w-full">
           {[
             { id: 'all', label: 'Todas' },
             { id: 'release', label: 'Lanzamientos' },
@@ -52,8 +41,10 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`px-3 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all cursor-pointer ${
-                filter === f.id ? 'bg-rose-600 text-white shadow' : 'text-zinc-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-[6px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                filter === f.id
+                  ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
+                  : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
               }`}
             >
               {f.label}
@@ -65,29 +56,29 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
       {/* News Feed Cards */}
       <div className="space-y-3">
         {filteredNews.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500 text-xs bg-zinc-900/40 border border-zinc-800 rounded-2xl">
+          <div className="text-center py-12 text-[#5f5f5d] text-xs bg-[#f7f4ed] border border-[#eceae4] rounded-[12px]">
             No hay noticias en esta categoría.
           </div>
         ) : (
           filteredNews.map(item => (
             <div
               key={item.id}
-              className="bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 p-5 rounded-2xl space-y-2 transition-colors shadow-md"
+              className="bg-[#fcfbf8] border border-[#eceae4] p-5 rounded-[12px] space-y-2 transition-colors"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${getBadgeColor(item.category)}`}>
+                <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#eceae4] bg-[#f7f4ed] text-[#1c1c1c]">
                   {item.category}
                 </span>
-                <span className="text-xs font-mono text-zinc-500">
+                <span className="text-xs font-mono text-[#5f5f5d]">
                   Año {item.year} • Mes {item.month}
                 </span>
               </div>
 
-              <h3 className="text-base font-extrabold text-white">
+              <h3 className="text-sm font-semibold text-[#1c1c1c]">
                 {item.headline}
               </h3>
 
-              <p className="text-xs text-zinc-300 leading-relaxed">
+              <p className="text-xs text-[#5f5f5d] leading-relaxed">
                 {item.body}
               </p>
             </div>
@@ -97,3 +88,4 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
     </div>
   );
 };
+

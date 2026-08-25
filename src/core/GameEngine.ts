@@ -12,9 +12,10 @@ import {
   MusicRegion
 } from '../types';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
-import { INITIAL_GENRES } from '../data/genres';
+import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
 import { INITIAL_LABELS } from '../data/labels';
 import { INITIAL_PRODUCERS, INITIAL_MANAGERS } from '../data/producersAndManagers';
+import { CORE_EVENT_TEMPLATES, getCreativeDroughtEvent } from '../data/eventTemplates';
 import { WorldSimulation } from '../systems/WorldSimulation';
 import { ChartEngine } from '../systems/ChartEngine';
 import { AwardEngine } from '../systems/AwardEngine';
@@ -26,10 +27,12 @@ import { StreamingEngine } from '../systems/StreamingEngine';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
 import { LegacyEngine } from '../systems/LegacyEngine';
 import { TimeSystem } from '../systems/TimeSystem';
+import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
 
 export class GameEngine {
   private world: WorldState;
   private playerId: string;
+  private eventQueue: EventDefinition[] = [];
   private currentEvent: EventDefinition | null = null;
   private onStateChangeListeners: Array<(world: WorldState, player: Artist, currentEvent: EventDefinition | null) => void> = [];
 
@@ -179,6 +182,121 @@ export class GameEngine {
     this.notify();
   }
 
+  // --- LIFESTYLE & UPGRADES SYSTEM ---
+
+  public getPlayerLifestyleBuffs() {
+    const player = this.getPlayer();
+    const buffs = {
+      qualityBonus: 0,
+      passiveEnergyPerMonth: 0,
+      hypeDecayReduction: 0,
+      tourFatigueReduction: 0,
+      skillBonus: 0,
+      creativityBonus: 0,
+      charismaBonus: 0,
+      disciplineBonus: 0,
+      reputationBonus: 0,
+      commercialAppealBonus: 0,
+      monthlyUpkeep: 0
+    };
+
+    if (!player.lifestyleUpgrades || player.lifestyleUpgrades.length === 0) {
+      return buffs;
+    }
+
+    const itemMap = new Map(LIFESTYLE_ITEMS.map(i => [i.id, i]));
+    for (const id of player.lifestyleUpgrades) {
+      const item = itemMap.get(id);
+      if (item) {
+        buffs.monthlyUpkeep += item.monthlyUpkeep;
+        if (item.effects.qualityBonus) buffs.qualityBonus += item.effects.qualityBonus;
+        if (item.effects.passiveEnergyPerMonth) buffs.passiveEnergyPerMonth += item.effects.passiveEnergyPerMonth;
+        if (item.effects.hypeDecayReduction) buffs.hypeDecayReduction += item.effects.hypeDecayReduction;
+        if (item.effects.tourFatigueReduction) buffs.tourFatigueReduction += item.effects.tourFatigueReduction;
+        if (item.effects.skillBonus) buffs.skillBonus += item.effects.skillBonus;
+        if (item.effects.creativityBonus) buffs.creativityBonus += item.effects.creativityBonus;
+        if (item.effects.charismaBonus) buffs.charismaBonus += item.effects.charismaBonus;
+        if (item.effects.disciplineBonus) buffs.disciplineBonus += item.effects.disciplineBonus;
+        if (item.effects.reputationBonus) buffs.reputationBonus += item.effects.reputationBonus;
+        if (item.effects.commercialAppealBonus) buffs.commercialAppealBonus += item.effects.commercialAppealBonus;
+      }
+    }
+    return buffs;
+  }
+
+  public buyLifestyleItem(itemId: string): { success: boolean; message: string } {
+    const player = this.getPlayer();
+    const item = LIFESTYLE_ITEMS.find(i => i.id === itemId);
+    if (!item) {
+      return { success: false, message: 'El artículo no existe en el catálogo.' };
+    }
+
+    if (!player.lifestyleUpgrades) {
+      player.lifestyleUpgrades = [];
+    }
+
+    if (player.lifestyleUpgrades.includes(itemId)) {
+      return { success: false, message: 'Ya posees este artículo.' };
+    }
+
+    if (player.stats.funds < item.price) {
+      return {
+        success: false,
+        message: `Fondos insuficientes. Cuesta $${item.price.toLocaleString()} y tienes $${player.stats.funds.toLocaleString()}.`
+      };
+    }
+
+    // Deduct funds and record ownership
+    player.stats.funds -= item.price;
+    player.lifestyleUpgrades.push(itemId);
+
+    // Apply immediate permanent skill/trait bonuses (multiplied x3 if prodigy)
+    const multiplier = player.isProdigy ? 3 : 1;
+    if (item.effects.skillBonus) {
+      player.personality.skill = Math.min(100, player.personality.skill + item.effects.skillBonus * multiplier);
+    }
+    if (item.effects.creativityBonus) {
+      player.personality.creativity = Math.min(100, player.personality.creativity + item.effects.creativityBonus * multiplier);
+    }
+    if (item.effects.charismaBonus) {
+      player.personality.charisma = Math.min(100, player.personality.charisma + item.effects.charismaBonus * multiplier);
+    }
+    if (item.effects.disciplineBonus) {
+      player.personality.discipline = Math.min(100, player.personality.discipline + item.effects.disciplineBonus * multiplier);
+    }
+    if (item.effects.reputationBonus) {
+      player.stats.reputation = Math.min(100, player.stats.reputation + item.effects.reputationBonus * multiplier);
+    }
+    if (item.effects.commercialAppealBonus) {
+      player.personality.commercialAppeal = Math.min(100, player.personality.commercialAppeal + item.effects.commercialAppealBonus * multiplier);
+    }
+
+    // Generate News
+    this.world.news.unshift({
+      id: `news_lifestyle_${Date.now()}`,
+      headline: `Estilo de Vida: ${player.name} adquiere "${item.name}"`,
+      body: `${player.name} invirtió $${item.price.toLocaleString()} en ${item.name.toLowerCase()}, potenciando su estatus y recursos artísticos.`,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'culture',
+      relatedArtistIds: [player.id],
+      sentiment: 'positive',
+      importance: 3
+    });
+
+    this.notify();
+    return { success: true, message: `¡Has adquirido "${item.name}" exitosamente!` };
+  }
+
+  public static readonly MAX_SINGLES_PER_YEAR = 5;
+
+  public getPlayerSinglesReleasedThisYear(): number {
+    const player = this.getPlayer();
+    return Object.values(this.world.songs).filter(
+      s => s.artistId === player.id && s.releaseYear === this.world.currentYear && s.isSingle
+    ).length;
+  }
+
   // --- ACTIONS ---
 
   public releaseSong(params: {
@@ -192,15 +310,36 @@ export class GameEngine {
     longevityCurve: Song['longevityCurve'];
   }): Song {
     const player = this.getPlayer();
+    const currentYearSingles = this.getPlayerSinglesReleasedThisYear();
+    if (currentYearSingles >= GameEngine.MAX_SINGLES_PER_YEAR) {
+      throw new Error(`Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año).`);
+    }
+
     const songId = `song_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
     const qualityBoost = prod ? prod.qualityBoost : 0;
 
-    // Quality calculation based on player stats + production investment + producer
-    const baseQuality = Math.min(100, Math.floor(player.personality.skill * 0.5 + player.personality.creativity * 0.3 + (params.budgetProduction / 5000) * 15 + qualityBoost));
-    const commercialAppeal = Math.min(100, Math.floor(player.personality.commercialAppeal * 0.6 + (params.budgetMarketing / 5000) * 20));
-    const originality = player.personality.originality;
+    // Subgenre bonuses
+    const subDetail = params.subGenreIds && params.subGenreIds.length > 0 ? SUBGENRE_DETAILS[params.subGenreIds[0]] : undefined;
+    const subQualityBonus = subDetail?.qualityBonus || 0;
+    const subCommBonus = subDetail?.commercialBonus || 0;
+    const subOrigBonus = subDetail?.originalityBonus || 0;
+
+    // Quality calculation based on player stats + production investment + producer + subgenre
+    const baseQuality = Math.min(100, Math.floor(
+      player.personality.skill * 0.45 +
+      player.personality.creativity * 0.35 +
+      (params.budgetProduction / 5000) * 15 +
+      qualityBoost +
+      subQualityBonus
+    ));
+    const commercialAppeal = Math.min(100, Math.floor(
+      player.personality.commercialAppeal * 0.55 +
+      (params.budgetMarketing / 5000) * 20 +
+      subCommBonus
+    ));
+    const originality = Math.min(100, player.personality.originality + subOrigBonus);
 
     // Deduct player funds and energy
     const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack : 0);
@@ -241,7 +380,7 @@ export class GameEngine {
     this.world.news.unshift({
       id: `news_rel_${songId}`,
       headline: `Lanzamiento: "${params.title}" de ${player.name} ya está disponible`,
-      body: `El nuevo single de ${player.name} llega con producción de alto calibre y gran expectativa.`,
+      body: `El nuevo single de ${player.name} (${subDetail?.name || params.genreId}) llega con producción de alto calibre y gran expectativa.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'release',
@@ -259,18 +398,23 @@ export class GameEngine {
     type: Album['type'];
     genreId: string;
     subGenreIds: string[];
-    songTitles: string[];
+    songTitles?: string[];
+    newTrackTitles?: string[];
+    includedSingleIds?: string[];
     budgetProduction: number;
     budgetMarketing: number;
     producerId?: string;
   }): Album {
     const player = this.getPlayer();
-    const albumId = `album_${player.id}_${this.world.currentYear}_${this.world.currentMonth}`;
+    const albumId = `album_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
     const qualityBoost = prod ? prod.qualityBoost : 0;
 
-    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack * 2 : 0);
+    const rawNewTitles = params.newTrackTitles || params.songTitles || [];
+    const includedIds = params.includedSingleIds || [];
+
+    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack * Math.min(rawNewTitles.length, 6) : 0);
     player.stats.funds = Math.max(0, player.stats.funds - totalCost);
     player.stats.energy = Math.max(10, player.stats.energy - 35);
     player.stats.hype = Math.min(100, player.stats.hype + 35);
@@ -278,10 +422,35 @@ export class GameEngine {
     player.lastReleaseMonth = this.world.currentMonth;
 
     const songIds: string[] = [];
-    const avgQuality = Math.min(100, Math.floor(player.personality.skill * 0.5 + player.personality.creativity * 0.4 + qualityBoost + (params.budgetProduction / 10000) * 15));
+    const albumSongs: Song[] = [];
+    let includedSinglesStreams = 0;
 
-    params.songTitles.forEach((st, idx) => {
-      const sId = `song_alb_${player.id}_${this.world.currentYear}_${idx}`;
+    // 1. Process previous singles included
+    for (const singleId of includedIds) {
+      const single = this.world.songs[singleId];
+      if (single && single.artistId === player.id) {
+        single.albumId = albumId;
+        songIds.push(singleId);
+        albumSongs.push(single);
+        includedSinglesStreams += single.streamsTotal;
+      }
+    }
+
+    // 2. Generate new tracks
+    const subDetail = params.subGenreIds && params.subGenreIds.length > 0 ? SUBGENRE_DETAILS[params.subGenreIds[0]] : undefined;
+    const lifestyleBuffs = this.getPlayerLifestyleBuffs();
+    const avgQuality = Math.min(100, Math.floor(
+      player.personality.skill * 0.45 +
+      player.personality.creativity * 0.35 +
+      qualityBoost +
+      lifestyleBuffs.qualityBonus +
+      (subDetail?.qualityBonus || 0) +
+      (params.budgetProduction / 10000) * 15
+    ));
+
+    rawNewTitles.forEach((st, idx) => {
+      const sId = `song_alb_${player.id}_${this.world.currentYear}_${idx}_${Math.floor(Math.random() * 1000)}`;
+      const isLeadSingle = idx === 0 && includedIds.length === 0;
       const song: Song = {
         id: sId,
         title: st,
@@ -292,9 +461,9 @@ export class GameEngine {
         subGenreIds: params.subGenreIds,
         releaseYear: this.world.currentYear,
         releaseMonth: this.world.currentMonth,
-        quality: avgQuality + Math.floor(Math.random() * 8 - 4),
-        commercialAppeal: Math.floor(player.personality.commercialAppeal * 0.7 + (params.budgetMarketing / 10000) * 15),
-        originality: player.personality.originality,
+        quality: Math.min(100, Math.max(20, avgQuality + Math.floor(Math.random() * 10 - 5))),
+        commercialAppeal: Math.min(100, Math.floor(player.personality.commercialAppeal * 0.65 + (params.budgetMarketing / 10000) * 15 + (subDetail?.commercialBonus || 0))),
+        originality: Math.min(100, player.personality.originality + (subDetail?.originalityBonus || 0)),
         hypeAtRelease: player.stats.hype,
         streamsTotal: 0,
         streamsLastMonth: 0,
@@ -302,7 +471,7 @@ export class GameEngine {
         peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
         weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
         longevityCurve: idx === 0 ? 'explosive_drop' : idx === 1 ? 'instant_classic' : 'steady',
-        isSingle: idx < 2,
+        isSingle: isLeadSingle,
         albumId,
         receptionRating: Math.floor(avgQuality / 20),
         isClassic: false,
@@ -310,13 +479,27 @@ export class GameEngine {
       };
       this.world.songs[sId] = song;
       songIds.push(sId);
+      albumSongs.push(song);
+    });
+
+    // 3. Compute Album Impact via StreamingEngine
+    const impact = StreamingEngine.calculateAlbumImpact({
+      albumType: params.type,
+      songs: albumSongs,
+      artist: player,
+      producerBoost: qualityBoost,
+      productionBudget: params.budgetProduction,
+      marketingBudget: params.budgetMarketing,
+      includedSinglesTotalStreams: includedSinglesStreams
     });
 
     const gradients = [
       'from-amber-600 via-rose-950 to-black',
       'from-purple-900 via-zinc-950 to-blue-950',
       'from-emerald-700 via-teal-950 to-black',
-      'from-cyan-700 via-indigo-950 to-zinc-950'
+      'from-cyan-700 via-indigo-950 to-zinc-950',
+      'from-rose-700 via-amber-950 to-stone-950',
+      'from-indigo-800 via-slate-900 to-black'
     ];
 
     const newAlbum: Album = {
@@ -329,10 +512,15 @@ export class GameEngine {
       subGenreIds: params.subGenreIds,
       releaseYear: this.world.currentYear,
       releaseMonth: this.world.currentMonth,
-      totalStreams: 0,
-      firstWeekSales: Math.floor(player.stats.popularity * 1500 + params.budgetMarketing * 0.4),
-      criticalScore: Math.floor(avgQuality * 0.75 + player.personality.originality * 0.25),
-      commercialScore: Math.floor(player.personality.commercialAppeal * 0.6 + player.stats.popularity * 0.4),
+      totalStreams: includedSinglesStreams,
+      firstWeekSales: impact.firstWeekSales,
+      criticalScore: impact.criticalScore,
+      criticalReviewText: impact.criticalReviewText,
+      commercialScore: impact.commercialScore,
+      productionBudget: params.budgetProduction,
+      marketingBudget: params.budgetMarketing,
+      producerId: params.producerId,
+      singlesIncludedCount: includedIds.length,
       peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
       awards: [],
       coverGradient: gradients[Object.keys(this.world.albums).length % gradients.length]
@@ -342,8 +530,8 @@ export class GameEngine {
 
     this.world.news.unshift({
       id: `news_alb_${albumId}`,
-      headline: `¡Álbum Estelar! "${params.title}" de ${player.name} ve la luz`,
-      body: `Con ${songIds.length} canciones, ${player.name} presenta una propuesta conceptual que promete marcar un antes y un después.`,
+      headline: `¡Álbum Estelar! "${params.title}" de ${player.name} debuta con ${impact.firstWeekSales.toLocaleString()} unidades`,
+      body: `Con ${songIds.length} canciones (${includedIds.length} singles previos incluidos), el nuevo proyecto de ${player.name} cosecha ${impact.criticalScore}/100 en la crítica especializada: "${impact.criticalReviewText}".`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'release',
@@ -352,17 +540,27 @@ export class GameEngine {
       importance: 4
     });
 
+    // Actualizar cumplimiento de contrato discográfico
+    IndustryEngine.onAlbumReleased(player, this.world);
+
     this.notify();
     return newAlbum;
   }
 
   public bookTour(tier: TourTier, name: string): Tour {
     const player = this.getPlayer();
+    const tourValidation = TourEngine.canStartTour(player);
+    if (!tourValidation.allowed) {
+      throw new Error(tourValidation.reason || 'Energía insuficiente para salir de gira (mínimo 85%).');
+    }
+
     const tour = TourEngine.generateTourPlan(player, tier, name, this.world.currentYear, this.world.currentMonth);
+    const lifestyleBuffs = this.getPlayerLifestyleBuffs();
+    const reducedFatigue = Math.max(5, Math.floor(tour.energyFatigue * (1 - lifestyleBuffs.tourFatigueReduction)));
 
     this.world.tours.push(tour);
     player.stats.funds += tour.netArtistProfit;
-    player.stats.energy = Math.max(5, player.stats.energy - tour.energyFatigue);
+    player.stats.energy = Math.max(5, player.stats.energy - reducedFatigue);
     player.stats.hype = Math.min(100, player.stats.hype + tour.hypeGenerated);
     player.stats.fansCount += tour.fanbaseGained;
 
@@ -385,6 +583,7 @@ export class GameEngine {
   public signContract(contract: LabelContract) {
     const player = this.getPlayer();
     player.labelId = contract.labelId;
+    player.activeContract = { ...contract };
     player.stats.funds += contract.signingBonus;
     const label = this.world.labels[contract.labelId];
     if (label) {
@@ -397,7 +596,16 @@ export class GameEngine {
 
   public hireManager(managerId: string) {
     const player = this.getPlayer();
-    player.managerId = managerId;
+    const manager = this.world.managers[managerId];
+    if (manager) {
+      IndustryEngine.hireManager(player, manager, this.world);
+    }
+    this.notify();
+  }
+
+  public fireManager() {
+    const player = this.getPlayer();
+    IndustryEngine.fireManager(player, this.world);
     this.notify();
   }
 
@@ -455,9 +663,27 @@ export class GameEngine {
   }
 
   public restAndRecharge() {
+    this.takeVacation();
+  }
+
+  public takeVacation() {
     const player = this.getPlayer();
-    player.stats.energy = Math.min(100, player.stats.energy + 40);
-    this.notify();
+    // Acción dedicada que consume exactamente 6 meses y recupera +50 de energía (hasta un tope de 100)
+    player.stats.energy = Math.min(100, player.stats.energy + 50);
+
+    this.world.news.unshift({
+      id: `news_vacation_${Date.now()}`,
+      headline: `Pausa Creativa: ${player.name} se toma 6 meses de vacaciones y retiro`,
+      body: `El artista aprovecha este semestre sabático para desconectar de la industria musical, recuperar energías (+50%) y buscar nueva inspiración sonora.`,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'culture',
+      relatedArtistIds: [player.id],
+      sentiment: 'positive',
+      importance: 3
+    });
+
+    this.advanceCycle(6, true);
   }
 
   public resolveCurrentEventChoice(choiceIndex: number): EventOutcome | null {
@@ -480,22 +706,46 @@ export class GameEngine {
       currentMonth: this.world.currentMonth
     });
 
-    // Apply outcome deltas
+    // Apply outcome deltas with Prodigy Multiplier if active
+    const prodigyMultiplier = player.isProdigy ? 3 : 1;
     if (outcome.fundsChange) player.stats.funds = Math.max(0, player.stats.funds + outcome.fundsChange);
-    if (outcome.hypeChange) player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + outcome.hypeChange));
-    if (outcome.popularityChange) player.stats.popularity = Math.max(0, Math.min(100, player.stats.popularity + outcome.popularityChange));
-    if (outcome.fansChange) player.stats.fansCount = Math.max(0, player.stats.fansCount + outcome.fansChange);
-    if (outcome.reputationChange) player.stats.reputation = Math.max(0, Math.min(100, player.stats.reputation + outcome.reputationChange));
+    if (outcome.hypeChange) player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + (outcome.hypeChange > 0 ? outcome.hypeChange * prodigyMultiplier : outcome.hypeChange)));
+    if (outcome.popularityChange) player.stats.popularity = Math.max(0, Math.min(100, player.stats.popularity + (outcome.popularityChange > 0 ? outcome.popularityChange * prodigyMultiplier : outcome.popularityChange)));
+    if (outcome.fansChange) player.stats.fansCount = Math.max(0, player.stats.fansCount + (outcome.fansChange > 0 ? outcome.fansChange * prodigyMultiplier : outcome.fansChange));
+    if (outcome.reputationChange) player.stats.reputation = Math.max(0, Math.min(100, player.stats.reputation + (outcome.reputationChange > 0 ? outcome.reputationChange * prodigyMultiplier : outcome.reputationChange)));
     if (outcome.energyChange) player.stats.energy = Math.max(0, Math.min(100, player.stats.energy + outcome.energyChange));
 
     if (outcome.statChanges) {
-      Object.assign(player.stats, outcome.statChanges);
+      for (const [k, v] of Object.entries(outcome.statChanges)) {
+        if (typeof v === 'number' && (player.stats as any)[k] !== undefined) {
+          const currentVal = (player.stats as any)[k] as number;
+          const delta = v - currentVal;
+          if (delta > 0 && player.isProdigy) {
+            (player.stats as any)[k] = Math.min(100, currentVal + delta * 3);
+          } else {
+            (player.stats as any)[k] = v;
+          }
+        }
+      }
     }
     if (outcome.personalityChanges) {
-      Object.assign(player.personality, outcome.personalityChanges);
+      for (const [k, v] of Object.entries(outcome.personalityChanges)) {
+        if (typeof v === 'number' && (player.personality as any)[k] !== undefined) {
+          const currentVal = (player.personality as any)[k] as number;
+          const delta = v - currentVal;
+          if (delta > 0 && player.isProdigy) {
+            (player.personality as any)[k] = Math.min(100, currentVal + delta * 3);
+          } else {
+            (player.personality as any)[k] = v;
+          }
+        }
+      }
     }
     if (outcome.newContract) {
       this.signContract(outcome.newContract);
+    }
+    if (outcome.newManagerId) {
+      this.hireManager(outcome.newManagerId);
     }
     if (outcome.relationshipChanges) {
       for (const rc of outcome.relationshipChanges) {
@@ -519,122 +769,186 @@ export class GameEngine {
       });
     }
 
-    this.currentEvent = null;
+    // Pop next event in queue if available
+    if (this.eventQueue.length > 0) {
+      this.currentEvent = this.eventQueue.shift()!;
+    } else {
+      this.currentEvent = null;
+    }
+
     this.notify();
     return outcome;
   }
 
   public advanceMonth() {
-    const isNewYear = this.world.currentMonth === 12;
-    const player = this.getPlayer();
+    this.advanceCycle(6);
+  }
 
-    // 1. Natural monthly energy recovery & hype decay
-    player.stats.energy = Math.min(100, player.stats.energy + 10);
-    player.stats.hype = Math.max(10, Math.floor(player.stats.hype * 0.95));
+  public advanceCycle(monthsCount: 6 | 12 = 6, isVacation: boolean = false) {
+    const collectedEvents: EventDefinition[] = [];
 
-    // 2. World Simulation (NPC releases, autonomous evolution)
-    WorldSimulation.simulateMonth(this.world);
+    for (let step = 0; step < monthsCount; step++) {
+      const isNewYear = this.world.currentMonth === 12;
+      const player = this.getPlayer();
+      const lifestyleBuffs = this.getPlayerLifestyleBuffs();
 
-    // 3. Player streaming & finances
-    const activeTrends = Object.values(this.world.trends).filter(t => t.stage !== 'exhausted');
-    const playerSongs = Object.values(this.world.songs).filter(s => s.artistId === player.id);
-    let playerTotalMonthlyStreams = 0;
+      // 1. Natural monthly energy recovery (plus lifestyle passive bonus) & hype decay
+      if (!isVacation) {
+        player.stats.energy = Math.min(100, player.stats.energy + 3 + lifestyleBuffs.passiveEnergyPerMonth);
+      } else {
+        player.stats.energy = Math.min(100, player.stats.energy + lifestyleBuffs.passiveEnergyPerMonth);
+      }
+      const decayFactor = Math.min(0.99, 0.95 + lifestyleBuffs.hypeDecayReduction);
+      player.stats.hype = Math.max(10, Math.floor(player.stats.hype * decayFactor));
 
-    for (const song of playerSongs) {
-      const streamRes = StreamingEngine.calculateSongMonthlyStreams(
-        song,
-        player,
-        this.world.currentYear,
-        this.world.currentMonth,
-        activeTrends,
-        this.world.genres[song.genreId]
+      // 2. World Simulation (NPC releases, autonomous evolution)
+      WorldSimulation.simulateMonth(this.world);
+
+      // 3. Player streaming & finances
+      const activeTrends = Object.values(this.world.trends).filter(t => t.stage !== 'exhausted');
+      const playerSongs = Object.values(this.world.songs).filter(s => s.artistId === player.id);
+      let playerTotalMonthlyStreams = 0;
+
+      for (const song of playerSongs) {
+        const streamRes = StreamingEngine.calculateSongMonthlyStreams(
+          song,
+          player,
+          this.world.currentYear,
+          this.world.currentMonth,
+          activeTrends,
+          this.world.genres[song.genreId]
+        );
+        song.streamsLastMonth = streamRes.streams;
+        song.streamsTotal += streamRes.streams;
+        song.monthlyStreamsHistory.push(streamRes.streams);
+        if (streamRes.wentViralNow) song.wentViral = true;
+        if (streamRes.becomesClassicNow) song.isClassic = true;
+        playerTotalMonthlyStreams += streamRes.streams;
+      }
+
+      player.stats.totalStreams += playerTotalMonthlyStreams;
+      player.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
+        playerTotalMonthlyStreams,
+        player.stats.popularity,
+        player.stats.fansCount,
+        player.stats.fanbaseLoyalty
       );
-      song.streamsLastMonth = streamRes.streams;
-      song.streamsTotal += streamRes.streams;
-      song.monthlyStreamsHistory.push(streamRes.streams);
-      if (streamRes.wentViralNow) song.wentViral = true;
-      if (streamRes.becomesClassicNow) song.isClassic = true;
-      playerTotalMonthlyStreams += streamRes.streams;
-    }
 
-    player.stats.totalStreams += playerTotalMonthlyStreams;
-    player.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
-      playerTotalMonthlyStreams,
-      player.stats.popularity,
-      player.stats.fansCount
-    );
+      // Monthly economy settlement
+      const label = player.labelId ? this.world.labels[player.labelId] : undefined;
+      const manager = player.managerId ? this.world.managers[player.managerId] : undefined;
+      const finance = EconomyEngine.calculateMonthlyFinances(player, playerTotalMonthlyStreams, label, manager);
+      player.stats.funds = Math.max(0, player.stats.funds + finance.netMonthlyProfit);
 
-    // Monthly economy settlement
-    const label = player.labelId ? this.world.labels[player.labelId] : undefined;
-    const manager = player.managerId ? this.world.managers[player.managerId] : undefined;
-    const finance = EconomyEngine.calculateMonthlyFinances(player, playerTotalMonthlyStreams, label, manager);
-    player.stats.funds = Math.max(0, player.stats.funds + finance.netMonthlyProfit);
-
-    // 4. Update genres and trends
-    const genreTrendRes = GenreTrendEngine.updateGenresAndTrends(this.world, isNewYear);
-    this.world.genres = genreTrendRes.updatedGenres;
-    this.world.trends = genreTrendRes.updatedTrends;
-    if (genreTrendRes.newTrendSpawned) {
-      this.world.news.unshift({
-        id: `news_trend_${genreTrendRes.newTrendSpawned.id}`,
-        headline: `Tendencia en alza: ${genreTrendRes.newTrendSpawned.name}`,
-        body: genreTrendRes.newTrendSpawned.description,
-        year: this.world.currentYear,
-        month: this.world.currentMonth,
-        category: 'trend',
-        relatedArtistIds: [],
-        sentiment: 'positive',
-        importance: 3
-      });
-    }
-
-    // 5. Update Regional Charts
-    const chartRes = ChartEngine.calculateRegionalCharts(this.world, this.world.songs, this.world.artists);
-    this.world.charts = chartRes.updatedCharts;
-    for (const cNews of chartRes.chartMilestoneNews) {
-      this.world.news.unshift({
-        id: `news_chart_${Date.now()}_${Math.random()}`,
-        headline: cNews.headline,
-        body: cNews.body,
-        year: this.world.currentYear,
-        month: this.world.currentMonth,
-        category: 'chart',
-        relatedArtistIds: [cNews.relatedArtistId],
-        sentiment: 'positive',
-        importance: 4
-      });
-    }
-
-    // 6. Annual awards on December end
-    if (isNewYear) {
-      const awardRes = AwardEngine.conductAnnualAwards(this.world, this.world.currentYear);
-      this.world.awardsHistory.unshift(awardRes.ceremony);
-      for (const aNews of awardRes.awardNews) {
+      // 4. Update genres and trends
+      const genreTrendRes = GenreTrendEngine.updateGenresAndTrends(this.world, isNewYear);
+      this.world.genres = genreTrendRes.updatedGenres;
+      this.world.trends = genreTrendRes.updatedTrends;
+      if (genreTrendRes.newTrendSpawned) {
         this.world.news.unshift({
-          id: `news_award_${Date.now()}_${Math.random()}`,
-          headline: aNews.headline,
-          body: aNews.body,
+          id: `news_trend_${genreTrendRes.newTrendSpawned.id}`,
+          headline: `Tendencia en alza: ${genreTrendRes.newTrendSpawned.name}`,
+          body: genreTrendRes.newTrendSpawned.description,
           year: this.world.currentYear,
           month: this.world.currentMonth,
-          category: 'award',
-          relatedArtistIds: [aNews.relatedArtistId],
+          category: 'trend',
+          relatedArtistIds: [],
           sentiment: 'positive',
-          importance: 5
+          importance: 3
         });
       }
+
+      // 5. Update Regional Charts
+      const chartRes = ChartEngine.calculateRegionalCharts(this.world, this.world.songs, this.world.artists);
+      this.world.charts = chartRes.updatedCharts;
+      for (const cNews of chartRes.chartMilestoneNews) {
+        this.world.news.unshift({
+          id: `news_chart_${Date.now()}_${Math.random()}`,
+          headline: cNews.headline,
+          body: cNews.body,
+          year: this.world.currentYear,
+          month: this.world.currentMonth,
+          category: 'chart',
+          relatedArtistIds: [cNews.relatedArtistId],
+          sentiment: 'positive',
+          importance: 4
+        });
+      }
+
+      // 6. Annual awards and mandatory drought check on December end
+      if (isNewYear) {
+        // Mandatory Creative Drought check: Did the player release ANY song or album this year?
+        const playerReleasesInYear = Object.values(this.world.songs).filter(
+          s => s.artistId === player.id && s.releaseYear === this.world.currentYear
+        ).length;
+
+        if (playerReleasesInYear === 0) {
+          const droughtEvent = getCreativeDroughtEvent({
+            player,
+            world: this.world,
+            currentYear: this.world.currentYear,
+            currentMonth: this.world.currentMonth
+          });
+          collectedEvents.unshift(droughtEvent);
+        }
+
+        const awardRes = AwardEngine.conductAnnualAwards(this.world, this.world.currentYear);
+        this.world.awardsHistory.unshift(awardRes.ceremony);
+        for (const aNews of awardRes.awardNews) {
+          this.world.news.unshift({
+            id: `news_award_${Date.now()}_${Math.random()}`,
+            headline: aNews.headline,
+            body: aNews.body,
+            year: this.world.currentYear,
+            month: this.world.currentMonth,
+            category: 'award',
+            relatedArtistIds: [aNews.relatedArtistId],
+            sentiment: 'positive',
+            importance: 5
+          });
+        }
+      }
+
+      // 7. Update player career stage & legacy
+      const yearsActive = TimeSystem.calculateCareerLengthYears(player.careerStartYear, this.world.currentYear);
+      const hitsCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
+      const no1sCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) === 1 || (s.peakPosition?.Argentina ?? 99) === 1).length;
+      player.careerStage = LegacyEngine.evaluateCareerStage(player, yearsActive, hitsCount);
+      player.legacyScore = LegacyEngine.calculateLegacyScore(player, hitsCount, no1sCount, this.world.currentYear);
+      LegacyEngine.checkAndCreateEra(player, this.world.currentYear, this.world.currentMonth);
+
+      // 8. Event selection for player during this month
+      if (Math.random() < 0.50 && collectedEvents.length < (monthsCount === 12 ? 3 : 2)) {
+        const nextEvt = EventEngine.selectNextEvent(
+          {
+            player,
+            world: this.world,
+            currentYear: this.world.currentYear,
+            currentMonth: this.world.currentMonth
+          },
+          this.world.recentEventIdsHistory
+        );
+        if (nextEvt) {
+          collectedEvents.push(nextEvt);
+          this.world.recentEventIdsHistory.push({
+            eventId: nextEvt.id,
+            year: this.world.currentYear,
+            month: this.world.currentMonth
+          });
+        }
+      }
+
+      // Advance Time
+      const nextTime = TimeSystem.advanceTime(this.world.currentYear, this.world.currentMonth);
+      this.world.currentYear = nextTime.year;
+      this.world.currentMonth = nextTime.month;
     }
 
-    // 7. Update player career stage & legacy
-    const yearsActive = TimeSystem.calculateCareerLengthYears(player.careerStartYear, this.world.currentYear);
-    const hitsCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
-    const no1sCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) === 1 || (s.peakPosition?.Argentina ?? 99) === 1).length;
-    player.careerStage = LegacyEngine.evaluateCareerStage(player, yearsActive, hitsCount);
-    player.legacyScore = LegacyEngine.calculateLegacyScore(player, hitsCount, no1sCount);
-    LegacyEngine.checkAndCreateEra(player, this.world.currentYear, this.world.currentMonth);
-
-    // 8. Event selection for player (approx 60% chance per month to have an active event if none pending)
-    if (Math.random() < 0.65) {
-      const nextEvt = EventEngine.selectNextEvent(
+    // Obligatory queue requirement: Disparar obligatoriamente una cola de eventos para el jugador
+    const minRequiredEvents = monthsCount === 12 ? 2 : 1;
+    while (collectedEvents.length < minRequiredEvents) {
+      const player = this.getPlayer();
+      const fallbackEvt = EventEngine.selectNextEvent(
         {
           player,
           world: this.world,
@@ -642,21 +956,28 @@ export class GameEngine {
           currentMonth: this.world.currentMonth
         },
         this.world.recentEventIdsHistory
-      );
-      if (nextEvt) {
-        this.currentEvent = nextEvt;
-        this.world.recentEventIdsHistory.push({
-          eventId: nextEvt.id,
-          year: this.world.currentYear,
-          month: this.world.currentMonth
-        });
-      }
+      ) || EventEngine.synthesizeProceduralEvent({
+        player,
+        world: this.world,
+        currentYear: this.world.currentYear,
+        currentMonth: this.world.currentMonth
+      });
+
+      collectedEvents.push(fallbackEvt);
+      this.world.recentEventIdsHistory.push({
+        eventId: fallbackEvt.id,
+        year: this.world.currentYear,
+        month: this.world.currentMonth
+      });
     }
 
-    // Advance Time
-    const nextTime = TimeSystem.advanceTime(this.world.currentYear, this.world.currentMonth);
-    this.world.currentYear = nextTime.year;
-    this.world.currentMonth = nextTime.month;
+    // Push events to the queue
+    this.eventQueue.push(...collectedEvents);
+
+    // If no active event dialog is currently showing, pop the first one
+    if (!this.currentEvent && this.eventQueue.length > 0) {
+      this.currentEvent = this.eventQueue.shift()!;
+    }
 
     this.notify();
   }
@@ -680,6 +1001,7 @@ export class GameEngine {
         this.world = parsed.world;
         this.playerId = parsed.playerId;
         this.currentEvent = null;
+        this.eventQueue = [];
         this.notify();
         return true;
       }

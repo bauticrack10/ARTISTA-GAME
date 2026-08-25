@@ -252,59 +252,156 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
     ]
   },
 
-  // --- INDUSTRY & CONTRACT CHAIN ---
+  // --- INDUSTRY & RECORD LABEL TRANSFER MARKET (POP-UP EVENTS) ---
   {
-    id: 'evt_major_label_advance_offer',
-    title: 'Oferta de Sello Discográfico Multinacional',
+    id: 'evt_major_label_bidding_war',
+    title: '¡Guerra de Fichajes! Majors e Indies Disputan tu Firma',
+    category: 'industry',
+    rarity: 'rare',
+    cooldownMonths: 24,
+    weight: 20,
+    condition: (ctx) => ctx.player.stats.monthlyListeners >= 100000 && !ctx.player.labelId,
+    getDescription: (ctx) => {
+      const listeners = ctx.player.stats.monthlyListeners.toLocaleString();
+      return `Tras superar la barrera consagratoria de los ${listeners} oyentes mensuales, se desató una auténtica guerra de ofertas en los despachos de la industria. Directivos de Majors multinacionales y sellos independientes líderes te citan con contratos sobre la mesa para disputarse tu fichaje.`;
+    },
+    choices: (ctx) => {
+      const advanceMajor = Math.floor(120000 + (ctx.player.stats.monthlyListeners * 0.4) + (ctx.player.stats.popularity * 1500));
+      const advanceIndie = Math.floor(45000 + (ctx.player.stats.monthlyListeners * 0.25) + (ctx.player.stats.popularity * 1000));
+
+      return [
+        {
+          id: 'c_sign_major_war',
+          text: `Firmar con la Major (Sony/Universal): $${advanceMajor.toLocaleString()} de adelanto, 22% regalías, 3 álbumes`,
+          consequencesDescription: `+$${advanceMajor.toLocaleString()} Adelanto inmediato, 22% Regalías, 96% Marketing Masivo, 45% Control Creativo`,
+          apply: () => ({
+            narrativeText: `Firmaste el contrato con la Major Multinacional. El adelanto multimillonario ingresa a tus cuentas y la maquinaria promocional global se activa de inmediato.`,
+            fundsChange: advanceMajor,
+            popularityChange: 12,
+            reputationChange: -2,
+            hypeChange: 25,
+            newContract: {
+              labelId: 'label_sony_columbia',
+              signingBonus: advanceMajor,
+              royaltyPercentage: 22,
+              albumsRequired: 3,
+              albumsDelivered: 0,
+              creativeControl: 45,
+              marketingPower: 96,
+              marketingBudgetPerRelease: 45000,
+              breakoutClause: advanceMajor * 3,
+              durationYears: 4,
+              signedYear: ctx.currentYear
+            },
+            newsGenerated: {
+              headline: `¡Fichaje Millonario! ${ctx.player.name} firma contrato estelar con una Major`,
+              body: `El acuerdo sacude el mercado discográfico con un adelanto récord y una campaña de distribución global.`,
+              sentiment: 'positive',
+              category: 'industry'
+            }
+          })
+        },
+        {
+          id: 'c_sign_indie_war',
+          text: `Firmar con Sello Independiente Líder (Dale Play / Rimas): $${advanceIndie.toLocaleString()} de adelanto, 60% regalías, 2 álbumes`,
+          consequencesDescription: `+$${advanceIndie.toLocaleString()} Adelanto, 60% Regalías Artista, 88% Marketing, 82% Control Creativo`,
+          apply: () => ({
+            narrativeText: `Optaste por el camino independiente de élite. Conservás el 60% de tus regalías y libertad total en la producción con respaldo estratégico de primer nivel.`,
+            fundsChange: advanceIndie,
+            popularityChange: 8,
+            statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6) },
+            hypeChange: 20,
+            newContract: {
+              labelId: 'label_dale_play',
+              signingBonus: advanceIndie,
+              royaltyPercentage: 60,
+              albumsRequired: 2,
+              albumsDelivered: 0,
+              creativeControl: 82,
+              marketingPower: 88,
+              marketingBudgetPerRelease: 25000,
+              breakoutClause: advanceIndie * 2,
+              durationYears: 3,
+              signedYear: ctx.currentYear
+            },
+            newsGenerated: {
+              headline: `${ctx.player.name} sella una alianza estratégica con Dale Play Records`,
+              body: `La escena celebra un acuerdo que prioriza la visión artística, regalías justas y alcance internacional.`,
+              sentiment: 'positive',
+              category: 'industry'
+            }
+          })
+        },
+        {
+          id: 'c_reject_all_independent',
+          text: 'Rechazar todas las ofertas: Permanecer 100% Agente Libre e Independiente',
+          consequencesDescription: '+100% Regalías y Másters propios, +Credibilidad Artística (+8), +Fidelidad de Fans (+8)',
+          apply: () => ({
+            narrativeText: `Rechazaste todos los cheques sobre la mesa. La noticia de tu rechazo a las Majors corrió por foros y medios, consagrándote como un referente absoluto de integridad.`,
+            statChanges: {
+              artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8),
+              fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 8)
+            },
+            reputationChange: 6,
+            hypeChange: 15,
+            newsGenerated: {
+              headline: `${ctx.player.name} rechaza a las Majors y reafirma su independencia absoluta`,
+              body: `La decisión marca un hito de autonomía creativa en la industria musical actual.`,
+              sentiment: 'neutral',
+              category: 'industry'
+            }
+          })
+        }
+      ];
+    }
+  },
+
+  {
+    id: 'evt_underground_boutique_offer',
+    title: 'Propuesta de Colectivo Underground & Sello Boutique',
     category: 'industry',
     rarity: 'uncommon',
-    cooldownMonths: 30,
-    weight: 10,
-    condition: (ctx) => ctx.player.stats.popularity >= 35 && !ctx.player.labelId,
-    getDescription: (ctx) => `Un directivo de A&R de una Major te cita en un hotel céntrico. Sobre la mesa hay un adelanto millonario, pero exigen el 80% de tus regalías y supervisión en la dirección sonora.`,
+    cooldownMonths: 20,
+    weight: 12,
+    condition: (ctx) => ctx.player.stats.monthlyListeners >= 20000 && ctx.player.stats.monthlyListeners < 100000 && !ctx.player.labelId && ctx.player.stats.artisticCredibility >= 50,
+    getDescription: (ctx) => `El colectivo independiente Underground Syndicate te propone un acuerdo boutique de distribución: un adelanto inicial modesto, el 78% de tus regalías y el 95% de libertad creativa para tu próximo álbum.`,
     choices: (ctx) => [
       {
-        id: 'c_sign_major',
-        text: 'Firmar con la Major: Aceptar el adelanto y el músculo promocional',
-        consequencesDescription: '+$150,000 Adelanto, +Potencia de Marketing, -Libertad Creativa',
+        id: 'c_accept_boutique',
+        text: 'Aceptar Alianza Boutique: $12,000 de adelanto, 78% regalías, 1 álbum',
+        consequencesDescription: '+$12,000 Fondos, 78% Regalías, 95% Control Creativo, 1 Álbum exigido',
         apply: () => ({
-          narrativeText: 'Firmaste el contrato con la Major. Tu presupuesto se multiplica, aunque los directivos revisarán cada demo antes de salir.',
-          fundsChange: 150000,
-          popularityChange: 10,
-          reputationChange: -3,
+          narrativeText: 'Firmaste con el colectivo underground. Tenés presupuesto fresco para tus grabaciones sin resignar ni un ápice de tu identidad artística.',
+          fundsChange: 12000,
+          statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) },
           newContract: {
-            labelId: 'label_sony_columbia',
-            signingBonus: 150000,
-            royaltyPercentage: 22,
-            albumsRequired: 3,
+            labelId: 'label_underground_syndicate',
+            signingBonus: 12000,
+            royaltyPercentage: 78,
+            albumsRequired: 1,
             albumsDelivered: 0,
-            creativeControl: 45,
-            marketingPower: 92,
-            durationYears: 4,
+            creativeControl: 95,
+            marketingPower: 50,
+            marketingBudgetPerRelease: 8000,
+            breakoutClause: 20000,
+            durationYears: 2,
             signedYear: ctx.currentYear
           },
           newsGenerated: {
-            headline: `${ctx.player.name} firma un acuerdo millonario con una Major discográfica`,
-            body: `El movimiento promete colocar a ${ctx.player.name} en rotaciones de radio y playlists internacionales.`,
+            headline: `${ctx.player.name} se une al colectivo Underground Syndicate`,
+            body: `Una alianza boutique que apuesta por el sonido de autor y la cultura de base.`,
             sentiment: 'positive',
             category: 'industry'
           }
         })
       },
       {
-        id: 'c_stay_independent',
-        text: 'Rechazar la oferta: Mantener el 100% de los másters y libertad total',
-        consequencesDescription: '+Credibilidad absoluta, +Fidelidad de la comunidad, Sin adelanto',
+        id: 'c_decline_boutique',
+        text: 'Declinar con cordialidad y seguir autogestionando tus canciones',
+        consequencesDescription: '+Control total, Sin compromisos de entrega',
         apply: () => ({
-          narrativeText: 'Rechazaste el cheque. El rumor de tu independencia recorrió la escena independiente, ganándote el respeto de los colegas más puristas.',
-          statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8), fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 8) },
-          reputationChange: 6,
-          newsGenerated: {
-            headline: `${ctx.player.name} rechaza a las Majors y apuesta por la independencia total`,
-            body: `La decisión marca un precedente de integridad artística en la escena actual.`,
-            sentiment: 'neutral',
-            category: 'industry'
-          }
+          narrativeText: 'Agradeciste la propuesta y continuaste con tu calendario de lanzamientos por cuenta propia.',
+          statChanges: { energy: Math.min(100, ctx.player.stats.energy + 2) }
         })
       }
     ]
@@ -534,5 +631,125 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         })
       }
     ]
+  },
+
+  // --- MANDATORY ANNUAL CREATIVE DROUGHT EVENT ---
+  {
+    id: 'evt_creative_drought_mandatory',
+    title: 'Alerta de Industria: Sequía Creativa y Año en Silencio',
+    category: 'career',
+    rarity: 'legendary',
+    cooldownMonths: 0,
+    weight: 100,
+    condition: () => true,
+    getDescription: (ctx) =>
+      `Ha finalizado el año ${ctx.currentYear} y no publicaste ninguna canción ni proyecto musical. Los medios de prensa, los algoritmos de streaming y tu comunidad de oyentes castigan la inactividad prolongada. Tu equipo te exige tomar una decisión inmediata.`,
+    choices: (ctx) => [
+      {
+        id: 'c_drought_emergency_single',
+        text: 'Encerrarse de urgencia en el estudio y publicar una maqueta acústica / espontánea',
+        consequencesDescription: '-$600 Fondos, -25 Energía, +14 Hype, Lanza un single espontáneo de rescate',
+        apply: () => {
+          const songId = `song_drought_${ctx.player.id}_${ctx.currentYear}_${Math.floor(Math.random() * 1000)}`;
+          const emergencySong = {
+            id: songId,
+            title: 'Sesión Nocturna (Lanzamiento de Emergencia)',
+            artistId: ctx.player.id,
+            featuredArtistIds: [],
+            genreId: ctx.player.mainGenreId,
+            subGenreIds: [],
+            releaseYear: ctx.currentYear,
+            releaseMonth: 12,
+            quality: Math.min(100, Math.floor(ctx.player.personality.skill * 0.7 + ctx.player.personality.creativity * 0.3)),
+            commercialAppeal: Math.min(100, Math.floor(ctx.player.personality.commercialAppeal * 0.6 + 15)),
+            originality: ctx.player.personality.originality,
+            hypeAtRelease: ctx.player.stats.hype + 14,
+            streamsTotal: 0,
+            streamsLastMonth: 0,
+            monthlyStreamsHistory: [],
+            peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+            weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+            longevityCurve: 'slow_burn' as const,
+            isSingle: true,
+            receptionRating: 3,
+            isClassic: false,
+            wentViral: false
+          };
+          ctx.world.songs[songId] = emergencySong;
+          ctx.player.lastReleaseYear = ctx.currentYear;
+          ctx.player.lastReleaseMonth = 12;
+
+          return {
+            narrativeText: `Te encerraste toda la noche y grabaste una pieza espontánea y cruda. "${emergencySong.title}" ya está en plataformas y detuvo la sangría de oyentes.`,
+            fundsChange: -600,
+            energyChange: -25,
+            hypeChange: 14,
+            popularityChange: 2,
+            newsGenerated: {
+              headline: `¡Rompe el silencio! ${ctx.player.name} publica un tema inédito de medianoche`,
+              body: `Tras meses sin lanzamientos, ${ctx.player.name} sorprende a sus seguidores con una grabación íntima de último momento.`,
+              sentiment: 'positive',
+              category: 'release'
+            }
+          };
+        }
+      },
+      {
+        id: 'c_drought_accept_consequences',
+        text: 'Aceptar la sequía creativa y asumir las duras penalizaciones del algoritmo',
+        consequencesDescription: '-25 Hype, -8 Popularidad, -15% Fans, Caída abrupta de oyentes mensuales',
+        apply: () => ({
+          narrativeText: 'Decidiste no forzar lanzamientos sin inspiración. Tu presencia en playlists cayó drásticamente y la prensa musical comienza a preguntarse si perdiste el rumbo.',
+          hypeChange: -25,
+          popularityChange: -8,
+          fansChange: -Math.floor(ctx.player.stats.fansCount * 0.15),
+          reputationChange: -4,
+          newsGenerated: {
+            headline: `¿Dónde está ${ctx.player.name}? Preocupación por un año completo sin música`,
+            body: `El silencio prolongado de ${ctx.player.name} pasa factura en las estadísticas de streaming.`,
+            sentiment: 'negative',
+            category: 'culture'
+          }
+        })
+      },
+      {
+        id: 'c_drought_announce_sabbatical',
+        text: 'Anunciar un retiro reflexivo / año sabático para reconstruir tu sonido',
+        consequencesDescription: '-35 Hype, -12 Popularidad, +8 Creatividad, +6 Originalidad, +40 Energía',
+        apply: () => ({
+          narrativeText: 'Emitiste un comunicado anunciando una pausa estratégica para reinventarte. Aunque el hype cayó en picada, tu salud mental y tus ideas artísticas se revitalizaron.',
+          hypeChange: -35,
+          popularityChange: -12,
+          energyChange: 40,
+          personalityChanges: {
+            creativity: Math.min(100, ctx.player.personality.creativity + 8),
+            originality: Math.min(100, ctx.player.personality.originality + 6)
+          },
+          newsGenerated: {
+            headline: `${ctx.player.name} anuncia un retiro temporal en busca de una nueva era musical`,
+            body: `El artista pausa su agenda pública para concentrarse en la evolución de su próximo universo sonoro.`,
+            sentiment: 'neutral',
+            category: 'industry'
+          }
+        })
+      }
+    ]
   }
 ];
+
+export function getCreativeDroughtEvent(ctx: EventContext): EventDefinition {
+  const droughtEvent = CORE_EVENT_TEMPLATES.find(e => e.id === 'evt_creative_drought_mandatory');
+  if (droughtEvent) return droughtEvent;
+
+  return {
+    id: 'evt_creative_drought_mandatory',
+    title: 'Alerta de Industria: Sequía Creativa y Año en Silencio',
+    category: 'career',
+    rarity: 'legendary',
+    cooldownMonths: 0,
+    weight: 100,
+    condition: () => true,
+    getDescription: () => `Ha finalizado el año ${ctx.currentYear} sin lanzamientos de ${ctx.player.name}.`,
+    choices: () => []
+  };
+}
