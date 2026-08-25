@@ -1,4 +1,4 @@
-﻿# Directrices del Proyecto - El Artista
+# Directrices del Proyecto - El Artista
 
 ## Reglas de Diseño e Interfaz de Usuario (UI/UX)
 
@@ -7,5 +7,9 @@
   - **Fondo:** Crema cálido (#f7f4ed), nunca blanco puro.
   - **Texto y Contrastes:** Charcoal (#1c1c1c) y escalas de opacidad, texto secundario #5f5f5d.
   - **Bordes y Contenedores:** 1px solid #eceae4 en tarjetas e imágenes, sin sombras pesadas.
-  - **Botones:** Botón oscuro con sombra *inset* característica (gba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px), radio 6px para botones rectangulares y 9999px únicamente para píldoras/iconos.
+  - **Botones:** Botón oscuro con sombra *inset* característica (gba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px), radio 6px para botones rectangulares y 9999px únicamente para píldoras/iconos.
   - **Tipografía y Jerarquía:** Camera Plain Variable (o fallbacks ui-sans-serif, system-ui), pesos 400 y 600, con espaciado negativo en titulares grandes.
+
+## Automatización y Flujo de Trabajo (Git & GitHub)
+
+- **Sincronización Automática con GitHub:** Siempre que se complete cualquier modificación, refactorización, nueva funcionalidad o corrección en el código, se debe verificar la compilación (`npm run build`), añadir todos los cambios (`git add -A`), realizar un commit descriptivo y hacer `git push origin main` al repositorio de GitHub automáticamente, sin esperar una petición manual del usuario.
