@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>El Artista — Music Career Simulator</title>
+    <meta name="description" content="Simulador profundo, procedural y dinámico de carrera musical donde el mundo evoluciona a lo largo de décadas." />
+    <meta property="og:title" content="El Artista — Music Career Simulator" />
+    <meta property="og:description" content="Simulador profundo, procedural y dinámico de carrera musical donde el mundo evoluciona a lo largo de décadas." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      (function() {
+        try {
+          var originalFetch = window.fetch;
+          var currentFetch = originalFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return currentFetch;
+            },
+            set: function(fn) {
+              currentFetch = fn;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (err) {
+          console.warn('Fetch property setter fallback failed:', err);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

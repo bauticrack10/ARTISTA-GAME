@@ -1,0 +1,6 @@
+{
+  "name": "El Artista — Music Career Simulator",
+  "description": "Simulador profundo, procedural y dinámico de carrera musical donde el mundo evoluciona a lo largo de décadas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
