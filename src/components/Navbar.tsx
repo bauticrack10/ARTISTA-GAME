@@ -1,25 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Artist, WorldState } from '../types';
 import { TimeSystem } from '../systems/TimeSystem';
 import {
-  Flame,
   Zap,
   DollarSign,
   Users,
-  TrendingUp,
-  Sparkles,
   Play,
-  FlaskConical,
-  Save,
   Award,
   Disc3,
   BarChart3,
   Compass,
   Building2,
-  Newspaper,
   Network,
-  UserPlus,
   ShoppingBag,
+  Sparkles,
+  TrendingUp,
   Crown
 } from 'lucide-react';
 
@@ -28,12 +23,8 @@ interface NavbarProps {
   world: WorldState;
   currentTab: string;
   onTabChange: (tab: string) => void;
-  onAdvanceMonth: () => void;
-  onOpenSimLab: () => void;
-  onOpenNewArtist: () => void;
+  onAdvanceCycle: (months: 6 | 12) => void;
   onReturnToTitle: () => void;
-  onExportSave: () => void;
-  onImportSave: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -41,168 +32,225 @@ export const Navbar: React.FC<NavbarProps> = ({
   world,
   currentTab,
   onTabChange,
-  onAdvanceMonth,
-  onOpenSimLab,
-  onOpenNewArtist,
-  onReturnToTitle,
-  onExportSave,
-  onImportSave
+  onAdvanceCycle,
+  onReturnToTitle
 }) => {
+  const [cycleMonths, setCycleMonths] = useState<6 | 12>(6);
   const monthName = TimeSystem.getMonthName(world.currentMonth);
-  const yearsActive = TimeSystem.calculateCareerLengthYears(player.careerStartYear, world.currentYear);
+  const semesterShort = world.currentMonth <= 6 ? '1er Semestre' : '2do Semestre';
+
+  const getEnergyBadge = () => {
+    if (player.stats.energy >= 85) {
+      return {
+        bg: 'bg-emerald-50 border-emerald-200 text-emerald-950',
+        icon: 'text-emerald-600',
+        bar: 'bg-emerald-500'
+      };
+    } else if (player.stats.energy >= 40) {
+      return {
+        bg: 'bg-amber-50 border-amber-200 text-amber-950',
+        icon: 'text-amber-600',
+        bar: 'bg-amber-500'
+      };
+    }
+    return {
+      bg: 'bg-rose-50 border-rose-200 text-rose-950',
+      icon: 'text-rose-600',
+      bar: 'bg-rose-500'
+    };
+  };
+
+  const energyStyle = getEnergyBadge();
 
   return (
-    <header className="sticky top-0 z-40 bg-[#f7f4ed]/95 backdrop-blur-md border-b border-[#eceae4] text-[#1c1c1c]">
-      {/* Top Meta Bar */}
-      <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-[#eceae4]/70">
-        {/* Brand & Date */}
-        <div className="flex items-center gap-3">
+    <header
+      className="sticky top-0 z-40 bg-[#f7f4ed]/95 backdrop-blur-md border-b border-[#eceae4] text-[#1c1c1c]"
+      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+    >
+      {/* Fila 1: Logo + Selector de Tiempo + Botonera de Avance (CTA Principal) + Píldoras de Recursos Vitales */}
+      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-2.5 sm:gap-4 border-b border-[#eceae4] overflow-x-auto scrollbar-none">
+        
+        {/* Izquierda: Logo ("EL ARTISTA") con enlace al Menú Principal */}
+        <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={onReturnToTitle}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer group"
+            className="flex items-center gap-2.5 hover:opacity-85 transition-opacity cursor-pointer text-left group"
             title="Volver al Menú Principal"
           >
             <div
-              className="w-8 h-8 rounded-[6px] bg-[#1c1c1c] text-[#fcfbf8] flex items-center justify-center"
+              className="w-8 h-8 rounded-[6px] bg-gradient-to-tr from-purple-700 via-indigo-600 to-amber-500 text-[#fcfbf8] flex items-center justify-center shrink-0"
               style={{
                 boxShadow:
-                  'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
+                  'rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
               }}
             >
-              <Disc3 className="w-4 h-4 animate-spin-slow" />
+              <Disc3 className="w-4.5 h-4.5 text-white animate-spin-slow" />
             </div>
-            <div className="text-left">
-              <span
-                className="font-semibold tracking-[-0.4px] text-[#1c1c1c] text-sm leading-none block"
-                style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-              >
+            <div className="flex flex-col">
+              <span className="font-semibold tracking-[-0.3px] text-[#1c1c1c] text-xs leading-none">
                 EL ARTISTA
               </span>
-              <span className="text-[10px] text-[#5f5f5d] tracking-normal uppercase">
+              <span className="text-[9px] text-[#5f5f5d] tracking-wider uppercase leading-tight mt-0.5">
                 Menú Principal
               </span>
             </div>
           </button>
+        </div>
 
-          <div className="h-5 w-px bg-[#eceae4]" />
-
-          {/* Time indicator */}
-          <div className="flex items-center gap-2 bg-[#fcfbf8] px-3 py-1 rounded-[6px] border border-[#eceae4] text-xs shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#1c1c1c]" />
+        {/* Centro: Indicador de Tiempo actual (`Enero 2026 • 1er Semestre`) + Botonera de avance integrada */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Selector de Tiempo Condensado */}
+          <div
+            className="flex items-center gap-2 bg-[#fcfbf8] px-2.5 sm:px-3 py-1.5 rounded-[6px] border border-[#eceae4] text-xs shadow-2xs whitespace-nowrap"
+            title={`Fecha actual: ${monthName} ${world.currentYear} (${semesterShort})`}
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             <span className="font-semibold text-[#1c1c1c]">
               {monthName} {world.currentYear}
             </span>
-            <span className="text-[#5f5f5d] font-mono">
-              (Año {yearsActive + 1})
+            <span className="text-[#5f5f5d] font-normal hidden sm:inline">
+              • {semesterShort}
             </span>
+          </div>
+
+          {/* Botonera de Simulación / Avance Integrada como CTA Principal */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* Toggle 6M / 1Y */}
+            <div className="flex items-center bg-[#eceae4] p-0.5 rounded-[6px] text-xs font-semibold">
+              <button
+                onClick={() => setCycleMonths(6)}
+                className={`px-2 py-1 rounded-[4px] transition-all cursor-pointer text-xs ${
+                  cycleMonths === 6
+                    ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-2xs'
+                    : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                }`}
+                title="Simular 6 Meses (1 Semestre)"
+              >
+                6M
+              </button>
+              <button
+                onClick={() => setCycleMonths(12)}
+                className={`px-2 py-1 rounded-[4px] transition-all cursor-pointer text-xs ${
+                  cycleMonths === 12
+                    ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-2xs'
+                    : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                }`}
+                title="Simular 1 Año Completo"
+              >
+                1Y
+              </button>
+            </div>
+
+            {/* Botón de Acción Principal (Avanzar Ciclo) */}
+            <button
+              id="btn-advance-cycle"
+              onClick={() => onAdvanceCycle(cycleMonths)}
+              className="group relative flex items-center gap-1.5 sm:gap-2 bg-[#1c1c1c] text-[#fcfbf8] px-3 sm:px-3.5 py-1.5 rounded-[6px] text-xs font-semibold cursor-pointer hover:bg-[#2c2c2c] active:scale-[0.98] transition-all shadow-sm shrink-0"
+              style={{
+                boxShadow:
+                  'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.08) 0px 1px 3px 0px'
+              }}
+              title={`Avanzar ciclo de ${cycleMonths === 6 ? '6 meses' : '1 año'} y simular lanzamientos, charts y eventos`}
+            >
+              <Play className="w-3.5 h-3.5 fill-emerald-400 text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
+              <span className="tracking-tight">
+                Avanzar Ciclo (+{cycleMonths === 6 ? '6M' : '1Y'})
+              </span>
+            </button>
           </div>
         </div>
 
-        {/* Player Stats Pills */}
-        <div className="flex items-center flex-wrap gap-2 text-xs">
-          {/* Prodigy Badge if active */}
+        {/* Derecha: Píldoras compactas de recursos indispensables (Energía %, Dinero $, Seguidores y Avatar) */}
+        <div className="flex items-center gap-2 text-xs shrink-0">
+          {/* Energía Vital con micro-barra */}
+          <div
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] border text-xs shadow-2xs ${energyStyle.bg}`}
+            title={`Energía Vital: ${player.stats.energy}% ${
+              player.stats.energy < 85 ? '(Giras Bloqueadas <85%)' : '(Giras Habilitadas)'
+            }`}
+          >
+            <Zap className={`w-3.5 h-3.5 shrink-0 ${energyStyle.icon}`} />
+            <span className="font-semibold font-mono">{player.stats.energy}%</span>
+            <div className="w-5 sm:w-6 h-1.5 bg-black/10 rounded-full overflow-hidden shrink-0 hidden sm:block">
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${energyStyle.bar}`}
+                style={{ width: `${Math.min(100, Math.max(0, player.stats.energy))}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Dinero / Fondos */}
+          <div
+            className="flex items-center gap-1.5 bg-[#fcfbf8] border border-[#eceae4] px-2.5 py-1 rounded-[6px] text-xs shadow-2xs"
+            title={`Fondos Monetarios Disponibles: $${player.stats.funds.toLocaleString()}`}
+          >
+            <DollarSign className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span className="font-semibold text-[#1c1c1c] font-mono">
+              ${player.stats.funds.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Seguidores / Fans */}
+          <div
+            className="flex items-center gap-1.5 bg-[#fcfbf8] border border-[#eceae4] px-2.5 py-1 rounded-[6px] text-xs shadow-2xs"
+            title={`Comunidad de Fans Activos: ${player.stats.fansCount.toLocaleString()}`}
+          >
+            <Users className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+            <span className="font-semibold text-[#1c1c1c] font-mono">
+              {player.stats.fansCount.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Badge Prodigio (opcional si aplica) */}
           {player.isProdigy && (
             <div
-              className="flex items-center gap-1.5 bg-[#1c1c1c] text-[#fcfbf8] px-2.5 py-1 rounded-[6px] font-semibold text-xs shadow-sm"
-              title="Rasgo: Promesa / Prodigio (1 en 100.000) • x3 Progreso permanente"
+              className="hidden xl:flex items-center gap-1 bg-amber-100/80 text-amber-950 border border-amber-300 px-2 py-1 rounded-[6px] text-[11px] font-bold shadow-2xs"
+              title="Rasgo: Promesa / Prodigio • x3 Ganancia permanente"
             >
-              <Crown className="w-3.5 h-3.5 text-amber-300" />
-              <span>Prodigio x3</span>
+              <Crown className="w-3 h-3 text-amber-800 fill-current shrink-0" />
+              <span>x3</span>
             </div>
           )}
 
-          {/* Energy */}
-          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Energía del Artista">
-            <Zap className="w-3.5 h-3.5 text-[#1c1c1c]" />
-            <span className="text-[#5f5f5d]">Energía:</span>
-            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.energy}%</span>
-          </div>
-
-          {/* Hype */}
-          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Hype Actual en la Escena">
-            <Flame className="w-3.5 h-3.5 text-[#1c1c1c]" />
-            <span className="text-[#5f5f5d]">Hype:</span>
-            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.hype}</span>
-          </div>
-
-          {/* Popularity */}
-          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Popularidad General (0-100)">
-            <TrendingUp className="w-3.5 h-3.5 text-[#1c1c1c]" />
-            <span className="text-[#5f5f5d]">Pop:</span>
-            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.popularity}</span>
-          </div>
-
-          {/* Fans */}
-          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Comunidad de Fanáticos">
-            <Users className="w-3.5 h-3.5 text-[#1c1c1c]" />
-            <span className="font-semibold text-[#1c1c1c] font-mono">{player.stats.fansCount.toLocaleString()}</span>
-          </div>
-
-          {/* Funds */}
-          <div className="flex items-center gap-1.5 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] shadow-sm" title="Fondos Disponibles">
-            <DollarSign className="w-3.5 h-3.5 text-[#1c1c1c]" />
-            <span className="font-semibold text-[#1c1c1c] font-mono">${player.stats.funds.toLocaleString()}</span>
-          </div>
-        </div>
-
-        {/* Actions (Advance, Test, Save, Return) */}
-        <div className="flex items-center gap-2">
+          {/* Perfil Rápido del Jugador */}
           <button
-            id="btn-advance-month"
-            onClick={onAdvanceMonth}
-            className="flex items-center gap-2 bg-[#1c1c1c] text-[#fcfbf8] px-3.5 py-1.5 rounded-[6px] text-xs font-semibold cursor-pointer hover:opacity-80 active:opacity-75 transition-opacity"
-            style={{
-              boxShadow:
-                'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-            }}
+            onClick={() => onTabChange('dashboard')}
+            className="flex items-center gap-2 pl-1 pr-2 sm:pr-2.5 py-1 rounded-[6px] bg-[#fcfbf8] hover:bg-[#eceae4] border border-[#eceae4] text-xs transition-colors cursor-pointer shrink-0"
+            title={`Perfil de ${player.name} • Ir a Inicio`}
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            <span>Avanzar Mes</span>
-          </button>
-
-          <button
-            id="btn-nav-new-career"
-            onClick={onOpenNewArtist}
-            className="flex items-center gap-1.5 bg-[#fcfbf8] border border-[#eceae4] text-[#1c1c1c] px-3 py-1.5 rounded-[6px] text-xs shadow-sm hover:bg-[#eceae4] cursor-pointer transition-colors"
-            title="Iniciar Nueva Carrera"
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Nueva Carrera</span>
-          </button>
-
-          <button
-            id="btn-open-sim-lab"
-            onClick={onOpenSimLab}
-            className="flex items-center gap-1.5 bg-[#fcfbf8] border border-[#eceae4] text-[#1c1c1c] px-3 py-1.5 rounded-[6px] text-xs shadow-sm hover:bg-[#eceae4] cursor-pointer transition-colors"
-            title="Simulador de 10-100 Años y Tests"
-          >
-            <FlaskConical className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Sim Lab</span>
-          </button>
-
-          <button
-            id="btn-export-save"
-            onClick={onExportSave}
-            className="p-1.5 bg-[#fcfbf8] hover:bg-[#eceae4] border border-[#eceae4] text-[#1c1c1c] rounded-[6px] text-xs transition-colors cursor-pointer shadow-sm"
-            title="Exportar Partida (JSON)"
-          >
-            <Save className="w-3.5 h-3.5" />
+            {player.avatarUrl ? (
+              <img
+                src={player.avatarUrl}
+                alt={player.name}
+                className="w-5 h-5 rounded-[4px] object-cover border border-[#eceae4] shrink-0"
+              />
+            ) : (
+              <div
+                className={`w-5 h-5 rounded-[4px] bg-gradient-to-tr ${
+                  player.avatarColor || 'from-amber-500 to-rose-600'
+                } text-[#fcfbf8] font-bold text-[10px] flex items-center justify-center shrink-0`}
+              >
+                {player.name.charAt(0)}
+              </div>
+            )}
+            <span className="font-semibold text-[#1c1c1c] max-w-[80px] sm:max-w-[100px] truncate">
+              {player.name}
+            </span>
           </button>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <nav className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto py-1.5 scrollbar-none text-xs font-normal">
+      {/* Fila 2: Menú de Navegación Horizontal con Scroll Suave */}
+      <nav className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto py-1.5 scrollbar-none text-xs font-normal scroll-smooth">
         {[
           { id: 'dashboard', label: 'Inicio', icon: Compass },
           { id: 'studio', label: 'Estudio & Música', icon: Disc3 },
           { id: 'lifestyle', label: 'Tienda & Estilo de Vida', icon: ShoppingBag },
           { id: 'charts', label: 'Charts & Rankings', icon: BarChart3 },
           { id: 'tours', label: 'Giras & Shows', icon: Sparkles },
-          { id: 'industry', label: 'Sellos & Industria', icon: Building2 },
+          { id: 'industry', label: 'Sellos & Managers', icon: Building2 },
           { id: 'relations', label: 'Artistas & Rivalidades', icon: Network },
-          { id: 'career', label: 'Eras & Carrera', icon: TrendingUp },
-          { id: 'news', label: 'Prensa & Noticias', icon: Newspaper },
+          { id: 'career', label: 'Eras & Trayectoria', icon: TrendingUp },
           { id: 'awards', label: 'Premios & Gala', icon: Award }
         ].map((tab) => {
           const Icon = tab.icon;
@@ -214,19 +262,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onTabChange(tab.id)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-[6px] whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold'
-                  : 'text-[#5f5f5d] hover:text-[#1c1c1c] hover:bg-[#eceae4]'
+                  ? 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold shadow-sm'
+                  : 'text-[#5f5f5d] hover:text-[#1c1c1c] hover:bg-[#eceae4]/70'
               }`}
               style={
                 isActive
                   ? {
                       boxShadow:
-                        'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
+                        'rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
                     }
                   : {}
               }
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#fcfbf8]' : 'text-[#5f5f5d]'}`} />
+              <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#fcfbf8]' : 'text-[#5f5f5d]'}`} />
               <span>{tab.label}</span>
             </button>
           );

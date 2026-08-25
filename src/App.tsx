@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GameEngine } from './core/GameEngine';
-import { WorldState, Artist, EventDefinition, LongevityCurve, TourTier, Album } from './types';
+import { WorldState, Artist, EventDefinition, LongevityCurve, TourTier, Album, AwardCeremony } from './types';
 import { StartScreen } from './components/StartScreen';
 import { CharacterCreatorView } from './components/CharacterCreatorView';
 import { Navbar } from './components/Navbar';
@@ -12,10 +12,10 @@ import { ToursView } from './components/ToursView';
 import { IndustryView } from './components/IndustryView';
 import { RelationshipsView } from './components/RelationshipsView';
 import { CareerErasView } from './components/CareerErasView';
-import { NewsView } from './components/NewsView';
 import { AwardsView } from './components/AwardsView';
+import { AwardsGalaModal } from './components/AwardsGalaModal';
 import { EventModal } from './components/EventModal';
-import { SimulationLabModal } from './components/SimulationLabModal';
+import { EraMilestoneModal, EraMilestoneData } from './components/EraMilestoneModal';
 
 type AppMode = 'start_screen' | 'character_creator' | 'game';
 
@@ -34,27 +34,118 @@ export default function App() {
   const [world, setWorld] = useState<WorldState>(() => getEngine().getWorld());
   const [player, setPlayer] = useState<Artist>(() => getEngine().getPlayer());
   const [currentEvent, setCurrentEvent] = useState<EventDefinition | null>(null);
+  const [activeGala, setActiveGala] = useState<AwardCeremony | null>(null);
+  const [activeMilestone, setActiveMilestone] = useState<EraMilestoneData | null>(null);
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
 
-  const [showSimLab, setShowSimLab] = useState(false);
+  const prevErasCountRef = useRef<number>(player.eras?.length || 1);
+  const milestonesAchievedRef = useRef<Set<string>>(new Set());
 
-  // Subscribe to engine state changes
+  // Subscribe to engine state changes (Auto-save on every state change)
   useEffect(() => {
     const eng = getEngine();
-    const unsubscribe = eng.subscribe((newWorld, newPlayer, newEvent) => {
+    const unsubscribe = eng.subscribe((newWorld, newPlayer, newEvent, newGala) => {
       setWorld({ ...newWorld });
       setPlayer({ ...newPlayer });
       setCurrentEvent(newEvent);
+      if (newGala) {
+        setActiveGala(newGala);
+      }
       if (appMode === 'game') {
         try {
           localStorage.setItem('el_artista_save', eng.exportSaveState());
         } catch (e) {
-          // quota or storage error
+          // storage error
         }
       }
     });
     return unsubscribe;
   }, [appMode]);
+
+  // Automatic Milestone Detection & Trigger
+  useEffect(() => {
+    if (appMode !== 'game' || !player) return;
+
+    // 1. Check if a new Era was added
+    if (player.eras && player.eras.length > prevErasCountRef.current) {
+      prevErasCountRef.current = player.eras.length;
+      const latestEra = player.eras[player.eras.length - 1];
+      setActiveMilestone({
+        type: 'era_transition',
+        title: `¡Transición de Era: "${latestEra.name}"!`,
+        eraName: latestEra.name,
+        stage: latestEra.stage,
+        milestoneLabel: `NUEVA ERA • ${latestEra.stage.toUpperCase()}`,
+        statValue: `${latestEra.stage}`,
+        year: world.currentYear,
+        month: world.currentMonth,
+        quote: latestEra.highlightSummary
+      });
+      return;
+    }
+
+    // 2. Check 100K Monthly Listeners milestone
+    if (player.stats.monthlyListeners >= 100000 && !milestonesAchievedRef.current.has('100k_listeners')) {
+      milestonesAchievedRef.current.add('100k_listeners');
+      setActiveMilestone({
+        type: 'listeners_milestone',
+        title: '¡100,000 Oyentes Mensuales Conquistados!',
+        milestoneLabel: '100K OYENTES',
+        statValue: `${player.stats.monthlyListeners.toLocaleString()}`,
+        year: world.currentYear,
+        month: world.currentMonth,
+        quote: `${player.name} rompe la barrera de los 100K oyentes en streaming global.`
+      });
+      return;
+    }
+
+    // 3. Check 1M Monthly Listeners milestone
+    if (player.stats.monthlyListeners >= 1000000 && !milestonesAchievedRef.current.has('1m_listeners')) {
+      milestonesAchievedRef.current.add('1m_listeners');
+      setActiveMilestone({
+        type: 'listeners_milestone',
+        title: '¡Superestrella: 1,000,000 de Oyentes Mensuales!',
+        milestoneLabel: '1 MILLÓN DE OYENTES',
+        statValue: `${(player.stats.monthlyListeners / 1000000).toFixed(1)}M`,
+        year: world.currentYear,
+        month: world.currentMonth,
+        quote: `Consagración absoluta en la cima de la industria musical.`
+      });
+      return;
+    }
+
+    // 4. Check Gold record milestone (500K total streams on a single song)
+    const songs = Object.values(world.songs).filter(s => s.artistId === player.id);
+    const goldSong = songs.find(s => s.streamsTotal >= 500000);
+    if (goldSong && !milestonesAchievedRef.current.has(`gold_${goldSong.id}`)) {
+      milestonesAchievedRef.current.add(`gold_${goldSong.id}`);
+      setActiveMilestone({
+        type: 'gold_record',
+        title: `¡Certificación de Oro: "${goldSong.title}"!`,
+        milestoneLabel: 'DISCO DE ORO 📀',
+        statValue: `${(goldSong.streamsTotal / 1000).toFixed(0)}K Streams`,
+        year: world.currentYear,
+        month: world.currentMonth,
+        quote: `"${goldSong.title}" es certificado con Disco de Oro oficial por su impacto en plataformas.`
+      });
+    }
+  }, [player?.eras?.length, player?.stats?.monthlyListeners, player?.stats?.totalStreams, appMode]);
+
+  const handleOpenMilestone = (customData?: Partial<EraMilestoneData>) => {
+    const currentEra = player.eras[player.eras.length - 1];
+    const data: EraMilestoneData = {
+      type: 'era_transition',
+      title: `Portada Conmemorativa: ${currentEra?.name || 'Era Musical'}`,
+      eraName: currentEra?.name,
+      stage: player.careerStage,
+      milestoneLabel: `ERA ${player.careerStage.toUpperCase()}`,
+      statValue: `${(player.stats.totalStreams / 1000000).toFixed(1)}M Streams`,
+      year: world.currentYear,
+      month: world.currentMonth,
+      ...customData
+    };
+    setActiveMilestone(data);
+  };
 
   // Start Screen handlers
   const handleStartNewCareer = () => {
@@ -71,6 +162,7 @@ export default function App() {
         setWorld(eng.getWorld());
         setPlayer(eng.getPlayer());
         setCurrentEvent(eng.getCurrentEvent());
+        setActiveGala(eng.getActiveGalaCeremony());
         setAppMode('game');
         setCurrentTab('dashboard');
         return;
@@ -80,11 +172,12 @@ export default function App() {
   };
 
   const handleLoadDemoCareer = () => {
-    const eng = new GameEngine(); // Defaults to Bhavi demo
+    const eng = new GameEngine();
     engineRef.current = eng;
     setWorld(eng.getWorld());
     setPlayer(eng.getPlayer());
     setCurrentEvent(eng.getCurrentEvent());
+    setActiveGala(null);
     setAppMode('game');
     setCurrentTab('dashboard');
     try {
@@ -100,6 +193,7 @@ export default function App() {
       setWorld(eng.getWorld());
       setPlayer(eng.getPlayer());
       setCurrentEvent(eng.getCurrentEvent());
+      setActiveGala(eng.getActiveGalaCeremony());
       setAppMode('game');
       setCurrentTab('dashboard');
       try {
@@ -118,6 +212,7 @@ export default function App() {
     setWorld(eng.getWorld());
     setPlayer(eng.getPlayer());
     setCurrentEvent(eng.getCurrentEvent());
+    setActiveGala(null);
     setAppMode('game');
     setCurrentTab('dashboard');
     try {
@@ -134,36 +229,6 @@ export default function App() {
     getEngine().takeVacation();
   };
 
-  const handleExportSave = () => {
-    const eng = getEngine();
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(eng.exportSaveState());
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `el_artista_save_${world.currentYear}_m${world.currentMonth}_${player.name.replace(/\s+/g, '_')}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
-
-  const handleImportSaveInGame = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = (e: any) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const content = event.target?.result as string;
-        if (content) {
-          handleImportSaveState(content);
-        }
-      };
-      reader.readAsText(file);
-    };
-    input.click();
-  };
-
   // 1. START SCREEN
   if (appMode === 'start_screen') {
     return (
@@ -173,15 +238,7 @@ export default function App() {
           onContinue={handleContinueSavedGame}
           onLoadDemo={handleLoadDemoCareer}
           onImportSave={handleImportSaveState}
-          onOpenSimLab={() => setShowSimLab(true)}
         />
-
-        {showSimLab && (
-          <SimulationLabModal
-            world={world}
-            onClose={() => setShowSimLab(false)}
-          />
-        )}
       </div>
     );
   }
@@ -201,7 +258,10 @@ export default function App() {
 
   // 3. ACTIVE GAME DASHBOARD & SYSTEMS
   return (
-    <div className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c] flex flex-col selection:bg-[#1c1c1c] selection:text-[#fcfbf8]">
+    <div
+      className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c] flex flex-col selection:bg-[#1c1c1c] selection:text-[#fcfbf8]"
+      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+    >
       {/* Top App Bar & Navigation */}
       <Navbar
         player={player}
@@ -209,11 +269,7 @@ export default function App() {
         currentTab={currentTab}
         onTabChange={setCurrentTab}
         onAdvanceCycle={handleAdvanceCycle}
-        onOpenSimLab={() => setShowSimLab(true)}
-        onOpenNewArtist={() => setAppMode('character_creator')}
         onReturnToTitle={() => setAppMode('start_screen')}
-        onExportSave={handleExportSave}
-        onImportSave={handleImportSaveInGame}
       />
 
       {/* Main Container */}
@@ -224,6 +280,9 @@ export default function App() {
             world={world}
             onNavigate={setCurrentTab}
             onRest={handleRest}
+            onUpdateAvatar={(url, color) => getEngine().updatePlayerAvatar(url, color)}
+            onUpdateProfile={(updates) => getEngine().updatePlayerProfile(updates)}
+            onOpenMilestone={handleOpenMilestone}
           />
         )}
 
@@ -280,12 +339,7 @@ export default function App() {
           <CareerErasView
             player={player}
             world={world}
-          />
-        )}
-
-        {currentTab === 'news' && (
-          <NewsView
-            world={world}
+            onOpenMilestone={handleOpenMilestone}
           />
         )}
 
@@ -293,6 +347,7 @@ export default function App() {
           <AwardsView
             world={world}
             player={player}
+            onOpenGala={(ceremony) => setActiveGala(ceremony)}
           />
         )}
       </main>
@@ -307,11 +362,25 @@ export default function App() {
         />
       )}
 
-      {/* Simulation Lab Modal */}
-      {showSimLab && (
-        <SimulationLabModal
+      {/* Annual Awards Gala Modal */}
+      {activeGala && (
+        <AwardsGalaModal
+          ceremony={activeGala}
+          player={player}
+          onClose={() => {
+            setActiveGala(null);
+            getEngine().closeGalaCeremony();
+          }}
+        />
+      )}
+
+      {/* Era Milestone & Simulated Magazine Cover Generator Modal */}
+      {activeMilestone && (
+        <EraMilestoneModal
+          milestone={activeMilestone}
+          player={player}
           world={world}
-          onClose={() => setShowSimLab(false)}
+          onClose={() => setActiveMilestone(null)}
         />
       )}
     </div>

@@ -65,6 +65,7 @@ export interface Artist {
   name: string;
   realName?: string;
   isPlayer: boolean;
+  avatarUrl?: string;
   avatarColor?: string;
   country: string;
   city: string;
@@ -361,19 +362,99 @@ export interface HistoricalRecord {
   description: string;
 }
 
+export interface AwardNominee {
+  artistId: string;
+  artistName: string;
+  itemId?: string; // song or album id
+  itemTitle?: string;
+  producerId?: string;
+  producerName?: string;
+  score: number;
+  highlightText?: string;
+  isPlayer: boolean;
+}
+
 export interface AwardCategory {
   id: string;
   name: string;
+  description?: string;
+  iconName?: string;
+  nominees?: AwardNominee[];
   nomineeArtistIds: string[];
   nomineeItemIds?: string[]; // song or album ids
   winnerArtistId: string;
+  winnerArtistName?: string;
   winnerItemId?: string;
+  winnerItemTitle?: string;
+  winnerProducerId?: string;
+  winnerProducerName?: string;
+  winnerReason?: string;
+  playerWon?: boolean;
+  playerNominated?: boolean;
 }
 
 export interface AwardCeremony {
   year: number;
   name: string;
+  theme?: string;
   categories: AwardCategory[];
+  playerNominationsCount?: number;
+  playerWinsCount?: number;
+}
+
+export interface SocialPost {
+  id: string;
+  platform: 'twitter' | 'instagram' | 'tiktok';
+  authorName: string;
+  authorHandle: string;
+  authorAvatarUrl?: string;
+  authorAvatarGradient?: string;
+  authorVerified?: boolean;
+  authorType: 'fan' | 'hater' | 'critic' | 'artist' | 'media' | 'producer' | 'influencer';
+  content: string;
+  year: number;
+  month: number;
+  likes: number;
+  retweetsOrShares: number;
+  commentsCount: number;
+  sentiment: 'positive' | 'negative' | 'polarizing' | 'meme' | 'hype';
+  relatedSongId?: string;
+  relatedAlbumId?: string;
+  relatedArtistId?: string;
+  badge?: string;
+  createdAt?: string;
+}
+
+export type EcosystemNPCType = 'beatmaker_barrio' | 'manager_chanta' | 'critico_hater' | 'rival_escena';
+
+export interface EcosystemNPC {
+  id: string;
+  name: string;
+  nickname: string;
+  type: EcosystemNPCType;
+  roleTitle: string;
+  avatarGradient: string;
+  avatarUrl?: string;
+  bio: string;
+  affinity: number;       // -100 to +100
+  respect: number;        // 0 to 100
+  tensionLevel: number;   // 0 to 100 (for rival/hater/manager)
+  loyalty: number;        // 0 to 100 (for beatmaker)
+  isEncountered: boolean;
+  history: string[];
+}
+
+export type BeefStage = 'tension' | 'social_beef' | 'diss_tracks' | 'all_out_war' | 'settled';
+
+export interface BeefState {
+  id: string;
+  targetId: string;
+  targetName: string;
+  stage: BeefStage;
+  hypeMultiplier: number;
+  turnsActive: number;
+  lastActionDescription: string;
+  playerWon?: boolean;
 }
 
 export interface NewsItem {
@@ -414,12 +495,21 @@ export interface EventOutcome {
     relationType?: ArtistRelationship['relationType'];
     historyEntry: string;
   }>;
+  ecosystemNPCChanges?: Array<{
+    npcId: string;
+    affinityDelta?: number;
+    respectDelta?: number;
+    loyaltyDelta?: number;
+    tensionDelta?: number;
+    historyEntry?: string;
+  }>;
   newsGenerated?: {
     headline: string;
     body: string;
     sentiment: NewsItem['sentiment'];
     category: NewsItem['category'];
   };
+  socialPostsGenerated?: SocialPost[];
   triggerChainEventId?: string; // starts or advances a narrative chain
   triggerDelayMonths?: number;
   newContract?: LabelContract;
@@ -452,6 +542,8 @@ export interface EventContext {
   label?: RecordLabel;
   topTrend?: MusicTrend;
   lastRelease?: Song | Album;
+  ecosystemContact?: EcosystemNPC;
+  activeBeef?: BeefState;
 }
 
 export interface WorldState {
@@ -470,6 +562,9 @@ export interface WorldState {
   charts: Record<MusicRegion, RegionalChart>;
   awardsHistory: AwardCeremony[];
   news: NewsItem[];
+  socialFeed: SocialPost[];
+  ecosystemContacts: Record<string, EcosystemNPC>;
+  activeBeefs: Record<string, BeefState>;
   records: HistoricalRecord[];
   globalHistoryTimeline: Array<{
     year: number;
@@ -489,33 +584,4 @@ export interface GameSaveState {
   world: WorldState;
 }
 
-export interface SubgenreDetail {
-  id: string;
-  name: string;
-  parentGenreId: string;
-  description: string;
-  aestheticTone: string;
-  requiredTrait?: {
-    trait: keyof PersonalityTraits | keyof ArtistStats;
-    min: number;
-    label: string;
-  };
-  qualityBonus?: number;
-  commercialBonus?: number;
-  originalityBonus?: number;
-}
-
-export interface DerivedSonicStyle {
-  id: string;
-  name: string;
-  parentGenreId: string;
-  parentGenreName: string;
-  description: string;
-  aestheticTone: string;
-  isUnlocked: boolean;
-  lockReason?: string;
-  qualityBonus: number;
-  commercialBonus: number;
-  originalityBonus: number;
-}
 

@@ -727,8 +727,704 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           },
           newsGenerated: {
             headline: `${ctx.player.name} anuncia un retiro temporal en busca de una nueva era musical`,
-            body: `El artista pausa su agenda pública para concentrarse en la evolución de su próximo universo sonoro.`,
+            body: `El artista decidió pausar sus lanzamientos para enfocarse en la evolución de su propuesta artística.`,
             sentiment: 'neutral',
+            category: 'culture'
+          }
+        })
+      }
+    ]
+  },
+
+  // --- URBAN DRAMA & MORAL DILEMMAS (EL ÍDOLO STYLE) ---
+  {
+    id: 'evt_shady_investor_offer',
+    title: 'Propuesta de Inversor Turbio y Dinero de la Noche',
+    category: 'industry',
+    rarity: 'uncommon',
+    cooldownMonths: 24,
+    weight: 15,
+    condition: (ctx) => ctx.player.stats.popularity >= 25,
+    getDescription: (ctx) =>
+      `Un conocido empresario de la noche y boliches del conurbano se te acerca en un reservado VIP. Te ofrece $50,000 en efectivo inmediato para costear tus próximas grabaciones, a cambio del 40% de tus ingresos por shows en vivo y asistencia obligatoria a sus eventos privados.`,
+    choices: (ctx) => [
+      {
+        id: 'c_accept_shady_cash',
+        text: 'Aceptar el dinero en efectivo y acelerar tus presupuestos',
+        consequencesDescription: '+$50,000 Fondos inmediatos, +15 Hype, -8 Credibilidad artística, -8 Reputación',
+        apply: () => ({
+          narrativeText:
+            'Tomaste el maletín con el adelanto en efectivo. Las cuentas están llenas, pero en los pasillos de la escena se comenta que tus shows ahora responden a intereses oscuros.',
+          fundsChange: 50000,
+          hypeChange: 15,
+          statChanges: {
+            artisticCredibility: Math.max(0, ctx.player.stats.artisticCredibility - 8),
+            reputation: Math.max(0, ctx.player.stats.reputation - 8)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_manager_chanta',
+              affinityDelta: 30,
+              tensionDelta: -20,
+              historyEntry: `Aceptó trato de inversión en efectivo durante el año ${ctx.currentYear}.`
+            }
+          ],
+          newsGenerated: {
+            headline: `Rumores en la noche: ${ctx.player.name} sella polémico acuerdo con empresarios nocturnos`,
+            body: `Se comenta que el artista financia su nueva etapa con capitales del circuito de discotecas privadas.`,
+            sentiment: 'shocking',
+            category: 'industry'
+          }
+        })
+      },
+      {
+        id: 'c_reject_shady_cash',
+        text: 'Rechazar la propuesta tajantemente y priorizar la procedencia limpia de tus fondos',
+        consequencesDescription: '+8 Credibilidad artística, +6 Fidelidad de fans, +4 Reputación',
+        apply: () => ({
+          narrativeText:
+            'Miraste al empresario a los ojos y rechazaste el fajo de billetes. Tu música seguirá construyéndose de manera honesta y sin ataduras turbias.',
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8),
+            fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 6),
+            reputation: Math.min(100, ctx.player.stats.reputation + 4)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_manager_chanta',
+              tensionDelta: 20,
+              historyEntry: `Rechazó la propuesta de financiamiento nocturno en ${ctx.currentYear}.`
+            }
+          ]
+        })
+      },
+      {
+        id: 'c_expose_extortion',
+        text: 'Exponer la propuesta turbia en redes sociales y alertar a otros artistas jóvenes',
+        consequencesDescription: '+25 Hype de impacto, +10 Credibilidad, Enemistad abierta con la noche',
+        apply: () => ({
+          narrativeText:
+            'Subiste un comunicado denunciando los contratos abusivos en los boliches. Tu valentía fue aplaudida por toda la comunidad independiente.',
+          hypeChange: 25,
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 10)
+          },
+          newsGenerated: {
+            headline: `${ctx.player.name} denuncia contratos abusivos en el circuito nocturno`,
+            body: `El artista expuso públicamente presiones y ofertas turbias de empresarios de discotecas.`,
+            sentiment: 'positive',
+            category: 'culture'
+          }
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_clandestine_afterparty',
+    title: 'Afterparty Clandestino VIP vs Encierro en el Estudio',
+    category: 'personal',
+    rarity: 'common',
+    cooldownMonths: 14,
+    weight: 18,
+    condition: (ctx) => ctx.player.stats.popularity >= 20,
+    getDescription: (ctx) =>
+      `Es viernes a la madrugada y estás a días de entregar los másters de tu próxima música. Te llega un mensaje para sumarte a un afterparty VIP en una mansión privada con streamers, influencers y celebridades de la noche.`,
+    choices: (ctx) => [
+      {
+        id: 'c_go_afterparty_wild',
+        text: 'Ir al Afterparty y entregarse a la noche descontrolada',
+        consequencesDescription: '+22 Hype, +Contactos de farándula, -25 Energía, -4 Disciplina, Riesgo de resaca',
+        apply: () => ({
+          narrativeText:
+            'Viviste una noche salvaje llena de cámaras, brindis y excesos. Salieron fotos en todas las cuentas de chismes y ganaste notoriedad, pero tu cuerpo quedó destruido.',
+          hypeChange: 22,
+          energyChange: -25,
+          popularityChange: 4,
+          personalityChanges: {
+            discipline: Math.max(0, ctx.player.personality.discipline - 4),
+            sociability: Math.min(100, ctx.player.personality.sociability + 5)
+          },
+          newsGenerated: {
+            headline: `${ctx.player.name} en el ojo de la tormenta tras un descontrolado afterparty`,
+            body: `Videos virales muestran al artista festejando hasta el amanecer en una mansión privada.`,
+            sentiment: 'shocking',
+            category: 'scandal'
+          }
+        })
+      },
+      {
+        id: 'c_stay_in_studio_grind',
+        text: 'Encerrarse toda la noche en el estudio a pulir las frecuencias de mezcla',
+        consequencesDescription: '+Calidad sonora en futuros temas, +6 Disciplina, +4 Credibilidad, -10 Energía',
+        apply: () => ({
+          narrativeText:
+            'Apagaste las notificaciones del teléfono y pasaste 10 horas frente a los monitores de estudio ajustando cada canal. El sonido quedó impecable.',
+          energyChange: -10,
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4)
+          },
+          personalityChanges: {
+            discipline: Math.min(100, ctx.player.personality.discipline + 6)
+          }
+        })
+      },
+      {
+        id: 'c_brief_appearance_balance',
+        text: 'Pasar solo 45 minutos para saludar, sacarte fotos y volver a descansar',
+        consequencesDescription: '+10 Hype, +Equilibrio mental, -6 Energía',
+        apply: () => ({
+          narrativeText:
+            'Hiciste acto de presencia con elegancia, generaste contenido para tus redes y te retiraste temprano a dormir sin desgastarte.',
+          hypeChange: 10,
+          energyChange: -6,
+          popularityChange: 2
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_beatmaker_loyalty_dilemma',
+    title: 'Lealtad al Beatmaker del Barrio vs Hitmaker Comercial',
+    category: 'relationships',
+    rarity: 'uncommon',
+    cooldownMonths: 24,
+    weight: 14,
+    condition: (ctx) => ctx.player.stats.popularity >= 30,
+    getDescription: (ctx) =>
+      `Un productor comercial con múltiples discos de platino te contacta y ofrece producir gratis el corte principal de tu proyecto, con una sola condición: descartar la pista que produjo tu amigo de la infancia del barrio (Nico '808').`,
+    choices: (ctx) => [
+      {
+        id: 'c_loyalty_barrio_beatmaker',
+        text: 'Mantener la lealtad con Nico "808" y defender el beat del barrio',
+        consequencesDescription: '+12 Credibilidad artística, +10 Fidelidad de fans, +Vínculo inquebrantable de lealtad',
+        apply: () => ({
+          narrativeText:
+            'Le explicaste al hitmaker que tu sonido nació en el barrio y no vas a dejar atrás a los tuyos por conveniencia. Nico quedó profundamente agradecido por tu lealtad.',
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 12),
+            fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 10)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_beatmaker_barrio',
+              affinityDelta: 40,
+              loyaltyDelta: 20,
+              historyEntry: `Defendió su producción ante un hitmaker consagrado en ${ctx.currentYear}.`
+            }
+          ]
+        })
+      },
+      {
+        id: 'c_choose_hitmaker_commercial',
+        text: 'Aceptar al hitmaker comercial para maximizar el impacto en radios y charts',
+        consequencesDescription: '+10 Popularidad, +22 Hype, -35 Afinidad con Nico "808", -6 Credibilidad',
+        apply: () => ({
+          narrativeText:
+            'Reemplazaste el beat barrial por la producción comercial. La canción suena gigante y comercial, pero la relación con Nico y tus amigos de la infancia quedó severamente herida.',
+          popularityChange: 10,
+          hypeChange: 22,
+          statChanges: {
+            artisticCredibility: Math.max(0, ctx.player.stats.artisticCredibility - 6)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_beatmaker_barrio',
+              affinityDelta: -35,
+              loyaltyDelta: -30,
+              historyEntry: `Fue reemplazado por un productor comercial en ${ctx.currentYear}.`
+            }
+          ],
+          newsGenerated: {
+            headline: `${ctx.player.name} se une a un productor de élite en busca del hit definitivo`,
+            body: `El nuevo sonido apuesta a la alta rotación comercial en plataformas y radios.`,
+            sentiment: 'positive',
+            category: 'release'
+          }
+        })
+      },
+      {
+        id: 'c_propose_coproduction_hybrid',
+        text: 'Proponer una coproducción al 50/50 fusionando la crudeza del barrio con el brillo comercial',
+        consequencesDescription: '+14 Hype, +8 Credibilidad artística, -12 Energía, Alianza creativa',
+        apply: () => ({
+          narrativeText:
+            'Lograste sentar a ambos en la misma mesa de mezcla. La combinación de los 808s crudos de Nico con los arreglos del productor consagrado resultó en una pieza única.',
+          hypeChange: 14,
+          energyChange: -12,
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_beatmaker_barrio',
+              affinityDelta: 20,
+              respectDelta: 15,
+              historyEntry: `Coprodujo con un hitmaker de élite gracias a la gestión de ${ctx.player.name}.`
+            }
+          ]
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_unreleased_track_leak',
+    title: 'Filtración en Telegram y Caos en Redes Sociales',
+    category: 'media',
+    rarity: 'uncommon',
+    cooldownMonths: 20,
+    weight: 12,
+    condition: (ctx) => ctx.player.stats.popularity >= 30,
+    getDescription: (ctx) =>
+      `Una maqueta inédita sin masterizar que grabaste hace unos meses se filtró en foros de Telegram y canales de Discord. En pocas horas se crearon miles de videos con el audio en TikTok.`,
+    choices: (ctx) => [
+      {
+        id: 'c_emergency_release_leak',
+        text: 'Subir de urgencia la canción oficial a plataformas para capitalizar las reproducciones',
+        consequencesDescription: '+$3,500 Fondos, +18 Hype, +4,000 Fans, pero sin pulir la mezcla final',
+        apply: () => ({
+          narrativeText:
+            'Subiste el tema en 24 horas. El algoritmo recompensó la inmediatez y sumaste miles de oyentes que ya conocían el estribillo por los leaks.',
+          fundsChange: 3500,
+          hypeChange: 18,
+          fansChange: 4000,
+          popularityChange: 3,
+          newsGenerated: {
+            headline: `¡Lanzamiento sorpresa! ${ctx.player.name} publica corte oficial tras filtración`,
+            body: `El tema acumula millones de reproducciones impulsado por el fervor de las redes.`,
+            sentiment: 'positive',
+            category: 'release'
+          }
+        })
+      },
+      {
+        id: 'c_rework_and_elevate_leak',
+        text: 'Ignorar la filtración y transformar la canción en una versión acústica / orquestal superior',
+        consequencesDescription: '+10 Credibilidad artística, +8 Originalidad, Ovación de la crítica',
+        apply: () => ({
+          narrativeText:
+            'Dejaste que el leak circulara y regrabaste el tema con una instrumentación totalmente reimaginada. Cuando salió la versión final, los críticos quedaron boquiabiertos.',
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 10)
+          },
+          personalityChanges: {
+            originality: Math.min(100, ctx.player.personality.originality + 8)
+          },
+          hypeChange: 12
+        })
+      },
+      {
+        id: 'c_rant_at_leakers',
+        text: 'Hacer un descargo furioso en redes amenazando con acciones legales a los hackers',
+        consequencesDescription: '+24 Hype por polémica, -5 Reputación, Divide a los fanáticos',
+        apply: () => ({
+          narrativeText:
+            'Tu descargo en directo se volvió viral. Aunque muchos entendieron tu frustración, otros te acusaron de no entender cómo funciona la cultura de internet.',
+          hypeChange: 24,
+          statChanges: {
+            reputation: Math.max(0, ctx.player.stats.reputation - 5)
+          }
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_shady_sponsorship_deal',
+    title: 'Dilema Ético: Patrocinio Millonario de Casino Online',
+    category: 'industry',
+    rarity: 'rare',
+    cooldownMonths: 36,
+    weight: 10,
+    condition: (ctx) => ctx.player.stats.popularity >= 40,
+    getDescription: (ctx) =>
+      `Una plataforma internacional de apuestas y casinos online te ofrece $75,000 en un solo pago por incluir su logo en tu próximo videoclip y promocionar enlaces de registro en tus historias.`,
+    choices: (ctx) => [
+      {
+        id: 'c_accept_gambling_sponsor',
+        text: 'Firmar el contrato y cobrar los $75,000 para financiar tus producciones',
+        consequencesDescription: '+$75,000 Fondos, -10 Credibilidad artística, -10 Reputación, Lluvia de críticas',
+        apply: () => ({
+          narrativeText:
+            'El dinero ingresó a tus cuentas bancarias. Ahora podés financiar grandes videoclips, pero influencers y seguidores te cuestionan por promover el juego en audiencias jóvenes.',
+          fundsChange: 75000,
+          statChanges: {
+            artisticCredibility: Math.max(0, ctx.player.stats.artisticCredibility - 10),
+            reputation: Math.max(0, ctx.player.stats.reputation - 10),
+            fanbaseLoyalty: Math.max(0, ctx.player.stats.fanbaseLoyalty - 8)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_critico_hater',
+              tensionDelta: 30,
+              historyEntry: `Destrozó al artista en su podcast por promocionar casinos online en ${ctx.currentYear}.`
+            }
+          ],
+          newsGenerated: {
+            headline: `Polémica por patrocinio: ${ctx.player.name} promociona plataforma de apuestas`,
+            body: `El acuerdo comercial desata un encendido debate ético en las redes sociales.`,
+            sentiment: 'negative',
+            category: 'scandal'
+          }
+        })
+      },
+      {
+        id: 'c_reject_gambling_sponsor',
+        text: 'Rechazar la oferta por principios y compromiso con tu comunidad de seguidores',
+        consequencesDescription: '+12 Credibilidad artística, +10 Fidelidad de fans, +8 Reputación',
+        apply: () => ({
+          narrativeText:
+            'Rechazaste el cheque. Cuando la noticia trascendió, tu reputación como artista con valores e integridad se consolidó con fuerza.',
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 12),
+            fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 10),
+            reputation: Math.min(100, ctx.player.stats.reputation + 8)
+          }
+        })
+      },
+      {
+        id: 'c_donate_half_sponsorship',
+        text: 'Aceptar el patrocinio pero donar el 50% ($37,500) a talleres de música y comedores barriales',
+        consequencesDescription: '+$37,500 Fondos netos, +16 Hype, Genera debate polarizado',
+        apply: () => ({
+          narrativeText:
+            'Destinaste la mitad del pago a centros comunitarios de tu barrio. Algunos lo vieron como una jugada brillante de relaciones públicas y otros como una contradicción.',
+          fundsChange: 37500,
+          hypeChange: 16,
+          statChanges: {
+            reputation: Math.min(100, ctx.player.stats.reputation + 4)
+          },
+          newsGenerated: {
+            headline: `${ctx.player.name} financia talleres barriales con fondos de patrocinio`,
+            body: `La donación genera elogios vecinales y debate en la prensa sobre patrocinios.`,
+            sentiment: 'positive',
+            category: 'culture'
+          }
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_yellow_press_ambush',
+    title: 'Encerrona y Preguntas Trampa en Late Night de Chismes',
+    category: 'media',
+    rarity: 'uncommon',
+    cooldownMonths: 20,
+    weight: 12,
+    condition: (ctx) => ctx.player.stats.popularity >= 35,
+    getDescription: (ctx) =>
+      `Durante una entrevista televisiva en vivo en horario central, el conductor desvía la conversación sobre tu música para acorralarte con rumores inventados sobre tu vida personal y supuestos excesos.`,
+    choices: (ctx) => [
+      {
+        id: 'c_rage_quit_live_tv',
+        text: 'Levantarte, sacarte el micrófono y abandonar el estudio en vivo',
+        consequencesDescription: '+28 Hype de rebeldía callejera, +Meme viral, -6 Reputación en medios masivos',
+        apply: () => ({
+          narrativeText:
+            'El clip de tu salida furiosa se convirtió en el video más visto de la semana. Los jóvenes aplaudieron tu dignidad y autenticidad sin filtro.',
+          hypeChange: 28,
+          popularityChange: 5,
+          statChanges: {
+            reputation: Math.max(0, ctx.player.stats.reputation - 6),
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6)
+          },
+          newsGenerated: {
+            headline: `¡Escándalo en vivo! ${ctx.player.name} abandona una entrevista televisiva`,
+            body: `El momento de tensión acumula millones de reproducciones en TikTok y YouTube.`,
+            sentiment: 'shocking',
+            category: 'scandal'
+          }
+        })
+      },
+      {
+        id: 'c_cold_irony_response',
+        text: 'Responder con frialdad lírica, ironía inteligente y elegancia',
+        consequencesDescription: '+8 Carisma, +8 Reputación, +6 Credibilidad intelectual',
+        apply: () => ({
+          narrativeText:
+            'Desarmaste al conductor con calma y respuestas afiladas. Los analistas elogiaron tu madurez para manejar la prensa sensacionalista.',
+          personalityChanges: {
+            charisma: Math.min(100, ctx.player.personality.charisma + 8)
+          },
+          statChanges: {
+            reputation: Math.min(100, ctx.player.stats.reputation + 8),
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6)
+          }
+        })
+      },
+      {
+        id: 'c_freestyle_hijack_interview',
+        text: 'Pedir el micrófono y responder improvisando barras inéditas a capella',
+        consequencesDescription: '+20 Hype musical, +10 Habilidad lírica, La música habla por sí sola',
+        apply: () => ({
+          narrativeText:
+            'Dejaste callado al piso entero tirando un verso improvisado que se volvió viral de inmediato por la calidad de tus rimas.',
+          hypeChange: 20,
+          personalityChanges: {
+            skill: Math.min(100, ctx.player.personality.skill + 4)
+          },
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8)
+          }
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_rival_social_beef',
+    title: 'Tiradera Pública en Redes de un Rival Ambicioso',
+    category: 'relationships',
+    rarity: 'uncommon',
+    cooldownMonths: 18,
+    weight: 16,
+    condition: (ctx) => ctx.player.stats.popularity >= 30,
+    getDescription: (ctx) =>
+      `Dante Zero subió una serie de historias burlándose de tus últimos números de streaming y acusándote de ser un producto sin calle que se achica en los escenarios. Las redes te exigen una respuesta inmediata.`,
+    choices: (ctx) => [
+      {
+        id: 'c_beef_respond_stories',
+        text: 'Responder con capturas y fuego en historias de Instagram (+Hype, riesgo de beef)',
+        consequencesDescription: '+22 Hype, -4 Disciplina, Escala el conflicto a guerra mediática',
+        apply: () => ({
+          narrativeText:
+            'Tus respuestas prendieron fuego las redes. Se armó una batalla campal de memes, opiniones y comentarios entre los fanáticos de ambos bandos.',
+          hypeChange: 22,
+          personalityChanges: {
+            discipline: Math.max(0, ctx.player.personality.discipline - 4)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_rival_escena',
+              affinityDelta: -25,
+              tensionDelta: 30,
+              historyEntry: `Intercambio de fuego e indirectas en redes sociales en ${ctx.currentYear}.`
+            }
+          ],
+          newsGenerated: {
+            headline: `¡Guerra en redes! ${ctx.player.name} y Dante Zero se cruzan con todo`,
+            body: `Las indirectas escalaron a acusaciones directas y encienden el debate en la escena urbana.`,
+            sentiment: 'shocking',
+            category: 'rivalry'
+          }
+        })
+      },
+      {
+        id: 'c_beef_studio_diss_track',
+        text: 'Encerrarse en el estudio y soltar un Diss Track oficial demoliendo sus argumentos',
+        consequencesDescription: '+42 Hype monumental, -15 Energía, +4 Credibilidad lírica, Inicia guerra musical',
+        apply: () => ({
+          narrativeText:
+            'Grabaste una pieza demoledora con rimas quirúrgicas. La escena completa se detuvo a escuchar la tiradera y coronó tu superioridad en el micrófono.',
+          hypeChange: 42,
+          energyChange: -15,
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_rival_escena',
+              affinityDelta: -45,
+              tensionDelta: 50,
+              historyEntry: `Recibió un diss track oficial de ${ctx.player.name} en ${ctx.currentYear}.`
+            }
+          ],
+          newsGenerated: {
+            headline: `¡Golpe sobre la mesa! ${ctx.player.name} destroza a Dante Zero con una tiradera histórica`,
+            body: `El nuevo tema de ${ctx.player.name} sacude las plataformas y se posiciona en lo más alto de las tendencias.`,
+            sentiment: 'shocking',
+            category: 'rivalry'
+          }
+        })
+      },
+      {
+        id: 'c_beef_ignore_superiority',
+        text: 'Ignorarlo por completo y enfocarte en tu disciplina y lanzamientos (+Disciplina, stat quo)',
+        consequencesDescription: '+6 Disciplina, +6 Credibilidad artística, Sin desgaste ni show mediático',
+        apply: () => ({
+          narrativeText:
+            'Decidiste no darle entidad ni regalarle reproducciones a tu rival. Tu silencio y tus números demostraron quién está en otro nivel de madurez.',
+          personalityChanges: {
+            discipline: Math.min(100, ctx.player.personality.discipline + 6)
+          },
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6)
+          },
+          ecosystemNPCChanges: [
+            {
+              npcId: 'npc_rival_escena',
+              tensionDelta: -10,
+              historyEntry: `Intentó provocar a ${ctx.player.name} pero fue ignorado en ${ctx.currentYear}.`
+            }
+          ]
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_masters_buyout_dilemma',
+    title: 'Oferta de Fondo de Inversión por la Venta de tus Másters',
+    category: 'industry',
+    rarity: 'rare',
+    cooldownMonths: 48,
+    weight: 8,
+    condition: (ctx) => ctx.player.stats.popularity >= 55,
+    getDescription: (ctx) =>
+      `Un fondo de inversión internacional te ofrece $250,000 en mano para adquirir el 100% de la propiedad de los másters y regalías futuras de todo tu catálogo inicial.`,
+    choices: (ctx) => [
+      {
+        id: 'c_sell_masters_cashout',
+        text: 'Vender los másters y asegurar $250,000 en liquidez inmediata',
+        consequencesDescription: '+$250,000 Fondos, -15 Independencia, -10 Credibilidad a largo plazo',
+        apply: () => ({
+          narrativeText:
+            'Cobraste el cheque multimillonario. Ahora disponés de un patrimonio importante, pero cediste los derechos de tus canciones fundacionales para siempre.',
+          fundsChange: 250000,
+          personalityChanges: {
+            independence: Math.max(0, ctx.player.personality.independence - 15)
+          },
+          statChanges: {
+            artisticCredibility: Math.max(0, ctx.player.stats.artisticCredibility - 10)
+          },
+          newsGenerated: {
+            headline: `${ctx.player.name} vende su catálogo histórico a un fondo internacional`,
+            body: `La operación multimillonaria genera debate sobre el control de la propiedad intelectual en la era del streaming.`,
+            sentiment: 'neutral',
+            category: 'industry'
+          }
+        })
+      },
+      {
+        id: 'c_keep_masters_forever',
+        text: 'Rechazar la compra y mantener tus derechos y regalías para toda la vida',
+        consequencesDescription: '+15 Independencia, +12 Credibilidad artística, +10 Fidelidad de fans',
+        apply: () => ({
+          narrativeText:
+            'Rechazaste la oferta corporativa. Tus canciones siguen siendo 100% tuyas, un hito celebrado por todos los puristas de la industria musical.',
+          personalityChanges: {
+            independence: Math.min(100, ctx.player.personality.independence + 15)
+          },
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 12),
+            fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 10)
+          }
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_pr_romance_proposal',
+    title: 'Propuesta de Romance Fingido / Showmance para la Prensa',
+    category: 'media',
+    rarity: 'uncommon',
+    cooldownMonths: 28,
+    weight: 10,
+    condition: (ctx) => ctx.player.stats.popularity >= 45,
+    getDescription: (ctx) =>
+      `La agencia de representación de una estrella pop de moda te propone coordinar salidas públicas y fingir un romance durante 3 meses para potenciar el lanzamiento de una balada romántica conjunta.`,
+    choices: (ctx) => [
+      {
+        id: 'c_accept_showmance_pr',
+        text: 'Aceptar el showmance y maximizar el alcance en revistas y televisión',
+        consequencesDescription: '+30 Hype masivo, +12 Popularidad mainstream, +15,000 Fans, -8 Credibilidad underground',
+        apply: () => ({
+          narrativeText:
+            'Aparecieron en las portadas de todas las revistas y portales. El morbo de la supuesta relación catapultó el single al tope de las radios.',
+          hypeChange: 30,
+          popularityChange: 12,
+          fansChange: 15000,
+          statChanges: {
+            artisticCredibility: Math.max(0, ctx.player.stats.artisticCredibility - 8)
+          },
+          newsGenerated: {
+            headline: `¿Nuevo romance del año? ${ctx.player.name} en el centro de todas las miradas`,
+            body: `Las apariciones públicas encienden las redes y disparan el interés por su próximo sencillo.`,
+            sentiment: 'positive',
+            category: 'culture'
+          }
+        })
+      },
+      {
+        id: 'c_reject_showmance_pr',
+        text: 'Rechazar la farsa y priorizar la autenticidad de tu vida personal',
+        consequencesDescription: '+8 Credibilidad artística, +6 Fidelidad de la fanbase núcleo',
+        apply: () => ({
+          narrativeText:
+            'Te negaste a participar en montajes publicitarios. Tu música seguirá hablando sin necesidad de telenovelas mediáticas.',
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8),
+            fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 6)
+          }
+        })
+      }
+    ]
+  },
+
+  {
+    id: 'evt_sample_clearance_scandal',
+    title: 'Intimación Legal por Sample No Acreditado',
+    category: 'industry',
+    rarity: 'rare',
+    cooldownMonths: 36,
+    weight: 9,
+    condition: (ctx) => ctx.player.stats.popularity >= 50,
+    getDescription: (ctx) =>
+      `Los abogados de una banda legendaria de los años 80 te enviaron una intimación formal por el uso de una melodía similar en uno de tus mayores éxitos, amenazando con bajar la canción de Spotify.`,
+    choices: (ctx) => [
+      {
+        id: 'c_settle_sample_privately',
+        text: 'Pagar un acuerdo extrajudicial confidencial para conservar el tema online',
+        consequencesDescription: '-$25,000 Fondos, Mantiene la canción en plataformas sin escándalo mediático',
+        apply: () => ({
+          narrativeText:
+            'Tus abogados acordaron el pago y la canción sigue acumulando millones de reproducciones sin interrupciones.',
+          fundsChange: -25000,
+          statChanges: {
+            reputation: Math.min(100, ctx.player.stats.reputation + 2)
+          }
+        })
+      },
+      {
+        id: 'c_invite_legend_studio_tribute',
+        text: 'Contactar al músico histórico, invitarlo al estudio y regrabar una versión homenaje oficial',
+        consequencesDescription: '+14 Credibilidad legendaria, +10 Reputación, +20 Hype por colaboración histórica',
+        apply: () => ({
+          narrativeText:
+            'Lo que era una disputa legal se transformó en un encuentro intergeneracional conmovedor. El remix conjunto se convirtió en un clásico instantáneo.',
+          hypeChange: 20,
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 14),
+            reputation: Math.min(100, ctx.player.stats.reputation + 10)
+          },
+          newsGenerated: {
+            headline: `De la disputa al homenaje: ${ctx.player.name} une fuerzas con leyendas de la música`,
+            body: `Una colaboración histórica que reconcilia épocas y celebra la herencia musical.`,
+            sentiment: 'positive',
+            category: 'culture'
+          }
+        })
+      },
+      {
+        id: 'c_fight_sample_in_court',
+        text: 'Ir a juicio y defender el derecho a la interpolación y sampling en la cultura hip hop',
+        consequencesDescription: '+24 Hype de rebeldía, -$12,000 en costas legales, Tensión mediática prolongada',
+        apply: () => ({
+          narrativeText:
+            'El juicio se convirtió en un debate nacional sobre los derechos del sampling y la creatividad en la era digital.',
+          hypeChange: 24,
+          fundsChange: -12000,
+          statChanges: {
+            artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6)
+          },
+          newsGenerated: {
+            headline: `Juicio histórico: ${ctx.player.name} defiende la cultura del sampling en tribunales`,
+            body: `El caso sienta un precedente crucial para los productores de la nueva generación.`,
+            sentiment: 'shocking',
             category: 'industry'
           }
         })

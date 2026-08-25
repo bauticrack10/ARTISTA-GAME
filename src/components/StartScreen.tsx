@@ -8,15 +8,13 @@ interface StartScreenProps {
   onContinue: () => void;
   onLoadDemo: () => void;
   onImportSave: (json: string) => void;
-  onOpenSimLab: () => void;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({
   onNewCareer,
   onContinue,
   onLoadDemo,
-  onImportSave,
-  onOpenSimLab
+  onImportSave
 }) => {
   const [savedGame, setSavedGame] = useState<{
     player: Artist;
@@ -85,14 +83,9 @@ export const StartScreen: React.FC<StartScreenProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={onOpenSimLab}
-            className="btn-ghost-outline text-xs !py-1.5 !px-3"
-            title="Abrir Laboratorio de Pruebas & Simulación"
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Sim Lab & Tests</span>
-          </button>
+          <span className="text-xs font-mono text-[#5f5f5d] bg-[#fcfbf8] border border-[#eceae4] px-2.5 py-1 rounded-[6px]">
+            v2.0 • 2026
+          </span>
         </div>
       </header>
 

@@ -1,6 +1,7 @@
 import { EventDefinition, EventContext, EventOutcome, EventChoice, WorldState, Artist, RecordLabel, LabelContract } from '../types';
 import { CORE_EVENT_TEMPLATES } from '../data/eventTemplates';
 import { IndustryEngine } from './IndustryEngine';
+import { RelationshipEngine } from './RelationshipEngine';
 
 export class EventEngine {
   static selectNextEvent(
@@ -70,10 +71,119 @@ export class EventEngine {
       mainGenreId: context.player.mainGenreId
     };
 
-    const isPositive = Math.random() > 0.4;
+    const dilemmaTypes = ['clandestine_night', 'viral_debate', 'barrio_session', 'rival_chatter'];
+    const chosenDilemma = dilemmaTypes[Math.floor(Math.random() * dilemmaTypes.length)];
     const eventUniqueId = `proc_evt_${context.currentYear}_${context.currentMonth}_${Math.floor(Math.random() * 10000)}`;
 
-    if (isPositive) {
+    if (chosenDilemma === 'clandestine_night') {
+      return {
+        id: eventUniqueId,
+        title: `Noche de Excesos en el Circuito Nocturno de ${context.player.city}`,
+        category: 'personal',
+        rarity: 'common',
+        cooldownMonths: 12,
+        weight: 12,
+        condition: () => true,
+        getDescription: () => `Tras una intensa semana de grabación, te invitan a un reservado exclusivo donde empresarios de la noche y colegas de ${context.player.city} están festejando hasta el amanecer.`,
+        choices: () => [
+          {
+            id: 'c_proc_party_hard',
+            text: 'Sumarte a la fiesta y vivir la noche a fondo',
+            consequencesDescription: '+18 Hype, +Contactos nocturnos, -18 Energía, -3 Disciplina',
+            apply: () => ({
+              narrativeText: 'La fiesta se extendió hasta altas horas. Ganaste presencia en historias y notoriedad, pero tu cuerpo sintió el desgaste.',
+              hypeChange: 18,
+              energyChange: -18,
+              personalityChanges: { discipline: Math.max(0, context.player.personality.discipline - 3) },
+              newsGenerated: {
+                headline: `${context.player.name} visto festejando en las noches de ${context.player.city}`,
+                body: `Imágenes del artista circulan en redes tras una noche agitada en locales exclusivos.`,
+                sentiment: 'shocking',
+                category: 'culture'
+              }
+            })
+          },
+          {
+            id: 'c_proc_rest_focus',
+            text: 'Declinar y dormir temprano para cuidar tu voz y energía',
+            consequencesDescription: '+8 Energía recuperada, +4 Disciplina, Cero desgaste',
+            apply: () => ({
+              narrativeText: 'Priorizaste tu descanso y salud vocal. Al día siguiente estabas listo para rendir al 100% en el micrófono.',
+              energyChange: 8,
+              personalityChanges: { discipline: Math.min(100, context.player.personality.discipline + 4) }
+            })
+          }
+        ]
+      };
+    } else if (chosenDilemma === 'barrio_session') {
+      return {
+        id: eventUniqueId,
+        title: `Sesión de Madrugada en el Home Studio de ${context.player.city}`,
+        category: 'music',
+        rarity: 'common',
+        cooldownMonths: 12,
+        weight: 12,
+        condition: () => true,
+        getDescription: () => `Un productor emergente de tu barrio te envía un paquete de instrumentales crudas de 808s pidiéndote una colaboración espontánea grabada en una sola toma.`,
+        choices: () => [
+          {
+            id: 'c_proc_record_raw',
+            text: 'Tirar barras crudas y subir la maqueta a plataformas',
+            consequencesDescription: '+Credibilidad callejera (+4), +14 Hype, -8 Energía',
+            apply: () => ({
+              narrativeText: 'La maqueta capturó la esencia callejera de tus inicios y fue celebrada por tu comunidad núcleo.',
+              statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 4) },
+              hypeChange: 14,
+              energyChange: -8,
+              fansChange: 1800
+            })
+          },
+          {
+            id: 'c_proc_polish_craft',
+            text: 'Guardar la idea para perfeccionarla en tu próximo álbum de estudio',
+            consequencesDescription: '+Habilidad técnica, +Calidad de futuras canciones',
+            apply: () => ({
+              narrativeText: 'Archivaste la idea para pulirla con mejores arreglos en tu próximo proyecto discográfico.',
+              statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 3) }
+            })
+          }
+        ]
+      };
+    } else if (chosenDilemma === 'rival_chatter') {
+      return {
+        id: eventUniqueId,
+        title: `Debate en Foros: Comparación con ${randomPeer.name}`,
+        category: 'media',
+        rarity: 'common',
+        cooldownMonths: 12,
+        weight: 12,
+        condition: () => true,
+        getDescription: () => `En Twitter y foros de música urbana se abrió una encuesta masiva comparando tus recientes números con los de ${randomPeer.name}, encendiendo el debate sobre quién domina el sonido actual.`,
+        choices: () => [
+          {
+            id: 'c_proc_engage_social_flame',
+            text: 'Publicar una declaración contundente sobre tu visión sonora independiente',
+            consequencesDescription: '+15 Hype, +Reputación (+4), +Fidelidad de fans (+5)',
+            apply: () => ({
+              narrativeText: 'Tus palabras marcaron una clara diferencia de visión y fueron ampliamente respaldadas por tus seguidores.',
+              hypeChange: 15,
+              reputationChange: 4,
+              statChanges: { fanbaseLoyalty: Math.min(100, context.player.stats.fanbaseLoyalty + 5) }
+            })
+          },
+          {
+            id: 'c_proc_ignore_social_flame',
+            text: 'No emitir comentarios y dejar que las canciones hablen por sí solas',
+            consequencesDescription: '+Mística personal, +Disciplina (+3)',
+            apply: () => ({
+              narrativeText: 'El debate se diluyó dejando tu imagen intacta y tu aura de misterio reforzada.',
+              personalityChanges: { discipline: Math.min(100, context.player.personality.discipline + 3) },
+              statChanges: { energy: Math.min(100, context.player.stats.energy + 2) }
+            })
+          }
+        ]
+      };
+    } else {
       return {
         id: eventUniqueId,
         title: `Repercusión Sonora en la Escena de ${context.player.mainGenreId}`,
@@ -103,38 +213,6 @@ export class EventEngine {
               narrativeText: 'Mantuviste el foco estricto en la calidad de tus próximas obras.',
               statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 3) },
               energyChange: 5
-            })
-          }
-        ]
-      };
-    } else {
-      return {
-        id: eventUniqueId,
-        title: `Debate sobre Tendencias & Dirección Sonora`,
-        category: 'media',
-        rarity: 'common',
-        cooldownMonths: 12,
-        weight: 10,
-        condition: () => true,
-        getDescription: () => `Un canal de crítica musical publicó un exhaustivo análisis comparando tu trayectoria con la de ${randomPeer.name}, abriendo un debate sobre qué rumbo tomará el género en los próximos años.`,
-        choices: () => [
-          {
-            id: 'c_artistic_statement',
-            text: 'Publicar una declaración sobre tu visión artística independiente',
-            consequencesDescription: '+Reputación, +Fidelidad de fans',
-            apply: () => ({
-              narrativeText: 'Tu claridad de conceptos reforzó el respeto tanto de tus seguidores como de tus detractores.',
-              reputationChange: 4,
-              statChanges: { fanbaseLoyalty: Math.min(100, context.player.stats.fanbaseLoyalty + 5) }
-            })
-          },
-          {
-            id: 'c_let_music_talk',
-            text: 'No emitir comentarios y dejar que las canciones hablen',
-            consequencesDescription: '+Mística personal, Sin desgaste',
-            apply: () => ({
-              narrativeText: 'El debate se diluyó naturalmente dejando tu prestigio intacto.',
-              statChanges: { energy: Math.min(100, context.player.stats.energy + 2) }
             })
           }
         ]

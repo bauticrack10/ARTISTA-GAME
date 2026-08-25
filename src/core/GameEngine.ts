@@ -9,7 +9,11 @@ import {
   EventDefinition,
   EventOutcome,
   GameSaveState,
-  MusicRegion
+  MusicRegion,
+  AwardCeremony,
+  EcosystemNPC,
+  BeefState,
+  SocialPost
 } from '../types';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
@@ -25,6 +29,7 @@ import { EconomyEngine } from '../systems/EconomyEngine';
 import { TourEngine } from '../systems/TourEngine';
 import { StreamingEngine } from '../systems/StreamingEngine';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
+import { SocialFeedEngine } from '../systems/SocialFeedEngine';
 import { LegacyEngine } from '../systems/LegacyEngine';
 import { TimeSystem } from '../systems/TimeSystem';
 import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
@@ -34,7 +39,8 @@ export class GameEngine {
   private playerId: string;
   private eventQueue: EventDefinition[] = [];
   private currentEvent: EventDefinition | null = null;
-  private onStateChangeListeners: Array<(world: WorldState, player: Artist, currentEvent: EventDefinition | null) => void> = [];
+  private activeGalaCeremony: AwardCeremony | null = null;
+  private onStateChangeListeners: Array<(world: WorldState, player: Artist, currentEvent: EventDefinition | null, activeGala: AwardCeremony | null) => void> = [];
 
   constructor(customPlayer?: Partial<Artist>) {
     this.world = this.createDefaultWorld();
@@ -45,6 +51,7 @@ export class GameEngine {
         name: customPlayer.name || 'Mi Artista',
         realName: customPlayer.realName || 'Nombre Real',
         isPlayer: true,
+        avatarUrl: customPlayer.avatarUrl,
         avatarColor: customPlayer.avatarColor || 'from-amber-500 to-rose-600',
         country: customPlayer.country || 'Argentina',
         city: customPlayer.city || 'Buenos Aires',
@@ -142,6 +149,27 @@ export class GameEngine {
           importance: 4
         }
       ],
+      socialFeed: [
+        {
+          id: 'post_init_1',
+          platform: 'twitter',
+          authorName: 'Trap & Flow Argentina',
+          authorHandle: '@trapflow_arg',
+          authorVerified: true,
+          authorType: 'media',
+          authorAvatarGradient: 'from-purple-700 to-indigo-900',
+          badge: 'Radar de Nuevos Talentos',
+          year: 2026,
+          month: 1,
+          content: 'Comienza una nueva era en la escena urbana. Productores independientes y nuevas voces prometen redefinir los charts.',
+          likes: 540,
+          retweetsOrShares: 85,
+          commentsCount: 34,
+          sentiment: 'positive'
+        }
+      ],
+      ecosystemContacts: RelationshipEngine.getInitialEcosystemContacts(),
+      activeBeefs: {},
       records: [],
       globalHistoryTimeline: [
         { year: 2026, month: 1, text: 'Inicio de la simulación musical.', category: 'world' }
@@ -151,9 +179,9 @@ export class GameEngine {
     };
   }
 
-  public subscribe(listener: (world: WorldState, player: Artist, currentEvent: EventDefinition | null) => void): () => void {
+  public subscribe(listener: (world: WorldState, player: Artist, currentEvent: EventDefinition | null, activeGala: AwardCeremony | null) => void): () => void {
     this.onStateChangeListeners.push(listener);
-    listener(this.world, this.getPlayer(), this.currentEvent);
+    listener(this.world, this.getPlayer(), this.currentEvent, this.activeGalaCeremony);
     return () => {
       this.onStateChangeListeners = this.onStateChangeListeners.filter(l => l !== listener);
     };
@@ -161,7 +189,7 @@ export class GameEngine {
 
   private notify() {
     const player = this.getPlayer();
-    this.onStateChangeListeners.forEach(listener => listener(this.world, player, this.currentEvent));
+    this.onStateChangeListeners.forEach(listener => listener(this.world, player, this.currentEvent, this.activeGalaCeremony));
   }
 
   public getWorld(): WorldState {
@@ -176,10 +204,45 @@ export class GameEngine {
     return this.currentEvent;
   }
 
+  public getActiveGalaCeremony(): AwardCeremony | null {
+    return this.activeGalaCeremony;
+  }
+
+  public openGalaCeremony(ceremony: AwardCeremony) {
+    this.activeGalaCeremony = ceremony;
+    this.notify();
+  }
+
+  public closeGalaCeremony() {
+    this.activeGalaCeremony = null;
+    this.notify();
+  }
+
   public setPlayer(playerArtist: Artist) {
     this.playerId = playerArtist.id;
     this.world.artists[this.playerId] = playerArtist;
     this.notify();
+  }
+
+  public updatePlayerAvatar(avatarUrl?: string, avatarColor?: string) {
+    const player = this.getPlayer();
+    if (player) {
+      if (avatarUrl !== undefined) player.avatarUrl = avatarUrl;
+      if (avatarColor !== undefined) player.avatarColor = avatarColor;
+      this.world.artists[this.playerId] = { ...player };
+      this.notify();
+    }
+  }
+
+  public updatePlayerProfile(updates: Partial<Artist>) {
+    const player = this.getPlayer();
+    if (player) {
+      this.world.artists[this.playerId] = {
+        ...player,
+        ...updates
+      };
+      this.notify();
+    }
   }
 
   // --- LIFESTYLE & UPGRADES SYSTEM ---
@@ -389,6 +452,11 @@ export class GameEngine {
       importance: 3
     });
 
+    // Generar reacciones en redes sociales
+    if (!this.world.socialFeed) this.world.socialFeed = [];
+    const socialPosts = SocialFeedEngine.generateReleasePosts(this.world, player, newSong);
+    this.world.socialFeed.unshift(...socialPosts);
+
     this.notify();
     return newSong;
   }
@@ -539,6 +607,11 @@ export class GameEngine {
       sentiment: 'positive',
       importance: 4
     });
+
+    // Generar reacciones en redes sociales
+    if (!this.world.socialFeed) this.world.socialFeed = [];
+    const socialPosts = SocialFeedEngine.generateReleasePosts(this.world, player, newAlbum);
+    this.world.socialFeed.unshift(...socialPosts);
 
     // Actualizar cumplimiento de contrato discográfico
     IndustryEngine.onAlbumReleased(player, this.world);
@@ -755,6 +828,17 @@ export class GameEngine {
         }
       }
     }
+    if (outcome.ecosystemNPCChanges) {
+      for (const nc of outcome.ecosystemNPCChanges) {
+        RelationshipEngine.modifyEcosystemNPC(this.world, nc.npcId, {
+          affinity: nc.affinityDelta,
+          respect: nc.respectDelta,
+          tension: nc.tensionDelta,
+          loyalty: nc.loyaltyDelta,
+          historyNote: nc.historyEntry
+        });
+      }
+    }
     if (outcome.newsGenerated) {
       this.world.news.unshift({
         id: `news_evt_${Date.now()}`,
@@ -769,6 +853,15 @@ export class GameEngine {
       });
     }
 
+    // Generar reacciones en redes sociales para el evento
+    if (!this.world.socialFeed) this.world.socialFeed = [];
+    if (outcome.socialPostsGenerated && outcome.socialPostsGenerated.length > 0) {
+      this.world.socialFeed.unshift(...outcome.socialPostsGenerated);
+    } else {
+      const eventPosts = SocialFeedEngine.generateEventPosts(this.world, player, this.currentEvent, outcome);
+      this.world.socialFeed.unshift(...eventPosts);
+    }
+
     // Pop next event in queue if available
     if (this.eventQueue.length > 0) {
       this.currentEvent = this.eventQueue.shift()!;
@@ -778,6 +871,74 @@ export class GameEngine {
 
     this.notify();
     return outcome;
+  }
+
+  public interactWithBeef(targetName: string, targetId: string, action: 'respond_social' | 'drop_diss' | 'ignore') {
+    const player = this.getPlayer();
+    const result = RelationshipEngine.processBeefInteraction(player, targetName, targetId, action, this.world);
+
+    if (result.hypeChange) player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + result.hypeChange));
+    if (result.disciplineChange) player.personality.discipline = Math.max(0, Math.min(100, player.personality.discipline + result.disciplineChange));
+    if (result.credibilityChange) player.stats.artisticCredibility = Math.max(0, Math.min(100, player.stats.artisticCredibility + result.credibilityChange));
+    if (result.energyChange) player.stats.energy = Math.max(5, Math.min(100, player.stats.energy + result.energyChange));
+
+    this.world.news.unshift({
+      id: `news_beef_${Date.now()}`,
+      headline: action === 'drop_diss' ? `¡Tiradera Directa! ${player.name} contra ${targetName}` : action === 'respond_social' ? `Cruce en Redes: ${player.name} y ${targetName}` : `${player.name} ignora provocaciones de ${targetName}`,
+      body: result.outcomeText,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'rivalry',
+      relatedArtistIds: [player.id],
+      sentiment: action === 'drop_diss' ? 'shocking' : 'positive',
+      importance: 4
+    });
+
+    this.notify();
+  }
+
+  public interactWithEcosystemNPC(npcId: string, action: 'collab_beat' | 'buy_exclusive' | 'hang_out' | 'call_out') {
+    const player = this.getPlayer();
+    if (!this.world.ecosystemContacts) {
+      this.world.ecosystemContacts = RelationshipEngine.getInitialEcosystemContacts();
+    }
+    const npc = this.world.ecosystemContacts[npcId];
+    if (!npc) return;
+
+    if (action === 'collab_beat') {
+      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+        affinity: 15,
+        loyalty: 10,
+        historyNote: `Sesión de producción compartida en ${this.world.currentYear}.`
+      });
+      player.stats.hype = Math.min(100, player.stats.hype + 10);
+      player.stats.energy = Math.max(5, player.stats.energy - 8);
+    } else if (action === 'buy_exclusive') {
+      if (player.stats.funds >= 500) {
+        player.stats.funds -= 500;
+        RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+          affinity: 20,
+          respect: 15,
+          historyNote: `Compró derechos exclusivos de producción por $500 en ${this.world.currentYear}.`
+        });
+        player.stats.artisticCredibility = Math.min(100, player.stats.artisticCredibility + 3);
+      }
+    } else if (action === 'hang_out') {
+      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+        affinity: 10,
+        historyNote: `Compartieron un momento distendido en ${this.world.currentYear}.`
+      });
+      player.stats.energy = Math.min(100, player.stats.energy + 5);
+    } else if (action === 'call_out') {
+      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+        affinity: -25,
+        tension: 30,
+        historyNote: `Cruce y discusión pública en ${this.world.currentYear}.`
+      });
+      player.stats.hype = Math.min(100, player.stats.hype + 15);
+    }
+
+    this.notify();
   }
 
   public advanceMonth() {
@@ -894,6 +1055,7 @@ export class GameEngine {
 
         const awardRes = AwardEngine.conductAnnualAwards(this.world, this.world.currentYear);
         this.world.awardsHistory.unshift(awardRes.ceremony);
+        this.activeGalaCeremony = awardRes.ceremony;
         for (const aNews of awardRes.awardNews) {
           this.world.news.unshift({
             id: `news_award_${Date.now()}_${Math.random()}`,
@@ -917,7 +1079,16 @@ export class GameEngine {
       player.legacyScore = LegacyEngine.calculateLegacyScore(player, hitsCount, no1sCount, this.world.currentYear);
       LegacyEngine.checkAndCreateEra(player, this.world.currentYear, this.world.currentMonth);
 
-      // 8. Event selection for player during this month
+      // 8. Ambient social feed generation & Event selection for player during this month
+      if (!this.world.socialFeed) this.world.socialFeed = [];
+      if (Math.random() < 0.65) {
+        const ambientPosts = SocialFeedEngine.generateMonthlyAmbientPosts(this.world, player);
+        this.world.socialFeed.unshift(...ambientPosts);
+        if (this.world.socialFeed.length > 100) {
+          this.world.socialFeed = this.world.socialFeed.slice(0, 100);
+        }
+      }
+
       if (Math.random() < 0.50 && collectedEvents.length < (monthsCount === 12 ? 3 : 2)) {
         const nextEvt = EventEngine.selectNextEvent(
           {
@@ -999,6 +1170,9 @@ export class GameEngine {
       const parsed: GameSaveState = JSON.parse(jsonString);
       if (parsed && parsed.world && parsed.playerId) {
         this.world = parsed.world;
+        if (!this.world.socialFeed) this.world.socialFeed = [];
+        if (!this.world.ecosystemContacts) this.world.ecosystemContacts = RelationshipEngine.getInitialEcosystemContacts();
+        if (!this.world.activeBeefs) this.world.activeBeefs = {};
         this.playerId = parsed.playerId;
         this.currentEvent = null;
         this.eventQueue = [];
@@ -1012,3 +1186,4 @@ export class GameEngine {
     }
   }
 }
+
