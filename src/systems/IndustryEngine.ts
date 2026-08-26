@@ -1,5 +1,15 @@
-import { Artist, RecordLabel, LabelContract, WorldState, Manager } from '../types';
+import { Artist, RecordLabel, LabelContract, WorldState, Manager, Producer, LongevityCurve } from '../types';
+import { SUBGENRE_DETAILS } from '../data/genres';
 import { formatMoney } from '../utils/formatters';
+
+export interface TrackPerformanceEvaluation {
+  performanceScore: number; // 0 - 100
+  longevityCurve: LongevityCurve;
+  productionQuality: number; // 0 - 100
+  marketingInvestment: number; // 0 - 100
+  creativitySkills: number; // 0 - 100
+  randomFactor: number; // 0 - 100
+}
 
 export interface ScoutRadarStatus {
   monthlyListeners: number;
@@ -340,6 +350,164 @@ export class IndustryEngine {
     });
 
     return newLabel;
+  }
+
+  /**
+   * Valida si el artista cumple los requisitos mínimos de reputación, popularidad y oyentes
+   * para trabajar con un productor musical de élite o consolidado.
+   */
+  static canWorkWithProducer(
+    artist: Artist,
+    producer?: Producer
+  ): { canWork: boolean; missingReasons: string[] } {
+    if (!producer || !producer.requirements) {
+      return { canWork: true, missingReasons: [] };
+    }
+
+    const missing: string[] = [];
+
+    if (producer.requirements.minReputation !== undefined && artist.stats.reputation < producer.requirements.minReputation) {
+      missing.push(`Requiere ${producer.requirements.minReputation}% de reputación (tienes ${artist.stats.reputation}%)`);
+    }
+
+    if (producer.requirements.minPopularity !== undefined && artist.stats.popularity < producer.requirements.minPopularity) {
+      missing.push(`Requiere ${producer.requirements.minPopularity}% de popularidad (tienes ${artist.stats.popularity}%)`);
+    }
+
+    if (producer.requirements.minMonthlyListeners !== undefined && artist.stats.monthlyListeners < producer.requirements.minMonthlyListeners) {
+      missing.push(`Requiere ${producer.requirements.minMonthlyListeners.toLocaleString()} oyentes mensuales (tienes ${artist.stats.monthlyListeners.toLocaleString()})`);
+    }
+
+    return {
+      canWork: missing.length === 0,
+      missingReasons: missing
+    };
+  }
+
+  /**
+   * Deriva orgánicamente el rendimiento y la curva de longevidad del tema en base a:
+   * performanceScore = (Calidad de Producción * 0.4) + (Inversión Marketing * 0.3) + (Creatividad/Skills * 0.2) + (Random Factor * 0.1).
+   * Asigna la longevityCurve adecuada ('instant_classic', 'slow_burn', 'steady', 'explosive_drop', 'sleeper_viral')
+   * según la performance, el perfil del artista y la aleatoriedad, sin requerir selección manual.
+   */
+  static deriveTrackPerformanceAndLongevity(params: {
+    artist: Artist;
+    productionBudget: number;
+    marketingBudget: number;
+    producer?: Producer;
+    subGenreId?: string;
+    musicVideo?: { budget: number; directorTier: string };
+    qualityBonus?: number;
+  }): TrackPerformanceEvaluation {
+    const { artist, productionBudget, marketingBudget, producer, subGenreId, musicVideo, qualityBonus = 0 } = params;
+
+    // 1. Calidad de Producción (0 - 100)
+    // Se compone de inversión en producción + bonificación de calidad del productor + lifestyle/estudio + subgénero
+    const subDetail = subGenreId ? SUBGENRE_DETAILS[subGenreId] : undefined;
+    const prodQualityBoost = producer ? producer.qualityBoost * 2.5 : 12;
+    const mvQualityBoost = musicVideo
+      ? (musicVideo.directorTier === 'Director de Élite Mundial' ? 12 : musicVideo.directorTier === 'Estudio Indie' ? 7 : 3)
+      : 0;
+    const budgetProdScore = Math.min(55, (productionBudget / 10000) * 45);
+    const productionQuality = Math.min(100, Math.max(10, Math.floor(
+      budgetProdScore +
+      prodQualityBoost +
+      mvQualityBoost +
+      qualityBonus +
+      (subDetail?.qualityBonus ? subDetail.qualityBonus * 2 : 0) +
+      (artist.personality.discipline * 0.15)
+    )));
+
+    // 2. Inversión Marketing & Alcance Comercial (0 - 100)
+    // Presupuesto de campaña + impacto de videoclip + poder comercial y de rotación
+    const mvMarketingBoost = musicVideo
+      ? (musicVideo.directorTier === 'Director de Élite Mundial' ? 30 : musicVideo.directorTier === 'Estudio Indie' ? 16 : 6)
+      : 0;
+    const budgetMktScore = Math.min(60, (marketingBudget / 12000) * 50);
+    const marketingInvestment = Math.min(100, Math.max(5, Math.floor(
+      budgetMktScore +
+      mvMarketingBoost +
+      (artist.personality.commercialAppeal * 0.25) +
+      (subDetail?.commercialBonus ? subDetail.commercialBonus * 1.5 : 0)
+    )));
+
+    // 3. Creatividad & Skills (0 - 100)
+    const creativitySkills = Math.min(100, Math.max(10, Math.floor(
+      (artist.personality.creativity * 0.50) +
+      (artist.personality.skill * 0.35) +
+      (artist.personality.originality * 0.15)
+    )));
+
+    // 4. Random Factor (0 - 100)
+    const randomFactor = Math.floor(Math.random() * 101);
+
+    // Formula estricta requerida:
+    // performanceScore = (Calidad de Producción * 0.4) + (Inversión Marketing * 0.3) + (Creatividad/Skills * 0.2) + (Random Factor * 0.1)
+    const performanceScore = Math.min(100, Math.max(5, Math.floor(
+      (productionQuality * 0.4) +
+      (marketingInvestment * 0.3) +
+      (creativitySkills * 0.2) +
+      (randomFactor * 0.1)
+    )));
+
+    // 5. Asignación orgánica de LongevityCurve sin requerir selección manual
+    let longevityCurve: LongevityCurve = 'steady';
+
+    const p = artist.personality;
+    const s = artist.stats;
+    const roll = Math.random();
+
+    // Instant Classic: Alto rendimiento general (80+), alta creatividad y maestría técnica con visión estética
+    if (performanceScore >= 78 && p.creativity >= 70 && p.skill >= 70 && (s.artisticCredibility >= 50 || p.originality >= 68)) {
+      if (roll < 0.65) {
+        longevityCurve = 'instant_classic';
+      } else {
+        longevityCurve = 'steady';
+      }
+    }
+    // Explosive Drop: Alto marketing y atractivo comercial comercial pero menor profundidad original
+    else if ((marketingInvestment >= 65 || p.commercialAppeal >= 72) && p.originality < 65 && performanceScore >= 55) {
+      if (roll < 0.60) {
+        longevityCurve = 'explosive_drop';
+      } else {
+        longevityCurve = 'steady';
+      }
+    }
+    // Slow Burn: Alta originalidad/creatividad con marketing medido, que florece gradualmente por boca a boca
+    else if ((p.originality >= 70 || p.creativity >= 75) && marketingInvestment < 65 && performanceScore >= 45) {
+      if (roll < 0.55) {
+        longevityCurve = 'slow_burn';
+      } else {
+        longevityCurve = 'steady';
+      }
+    }
+    // Sleeper Viral: Alto carisma, tolerancia al riesgo, impacto visual o factor sorpresa
+    else if ((p.charisma >= 75 || p.riskTolerance >= 75 || Boolean(musicVideo)) && (roll < 0.35 || randomFactor >= 85)) {
+      longevityCurve = 'sleeper_viral';
+    }
+    // Asignación probabilística balanceada según el score
+    else {
+      if (performanceScore >= 75 && roll < 0.25) {
+        longevityCurve = 'instant_classic';
+      } else if (roll < 0.20) {
+        longevityCurve = 'slow_burn';
+      } else if (roll < 0.35) {
+        longevityCurve = 'explosive_drop';
+      } else if (roll < 0.45) {
+        longevityCurve = 'sleeper_viral';
+      } else {
+        longevityCurve = 'steady';
+      }
+    }
+
+    return {
+      performanceScore,
+      longevityCurve,
+      productionQuality,
+      marketingInvestment,
+      creativitySkills,
+      randomFactor
+    };
   }
 }
 

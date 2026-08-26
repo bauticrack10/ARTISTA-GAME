@@ -442,6 +442,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'r_and_b_soul',
     description: 'Ruido de cinta analógica, samples acogedores y calidez hogareña.',
     aestheticTone: 'Estudio casero, café matutino y relax reflexivo',
+    requiredTrait: { trait: 'originality', min: 70, label: 'Originalidad 70+' },
     qualityBonus: 6,
     commercialBonus: 6,
     originalityBonus: 6
@@ -576,6 +577,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'afrobeat_dancehall',
     description: 'Guitarras a contratiempo, mensaje de unidad y armonías soleadas.',
     aestheticTone: 'Playa, brisa marina y vibración espiritual',
+    requiredTrait: { trait: 'creativity', min: 70, label: 'Creatividad 70+' },
     qualityBonus: 7,
     commercialBonus: 7,
     originalityBonus: 6
@@ -630,7 +632,8 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
 /**
  * Derives and unlocks sonic styles according to the artist's Current Era,
  * main genre, subgenres, and personality/stat traits.
- * Eliminates arbitrary genre selection.
+ * Eliminates arbitrary genre selection and maintains only the base style unlocked
+ * until personality trait thresholds (Creativity, Originality, Skill, etc.) are reached.
  */
 export function getArtistDerivedStyles(
   artist: Artist,
@@ -673,14 +676,21 @@ export function getArtistDerivedStyles(
 
     if (detail.requiredTrait) {
       const req = detail.requiredTrait;
-      const currentVal =
-        (artist.personality as any)[req.trait] ??
-        (artist.stats as any)[req.trait] ??
-        0;
+      const traitKey = req.trait;
+
+      // Evaluate artist personality traits strictly (primary), fallback to stats if applicable
+      const personalityVal = artist.personality && (traitKey in artist.personality)
+        ? (artist.personality as any)[traitKey]
+        : undefined;
+      const statsVal = artist.stats && (traitKey in artist.stats)
+        ? (artist.stats as any)[traitKey]
+        : undefined;
+
+      const currentVal = personalityVal !== undefined ? personalityVal : (statsVal !== undefined ? statsVal : 0);
 
       if (currentVal < req.min) {
         isUnlocked = false;
-        lockReason = `Bloqueado: Requiere ${req.label} (Actual: ${currentVal})`;
+        lockReason = `Bloqueado: Requiere ${req.label} (Tienes ${Math.round(currentVal)})`;
       }
     }
 
@@ -699,10 +709,11 @@ export function getArtistDerivedStyles(
     });
   });
 
-  // Ensure at least one unlocked style exists
+  // Guarantee that the base style (without requiredTrait) is unlocked if all styles were somehow locked
   if (availableStyles.every(s => !s.isUnlocked) && availableStyles.length > 0) {
-    availableStyles[0].isUnlocked = true;
-    availableStyles[0].lockReason = undefined;
+    const baseStyle = availableStyles.find(s => !SUBGENRE_DETAILS[s.id]?.requiredTrait) || availableStyles[0];
+    baseStyle.isUnlocked = true;
+    baseStyle.lockReason = undefined;
   }
 
   return {

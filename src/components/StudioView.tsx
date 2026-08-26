@@ -8,7 +8,8 @@ import {
   LongevityCurve,
   Producer,
   MusicVideoConcept,
-  MusicVideoDirectorTier
+  MusicVideoDirectorTier,
+  CareerStage
 } from '../types';
 import { getArtistDerivedStyles, SUBGENRE_DETAILS } from '../data/genres';
 import { GameEngine } from '../core/GameEngine';
@@ -165,6 +166,83 @@ export const DIRECTOR_TIERS: DirectorTierOption[] = [
   }
 ];
 
+export const CAREER_STAGE_RANK: Record<CareerStage, number> = {
+  'Underground': 0,
+  'Emerging': 1,
+  'Declining': 1,
+  'Breakout': 2,
+  'Comeback': 2,
+  'Established': 3,
+  'Veteran': 3,
+  'Mainstream': 4,
+  'Superstar': 5,
+  'Legend': 6,
+  'Retired': 0
+};
+
+export interface ProducerLockInfo {
+  isUnlocked: boolean;
+  lockReason?: string;
+  minPopularity: number;
+  minCareerStage: CareerStage;
+}
+
+export const getProducerRequirements = (producer: Producer): { minPopularity: number; minCareerStage: CareerStage } => {
+  if (producer.reputation >= 95 || producer.id === 'prod_bizarrap' || producer.id === 'prod_metro_boomin' || producer.id === 'prod_tainy') {
+    return { minPopularity: producer.minPopularity ?? 65, minCareerStage: 'Established' };
+  }
+  if (producer.reputation >= 75 || producer.id === 'prod_oniria' || producer.id === 'prod_synth_alchemist') {
+    return { minPopularity: producer.minPopularity ?? 35, minCareerStage: 'Breakout' };
+  }
+  if (producer.reputation >= 45 || producer.id === 'prod_club_hustle') {
+    return { minPopularity: producer.minPopularity ?? 10, minCareerStage: 'Emerging' };
+  }
+  return { minPopularity: producer.minPopularity ?? 0, minCareerStage: 'Underground' };
+};
+
+export const getProducerLockStatus = (
+  producer: Producer,
+  player: Artist
+): ProducerLockInfo => {
+  const req = getProducerRequirements(producer);
+  const playerStageRank = CAREER_STAGE_RANK[player.careerStage] ?? 0;
+  const reqStageRank = CAREER_STAGE_RANK[req.minCareerStage] ?? 0;
+
+  const hasPop = player.stats.popularity >= req.minPopularity;
+  const hasStage = playerStageRank >= reqStageRank;
+
+  if (!hasPop && !hasStage) {
+    return {
+      isUnlocked: false,
+      lockReason: `Req. ${req.minPopularity}% Pop y Etapa ${req.minCareerStage}`,
+      minPopularity: req.minPopularity,
+      minCareerStage: req.minCareerStage
+    };
+  }
+  if (!hasPop) {
+    return {
+      isUnlocked: false,
+      lockReason: `Req. ${req.minPopularity}% Popularidad (Tienes ${player.stats.popularity}%)`,
+      minPopularity: req.minPopularity,
+      minCareerStage: req.minCareerStage
+    };
+  }
+  if (!hasStage) {
+    return {
+      isUnlocked: false,
+      lockReason: `Req. Etapa ${req.minCareerStage} (Eres ${player.careerStage})`,
+      minPopularity: req.minPopularity,
+      minCareerStage: req.minCareerStage
+    };
+  }
+
+  return {
+    isUnlocked: true,
+    minPopularity: req.minPopularity,
+    minCareerStage: req.minCareerStage
+  };
+};
+
 interface StudioViewProps {
   player: Artist;
   world: WorldState;
@@ -176,7 +254,7 @@ interface StudioViewProps {
     producerId?: string;
     budgetProduction: number;
     budgetMarketing: number;
-    longevityCurve: LongevityCurve;
+    longevityCurve?: LongevityCurve;
     musicVideo?: {
       concept: string;
       budget: number;
@@ -239,9 +317,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
     styleDerivation.availableStyles[0]?.id || ''
   );
   const [singleProducer, setSingleProducer] = useState<string>('');
-  const [singleProdBudget, setSingleProdBudget] = useState(2000);
-  const [singleMktBudget, setSingleMktBudget] = useState(2500);
-  const [singleLongevity, setSingleLongevity] = useState<LongevityCurve>('steady');
+  const [singleProdBudget, setSingleProdBudget] = useState(0);
+  const [singleMktBudget, setSingleMktBudget] = useState(0);
 
   // Music Video Production State
   const [hasMusicVideo, setHasMusicVideo] = useState(false);
@@ -252,6 +329,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const videoCost = hasMusicVideo ? currentDirectorTier.cost : 0;
   const singleProdFee = singleProducer ? (world.producers[singleProducer]?.costPerTrack || 0) : 0;
   const totalSingleCost = singleProdBudget + singleMktBudget + singleProdFee + videoCost;
+  const isFundsInsufficient = totalSingleCost > player.stats.funds;
 
   // Album State
   const [albumTitle, setAlbumTitle] = useState('');
@@ -295,6 +373,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   const totalAlbumTracksCount = includedSingleIds.length + newTrackTitles.filter(t => t.trim().length > 0).length;
   const minTracksRequired = getMinTracksForType(albumType);
+
+  const albumProdFee = albumProducer ? (world.producers[albumProducer]?.costPerTrack || 0) * Math.min(newTrackTitles.filter(t => t.trim().length > 0).length, 6) : 0;
+  const totalAlbumCost = albumProdBudget + albumMktBudget + albumProdFee;
+  const isAlbumFundsInsufficient = totalAlbumCost > player.stats.funds;
+  const isAlbumTracksInsufficient = totalAlbumTracksCount < minTracksRequired;
+  const isAlbumEnergyInsufficient = player.stats.energy < 35;
+  const isAlbumDisabled = isAlbumTracksInsufficient || isAlbumFundsInsufficient || isAlbumEnergyInsufficient || !albumTitle.trim();
 
   // Quick title suggestion
   const generateRandomTitle = (isAlbum: boolean) => {
@@ -341,7 +426,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       producerId: singleProducer || undefined,
       budgetProduction: singleProdBudget,
       budgetMarketing: singleMktBudget,
-      longevityCurve: singleLongevity,
+      longevityCurve: 'steady',
       musicVideo: hasMusicVideo ? {
         concept: selectedVideoConcept,
         budget: videoCost,
@@ -629,32 +714,34 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
                 >
                   <option value="">Autoproducción en Home Studio ($0)</option>
-                  {(Object.values(world.producers) as Producer[]).map(p => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} (+{p.qualityBoost}% Calidad) — ${p.costPerTrack.toLocaleString()}
-                    </option>
-                  ))}
+                  {(Object.values(world.producers) as Producer[]).map(p => {
+                    const lockInfo = getProducerLockStatus(p, player);
+                    return (
+                      <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#0B0C10] text-[#F8FAFC]">
+                        {lockInfo.isUnlocked ? '' : '🔒 '}{p.name} (+{p.qualityBoost}% Calidad) — ${p.costPerTrack.toLocaleString()} {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             </div>
 
-            {/* Right Column: Longevity, Budgets & Launch Preview */}
+            {/* Right Column: Budgets, Organic Performance & Launch Preview */}
             <div className="space-y-5">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] mb-2">
-                  Comportamiento & Curva de Streaming
-                </label>
-                <select
-                  value={singleLongevity}
-                  onChange={e => setSingleLongevity(e.target.value as LongevityCurve)}
-                  className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
-                >
-                  <option value="steady">Estable (Crecimiento y caída predecible mes a mes)</option>
-                  <option value="explosive_drop">Debut Explosivo (Gran impacto inicial, caída rápida)</option>
-                  <option value="slow_burn">Slow Burn (Crece lentamente durante 6-12 meses)</option>
-                  <option value="sleeper_viral">Potencial Viral Durmiente (Puede explotar años después)</option>
-                  <option value="instant_classic">Clásico Instantáneo (Mínima pérdida de streams con los años)</option>
-                </select>
+              {/* Proyección Orgánica */}
+              <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-[#F8FAFC] flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#06B6D4]" />
+                    Proyección de Rendimiento & Streaming
+                  </span>
+                  <span className="text-[10px] uppercase font-bold text-[#06B6D4] bg-[#06B6D4]/10 border border-[#06B6D4]/30 px-2 py-0.5 rounded-full">
+                    Motor Orgánico
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#94A3B8] leading-snug">
+                  La curva de éxito, viralidad y longevidad en listas se calculará automáticamente según tu calidad de producción, inversión promocional, originalidad y creatividad artística ({player.personality.creativity}/100).
+                </p>
               </div>
 
               {/* Budgets Sliders */}
@@ -663,14 +750,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <span className="block text-[11px] font-semibold text-[#F59E0B] mb-1">
                     Producción & Mezcla
                   </span>
-                  <div className="text-sm font-bold font-mono text-[#F59E0B] mb-2">
-                    ${singleProdBudget.toLocaleString()}
+                  <div className="text-xs font-bold font-mono text-[#F59E0B] mb-2">
+                    {singleProdBudget === 0 ? '$0 (Home Studio)' : `$${singleProdBudget.toLocaleString()}`}
                   </div>
                   <input
                     type="range"
-                    min="500"
+                    min="0"
                     max="25000"
-                    step="500"
+                    step="250"
                     value={singleProdBudget}
                     onChange={e => setSingleProdBudget(Number(e.target.value))}
                     className="w-full accent-[#F59E0B]"
@@ -681,14 +768,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <span className="block text-[11px] font-semibold text-emerald-400 mb-1">
                     Marketing & Campaña
                   </span>
-                  <div className="text-sm font-bold font-mono text-emerald-400 mb-2">
-                    ${singleMktBudget.toLocaleString()}
+                  <div className="text-xs font-bold font-mono text-emerald-400 mb-2">
+                    {singleMktBudget === 0 ? '$0 (Difusión Orgánica)' : `$${singleMktBudget.toLocaleString()}`}
                   </div>
                   <input
                     type="range"
-                    min="500"
+                    min="0"
                     max="25000"
-                    step="500"
+                    step="250"
                     value={singleMktBudget}
                     onChange={e => setSingleMktBudget(Number(e.target.value))}
                     className="w-full accent-emerald-500"
@@ -697,11 +784,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
               </div>
 
               {/* Cost & Summary Card */}
-              <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2 text-xs">
+              <div className={`p-4 rounded-xl border space-y-2 text-xs transition-all ${
+                isFundsInsufficient
+                  ? 'bg-rose-950/20 border-rose-500/40 shadow-[0_0_20px_rgba(244,63,94,0.15)]'
+                  : 'bg-[#0B0C10] border-[#2A2E3D]'
+              }`}>
                 <div className="flex items-center justify-between text-[#94A3B8]">
                   <span>Producción & Marketing:</span>
                   <span className="font-mono text-[#F8FAFC]">
-                    ${(singleProdBudget + singleMktBudget).toLocaleString()}
+                    {singleProdBudget === 0 && singleMktBudget === 0
+                      ? '$0 (Home Studio / Difusión Orgánica)'
+                      : `$${(singleProdBudget + singleMktBudget).toLocaleString()}`}
                   </span>
                 </div>
                 {singleProducer && (
@@ -722,7 +815,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 )}
                 <div className="flex items-center justify-between text-[#94A3B8] pt-1 border-t border-[#2A2E3D]">
                   <span className="font-semibold text-[#F8FAFC]">Costo Total del Sencillo:</span>
-                  <span className="font-bold font-mono text-[#C084FC] text-sm">
+                  <span className={`font-bold font-mono text-sm ${isFundsInsufficient ? 'text-rose-400' : 'text-[#C084FC]'}`}>
                     ${totalSingleCost.toLocaleString()}
                   </span>
                 </div>
@@ -732,10 +825,20 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </div>
                 <div className="flex items-center justify-between text-[#94A3B8]">
                   <span>Fondos Disponibles:</span>
-                  <span className={`font-bold font-mono ${player.stats.funds >= totalSingleCost ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <span className={`font-bold font-mono ${!isFundsInsufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                     ${player.stats.funds.toLocaleString()}
                   </span>
                 </div>
+
+                {isFundsInsufficient && (
+                  <div className="pt-2 border-t border-rose-500/30 flex items-start gap-2 text-rose-300 text-[11px] leading-snug">
+                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block text-rose-400">Fondos Insuficientes: Te faltan ${(totalSingleCost - player.stats.funds).toLocaleString()}</strong>
+                      Ajusta los sliders de producción a $0 (Home Studio) o prescinde del videoclip/productor externo.
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -939,18 +1042,44 @@ export const StudioView: React.FC<StudioViewProps> = ({
             )}
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-[#2A2E3D]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#2A2E3D]">
+            <div className="text-xs text-[#94A3B8]">
+              {isFundsInsufficient ? (
+                <span className="text-rose-400 flex items-center gap-1.5 font-medium">
+                  <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes para este presupuesto.
+                </span>
+              ) : isSinglesLimitReached ? (
+                <span className="text-rose-400 flex items-center gap-1.5 font-medium">
+                  <Lock className="w-3.5 h-3.5" /> Límite anual de singles alcanzado ({MAX_SINGLES}/{MAX_SINGLES}).
+                </span>
+              ) : player.stats.energy < 15 ? (
+                <span className="text-amber-400 flex items-center gap-1.5 font-medium">
+                  <Zap className="w-3.5 h-3.5" /> Artista agotado (requiere al menos 15% energía).
+                </span>
+              ) : (
+                <span className="text-emerald-400 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Listo para grabación y lanzamiento.
+                </span>
+              )}
+            </div>
+
             <button
               type="submit"
-              disabled={isSinglesLimitReached}
+              disabled={isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()}
               className={`px-5 py-2.5 rounded-[6px] text-sm transition-all flex items-center gap-2 ${
-                isSinglesLimitReached
+                isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()
                   ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-90 cursor-pointer'
               }`}
             >
               <Disc3 className="w-4 h-4 text-white" />
-              <span>{hasMusicVideo ? 'Grabar Single & Estrenar Videoclip' : 'Grabar & Publicar Single'}</span>
+              <span>
+                {isFundsInsufficient
+                  ? `Fondos Insuficientes ($${totalSingleCost.toLocaleString()})`
+                  : hasMusicVideo
+                  ? 'Grabar Single & Estrenar Videoclip'
+                  : 'Grabar & Publicar Single'}
+              </span>
             </button>
           </div>
         </form>
@@ -1024,11 +1153,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="">Autoproducido ($0)</option>
-                    {(Object.values(world.producers) as Producer[]).map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} (+{p.qualityBoost}% Calidad)
-                      </option>
-                    ))}
+                    {(Object.values(world.producers) as Producer[]).map(p => {
+                      const lockInfo = getProducerLockStatus(p, player);
+                      return (
+                        <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#0B0C10] text-[#F8FAFC]">
+                          {lockInfo.isUnlocked ? '' : '🔒 '}{p.name} (+{p.qualityBoost}% Calidad) — ${p.costPerTrack.toLocaleString()}/track {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               </div>
@@ -1204,11 +1336,29 @@ export const StudioView: React.FC<StudioViewProps> = ({
               </div>
 
               {/* Impact Forecast Box */}
-              <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2 text-xs">
+              <div className={`p-4 rounded-xl border space-y-2 text-xs transition-all ${
+                isAlbumFundsInsufficient
+                  ? 'bg-rose-950/20 border-rose-500/40 shadow-[0_0_20px_rgba(244,63,94,0.15)]'
+                  : 'bg-[#0B0C10] border-[#2A2E3D]'
+              }`}>
                 <div className="flex items-center justify-between text-[#94A3B8]">
-                  <span>Costo Total del Proyecto:</span>
-                  <span className="font-bold font-mono text-[#C084FC] text-sm">
-                    ${(albumProdBudget + albumMktBudget + (albumProducer ? (world.producers[albumProducer]?.costPerTrack || 0) * 2 : 0)).toLocaleString()}
+                  <span>Producción & Campaña:</span>
+                  <span className="font-mono text-[#F8FAFC]">
+                    ${(albumProdBudget + albumMktBudget).toLocaleString()}
+                  </span>
+                </div>
+                {albumProducer && (
+                  <div className="flex items-center justify-between text-[#94A3B8]">
+                    <span>Productor ({world.producers[albumProducer]?.name}):</span>
+                    <span className="font-mono text-[#F8FAFC]">
+                      +${albumProdFee.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between text-[#94A3B8] pt-1 border-t border-[#2A2E3D]">
+                  <span className="font-semibold text-[#F8FAFC]">Costo Total del Proyecto:</span>
+                  <span className={`font-bold font-mono text-sm ${isAlbumFundsInsufficient ? 'text-rose-400' : 'text-[#C084FC]'}`}>
+                    ${totalAlbumCost.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[#94A3B8]">
@@ -1216,25 +1366,60 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <span className="font-semibold text-rose-400">-35% Energía</span>
                 </div>
                 <div className="flex items-center justify-between text-[#94A3B8]">
-                  <span>Estimación Crítica:</span>
-                  <span className="font-semibold text-[#C084FC]">Metacritic / Pitchfork Review</span>
+                  <span>Fondos Disponibles:</span>
+                  <span className={`font-bold font-mono ${!isAlbumFundsInsufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    ${player.stats.funds.toLocaleString()}
+                  </span>
                 </div>
+                {isAlbumFundsInsufficient && (
+                  <div className="pt-2 border-t border-rose-500/30 flex items-start gap-2 text-rose-300 text-[11px] leading-snug">
+                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block text-rose-400">Fondos Insuficientes: Te faltan ${(totalAlbumCost - player.stats.funds).toLocaleString()}</strong>
+                      Ajusta los presupuestos de producción o marketing para continuar.
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-[#2A2E3D]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#2A2E3D]">
+            <div className="text-xs text-[#94A3B8]">
+              {isAlbumFundsInsufficient ? (
+                <span className="text-rose-400 flex items-center gap-1.5 font-medium">
+                  <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes para costear el proyecto.
+                </span>
+              ) : isAlbumTracksInsufficient ? (
+                <span className="text-rose-400 flex items-center gap-1.5 font-medium">
+                  <Lock className="w-3.5 h-3.5" /> Faltan canciones: {totalAlbumTracksCount}/{minTracksRequired} mínimas requeridas.
+                </span>
+              ) : isAlbumEnergyInsufficient ? (
+                <span className="text-amber-400 flex items-center gap-1.5 font-medium">
+                  <Zap className="w-3.5 h-3.5" /> Artista exhausto (requiere al menos 35% de energía).
+                </span>
+              ) : (
+                <span className="text-emerald-400 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Proyecto listo para producción y publicación.
+                </span>
+              )}
+            </div>
+
             <button
               type="submit"
-              disabled={totalAlbumTracksCount < minTracksRequired}
+              disabled={isAlbumDisabled}
               className={`px-6 py-2.5 rounded-[6px] text-sm transition-all flex items-center gap-2 ${
-                totalAlbumTracksCount < minTracksRequired
+                isAlbumDisabled
                   ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-90 cursor-pointer'
               }`}
             >
               <Layers className="w-4 h-4 text-white" />
-              <span>Publicar Proyecto Completo</span>
+              <span>
+                {isAlbumFundsInsufficient
+                  ? `Fondos Insuficientes ($${totalAlbumCost.toLocaleString()})`
+                  : 'Publicar Proyecto Completo'}
+              </span>
             </button>
           </div>
         </form>

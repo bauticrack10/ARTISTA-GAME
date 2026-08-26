@@ -311,6 +311,12 @@ export interface Manager {
   avatarGradient?: string;
 }
 
+export interface ProducerRequirements {
+  minReputation?: number;
+  minPopularity?: number;
+  minMonthlyListeners?: number;
+}
+
 export interface Producer {
   id: string;
   name: string;
@@ -321,6 +327,7 @@ export interface Producer {
   costPerTrack: number;
   qualityBoost: number;
   country: string;
+  requirements?: ProducerRequirements;
 }
 
 export type TourTier = 'club' | 'theater' | 'arena' | 'stadium' | 'festival_circuit' | 'world_tour';

@@ -1,49 +1,35 @@
 import { Producer, Manager } from '../types';
 
 export const INITIAL_PRODUCERS: Record<string, Producer> = {
-  prod_bizarrap: {
-    id: 'prod_bizarrap',
-    name: 'Bizarrap',
-    tagline: '¡Biza!',
-    signatureStyle: 'BZRP Music Sessions, drops explosivos, sintetizadores analógicos, fusión electrónica-urbana',
-    genreSpecialties: ['trap_latino', 'musica_electronica', 'hip_hop_rap', 'pop_moderno'],
-    reputation: 98,
-    costPerTrack: 85000,
-    qualityBoost: 22,
-    country: 'Argentina'
+  prod_nico_homestudio: {
+    id: 'prod_nico_homestudio',
+    name: "Nico 'Home Studio' (Beatmaker de Barrio)",
+    tagline: 'Grabando en la pieza',
+    signatureStyle: '808s caseros, compresión cruda, loops directos y ritmo barrial accesible',
+    genreSpecialties: ['trap_latino', 'hip_hop_rap', 'reggaeton', 'drill'],
+    reputation: 25,
+    costPerTrack: 200,
+    qualityBoost: 4,
+    country: 'Argentina',
+    requirements: {
+      minReputation: 0,
+      minPopularity: 0
+    }
   },
-  prod_metro_boomin: {
-    id: 'prod_metro_boomin',
-    name: 'Metro Boomin',
-    tagline: 'If Young Metro don’t trust you...',
-    signatureStyle: '808s cinematográficos, melodías oscuras y góticas de piano y cuerdas',
-    genreSpecialties: ['hip_hop_rap', 'trap_latino'],
-    reputation: 97,
-    costPerTrack: 90000,
-    qualityBoost: 24,
-    country: 'USA'
-  },
-  prod_tainy: {
-    id: 'prod_tainy',
-    name: 'Tainy',
-    tagline: 'Neon16',
-    signatureStyle: 'Dembow futurista, texturas ambient, armonías de pop vanguardista',
-    genreSpecialties: ['reggaeton', 'pop_moderno', 'trap_latino'],
-    reputation: 96,
-    costPerTrack: 75000,
-    qualityBoost: 20,
-    country: 'Puerto Rico'
-  },
-  prod_oniria: {
-    id: 'prod_oniria',
-    name: 'Oniria',
-    tagline: 'Mueva Records',
-    signatureStyle: 'Trap crudo, beats experimentales, distorsión y texturas lo-fi',
-    genreSpecialties: ['trap_latino', 'drill'],
-    reputation: 82,
-    costPerTrack: 18000,
-    qualityBoost: 14,
-    country: 'Argentina'
+  prod_lauty_sample: {
+    id: 'prod_lauty_sample',
+    name: "Lauty 'Sample Digger' (Productor Amateur)",
+    tagline: 'Crate digging & FL Studio',
+    signatureStyle: 'Samples de vinilo antiguos, melodías nostálgicas y texturas lo-fi con onda',
+    genreSpecialties: ['hip_hop_rap', 'trap_latino', 'r_and_b_soul', 'rock_alternativo'],
+    reputation: 38,
+    costPerTrack: 450,
+    qualityBoost: 7,
+    country: 'Argentina',
+    requirements: {
+      minReputation: 10,
+      minPopularity: 5
+    }
   },
   prod_club_hustle: {
     id: 'prod_club_hustle',
@@ -52,9 +38,14 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
     signatureStyle: 'Beats rápidos de bajo presupuesto pero mucha actitud callejera',
     genreSpecialties: ['trap_latino', 'drill', 'hip_hop_rap'],
     reputation: 52,
-    costPerTrack: 2500,
-    qualityBoost: 8,
-    country: 'Argentina'
+    costPerTrack: 1500,
+    qualityBoost: 9,
+    country: 'Argentina',
+    requirements: {
+      minReputation: 25,
+      minPopularity: 15,
+      minMonthlyListeners: 10000
+    }
   },
   prod_synth_alchemist: {
     id: 'prod_synth_alchemist',
@@ -63,9 +54,78 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
     signatureStyle: 'Sintetizadores vintage Juno-106, cajas de ritmo analógicas y reverberaciones espaciales',
     genreSpecialties: ['pop_moderno', 'musica_electronica', 'r_and_b_soul'],
     reputation: 74,
-    costPerTrack: 12000,
-    qualityBoost: 15,
-    country: 'España'
+    costPerTrack: 8000,
+    qualityBoost: 14,
+    country: 'España',
+    requirements: {
+      minReputation: 45,
+      minPopularity: 35,
+      minMonthlyListeners: 40000
+    }
+  },
+  prod_oniria: {
+    id: 'prod_oniria',
+    name: 'Oniria',
+    tagline: 'Mueva Records',
+    signatureStyle: 'Trap crudo, beats experimentales, distorsión y texturas lo-fi',
+    genreSpecialties: ['trap_latino', 'drill'],
+    reputation: 82,
+    costPerTrack: 16000,
+    qualityBoost: 17,
+    country: 'Argentina',
+    requirements: {
+      minReputation: 60,
+      minPopularity: 45,
+      minMonthlyListeners: 100000
+    }
+  },
+  prod_tainy: {
+    id: 'prod_tainy',
+    name: 'Tainy',
+    tagline: 'Neon16',
+    signatureStyle: 'Dembow futurista, texturas ambient, armonías de pop vanguardista',
+    genreSpecialties: ['reggaeton', 'pop_moderno', 'trap_latino'],
+    reputation: 96,
+    costPerTrack: 55000,
+    qualityBoost: 21,
+    country: 'Puerto Rico',
+    requirements: {
+      minReputation: 75,
+      minPopularity: 65,
+      minMonthlyListeners: 400000
+    }
+  },
+  prod_metro_boomin: {
+    id: 'prod_metro_boomin',
+    name: 'Metro Boomin',
+    tagline: 'If Young Metro don’t trust you...',
+    signatureStyle: '808s cinematográficos, melodías oscuras y góticas de piano y cuerdas',
+    genreSpecialties: ['hip_hop_rap', 'trap_latino'],
+    reputation: 97,
+    costPerTrack: 75000,
+    qualityBoost: 24,
+    country: 'USA',
+    requirements: {
+      minReputation: 80,
+      minPopularity: 75,
+      minMonthlyListeners: 750000
+    }
+  },
+  prod_bizarrap: {
+    id: 'prod_bizarrap',
+    name: 'Bizarrap',
+    tagline: '¡Biza!',
+    signatureStyle: 'BZRP Music Sessions, drops explosivos, sintetizadores analógicos, fusión electrónica-urbana',
+    genreSpecialties: ['trap_latino', 'musica_electronica', 'hip_hop_rap', 'pop_moderno'],
+    reputation: 98,
+    costPerTrack: 85000,
+    qualityBoost: 26,
+    country: 'Argentina',
+    requirements: {
+      minReputation: 85,
+      minPopularity: 80,
+      minMonthlyListeners: 1000000
+    }
   }
 };
 

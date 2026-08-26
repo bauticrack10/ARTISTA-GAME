@@ -33,6 +33,7 @@ import { RelationshipEngine } from '../systems/RelationshipEngine';
 import { SocialFeedEngine } from '../systems/SocialFeedEngine';
 import { LegacyEngine } from '../systems/LegacyEngine';
 import { TimeSystem } from '../systems/TimeSystem';
+import { IndustryEngine } from '../systems/IndustryEngine';
 import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
 
 export class GameEngine {
@@ -393,7 +394,7 @@ export class GameEngine {
     producerId?: string;
     budgetProduction: number;
     budgetMarketing: number;
-    longevityCurve: Song['longevityCurve'];
+    longevityCurve?: Song['longevityCurve'];
     musicVideo?: {
       concept: string;
       budget: number;
@@ -406,66 +407,77 @@ export class GameEngine {
       throw new Error(`Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año). El cupo se reiniciará en enero (Semestre 1).`);
     }
 
-    const songId = `song_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
-
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
-    const qualityBoost = prod ? prod.qualityBoost : 0;
+    if (prod) {
+      const prodCheck = IndustryEngine.canWorkWithProducer(player, prod);
+      if (!prodCheck.canWork) {
+        throw new Error(`Requisitos no cumplidos para contratar a ${prod.name}: ${prodCheck.missingReasons.join(', ')}`);
+      }
+    }
+
+    const videoCost = params.musicVideo ? params.musicVideo.budget : 0;
+    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack : 0) + videoCost;
+
+    if (totalCost > player.stats.funds) {
+      throw new Error(`Fondos insuficientes para este lanzamiento. Costo: $${totalCost.toLocaleString()}, Disponibles: $${player.stats.funds.toLocaleString()}`);
+    }
+
+    const songId = `song_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 
     // Subgenre bonuses
     const subDetail = params.subGenreIds && params.subGenreIds.length > 0 ? SUBGENRE_DETAILS[params.subGenreIds[0]] : undefined;
-    const subQualityBonus = subDetail?.qualityBonus || 0;
-    const subCommBonus = subDetail?.commercialBonus || 0;
     const subOrigBonus = subDetail?.originalityBonus || 0;
 
     // Music Video Bonuses & Initial Views
-    const videoCost = params.musicVideo ? params.musicVideo.budget : 0;
     let mvHypeBonus = 0;
-    let mvQualityBonus = 0;
-    let mvCommercialBonus = 0;
     let initialViews = 0;
 
     if (params.musicVideo) {
       if (params.musicVideo.directorTier === 'Director de Élite Mundial') {
         mvHypeBonus = 50;
-        mvQualityBonus = 8;
-        mvCommercialBonus = 12;
         initialViews = Math.floor(450000 + player.stats.popularity * 25000 + Math.random() * 200000);
       } else if (params.musicVideo.directorTier === 'Estudio Indie') {
         mvHypeBonus = 25;
-        mvQualityBonus = 5;
-        mvCommercialBonus = 6;
         initialViews = Math.floor(45000 + player.stats.popularity * 3000 + Math.random() * 25000);
       } else {
         // Director Emergente
         mvHypeBonus = 10;
-        mvQualityBonus = 2;
-        mvCommercialBonus = 3;
         initialViews = Math.floor(6000 + player.stats.popularity * 400 + Math.random() * 4000);
       }
     }
 
-    // Quality calculation based on player stats + production investment + producer + subgenre + video
-    const baseQuality = Math.min(100, Math.floor(
-      player.personality.skill * 0.45 +
-      player.personality.creativity * 0.35 +
-      (params.budgetProduction / 5000) * 15 +
-      qualityBoost +
-      subQualityBonus +
-      mvQualityBonus
-    ));
-    const commercialAppeal = Math.min(100, Math.floor(
-      player.personality.commercialAppeal * 0.55 +
-      (params.budgetMarketing / 5000) * 20 +
-      subCommBonus +
-      mvCommercialBonus
-    ));
+    // Organic Performance and Longevity Curve Derivation via IndustryEngine:
+    // performanceScore = (Calidad de Producción * 0.4) + (Inversión Marketing * 0.3) + (Creatividad/Skills * 0.2) + (Random Factor * 0.1)
+    const lifestyleBuffs = this.getPlayerLifestyleBuffs();
+    const perfEval = IndustryEngine.deriveTrackPerformanceAndLongevity({
+      artist: player,
+      productionBudget: params.budgetProduction,
+      marketingBudget: params.budgetMarketing,
+      producer: prod,
+      subGenreId: params.subGenreIds && params.subGenreIds.length > 0 ? params.subGenreIds[0] : undefined,
+      musicVideo: params.musicVideo,
+      qualityBonus: lifestyleBuffs.qualityBonus
+    });
+
+    const chosenLongevity = params.longevityCurve || perfEval.longevityCurve;
+
+    const baseQuality = Math.min(100, Math.max(10, Math.floor(
+      player.personality.skill * 0.40 +
+      player.personality.creativity * 0.30 +
+      perfEval.productionQuality * 0.30
+    )));
+
+    const commercialAppeal = Math.min(100, Math.max(10, Math.floor(
+      player.personality.commercialAppeal * 0.45 +
+      perfEval.marketingInvestment * 0.55
+    )));
+
     const originality = Math.min(100, player.personality.originality + subOrigBonus);
 
     // Deduct player funds and energy
-    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack : 0) + videoCost;
     player.stats.funds = Math.max(0, player.stats.funds - totalCost);
     player.stats.energy = Math.max(10, player.stats.energy - 15);
-    player.stats.hype = Math.min(100, player.stats.hype + Math.floor(params.budgetMarketing / 2000) * 10 + 15 + mvHypeBonus);
+    player.stats.hype = Math.min(100, player.stats.hype + (params.budgetMarketing > 0 ? Math.floor(params.budgetMarketing / 2000) * 10 : 0) + 15 + mvHypeBonus);
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
 
@@ -488,9 +500,9 @@ export class GameEngine {
       monthlyStreamsHistory: [],
       peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
       weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
-      longevityCurve: params.longevityCurve,
+      longevityCurve: chosenLongevity,
       isSingle: true,
-      receptionRating: Math.floor(baseQuality / 20),
+      receptionRating: Math.floor(perfEval.performanceScore / 20),
       isClassic: false,
       wentViral: false,
       musicVideo: params.musicVideo ? {
@@ -546,6 +558,12 @@ export class GameEngine {
     const albumId = `album_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
+    if (prod) {
+      const prodCheck = IndustryEngine.canWorkWithProducer(player, prod);
+      if (!prodCheck.canWork) {
+        throw new Error(`Requisitos no cumplidos para contratar a ${prod.name}: ${prodCheck.missingReasons.join(', ')}`);
+      }
+    }
     const qualityBoost = prod ? prod.qualityBoost : 0;
 
     const rawNewTitles = params.newTrackTitles || params.songTitles || [];
@@ -573,19 +591,20 @@ export class GameEngine {
       }
     }
 
-    // 2. Generate new tracks
+    // 2. Generate new tracks with organic longevity curves and quality derivation
     const subDetail = params.subGenreIds && params.subGenreIds.length > 0 ? SUBGENRE_DETAILS[params.subGenreIds[0]] : undefined;
     const lifestyleBuffs = this.getPlayerLifestyleBuffs();
-    const avgQuality = Math.min(100, Math.floor(
-      player.personality.skill * 0.45 +
-      player.personality.creativity * 0.35 +
-      qualityBoost +
-      lifestyleBuffs.qualityBonus +
-      (subDetail?.qualityBonus || 0) +
-      (params.budgetProduction / 10000) * 15
-    ));
 
     rawNewTitles.forEach((st, idx) => {
+      const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
+        artist: player,
+        productionBudget: Math.floor(params.budgetProduction / Math.max(1, rawNewTitles.length)),
+        marketingBudget: Math.floor(params.budgetMarketing / Math.max(1, rawNewTitles.length)),
+        producer: prod,
+        subGenreId: params.subGenreIds && params.subGenreIds.length > 0 ? params.subGenreIds[0] : undefined,
+        qualityBonus: lifestyleBuffs.qualityBonus
+      });
+
       const sId = `song_alb_${player.id}_${this.world.currentYear}_${idx}_${Math.floor(Math.random() * 1000)}`;
       const song: Song = {
         id: sId,
@@ -597,8 +616,8 @@ export class GameEngine {
         subGenreIds: params.subGenreIds,
         releaseYear: this.world.currentYear,
         releaseMonth: this.world.currentMonth,
-        quality: Math.min(100, Math.max(20, avgQuality + Math.floor(Math.random() * 10 - 5))),
-        commercialAppeal: Math.min(100, Math.floor(player.personality.commercialAppeal * 0.65 + (params.budgetMarketing / 10000) * 15 + (subDetail?.commercialBonus || 0))),
+        quality: Math.min(100, Math.max(20, Math.floor(trackPerf.productionQuality * 0.45 + player.personality.skill * 0.55 + Math.floor(Math.random() * 8 - 4)))),
+        commercialAppeal: Math.min(100, Math.max(20, Math.floor(trackPerf.marketingInvestment * 0.50 + player.personality.commercialAppeal * 0.50 + (subDetail?.commercialBonus || 0)))),
         originality: Math.min(100, player.personality.originality + (subDetail?.originalityBonus || 0)),
         hypeAtRelease: player.stats.hype,
         streamsTotal: 0,
@@ -606,10 +625,10 @@ export class GameEngine {
         monthlyStreamsHistory: [],
         peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
         weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
-        longevityCurve: idx === 0 ? 'explosive_drop' : idx === 1 ? 'instant_classic' : 'steady',
+        longevityCurve: trackPerf.longevityCurve,
         isSingle: false,
         albumId,
-        receptionRating: Math.floor(avgQuality / 20),
+        receptionRating: Math.floor(trackPerf.performanceScore / 20),
         isClassic: false,
         wentViral: false
       };

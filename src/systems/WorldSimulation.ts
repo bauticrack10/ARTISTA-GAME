@@ -3,6 +3,7 @@ import { generateRandomArtistName, generateSongTitle, generateAlbumTitle } from 
 import { StreamingEngine } from './StreamingEngine';
 import { LegacyEngine } from './LegacyEngine';
 import { TimeSystem } from './TimeSystem';
+import { IndustryEngine } from './IndustryEngine';
 
 export class WorldSimulation {
   static simulateMonth(world: WorldState): {
@@ -150,9 +151,8 @@ export class WorldSimulation {
 
       if (monthsSinceLastRelease >= 4 && Math.random() < 0.18) {
         const isAlbum = monthsSinceLastRelease >= 14 && Math.random() < 0.35;
-        const quality = Math.min(100, Math.max(30, artist.personality.skill + (Math.random() * 20 - 10)));
-        const commercial = Math.min(100, Math.max(30, artist.personality.commercialAppeal + (Math.random() * 20 - 10)));
-        const originality = Math.min(100, Math.max(30, artist.personality.originality + (Math.random() * 20 - 10)));
+        const estProdBudget = Math.floor(artist.stats.funds * 0.05 + artist.stats.popularity * 100);
+        const estMktBudget = Math.floor(artist.stats.funds * 0.08 + artist.stats.hype * 80);
 
         artist.lastReleaseYear = world.currentYear;
         artist.lastReleaseMonth = world.currentMonth;
@@ -167,8 +167,13 @@ export class WorldSimulation {
           for (let i = 0; i < songCount; i++) {
             const sTitle = generateSongTitle(Object.keys(world.songs).length + i + 1, artist.mainGenreId);
             const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${i}`;
-            const curves = ['explosive_drop', 'slow_burn', 'sleeper_viral', 'instant_classic', 'steady'] as const;
-            const curve = curves[Math.floor(Math.random() * curves.length)];
+
+            const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
+              artist,
+              productionBudget: Math.floor(estProdBudget / songCount),
+              marketingBudget: Math.floor(estMktBudget / songCount),
+              subGenreId: artist.subGenreIds?.[0]
+            });
 
             const newSong: Song = {
               id: songId,
@@ -179,19 +184,19 @@ export class WorldSimulation {
               subGenreIds: artist.subGenreIds,
               releaseYear: world.currentYear,
               releaseMonth: world.currentMonth,
-              quality: Math.floor(quality + (Math.random() * 10 - 5)),
-              commercialAppeal: Math.floor(commercial + (Math.random() * 10 - 5)),
-              originality: Math.floor(originality + (Math.random() * 10 - 5)),
+              quality: Math.min(100, Math.max(20, Math.floor(trackPerf.productionQuality * 0.5 + artist.personality.skill * 0.5 + Math.floor(Math.random() * 8 - 4)))),
+              commercialAppeal: Math.min(100, Math.max(20, Math.floor(trackPerf.marketingInvestment * 0.5 + artist.personality.commercialAppeal * 0.5))),
+              originality: Math.min(100, artist.personality.originality),
               hypeAtRelease: artist.stats.hype,
               streamsTotal: 0,
               streamsLastMonth: 0,
               monthlyStreamsHistory: [],
               peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
               weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
-              longevityCurve: curve,
+              longevityCurve: trackPerf.longevityCurve,
               isSingle: i === 0, // First track is lead single
               albumId,
-              receptionRating: Math.floor(3 + Math.random() * 2),
+              receptionRating: Math.floor(trackPerf.performanceScore / 20),
               isClassic: false,
               wentViral: false
             };
@@ -221,8 +226,8 @@ export class WorldSimulation {
             releaseMonth: world.currentMonth,
             totalStreams: 0,
             firstWeekSales: Math.floor(artist.stats.popularity * 1200 + Math.random() * 5000),
-            criticalScore: Math.floor(quality * 0.7 + originality * 0.3),
-            commercialScore: Math.floor(commercial * 0.8 + artist.stats.popularity * 0.2),
+            criticalScore: Math.floor(artist.personality.skill * 0.5 + artist.personality.originality * 0.3 + (Math.random() * 20)),
+            commercialScore: Math.floor(artist.personality.commercialAppeal * 0.6 + artist.stats.popularity * 0.4),
             peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
             awards: [],
             coverGradient: gradients[Object.keys(world.albums).length % gradients.length]
@@ -234,8 +239,13 @@ export class WorldSimulation {
           // Drop Single
           const sTitle = generateSongTitle(Object.keys(world.songs).length + 1, artist.mainGenreId);
           const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}`;
-          const curves = ['explosive_drop', 'slow_burn', 'sleeper_viral', 'instant_classic', 'steady'] as const;
-          const curve = curves[Math.floor(Math.random() * curves.length)];
+
+          const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
+            artist,
+            productionBudget: estProdBudget,
+            marketingBudget: estMktBudget,
+            subGenreId: artist.subGenreIds?.[0]
+          });
 
           const newSong: Song = {
             id: songId,
@@ -246,18 +256,18 @@ export class WorldSimulation {
             subGenreIds: artist.subGenreIds,
             releaseYear: world.currentYear,
             releaseMonth: world.currentMonth,
-            quality: Math.floor(quality),
-            commercialAppeal: Math.floor(commercial),
-            originality: Math.floor(originality),
+            quality: Math.min(100, Math.max(20, Math.floor(trackPerf.productionQuality * 0.5 + artist.personality.skill * 0.5))),
+            commercialAppeal: Math.min(100, Math.max(20, Math.floor(trackPerf.marketingInvestment * 0.5 + artist.personality.commercialAppeal * 0.5))),
+            originality: Math.min(100, artist.personality.originality),
             hypeAtRelease: artist.stats.hype,
             streamsTotal: 0,
             streamsLastMonth: 0,
             monthlyStreamsHistory: [],
             peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
             weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
-            longevityCurve: curve,
+            longevityCurve: trackPerf.longevityCurve,
             isSingle: true,
-            receptionRating: Math.floor(3 + Math.random() * 2),
+            receptionRating: Math.floor(trackPerf.performanceScore / 20),
             isClassic: false,
             wentViral: false
           };
