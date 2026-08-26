@@ -213,16 +213,16 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                             : 'bg-[#0B0C10] border-[#2A2E3D]'
                         }`}
                       >
-                        <div className="space-y-0.5">
+                        <div className="space-y-0.5 min-w-0 flex-1">
                           <span className="text-[10px] font-bold uppercase text-[#94A3B8] block tracking-wide">
                             {cat.name}
                           </span>
-                          <p className="font-bold text-sm text-[#F8FAFC] flex items-center gap-1.5">
-                            🏆 {cat.winnerArtistName}
-                            {itemTitle && <span className="font-normal text-[#94A3B8]">— {itemTitle}</span>}
+                          <p className="font-bold text-sm text-[#F8FAFC] flex items-center gap-1.5 truncate">
+                            <span>🏆 {cat.winnerArtistName}</span>
+                            {itemTitle && <span className="font-normal text-[#94A3B8] truncate">— {itemTitle}</span>}
                           </p>
                           {cat.winnerReason && (
-                            <p className="text-[11px] text-[#94A3B8] italic">
+                            <p className="text-[11px] text-[#94A3B8] italic truncate">
                               {cat.winnerReason}
                             </p>
                           )}
@@ -242,25 +242,26 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
           ) : currentCategory ? (
             /* VIEW 2: SINGLE CATEGORY PRESENTATION CARD */
             <div className="bg-[#0B0C10] border border-amber-500/30 rounded-[12px] p-5 sm:p-6 space-y-5 shadow-sm">
+              {/* Category Header */}
               <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#94A3B8]">
                       Categoría {currentCategoryIndex + 1} de {categories.length}
                     </span>
                     {(currentCategory.playerNominated || currentCategory.nomineeArtistIds.includes(player.id)) && (
-                      <span className="text-[10px] font-bold text-purple-300 bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1">
+                      <span className="text-[10px] font-bold text-purple-300 bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 rounded-[4px] inline-flex items-center gap-1 shadow-xs">
                         <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
                         ¡Estás Nominado!
                       </span>
                     )}
                   </div>
                   <h3 className="text-xl sm:text-2xl font-semibold tracking-[-0.9px] text-[#F8FAFC] flex items-center gap-2">
-                    <CategoryIcon className="w-5 h-5 text-amber-400" />
-                    {currentCategory.name}
+                    <CategoryIcon className="w-5 h-5 text-amber-400 shrink-0" />
+                    <span className="truncate">{currentCategory.name}</span>
                   </h3>
                   {currentCategory.description && (
-                    <p className="text-xs text-[#94A3B8] mt-1">
+                    <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
                       {currentCategory.description}
                     </p>
                   )}
@@ -269,7 +270,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                 {!isCurrentRevealed ? (
                   <button
                     onClick={() => handleRevealWinner(currentCategoryIndex)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 border border-amber-300 px-4 py-2 rounded-[6px] text-xs font-bold hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer shadow-sm shrink-0"
+                    className="flex items-center gap-2 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 border border-amber-300 px-4 py-2 rounded-[6px] text-xs font-bold hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer shadow-sm shrink-0"
                   >
                     <Sparkles className="w-4 h-4 text-amber-950 animate-pulse" />
                     <span>Revelar Ganador</span>
@@ -282,13 +283,23 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                 )}
               </div>
 
-              {/* Nominees List */}
-              <div className="space-y-2 pt-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] block">
-                  Artistas y Obras Nominadas ({currentCategory.nominees?.length || currentCategory.nomineeArtistIds.length})
-                </span>
+              {/* Nominees Grid (4 items: 2x2 on sm/desktop, 1x4 on mobile) */}
+              <div className="space-y-2.5 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] flex items-center gap-1.5">
+                    <span>Artistas y Obras Nominadas</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-[4px] bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC]">
+                      {currentCategory.nominees?.length || currentCategory.nomineeArtistIds.length}
+                    </span>
+                  </span>
+                  {isCurrentRevealed && (
+                    <span className="text-[10px] text-amber-400 font-medium italic">
+                      ★ Ganador oficial destacado
+                    </span>
+                  )}
+                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {(currentCategory.nominees || []).map((nominee, nIdx) => {
                     const isWinner = isCurrentRevealed && nominee.artistId === currentCategory.winnerArtistId;
                     const isPlayerNominee = nominee.artistId === player.id || nominee.isPlayer;
@@ -296,44 +307,69 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                     return (
                       <div
                         key={nominee.artistId + (nominee.itemId || '') + nIdx}
-                        className={`p-3 rounded-[8px] border transition-all ${
+                        className={`p-3.5 rounded-[10px] border transition-all flex flex-col justify-between gap-2.5 ${
                           isWinner
-                            ? 'bg-amber-500/15 border-amber-500/50 ring-2 ring-amber-400 shadow-sm'
+                            ? 'bg-amber-500/15 border-amber-500/50 ring-2 ring-amber-400/80 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
                             : isPlayerNominee
-                            ? 'bg-purple-500/15 border-purple-500/40'
-                            : 'bg-[#16181F] border-[#2A2E3D]'
+                            ? 'bg-purple-500/15 border-purple-500/40 shadow-xs'
+                            : 'bg-[#16181F] border-[#2A2E3D] hover:border-[#2A2E3D]/80'
                         }`}
                       >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="text-xs font-bold text-[#8B5CF6] w-4 font-mono shrink-0">
-                              #{nIdx + 1}
+                        <div className="flex items-start justify-between gap-2.5">
+                          <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                            <span
+                              className={`w-6 h-6 rounded-[6px] flex items-center justify-center font-mono font-bold text-xs shrink-0 border ${
+                                isWinner
+                                  ? 'bg-gradient-to-tr from-amber-500 to-yellow-500 text-stone-950 border-amber-400 shadow-xs'
+                                  : isPlayerNominee
+                                  ? 'bg-purple-500/25 text-purple-300 border-purple-500/40'
+                                  : 'bg-[#0B0C10] text-[#94A3B8] border-[#2A2E3D]'
+                              }`}
+                            >
+                              {isWinner ? '🏆' : `#${nIdx + 1}`}
                             </span>
-                            <div className="min-w-0">
-                              <h4 className="text-xs font-semibold text-[#F8FAFC] flex items-center gap-1.5 truncate">
-                                {nominee.itemTitle ? `"${nominee.itemTitle}" — ` : ''}
-                                {nominee.artistName}
-                                {isPlayerNominee && (
-                                  <span className="text-[9px] bg-purple-500/25 text-purple-300 border border-purple-500/40 font-bold px-1.5 py-0.2 rounded-[4px] shrink-0">
-                                    TÚ
-                                  </span>
-                                )}
-                              </h4>
-                              {nominee.highlightText && (
-                                <p className="text-[10px] text-[#94A3B8] mt-0.5 truncate">
-                                  {nominee.highlightText}
-                                </p>
+
+                            <div className="min-w-0 flex-1">
+                              {nominee.itemTitle ? (
+                                <>
+                                  <h4 className="text-xs font-bold text-[#F8FAFC] truncate" title={nominee.itemTitle}>
+                                    "{nominee.itemTitle}"
+                                  </h4>
+                                  <p className="text-[11px] text-[#94A3B8] truncate mt-0.5" title={nominee.artistName}>
+                                    {nominee.artistName}
+                                  </p>
+                                </>
+                              ) : (
+                                <h4 className="text-xs font-bold text-[#F8FAFC] truncate" title={nominee.artistName}>
+                                  {nominee.artistName}
+                                </h4>
                               )}
                             </div>
                           </div>
 
-                          {isWinner && (
-                            <div className="flex items-center gap-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 px-2 py-0.5 rounded-[4px] text-[10px] font-extrabold border border-amber-400 shadow-xs shrink-0">
-                              <Trophy className="w-3 h-3 text-amber-950" />
-                              <span>GANADOR</span>
-                            </div>
-                          )}
+                          <div className="flex items-center gap-1 shrink-0">
+                            {isPlayerNominee && (
+                              <span className="text-[9px] font-bold bg-purple-500/25 text-purple-300 border border-purple-500/40 px-1.5 py-0.5 rounded-[4px] shadow-xs">
+                                TÚ
+                              </span>
+                            )}
+                            {isWinner && (
+                              <span className="flex items-center gap-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 px-2 py-0.5 rounded-[4px] text-[10px] font-extrabold border border-amber-400 shadow-xs animate-pulse">
+                                <Trophy className="w-3 h-3 text-amber-950" />
+                                <span>GANADOR</span>
+                              </span>
+                            )}
+                          </div>
                         </div>
+
+                        {/* Card Footer: Highlight stats / metadata */}
+                        {(nominee.highlightText || nominee.producerName) && (
+                          <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-[#94A3B8]">
+                            <span className="truncate" title={nominee.highlightText || `Prod: ${nominee.producerName}`}>
+                              {nominee.highlightText || (nominee.producerName ? `Producción: ${nominee.producerName}` : '')}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -343,9 +379,9 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
               {/* Winner Announcement Card if revealed */}
               {isCurrentRevealed && (
                 <div
-                  className={`p-5 rounded-[12px] border mt-4 animate-fade-in ${
+                  className={`p-4 sm:p-5 rounded-[12px] border mt-4 animate-fade-in ${
                     currentCategory.winnerArtistId === player.id || currentCategory.playerWon
-                      ? 'bg-amber-500/15 border-amber-500/50 text-amber-200 ring-2 ring-amber-400'
+                      ? 'bg-gradient-to-br from-amber-500/20 via-amber-500/10 to-yellow-500/10 border-amber-500/50 text-amber-200 ring-2 ring-amber-400 shadow-lg'
                       : 'bg-[#16181F] border-[#2A2E3D] text-[#F8FAFC]'
                   }`}
                 >
@@ -354,34 +390,45 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                       className={`w-12 h-12 rounded-[8px] flex items-center justify-center shrink-0 ${
                         currentCategory.winnerArtistId === player.id || currentCategory.playerWon
                           ? 'bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 shadow-md'
-                          : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#F8FAFC]'
+                          : 'bg-[#0B0C10] border border-[#2A2E3D] text-amber-400'
                       }`}
                     >
                       <Trophy className="w-6 h-6" />
                     </div>
 
-                    <div className="space-y-1 min-w-0 flex-1">
+                    <div className="space-y-1.5 min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-[4px] bg-amber-500/20 text-amber-300 border border-amber-500/40">
                           Estatuilla Oficial de la Academia
                         </span>
                         {(currentCategory.winnerArtistId === player.id || currentCategory.playerWon) && (
-                          <span className="text-xs font-bold text-amber-300 bg-amber-500/25 border border-amber-400/50 px-2 py-0.5 rounded-[4px] flex items-center gap-1">
-                            <PartyPopper className="w-3.5 h-3.5" />
+                          <span className="text-xs font-bold text-amber-300 bg-amber-500/25 border border-amber-400/50 px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs">
+                            <PartyPopper className="w-3.5 h-3.5 text-amber-400" />
                             ¡FELICIDADES! HAS GANADO ESTA CATEGORÍA
                           </span>
                         )}
                       </div>
 
-                      <h4 className="text-lg font-semibold tracking-tight text-[#F8FAFC]">
+                      <h4 className="text-base sm:text-lg font-semibold tracking-tight text-[#F8FAFC] truncate">
                         {currentCategory.winnerItemTitle ? `"${currentCategory.winnerItemTitle}" — ` : ''}
                         {currentCategory.winnerArtistName}
                       </h4>
 
                       {currentCategory.winnerReason && (
                         <p className="text-xs text-[#94A3B8] leading-relaxed italic">
-                          {currentCategory.winnerReason}
+                          "{currentCategory.winnerReason}"
                         </p>
+                      )}
+
+                      {(currentCategory.winnerArtistId === player.id || currentCategory.playerWon) && (
+                        <div className="pt-2 flex items-center gap-2 flex-wrap font-mono text-[11px]">
+                          <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-[4px] font-bold">
+                            +5 Pts de Legado
+                          </span>
+                          <span className="bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-[4px] font-bold">
+                            +Hype & Reputación
+                          </span>
+                        </div>
                       )}
                     </div>
                   </div>

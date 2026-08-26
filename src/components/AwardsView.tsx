@@ -292,30 +292,51 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                                 )}
                               </div>
 
-                              {/* Nominees List */}
+                              {/* Nominees Grid (4 items: 2x2 layout on sm:) */}
                               {cat.nominees && cat.nominees.length > 0 && (
-                                <div className="pt-1.5 border-t border-[#2A2E3D]/70 space-y-1">
-                                  <span className="text-[10px] uppercase text-[#94A3B8] font-semibold block">
+                                <div className="pt-2 border-t border-[#2A2E3D] space-y-1.5">
+                                  <span className="text-[10px] uppercase text-[#94A3B8] font-bold tracking-wider block">
                                     Nominados ({cat.nominees.length})
                                   </span>
-                                  <div className="space-y-0.5">
-                                    {cat.nominees.map((nom, nIdx) => (
-                                      <div
-                                        key={nIdx}
-                                        className={`flex items-center justify-between text-[11px] py-0.5 ${
-                                          nom.artistId === player.id ? 'font-bold text-purple-300' : 'text-[#94A3B8]'
-                                        }`}
-                                      >
-                                        <span>
-                                          • {nom.artistName} {nom.itemTitle ? `("${nom.itemTitle}")` : ''}
-                                        </span>
-                                        {nom.artistId === player.id && (
-                                          <span className="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-1.5 py-0.2 rounded-[3px] font-bold">
-                                            Tú
-                                          </span>
-                                        )}
-                                      </div>
-                                    ))}
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                    {cat.nominees.map((nom, nIdx) => {
+                                      const isNomPlayer = nom.artistId === player.id || nom.isPlayer;
+                                      const isNomWinner = nom.artistId === cat.winnerArtistId;
+                                      return (
+                                        <div
+                                          key={nIdx}
+                                          className={`p-2 rounded-[6px] border text-[11px] flex items-center justify-between gap-1.5 transition-all ${
+                                            isNomWinner
+                                              ? 'bg-amber-500/10 border-amber-500/30 font-semibold text-amber-200'
+                                              : isNomPlayer
+                                              ? 'bg-purple-500/10 border-purple-500/30 font-semibold text-purple-200'
+                                              : 'bg-[#16181F] border-[#2A2E3D]/80 text-[#94A3B8]'
+                                          }`}
+                                        >
+                                          <div className="min-w-0 flex-1 truncate">
+                                            <span className="font-mono text-[10px] mr-1 text-[#8B5CF6]">#{nIdx + 1}</span>
+                                            <span className="text-[#F8FAFC]">
+                                              {nom.itemTitle ? `"${nom.itemTitle}"` : nom.artistName}
+                                            </span>
+                                            {nom.itemTitle && (
+                                              <span className="text-[#94A3B8] text-[10px] ml-1 truncate">
+                                                — {nom.artistName}
+                                              </span>
+                                            )}
+                                          </div>
+                                          {isNomPlayer && (
+                                            <span className="text-[9px] bg-purple-500/25 text-purple-300 border border-purple-500/40 px-1.5 py-0.2 rounded-[3px] font-bold shrink-0">
+                                              Tú
+                                            </span>
+                                          )}
+                                          {isNomWinner && (
+                                            <span className="text-[9px] bg-amber-500/25 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded-[3px] font-bold shrink-0">
+                                              🏆 Ganador
+                                            </span>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
                                   </div>
                                 </div>
                               )}
