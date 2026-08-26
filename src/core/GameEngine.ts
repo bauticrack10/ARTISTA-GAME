@@ -58,7 +58,7 @@ export class GameEngine {
         avatarIcon: customPlayer.avatarIcon,
         country: customPlayer.country || 'Argentina',
         city: customPlayer.city || 'Buenos Aires',
-        birthYear: customPlayer.birthYear || ((customPlayer.careerStartYear || 2026) - 18),
+        birthYear: customPlayer.birthYear !== undefined ? customPlayer.birthYear : ((customPlayer.careerStartYear || 2026) - 18),
         careerStartYear: customPlayer.careerStartYear || 2026,
         mainGenreId: customPlayer.mainGenreId || 'trap_latino',
         subGenreIds: customPlayer.subGenreIds || [],
@@ -208,6 +208,11 @@ export class GameEngine {
 
   public getPlayer(): Artist {
     return this.world.artists[this.playerId] || Object.values(this.world.artists)[0];
+  }
+
+  public getPlayerAge(): number {
+    const player = this.getPlayer();
+    return TimeSystem.calculateAge(player.birthYear, this.world.currentYear);
   }
 
   public getCurrentEvent(): EventDefinition | null {
@@ -1152,21 +1157,22 @@ export class GameEngine {
       // 6. Annual awards and mandatory drought check on December end
       if (isNewYear) {
         // Mandatory Creative Drought check: Did the player release ANY song or album this year?
+        const droughtYear = this.world.currentYear;
         const playerReleasesInYear = Object.values(this.world.songs).filter(
-          s => s.artistId === player.id && s.releaseYear === this.world.currentYear
+          s => s.artistId === player.id && s.releaseYear === droughtYear
         ).length;
 
         if (playerReleasesInYear === 0) {
           const droughtEvent = getCreativeDroughtEvent({
             player,
             world: this.world,
-            currentYear: this.world.currentYear,
+            currentYear: droughtYear,
             currentMonth: this.world.currentMonth
           });
           collectedEvents.unshift(droughtEvent);
         }
 
-        const awardRes = AwardEngine.conductAnnualAwards(this.world, this.world.currentYear);
+        const awardRes = AwardEngine.conductAnnualAwards(this.world, droughtYear);
         this.world.awardsHistory.unshift(awardRes.ceremony);
         this.activeGalaCeremony = awardRes.ceremony;
         for (const aNews of awardRes.awardNews) {
@@ -1174,7 +1180,7 @@ export class GameEngine {
             id: `news_award_${Date.now()}_${Math.random()}`,
             headline: aNews.headline,
             body: aNews.body,
-            year: this.world.currentYear,
+            year: droughtYear,
             month: this.world.currentMonth,
             category: 'award',
             relatedArtistIds: [aNews.relatedArtistId],

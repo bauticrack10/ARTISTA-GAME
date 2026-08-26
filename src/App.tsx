@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GameEngine } from './core/GameEngine';
-import { WorldState, Artist, EventDefinition, LongevityCurve, TourTier, Album, AwardCeremony } from './types';
+import { WorldState, Artist, EventDefinition, LongevityCurve, TourTier, Album, AwardCeremony, Song } from './types';
 import { StartScreen } from './components/StartScreen';
 import { CharacterCreatorView } from './components/CharacterCreatorView';
 import { Navbar } from './components/Navbar';

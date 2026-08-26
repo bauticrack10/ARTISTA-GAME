@@ -255,11 +255,12 @@ export function useEventModal({
       /sequ[íi]a|cierre|anual|balance/i.test(event.title);
 
     if (isAnnualOrDrought && (month === 12 || event.id === 'evt_creative_drought_mandatory')) {
+      const yearToDisplay = event.eventYear ?? (month === 1 && event.id === 'evt_creative_drought_mandatory' ? year - 1 : year);
       return {
-        label: `Fin del Año ${year}`,
-        badge: `Fin del Año ${year} • Cierre de Temporada`,
+        label: `Fin del Año ${yearToDisplay}`,
+        badge: `Fin del Año ${yearToDisplay} • Cierre de Temporada`,
         isYearEnd: true,
-        monthName
+        monthName: 'Diciembre'
       };
     }
 
@@ -269,11 +270,18 @@ export function useEventModal({
       isYearEnd: false,
       monthName
     };
-  }, [world.currentMonth, world.currentYear, event.id, event.category, event.title]);
+  }, [world.currentMonth, world.currentYear, event.id, event.category, event.title, event.eventYear]);
 
   // Category visual metadata
   const categoryMeta: CategoryMeta = useMemo(() => {
     switch (event.category) {
+      case 'crisis':
+        return {
+          label: 'Crisis & Sequía',
+          icon: Swords,
+          badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+          glow: 'from-rose-500/20 via-transparent to-transparent'
+        };
       case 'career':
         return {
           label: 'Decisión de Carrera',
@@ -344,6 +352,12 @@ export function useEventModal({
   // Rarity visual metadata
   const rarityMeta: RarityMeta = useMemo(() => {
     switch (event.rarity) {
+      case 'crisis':
+        return {
+          label: 'Momento Crítico',
+          badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_12px_rgba(244,63,94,0.3)]',
+          dotColor: 'bg-rose-500'
+        };
       case 'legendary':
         return {
           label: 'Hito Legendario',

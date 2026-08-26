@@ -45,6 +45,7 @@ export class EventEngine {
       else if (evt.rarity === 'uncommon') score *= 0.6;
       else if (evt.rarity === 'rare') score *= 0.3;
       else if (evt.rarity === 'legendary') score *= 0.1;
+      else if (evt.rarity === 'crisis') score *= 0.5;
 
       candidates.push({ event: evt, score });
     }

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { WorldState, Artist, NewsItem, SocialPost } from '../types';
+import { WorldState, Artist, NewsItem, SocialPost, MusicTrend } from '../types';
 import {
   Radio,
   Newspaper,

@@ -573,6 +573,7 @@ export interface EventContext {
   world: WorldState;
   currentYear: number;
   currentMonth: number;
+  eventYear?: number;
   recentCollabArtist?: Artist;
   rivalArtist?: Artist;
   mentorArtist?: Artist;
