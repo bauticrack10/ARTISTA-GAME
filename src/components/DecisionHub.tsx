@@ -130,8 +130,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   <Layers className="w-3 h-3 text-[#8B5CF6]" />
                   Cupo Anual:
                 </span>
-                <span className="font-semibold text-[#F8FAFC]">
-                  {world ? `${singlesThisYear}/5 singles este año` : 'Hasta 5 singles/año'}
+                <span className="font-semibold text-[#F8FAFC] text-[10px]" title="El cupo se reinicia automáticamente en el 1er Semestre de cada año">
+                  {world ? `${singlesThisYear}/5 singles (Reinicia en Semestre 1 de cada año)` : 'Hasta 5 singles/año'}
                 </span>
               </div>
             </div>
@@ -310,7 +310,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         </div>
 
         {/* ========================================================================= */}
-        {/* TARJETA 4: DESCANSO */}
+        {/* TARJETA 4: DESCANSO & BIENESTAR */}
         {/* ========================================================================= */}
         <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#10B981]/60 border-l-4 border-l-[#10B981] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] flex flex-col justify-between h-full space-y-4">
           <div className="space-y-3">
@@ -320,17 +320,17 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 <Coffee className="w-5 h-5" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-[9999px] border border-emerald-500/30 shadow-xs">
-                +50 Energía • 6 Meses
+                +50 Energía • Sin Salto de Turno
               </span>
             </div>
 
             {/* Title & Description */}
             <div>
               <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
-                Descanso
+                Descanso & Bienestar
               </h3>
               <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
-                Vacaciones de 6 meses para desconectar de la prensa, recuperar vitalidad y percibir regalías.
+                Retiro de relax para recuperar vitalidad inmediata (+50) sin consumir turnos del calendario.
               </p>
             </div>
 
@@ -345,10 +345,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </div>
               <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
                 <span className="text-[#94A3B8] flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-emerald-400" />
-                  Tiempo Empleado:
+                  <DollarSign className="w-3 h-3 text-emerald-400" />
+                  Costo de Retiro:
                 </span>
-                <span className="font-semibold text-[#F8FAFC]">Semestre Sabático (6M)</span>
+                <span className="font-semibold text-emerald-400">$400 • Acción Inmediata</span>
               </div>
             </div>
           </div>
@@ -358,10 +358,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
             id="btn-take-vacation"
             onClick={onRest}
             className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#10B981] text-[#F8FAFC] hover:text-black border border-[#2A2E3D] hover:border-[#10B981] font-bold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-            title="Tomar 6 meses de descanso y recuperar +50 de energía vital"
+            title="Tomar retiro de descanso y recuperar +50 de energía vital por $400 en el semestre actual"
           >
             <Zap className="w-3.5 h-3.5 text-emerald-400 group-hover:text-black fill-current" />
-            <span>Tomar Vacaciones</span>
+            <span>Tomar Retiro de Descanso</span>
             <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
           </button>
         </div>

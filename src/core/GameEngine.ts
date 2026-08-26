@@ -795,24 +795,30 @@ export class GameEngine {
     this.takeVacation();
   }
 
-  public takeVacation() {
+  public takeVacation(cost: number = 400) {
     const player = this.getPlayer();
-    // Acción dedicada que consume exactamente 6 meses y recupera +50 de energía (hasta un tope de 100)
+    // 1. Descontar costo módico de fondos si tiene saldo disponible
+    const actualCost = Math.min(player.stats.funds, cost);
+    player.stats.funds = Math.max(0, player.stats.funds - actualCost);
+
+    // 2. Recuperar energía vital (+50 hasta un tope de 100)
     player.stats.energy = Math.min(100, player.stats.energy + 50);
 
+    // 3. Registrar noticia de bienestar
     this.world.news.unshift({
       id: `news_vacation_${Date.now()}`,
-      headline: `Pausa Creativa: ${player.name} se toma 6 meses de vacaciones y retiro`,
-      body: `El artista aprovecha este semestre sabático para desconectar de la industria musical, recuperar energías (+50%) y buscar nueva inspiración sonora.`,
+      headline: `Bienestar & Pausa: ${player.name} realiza un retiro de descanso`,
+      body: `El artista recupera vitalidad (+50% de energía) y renueva su enfoque creativo para las próximas producciones sin alterar el calendario de la temporada.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'culture',
       relatedArtistIds: [player.id],
       sentiment: 'positive',
-      importance: 3
+      importance: 2
     });
 
-    this.advanceCycle(6, true);
+    // 4. Notificar actualización de estado sin forzar avance de semestre duplicado
+    this.notify();
   }
 
   public resolveCurrentEventChoice(choiceIndex: number): EventOutcome | null {

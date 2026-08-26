@@ -83,6 +83,50 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   const currentLabel = player.labelId && world.labels ? world.labels[player.labelId] : null;
   const currentManager = player.managerId && world.managers ? world.managers[player.managerId] : null;
 
+  // Dynamic growth percentage calculation for streams/listeners (with 0.0% zero-state)
+  const listenerGrowth = React.useMemo(() => {
+    const playerSongs = (Object.values(world.songs || {}) as Song[]).filter(
+      (s) => s.artistId === player.id
+    );
+    // Estado cero: sin canciones grabadas o streams en cero absoluto
+    if (playerSongs.length === 0 || player.stats.totalStreams === 0) {
+      return {
+        formatted: '0.0%',
+        label: '0.0% este semestre',
+        isPositive: false,
+        isZero: true
+      };
+    }
+
+    let currentPeriodStreams = 0;
+    let prevPeriodStreams = 0;
+    for (const song of playerSongs) {
+      const history = song.monthlyStreamsHistory || [];
+      if (history.length >= 2) {
+        currentPeriodStreams += history[history.length - 1] || 0;
+        prevPeriodStreams += history[history.length - 2] || 0;
+      } else if (history.length === 1) {
+        currentPeriodStreams += history[0] || 0;
+      }
+    }
+
+    if (prevPeriodStreams === 0) {
+      if (currentPeriodStreams > 0) {
+        return { formatted: '+100%', label: '+100% debut', isPositive: true, isZero: false };
+      }
+      return { formatted: '0.0%', label: '0.0% este semestre', isPositive: false, isZero: true };
+    }
+
+    const pct = ((currentPeriodStreams - prevPeriodStreams) / prevPeriodStreams) * 100;
+    const sign = pct >= 0 ? '+' : '';
+    return {
+      formatted: `${sign}${pct.toFixed(1)}%`,
+      label: `${sign}${pct.toFixed(1)}% este semestre`,
+      isPositive: pct > 0,
+      isZero: pct === 0
+    };
+  }, [world.songs, player.id, player.stats.totalStreams]);
+
   const handleOpenModal = () => {
     if (onOpenAvatarModal) {
       onOpenAvatarModal();
@@ -274,8 +318,8 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono block mt-0.5">
               {formatListeners(player.stats.monthlyListeners)}
             </span>
-            <span className="text-[10px] text-emerald-500/80 font-medium block">
-              +12.4% este semestre
+            <span className={`text-[10px] font-medium block ${listenerGrowth.isPositive ? 'text-emerald-500/80' : 'text-[#94A3B8]'}`}>
+              {listenerGrowth.label}
             </span>
           </div>
 

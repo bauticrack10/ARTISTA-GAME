@@ -184,8 +184,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 playSound('click');
                 onAdvanceCycle(cycleMonths);
               }}
-              className="group relative flex items-center gap-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:from-[#7C3AED] hover:to-[#DB2777] text-white px-4 py-1.5 rounded-[8px] text-xs font-bold cursor-pointer active:scale-[0.98] transition-all shadow-[0_0_15px_rgba(139,92,246,0.35)] shrink-0 border border-white/20"
-              title={`Avanzar ciclo de ${cycleMonths === 6 ? '6 meses' : '1 año'} y simular lanzamientos, charts y eventos`}
+              className="group relative flex items-center gap-2 bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#EC4899] hover:from-[#6D28D9] hover:via-[#7C3AED] hover:to-[#DB2777] text-white px-4 py-1.5 rounded-[8px] text-xs font-bold cursor-pointer active:scale-[0.98] transition-all shadow-[0_0_15px_rgba(124,58,237,0.35)] shrink-0 border border-white/20"
+              title={`Avanzar ciclo de ${cycleMonths === 6 ? '6 meses (1 Semestre)' : '1 año (2 Semestres)'} y simular lanzamientos, charts y eventos`}
             >
               <Play className="w-3.5 h-3.5 fill-white text-white group-hover:scale-110 transition-transform shrink-0" />
               <span className="tracking-tight font-semibold">

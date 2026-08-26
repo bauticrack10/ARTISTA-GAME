@@ -526,8 +526,9 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 : 'bg-[#8B5CF6]/15 border-[#8B5CF6]/40 text-[#C084FC]'
             }`}>
               <Calendar className={`w-4 h-4 ${isSinglesLimitReached ? 'text-rose-400' : 'text-[#8B5CF6]'}`} />
-              <span>Singles en {world.currentYear}:</span>
+              <span>Cupo Anual de Singles:</span>
               <strong className="font-mono">{singlesThisYear} / {MAX_SINGLES}</strong>
+              <span className="text-[10px] text-[#94A3B8] font-normal hidden sm:inline">(Reinicia en Semestre 1 de cada año)</span>
               {isSinglesLimitReached && <span className="text-[10px] text-rose-400 font-bold uppercase">(Tope alcanzado)</span>}
             </div>
           </div>
