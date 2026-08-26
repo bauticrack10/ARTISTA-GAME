@@ -64,7 +64,26 @@ export class StreamingEngine {
     // Base total potential per month
     const baseTotalStreams = fanStreamBase + algorithmicStreams;
 
-    // 5. Longevity curves & decay over time
+    // 5. Music Video Boost (Initial streaming velocity & viral chance multiplier)
+    let musicVideoVelocityMultiplier = 1.0;
+    let viralChanceBonus = 0;
+    if (song.musicVideo) {
+      if (song.musicVideo.directorTier === 'Director de Élite Mundial') {
+        if (ageMonths <= 3) musicVideoVelocityMultiplier = 1.70;
+        else if (ageMonths <= 6) musicVideoVelocityMultiplier = 1.30;
+        viralChanceBonus = 0.035; // +3.5% viral chance
+      } else if (song.musicVideo.directorTier === 'Estudio Indie') {
+        if (ageMonths <= 3) musicVideoVelocityMultiplier = 1.35;
+        else if (ageMonths <= 5) musicVideoVelocityMultiplier = 1.15;
+        viralChanceBonus = 0.015; // +1.5% viral chance
+      } else {
+        // Director Emergente
+        if (ageMonths <= 2) musicVideoVelocityMultiplier = 1.15;
+        viralChanceBonus = 0.005; // +0.5% viral chance
+      }
+    }
+
+    // 6. Longevity curves & decay over time
     let ageMultiplier = 1.0;
     let wentViralNow = false;
     let becomesClassicNow = false;
@@ -83,7 +102,7 @@ export class StreamingEngine {
       if (song.wentViral) {
         // Post-viral decaying retention
         ageMultiplier = 2.2 * Math.max(0.18, Math.pow(0.88, (ageMonths % 12)));
-      } else if (ageMonths >= 4 && ageMonths <= 96 && Math.random() < 0.012) {
+      } else if (ageMonths >= 4 && ageMonths <= 96 && Math.random() < (0.012 + viralChanceBonus)) {
         wentViralNow = true;
         ageMultiplier = 5.0;
       } else {
@@ -105,7 +124,13 @@ export class StreamingEngine {
       else ageMultiplier = Math.max(0.05, Math.pow(0.88, ageMonths));
     }
 
-    const calculatedStreams = Math.floor(baseTotalStreams * ageMultiplier);
+    // Early viral check for songs with high-budget video or exceptional reach
+    if (!song.wentViral && ageMonths <= 2 && viralChanceBonus > 0 && Math.random() < viralChanceBonus) {
+      wentViralNow = true;
+      ageMultiplier *= 2.5;
+    }
+
+    const calculatedStreams = Math.floor(baseTotalStreams * ageMultiplier * musicVideoVelocityMultiplier);
     // Minimum stream floor scaled realistically
     const minFloor = artist.stats.popularity > 20 ? 50 : Math.max(5, Math.floor(activeFans * 0.05));
 

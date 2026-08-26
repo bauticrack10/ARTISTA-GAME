@@ -15,6 +15,8 @@ import {
   Layers,
   Clock
 } from 'lucide-react';
+import { playSound } from '../utils/audioSystem';
+
 
 export interface DecisionHubProps {
   player: Artist;
@@ -137,7 +139,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
 
           {/* Action CTA Button */}
           <button
-            onClick={() => onNavigate('studio')}
+            onClick={() => {
+              playSound('click');
+              onNavigate('studio');
+            }}
             className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#8B5CF6] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#8B5CF6] font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(139,92,246,0.3)]"
             title="Entrar al Estudio de Grabación"
           >
@@ -197,7 +202,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
 
           {/* Action CTA Button */}
           <button
-            onClick={() => onNavigate('lifestyle')}
+            onClick={() => {
+              playSound('click');
+              onNavigate('lifestyle');
+            }}
             className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#06B6D4] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#06B6D4] font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]"
             title="Ver Catálogo de Mejoras y Bienes de Lujo"
           >
@@ -279,6 +287,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           <button
             onClick={() => {
               if (isTourReady) {
+                playSound('click');
                 onNavigate('tours');
               }
             }}

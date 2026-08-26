@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Artist, WorldState, Song, Album, ReleaseType, LongevityCurve, Producer } from '../types';
+import {
+  Artist,
+  WorldState,
+  Song,
+  Album,
+  ReleaseType,
+  LongevityCurve,
+  Producer,
+  MusicVideoConcept,
+  MusicVideoDirectorTier
+} from '../types';
 import { getArtistDerivedStyles, SUBGENRE_DETAILS } from '../data/genres';
 import { GameEngine } from '../core/GameEngine';
 import {
@@ -24,7 +34,17 @@ import {
   Radio,
   FileMusic,
   CheckSquare,
-  Square
+  Square,
+  Video,
+  Clapperboard,
+  Film,
+  Tv,
+  Box,
+  Camera,
+  Eye,
+  Crown,
+  Zap,
+  Play
 } from 'lucide-react';
 import {
   getGenreTheme,
@@ -32,6 +52,117 @@ import {
   RELEASE_BADGES,
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
+import { playSound } from '../utils/audioSystem';
+
+export interface VideoConceptOption {
+  id: MusicVideoConcept;
+  name: string;
+  tag: string;
+  description: string;
+  icon: React.ElementType;
+  gradient: string;
+  borderHover: string;
+}
+
+export const VIDEO_CONCEPTS: VideoConceptOption[] = [
+  {
+    id: 'Cine 4K Cinematográfico',
+    name: 'Cine 4K Cinematográfico',
+    tag: '4K Anamórfico',
+    description: 'Planos secuencia cinematográficos, iluminación con lentes anamórficas de 35mm, narrativa dramática y etalonaje de película de autor.',
+    icon: Clapperboard,
+    gradient: 'from-cyan-500/20 to-blue-600/20',
+    borderHover: 'hover:border-cyan-400/50'
+  },
+  {
+    id: 'VHS Retro Synthwave',
+    name: 'VHS Retro Synthwave',
+    tag: 'Textura Analógica 80s',
+    description: 'Luces de neón magenta y cian, escaneo analógico en cinta VHS, destellos de cromo y atmósfera de club nocturno retro.',
+    icon: Tv,
+    gradient: 'from-pink-500/20 to-purple-600/20',
+    borderHover: 'hover:border-pink-400/50'
+  },
+  {
+    id: 'Animación 3D Futurista',
+    name: 'Animación 3D Futurista',
+    tag: 'CGI Unreal Engine',
+    description: 'Avatares 3D hiperrealistas, efectos visuales de partículas, escenografía cyberpunk distópica y estética de videojuego AAA.',
+    icon: Box,
+    gradient: 'from-violet-500/20 to-fuchsia-600/20',
+    borderHover: 'hover:border-violet-400/50'
+  },
+  {
+    id: 'Urbano Callejero DIY',
+    name: 'Urbano Callejero DIY',
+    tag: 'Guerrilla & Fisheye',
+    description: 'Grabación en formato guerrilla urbana con lente Fisheye, tomas nocturnas con flash crudo y dinamismo skate/trap underground.',
+    icon: Camera,
+    gradient: 'from-amber-500/20 to-orange-600/20',
+    borderHover: 'hover:border-amber-400/50'
+  },
+  {
+    id: 'Psicodélico & Arte Conceptual',
+    name: 'Psicodélico & Arte Conceptual',
+    tag: 'Vanguardia & Surrealismo',
+    description: 'Simbolismos oníricos, vestuarios de alta costura conceptual, distorsiones visuales hipnóticas y dirección artística de galería moderna.',
+    icon: Eye,
+    gradient: 'from-emerald-500/20 to-teal-600/20',
+    borderHover: 'hover:border-emerald-400/50'
+  }
+];
+
+export interface DirectorTierOption {
+  id: MusicVideoDirectorTier;
+  name: string;
+  tag: string;
+  cost: number;
+  description: string;
+  hypeBoost: number;
+  velocityBoost: number;
+  viralBoost: number;
+  estimatedViews: string;
+  icon: React.ElementType;
+}
+
+export const DIRECTOR_TIERS: DirectorTierOption[] = [
+  {
+    id: 'Director Emergente',
+    name: 'Director Emergente',
+    tag: 'Indie / Guerrilla',
+    cost: 1500,
+    description: 'Joven realizador audiovisual con visión transgresora, equipo ligero y creatividad fresca.',
+    hypeBoost: 10,
+    velocityBoost: 15,
+    viralBoost: 5,
+    estimatedViews: '10k – 50k vistas',
+    icon: Video
+  },
+  {
+    id: 'Estudio Indie',
+    name: 'Estudio Indie',
+    tag: 'Productora Consolidada',
+    cost: 5000,
+    description: 'Productora audiovisual establecida con set de iluminación profesional, escenografía y casting.',
+    hypeBoost: 25,
+    velocityBoost: 35,
+    viralBoost: 15,
+    estimatedViews: '50k – 300k vistas',
+    icon: Film
+  },
+  {
+    id: 'Director de Élite Mundial',
+    name: 'Director de Élite Mundial',
+    tag: 'Nivel MTV VMAs / Hollywood',
+    cost: 20000,
+    description: 'Director galardonado internacionalmente con cámaras RED/ARRI, efectos especiales y distribución global masiva.',
+    hypeBoost: 50,
+    velocityBoost: 70,
+    viralBoost: 35,
+    estimatedViews: '500k – 5M+ vistas',
+    icon: Crown
+  }
+];
 
 interface StudioViewProps {
   player: Artist;
@@ -45,6 +176,11 @@ interface StudioViewProps {
     budgetProduction: number;
     budgetMarketing: number;
     longevityCurve: LongevityCurve;
+    musicVideo?: {
+      concept: string;
+      budget: number;
+      directorTier: string;
+    };
   }) => void;
   onReleaseAlbum: (params: {
     title: string;
@@ -105,6 +241,16 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const [singleProdBudget, setSingleProdBudget] = useState(2000);
   const [singleMktBudget, setSingleMktBudget] = useState(2500);
   const [singleLongevity, setSingleLongevity] = useState<LongevityCurve>('steady');
+
+  // Music Video Production State
+  const [hasMusicVideo, setHasMusicVideo] = useState(false);
+  const [selectedVideoConcept, setSelectedVideoConcept] = useState<MusicVideoConcept>('Cine 4K Cinematográfico');
+  const [selectedDirectorTier, setSelectedDirectorTier] = useState<MusicVideoDirectorTier>('Estudio Indie');
+
+  const currentDirectorTier = DIRECTOR_TIERS.find(t => t.id === selectedDirectorTier) || DIRECTOR_TIERS[1];
+  const videoCost = hasMusicVideo ? currentDirectorTier.cost : 0;
+  const singleProdFee = singleProducer ? (world.producers[singleProducer]?.costPerTrack || 0) : 0;
+  const totalSingleCost = singleProdBudget + singleMktBudget + singleProdFee + videoCost;
 
   // Album State
   const [albumTitle, setAlbumTitle] = useState('');
@@ -177,11 +323,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
       return;
     }
 
-    const prodFee = singleProducer ? (world.producers[singleProducer]?.costPerTrack || 0) : 0;
-    const totalCost = singleProdBudget + singleMktBudget + prodFee;
-
-    if (totalCost > player.stats.funds) {
-      alert(`Fondos insuficientes. Necesitas $${totalCost.toLocaleString()} y tienes $${player.stats.funds.toLocaleString()}`);
+    if (totalSingleCost > player.stats.funds) {
+      alert(`Fondos insuficientes. Necesitas $${totalSingleCost.toLocaleString()} y tienes $${player.stats.funds.toLocaleString()}`);
       return;
     }
     if (player.stats.energy < 15) {
@@ -197,11 +340,22 @@ export const StudioView: React.FC<StudioViewProps> = ({
       producerId: singleProducer || undefined,
       budgetProduction: singleProdBudget,
       budgetMarketing: singleMktBudget,
-      longevityCurve: singleLongevity
+      longevityCurve: singleLongevity,
+      musicVideo: hasMusicVideo ? {
+        concept: selectedVideoConcept,
+        budget: videoCost,
+        directorTier: selectedDirectorTier
+      } : undefined
     });
 
-    setNotification(`¡El single "${singleTitle}" ha sido lanzado al mercado mundial!`);
+    playSound('release');
+    setNotification(
+      hasMusicVideo
+        ? `¡El single "${singleTitle}" y su Videoclip Oficial (${selectedVideoConcept}) han sido estrenados mundialmente!`
+        : `¡El single "${singleTitle}" ha sido lanzado al mercado mundial!`
+    );
     setSingleTitle('');
+    setHasMusicVideo(false);
     setTimeout(() => setNotification(null), 5000);
   };
 
@@ -238,6 +392,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       producerId: albumProducer || undefined
     });
 
+    playSound('release');
     setNotification(`¡El proyecto "${albumTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`);
     setAlbumTitle('');
     setIncludedSingleIds([]);
@@ -542,9 +697,31 @@ export const StudioView: React.FC<StudioViewProps> = ({
               {/* Cost & Summary Card */}
               <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2 text-xs">
                 <div className="flex items-center justify-between text-[#94A3B8]">
-                  <span>Costo Total del Sencillo:</span>
+                  <span>Producción & Marketing:</span>
+                  <span className="font-mono text-[#F8FAFC]">
+                    ${(singleProdBudget + singleMktBudget).toLocaleString()}
+                  </span>
+                </div>
+                {singleProducer && (
+                  <div className="flex items-center justify-between text-[#94A3B8]">
+                    <span>Productor ({world.producers[singleProducer]?.name}):</span>
+                    <span className="font-mono text-[#F8FAFC]">
+                      +${singleProdFee.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+                {hasMusicVideo && (
+                  <div className="flex items-center justify-between text-[#38BDF8]">
+                    <span>Videoclip ({selectedDirectorTier}):</span>
+                    <span className="font-bold font-mono">
+                      +${videoCost.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between text-[#94A3B8] pt-1 border-t border-[#2A2E3D]">
+                  <span className="font-semibold text-[#F8FAFC]">Costo Total del Sencillo:</span>
                   <span className="font-bold font-mono text-[#C084FC] text-sm">
-                    ${(singleProdBudget + singleMktBudget + (singleProducer ? (world.producers[singleProducer]?.costPerTrack || 0) : 0)).toLocaleString()}
+                    ${totalSingleCost.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[#94A3B8]">
@@ -553,12 +730,211 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </div>
                 <div className="flex items-center justify-between text-[#94A3B8]">
                   <span>Fondos Disponibles:</span>
-                  <span className="font-bold font-mono text-emerald-400">
+                  <span className={`font-bold font-mono ${player.stats.funds >= totalSingleCost ? 'text-emerald-400' : 'text-rose-400'}`}>
                     ${player.stats.funds.toLocaleString()}
                   </span>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* --- MUSIC VIDEO PRODUCTION SECTION (RODAJE DE VIDEOCLIPS) --- */}
+          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-2xl p-5 sm:p-6 space-y-5 transition-all shadow-inner">
+            {/* Header with Toggle */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#2A2E3D] pb-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2.5 rounded-xl border transition-all ${
+                  hasMusicVideo
+                    ? 'bg-gradient-to-tr from-[#06B6D4]/30 to-[#8B5CF6]/30 text-[#38BDF8] border-[#06B6D4]/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                    : 'bg-[#16181F] text-[#94A3B8] border-[#2A2E3D]'
+                }`}>
+                  <Clapperboard className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-[#F8FAFC]">
+                      Producción de Videoclip Oficial
+                    </h3>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#8B5CF6]/20 border border-[#8B5CF6]/40 text-[#C084FC]">
+                      Visual Lab
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#94A3B8] mt-0.5">
+                    Rodá una pieza audiovisual cinematográfica para disparar el Hype de tu Era, multiplicar el impacto Viral y acelerar el debut en streaming.
+                  </p>
+                </div>
+              </div>
+
+              {/* Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setHasMusicVideo(!hasMusicVideo)}
+                className={`px-4 py-2 rounded-[6px] text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  hasMusicVideo
+                    ? 'bg-gradient-to-r from-[#06B6D4] to-[#8B5CF6] text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]'
+                    : 'bg-[#16181F] hover:bg-white/[0.06] text-[#CBD5E1] border border-[#2A2E3D]'
+                }`}
+              >
+                <Video className="w-4 h-4" />
+                <span>{hasMusicVideo ? '✓ Videoclip Activado' : '+ Rodar Videoclip Oficial'}</span>
+              </button>
+            </div>
+
+            {hasMusicVideo ? (
+              <div className="space-y-6 pt-1">
+                {/* 1. CONCEPT & AESTHETICS */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#06B6D4]" />
+                      1. Concepto & Estética Visual
+                    </label>
+                    <span className="text-[11px] text-[#94A3B8]">
+                      Seleccionado: <strong className="text-[#38BDF8]">{selectedVideoConcept}</strong>
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {VIDEO_CONCEPTS.map(concept => {
+                      const isSelected = selectedVideoConcept === concept.id;
+                      const ConceptIcon = concept.icon;
+                      return (
+                        <div
+                          key={concept.id}
+                          onClick={() => setSelectedVideoConcept(concept.id)}
+                          className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between gap-2 cursor-pointer ${
+                            isSelected
+                              ? 'bg-gradient-to-br from-[#16181F] to-[#06B6D4]/15 border-[#06B6D4] shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-[#06B6D4]'
+                              : `bg-[#16181F] border-[#2A2E3D] ${concept.borderHover} hover:bg-white/[0.02]`
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <div className={`p-1.5 rounded-[6px] ${isSelected ? 'bg-[#06B6D4]/20 text-[#38BDF8]' : 'bg-[#0B0C10] text-[#94A3B8]'}`}>
+                                <ConceptIcon className="w-4 h-4" />
+                              </div>
+                              <span className="text-xs font-semibold text-[#F8FAFC]">{concept.name}</span>
+                            </div>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-[4px] border ${
+                              isSelected ? 'bg-[#06B6D4]/20 border-[#06B6D4]/40 text-[#38BDF8]' : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8]'
+                            }`}>
+                              {concept.tag}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#94A3B8] leading-snug">
+                            {concept.description}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. DIRECTOR TIER & PRODUCTION BUDGET */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
+                      <Film className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                      2. Nivel de Dirección & Presupuesto Audiovisual
+                    </label>
+                    <span className="text-[11px] text-[#94A3B8]">
+                      Tarifa: <strong className="text-emerald-400 font-mono">${currentDirectorTier.cost.toLocaleString()}</strong>
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                    {DIRECTOR_TIERS.map(tier => {
+                      const isSelected = selectedDirectorTier === tier.id;
+                      const TierIcon = tier.icon;
+                      return (
+                        <div
+                          key={tier.id}
+                          onClick={() => setSelectedDirectorTier(tier.id)}
+                          className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 cursor-pointer ${
+                            isSelected
+                              ? 'bg-gradient-to-br from-[#16181F] to-[#8B5CF6]/20 border-[#8B5CF6] shadow-[0_0_18px_rgba(139,92,246,0.3)] ring-1 ring-[#8B5CF6]'
+                              : 'bg-[#16181F] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-white/[0.02]'
+                          }`}
+                        >
+                          <div className="space-y-1.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <div className={`p-1.5 rounded-[6px] ${isSelected ? 'bg-[#8B5CF6]/25 text-[#C084FC]' : 'bg-[#0B0C10] text-[#94A3B8]'}`}>
+                                  <TierIcon className="w-4 h-4" />
+                                </div>
+                                <h4 className="text-xs font-bold text-[#F8FAFC]">{tier.name}</h4>
+                              </div>
+                              <span className="text-xs font-extrabold font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-[4px] border border-emerald-500/40">
+                                ${tier.cost.toLocaleString()}
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-[#94A3B8] font-semibold block">{tier.tag}</span>
+                            <p className="text-[11px] text-[#94A3B8] leading-snug pt-1">
+                              {tier.description}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1 pt-2 border-t border-[#2A2E3D] text-[10px] font-mono">
+                            <div className="flex items-center justify-between text-[#94A3B8]">
+                              <span>Hype Inmediato:</span>
+                              <strong className="text-[#C084FC]">+{tier.hypeBoost}</strong>
+                            </div>
+                            <div className="flex items-center justify-between text-[#94A3B8]">
+                              <span>Velocidad Streaming:</span>
+                              <strong className="text-emerald-400">+{tier.velocityBoost}%</strong>
+                            </div>
+                            <div className="flex items-center justify-between text-[#94A3B8]">
+                              <span>Probabilidad Viral:</span>
+                              <strong className="text-pink-400">+{tier.viralBoost}%</strong>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. LIVE IMPACT PREVIEW PANEL */}
+                <div className="bg-[#16181F] border border-[#06B6D4]/30 rounded-xl p-4 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#38BDF8]">
+                      <Zap className="w-4 h-4 text-[#06B6D4]" />
+                      <span>Previsualización de Impacto del Videoclip</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-[#94A3B8]">
+                      Estética: <strong className="text-[#F8FAFC]">{selectedVideoConcept}</strong>
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center font-mono">
+                    <div className="bg-[#0B0C10] p-2 rounded-lg border border-[#8B5CF6]/30">
+                      <span className="text-[9px] text-[#C084FC] uppercase block font-bold">Hype Adicional</span>
+                      <span className="text-xs sm:text-sm font-bold text-[#F8FAFC]">+{currentDirectorTier.hypeBoost} Hype</span>
+                    </div>
+                    <div className="bg-[#0B0C10] p-2 rounded-lg border border-emerald-500/30">
+                      <span className="text-[9px] text-emerald-300 uppercase block font-bold">Velocidad Streaming</span>
+                      <span className="text-xs sm:text-sm font-bold text-emerald-400">+{currentDirectorTier.velocityBoost}% Inicio</span>
+                    </div>
+                    <div className="bg-[#0B0C10] p-2 rounded-lg border border-pink-500/30">
+                      <span className="text-[9px] text-pink-300 uppercase block font-bold">Chance Viral</span>
+                      <span className="text-xs sm:text-sm font-bold text-pink-400">+{currentDirectorTier.viralBoost}% Viral</span>
+                    </div>
+                    <div className="bg-[#0B0C10] p-2 rounded-lg border border-cyan-500/30">
+                      <span className="text-[9px] text-cyan-300 uppercase block font-bold">Alcance Visual</span>
+                      <span className="text-xs sm:text-sm font-bold text-[#38BDF8]">{currentDirectorTier.estimatedViews}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-3 bg-[#16181F] rounded-xl border border-[#2A2E3D] flex items-center justify-between text-xs text-[#94A3B8]">
+                <span className="flex items-center gap-2">
+                  <Info className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                  Lanzamiento estándar en solo audio. No se descontarán costes de rodaje ni se generará contenido visual oficial.
+                </span>
+                <span className="font-mono text-[#94A3B8] font-semibold">$0 Adicional</span>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end pt-4 border-t border-[#2A2E3D]">
@@ -572,7 +948,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }`}
             >
               <Disc3 className="w-4 h-4 text-white" />
-              <span>Grabar & Publicar Single</span>
+              <span>{hasMusicVideo ? 'Grabar Single & Estrenar Videoclip' : 'Grabar & Publicar Single'}</span>
             </button>
           </div>
         </form>

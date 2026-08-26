@@ -9,7 +9,8 @@ import {
   ArrowRight,
   Mic2,
   Sparkles,
-  ArrowUpRight
+  ArrowUpRight,
+  Video
 } from 'lucide-react';
 import { getGenreTheme } from '../utils/themeColors';
 
@@ -202,6 +203,16 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
 
                   {/* Tags Row */}
                   <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                    {song.musicVideo && (
+                      <span
+                        className="text-[10px] font-bold bg-cyan-950/70 text-cyan-300 border border-cyan-500/50 px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs"
+                        title={`Videoclip Oficial: ${song.musicVideo.concept} • Dir: ${song.musicVideo.directorTier} • ${song.musicVideo.views.toLocaleString()} vistas`}
+                      >
+                        <Video className="w-2.5 h-2.5 text-cyan-400" />
+                        🎬 Videoclip Oficial
+                      </span>
+                    )}
+
                     {song.wentViral && (
                       <span className="text-[10px] font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs">
                         <Flame className="w-2.5 h-2.5 fill-current" />

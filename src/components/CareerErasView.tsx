@@ -20,7 +20,8 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Newspaper
+  Newspaper,
+  Video
 } from 'lucide-react';
 import { TimeSystem } from '../systems/TimeSystem';
 import {
@@ -146,18 +147,21 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
   // Singles (Top singles or all singles)
   playerSongs.filter(s => s.isSingle).forEach(single => {
     const isHit = (single.peakPosition?.Global ?? 99) <= 10;
+    const hasVideo = Boolean(single.musicVideo);
+    const mv = single.musicVideo;
+
     timelineItems.push({
       id: `traj_sng_${single.id}`,
       year: single.releaseYear,
       month: single.releaseMonth,
       type: 'single',
-      title: `Single: "${single.title}"`,
-      description: `Sencillo de calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}`,
-      metrics: `${(single.streamsTotal / 1000000).toFixed(1)}M streams • Pico #${single.peakPosition?.Global || '-'} Global`,
-      badge: isHit ? 'Hit Top 10 🔥' : 'Single',
-      badgeClass: isHit ? 'bg-purple-900/50 text-purple-300 border-purple-500/40 font-bold' : 'bg-purple-950/50 text-purple-300 border-purple-500/40',
-      icon: Disc3,
-      iconBgClass: 'bg-purple-950/60 text-purple-400 border-purple-500/40'
+      title: `Single: "${single.title}"${hasVideo ? ' 🎬 (Videoclip Oficial)' : ''}`,
+      description: `Sencillo de calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" (Dir. ${mv.directorTier}, ${(mv.views / 1000).toFixed(0)}k vistas).` : ''}`,
+      metrics: `${(single.streamsTotal / 1000000).toFixed(1)}M streams${hasVideo && mv ? ` • ${(mv.views / 1000000).toFixed(1)}M vistas en video` : ''} • Pico #${single.peakPosition?.Global || '-'} Global`,
+      badge: hasVideo ? '🎬 Videoclip Oficial' : isHit ? 'Hit Top 10 🔥' : 'Single',
+      badgeClass: hasVideo ? 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40 font-bold' : isHit ? 'bg-purple-900/50 text-purple-300 border-purple-500/40 font-bold' : 'bg-purple-950/50 text-purple-300 border-purple-500/40',
+      icon: hasVideo ? Video : Disc3,
+      iconBgClass: hasVideo ? 'bg-cyan-950/60 text-cyan-400 border-cyan-500/40' : 'bg-purple-950/60 text-purple-400 border-purple-500/40'
     });
   });
 
@@ -587,7 +591,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                     </div>
                     <span>•</span>
                     <span>
-                      Lanzamientos en esta Era: <strong className="text-[#8B5CF6] font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles</strong>
+                      Lanzamientos en esta Era: <strong className="text-[#8B5CF6] font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles{eraSingles.filter(s => s.musicVideo).length > 0 ? ` (${eraSingles.filter(s => s.musicVideo).length} videoclips 🎬)` : ''}</strong>
                     </span>
                   </div>
 

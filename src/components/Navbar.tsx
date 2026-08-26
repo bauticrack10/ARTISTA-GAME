@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Artist, WorldState } from '../types';
 import { TimeSystem } from '../systems/TimeSystem';
+import { audioSystem, playSound } from '../utils/audioSystem';
+import { AudioEqualizer } from './AudioEqualizer';
 import {
   Zap,
   DollarSign,
@@ -15,7 +17,9 @@ import {
   ShoppingBag,
   Sparkles,
   TrendingUp,
-  Crown
+  Crown,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -36,6 +40,23 @@ export const Navbar: React.FC<NavbarProps> = ({
   onReturnToTitle
 }) => {
   const [cycleMonths, setCycleMonths] = useState<6 | 12>(6);
+  const [soundEnabled, setSoundEnabled] = useState(() => audioSystem.isSoundEnabled());
+
+  useEffect(() => {
+    return audioSystem.subscribeSoundState((enabled) => {
+      setSoundEnabled(enabled);
+    });
+  }, []);
+
+  const handleToggleSound = () => {
+    audioSystem.toggleSound();
+  };
+
+  const handleTabClick = (tabId: string) => {
+    playSound('click');
+    onTabChange(tabId);
+  };
+
   const monthName = TimeSystem.getMonthName(world.currentMonth);
   const semesterShort = world.currentMonth <= 6 ? '1er Semestre' : '2do Semestre';
 
@@ -73,7 +94,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Izquierda: Logo ("EL ARTISTA") con enlace al Menú Principal */}
         <div className="flex items-center gap-3 shrink-0">
           <button
-            onClick={onReturnToTitle}
+            onClick={() => {
+              playSound('click');
+              onReturnToTitle();
+            }}
             className="flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer text-left group"
             title="Volver al Menú Principal"
           >
@@ -117,7 +141,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Toggle 6M / 1Y */}
             <div className="flex items-center bg-[#16181F] p-0.5 rounded-[6px] text-xs font-semibold border border-[#2A2E3D]">
               <button
-                onClick={() => setCycleMonths(6)}
+                onClick={() => {
+                  playSound('click');
+                  setCycleMonths(6);
+                }}
                 className={`px-2.5 py-1 rounded-[4px] transition-all cursor-pointer text-xs ${
                   cycleMonths === 6
                     ? 'bg-[#8B5CF6] text-white shadow-xs font-bold'
@@ -128,7 +155,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 6M
               </button>
               <button
-                onClick={() => setCycleMonths(12)}
+                onClick={() => {
+                  playSound('click');
+                  setCycleMonths(12);
+                }}
                 className={`px-2.5 py-1 rounded-[4px] transition-all cursor-pointer text-xs ${
                   cycleMonths === 12
                     ? 'bg-[#8B5CF6] text-white shadow-xs font-bold'
@@ -143,7 +173,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Botón de Acción Principal (Avanzar Ciclo) */}
             <button
               id="btn-advance-cycle"
-              onClick={() => onAdvanceCycle(cycleMonths)}
+              onClick={() => {
+                playSound('click');
+                onAdvanceCycle(cycleMonths);
+              }}
               className="group relative flex items-center gap-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:from-[#7C3AED] hover:to-[#DB2777] text-white px-4 py-1.5 rounded-[8px] text-xs font-bold cursor-pointer active:scale-[0.98] transition-all shadow-[0_0_15px_rgba(139,92,246,0.35)] shrink-0 border border-white/20"
               title={`Avanzar ciclo de ${cycleMonths === 6 ? '6 meses' : '1 año'} y simular lanzamientos, charts y eventos`}
             >
@@ -155,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Derecha: Píldoras compactas de recursos indispensables (Oyentes, Energía, Fondos, Fans, Avatar) */}
+        {/* Derecha: Píldoras compactas de recursos indispensables (Oyentes, Energía, Fondos, Fans, Avatar, Audio FX Toggle) */}
         <div className="flex items-center gap-2 text-xs shrink-0">
           {/* Oyentes Mensuales Pill */}
           <div
@@ -225,9 +258,37 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
+          {/* Control de Audio / SFX Engine con Visualizador Equalizer */}
+          <div className="flex items-center gap-1.5 bg-[#16181F] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 p-1 rounded-[8px] transition-colors">
+            <button
+              id="btn-toggle-audio-sfx"
+              onClick={handleToggleSound}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-[6px] transition-all cursor-pointer text-xs font-semibold ${
+                soundEnabled
+                  ? 'bg-[#8B5CF6]/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.25)]'
+                  : 'bg-[#0B0C10] text-[#64748B] border border-transparent hover:text-[#94A3B8]'
+              }`}
+              title={soundEnabled ? 'Silenciar Efectos de Sonido (Mute)' : 'Activar Efectos de Sonido (Unmute)'}
+            >
+              {soundEnabled ? (
+                <Volume2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 animate-pulse" />
+              ) : (
+                <VolumeX className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
+              )}
+              <span className="hidden md:inline text-[11px]">
+                {soundEnabled ? 'SFX' : 'MUTE'}
+              </span>
+            </button>
+
+            {/* Audio Reactive Equalizer Bars */}
+            <div className="px-1 py-0.5 flex items-center" title={soundEnabled ? 'Equalizador de audio' : 'Audio Silenciado'}>
+              <AudioEqualizer size="xs" barsCount={4} colorScheme="synthwave" />
+            </div>
+          </div>
+
           {/* Perfil Rápido del Jugador */}
           <button
-            onClick={() => onTabChange('dashboard')}
+            onClick={() => handleTabClick('dashboard')}
             className="flex items-center gap-2 pl-1 pr-2 sm:pr-2.5 py-1 rounded-[8px] bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 text-xs transition-colors cursor-pointer shrink-0 shadow-xs"
             title={`Perfil de ${player.name} • Ir a Inicio`}
           >
@@ -272,7 +333,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               key={tab.id}
               id={`nav-tab-${tab.id}`}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-[8px] whitespace-nowrap transition-all cursor-pointer ${
                 isActive
                   ? 'bg-gradient-to-r from-[#8B5CF6]/25 to-[#EC4899]/25 border border-[#8B5CF6]/60 text-[#F8FAFC] font-bold shadow-[0_0_12px_rgba(139,92,246,0.25)]'

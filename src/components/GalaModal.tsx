@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AwardCeremony, AwardCategory, Artist, WorldState } from '../types';
+import { playSound } from '../utils/audioSystem';
 import {
   Trophy,
   Award,
@@ -39,6 +40,7 @@ export const GalaModal: React.FC<GalaModalProps> = ({
   // Trigger celebration effects with vibrant multicolors if player won
   const handleRevealWinner = () => {
     setRevealedCategories(prev => ({ ...prev, [currentCategoryIndex]: true }));
+    playSound('award');
 
     if (currentCategory?.playerWon) {
       try {

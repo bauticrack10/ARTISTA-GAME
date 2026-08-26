@@ -123,6 +123,27 @@ export interface LifestyleItem {
 export type ReleaseType = 'single' | 'ep' | 'mixtape' | 'album' | 'deluxe' | 'collab_album';
 export type LongevityCurve = 'explosive_drop' | 'slow_burn' | 'sleeper_viral' | 'instant_classic' | 'steady';
 
+export type MusicVideoConcept =
+  | 'Cine 4K Cinematográfico'
+  | 'VHS Retro Synthwave'
+  | 'Animación 3D Futurista'
+  | 'Urbano Callejero DIY'
+  | 'Psicodélico & Arte Conceptual';
+
+export type MusicVideoDirectorTier =
+  | 'Director Emergente'
+  | 'Estudio Indie'
+  | 'Director de Élite Mundial';
+
+export interface MusicVideoData {
+  concept: string;
+  budget: number;
+  directorTier: string;
+  views: number;
+  releaseYear?: number;
+  releaseMonth?: number;
+}
+
 export interface Song {
   id: string;
   title: string;
@@ -148,6 +169,7 @@ export interface Song {
   receptionRating: number;   // 1 to 5 stars or 0-100
   isClassic: boolean;
   wentViral: boolean;
+  musicVideo?: MusicVideoData;
 }
 
 export interface Album {

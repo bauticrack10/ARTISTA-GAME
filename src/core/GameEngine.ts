@@ -371,6 +371,11 @@ export class GameEngine {
     budgetProduction: number;
     budgetMarketing: number;
     longevityCurve: Song['longevityCurve'];
+    musicVideo?: {
+      concept: string;
+      budget: number;
+      directorTier: string;
+    };
   }): Song {
     const player = this.getPlayer();
     const currentYearSingles = this.getPlayerSinglesReleasedThisYear();
@@ -389,26 +394,55 @@ export class GameEngine {
     const subCommBonus = subDetail?.commercialBonus || 0;
     const subOrigBonus = subDetail?.originalityBonus || 0;
 
-    // Quality calculation based on player stats + production investment + producer + subgenre
+    // Music Video Bonuses & Initial Views
+    const videoCost = params.musicVideo ? params.musicVideo.budget : 0;
+    let mvHypeBonus = 0;
+    let mvQualityBonus = 0;
+    let mvCommercialBonus = 0;
+    let initialViews = 0;
+
+    if (params.musicVideo) {
+      if (params.musicVideo.directorTier === 'Director de Élite Mundial') {
+        mvHypeBonus = 50;
+        mvQualityBonus = 8;
+        mvCommercialBonus = 12;
+        initialViews = Math.floor(450000 + player.stats.popularity * 25000 + Math.random() * 200000);
+      } else if (params.musicVideo.directorTier === 'Estudio Indie') {
+        mvHypeBonus = 25;
+        mvQualityBonus = 5;
+        mvCommercialBonus = 6;
+        initialViews = Math.floor(45000 + player.stats.popularity * 3000 + Math.random() * 25000);
+      } else {
+        // Director Emergente
+        mvHypeBonus = 10;
+        mvQualityBonus = 2;
+        mvCommercialBonus = 3;
+        initialViews = Math.floor(6000 + player.stats.popularity * 400 + Math.random() * 4000);
+      }
+    }
+
+    // Quality calculation based on player stats + production investment + producer + subgenre + video
     const baseQuality = Math.min(100, Math.floor(
       player.personality.skill * 0.45 +
       player.personality.creativity * 0.35 +
       (params.budgetProduction / 5000) * 15 +
       qualityBoost +
-      subQualityBonus
+      subQualityBonus +
+      mvQualityBonus
     ));
     const commercialAppeal = Math.min(100, Math.floor(
       player.personality.commercialAppeal * 0.55 +
       (params.budgetMarketing / 5000) * 20 +
-      subCommBonus
+      subCommBonus +
+      mvCommercialBonus
     ));
     const originality = Math.min(100, player.personality.originality + subOrigBonus);
 
     // Deduct player funds and energy
-    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack : 0);
+    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack : 0) + videoCost;
     player.stats.funds = Math.max(0, player.stats.funds - totalCost);
     player.stats.energy = Math.max(10, player.stats.energy - 15);
-    player.stats.hype = Math.min(100, player.stats.hype + Math.floor(params.budgetMarketing / 2000) * 10 + 15);
+    player.stats.hype = Math.min(100, player.stats.hype + Math.floor(params.budgetMarketing / 2000) * 10 + 15 + mvHypeBonus);
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
 
@@ -435,21 +469,33 @@ export class GameEngine {
       isSingle: true,
       receptionRating: Math.floor(baseQuality / 20),
       isClassic: false,
-      wentViral: false
+      wentViral: false,
+      musicVideo: params.musicVideo ? {
+        concept: params.musicVideo.concept,
+        budget: params.musicVideo.budget,
+        directorTier: params.musicVideo.directorTier,
+        views: initialViews,
+        releaseYear: this.world.currentYear,
+        releaseMonth: this.world.currentMonth
+      } : undefined
     };
 
     this.world.songs[songId] = newSong;
 
     this.world.news.unshift({
       id: `news_rel_${songId}`,
-      headline: `Lanzamiento: "${params.title}" de ${player.name} ya está disponible`,
-      body: `El nuevo single de ${player.name} (${subDetail?.name || params.genreId}) llega con producción de alto calibre y gran expectativa.`,
+      headline: params.musicVideo
+        ? `Lanzamiento: "${params.title}" de ${player.name} estrena videoclip oficial`
+        : `Lanzamiento: "${params.title}" de ${player.name} ya está disponible`,
+      body: params.musicVideo
+        ? `El nuevo single de ${player.name} llega acompañado de un ambicioso videoclip con estética "${params.musicVideo.concept}" dirigido por ${params.musicVideo.directorTier}.`
+        : `El nuevo single de ${player.name} (${subDetail?.name || params.genreId}) llega con producción de alto calibre y gran expectativa.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'release',
       relatedArtistIds: [player.id, ...params.featuredArtistIds],
       sentiment: 'positive',
-      importance: 3
+      importance: params.musicVideo ? 4 : 3
     });
 
     // Generar reacciones en redes sociales
@@ -984,6 +1030,10 @@ export class GameEngine {
         song.monthlyStreamsHistory.push(streamRes.streams);
         if (streamRes.wentViralNow) song.wentViral = true;
         if (streamRes.becomesClassicNow) song.isClassic = true;
+        if (song.musicVideo) {
+          const videoViewGain = Math.floor(streamRes.streams * (0.35 + Math.random() * 0.25));
+          song.musicVideo.views += videoViewGain;
+        }
         playerTotalMonthlyStreams += streamRes.streams;
       }
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AwardCeremony, AwardCategory, Artist } from '../types';
+import { playSound } from '../utils/audioSystem';
 import {
   Trophy,
   Crown,
@@ -30,6 +31,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({ ceremony, play
 
   const handleRevealWinner = (index: number) => {
     setRevealedCategories(prev => ({ ...prev, [index]: true }));
+    playSound('award');
     const cat = categories[index];
     if (cat && cat.winnerArtistId === player.id) {
       try {

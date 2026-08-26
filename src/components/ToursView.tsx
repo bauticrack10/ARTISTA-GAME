@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Artist, WorldState, TourTier } from '../types';
 import { Sparkles, MapPin, Ticket, AlertTriangle, CheckCircle2, Zap } from 'lucide-react';
 import { TourEngine, MIN_TOUR_ENERGY } from '../systems/TourEngine';
+import { playSound } from '../utils/audioSystem';
+
 
 interface ToursViewProps {
   player: Artist;
@@ -121,6 +123,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
     }
 
     onBookTour(selectedTier, tourName);
+    playSound('tour');
     setNotification(`¡La gira "${tourName}" ha sido completada con rotundo éxito!`);
     setTourName('');
     setTimeout(() => setNotification(null), 4000);

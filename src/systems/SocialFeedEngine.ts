@@ -198,6 +198,30 @@ export class SocialFeedEngine {
       relatedArtistId: player.id
     });
 
+    // 6. Post Exclusivo de Videoclip Oficial (si aplica)
+    if (!isAlbum && (release as Song).musicVideo) {
+      const mv = (release as Song).musicVideo!;
+      posts.push({
+        id: `post_mv_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
+        platform: 'twitter',
+        authorName: 'Charts & Streams Live',
+        authorHandle: '@charts_radar_live',
+        authorVerified: true,
+        authorType: 'media',
+        authorAvatarGradient: 'from-cyan-500 to-blue-600',
+        badge: '🎬 Estreno Visual',
+        year,
+        month,
+        content: `🎬 ESTRENO VIDEOCLIP: @${player.name.toLowerCase().replace(/\s+/g, '')} acaba de lanzar el video oficial de "${title}" con estética "${mv.concept}" (Dirigido por ${mv.directorTier}). La dirección de arte y la cinematografía son de altísimo nivel. Ya supera miles de reproducciones en YouTube.`,
+        likes: Math.floor(2500 + player.stats.popularity * 100 + Math.random() * 1000),
+        retweetsOrShares: Math.floor(600 + player.stats.popularity * 25 + Math.random() * 300),
+        commentsCount: Math.floor(240 + player.stats.popularity * 15 + Math.random() * 100),
+        sentiment: 'hype',
+        relatedSongId: release.id,
+        relatedArtistId: player.id
+      });
+    }
+
     return posts;
   }
 

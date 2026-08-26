@@ -16,6 +16,8 @@ import { AwardsView } from './components/AwardsView';
 import { AwardsGalaModal } from './components/AwardsGalaModal';
 import { EventModal } from './components/EventModal';
 import { EraMilestoneModal, EraMilestoneData } from './components/EraMilestoneModal';
+import { playSound } from './utils/audioSystem';
+
 
 type AppMode = 'start_screen' | 'character_creator' | 'game';
 
@@ -70,6 +72,7 @@ export default function App() {
     if (player.eras && player.eras.length > prevErasCountRef.current) {
       prevErasCountRef.current = player.eras.length;
       const latestEra = player.eras[player.eras.length - 1];
+      playSound('level_up');
       setActiveMilestone({
         type: 'era_transition',
         title: `¡Transición de Era: "${latestEra.name}"!`,
@@ -87,6 +90,7 @@ export default function App() {
     // 2. Check 100K Monthly Listeners milestone
     if (player.stats.monthlyListeners >= 100000 && !milestonesAchievedRef.current.has('100k_listeners')) {
       milestonesAchievedRef.current.add('100k_listeners');
+      playSound('level_up');
       setActiveMilestone({
         type: 'listeners_milestone',
         title: '¡100,000 Oyentes Mensuales Conquistados!',
@@ -102,6 +106,7 @@ export default function App() {
     // 3. Check 1M Monthly Listeners milestone
     if (player.stats.monthlyListeners >= 1000000 && !milestonesAchievedRef.current.has('1m_listeners')) {
       milestonesAchievedRef.current.add('1m_listeners');
+      playSound('chart_no1');
       setActiveMilestone({
         type: 'listeners_milestone',
         title: '¡Superestrella: 1,000,000 de Oyentes Mensuales!',
@@ -119,6 +124,7 @@ export default function App() {
     const goldSong = songs.find(s => s.streamsTotal >= 500000);
     if (goldSong && !milestonesAchievedRef.current.has(`gold_${goldSong.id}`)) {
       milestonesAchievedRef.current.add(`gold_${goldSong.id}`);
+      playSound('award');
       setActiveMilestone({
         type: 'gold_record',
         title: `¡Certificación de Oro: "${goldSong.title}"!`,
@@ -132,6 +138,7 @@ export default function App() {
   }, [player?.eras?.length, player?.stats?.monthlyListeners, player?.stats?.totalStreams, appMode]);
 
   const handleOpenMilestone = (customData?: Partial<EraMilestoneData>) => {
+    playSound('click');
     const currentEra = player.eras[player.eras.length - 1];
     const data: EraMilestoneData = {
       type: 'era_transition',
@@ -149,10 +156,12 @@ export default function App() {
 
   // Start Screen handlers
   const handleStartNewCareer = () => {
+    playSound('click');
     setAppMode('character_creator');
   };
 
   const handleContinueSavedGame = () => {
+    playSound('click');
     const saved = localStorage.getItem('el_artista_save');
     if (saved) {
       const eng = new GameEngine();
@@ -172,6 +181,7 @@ export default function App() {
   };
 
   const handleLoadDemoCareer = () => {
+    playSound('click');
     const eng = new GameEngine();
     engineRef.current = eng;
     setWorld(eng.getWorld());
@@ -186,6 +196,7 @@ export default function App() {
   };
 
   const handleImportSaveState = (jsonContent: string) => {
+    playSound('click');
     const eng = new GameEngine();
     const loaded = eng.importSaveState(jsonContent);
     if (loaded) {
@@ -207,6 +218,7 @@ export default function App() {
 
   // Character creation handler
   const handleCreatePlayer = (customArtist: Partial<Artist>) => {
+    playSound('release');
     const eng = new GameEngine(customArtist);
     engineRef.current = eng;
     setWorld(eng.getWorld());
@@ -223,10 +235,12 @@ export default function App() {
   // In-Game actions
   const handleAdvanceCycle = (months: 6 | 12) => {
     getEngine().advanceCycle(months);
+    playSound('money');
   };
 
   const handleRest = () => {
     getEngine().takeVacation();
+    playSound('money');
   };
 
   // 1. START SCREEN
