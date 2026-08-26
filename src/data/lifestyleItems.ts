@@ -1,6 +1,134 @@
 import { LifestyleItem } from '../types';
 
 export const LIFESTYLE_ITEMS: LifestyleItem[] = [
+  // 0. HOME STUDIO & BÁSICO (Early-Game Underground: $90 - $350)
+  {
+    id: 'starter_pop_filter',
+    name: 'Filtro Antipop & Brazo Articulado de Escritorio',
+    category: 'home_studio',
+    price: 90,
+    monthlyUpkeep: 0,
+    description: 'Accesorio de acero y doble malla que elimina plosivas al cantar cerca del micrófono.',
+    iconName: 'Sparkles',
+    buffDescription: '+1 Calidad vocal limpia en grabaciones caseras.',
+    effects: {
+      qualityBonus: 1
+    }
+  },
+  {
+    id: 'starter_acoustic_panel',
+    name: 'Paneles Fonoabsorbentes de Habitación (Set 12u)',
+    category: 'home_studio',
+    price: 110,
+    monthlyUpkeep: 0,
+    description: 'Espuma acústica de alta densidad para reducir el eco y la reverberación del cuarto.',
+    iconName: 'Home',
+    buffDescription: '+1 Calidad acústica, +1 Creatividad al grabar sin ruidos.',
+    effects: {
+      qualityBonus: 1,
+      creativityBonus: 1
+    }
+  },
+  {
+    id: 'starter_usb_mic',
+    name: 'Micrófono USB Condensador Plug & Play',
+    category: 'home_studio',
+    price: 130,
+    monthlyUpkeep: 5,
+    description: 'Micrófono condensador con conexión directa USB para maquetas vocales claras sin equipo complejo.',
+    iconName: 'Mic',
+    buffDescription: '+2 Calidad en grabaciones, +1 Habilidad técnica.',
+    effects: {
+      qualityBonus: 2,
+      skillBonus: 1
+    }
+  },
+  {
+    id: 'starter_headphones',
+    name: 'Auriculares de Monitoreo Cerrados ATH',
+    category: 'home_studio',
+    price: 150,
+    monthlyUpkeep: 5,
+    description: 'Aislamiento sonoro y respuesta plana para ecualizar con claridad y afinar detalles de mezcla.',
+    iconName: 'Radio',
+    buffDescription: '+2 Calidad de mezcla en temas autoproducidos, +1 Disciplina.',
+    effects: {
+      qualityBonus: 2,
+      disciplineBonus: 1
+    }
+  },
+  {
+    id: 'starter_daw',
+    name: 'Software DAW & Licencia de Producción Intro',
+    category: 'home_studio',
+    price: 180,
+    monthlyUpkeep: 0,
+    description: 'Licencia oficial de DAW para componer beats, samplear y estructurar canciones completas.',
+    iconName: 'Sliders',
+    buffDescription: '+3 Calidad de producción, +2 Creatividad compositiva.',
+    effects: {
+      qualityBonus: 3,
+      creativityBonus: 2
+    }
+  },
+  {
+    id: 'starter_audio_interface',
+    name: 'Interfaz de Audio USB 2x2 con Preamp Air',
+    category: 'home_studio',
+    price: 220,
+    monthlyUpkeep: 10,
+    description: 'Conversión de audio de 24 bits a 192 kHz con entradas XLR para micrófonos e instrumentos.',
+    iconName: 'Sliders',
+    buffDescription: '+3 Calidad de grabación, +2 Habilidad técnica de sonido.',
+    effects: {
+      qualityBonus: 3,
+      skillBonus: 2
+    }
+  },
+  {
+    id: 'starter_local_promo',
+    name: 'Campaña de Difusión Local & TikTok Boost',
+    category: 'home_studio',
+    price: 260,
+    monthlyUpkeep: 0,
+    description: 'Pauta publicitaria focalizada en tu ciudad y afiches para dar a conocer tus primeros lanzamientos.',
+    iconName: 'Sparkles',
+    buffDescription: '+4 Hype basal, +2 Atractivo Comercial, -2% decaimiento de hype.',
+    effects: {
+      commercialAppealBonus: 2,
+      hypeDecayReduction: 0.02
+    }
+  },
+  {
+    id: 'starter_midi_keyboard',
+    name: 'Controlador MIDI 25 Teclas con Pads RGB',
+    category: 'home_studio',
+    price: 290,
+    monthlyUpkeep: 12,
+    description: 'Teclas sensibles a la velocidad, knobs giratorios y drum pads para arreglos melódicos rápidos.',
+    iconName: 'Sliders',
+    buffDescription: '+3 Creatividad melódica, +2 Habilidad técnica.',
+    effects: {
+      creativityBonus: 3,
+      skillBonus: 2
+    }
+  },
+  {
+    id: 'starter_studio_monitors',
+    name: 'Monitores de Estudio Campo Cercano (Par 4")',
+    category: 'home_studio',
+    price: 350,
+    monthlyUpkeep: 15,
+    description: 'Altavoces activos con respuesta plana para escuchar el balance real de graves y agudos.',
+    iconName: 'Disc3',
+    buffDescription: '+4 Calidad de masterización, +2 Habilidad, +1 Reputación.',
+    effects: {
+      qualityBonus: 4,
+      skillBonus: 2,
+      reputationBonus: 1
+    }
+  },
+
   // 1. ESTUDIO & EQUIPAMIENTO (+Calidad de grabación, +Skill)
   {
     id: 'studio_mic_shure_sm7b',

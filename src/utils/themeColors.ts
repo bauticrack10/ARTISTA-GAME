@@ -415,6 +415,22 @@ export const STAT_THEMES = {
 /* ========================================================================= */
 
 export const LIFESTYLE_THEMES = {
+  starter: {
+    cardBorder: 'border-amber-200 dark:border-amber-800/60 hover:border-amber-400 dark:hover:border-amber-400/80',
+    iconBg: 'bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60',
+    badge: 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+    accentText: 'text-amber-700 dark:text-amber-400',
+    lightBg: 'bg-amber-50/40 dark:bg-amber-950/20',
+    glow: 'rgba(245, 158, 11, 0.25)'
+  },
+  home_studio: {
+    cardBorder: 'border-amber-200 dark:border-amber-800/60 hover:border-amber-400 dark:hover:border-amber-400/80',
+    iconBg: 'bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60',
+    badge: 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+    accentText: 'text-amber-700 dark:text-amber-400',
+    lightBg: 'bg-amber-50/40 dark:bg-amber-950/20',
+    glow: 'rgba(245, 158, 11, 0.25)'
+  },
   studio: {
     cardBorder: 'border-cyan-200 dark:border-cyan-800/60 hover:border-cyan-400 dark:hover:border-cyan-400/80',
     iconBg: 'bg-cyan-100 dark:bg-cyan-950/70 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/60',

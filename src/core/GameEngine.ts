@@ -13,7 +13,9 @@ import {
   AwardCeremony,
   EcosystemNPC,
   BeefState,
-  SocialPost
+  SocialPost,
+  FinancialTransaction,
+  TransactionCategory
 } from '../types';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
@@ -112,6 +114,7 @@ export class GameEngine {
         generationIndex: customPlayer.generationIndex || 1,
         influences: customPlayer.influences || [],
         lifestyleUpgrades: customPlayer.lifestyleUpgrades || [],
+        financialLedger: customPlayer.financialLedger || [],
         isProdigy: customPlayer.isProdigy,
         prodigyMultiplier: customPlayer.prodigyMultiplier
       };
@@ -185,7 +188,8 @@ export class GameEngine {
         { year: 2026, month: 1, text: 'Inicio de la simulación musical.', category: 'world' }
       ],
       recentEventIdsHistory: [],
-      activeNarrativeChains: {}
+      activeNarrativeChains: {},
+      financialLedger: []
     };
   }
 
@@ -213,6 +217,54 @@ export class GameEngine {
   public getPlayerAge(): number {
     const player = this.getPlayer();
     return TimeSystem.calculateAge(player.birthYear, this.world.currentYear);
+  }
+
+  public recordTransaction(
+    type: 'income' | 'expense',
+    category: TransactionCategory,
+    amount: number,
+    description: string
+  ): FinancialTransaction {
+    const player = this.getPlayer();
+    const cleanAmount = Math.abs(Math.round(amount));
+
+    if (!player.financialLedger) player.financialLedger = [];
+    if (!this.world.financialLedger) this.world.financialLedger = [];
+
+    const tx: FinancialTransaction = {
+      id: `tx_${this.world.currentYear}_${this.world.currentMonth}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      type,
+      category,
+      amount: cleanAmount,
+      description,
+      resultingBalance: player.stats.funds,
+      balanceAfter: player.stats.funds,
+      dateStr: `Año ${this.world.currentYear} - Mes ${this.world.currentMonth}`,
+      timestamp: Date.now()
+    };
+
+    player.financialLedger.unshift(tx);
+    this.world.financialLedger.unshift(tx);
+
+    if (player.financialLedger.length > 500) {
+      player.financialLedger = player.financialLedger.slice(0, 500);
+    }
+    if (this.world.financialLedger.length > 500) {
+      this.world.financialLedger = this.world.financialLedger.slice(0, 500);
+    }
+
+    return tx;
+  }
+
+  public recordFinancialTransaction(params: {
+    type: 'income' | 'expense';
+    category: TransactionCategory;
+    amount: number;
+    description: string;
+  }): FinancialTransaction {
+    return this.recordTransaction(params.type, params.category, params.amount, params.description);
   }
 
   public getCurrentEvent(): EventDefinition | null {
@@ -328,6 +380,13 @@ export class GameEngine {
     // Deduct funds and record ownership
     player.stats.funds -= item.price;
     player.lifestyleUpgrades.push(itemId);
+
+    this.recordFinancialTransaction({
+      type: 'expense',
+      category: 'store',
+      amount: item.price,
+      description: `Compra en tienda: ${item.name}`
+    });
 
     // Apply immediate permanent skill/trait bonuses (multiplied x3 if prodigy)
     const multiplier = player.isProdigy ? 3 : 1;
@@ -486,6 +545,39 @@ export class GameEngine {
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
 
+    if (params.budgetProduction > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: params.budgetProduction,
+        description: `Producción de single "${params.title}"`
+      });
+    }
+    if (params.budgetMarketing > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'marketing',
+        amount: params.budgetMarketing,
+        description: `Marketing & difusión single "${params.title}"`
+      });
+    }
+    if (params.producerId && params.producerId !== 'self' && producerFee > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: producerFee,
+        description: `Honorarios de beatmaker para "${params.title}"`
+      });
+    }
+    if (params.musicVideo && params.musicVideo.cost > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: params.musicVideo.cost,
+        description: `Producción videoclip oficial "${params.title}"`
+      });
+    }
+
     const newSong: Song = {
       id: songId,
       title: params.title,
@@ -580,6 +672,32 @@ export class GameEngine {
     player.stats.hype = Math.min(100, player.stats.hype + 35);
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
+
+    if (params.budgetProduction > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: params.budgetProduction,
+        description: `Producción de álbum/EP "${params.title}"`
+      });
+    }
+    if (params.budgetMarketing > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'marketing',
+        amount: params.budgetMarketing,
+        description: `Campaña de marketing para álbum "${params.title}"`
+      });
+    }
+    if (prod && prod.costPerTrack > 0) {
+      const prodCost = prod.costPerTrack * Math.min(rawNewTitles.length, 6);
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: prodCost,
+        description: `Producción ejecutiva de ${prod.name} para álbum "${params.title}"`
+      });
+    }
 
     const songIds: string[] = [];
     const albumSongs: Song[] = [];
@@ -736,6 +854,13 @@ export class GameEngine {
     player.stats.hype = Math.min(100, player.stats.hype + tour.hypeGenerated);
     player.stats.fansCount += tour.fanbaseGained;
 
+    this.recordFinancialTransaction({
+      type: 'income',
+      category: 'tour',
+      amount: tour.netArtistProfit,
+      description: `Ganancia neta por gira "${tour.name}"`
+    });
+
     this.world.news.unshift({
       id: `news_tour_${tour.id}`,
       headline: `Gira Consagratoria: ${tour.name} culmina con ${tour.totalTicketsSold.toLocaleString()} tickets vendidos`,
@@ -762,6 +887,15 @@ export class GameEngine {
       if (!label.rosterArtistIds.includes(player.id)) {
         label.rosterArtistIds.push(player.id);
       }
+    }
+
+    if (contract.signingBonus > 0) {
+      this.recordFinancialTransaction({
+        type: 'income',
+        category: 'contract',
+        amount: contract.signingBonus,
+        description: `Bono de firma discográfica (${label ? label.name : 'Sello'})`
+      });
     }
     this.notify();
   }
@@ -815,19 +949,31 @@ export class GameEngine {
     } else if (actionType === 'shoutout') {
       RelationshipEngine.modifyRelationship(player, target, 15, 10, 'friend', `Mención pública elogiosa en ${this.world.currentYear}.`);
       player.stats.hype = Math.min(100, player.stats.hype + 5);
+      this.world.news.unshift({
+        id: `news_shoutout_${Date.now()}`,
+        headline: `Respeto mutuo: ${player.name} elogia públicamente a ${target.name}`,
+        body: `Un gesto de camaradería artística que fortalece los lazos de la escena.`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: 'culture',
+        relatedArtistIds: [player.id, target.id],
+        sentiment: 'positive',
+        importance: 2
+      });
     } else if (actionType === 'diss') {
-      RelationshipEngine.modifyRelationship(player, target, -40, 10, 'feud', `Tiradera y feudo desatado en ${this.world.currentYear}.`);
-      player.stats.hype = Math.min(100, player.stats.hype + 25);
+      const beef = RelationshipEngine.triggerBeef(player, target, this.world.currentYear, this.world.currentMonth);
+      this.world.activeBeefs[beef.id] = beef;
+      player.stats.hype = Math.min(100, player.stats.hype + 22);
       this.world.news.unshift({
         id: `news_diss_${Date.now()}`,
-        headline: `¡Fuego cruzado! ${player.name} apunta contra ${target.name}`,
-        body: `Declaraciones incendiarias desatan la polémica en las redes.`,
+        headline: `¡Guerra declarada! ${player.name} lanza un diss track contra ${target.name}`,
+        body: `La escena musical estalla ante el cruce de rimas y declaraciones directas entre ambos artistas.`,
         year: this.world.currentYear,
         month: this.world.currentMonth,
         category: 'rivalry',
         relatedArtistIds: [player.id, target.id],
         sentiment: 'shocking',
-        importance: 4
+        importance: 5
       });
     }
 
@@ -846,6 +992,12 @@ export class GameEngine {
     const actualCost = Math.min(Math.max(0, player.stats.funds), cost);
     if (actualCost > 0) {
       player.stats.funds -= actualCost;
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'lifestyle',
+        amount: actualCost,
+        description: 'Retiro de bienestar y vacaciones'
+      });
     }
 
     // 2. Recuperar energía vital (+50 hasta un tope de 100)
@@ -898,7 +1050,24 @@ export class GameEngine {
 
     // Apply outcome deltas with Prodigy Multiplier if active
     const prodigyMultiplier = player.isProdigy ? 3 : 1;
-    if (outcome.fundsChange) player.stats.funds = Math.max(0, player.stats.funds + outcome.fundsChange);
+    if (outcome.fundsChange) {
+      player.stats.funds = Math.max(0, player.stats.funds + outcome.fundsChange);
+      if (outcome.fundsChange > 0) {
+        this.recordFinancialTransaction({
+          type: 'income',
+          category: 'event',
+          amount: outcome.fundsChange,
+          description: `Recompensa de evento: ${this.currentEvent.title}`
+        });
+      } else if (outcome.fundsChange < 0) {
+        this.recordFinancialTransaction({
+          type: 'expense',
+          category: 'event',
+          amount: Math.abs(outcome.fundsChange),
+          description: `Gasto de evento: ${this.currentEvent.title}`
+        });
+      }
+    }
     if (outcome.hypeChange) player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + (outcome.hypeChange > 0 ? outcome.hypeChange * prodigyMultiplier : outcome.hypeChange)));
     if (outcome.popularityChange) player.stats.popularity = Math.max(0, Math.min(100, player.stats.popularity + (outcome.popularityChange > 0 ? outcome.popularityChange * prodigyMultiplier : outcome.popularityChange)));
     if (outcome.fansChange) player.stats.fansCount = Math.max(0, player.stats.fansCount + (outcome.fansChange > 0 ? outcome.fansChange * prodigyMultiplier : outcome.fansChange));
@@ -1117,6 +1286,48 @@ export class GameEngine {
       const label = player.labelId ? this.world.labels[player.labelId] : undefined;
       const manager = player.managerId ? this.world.managers[player.managerId] : undefined;
       const finance = EconomyEngine.calculateMonthlyFinances(player, playerTotalMonthlyStreams, label, manager);
+
+      if (finance.artistStreamingNet > 0) {
+        this.recordFinancialTransaction({
+          type: 'income',
+          category: 'streaming',
+          amount: finance.artistStreamingNet,
+          description: `Regalías de streaming (${this.world.currentYear}, Mes ${this.world.currentMonth})`
+        });
+      }
+      if (finance.merchRevenue > 0) {
+        this.recordFinancialTransaction({
+          type: 'income',
+          category: 'merch',
+          amount: finance.merchRevenue,
+          description: `Venta de merchandising (${this.world.currentYear}, Mes ${this.world.currentMonth})`
+        });
+      }
+      if (finance.baseLivingExpenses > 0) {
+        this.recordFinancialTransaction({
+          type: 'expense',
+          category: 'living_cost',
+          amount: finance.baseLivingExpenses,
+          description: `Alquiler / Costo de vida (${this.world.currentYear}, Mes ${this.world.currentMonth})`
+        });
+      }
+      if (finance.lifestyleUpkeep > 0) {
+        this.recordFinancialTransaction({
+          type: 'expense',
+          category: 'maintenance',
+          amount: finance.lifestyleUpkeep,
+          description: `Mantenimiento de equipamiento & estudio (${this.world.currentYear}, Mes ${this.world.currentMonth})`
+        });
+      }
+      if (finance.managerCommission > 0) {
+        this.recordFinancialTransaction({
+          type: 'expense',
+          category: 'contract',
+          amount: finance.managerCommission,
+          description: `Comisión de manager (${manager?.name || 'Manager'})`
+        });
+      }
+
       player.stats.funds = Math.max(0, player.stats.funds + finance.netMonthlyProfit);
 
       // 4. Update genres and trends
@@ -1292,6 +1503,11 @@ export class GameEngine {
         if (!this.world.socialFeed) this.world.socialFeed = [];
         if (!this.world.ecosystemContacts) this.world.ecosystemContacts = RelationshipEngine.getInitialEcosystemContacts();
         if (!this.world.activeBeefs) this.world.activeBeefs = {};
+        if (!this.world.financialLedger) this.world.financialLedger = [];
+        const player = this.world.artists[parsed.playerId];
+        if (player && !player.financialLedger) {
+          player.financialLedger = [];
+        }
         this.playerId = parsed.playerId;
         this.currentEvent = null;
         this.eventQueue = [];

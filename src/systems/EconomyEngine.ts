@@ -44,13 +44,23 @@ export class EconomyEngine {
       prodigyMerchBoost
     );
 
-    // Baseline living & crew expenses scaled to career stage (underground costs are gentle)
-    let baseLivingExpenses = 250;
-    if (artist.stats.popularity > 85) baseLivingExpenses = 35000;
-    else if (artist.stats.popularity > 70) baseLivingExpenses = 14000;
-    else if (artist.stats.popularity > 50) baseLivingExpenses = 4500;
-    else if (artist.stats.popularity > 30) baseLivingExpenses = 1500;
-    else if (artist.stats.popularity > 15) baseLivingExpenses = 600;
+    // Baseline living & crew expenses scaled to career stage (underground costs are gentle and realistic, $35/mes)
+    let baseLivingExpenses = 35;
+    if (artist.careerStage === 'Underground' || artist.stats.popularity <= 10) {
+      baseLivingExpenses = 35;
+    } else if (artist.stats.popularity > 85) {
+      baseLivingExpenses = 28000;
+    } else if (artist.stats.popularity > 70) {
+      baseLivingExpenses = 12000;
+    } else if (artist.stats.popularity > 50) {
+      baseLivingExpenses = 3800;
+    } else if (artist.stats.popularity > 30) {
+      baseLivingExpenses = 1200;
+    } else if (artist.stats.popularity > 15) {
+      baseLivingExpenses = 400;
+    } else {
+      baseLivingExpenses = 100;
+    }
 
     // Lifestyle items monthly maintenance/upkeep
     let lifestyleUpkeep = 0;
@@ -84,6 +94,47 @@ export class EconomyEngine {
       expensesLivingAndCrew: totalExpenses,
       managerCommission,
       netMonthlyProfit
+    };
+  }
+
+  static getOperatingCostsEstimate(
+    artist: Artist,
+    totalMonthlyStreams: number,
+    label: RecordLabel | undefined,
+    manager: Manager | undefined
+  ) {
+    const monthly = this.calculateMonthlyFinances(artist, totalMonthlyStreams, label, manager);
+    const semestralMonths = 6;
+
+    const livingCostSemestral = monthly.baseLivingExpenses * semestralMonths;
+    const upkeepSemestral = monthly.lifestyleUpkeep * semestralMonths;
+    const totalExpensesSemestral = monthly.expensesLivingAndCrew * semestralMonths;
+    const estRevenueMonthly = monthly.artistStreamingNet + monthly.merchRevenue;
+    const estRevenueSemestral = estRevenueMonthly * semestralMonths;
+    const estNetMonthly = monthly.netMonthlyProfit;
+    const estNetSemestral = monthly.netMonthlyProfit * semestralMonths;
+
+    const isDeficit = estNetSemestral < 0;
+    const bankruptcyRisk = isDeficit && Math.abs(estNetSemestral) > artist.stats.funds;
+    const monthsOfRunway = isDeficit && monthly.expensesLivingAndCrew > 0
+      ? Math.max(0, Math.floor(artist.stats.funds / Math.abs(estNetMonthly || 1)))
+      : 99;
+
+    return {
+      monthly,
+      livingCostMonthly: monthly.baseLivingExpenses,
+      livingCostSemestral,
+      upkeepMonthly: monthly.lifestyleUpkeep,
+      upkeepSemestral,
+      totalExpensesMonthly: monthly.expensesLivingAndCrew,
+      totalExpensesSemestral,
+      estRevenueMonthly,
+      estRevenueSemestral,
+      estNetMonthly,
+      estNetSemestral,
+      isDeficit,
+      bankruptcyRisk,
+      monthsOfRunway
     };
   }
 }

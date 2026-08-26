@@ -92,11 +92,47 @@ export interface Artist {
   generationIndex: number;
   influences: string[]; // artist IDs of inspirations
   lifestyleUpgrades?: string[]; // purchased lifestyle item IDs
+  financialLedger?: FinancialTransaction[];
   isProdigy?: boolean; // 1 in 100,000 rare prodigy trait
   prodigyMultiplier?: number; // 3x multiplier on stat/exp gains
 }
 
-export type LifestyleCategory = 'studio' | 'real_estate' | 'vehicles' | 'coaching';
+export type TransactionCategory =
+  | 'streaming'
+  | 'merch'
+  | 'production'
+  | 'marketing'
+  | 'release'
+  | 'store'
+  | 'lifestyle'
+  | 'living_cost'
+  | 'living_expenses'
+  | 'maintenance'
+  | 'tour'
+  | 'event'
+  | 'contract'
+  | 'contract_bonus'
+  | 'manager'
+  | 'manager_fee'
+  | 'vacation'
+  | 'npc'
+  | 'other';
+
+export interface FinancialTransaction {
+  id: string;
+  year: number;
+  month: number;
+  type: 'income' | 'expense';
+  category: TransactionCategory;
+  amount: number;
+  description: string;
+  resultingBalance: number;
+  balanceAfter?: number;
+  dateStr?: string;
+  timestamp?: number;
+}
+
+export type LifestyleCategory = 'starter' | 'home_studio' | 'studio' | 'real_estate' | 'vehicles' | 'coaching';
 
 export interface LifestyleItem {
   id: string;
@@ -612,6 +648,7 @@ export interface WorldState {
   }>;
   recentEventIdsHistory: Array<{ eventId: string; year: number; month: number }>;
   activeNarrativeChains: Record<string, { currentStep: number; nextTriggerYearMonth: { year: number; month: number } }>;
+  financialLedger?: FinancialTransaction[];
 }
 
 export interface GameSaveState {
