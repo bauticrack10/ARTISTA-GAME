@@ -103,9 +103,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
     title: `Debut Artístico en la Escena`,
     description: `Comienzo formal de la trayectoria artística en ${player.city}, ${player.country}. Enfoque sonoro inicial: ${world.genres[player.mainGenreId]?.name || player.mainGenreId}.`,
     badge: 'Inicio de Carrera',
-    badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+    badgeClass: 'bg-purple-900/40 text-purple-300 border-purple-500/40',
     icon: Sparkles,
-    iconBgClass: 'bg-purple-100 text-purple-700 border-purple-200'
+    iconBgClass: 'bg-purple-950/60 text-purple-400 border-purple-500/40'
   });
 
   // Eras
@@ -119,9 +119,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         title: `Transición a Era: "${era.name}"`,
         description: `${era.highlightSummary} (Etapa ${era.stage} • Sonido: ${world.genres[era.genreFocus]?.name || era.genreFocus})`,
         badge: `Era ${era.stage}`,
-        badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+        badgeClass: 'bg-teal-900/40 text-teal-300 border-teal-500/40',
         icon: TrendingUp,
-        iconBgClass: 'bg-teal-100 text-teal-700 border-teal-200'
+        iconBgClass: 'bg-teal-950/60 text-teal-400 border-teal-500/40'
       });
     }
   });
@@ -137,9 +137,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       description: `Álbum de ${album.songIds.length} canciones (${album.type.toUpperCase()}). Calificación crítica: ${album.criticalScore}/100.`,
       metrics: `${(album.totalStreams / 1000000).toFixed(1)}M streams • ${album.firstWeekSales.toLocaleString()} ventas debut`,
       badge: album.id === bestAlbum?.id ? 'Mejor Disco ⭐' : 'Disco Oficial',
-      badgeClass: album.id === bestAlbum?.id ? 'bg-amber-100 text-amber-900 border-amber-300 font-bold' : 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      badgeClass: album.id === bestAlbum?.id ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 font-bold' : 'bg-indigo-900/40 text-indigo-300 border-indigo-500/40',
       icon: Disc3,
-      iconBgClass: 'bg-indigo-100 text-indigo-700 border-indigo-200'
+      iconBgClass: 'bg-indigo-950/60 text-indigo-400 border-indigo-500/40'
     });
   });
 
@@ -155,9 +155,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       description: `Sencillo de calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}`,
       metrics: `${(single.streamsTotal / 1000000).toFixed(1)}M streams • Pico #${single.peakPosition?.Global || '-'} Global`,
       badge: isHit ? 'Hit Top 10 🔥' : 'Single',
-      badgeClass: isHit ? RELEASE_BADGES.hitTop10 : 'bg-purple-100 text-purple-800 border-purple-200',
+      badgeClass: isHit ? 'bg-purple-900/50 text-purple-300 border-purple-500/40 font-bold' : 'bg-purple-950/50 text-purple-300 border-purple-500/40',
       icon: Disc3,
-      iconBgClass: 'bg-purple-100 text-purple-700 border-purple-200'
+      iconBgClass: 'bg-purple-950/60 text-purple-400 border-purple-500/40'
     });
   });
 
@@ -172,9 +172,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       description: `Tour de ${tour.stops.length} fechas por ${tour.stops.map(s => s.city).slice(0, 3).join(', ')}...`,
       metrics: `$${tour.grossRevenue.toLocaleString()} recaudación • ${tour.totalTicketsSold.toLocaleString()} tickets vendidos`,
       badge: tour.id === bestTour?.id ? 'Mejor Gira ⭐' : 'Tour',
-      badgeClass: tour.id === bestTour?.id ? 'bg-amber-100 text-amber-900 border-amber-300 font-bold' : 'bg-orange-100 text-orange-800 border-orange-200',
+      badgeClass: tour.id === bestTour?.id ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 font-bold' : 'bg-orange-900/40 text-orange-300 border-orange-500/40',
       icon: Sparkles,
-      iconBgClass: 'bg-orange-100 text-orange-700 border-orange-200'
+      iconBgClass: 'bg-orange-950/60 text-orange-400 border-orange-500/40'
     });
   });
 
@@ -191,9 +191,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       description: `Galardón otorgado por la academia musical en reconocimiento a la excelencia artística y comercial.`,
       metrics: `+5 Puntos de Legado Oficial`,
       badge: 'Estatuilla 🏆',
-      badgeClass: 'bg-yellow-100 text-yellow-900 border-yellow-300 font-bold',
+      badgeClass: 'bg-yellow-950/60 text-yellow-300 border-yellow-500/40 font-bold',
       icon: Trophy,
-      iconBgClass: 'bg-yellow-100 text-amber-700 border-yellow-300'
+      iconBgClass: 'bg-yellow-950/60 text-yellow-400 border-yellow-500/40'
     });
   });
 
@@ -208,9 +208,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       title: `Firma de Contrato con ${label?.name || 'Sello Discográfico'}`,
       description: `Acuerdo discográfico por ${player.activeContract.albumsRequired} álbumes (${player.activeContract.royaltyPercentage}% de regalías, adelanto de $${player.activeContract.signingBonus.toLocaleString()}).`,
       badge: 'Contrato',
-      badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      badgeClass: 'bg-emerald-900/40 text-emerald-300 border-emerald-500/40',
       icon: Building2,
-      iconBgClass: 'bg-emerald-100 text-emerald-700 border-emerald-200'
+      iconBgClass: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40'
     });
   }
 
@@ -230,25 +230,25 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
 
   return (
     <div
-      className="space-y-8 pb-16 text-[#1c1c1c]"
+      className="space-y-8 pb-16 text-[#F8FAFC]"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* 1. HEADER SECTION */}
-      <div className="bg-[#f7f4ed] p-6 sm:p-8 rounded-[16px] border border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm">
+      <div className="bg-[#16181F] p-6 sm:p-8 rounded-[16px] border border-[#2A2E3D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-teal-100 text-teal-900 border border-teal-200 px-2.5 py-0.5 rounded-[4px]">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-teal-950/60 text-teal-300 border border-teal-500/40 px-2.5 py-0.5 rounded-[4px]">
               Trayectoria & Legado
             </span>
-            <span className="text-xs text-[#5f5f5d]">
+            <span className="text-xs text-[#94A3B8]">
               {yearsActive + 1} Años de Actividad • {player.careerStage}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-[#1c1c1c] tracking-[-1.1px] mt-1.5 flex items-center gap-2.5">
-            <TrendingUp className="w-7 h-7 text-teal-600" />
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#F8FAFC] tracking-[-1.1px] mt-1.5 flex items-center gap-2.5">
+            <TrendingUp className="w-7 h-7 text-teal-400" />
             Carrera, Discografía & Hitos de {player.name}
           </h1>
-          <p className="text-xs text-[#5f5f5d] mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-[#94A3B8] mt-1 max-w-2xl leading-relaxed">
             Revisá la cronología completa de tu trayectoria: el desempeño de tu discografía, la mejor gira de tu vida, las estatuillas ganadas y la evolución estética entre tus distintas Eras.
           </p>
         </div>
@@ -269,11 +269,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   year: world.currentYear
                 })
               }
-              className="flex items-center justify-center gap-2 bg-[#1c1c1c] text-[#fcfbf8] text-xs font-semibold px-4 py-3 rounded-[6px] hover:opacity-90 active:scale-98 transition-all cursor-pointer shadow-sm"
-              style={{
-                boxShadow:
-                  'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-              }}
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] text-xs px-4 py-3 rounded-[6px] hover:opacity-95 active:scale-98 transition-all cursor-pointer"
             >
               <Newspaper className="w-4 h-4 text-amber-300" />
               <span>Generar Portada de Revista</span>
@@ -281,13 +277,13 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
           )}
 
           {/* Legacy Score Box */}
-          <div className="bg-[#fcfbf8] px-5 py-3 rounded-[12px] border border-amber-300 text-center font-mono shrink-0 shadow-sm bg-gradient-to-br from-[#fcfbf8] to-amber-50/50">
-            <span className="text-[10px] text-amber-900 block uppercase tracking-wider font-bold">
+          <div className="bg-[#0B0C10] px-5 py-3 rounded-[12px] border border-amber-500/40 text-center font-mono shrink-0 shadow-sm bg-gradient-to-br from-[#0B0C10] to-amber-950/20">
+            <span className="text-[10px] text-amber-400 block uppercase tracking-wider font-bold">
               Puntaje de Legado
             </span>
-            <span className="text-2xl sm:text-3xl font-bold text-amber-700">
+            <span className="text-2xl sm:text-3xl font-bold text-amber-400">
               {player.legacyScore}
-              <span className="text-sm font-normal text-[#5f5f5d]">/100</span>
+              <span className="text-sm font-normal text-[#94A3B8]">/100</span>
             </span>
           </div>
         </div>
@@ -295,57 +291,57 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
 
       {/* 2. EXECUTIVE KPI CARDS WITH VIBRANT COLORS */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-        <div className="bg-purple-50/40 border border-purple-200/80 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
-          <span className="text-[10px] text-purple-900 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#16181F] border border-purple-500/30 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
+          <span className="text-[10px] text-purple-300 uppercase tracking-wider block font-bold font-mono">
             Total Streams
           </span>
-          <p className="text-base sm:text-lg font-bold text-purple-900 font-mono">
+          <p className="text-base sm:text-lg font-bold text-purple-400 font-mono">
             {(player.stats.totalStreams / 1000000).toFixed(1)}M
           </p>
         </div>
 
-        <div className="bg-orange-50/40 border border-orange-200/80 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
-          <span className="text-[10px] text-orange-900 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#16181F] border border-orange-500/30 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
+          <span className="text-[10px] text-orange-300 uppercase tracking-wider block font-bold font-mono">
             Hits Top 10
           </span>
-          <p className="text-base sm:text-lg font-bold text-orange-900 font-mono">
-            {totalHits} <span className="text-xs font-normal text-[#5f5f5d]">temas</span>
+          <p className="text-base sm:text-lg font-bold text-orange-400 font-mono">
+            {totalHits} <span className="text-xs font-normal text-[#94A3B8]">temas</span>
           </p>
         </div>
 
-        <div className="bg-amber-50/40 border border-amber-200/80 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
-          <span className="text-[10px] text-amber-900 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#16181F] border border-amber-500/30 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
+          <span className="text-[10px] text-amber-300 uppercase tracking-wider block font-bold font-mono">
             Hits #1 Charts
           </span>
-          <p className="text-base sm:text-lg font-bold text-amber-900 font-mono">
-            {totalNo1s} <span className="text-xs font-normal text-[#5f5f5d]">himnos</span>
+          <p className="text-base sm:text-lg font-bold text-amber-400 font-mono">
+            {totalNo1s} <span className="text-xs font-normal text-[#94A3B8]">himnos</span>
           </p>
         </div>
 
-        <div className="bg-blue-50/40 border border-blue-200/80 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
-          <span className="text-[10px] text-blue-900 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#16181F] border border-blue-500/30 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
+          <span className="text-[10px] text-blue-300 uppercase tracking-wider block font-bold font-mono">
             Álbumes Lanzados
           </span>
-          <p className="text-base sm:text-lg font-bold text-blue-900 font-mono">
-            {playerAlbums.length} <span className="text-xs font-normal text-[#5f5f5d]">LPs</span>
+          <p className="text-base sm:text-lg font-bold text-blue-400 font-mono">
+            {playerAlbums.length} <span className="text-xs font-normal text-[#94A3B8]">LPs</span>
           </p>
         </div>
 
-        <div className="bg-yellow-50/40 border border-yellow-200/80 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
-          <span className="text-[10px] text-yellow-900 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#16181F] border border-yellow-500/30 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
+          <span className="text-[10px] text-yellow-300 uppercase tracking-wider block font-bold font-mono">
             Premios Ganados
           </span>
-          <p className="text-base sm:text-lg font-bold text-amber-700 font-mono">
-            {player.awardsWon.length} <span className="text-xs font-normal text-[#5f5f5d]">trofeos</span>
+          <p className="text-base sm:text-lg font-bold text-yellow-400 font-mono">
+            {player.awardsWon.length} <span className="text-xs font-normal text-[#94A3B8]">trofeos</span>
           </p>
         </div>
 
-        <div className="bg-emerald-50/40 border border-emerald-200/80 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
-          <span className="text-[10px] text-emerald-900 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#16181F] border border-emerald-500/30 p-3.5 rounded-[10px] space-y-1 shadow-2xs">
+          <span className="text-[10px] text-emerald-300 uppercase tracking-wider block font-bold font-mono">
             Giras Realizadas
           </span>
-          <p className="text-base sm:text-lg font-bold text-emerald-900 font-mono">
-            {playerTours.length} <span className="text-xs font-normal text-[#5f5f5d]">tours</span>
+          <p className="text-base sm:text-lg font-bold text-emerald-400 font-mono">
+            {playerTours.length} <span className="text-xs font-normal text-[#94A3B8]">tours</span>
           </p>
         </div>
       </div>
@@ -353,25 +349,25 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       {/* 3. HERO SHOWCASE: MEJOR DISCO & MEJOR GIRA */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* A. MEJOR DISCO */}
-        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-6 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#eceae4] pb-3">
+        <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
             <div className="flex items-center gap-2">
-              <Disc3 className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-base font-semibold text-[#1c1c1c]">
+              <Disc3 className="w-5 h-5 text-indigo-400" />
+              <h2 className="text-base font-semibold text-[#F8FAFC]">
                 Mejor Disco Histórico (Obra Cumbre)
               </h2>
             </div>
-            <span className="text-[10px] uppercase font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-[4px] shadow-2xs">
+            <span className="text-[10px] uppercase font-bold bg-amber-950/60 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-[4px] shadow-2xs">
               🌟 Récord de Ventas & Streams
             </span>
           </div>
 
           {bestAlbum ? (
-            <div className="bg-[#fcfbf8] border border-[#eceae4] rounded-[12px] p-5 space-y-4 shadow-xs">
+            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-5 space-y-4 shadow-xs">
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 {/* Cover Gradient */}
                 <div
-                  className={`w-24 h-24 sm:w-28 sm:h-28 rounded-[12px] border-2 border-white bg-gradient-to-br ${bestAlbum.coverGradient || ARTISTIC_COVER_GRADIENTS[0]} shrink-0 flex flex-col justify-end p-2.5 text-white shadow-md`}
+                  className={`w-24 h-24 sm:w-28 sm:h-28 rounded-[12px] border-2 border-white/20 bg-gradient-to-br ${bestAlbum.coverGradient || ARTISTIC_COVER_GRADIENTS[0]} shrink-0 flex flex-col justify-end p-2.5 text-white shadow-md`}
                 >
                   <Disc3 className="w-5 h-5 opacity-90" />
                   <span className="text-[10px] font-extrabold uppercase truncate mt-auto drop-shadow-sm">
@@ -381,15 +377,15 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
 
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-[#5f5f5d]">
+                    <span className="text-xs font-mono text-[#94A3B8]">
                       Lanzado en {bestAlbum.releaseYear} (Mes {bestAlbum.releaseMonth})
                     </span>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-[4px] bg-emerald-100 text-emerald-900 border border-emerald-300">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-[4px] bg-emerald-950/60 text-emerald-400 border border-emerald-500/40">
                       Crítica: {bestAlbum.criticalScore}/100
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-semibold text-[#1c1c1c] tracking-[-0.5px]">
+                  <h3 className="text-lg font-semibold text-[#F8FAFC] tracking-[-0.5px]">
                     {bestAlbum.title}
                   </h3>
 
@@ -397,13 +393,13 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${getGenreBadgeClass(bestAlbum.genreId)}`}>
                       {world.genres[bestAlbum.genreId]?.name || bestAlbum.genreId}
                     </span>
-                    <span className="text-xs text-[#5f5f5d] font-mono">
+                    <span className="text-xs text-[#94A3B8] font-mono">
                       {bestAlbum.songIds.length} canciones
                     </span>
                   </div>
 
                   {bestAlbum.criticalReviewText && (
-                    <p className="text-xs text-[#5f5f5d] italic bg-[#f7f4ed] p-2.5 rounded-[6px] border border-[#eceae4]/70">
+                    <p className="text-xs text-[#94A3B8] italic bg-[#16181F] p-2.5 rounded-[6px] border border-[#2A2E3D]">
                       "{bestAlbum.criticalReviewText}"
                     </p>
                   )}
@@ -411,34 +407,34 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               </div>
 
               {/* Metrics Bar */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#eceae4] text-center font-mono">
-                <div className="bg-purple-50/50 p-2 rounded-[6px] border border-purple-200">
-                  <span className="text-[10px] text-purple-900 uppercase block font-semibold">Streams Totales</span>
-                  <span className="text-xs sm:text-sm font-bold text-purple-800">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#2A2E3D] text-center font-mono">
+                <div className="bg-purple-950/40 p-2 rounded-[6px] border border-purple-500/30">
+                  <span className="text-[10px] text-purple-300 uppercase block font-semibold">Streams Totales</span>
+                  <span className="text-xs sm:text-sm font-bold text-purple-400">
                     {(bestAlbum.totalStreams / 1000000).toFixed(1)}M
                   </span>
                 </div>
-                <div className="bg-indigo-50/50 p-2 rounded-[6px] border border-indigo-200">
-                  <span className="text-[10px] text-indigo-900 uppercase block font-semibold">Ventas Debut</span>
-                  <span className="text-xs sm:text-sm font-bold text-indigo-800">
+                <div className="bg-indigo-950/40 p-2 rounded-[6px] border border-indigo-500/30">
+                  <span className="text-[10px] text-indigo-300 uppercase block font-semibold">Ventas Debut</span>
+                  <span className="text-xs sm:text-sm font-bold text-indigo-400">
                     {bestAlbum.firstWeekSales.toLocaleString()}
                   </span>
                 </div>
-                <div className="bg-emerald-50/50 p-2 rounded-[6px] border border-emerald-200">
-                  <span className="text-[10px] text-emerald-900 uppercase block font-semibold">Score Comercial</span>
-                  <span className="text-xs sm:text-sm font-bold text-emerald-800">
+                <div className="bg-emerald-950/40 p-2 rounded-[6px] border border-emerald-500/30">
+                  <span className="text-[10px] text-emerald-300 uppercase block font-semibold">Score Comercial</span>
+                  <span className="text-xs sm:text-sm font-bold text-emerald-400">
                     {bestAlbum.commercialScore}/100
                   </span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-[#fcfbf8] border border-[#eceae4] rounded-[12px] p-6 text-center space-y-2">
-              <div className="w-10 h-10 rounded-full bg-[#f7f4ed] text-[#5f5f5d] mx-auto flex items-center justify-center border border-[#eceae4]">
+            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-6 text-center space-y-2">
+              <div className="w-10 h-10 rounded-full bg-[#16181F] text-[#94A3B8] mx-auto flex items-center justify-center border border-[#2A2E3D]">
                 <Disc3 className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-semibold text-[#1c1c1c]">Aún no has publicado un álbum</h3>
-              <p className="text-xs text-[#5f5f5d] max-w-sm mx-auto">
+              <h3 className="text-sm font-semibold text-[#F8FAFC]">Aún no has publicado un álbum</h3>
+              <p className="text-xs text-[#94A3B8] max-w-sm mx-auto">
                 Dirígete al Estudio para componer y producir tu primer LP o EP conceptual y consagrar tu sonido.
               </p>
             </div>
@@ -446,75 +442,75 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         </div>
 
         {/* B. MEJOR GIRA */}
-        <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-6 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#eceae4] pb-3">
+        <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-600" />
-              <h2 className="text-base font-semibold text-[#1c1c1c]">
+              <Sparkles className="w-5 h-5 text-amber-400" />
+              <h2 className="text-base font-semibold text-[#F8FAFC]">
                 Mejor Gira Histórica (Mayor Recaudación)
               </h2>
             </div>
-            <span className="text-[10px] uppercase font-bold bg-orange-100 text-orange-900 border border-orange-300 px-2.5 py-0.5 rounded-[4px] shadow-2xs">
+            <span className="text-[10px] uppercase font-bold bg-orange-950/60 text-orange-300 border border-orange-500/40 px-2.5 py-0.5 rounded-[4px] shadow-2xs">
               🔥 Récord de Asistencia & Taquilla
             </span>
           </div>
 
           {bestTour ? (
-            <div className="bg-[#fcfbf8] border border-[#eceae4] rounded-[12px] p-5 space-y-4 shadow-xs">
+            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-5 space-y-4 shadow-xs">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-[#5f5f5d]">
+                  <span className="text-xs font-mono text-[#94A3B8]">
                     Año {bestTour.year} (Mes {bestTour.month})
                   </span>
-                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-[4px] bg-amber-100 text-amber-900 border border-amber-300">
+                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-[4px] bg-amber-950/60 text-amber-300 border border-amber-500/40">
                     Nivel: {bestTour.tier}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-semibold text-[#1c1c1c] tracking-[-0.5px]">
+                <h3 className="text-lg font-semibold text-[#F8FAFC] tracking-[-0.5px]">
                   {bestTour.name}
                 </h3>
 
-                <p className="text-xs text-[#5f5f5d] flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-rose-600" />
+                <p className="text-xs text-[#94A3B8] flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-rose-400" />
                   {bestTour.stops.length} ciudades visitadas: {bestTour.stops.slice(0, 4).map(s => s.city).join(', ')}...
                 </p>
               </div>
 
               {/* Tour Numbers */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#eceae4] text-center font-mono">
-                <div className="bg-emerald-50/50 p-2 rounded-[6px] border border-emerald-200">
-                  <span className="text-[10px] text-emerald-900 uppercase block font-semibold">Recaudación Bruta</span>
-                  <span className="text-xs sm:text-sm font-bold text-emerald-800">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#2A2E3D] text-center font-mono">
+                <div className="bg-emerald-950/40 p-2 rounded-[6px] border border-emerald-500/30">
+                  <span className="text-[10px] text-emerald-300 uppercase block font-semibold">Recaudación Bruta</span>
+                  <span className="text-xs sm:text-sm font-bold text-emerald-400">
                     ${bestTour.grossRevenue.toLocaleString()}
                   </span>
                 </div>
-                <div className="bg-blue-50/50 p-2 rounded-[6px] border border-blue-200">
-                  <span className="text-[10px] text-blue-900 uppercase block font-semibold">Beneficio Neto</span>
-                  <span className="text-xs sm:text-sm font-bold text-blue-800">
+                <div className="bg-blue-950/40 p-2 rounded-[6px] border border-blue-500/30">
+                  <span className="text-[10px] text-blue-300 uppercase block font-semibold">Beneficio Neto</span>
+                  <span className="text-xs sm:text-sm font-bold text-blue-400">
                     ${bestTour.netArtistProfit.toLocaleString()}
                   </span>
                 </div>
-                <div className="bg-purple-50/50 p-2 rounded-[6px] border border-purple-200">
-                  <span className="text-[10px] text-purple-900 uppercase block font-semibold">Asistencia</span>
-                  <span className="text-xs sm:text-sm font-bold text-purple-800">
+                <div className="bg-purple-950/40 p-2 rounded-[6px] border border-purple-500/30">
+                  <span className="text-[10px] text-purple-300 uppercase block font-semibold">Asistencia</span>
+                  <span className="text-xs sm:text-sm font-bold text-purple-400">
                     {bestTour.totalTicketsSold.toLocaleString()}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-[#f7f4ed] p-2.5 rounded-[6px] border border-[#eceae4] flex items-center justify-between text-xs text-[#5f5f5d]">
-                <span>Tasa de Ocupación: <strong className="text-emerald-700">{Math.round((bestTour.totalTicketsSold / Math.max(1, bestTour.totalCapacity)) * 100)}%</strong></span>
-                <span>Hype Generado: <strong className="text-orange-700">+{bestTour.hypeGenerated}</strong></span>
+              <div className="bg-[#16181F] p-2.5 rounded-[6px] border border-[#2A2E3D] flex items-center justify-between text-xs text-[#94A3B8]">
+                <span>Tasa de Ocupación: <strong className="text-emerald-400">{Math.round((bestTour.totalTicketsSold / Math.max(1, bestTour.totalCapacity)) * 100)}%</strong></span>
+                <span>Hype Generado: <strong className="text-orange-400">+{bestTour.hypeGenerated}</strong></span>
               </div>
             </div>
           ) : (
-            <div className="bg-[#fcfbf8] border border-[#eceae4] rounded-[12px] p-6 text-center space-y-2">
-              <div className="w-10 h-10 rounded-full bg-[#f7f4ed] text-[#5f5f5d] mx-auto flex items-center justify-center border border-[#eceae4]">
+            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-6 text-center space-y-2">
+              <div className="w-10 h-10 rounded-full bg-[#16181F] text-[#94A3B8] mx-auto flex items-center justify-center border border-[#2A2E3D]">
                 <Sparkles className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-semibold text-[#1c1c1c]">Aún no has salido de gira</h3>
-              <p className="text-xs text-[#5f5f5d] max-w-sm mx-auto">
+              <h3 className="text-sm font-semibold text-[#F8FAFC]">Aún no has salido de gira</h3>
+              <p className="text-xs text-[#94A3B8] max-w-sm mx-auto">
                 Cuando acumules 85% de energía, organizá tu primer tour en la sección de Giras & Shows para llenar clubes, teatros y estadios.
               </p>
             </div>
@@ -523,23 +519,23 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       </div>
 
       {/* 4. CHRONOLOGICAL ERAS TIMELINE */}
-      <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-6 space-y-6 shadow-sm">
-        <div className="flex items-center justify-between border-b border-[#eceae4] pb-3">
+      <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 space-y-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
           <div>
-            <h2 className="text-base font-semibold text-[#1c1c1c] flex items-center gap-2">
-              <History className="w-5 h-5 text-teal-600" />
+            <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
+              <History className="w-5 h-5 text-teal-400" />
               Evolución de Eras Musicales ({player.eras.length})
             </h2>
-            <p className="text-xs text-[#5f5f5d] mt-0.5">
+            <p className="text-xs text-[#94A3B8] mt-0.5">
               Transiciones estéticas, cambios sonoros y madurez cultural del artista
             </p>
           </div>
-          <span className="text-xs font-mono text-[#5f5f5d] bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4]">
-            Etapa Actual: <strong className="text-purple-700">{player.careerStage}</strong>
+          <span className="text-xs font-mono text-[#94A3B8] bg-[#0B0C10] px-2.5 py-1 rounded-[6px] border border-[#2A2E3D]">
+            Etapa Actual: <strong className="text-[#8B5CF6]">{player.careerStage}</strong>
           </span>
         </div>
 
-        <div className="relative pl-6 sm:pl-8 border-l-2 border-teal-300 space-y-6 my-2">
+        <div className="relative pl-6 sm:pl-8 border-l-2 border-teal-500/40 space-y-6 my-2">
           {player.eras.map((era, index) => {
             const isCurrent = index === player.eras.length - 1;
             const eraAlbums = playerAlbums.filter(a => a.releaseYear >= era.startYear && (!era.endYear || a.releaseYear <= era.endYear));
@@ -552,37 +548,37 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 <div
                   className={`absolute -left-[31px] sm:-left-[39px] top-2 w-4 h-4 rounded-full border-2 transition-all ${
                     isCurrent
-                      ? 'bg-teal-600 border-teal-600 ring-4 ring-teal-200'
-                      : 'bg-[#f7f4ed] border-teal-300'
+                      ? 'bg-teal-400 border-teal-300 ring-4 ring-teal-500/30'
+                      : 'bg-[#16181F] border-teal-500/50'
                   }`}
                 />
 
-                <div className="bg-[#fcfbf8] p-5 sm:p-6 rounded-[12px] border border-[#eceae4] space-y-3 shadow-xs hover:border-teal-400 transition-all">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-[#eceae4]/70 pb-2.5">
+                <div className="bg-[#0B0C10] p-5 sm:p-6 rounded-[12px] border border-[#2A2E3D] space-y-3 shadow-xs hover:border-teal-500/50 transition-all">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-[#2A2E3D] pb-2.5">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                      <h3 className="text-base font-semibold text-[#1c1c1c]">
+                      <h3 className="text-base font-semibold text-[#F8FAFC]">
                         {era.name}
                       </h3>
-                      <span className="text-[10px] uppercase font-bold bg-teal-50 text-teal-800 border border-teal-200 px-2 py-0.5 rounded-[4px]">
+                      <span className="text-[10px] uppercase font-bold bg-teal-950/60 text-teal-300 border border-teal-500/40 px-2 py-0.5 rounded-[4px]">
                         {era.stage}
                       </span>
                       {isCurrent && (
-                        <span className="text-[10px] font-bold bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-2 py-0.5 rounded-[4px] shadow-2xs">
+                        <span className="text-[10px] font-bold bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-2 py-0.5 rounded-[4px] shadow-[0_0_10px_rgba(20,184,166,0.3)]">
                           Era Vigente
                         </span>
                       )}
                     </div>
 
-                    <span className="text-xs font-mono text-[#5f5f5d]">
+                    <span className="text-xs font-mono text-[#94A3B8]">
                       {era.startYear} ({TimeSystem.getMonthName(era.startMonth)}) — {era.endYear ? `${era.endYear} (${TimeSystem.getMonthName(era.endMonth || 12)})` : 'Presente'}
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-[#5f5f5d] leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
                     {era.highlightSummary}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#5f5f5d] pt-1">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#94A3B8] pt-1">
                     <div className="flex items-center gap-1.5">
                       <span>Enfoque Sonoro:</span>
                       <span className={`text-[10px] font-bold px-2 py-0.2 rounded-full ${eraGenreTheme.badgeBg} ${eraGenreTheme.badgeText}`}>
@@ -591,20 +587,20 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                     </div>
                     <span>•</span>
                     <span>
-                      Lanzamientos en esta Era: <strong className="text-purple-700 font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles</strong>
+                      Lanzamientos en esta Era: <strong className="text-[#8B5CF6] font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles</strong>
                     </span>
                   </div>
 
                   {/* Albums released during this era */}
                   {eraAlbums.length > 0 && (
-                    <div className="pt-2 border-t border-[#eceae4]/60 flex items-center gap-2 overflow-x-auto">
-                      <span className="text-[10px] uppercase text-[#5f5f5d] font-semibold shrink-0">
+                    <div className="pt-2 border-t border-[#2A2E3D] flex items-center gap-2 overflow-x-auto">
+                      <span className="text-[10px] uppercase text-[#94A3B8] font-semibold shrink-0">
                         Discos Clave:
                       </span>
                       {eraAlbums.map(alb => (
                         <span
                           key={alb.id}
-                          className="bg-indigo-50 text-indigo-900 text-xs px-2.5 py-1 rounded-[6px] border border-indigo-200 whitespace-nowrap font-semibold"
+                          className="bg-indigo-950/60 text-indigo-300 text-xs px-2.5 py-1 rounded-[6px] border border-indigo-500/40 whitespace-nowrap font-semibold"
                         >
                           📀 {alb.title} ({alb.criticalScore} pts)
                         </span>
@@ -614,8 +610,8 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
 
                   {/* Era Quick Actions */}
                   {onOpenMilestone && (
-                    <div className="pt-2 border-t border-[#eceae4]/60 flex items-center justify-between">
-                      <span className="text-[11px] text-[#5f5f5d]">
+                    <div className="pt-2 border-t border-[#2A2E3D] flex items-center justify-between">
+                      <span className="text-[11px] text-[#94A3B8]">
                         Registrado en los archivos de la crítica y la prensa musical.
                       </span>
                       <button
@@ -630,9 +626,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                             quote: era.highlightSummary
                           })
                         }
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1c1c1c] hover:underline cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F8FAFC] hover:text-[#8B5CF6] hover:underline cursor-pointer"
                       >
-                        <Newspaper className="w-3.5 h-3.5 text-amber-600" />
+                        <Newspaper className="w-3.5 h-3.5 text-amber-400" />
                         <span>Ver Portada de Revista de esta Era</span>
                       </button>
                     </div>
@@ -645,24 +641,24 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       </div>
 
       {/* 5. FULL DISCOGRAPHY SECTION */}
-      <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-6 space-y-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#eceae4] pb-3">
+      <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 space-y-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2E3D] pb-3">
           <div>
-            <h2 className="text-base font-semibold text-[#1c1c1c] flex items-center gap-2">
-              <Disc3 className="w-5 h-5 text-indigo-600" />
+            <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
+              <Disc3 className="w-5 h-5 text-indigo-400" />
               Catálogo Discográfico Completo ({playerAlbums.length} Proyectos)
             </h2>
-            <p className="text-xs text-[#5f5f5d] mt-0.5">
+            <p className="text-xs text-[#94A3B8] mt-0.5">
               Todos los álbumes, EPs y mixtapes lanzados a lo largo de tu carrera
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-[#fcfbf8] p-1 rounded-[6px] border border-[#eceae4] text-xs shadow-2xs">
-            <span className="text-[10px] text-[#5f5f5d] uppercase px-2 font-mono">Ordenar:</span>
+          <div className="flex items-center gap-1.5 bg-[#0B0C10] p-1 rounded-[6px] border border-[#2A2E3D] text-xs shadow-2xs">
+            <span className="text-[10px] text-[#94A3B8] uppercase px-2 font-mono">Ordenar:</span>
             <button
               onClick={() => setDiscographySort('streams')}
               className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer ${
-                discographySort === 'streams' ? 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold' : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                discographySort === 'streams' ? 'bg-[#8B5CF6] text-white font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
               }`}
             >
               Streams
@@ -670,7 +666,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             <button
               onClick={() => setDiscographySort('score')}
               className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer ${
-                discographySort === 'score' ? 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold' : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                discographySort === 'score' ? 'bg-[#8B5CF6] text-white font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
               }`}
             >
               Crítica
@@ -678,7 +674,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             <button
               onClick={() => setDiscographySort('date')}
               className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer ${
-                discographySort === 'date' ? 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold' : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                discographySort === 'date' ? 'bg-[#8B5CF6] text-white font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
               }`}
             >
               Fecha
@@ -687,10 +683,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         </div>
 
         {sortedAlbums.length === 0 ? (
-          <div className="bg-[#fcfbf8] border border-[#eceae4] rounded-[12px] p-8 text-center space-y-2">
-            <Disc3 className="w-8 h-8 text-[#5f5f5d] mx-auto" />
-            <h3 className="text-sm font-semibold text-[#1c1c1c]">Sin Discografía Aún</h3>
-            <p className="text-xs text-[#5f5f5d]">
+          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-8 text-center space-y-2">
+            <Disc3 className="w-8 h-8 text-[#94A3B8] mx-auto" />
+            <h3 className="text-sm font-semibold text-[#F8FAFC]">Sin Discografía Aún</h3>
+            <p className="text-xs text-[#94A3B8]">
               Lanzá tu primer álbum o EP en la pestaña de Estudio para comenzar a construir tu catálogo.
             </p>
           </div>
@@ -703,31 +699,31 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               return (
                 <div
                   key={album.id}
-                  className={`bg-[#fcfbf8] p-5 rounded-[12px] border transition-all space-y-3 flex flex-col justify-between shadow-xs ${
-                    isBest ? 'border-amber-400 ring-2 ring-amber-300/40' : 'border-[#eceae4] hover:border-indigo-300'
+                  className={`bg-[#0B0C10] p-5 rounded-[12px] border transition-all space-y-3 flex flex-col justify-between shadow-xs ${
+                    isBest ? 'border-amber-500/60 ring-2 ring-amber-500/30' : 'border-[#2A2E3D] hover:border-indigo-500/50'
                   }`}
                 >
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
                       <div
-                        className={`w-16 h-16 rounded-[8px] bg-gradient-to-br ${coverGrad} shrink-0 border-2 border-white shadow-sm flex items-end p-1.5 text-white text-[9px] font-bold uppercase`}
+                        className={`w-16 h-16 rounded-[8px] bg-gradient-to-br ${coverGrad} shrink-0 border-2 border-white/20 shadow-sm flex items-end p-1.5 text-white text-[9px] font-bold uppercase`}
                       >
                         {album.type}
                       </div>
 
                       <div className="space-y-0.5 flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono text-[#5f5f5d]">
+                          <span className="text-[10px] font-mono text-[#94A3B8]">
                             {album.releaseYear}
                           </span>
                           {isBest && (
-                            <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded-[3px]">
+                            <span className="bg-amber-950/60 text-amber-300 border border-amber-500/40 text-[9px] font-bold px-1.5 py-0.5 rounded-[3px]">
                               Mejor Disco ⭐
                             </span>
                           )}
                         </div>
 
-                        <h3 className="text-sm font-semibold text-[#1c1c1c] truncate">
+                        <h3 className="text-sm font-semibold text-[#F8FAFC] truncate">
                           {album.title}
                         </h3>
 
@@ -735,7 +731,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                           <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full ${albumGenre.badgeBg} ${albumGenre.badgeText}`}>
                             {world.genres[album.genreId]?.name || album.genreId}
                           </span>
-                          <span className="text-[10px] text-[#5f5f5d]">
+                          <span className="text-[10px] text-[#94A3B8]">
                             {album.songIds.length} tracks
                           </span>
                         </div>
@@ -743,23 +739,23 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                     </div>
 
                     <div className="grid grid-cols-3 gap-1.5 text-center font-mono text-xs">
-                      <div className="bg-purple-50/50 p-1.5 rounded-[4px] border border-purple-200">
-                        <span className="text-[9px] text-purple-900 uppercase block font-semibold">Streams</span>
-                        <span className="font-bold text-purple-800">{(album.totalStreams / 1000000).toFixed(1)}M</span>
+                      <div className="bg-purple-950/40 p-1.5 rounded-[4px] border border-purple-500/30">
+                        <span className="text-[9px] text-purple-300 uppercase block font-semibold">Streams</span>
+                        <span className="font-bold text-purple-400">{(album.totalStreams / 1000000).toFixed(1)}M</span>
                       </div>
-                      <div className="bg-indigo-50/50 p-1.5 rounded-[4px] border border-indigo-200">
-                        <span className="text-[9px] text-indigo-900 uppercase block font-semibold">Ventas</span>
-                        <span className="font-bold text-indigo-800">{album.firstWeekSales.toLocaleString()}</span>
+                      <div className="bg-indigo-950/40 p-1.5 rounded-[4px] border border-indigo-500/30">
+                        <span className="text-[9px] text-indigo-300 uppercase block font-semibold">Ventas</span>
+                        <span className="font-bold text-indigo-400">{album.firstWeekSales.toLocaleString()}</span>
                       </div>
-                      <div className="bg-emerald-50/50 p-1.5 rounded-[4px] border border-emerald-200">
-                        <span className="text-[9px] text-emerald-900 uppercase block font-semibold">Crítica</span>
-                        <span className="font-bold text-emerald-800">{album.criticalScore}/100</span>
+                      <div className="bg-emerald-950/40 p-1.5 rounded-[4px] border border-emerald-500/30">
+                        <span className="text-[9px] text-emerald-300 uppercase block font-semibold">Crítica</span>
+                        <span className="font-bold text-emerald-400">{album.criticalScore}/100</span>
                       </div>
                     </div>
                   </div>
 
                   {album.criticalReviewText && (
-                    <p className="text-[11px] text-[#5f5f5d] italic line-clamp-2 border-t border-[#eceae4]/60 pt-2">
+                    <p className="text-[11px] text-[#94A3B8] italic line-clamp-2 border-t border-[#2A2E3D] pt-2">
                       "{album.criticalReviewText}"
                     </p>
                   )}
@@ -771,14 +767,14 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       </div>
 
       {/* 6. CHRONOLOGICAL TRAJECTORY LOG (TIMELINE DIARY) */}
-      <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-6 space-y-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#eceae4] pb-3">
+      <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 space-y-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2E3D] pb-3">
           <div>
-            <h2 className="text-base font-semibold text-[#1c1c1c] flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-indigo-600" />
+            <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-indigo-400" />
               Registro Histórico Cronológico de Carrera ({timelineItems.length} Hitos)
             </h2>
-            <p className="text-xs text-[#5f5f5d] mt-0.5">
+            <p className="text-xs text-[#94A3B8] mt-0.5">
               Diario cronológico detallado de cada lanzamiento, premio, gira y acontecimiento
             </p>
           </div>
@@ -797,8 +793,8 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 onClick={() => setTimelineFilter(f.id as any)}
                 className={`px-3 py-1 rounded-[6px] transition-colors cursor-pointer border whitespace-nowrap ${
                   timelineFilter === f.id
-                    ? 'bg-[#1c1c1c] text-[#fcfbf8] border-[#1c1c1c] font-semibold'
-                    : 'bg-[#fcfbf8] text-[#5f5f5d] border-[#eceae4] hover:text-[#1c1c1c]'
+                    ? 'bg-[#8B5CF6] text-white border-[#8B5CF6] font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]'
+                    : 'bg-[#0B0C10] text-[#94A3B8] border-[#2A2E3D] hover:text-[#F8FAFC] hover:bg-[#16181F]'
                 }`}
               >
                 {f.label}
@@ -808,7 +804,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         </div>
 
         {filteredTimeline.length === 0 ? (
-          <div className="text-center py-8 text-[#5f5f5d] text-xs">
+          <div className="text-center py-8 text-[#94A3B8] text-xs">
             No se encontraron eventos para el filtro seleccionado.
           </div>
         ) : (
@@ -818,7 +814,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               return (
                 <div
                   key={item.id}
-                  className="bg-[#fcfbf8] p-4 rounded-[12px] border border-[#eceae4] flex items-start justify-between gap-4 hover:border-indigo-300 transition-all shadow-2xs"
+                  className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] flex items-start justify-between gap-4 hover:border-indigo-500/40 transition-all shadow-2xs"
                 >
                   <div className="flex items-start gap-3.5">
                     <div
@@ -829,31 +825,31 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
 
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-semibold text-[#1c1c1c]">
+                        <span className="text-xs font-semibold text-[#F8FAFC]">
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className={`text-[10px] font-bold uppercase px-2 py-0.2 rounded-[4px] border ${item.badgeClass || 'bg-[#f7f4ed] text-[#1c1c1c] border-[#eceae4]'}`}>
+                          <span className={`text-[10px] font-bold uppercase px-2 py-0.2 rounded-[4px] border ${item.badgeClass || 'bg-[#16181F] text-[#F8FAFC] border-[#2A2E3D]'}`}>
                             {item.badge}
                           </span>
                         )}
                       </div>
 
-                      <p className="text-xs text-[#5f5f5d] leading-relaxed">
+                      <p className="text-xs text-[#94A3B8] leading-relaxed">
                         {item.description}
                       </p>
 
                       {item.metrics && (
-                        <p className="text-[11px] font-mono text-purple-900 font-semibold pt-0.5">
+                        <p className="text-[11px] font-mono text-purple-400 font-semibold pt-0.5">
                           {item.metrics}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0 font-mono text-xs text-[#5f5f5d]">
-                    <span className="block font-bold text-[#1c1c1c]">{item.year}</span>
-                    <span className="text-[10px] text-[#5f5f5d]">Mes {item.month}</span>
+                  <div className="text-right shrink-0 font-mono text-xs text-[#94A3B8]">
+                    <span className="block font-bold text-[#F8FAFC]">{item.year}</span>
+                    <span className="text-[10px] text-[#94A3B8]">Mes {item.month}</span>
                   </div>
                 </div>
               );

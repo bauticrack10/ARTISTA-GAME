@@ -50,57 +50,57 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   const getEcosystemBadge = (roleType: EcosystemNPC['roleType']) => {
     switch (roleType) {
       case 'beatmaker_barrio':
-        return { label: 'Beatmaker de Confianza', color: 'bg-teal-100 text-teal-900 border-teal-300' };
+        return { label: 'Beatmaker de Confianza', color: 'bg-teal-500/20 text-teal-300 border-teal-500/40' };
       case 'manager_chanta':
-        return { label: 'Manager / Intermediario', color: 'bg-amber-100 text-amber-950 border-amber-300' };
+        return { label: 'Manager / Intermediario', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' };
       case 'critico_hater':
-        return { label: 'Crítica / Prensa Hostil', color: 'bg-rose-100 text-rose-900 border-rose-300' };
+        return { label: 'Crítica / Prensa Hostil', color: 'bg-rose-500/20 text-rose-300 border-rose-500/40' };
       case 'rival_escena':
-        return { label: 'Rival Directo de Escena', color: 'bg-purple-100 text-purple-900 border-purple-300' };
+        return { label: 'Rival Directo de Escena', color: 'bg-purple-500/20 text-purple-300 border-purple-500/40' };
       default:
-        return { label: 'Contacto Urbano', color: 'bg-zinc-100 text-zinc-900 border-zinc-300' };
+        return { label: 'Contacto Urbano', color: 'bg-white/[0.06] text-[#F8FAFC] border-[#2A2E3D]' };
     }
   };
 
   const getBeefStageBadge = (stage: BeefState['stage']) => {
     switch (stage) {
       case 'tension':
-        return { label: 'Tensión Creciente', color: 'bg-amber-100 text-amber-900 border-amber-300' };
+        return { label: 'Tensión Creciente', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' };
       case 'social_beef':
-        return { label: 'Cruce en Redes', color: 'bg-orange-100 text-orange-950 border-orange-300' };
+        return { label: 'Cruce en Redes', color: 'bg-orange-500/20 text-orange-300 border-orange-500/40' };
       case 'diss_tracks':
-        return { label: 'Guerra de Tiraderas', color: 'bg-rose-100 text-rose-900 border-rose-300 animate-pulse font-bold' };
+        return { label: 'Guerra de Tiraderas', color: 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse font-bold' };
       case 'all_out_war':
-        return { label: 'Conflicto Total', color: 'bg-red-200 text-red-950 border-red-400 font-bold' };
+        return { label: 'Conflicto Total', color: 'bg-red-500/30 text-red-200 border-red-500/50 font-bold' };
       case 'settled':
-        return { label: 'Tregua / Resuelto', color: 'bg-emerald-100 text-emerald-900 border-emerald-300' };
+        return { label: 'Tregua / Resuelto', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' };
       default:
-        return { label: 'Activo', color: 'bg-zinc-100 text-zinc-900 border-zinc-300' };
+        return { label: 'Activo', color: 'bg-white/[0.06] text-[#F8FAFC] border-[#2A2E3D]' };
     }
   };
 
   return (
-    <div className="space-y-8 pb-12" style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}>
+    <div className="space-y-8 pb-12 text-[#F8FAFC]" style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}>
       {/* Header */}
-      <div className="bg-[#f7f4ed] p-6 rounded-[16px] border border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[#16181F] p-6 rounded-[16px] border border-[#2A2E3D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
         <div>
-          <h1 className="text-2xl font-semibold text-[#1c1c1c] tracking-[-0.9px] flex items-center gap-2">
-            <Network className="w-5 h-5 text-[#1c1c1c]" />
+          <h1 className="text-2xl font-semibold text-[#F8FAFC] tracking-[-0.9px] flex items-center gap-2">
+            <Network className="w-5 h-5 text-[#8B5CF6]" />
             Ecosistema, Vínculos & Rivalidades Urbanas
           </h1>
-          <p className="text-xs text-[#5f5f5d] mt-1">
+          <p className="text-xs text-[#94A3B8] mt-1">
             Gestioná tu círculo cercano de confianza, lidiá con managers y críticos de la escena, y defendé tu respeto en tiraderas.
           </p>
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex items-center gap-1 bg-[#fcfbf8] p-1 rounded-[8px] border border-[#eceae4] text-xs flex-wrap">
+        <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D] text-xs flex-wrap">
           <button
             onClick={() => setFilter('all')}
             className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
               filter === 'all'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Todos ({otherArtists.length + ecosystemContacts.length})
@@ -109,8 +109,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             onClick={() => setFilter('ecosystem')}
             className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
               filter === 'ecosystem'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Personajes Ecosistema ({ecosystemContacts.length})
@@ -119,8 +119,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             onClick={() => setFilter('friends')}
             className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
               filter === 'friends'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Aliados
@@ -129,8 +129,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             onClick={() => setFilter('rivals')}
             className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
               filter === 'rivals'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Rivales
@@ -139,8 +139,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             onClick={() => setFilter('feuds')}
             className={`px-3 py-1.5 rounded-[6px] font-semibold transition-all cursor-pointer ${
               filter === 'feuds'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-[rgba(255,255,255,0.2)_0px_0.5px_0px_0px_inset,rgba(0,0,0,0.2)_0px_0px_0px_0.5px_inset,rgba(0,0,0,0.05)_0px_1px_2px_0px]'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             Tiraderas & Feudos
@@ -152,8 +152,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       {activeBeefs.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <Swords className="w-4 h-4 text-rose-600 animate-pulse" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[#1c1c1c]">
+            <Swords className="w-4 h-4 text-rose-400 animate-pulse" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[#F8FAFC]">
               Tiraderas & Feudos Activos en la Escena ({activeBeefs.length})
             </h2>
           </div>
@@ -165,19 +165,19 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={beef.id}
-                  className="bg-[#fcfbf8] border border-rose-200 rounded-[12px] p-4 space-y-3 shadow-2xs relative overflow-hidden"
+                  className="bg-[#16181F] border border-rose-500/30 rounded-[12px] p-4 space-y-3 shadow-md relative overflow-hidden"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-full bg-rose-950 text-rose-100 flex items-center justify-center font-bold text-xs border border-rose-300">
+                      <div className="w-9 h-9 rounded-full bg-rose-950/80 text-rose-200 flex items-center justify-center font-bold text-xs border border-rose-500/40">
                         VS
                       </div>
                       <div>
-                        <h3 className="font-bold text-sm text-[#1c1c1c]">
+                        <h3 className="font-bold text-sm text-[#F8FAFC]">
                           {beef.targetName}
                         </h3>
-                        <span className="text-[11px] text-[#5f5f5d]">
-                          Hype generado: <strong className="text-orange-600">+{beef.hypeGenerated}</strong>
+                        <span className="text-[11px] text-[#94A3B8]">
+                          Hype generado: <strong className="text-orange-400">+{beef.hypeGenerated}</strong>
                         </span>
                       </div>
                     </div>
@@ -188,12 +188,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   </div>
 
                   {/* Tension Meter */}
-                  <div className="space-y-1 bg-[#f7f4ed] p-2.5 rounded-[8px] border border-[#eceae4]">
+                  <div className="space-y-1 bg-[#0B0C10] p-2.5 rounded-[8px] border border-[#2A2E3D]">
                     <div className="flex justify-between text-[11px]">
-                      <span className="text-[#5f5f5d]">Nivel de Tensión Bélica</span>
-                      <span className="font-mono font-bold text-rose-700">{beef.tensionLevel}/100</span>
+                      <span className="text-[#94A3B8]">Nivel de Tensión Bélica</span>
+                      <span className="font-mono font-bold text-rose-400">{beef.tensionLevel}/100</span>
                     </div>
-                    <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#16181F] h-1.5 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-amber-500 to-rose-600 rounded-full"
                         style={{ width: `${Math.min(100, beef.tensionLevel)}%` }}
@@ -203,8 +203,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* Diss Tracks Exchanged */}
                   {beef.dissTracksExchanged && beef.dissTracksExchanged.length > 0 && (
-                    <div className="text-[11px] text-[#5f5f5d] space-y-0.5">
-                      <span className="font-semibold text-[#1c1c1c]">Tiraderas lanzadas:</span>
+                    <div className="text-[11px] text-[#94A3B8] space-y-0.5">
+                      <span className="font-semibold text-[#F8FAFC]">Tiraderas lanzadas:</span>
                       <ul className="list-disc list-inside text-[10px] italic">
                         {beef.dissTracksExchanged.map((track, i) => (
                           <li key={i}>{track}</li>
@@ -215,31 +215,31 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* Interactive Beef Buttons */}
                   {onInteractBeef && beef.stage !== 'settled' && (
-                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-[#eceae4]">
+                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-[#2A2E3D]">
                       <button
                         onClick={() => onInteractBeef(beef.targetName, beef.targetId, 'respond_social')}
-                        className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-semibold flex items-center justify-center gap-1"
+                        className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] py-1.5 px-2 text-[10px] font-semibold rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer"
                         title="Responder en Redes (+Hype)"
                       >
-                        <MessageSquare className="w-3 h-3 text-[#1c1c1c]" />
+                        <MessageSquare className="w-3 h-3 text-[#8B5CF6]" />
                         <span>Chicana</span>
                       </button>
 
                       <button
                         onClick={() => onInteractBeef(beef.targetName, beef.targetId, 'drop_diss')}
-                        className="bg-rose-950 text-white hover:bg-black py-1.5 px-2 text-[10px] font-semibold rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-2xs"
+                        className="bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold py-1.5 px-2 text-[10px] rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)]"
                         title="Lanzar Diss Track directo"
                       >
-                        <Swords className="w-3 h-3 text-rose-300" />
+                        <Swords className="w-3 h-3 text-rose-200" />
                         <span>Diss Track</span>
                       </button>
 
                       <button
                         onClick={() => onInteractBeef(beef.targetName, beef.targetId, 'ignore')}
-                        className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-semibold flex items-center justify-center gap-1"
+                        className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#2A2E3D] py-1.5 px-2 text-[10px] font-semibold rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer"
                         title="Ignorar (+Disciplina, calma)"
                       >
-                        <ShieldCheck className="w-3 h-3 text-[#5f5f5d]" />
+                        <ShieldCheck className="w-3 h-3 text-[#94A3B8]" />
                         <span>Ignorar</span>
                       </button>
                     </div>
@@ -256,12 +256,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-[#1c1c1c]" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-[#1c1c1c]">
+              <UserCheck className="w-4 h-4 text-[#8B5CF6]" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-[#F8FAFC]">
                 Personajes Recurrentes del Ecosistema Urbano ({ecosystemContacts.length})
               </h2>
             </div>
-            <span className="text-[11px] text-[#5f5f5d]">
+            <span className="text-[11px] text-[#94A3B8]">
               Amistades, managers, productores y críticos
             </span>
           </div>
@@ -273,16 +273,16 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={npc.id}
-                  className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-4 space-y-3 flex flex-col justify-between shadow-2xs hover:border-[rgba(28,28,28,0.4)] transition-all"
+                  className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-4 space-y-3 flex flex-col justify-between shadow-md hover:border-[#8B5CF6]/50 transition-all"
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-[8px] bg-[#1c1c1c] text-[#fcfbf8] font-bold text-sm flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-[8px] bg-gradient-to-tr from-stone-700 to-zinc-900 text-[#F8FAFC] font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
                           {npc.name.charAt(0)}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-bold text-sm text-[#1c1c1c] truncate">
+                          <h3 className="font-bold text-sm text-[#F8FAFC] truncate">
                             {npc.name}
                           </h3>
                           <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-[4px] border ${badge.color}`}>
@@ -292,24 +292,24 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       </div>
                     </div>
 
-                    <p className="text-[11px] text-[#5f5f5d] leading-relaxed line-clamp-3">
+                    <p className="text-[11px] text-[#94A3B8] leading-relaxed line-clamp-3">
                       {npc.description}
                     </p>
                   </div>
 
                   {/* Meters: Afinidad, Respeto, Tensión, Lealtad */}
-                  <div className="space-y-1.5 bg-[#fcfbf8] p-2.5 rounded-[8px] border border-[#eceae4] text-[11px]">
+                  <div className="space-y-1.5 bg-[#0B0C10] p-2.5 rounded-[8px] border border-[#2A2E3D] text-[11px]">
                     <div className="flex justify-between">
-                      <span className="text-[#5f5f5d]">Afinidad / Confianza</span>
-                      <span className="font-mono font-semibold text-[#1c1c1c]">{npc.affinity > 0 ? `+${npc.affinity}` : npc.affinity}</span>
+                      <span className="text-[#94A3B8]">Afinidad / Confianza</span>
+                      <span className="font-mono font-semibold text-[#F8FAFC]">{npc.affinity > 0 ? `+${npc.affinity}` : npc.affinity}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#5f5f5d]">Lealtad al Proyecto</span>
-                      <span className="font-mono font-semibold text-[#1c1c1c]">{npc.loyalty}%</span>
+                      <span className="text-[#94A3B8]">Lealtad al Proyecto</span>
+                      <span className="font-mono font-semibold text-[#F8FAFC]">{npc.loyalty}%</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#5f5f5d]">Tensión Acumulada</span>
-                      <span className={`font-mono font-semibold ${npc.tension > 40 ? 'text-rose-600 font-bold' : 'text-[#1c1c1c]'}`}>{npc.tension}%</span>
+                      <span className="text-[#94A3B8]">Tensión Acumulada</span>
+                      <span className={`font-mono font-semibold ${npc.tension > 40 ? 'text-rose-400 font-bold' : 'text-[#F8FAFC]'}`}>{npc.tension}%</span>
                     </div>
                   </div>
 
@@ -320,18 +320,18 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'collab_beat')}
-                            className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-medium flex items-center justify-center gap-1"
+                            className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] py-1.5 px-2 text-[10px] font-medium rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer"
                             title="Producir beat con Nico 808"
                           >
-                            <Volume2 className="w-3 h-3 text-[#1c1c1c]" />
+                            <Volume2 className="w-3 h-3 text-[#8B5CF6]" />
                             <span>Sesión</span>
                           </button>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'buy_exclusive')}
-                            className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-medium flex items-center justify-center gap-1"
+                            className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] py-1.5 px-2 text-[10px] font-medium rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer"
                             title="Comprar instrumental exclusiva ($500)"
                           >
-                            <DollarSign className="w-3 h-3 text-emerald-700" />
+                            <DollarSign className="w-3 h-3 text-emerald-400" />
                             <span>Exclusiva</span>
                           </button>
                         </>
@@ -341,18 +341,18 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'hang_out')}
-                            className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-medium flex items-center justify-center gap-1"
+                            className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] py-1.5 px-2 text-[10px] font-medium rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer"
                             title="Reunión en reservado"
                           >
-                            <Coffee className="w-3 h-3 text-[#1c1c1c]" />
+                            <Coffee className="w-3 h-3 text-[#8B5CF6]" />
                             <span>Reunión</span>
                           </button>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'call_out')}
-                            className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-medium flex items-center justify-center gap-1 text-rose-700"
+                            className="bg-[#0B0C10] hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 border border-rose-500/30 py-1.5 px-2 text-[10px] font-medium rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer"
                             title="Auditar finanzas / Confrontar"
                           >
-                            <AlertTriangle className="w-3 h-3 text-rose-600" />
+                            <AlertTriangle className="w-3 h-3 text-rose-400" />
                             <span>Auditar</span>
                           </button>
                         </>
@@ -362,10 +362,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'call_out')}
-                            className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-medium flex items-center justify-center gap-1 text-rose-700 col-span-2"
+                            className="bg-[#0B0C10] hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 border border-rose-500/30 py-1.5 px-2 text-[10px] font-medium rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer col-span-2"
                             title="Desafiar en redes públicas (+Hype)"
                           >
-                            <Zap className="w-3 h-3 text-orange-600" />
+                            <Zap className="w-3 h-3 text-orange-400" />
                             <span>Desafiar Crítica</span>
                           </button>
                         </>
@@ -375,18 +375,18 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => onInteractBeef(npc.name, npc.id, 'respond_social')}
-                            className="btn-cream-surface !py-1.5 !px-2 !text-[10px] !font-medium flex items-center justify-center gap-1"
+                            className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] py-1.5 px-2 text-[10px] font-medium rounded-[6px] flex items-center justify-center gap-1 transition-all cursor-pointer"
                             title="Responder en Redes"
                           >
-                            <MessageSquare className="w-3 h-3 text-[#1c1c1c]" />
+                            <MessageSquare className="w-3 h-3 text-[#8B5CF6]" />
                             <span>Chicana</span>
                           </button>
                           <button
                             onClick={() => onInteractBeef(npc.name, npc.id, 'drop_diss')}
-                            className="bg-rose-950 text-white hover:bg-black py-1.5 px-2 text-[10px] font-medium rounded-[6px] flex items-center justify-center gap-1 cursor-pointer transition-all"
+                            className="bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold py-1.5 px-2 text-[10px] rounded-[6px] flex items-center justify-center gap-1 cursor-pointer transition-all shadow-[0_0_12px_rgba(244,63,94,0.4)]"
                             title="Tiradera Musical"
                           >
-                            <Swords className="w-3 h-3 text-rose-300" />
+                            <Swords className="w-3 h-3 text-rose-200" />
                             <span>Tiradera</span>
                           </button>
                         </>
@@ -404,8 +404,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       {(filter !== 'ecosystem') && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <User className="w-4 h-4 text-[#1c1c1c]" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[#1c1c1c]">
+            <User className="w-4 h-4 text-[#8B5CF6]" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[#F8FAFC]">
               Artistas & Colegas de la Industria ({filteredArtists.length})
             </h2>
           </div>
@@ -424,49 +424,49 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={artist.id}
-                  className="bg-[#f7f4ed] border border-[#eceae4] rounded-[12px] p-5 space-y-4 flex flex-col justify-between shadow-2xs hover:border-[rgba(28,28,28,0.4)] transition-all"
+                  className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-5 space-y-4 flex flex-col justify-between shadow-md hover:border-[#8B5CF6]/50 transition-all"
                 >
                   {/* Header Info */}
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className={`w-11 h-11 rounded-[6px] bg-[#1c1c1c] flex items-center justify-center text-[#fcfbf8] font-semibold text-base shadow-2xs`}>
+                        <div className={`w-11 h-11 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D] flex items-center justify-center text-[#F8FAFC] font-semibold text-base shadow-xs`}>
                           {artist.name.charAt(0)}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-[#1c1c1c] flex items-center gap-1.5">
+                          <h3 className="font-semibold text-sm text-[#F8FAFC] flex items-center gap-1.5">
                             {artist.name}
                           </h3>
-                          <p className="text-[11px] text-[#5f5f5d]">
+                          <p className="text-[11px] text-[#94A3B8]">
                             {artist.country} • {world.genres[artist.mainGenreId]?.name || artist.mainGenreId}
                           </p>
                         </div>
                       </div>
 
-                      <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#eceae4] bg-[#fcfbf8] text-[#1c1c1c]">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC]">
                         {rel.relationType}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs text-[#5f5f5d] font-mono pt-1">
-                      <span>Pop: <strong className="text-[#1c1c1c] font-semibold">{artist.stats.popularity}</strong></span>
-                      <span>Oyentes: <strong className="text-[#1c1c1c] font-semibold">{(artist.stats.monthlyListeners / 1000000).toFixed(1)}M</strong></span>
-                      <span>Etapa: <strong className="text-[#5f5f5d]">{artist.careerStage}</strong></span>
+                    <div className="flex items-center justify-between text-xs text-[#94A3B8] font-mono pt-1">
+                      <span>Pop: <strong className="text-[#F8FAFC] font-semibold">{artist.stats.popularity}</strong></span>
+                      <span>Oyentes: <strong className="text-[#F8FAFC] font-semibold">{(artist.stats.monthlyListeners / 1000000).toFixed(1)}M</strong></span>
+                      <span>Etapa: <strong className="text-[#94A3B8]">{artist.careerStage}</strong></span>
                     </div>
                   </div>
 
                   {/* Relationship Meters */}
-                  <div className="space-y-2 bg-[#fcfbf8] p-3 rounded-[8px] border border-[#eceae4] text-xs">
+                  <div className="space-y-2 bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D] text-xs">
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
-                        <span className="text-[#5f5f5d]">Afinidad Mutua</span>
-                        <span className="font-semibold font-mono text-[#1c1c1c]">
+                        <span className="text-[#94A3B8]">Afinidad Mutua</span>
+                        <span className="font-semibold font-mono text-[#F8FAFC]">
                           {rel.affinity > 0 ? `+${rel.affinity}` : rel.affinity}
                         </span>
                       </div>
-                      <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-[#16181F] h-1.5 rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-[#1c1c1c]"
+                          className="h-full rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]"
                           style={{ width: `${Math.max(10, Math.abs(rel.affinity))}%` }}
                         />
                       </div>
@@ -474,16 +474,16 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
-                        <span className="text-[#5f5f5d]">Respeto Profesional</span>
-                        <span className="font-semibold text-[#1c1c1c] font-mono">{rel.respect}%</span>
+                        <span className="text-[#94A3B8]">Respeto Profesional</span>
+                        <span className="font-semibold text-[#F8FAFC] font-mono">{rel.respect}%</span>
                       </div>
-                      <div className="w-full bg-[#eceae4] h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-[#1c1c1c] h-full rounded-full" style={{ width: `${rel.respect}%` }} />
+                      <div className="w-full bg-[#16181F] h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-gradient-to-r from-[#8B5CF6] to-[#06B6D4] h-full rounded-full" style={{ width: `${rel.respect}%` }} />
                       </div>
                     </div>
 
                     {rel.history.length > 0 && (
-                      <div className="pt-2 border-t border-[#eceae4] text-[10px] text-[#5f5f5d] italic">
+                      <div className="pt-2 border-t border-[#2A2E3D] text-[10px] text-[#94A3B8] italic">
                         Último hito: "{rel.history[rel.history.length - 1]}"
                       </div>
                     )}
@@ -493,28 +493,28 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   <div className="grid grid-cols-3 gap-2 pt-1">
                     <button
                       onClick={() => onInteract(artist.id, 'collab_request')}
-                      className="btn-cream-surface !py-1.5 !px-2 !text-[11px] !font-medium flex flex-col items-center gap-1"
+                      className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 py-1.5 px-2 text-[11px] font-medium rounded-[6px] flex flex-col items-center gap-1 transition-all cursor-pointer"
                       title="Proponer Colaboración"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#8B5CF6]" />
                       <span>Colab</span>
                     </button>
 
                     <button
                       onClick={() => onInteract(artist.id, 'shoutout')}
-                      className="btn-cream-surface !py-1.5 !px-2 !text-[11px] !font-medium flex flex-col items-center gap-1"
+                      className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#EC4899]/50 py-1.5 px-2 text-[11px] font-medium rounded-[6px] flex flex-col items-center gap-1 transition-all cursor-pointer"
                       title="Elogio Público / Mención"
                     >
-                      <Heart className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                      <Heart className="w-3.5 h-3.5 text-[#EC4899]" />
                       <span>Elogio</span>
                     </button>
 
                     <button
                       onClick={() => onInteract(artist.id, 'diss')}
-                      className="btn-cream-surface !py-1.5 !px-2 !text-[11px] !font-medium flex flex-col items-center gap-1 text-rose-700"
+                      className="bg-[#0B0C10] hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 border border-rose-500/30 py-1.5 px-2 text-[11px] font-medium rounded-[6px] flex flex-col items-center gap-1 transition-all cursor-pointer"
                       title="Tiradera / Diss Track"
                     >
-                      <Swords className="w-3.5 h-3.5 text-rose-700" />
+                      <Swords className="w-3.5 h-3.5 text-rose-400" />
                       <span>Tiradera</span>
                     </button>
                   </div>

@@ -1,49 +1,33 @@
-# Design System Inspired by Lovable
+# Design System - Studio After Dark / Synthwave Moderno
 
 ## 1. Visual Theme & Atmosphere
 
-Lovable's website radiates warmth through restraint. The entire page sits on a creamy, parchment-toned background (`#f7f4ed`) that immediately separates it from the cold-white conventions of most developer tool sites. This isn't minimalism for minimalism's sake — it's a deliberate choice to feel approachable, almost analog, like a well-crafted notebook. The near-black text (`#1c1c1c`) against this warm cream creates a contrast ratio that's easy on the eyes while maintaining sharp readability.
+"Studio After Dark / Synthwave Moderno" transports the player directly into the late-night atmosphere of high-end recording studios, neon-lit control rooms, and backstage festival stages. The entire interface sits on a deep obsidian foundation (`#0B0C10`), eliminating corporate cream tones in favor of an immersive, high-energy music simulation vibe.
 
-The custom Camera Plain Variable typeface is the system's secret weapon. Unlike geometric sans-serifs that signal "tech company," Camera Plain has a humanist warmth — slightly rounded terminals, organic curves, and a comfortable reading rhythm. At display sizes (48px–60px), weight 600 with aggressive negative letter-spacing (-0.9px to -1.5px) compresses headlines into confident, editorial statements. The font uses `ui-sans-serif, system-ui` as fallbacks, acknowledging that the custom typeface carries the brand personality.
+Sleek dark slate surfaces (`#16181F`) with subtle borders (`#2A2E3D`) and soft glassmorphic depth (`backdrop-blur-md`) define cards and control panels. Dynamic electric purple (`#8B5CF6`) transitioning to vibrant magenta (`#EC4899`) delivers immediate visual punch to primary actions, while neon green (`#10B981`) and electric cyan (`#06B6D4`) highlight recording status, live charts, and touring momentum.
 
-What makes Lovable's visual system distinctive is its opacity-driven depth model. Rather than using a traditional gray scale, the system modulates `#1c1c1c` at varying opacities (0.03, 0.04, 0.4, 0.82–0.83) to create a unified tonal range. Every shade of gray on the page is technically the same hue — just more or less transparent. This creates a visual coherence that's nearly impossible to achieve with arbitrary hex values. The border system follows suit: `1px solid #eceae4` for light divisions and `1px solid rgba(28, 28, 28, 0.4)` for stronger interactive boundaries.
+Ambient stage glows, subtle noise textures, and crisp off-white typography (`#F8FAFC`) with ash gray descriptions (`#94A3B8`) ensure uncompromising readability and authentic music-industry aesthetics.
 
 **Key Characteristics:**
-- Warm parchment background (`#f7f4ed`) — not white, not beige, a deliberate cream that feels hand-selected
-- Camera Plain Variable typeface with humanist warmth and editorial letter-spacing at display sizes
-- Opacity-driven color system: all grays derived from `#1c1c1c` at varying transparency levels
-- Inset shadow technique on buttons: `rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset`
-- Warm neutral border palette: `#eceae4` for subtle, `rgba(28,28,28,0.4)` for interactive elements
-- Full-pill radius (`9999px`) used extensively for action buttons and icon containers
-- Focus state uses `rgba(0,0,0,0.1) 0px 4px 12px` shadow for soft, warm emphasis
-- shadcn/ui + Radix UI component primitives with Tailwind CSS utility styling
+- **Deep Obsidian Foundation** (`#0B0C10`): Deep night/studio background.
+- **Slate Glass Cards** (`#16181F` with `1px solid #2A2E3D`): Structured containment with subtle glassmorphism.
+- **Electric Violet to Magenta Gradient** (`#8B5CF6` → `#EC4899`): Primary CTA power and ambient backdrop orbs.
+- **Neon Green Studio Accents** (`#10B981`): Play buttons, active recording, positive financial metrics, certifications.
+- **Electric Cyan Accents** (`#06B6D4`): Charts rankings, touring venues, audio waves and technology.
+- **High-Contrast Typography**: Off-White (`#F8FAFC`) for titles and Ash Gray (`#94A3B8`) for body/metadata.
+- **Tactile Inset & Neon Glows**: `box-shadow: 0 0 20px rgba(139, 92, 246, 0.4)` for dominant primary actions.
 
 ## 2. Color Palette & Roles
 
-### Primary
-- **Cream** (`#f7f4ed`): Page background, card surfaces, button surfaces. The foundation — warm, paper-like, human.
-- **Charcoal** (`#1c1c1c`): Primary text, headings, dark button backgrounds. Not pure black — organic warmth.
-- **Off-White** (`#fcfbf8`): Button text on dark backgrounds, subtle highlight. Barely distinguishable from pure white.
-
-### Neutral Scale (Opacity-Based)
-- **Charcoal 100%** (`#1c1c1c`): Primary text, headings, dark surfaces.
-- **Charcoal 83%** (`rgba(28,28,28,0.83)`): Strong secondary text.
-- **Charcoal 82%** (`rgba(28,28,28,0.82)`): Body copy.
-- **Muted Gray** (`#5f5f5d`): Secondary text, descriptions, captions.
-- **Charcoal 40%** (`rgba(28,28,28,0.4)`): Interactive borders, button outlines.
-- **Charcoal 4%** (`rgba(28,28,28,0.04)`): Subtle hover backgrounds, micro-tints.
-- **Charcoal 3%** (`rgba(28,28,28,0.03)`): Barely-visible overlays, background depth.
-
-### Surface & Border
-- **Light Cream** (`#eceae4`): Card borders, dividers, image outlines. The warm divider line.
-- **Cream Surface** (`#f7f4ed`): Card backgrounds, section fills — same as page background for seamless integration.
-
-### Interactive
-- **Ring Blue** (`#3b82f6` at 50% opacity): `--tw-ring-color`, Tailwind focus ring.
-- **Focus Shadow** (`rgba(0,0,0,0.1) 0px 4px 12px`): Focus and active state shadow — soft, warm, diffused.
-
-### Inset Shadows
-- **Button Inset** (`rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px`): The signature multi-layer inset shadow on dark buttons.
+| Rol en la interfaz | Color | Código Hex | Uso exacto |
+| --- | --- | --- | --- |
+| **Fondo Principal** | Deep Obsidian | `#0B0C10` | Reemplaza el fondo beige actual. Da atmósfera de noche y estudio. |
+| **Superficies / Cards** | Slate Glass | `#16181F` *(borde: `#2A2E3D`)* | Tarjetas de features, contenedor de partida y paneles. |
+| **Acento Primario** | Violeta Eléctrico | `#8B5CF6` *(gradiente a `#EC4899`)* | Botón "Iniciar Nueva Carrera", tags activos y glow de fondo. |
+| **Acento Secundario** | Verde Neón / Estudio | `#10B981` | Botón "Continuar Partida" (ícono play), badges de dinero/status. |
+| **Acento Terciario** | Cian / Azul Eléctrico | `#06B6D4` | Íconos de Charts/Giras y detalles secundarios. |
+| **Texto Principal** | Blanco Roto | `#F8FAFC` | Título "Construí tu Legado Musical" y headers. |
+| **Texto Secundario** | Gris Ceniza | `#94A3B8` | Bajadas descriptivas y textos de tarjetas. |
 
 ## 3. Typography Rules
 

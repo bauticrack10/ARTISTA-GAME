@@ -90,31 +90,31 @@ export const GalaModal: React.FC<GalaModalProps> = ({
   const CategoryIcon = currentCategory ? getCategoryIcon(currentCategory.name) : Award;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       <div
-        className="bg-[#f7f4ed] border border-[#eceae4] max-w-2xl w-full rounded-[16px] p-5 sm:p-7 space-y-6 shadow-[0_12px_40px_rgba(0,0,0,0.18)] relative overflow-hidden my-auto animate-fade-in text-[#1c1c1c]"
+        className="bg-[#16181F] border border-[#2A2E3D] max-w-2xl w-full rounded-[16px] p-5 sm:p-7 space-y-6 shadow-2xl relative overflow-hidden my-auto animate-fade-in text-[#F8FAFC]"
         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
       >
         {/* Subtle decorative background watermark */}
-        <div className="absolute -right-12 -top-12 opacity-5 pointer-events-none text-amber-600">
+        <div className="absolute -right-12 -top-12 opacity-5 pointer-events-none text-amber-500">
           <Trophy className="w-64 h-64" />
         </div>
 
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-[#eceae4] pb-4 relative z-10">
+        <div className="flex items-start justify-between border-b border-[#2A2E3D] pb-4 relative z-10">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 border border-amber-300 shadow-2xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 border border-amber-300 shadow-xs">
                 Ceremonia Anual {ceremony.year}
               </span>
-              <span className="text-xs text-[#5f5f5d]">Premios de la Academia Musical</span>
+              <span className="text-xs text-[#94A3B8]">Premios de la Academia Musical</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-semibold tracking-[-0.8px] text-[#1c1c1c] mt-1 flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-amber-500" />
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-[-0.8px] text-[#F8FAFC] mt-1 flex items-center gap-2">
+              <Trophy className="w-6 h-6 text-amber-400" />
               {ceremony.name}
             </h1>
             {ceremony.theme && (
-              <p className="text-xs text-[#5f5f5d] mt-0.5 italic">
+              <p className="text-xs text-[#94A3B8] mt-0.5 italic">
                 "{ceremony.theme}"
               </p>
             )}
@@ -122,7 +122,7 @@ export const GalaModal: React.FC<GalaModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-[6px] hover:bg-[#eceae4] text-[#5f5f5d] hover:text-[#1c1c1c] transition-colors cursor-pointer"
+            className="p-1.5 rounded-[6px] hover:bg-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
             title="Cerrar Gala"
           >
             <X className="w-5 h-5" />
@@ -144,10 +144,10 @@ export const GalaModal: React.FC<GalaModalProps> = ({
                 }}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-[6px] text-xs transition-all cursor-pointer whitespace-nowrap ${
                   isSelected
-                    ? 'bg-[#1c1c1c] text-[#fcfbf8] font-bold shadow-sm'
+                    ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_15px_rgba(139,92,246,0.35)]'
                     : isRevealed
-                    ? 'bg-amber-50 text-amber-950 border border-amber-200 font-semibold'
-                    : 'bg-[#fcfbf8] border border-[#eceae4] text-[#5f5f5d] hover:text-[#1c1c1c]'
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold'
+                    : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC]'
                 }`}
               >
                 <StepIcon className="w-3 h-3" />
@@ -163,8 +163,8 @@ export const GalaModal: React.FC<GalaModalProps> = ({
             onClick={() => setShowSummary(true)}
             className={`flex items-center gap-1.5 px-3 py-1 rounded-[6px] text-xs transition-all cursor-pointer whitespace-nowrap ${
               showSummary
-                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 font-bold border border-amber-300 shadow-sm'
-                : 'bg-[#fcfbf8] border border-[#eceae4] text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold border border-amber-400 shadow-sm'
+                : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
           >
             <CheckCircle2 className="w-3 h-3" />
@@ -176,36 +176,36 @@ export const GalaModal: React.FC<GalaModalProps> = ({
         {showSummary ? (
           <div className="space-y-6 relative z-10">
             {/* Player Highlights Banner */}
-            <div className="bg-gradient-to-br from-[#fcfbf8] to-amber-50/50 border border-amber-200 rounded-[12px] p-5 text-center space-y-3 shadow-xs">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 mx-auto flex items-center justify-center shadow-md">
-                <Trophy className="w-7 h-7 text-amber-950" />
+            <div className="bg-gradient-to-br from-[#16181F] to-[#1C1F2B] border border-amber-500/30 rounded-[12px] p-5 text-center space-y-3 shadow-md">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 mx-auto flex items-center justify-center shadow-md">
+                <Trophy className="w-7 h-7 text-stone-950" />
               </div>
 
               <div>
-                <h2 className="text-lg font-semibold text-[#1c1c1c]">
+                <h2 className="text-lg font-semibold text-[#F8FAFC]">
                   Balance de la Gala para {player.name}
                 </h2>
-                <p className="text-xs text-[#5f5f5d] mt-0.5">
+                <p className="text-xs text-[#94A3B8] mt-0.5">
                   Año {ceremony.year} • Premios Anuales de la Música
                 </p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-mono">
-                <div className="bg-purple-50 p-3 rounded-[8px] border border-purple-200">
-                  <span className="text-[10px] uppercase text-purple-900 font-bold block">Nominaciones</span>
-                  <span className="text-lg font-bold text-purple-800">
+                <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-purple-500/30">
+                  <span className="text-[10px] uppercase text-purple-400 font-bold block">Nominaciones</span>
+                  <span className="text-lg font-bold text-purple-300">
                     {ceremony.playerNominationsCount || 0}
                   </span>
                 </div>
-                <div className="bg-amber-50 p-3 rounded-[8px] border border-amber-200">
-                  <span className="text-[10px] uppercase text-amber-900 font-bold block">Premios Ganados</span>
-                  <span className="text-lg font-bold text-amber-800">
+                <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-amber-500/30">
+                  <span className="text-[10px] uppercase text-amber-400 font-bold block">Premios Ganados</span>
+                  <span className="text-lg font-bold text-amber-300">
                     {ceremony.playerWinsCount || 0}
                   </span>
                 </div>
-                <div className="bg-emerald-50 p-3 rounded-[8px] border border-emerald-200 col-span-2 sm:col-span-1">
-                  <span className="text-[10px] uppercase text-emerald-900 font-bold block">Puntaje de Legado</span>
-                  <span className="text-lg font-bold text-emerald-800">
+                <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-emerald-500/30 col-span-2 sm:col-span-1">
+                  <span className="text-[10px] uppercase text-emerald-400 font-bold block">Puntaje de Legado</span>
+                  <span className="text-lg font-bold text-emerald-300">
                     {player.legacyScore}/100
                   </span>
                 </div>
@@ -214,7 +214,7 @@ export const GalaModal: React.FC<GalaModalProps> = ({
 
             {/* List of All Winners */}
             <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase text-[#5f5f5d] tracking-wider">
+              <h3 className="text-xs font-bold uppercase text-[#94A3B8] tracking-wider">
                 Ganadores Oficiales de la Edición {ceremony.year}
               </h3>
               <div className="space-y-2">
@@ -226,27 +226,27 @@ export const GalaModal: React.FC<GalaModalProps> = ({
                       key={cat.id || idx}
                       className={`p-3.5 rounded-[10px] border flex items-center justify-between gap-3 text-xs ${
                         isPlayerWinner
-                          ? 'bg-amber-50/80 border-amber-300 ring-1 ring-amber-300 shadow-sm'
-                          : 'bg-[#fcfbf8] border-[#eceae4]'
+                          ? 'bg-amber-500/15 border-amber-500/40 ring-1 ring-amber-400 shadow-sm'
+                          : 'bg-[#0B0C10] border border-[#2A2E3D]'
                       }`}
                     >
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold uppercase text-[#5f5f5d] block tracking-wide">
+                        <span className="text-[10px] font-bold uppercase text-[#94A3B8] block tracking-wide">
                           {cat.name}
                         </span>
-                        <p className="font-bold text-sm text-[#1c1c1c] flex items-center gap-1.5">
+                        <p className="font-bold text-sm text-[#F8FAFC] flex items-center gap-1.5">
                           🏆 {cat.winnerArtistName}
-                          {itemTitle && <span className="font-normal text-[#5f5f5d]">— {itemTitle}</span>}
+                          {itemTitle && <span className="font-normal text-[#94A3B8]">— {itemTitle}</span>}
                         </p>
                         {cat.winnerReason && (
-                          <p className="text-[11px] text-[#5f5f5d] italic">
+                          <p className="text-[11px] text-[#94A3B8] italic">
                             {cat.winnerReason}
                           </p>
                         )}
                       </div>
 
                       {isPlayerWinner && (
-                        <div className="shrink-0 bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 border border-amber-300 px-2.5 py-1 rounded-[6px] font-bold text-[10px] shadow-xs">
+                        <div className="shrink-0 bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 border border-amber-400 px-2.5 py-1 rounded-[6px] font-bold text-[10px] shadow-xs">
                           ¡Tu Victoria! 🏆
                         </div>
                       )}
@@ -261,13 +261,9 @@ export const GalaModal: React.FC<GalaModalProps> = ({
               <button
                 id="btn-close-gala-summary"
                 onClick={onClose}
-                className="bg-[#1c1c1c] text-[#fcfbf8] px-6 py-2.5 rounded-[6px] text-xs font-semibold hover:opacity-90 active:opacity-75 transition-opacity cursor-pointer flex items-center gap-2 shadow-sm"
-                style={{
-                  boxShadow:
-                    'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                }}
+                className="bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white px-6 py-2.5 rounded-[6px] text-xs font-bold hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.4)]"
               >
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-white" />
                 <span>Guardar en Vitrina & Continuar</span>
               </button>
             </div>
@@ -276,13 +272,13 @@ export const GalaModal: React.FC<GalaModalProps> = ({
           /* MAIN BODY: SINGLE CATEGORY PRESENTATION */
           <div className="space-y-5 relative z-10">
             {/* Category Header Card */}
-            <div className="bg-[#fcfbf8] border border-amber-200 rounded-[12px] p-5 flex items-start gap-4 shadow-2xs">
-              <div className="p-3 bg-amber-100 rounded-[8px] border border-amber-300 text-amber-700 shrink-0">
+            <div className="bg-[#0B0C10] border border-amber-500/30 rounded-[12px] p-5 flex items-start gap-4 shadow-sm">
+              <div className="p-3 bg-amber-500/20 rounded-[8px] border border-amber-500/40 text-amber-300 shrink-0">
                 <CategoryIcon className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#5f5f5d]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#94A3B8]">
                     Categoría {currentCategoryIndex + 1} de {categories.length}
                   </span>
                   {currentCategory.playerNominated && (
@@ -292,10 +288,10 @@ export const GalaModal: React.FC<GalaModalProps> = ({
                     </span>
                   )}
                 </div>
-                <h2 className="text-lg font-semibold text-[#1c1c1c] tracking-[-0.6px]">
+                <h2 className="text-lg font-semibold text-[#F8FAFC] tracking-[-0.6px]">
                   {currentCategory.name}
                 </h2>
-                <p className="text-xs text-[#5f5f5d] leading-relaxed">
+                <p className="text-xs text-[#94A3B8] leading-relaxed">
                   {currentCategory.description}
                 </p>
               </div>
@@ -303,7 +299,7 @@ export const GalaModal: React.FC<GalaModalProps> = ({
 
             {/* Nominees List */}
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-[#5f5f5d] uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider">
                 Nominados Oficiales ({currentCategory.nominees?.length || 0})
               </label>
 
@@ -317,35 +313,35 @@ export const GalaModal: React.FC<GalaModalProps> = ({
                       key={nominee.artistId + (nominee.itemId || '') + nIdx}
                       className={`p-3.5 rounded-[10px] border transition-all flex items-center justify-between gap-3 text-xs ${
                         isWinner
-                          ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400 shadow-xs'
+                          ? 'bg-amber-500/15 border-amber-500/40 ring-2 ring-amber-400 shadow-xs'
                           : isPlayer
-                          ? 'bg-purple-50/40 border-purple-300'
-                          : 'bg-[#fcfbf8] border-[#eceae4]'
+                          ? 'bg-purple-500/15 border-purple-500/40'
+                          : 'bg-[#0B0C10] border border-[#2A2E3D]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-7 h-7 rounded-[6px] flex items-center justify-center font-mono font-bold text-xs border ${
                             isWinner
-                              ? 'bg-gradient-to-tr from-amber-500 to-yellow-500 text-slate-950 border-amber-400'
+                              ? 'bg-gradient-to-tr from-amber-500 to-yellow-500 text-stone-950 border-amber-400'
                               : isPlayer
-                              ? 'bg-purple-100 text-purple-800 border-purple-300'
-                              : 'bg-[#f7f4ed] text-[#5f5f5d] border-[#eceae4]'
+                              ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
+                              : 'bg-[#16181F] text-[#94A3B8] border border-[#2A2E3D]'
                           }`}
                         >
                           {isWinner ? '🏆' : `${nIdx + 1}`}
                         </div>
 
                         <div>
-                          <p className="font-bold text-sm text-[#1c1c1c] flex items-center gap-1.5">
+                          <p className="font-bold text-sm text-[#F8FAFC] flex items-center gap-1.5">
                             {nominee.artistName}
                             {nominee.itemTitle && (
-                              <span className="font-normal text-[#5f5f5d]">
+                              <span className="font-normal text-[#94A3B8]">
                                 — "{nominee.itemTitle}"
                               </span>
                             )}
                           </p>
-                          <p className="text-[11px] text-[#5f5f5d] mt-0.5">
+                          <p className="text-[11px] text-[#94A3B8] mt-0.5">
                             {nominee.highlightText || (nominee.producerName ? `Producción: ${nominee.producerName}` : 'Desempeño destacado')}
                           </p>
                         </div>
@@ -353,12 +349,12 @@ export const GalaModal: React.FC<GalaModalProps> = ({
 
                       <div className="flex items-center gap-2">
                         {isPlayer && (
-                          <span className="text-[10px] font-bold text-purple-900 bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-[4px]">
+                          <span className="text-[10px] font-bold text-purple-300 bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 rounded-[4px]">
                             Tu Candidatura
                           </span>
                         )}
                         {isWinner && (
-                          <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 font-extrabold text-[10px] px-2.5 py-1 rounded-[4px] border border-amber-300 flex items-center gap-1 shadow-xs animate-pulse">
+                          <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-extrabold text-[10px] px-2.5 py-1 rounded-[4px] border border-amber-300 flex items-center gap-1 shadow-xs animate-pulse">
                             ¡GANADOR! 🏆
                           </span>
                         )}
@@ -371,24 +367,24 @@ export const GalaModal: React.FC<GalaModalProps> = ({
 
             {/* Reveal / Celebration Box */}
             {!isCurrentRevealed ? (
-              <div className="bg-gradient-to-br from-[#fcfbf8] to-amber-50/40 border border-amber-200 rounded-[12px] p-6 text-center space-y-3 shadow-xs">
-                <div className="p-3 bg-amber-100 text-amber-700 rounded-full w-12 h-12 mx-auto flex items-center justify-center border border-amber-300 shadow-2xs">
+              <div className="bg-gradient-to-br from-[#0B0C10] to-amber-950/20 border border-amber-500/30 rounded-[12px] p-6 text-center space-y-3 shadow-xs">
+                <div className="p-3 bg-amber-500/20 text-amber-300 rounded-full w-12 h-12 mx-auto flex items-center justify-center border border-amber-500/40 shadow-xs">
                   <Award className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-[#1c1c1c]">
+                  <h3 className="text-sm font-bold text-[#F8FAFC]">
                     Sobre Sellado de la Academia
                   </h3>
-                  <p className="text-xs text-[#5f5f5d] mt-0.5">
+                  <p className="text-xs text-[#94A3B8] mt-0.5">
                     El jurado y las estadísticas del año han determinado al vencedor de esta categoría.
                   </p>
                 </div>
                 <button
                   id="btn-reveal-award-winner"
                   onClick={handleRevealWinner}
-                  className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-950 font-bold border border-amber-300 px-6 py-2.5 rounded-[6px] text-xs cursor-pointer hover:opacity-90 active:opacity-75 transition-all inline-flex items-center gap-2 shadow-sm"
+                  className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 font-bold border border-amber-300 px-6 py-2.5 rounded-[6px] text-xs cursor-pointer hover:opacity-90 active:opacity-75 transition-all inline-flex items-center gap-2 shadow-sm"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-900" />
+                  <Sparkles className="w-4 h-4 text-stone-950" />
                   <span>Abrir Sobre & Revelar Ganador</span>
                 </button>
               </div>
@@ -397,39 +393,39 @@ export const GalaModal: React.FC<GalaModalProps> = ({
               <div
                 className={`border rounded-[12px] p-5 space-y-3 animate-fade-in ${
                   currentCategory.playerWon
-                    ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400 shadow-md'
-                    : 'bg-[#fcfbf8] border-[#eceae4]'
+                    ? 'bg-amber-500/15 border-amber-500/40 ring-2 ring-amber-400 shadow-md'
+                    : 'bg-[#0B0C10] border border-[#2A2E3D]'
                 }`}
               >
-                <div className="flex items-center justify-between border-b border-[#eceae4] pb-2.5">
+                <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-2.5">
                   <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-amber-600" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#1c1c1c]">
+                    <Trophy className="w-5 h-5 text-amber-400" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#F8FAFC]">
                       Ganador del Galardón
                     </span>
                   </div>
                   {currentCategory.playerWon ? (
-                    <span className="bg-amber-400 text-amber-950 font-extrabold px-2.5 py-0.5 rounded-[4px] text-[10px] border border-amber-500 shadow-2xs">
+                    <span className="bg-amber-400 text-stone-950 font-extrabold px-2.5 py-0.5 rounded-[4px] text-[10px] border border-amber-500 shadow-xs">
                       ¡VICTORIA PARA TI! 🎉
                     </span>
                   ) : (
-                    <span className="text-xs text-[#5f5f5d] font-mono">
+                    <span className="text-xs text-[#94A3B8] font-mono">
                       Oficial
                     </span>
                   )}
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-base sm:text-lg font-bold text-[#1c1c1c] flex items-center gap-2">
+                  <h3 className="text-base sm:text-lg font-bold text-[#F8FAFC] flex items-center gap-2">
                     {currentCategory.winnerArtistName}
                     {currentCategory.winnerItemTitle && (
-                      <span className="font-normal text-[#5f5f5d]">
+                      <span className="font-normal text-[#94A3B8]">
                         — "{currentCategory.winnerItemTitle}"
                       </span>
                     )}
                   </h3>
                   {currentCategory.winnerReason && (
-                    <p className="text-xs text-[#5f5f5d] leading-relaxed italic">
+                    <p className="text-xs text-[#94A3B8] leading-relaxed italic">
                       "{currentCategory.winnerReason}"
                     </p>
                   )}
@@ -437,16 +433,16 @@ export const GalaModal: React.FC<GalaModalProps> = ({
 
                 {/* Player celebration bonus pill */}
                 {currentCategory.playerWon && (
-                  <div className="bg-[#f7f4ed] border border-amber-200 rounded-[8px] p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                  <div className="bg-[#16181F] border border-amber-500/30 rounded-[8px] p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                       Recompensas obtenidas:
                     </span>
                     <div className="flex items-center gap-2 font-mono text-[11px]">
-                      <span className="bg-amber-100 px-2 py-0.5 rounded-[4px] border border-amber-300 font-bold text-amber-900">
+                      <span className="bg-amber-500/20 px-2 py-0.5 rounded-[4px] border border-amber-500/40 font-bold text-amber-300">
                         +5 Legado
                       </span>
-                      <span className="bg-purple-100 px-2 py-0.5 rounded-[4px] border border-purple-300 font-bold text-purple-900">
+                      <span className="bg-purple-500/20 px-2 py-0.5 rounded-[4px] border border-purple-500/40 font-bold text-purple-300">
                         +Hype & Reputación
                       </span>
                     </div>
@@ -456,15 +452,15 @@ export const GalaModal: React.FC<GalaModalProps> = ({
             )}
 
             {/* Stepper Navigation Footer */}
-            <div className="flex items-center justify-between pt-2 border-t border-[#eceae4]">
+            <div className="flex items-center justify-between pt-2 border-t border-[#2A2E3D]">
               <button
                 id="btn-gala-prev"
                 onClick={handlePrev}
                 disabled={currentCategoryIndex === 0}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border border-[#eceae4] text-xs transition-colors cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border border-[#2A2E3D] text-xs transition-colors cursor-pointer ${
                   currentCategoryIndex === 0
-                    ? 'opacity-40 cursor-not-allowed text-[#5f5f5d]'
-                    : 'bg-[#fcfbf8] text-[#1c1c1c] hover:bg-[#eceae4]'
+                    ? 'opacity-40 cursor-not-allowed text-[#64748B]'
+                    : 'bg-[#0B0C10] text-[#F8FAFC] hover:bg-[#2A2E3D]'
                 }`}
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -474,14 +470,10 @@ export const GalaModal: React.FC<GalaModalProps> = ({
               <button
                 id="btn-gala-next"
                 onClick={handleNext}
-                className="bg-[#1c1c1c] text-[#fcfbf8] px-4 py-1.5 rounded-[6px] text-xs font-semibold hover:opacity-90 active:opacity-75 transition-opacity cursor-pointer flex items-center gap-1.5 shadow-sm"
-                style={{
-                  boxShadow:
-                    'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                }}
+                className="bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white px-4 py-1.5 rounded-[6px] text-xs font-bold hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.35)]"
               >
                 <span>{currentCategoryIndex < categories.length - 1 ? 'Siguiente Categoría' : 'Ver Resumen Final'}</span>
-                <ChevronRight className="w-4 h-4 text-amber-300" />
+                <ChevronRight className="w-4 h-4 text-white" />
               </button>
             </div>
           </div>

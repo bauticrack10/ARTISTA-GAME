@@ -189,17 +189,17 @@ export const EventModal: React.FC<EventModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div
-        className="bg-[#181817]/95 border border-white/15 max-w-2xl w-full rounded-[18px] p-6 sm:p-8 space-y-6 shadow-[0_20px_60px_rgba(0,0,0,0.6)] text-[#fcfbf8] relative overflow-hidden my-auto"
+        className="bg-[#16181F] border border-[#2A2E3D] max-w-2xl w-full rounded-[18px] p-6 sm:p-8 space-y-6 shadow-2xl text-[#F8FAFC] relative overflow-hidden my-auto"
         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
       >
         {/* Subtle Ambient Radial Glow */}
         <div
-          className={`absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-br ${categoryMeta.glow} rounded-full blur-3xl pointer-events-none opacity-60`}
+          className={`absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-br ${categoryMeta.glow} rounded-full blur-3xl pointer-events-none opacity-40`}
         />
-        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none opacity-40" />
+        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-[#EC4899]/10 rounded-full blur-3xl pointer-events-none opacity-30" />
 
         {/* Top Header: Category, Rarity, and Character Context */}
-        <div className="space-y-4 relative z-10 border-b border-white/10 pb-5">
+        <div className="space-y-4 relative z-10 border-b border-[#2A2E3D] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-2.5">
             <div className="flex items-center gap-2">
               <span
@@ -218,17 +218,17 @@ export const EventModal: React.FC<EventModalProps> = ({
             </div>
 
             {/* Artist Mini Status Pill */}
-            <div className="flex items-center gap-3 bg-white/5 px-3 py-1 rounded-full border border-white/10 text-xs font-mono text-white/80">
+            <div className="flex items-center gap-3 bg-[#0B0C10] px-3 py-1 rounded-full border border-[#2A2E3D] text-xs font-mono text-[#F8FAFC]">
               <span className="flex items-center gap-1 text-emerald-400">
                 <DollarSign className="w-3.5 h-3.5" />
                 ${player.stats.funds.toLocaleString()}
               </span>
-              <span className="text-white/20">|</span>
+              <span className="text-[#2A2E3D]">|</span>
               <span className="flex items-center gap-1 text-amber-400">
                 <Zap className="w-3.5 h-3.5" />
                 {player.stats.energy}%
               </span>
-              <span className="text-white/20">|</span>
+              <span className="text-[#2A2E3D]">|</span>
               <span className="flex items-center gap-1 text-orange-400">
                 <Flame className="w-3.5 h-3.5" />
                 {player.stats.hype}
@@ -243,36 +243,36 @@ export const EventModal: React.FC<EventModalProps> = ({
                 <img
                   src={player.avatarUrl}
                   alt={player.name}
-                  className="w-14 h-14 rounded-[12px] object-cover border-2 border-white/20 shadow-md"
+                  className="w-14 h-14 rounded-[12px] object-cover border-2 border-[#2A2E3D] shadow-md"
                 />
               ) : (
                 <div
                   className={`w-14 h-14 rounded-[12px] bg-gradient-to-tr ${
                     player.avatarColor || 'from-amber-500 to-rose-600'
-                  } flex items-center justify-center text-white text-xl font-bold border-2 border-white/20 shadow-md`}
+                  } flex items-center justify-center text-white text-xl font-bold border-2 border-[#2A2E3D] shadow-md`}
                 >
                   {player.name.charAt(0)}
                 </div>
               )}
-              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-[#181817] border border-white/20 text-amber-300">
+              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-[#16181F] border border-[#2A2E3D] text-amber-300">
                 <CategoryIcon className="w-3 h-3" />
               </div>
             </div>
 
             <div className="space-y-1 flex-1 min-w-0">
-              <span className="text-[11px] text-white/60 uppercase font-mono tracking-wider block">
+              <span className="text-[11px] text-[#94A3B8] uppercase font-mono tracking-wider block">
                 {player.name} • {world.currentYear} (Mes {world.currentMonth})
               </span>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-[-0.8px] text-[#fcfbf8] leading-tight">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-[-0.8px] text-[#F8FAFC] leading-tight">
                 {event.title}
               </h2>
             </div>
           </div>
 
           {/* Narrative Story Description */}
-          <div className="bg-black/30 border border-white/10 rounded-[12px] p-4 text-sm text-[#d8d6ce] leading-relaxed relative overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 via-purple-400 to-teal-400" />
-            <p className="pl-2 font-normal">
+          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-4 text-sm text-[#94A3B8] leading-relaxed relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#8B5CF6] via-[#EC4899] to-[#06B6D4]" />
+            <p className="pl-2 font-normal text-[#F8FAFC]">
               {eventDescription}
             </p>
           </div>
@@ -281,11 +281,11 @@ export const EventModal: React.FC<EventModalProps> = ({
         {/* Choices Section */}
         <div className="space-y-3.5 relative z-10">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-white/70 uppercase tracking-wider flex items-center gap-1.5">
-              <Swords className="w-3.5 h-3.5 text-amber-400" />
+            <label className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1.5">
+              <Swords className="w-3.5 h-3.5 text-[#8B5CF6]" />
               Selecciona tu respuesta o postura:
             </label>
-            <span className="text-[11px] font-mono text-white/40">
+            <span className="text-[11px] font-mono text-[#64748B]">
               {choices.length} opciones disponibles
             </span>
           </div>
@@ -321,37 +321,29 @@ export const EventModal: React.FC<EventModalProps> = ({
                   onClick={() => handleChoiceClick(idx, isEligible)}
                   className={`w-full text-left p-4 sm:p-4.5 rounded-[12px] border transition-all cursor-pointer flex items-start justify-between gap-4 group relative overflow-hidden ${
                     isEligible
-                      ? 'bg-white/[0.04] hover:bg-white/[0.08] border-white/15 hover:border-amber-400/60 active:scale-[0.99] shadow-sm hover:shadow-[0_4px_20px_rgba(251,191,36,0.12)]'
-                      : 'bg-white/[0.02] border-white/5 opacity-45 cursor-not-allowed'
+                      ? 'bg-[#0B0C10] hover:bg-[#16181F] border-[#2A2E3D] hover:border-[#8B5CF6]/70 active:scale-[0.99] shadow-sm hover:shadow-[0_0_20px_rgba(139,92,246,0.2)]'
+                      : 'bg-[#0B0C10]/40 border-[#2A2E3D]/50 opacity-45 cursor-not-allowed'
                   }`}
-                  style={
-                    isEligible
-                      ? {
-                          boxShadow:
-                            'rgba(255, 255, 255, 0.05) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.3) 0px 2px 4px 0px'
-                        }
-                      : {}
-                  }
                 >
                   {/* Left Indicator Accent on Hover */}
                   {isEligible && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#8B5CF6] to-[#EC4899] opacity-0 group-hover:opacity-100 transition-opacity" />
                   )}
 
                   <div className="space-y-2 flex-1 min-w-0">
                     {/* Choice Action Text */}
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-bold text-white/40 group-hover:text-amber-400 transition-colors">
+                      <span className="text-xs font-mono font-bold text-[#64748B] group-hover:text-[#8B5CF6] transition-colors">
                         [0{idx + 1}]
                       </span>
-                      <h4 className="text-sm sm:text-base font-semibold text-[#fcfbf8] group-hover:text-amber-200 transition-colors leading-snug">
+                      <h4 className="text-sm sm:text-base font-semibold text-[#F8FAFC] group-hover:text-[#8B5CF6] transition-colors leading-snug">
                         {choice.text}
                       </h4>
                     </div>
 
                     {/* Narrative Consequence */}
                     {choice.consequencesDescription && (
-                      <p className="text-xs text-white/70 leading-relaxed font-normal">
+                      <p className="text-xs text-[#94A3B8] leading-relaxed font-normal">
                         {choice.consequencesDescription}
                       </p>
                     )}
@@ -372,7 +364,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                               ? 'bg-teal-500/15 text-teal-300 border-teal-500/30'
                               : chip.type === 'negative'
                               ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
-                              : 'bg-white/10 text-white/80 border-white/15';
+                              : 'bg-white/10 text-[#F8FAFC] border-white/15';
 
                           return (
                             <span
@@ -399,11 +391,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                   {/* Right Action Button Icon */}
                   {isEligible && (
                     <div
-                      className="p-2.5 rounded-[8px] bg-white/10 text-white group-hover:bg-amber-400 group-hover:text-black shrink-0 transition-all shadow-xs mt-0.5"
-                      style={{
-                        boxShadow:
-                          'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-                      }}
+                      className="p-2.5 rounded-[8px] bg-white/[0.06] text-[#F8FAFC] group-hover:bg-gradient-to-r group-hover:from-[#8B5CF6] group-hover:to-[#EC4899] group-hover:text-white shrink-0 transition-all shadow-xs mt-0.5"
                     >
                       <ArrowRight className="w-4 h-4" />
                     </div>

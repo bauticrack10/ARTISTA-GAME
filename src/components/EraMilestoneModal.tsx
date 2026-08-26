@@ -277,26 +277,22 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div
-        className="bg-[#f7f4ed] border border-[#eceae4] max-w-4xl w-full rounded-[18px] flex flex-col overflow-hidden text-[#1c1c1c] shadow-[0_25px_60px_rgba(0,0,0,0.35)] relative my-auto max-h-[92vh]"
+        className="bg-[#16181F] border border-[#2A2E3D] max-w-4xl w-full rounded-[18px] flex flex-col overflow-hidden text-[#F8FAFC] shadow-2xl relative my-auto max-h-[92vh]"
         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
       >
         {/* Top Header Bar */}
-        <div className="px-6 py-4 border-b border-[#eceae4] bg-[#f7f4ed] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[#2A2E3D] bg-[#16181F] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
-              className="p-2 rounded-[8px] bg-[#1c1c1c] text-[#fcfbf8] shadow-sm shrink-0"
-              style={{
-                boxShadow:
-                  'rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-              }}
+              className="p-2 rounded-[8px] bg-[#0B0C10] border border-[#2A2E3D] text-[#F8FAFC] shadow-sm shrink-0"
             >
               <Newspaper className="w-5 h-5 text-amber-300" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.2 rounded-[4px] inline-block">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-amber-300 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded-[4px] inline-block">
                 Hito & Social Proof • Portada Conmemorativa
               </span>
-              <h2 className="text-lg sm:text-xl font-bold tracking-[-0.7px] text-[#1c1c1c]">
+              <h2 className="text-lg sm:text-xl font-bold tracking-[-0.7px] text-[#F8FAFC]">
                 {milestone.title}
               </h2>
             </div>
@@ -304,7 +300,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-[6px] hover:bg-[#eceae4] text-[#5f5f5d] hover:text-[#1c1c1c] transition-colors cursor-pointer"
+            className="p-1.5 rounded-[6px] hover:bg-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
             title="Cerrar ventana"
           >
             <X className="w-5 h-5" />
@@ -462,8 +458,8 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
           <div className="lg:col-span-5 space-y-5">
             {/* 1. Magazine Style Switcher */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-[#5f5f5d] uppercase tracking-wider flex items-center gap-1.5">
-                <Palette className="w-3.5 h-3.5 text-[#1c1c1c]" />
+              <label className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1.5">
+                <Palette className="w-3.5 h-3.5 text-[#8B5CF6]" />
                 Estilo Editorial / Revista
               </label>
 
@@ -479,12 +475,12 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
                     onClick={() => setSelectedPreset(item.id as MagazinePreset)}
                     className={`p-3 rounded-[10px] border text-left transition-all cursor-pointer ${
                       selectedPreset === item.id
-                        ? 'bg-[#1c1c1c] text-[#fcfbf8] border-[#1c1c1c] shadow-sm font-semibold'
-                        : 'bg-[#fcfbf8] text-[#1c1c1c] border-[#eceae4] hover:border-[rgba(28,28,28,0.4)]'
+                        ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white border-transparent shadow-[0_0_15px_rgba(139,92,246,0.35)] font-semibold'
+                        : 'bg-[#0B0C10] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#8B5CF6]/50'
                     }`}
                   >
                     <span className="text-xs font-bold block">{item.label}</span>
-                    <span className="text-[10px] opacity-70 block">{item.sub}</span>
+                    <span className="text-[10px] opacity-75 block">{item.sub}</span>
                   </button>
                 ))}
               </div>
@@ -492,8 +488,8 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
 
             {/* 2. Headline Editor & Presets */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-[#5f5f5d] uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <label className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#8B5CF6]" />
                 Titular Principal de la Portada
               </label>
 
@@ -502,13 +498,13 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
                 onChange={(e) => setCustomHeadline(e.target.value)}
                 rows={3}
                 maxLength={160}
-                className="w-full bg-[#fcfbf8] border border-[#eceae4] rounded-[8px] p-3 text-xs text-[#1c1c1c] focus:outline-none focus:ring-1 focus:ring-[#1c1c1c] leading-relaxed resize-none"
+                className="w-full bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-3 text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] leading-relaxed resize-none"
                 placeholder="Escribe el titular impactante..."
               />
 
               {/* Quick Preset Headline Pills */}
               <div className="space-y-1.5">
-                <span className="text-[10px] uppercase font-bold text-[#5f5f5d] block">
+                <span className="text-[10px] uppercase font-bold text-[#94A3B8] block">
                   O sugerencias automáticas:
                 </span>
                 <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
@@ -516,7 +512,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
                     <button
                       key={sIdx}
                       onClick={() => setCustomHeadline(sug)}
-                      className="w-full text-left p-2 rounded-[6px] bg-[#fcfbf8] border border-[#eceae4] text-[11px] text-[#5f5f5d] hover:text-[#1c1c1c] hover:border-[rgba(28,28,28,0.3)] transition-all truncate block cursor-pointer"
+                      className="w-full text-left p-2 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D] text-[11px] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/50 transition-all truncate block cursor-pointer"
                     >
                       "{sug}"
                     </button>
@@ -526,34 +522,30 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
             </div>
 
             {/* 3. Export & Share Actions */}
-            <div className="space-y-2.5 pt-2 border-t border-[#eceae4]">
+            <div className="space-y-2.5 pt-2 border-t border-[#2A2E3D]">
               {/* Download PNG Button */}
               <button
                 onClick={handleDownloadCover}
                 disabled={isDownloading}
-                className="w-full bg-[#1c1c1c] text-[#fcfbf8] py-3 px-4 rounded-[6px] text-xs font-semibold hover:opacity-90 active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm"
-                style={{
-                  boxShadow:
-                    'rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                }}
+                className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white py-3 px-4 rounded-[6px] text-xs font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <Download className="w-4 h-4 text-amber-300" />
+                <Download className="w-4 h-4 text-white" />
                 <span>{isDownloading ? 'Generando imagen PNG...' : 'Descargar Portada en Alta Calidad (PNG)'}</span>
               </button>
 
               {/* Copy Social Announcement Button */}
               <button
                 onClick={handleCopyShareText}
-                className="w-full bg-[#fcfbf8] text-[#1c1c1c] border border-[#eceae4] hover:bg-[#eceae4] py-2.5 px-4 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-2xs"
+                className="w-full bg-[#0B0C10] text-[#F8FAFC] border border-[#2A2E3D] hover:bg-[#16181F] py-2.5 px-4 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-2xs"
               >
                 {isCopied ? (
                   <>
-                    <Check className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-700 font-bold">¡Texto Copiado al Portapapeles!</span>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-400 font-bold">¡Texto Copiado al Portapapeles!</span>
                   </>
                 ) : (
                   <>
-                    <Share2 className="w-4 h-4 text-[#1c1c1c]" />
+                    <Share2 className="w-4 h-4 text-[#8B5CF6]" />
                     <span>Copiar Publicación para Redes Sociales</span>
                   </>
                 )}
@@ -563,17 +555,13 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-[#eceae4] bg-[#f7f4ed] flex items-center justify-between">
-          <span className="text-xs text-[#5f5f5d]">
+        <div className="px-6 py-4 border-t border-[#2A2E3D] bg-[#16181F] flex items-center justify-between">
+          <span className="text-xs text-[#94A3B8]">
             Hito registrado en la cronología de carrera y en los archivos de la revista.
           </span>
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-[6px] text-xs font-semibold bg-[#1c1c1c] text-[#fcfbf8] hover:opacity-90 active:opacity-80 transition-all cursor-pointer shadow-sm"
-            style={{
-              boxShadow:
-                'rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-            }}
+            className="px-5 py-2 rounded-[6px] text-xs font-bold bg-[#0B0C10] text-[#F8FAFC] border border-[#2A2E3D] hover:bg-[#2A2E3D] transition-all cursor-pointer shadow-sm"
           >
             Continuar Carrera
           </button>

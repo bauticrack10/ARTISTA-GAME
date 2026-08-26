@@ -390,29 +390,29 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const computedPersonality = getComputedPersonality();
 
   return (
-    <div className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c] p-4 sm:p-6 lg:p-8 font-sans">
+    <div
+      className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] p-4 sm:p-6 lg:p-8 font-sans"
+      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+    >
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Top Header - Strictly design.md */}
-        <div className="flex items-center justify-between border-b border-[#eceae4] pb-5">
+        {/* Top Header */}
+        <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-5">
           <div className="flex items-center gap-3">
             <button
               onClick={onBackToMenu}
-              className="p-2 rounded-md bg-[#f7f4ed] border border-[rgba(28,28,28,0.4)] text-[#1c1c1c] hover:opacity-80 transition-opacity cursor-pointer"
+              className="p-2 rounded-md bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-[#8B5CF6]/40 transition-all cursor-pointer shadow-sm"
               title="Volver al Menú Principal"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1
-                className="text-2xl sm:text-3xl font-semibold text-[#1c1c1c] tracking-[-0.9px] flex items-center gap-2"
-                style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-              >
+              <h1 className="text-2xl sm:text-3xl font-semibold text-[#F8FAFC] tracking-[-0.9px] flex items-center gap-2">
                 <span>Creación del Artista</span>
-                <span className="text-xs bg-[#eceae4] text-[#1c1c1c] px-2.5 py-0.5 rounded-full font-semibold">
+                <span className="text-xs bg-[#2A2E3D] text-[#F8FAFC] border border-[#2A2E3D] px-2.5 py-0.5 rounded-full font-semibold">
                   Año 1 • 2026
                 </span>
               </h1>
-              <p className="text-xs text-[#5f5f5d] mt-0.5">
+              <p className="text-xs text-[#94A3B8] mt-0.5">
                 Diseñá tu identidad musical, seleccioná tu punto de partida e iniciá tu viaje en la industria.
               </p>
             </div>
@@ -423,35 +423,35 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
         <div
           className={`p-4 rounded-xl border transition-all ${
             isProdigy
-              ? 'bg-[#1c1c1c] text-[#fcfbf8] border-[#1c1c1c] shadow-md'
-              : 'bg-[#f7f4ed] text-[#1c1c1c] border-[#eceae4]'
+              ? 'bg-gradient-to-r from-amber-500/15 via-[#16181F] to-purple-500/15 text-[#F8FAFC] border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.15)]'
+              : 'bg-[#16181F] text-[#F8FAFC] border-[#2A2E3D]'
           }`}
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div
                 className={`p-2.5 rounded-full ${
-                  isProdigy ? 'bg-amber-400 text-[#1c1c1c]' : 'bg-[#eceae4] text-[#1c1c1c]'
+                  isProdigy ? 'bg-amber-400 text-stone-950 shadow-[0_0_12px_rgba(251,191,36,0.5)]' : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#F8FAFC]'
                 }`}
               >
-                {isProdigy ? <Crown className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+                {isProdigy ? <Crown className="w-5 h-5" /> : <Sparkles className="w-5 h-5 text-[#8B5CF6]" />}
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-semibold uppercase tracking-wider">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#F8FAFC]">
                     Rasgo Ultra-Raro: Promesa / Prodigio
                   </span>
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-semibold ${
                       isProdigy
                         ? 'bg-amber-400/20 text-amber-300 border border-amber-400/30'
-                        : 'bg-[#eceae4] text-[#5f5f5d]'
+                        : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8]'
                     }`}
                   >
                     Probabilidad: 1 en 100.000 (0.001%)
                   </span>
                 </div>
-                <p className={`text-xs mt-0.5 ${isProdigy ? 'text-[#fcfbf8]/80' : 'text-[#5f5f5d]'}`}>
+                <p className={`text-xs mt-0.5 ${isProdigy ? 'text-amber-200/90' : 'text-[#94A3B8]'}`}>
                   {isProdigy
                     ? '✨ ¡ACTIVADO! Atributos iniciales maximizados (95-100) y Multiplicador permanente x3 en ganancia de experiencia y stats.'
                     : 'Un talento generacional irrepetible con estadísticas iniciales perfectas y progreso triplicado de por vida.'}
@@ -466,19 +466,15 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <button
                     type="button"
                     onClick={handleRollProdigyLuck}
-                    className="px-3 py-1.5 rounded-md text-xs font-normal border border-[rgba(28,28,28,0.4)] text-[#1c1c1c] hover:opacity-80 transition-all cursor-pointer flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-md text-xs font-normal border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-[#8B5CF6]/40 transition-all cursor-pointer flex items-center gap-1.5"
                   >
-                    <Dices className="w-3.5 h-3.5" />
+                    <Dices className="w-3.5 h-3.5 text-[#06B6D4]" />
                     <span>Probar Suerte</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsProdigy(true)}
-                    className="px-3 py-1.5 rounded-md text-xs font-normal bg-[#1c1c1c] text-[#fcfbf8] hover:opacity-80 transition-all cursor-pointer flex items-center gap-1.5"
-                    style={{
-                      boxShadow:
-                        'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                    }}
+                    className="px-3 py-1.5 rounded-md text-xs font-semibold bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white hover:opacity-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.35)]"
                   >
                     <Crown className="w-3.5 h-3.5 text-amber-300" />
                     <span>Activar (Probar Rasgo)</span>
@@ -488,7 +484,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsProdigy(false)}
-                  className="px-3 py-1.5 rounded-md text-xs font-normal bg-[#eceae4] text-[#1c1c1c] hover:opacity-80 transition-all cursor-pointer"
+                  className="px-3 py-1.5 rounded-md text-xs font-normal bg-[#2A2E3D] text-[#F8FAFC] hover:bg-[#373C4E] transition-all cursor-pointer"
                 >
                   Desactivar
                 </button>
@@ -497,7 +493,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           </div>
 
           {rollMessage && (
-            <div className="mt-2.5 pt-2.5 border-t border-[#eceae4]/30 text-xs font-mono">
+            <div className="mt-2.5 pt-2.5 border-t border-[#2A2E3D] text-xs font-mono text-[#94A3B8]">
               {rollMessage}
             </div>
           )}
@@ -508,25 +504,25 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           {/* Main Configuration Columns (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Section 1: Identidad & Origen */}
-            <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-xl p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-[#eceae4] pb-3">
-                <div className="flex items-center gap-2 text-[#1c1c1c] font-semibold text-xs uppercase tracking-wider">
-                  <User className="w-4 h-4 text-[#1c1c1c]" />
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-xl p-5 space-y-4 shadow-md">
+              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
+                <div className="flex items-center gap-2 text-[#F8FAFC] font-semibold text-xs uppercase tracking-wider">
+                  <User className="w-4 h-4 text-[#8B5CF6]" />
                   <span>1. Identidad & Origen</span>
                 </div>
                 <button
                   type="button"
                   onClick={handleRandomizeName}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-md border border-[rgba(28,28,28,0.4)] text-[#1c1c1c] text-xs font-normal hover:opacity-80 transition-opacity cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-md border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC] text-xs font-normal hover:bg-[#1C1F2B] hover:border-[#8B5CF6]/40 transition-all cursor-pointer"
                 >
-                  <Shuffle className="w-3.5 h-3.5" />
+                  <Shuffle className="w-3.5 h-3.5 text-[#06B6D4]" />
                   <span>Aleatorio</span>
                 </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
                     Nombre Artístico *
                   </label>
                   <input
@@ -535,12 +531,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Ej: Warren Rovers"
-                    className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-purple-400 rounded-md px-3.5 py-2 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors"
+                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-md px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
                     Nombre Real
                   </label>
                   <input
@@ -548,16 +544,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={realName}
                     onChange={e => setRealName(e.target.value)}
                     placeholder="Ej: Warren Alexander"
-                    className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-purple-400 rounded-md px-3.5 py-2 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors"
+                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-md px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] transition-colors"
                   />
                 </div>
               </div>
 
               {/* Age Slider */}
               <div className="pt-1">
-                <div className="flex justify-between items-center text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider mb-1.5">
+                <div className="flex justify-between items-center text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
                   <span>Edad Inicial</span>
-                  <span className="text-[#1c1c1c] font-mono text-sm font-semibold">{age} Años (Nacido en {2026 - age})</span>
+                  <span className="text-[#F8FAFC] font-mono text-sm font-semibold">{age} Años (Nacido en {2026 - age})</span>
                 </div>
                 <input
                   type="range"
@@ -565,9 +561,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   max={35}
                   value={age}
                   onChange={e => setAge(Number(e.target.value))}
-                  className="w-full accent-[#1c1c1c] cursor-pointer"
+                  className="w-full accent-[#8B5CF6] cursor-pointer"
                 />
-                <div className="flex justify-between text-[11px] text-[#5f5f5d] font-mono">
+                <div className="flex justify-between text-[11px] text-[#94A3B8] font-mono">
                   <span>16 Años (Joven Promesa)</span>
                   <span>25 Años</span>
                   <span>35 Años (Veterano)</span>
@@ -577,16 +573,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Country & City */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
                     País de Origen
                   </label>
                   <select
                     value={country}
                     onChange={e => handleCountryChange(e.target.value)}
-                    className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-[rgba(28,28,28,0.4)] rounded-md px-3.5 py-2 text-xs text-[#1c1c1c] focus:outline-none cursor-pointer"
+                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-md px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
                   >
                     {Object.keys(COUNTRY_CITIES).map(c => (
-                      <option key={c} value={c}>
+                      <option key={c} value={c} className="bg-[#0B0C10] text-[#F8FAFC]">
                         {c}
                       </option>
                     ))}
@@ -595,13 +591,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
                       Ciudad Natal
                     </label>
                     <button
                       type="button"
                       onClick={() => setIsCustomCity(!isCustomCity)}
-                      className="text-[11px] text-[#1c1c1c] underline cursor-pointer hover:opacity-80"
+                      className="text-[11px] text-[#06B6D4] underline cursor-pointer hover:opacity-80"
                     >
                       {isCustomCity ? 'Elegir de lista' : 'Personalizar'}
                     </button>
@@ -613,16 +609,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       value={customCityText}
                       onChange={e => setCustomCityText(e.target.value)}
                       placeholder="Nombre de tu ciudad..."
-                      className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-[rgba(28,28,28,0.4)] rounded-md px-3.5 py-2 text-xs text-[#1c1c1c] focus:outline-none"
+                      className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-md px-3.5 py-2 text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none"
                     />
                   ) : (
                     <select
                       value={city}
                       onChange={e => setCity(e.target.value)}
-                      className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-[rgba(28,28,28,0.4)] rounded-md px-3.5 py-2 text-xs text-[#1c1c1c] focus:outline-none cursor-pointer"
+                      className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-md px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
                     >
                       {(COUNTRY_CITIES[country] || []).map(ci => (
-                        <option key={ci} value={ci}>
+                        <option key={ci} value={ci} className="bg-[#0B0C10] text-[#F8FAFC]">
                           {ci}
                         </option>
                       ))}
@@ -633,14 +629,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* Section 2: Estilo Musical & Géneros */}
-            <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-xl p-5 space-y-4">
-              <div className="flex items-center gap-2 text-[#1c1c1c] font-semibold text-xs uppercase tracking-wider border-b border-[#eceae4] pb-3">
-                <Music2 className="w-4 h-4 text-[#1c1c1c]" />
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-xl p-5 space-y-4 shadow-md">
+              <div className="flex items-center gap-2 text-[#F8FAFC] font-semibold text-xs uppercase tracking-wider border-b border-[#2A2E3D] pb-3">
+                <Music2 className="w-4 h-4 text-[#EC4899]" />
                 <span>2. Estilo Musical & Géneros</span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
                   Género Principal (Identidad Central)
                 </label>
                 <select
@@ -650,16 +646,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     setMainGenreId(val);
                     setSecondaryGenres(secondaryGenres.filter(g => g !== val));
                   }}
-                  className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-[rgba(28,28,28,0.4)] rounded-md px-3.5 py-2 text-xs text-[#1c1c1c] focus:outline-none cursor-pointer"
+                  className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-md px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
                 >
                   {(Object.values(world.genres) as Genre[]).map(g => (
-                    <option key={g.id} value={g.id}>
+                    <option key={g.id} value={g.id} className="bg-[#0B0C10] text-[#F8FAFC]">
                       {g.name} ({g.originCountry}) — {g.lifecycle.toUpperCase()}
                     </option>
                   ))}
                 </select>
                 {selectedMainGenre && (
-                  <p className="text-[11px] text-[#5f5f5d] mt-1.5 italic">
+                  <p className="text-[11px] text-[#94A3B8] mt-1.5 italic">
                     "{selectedMainGenre.aestheticTone}"
                   </p>
                 )}
@@ -667,10 +663,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold text-[#1c1c1c] uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
                     Géneros Secundarios / Sub-estilos (Máximo 3)
                   </label>
-                  <span className="text-[11px] text-[#5f5f5d] font-mono">
+                  <span className="text-[11px] text-[#94A3B8] font-mono">
                     {secondaryGenres.length}/3 seleccionados
                   </span>
                 </div>
@@ -679,35 +675,15 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     .filter(g => g.id !== mainGenreId)
                     .map(g => {
                       const isSelected = secondaryGenres.includes(g.id);
-                      // Genre-specific accent colors from design.md palette
-                      const genreColorMap: Record<string, string> = {
-                        trap_latino: 'bg-purple-600 text-white border-purple-600',
-                        reggaeton: 'bg-amber-500 text-white border-amber-500',
-                        pop: 'bg-pink-500 text-white border-pink-500',
-                        pop_latino: 'bg-fuchsia-500 text-white border-fuchsia-500',
-                        rnb: 'bg-indigo-600 text-white border-indigo-600',
-                        rock: 'bg-emerald-600 text-white border-emerald-600',
-                        rock_argentino: 'bg-emerald-700 text-white border-emerald-700',
-                        drill: 'bg-rose-600 text-white border-rose-600',
-                        hip_hop_rap: 'bg-violet-600 text-white border-violet-600',
-                        cumbia: 'bg-orange-500 text-white border-orange-500',
-                        electronica: 'bg-cyan-600 text-white border-cyan-600',
-                        dembow: 'bg-amber-600 text-white border-amber-600',
-                        salsa: 'bg-red-500 text-white border-red-500',
-                        bachata: 'bg-rose-500 text-white border-rose-500',
-                        corridos_tumbados: 'bg-amber-700 text-white border-amber-700',
-                        folk: 'bg-teal-600 text-white border-teal-600',
-                      };
-                      const selectedColor = genreColorMap[g.id] || 'bg-[#1c1c1c] text-[#fcfbf8] border-[#1c1c1c]';
                       return (
                         <button
                           type="button"
                           key={g.id}
                           onClick={() => toggleSecondaryGenre(g.id)}
-                          className={`px-3 py-1.5 rounded-full border text-xs font-normal transition-all cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-full border text-xs transition-all cursor-pointer ${
                             isSelected
-                              ? `${selectedColor} font-semibold shadow-sm`
-                              : 'bg-[#f7f4ed] border-[#eceae4] text-[#1c1c1c] hover:border-[rgba(28,28,28,0.4)]'
+                              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-semibold border-transparent shadow-[0_0_12px_rgba(139,92,246,0.35)]'
+                              : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/50'
                           }`}
                         >
                           {g.name}
@@ -719,14 +695,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* Section 3: Personalidad & Arquetipo */}
-            <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-xl p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-[#eceae4] pb-3">
-                <div className="flex items-center gap-2 text-[#1c1c1c] font-semibold text-xs uppercase tracking-wider">
-                  <Brain className="w-4 h-4 text-[#1c1c1c]" />
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-xl p-5 space-y-4 shadow-md">
+              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
+                <div className="flex items-center gap-2 text-[#F8FAFC] font-semibold text-xs uppercase tracking-wider">
+                  <Brain className="w-4 h-4 text-[#10B981]" />
                   <span>3. Personalidad & Enfoque Artístico</span>
                 </div>
                 {isProdigy && (
-                  <span className="text-[11px] font-semibold text-[#1c1c1c] bg-[#eceae4] px-2.5 py-0.5 rounded-full">
+                  <span className="text-[11px] font-semibold text-amber-300 bg-amber-400/15 border border-amber-400/30 px-2.5 py-0.5 rounded-full">
                     Maximizados por Prodigio (95-100)
                   </span>
                 )}
@@ -749,38 +725,37 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         onClick={() => setArchetype(a.id as any)}
                         className={`p-3 rounded-lg border text-left transition-all cursor-pointer ${
                           archetype === a.id
-                            ? 'bg-[#eceae4] border-[#1c1c1c] text-[#1c1c1c] font-semibold'
-                            : 'bg-[#f7f4ed] border-[#eceae4] text-[#5f5f5d] hover:text-[#1c1c1c] hover:border-[rgba(28,28,28,0.4)]'
+                            ? 'bg-[#1C1F2B] border-[#8B5CF6] text-[#F8FAFC] font-semibold ring-1 ring-[#8B5CF6]'
+                            : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/50'
                         }`}
                       >
-                        <p className="text-xs font-semibold text-[#1c1c1c]">{a.title}</p>
-                        <p className="text-[10px] text-[#5f5f5d] mt-1 leading-tight">{a.desc}</p>
+                        <p className="text-xs font-semibold text-[#F8FAFC]">{a.title}</p>
+                        <p className="text-[10px] text-[#94A3B8] mt-1 leading-tight">{a.desc}</p>
                       </button>
                     ))}
                   </div>
 
                   {/* Custom Sliders if 'custom' is selected */}
                   {archetype === 'custom' && (
-                    <div className="p-4 bg-[#f7f4ed] border border-[#eceae4] rounded-lg space-y-3 pt-3">
+                    <div className="p-4 bg-[#0B0C10] border border-[#2A2E3D] rounded-lg space-y-3 pt-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                         {Object.entries(customTraits).map(([traitKey, val]) => {
-                          const valueColor = val > 70 ? 'text-emerald-700' : val >= 40 ? 'text-amber-700' : 'text-rose-700';
-                          const accentColor = val > 70 ? 'accent-emerald-600' : val >= 40 ? 'accent-amber-600' : 'accent-rose-600';
+                          const valueColor = val > 70 ? 'text-[#10B981]' : val >= 40 ? 'text-amber-400' : 'text-rose-400';
                           return (
-                          <div key={traitKey} className="space-y-1">
-                            <div className="flex justify-between text-[11px] text-[#1c1c1c] font-medium capitalize">
-                              <span>{traitKey.replace(/([A-Z])/g, ' $1')}</span>
-                              <span className={`font-mono font-semibold ${valueColor}`}>{val}</span>
+                            <div key={traitKey} className="space-y-1">
+                              <div className="flex justify-between text-[11px] text-[#F8FAFC] font-medium capitalize">
+                                <span>{traitKey.replace(/([A-Z])/g, ' $1')}</span>
+                                <span className={`font-mono font-semibold ${valueColor}`}>{val}</span>
+                              </div>
+                              <input
+                                type="range"
+                                min={30}
+                                max={99}
+                                value={val}
+                                onChange={e => setCustomTraits({ ...customTraits, [traitKey]: Number(e.target.value) })}
+                                className="w-full cursor-pointer h-1.5 bg-[#16181F] rounded-lg accent-[#8B5CF6]"
+                              />
                             </div>
-                            <input
-                              type="range"
-                              min={30}
-                              max={99}
-                              value={val}
-                              onChange={e => setCustomTraits({ ...customTraits, [traitKey]: Number(e.target.value) })}
-                              className={`w-full cursor-pointer h-1.5 bg-[#eceae4] rounded-lg ${accentColor}`}
-                            />
-                          </div>
                           );
                         })}
                       </div>
@@ -788,12 +763,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   )}
                 </>
               ) : (
-                <div className="p-4 bg-[#eceae4] border border-[#eceae4] rounded-lg text-xs space-y-2">
-                  <p className="font-semibold text-[#1c1c1c] flex items-center gap-1.5">
-                    <Star className="w-4 h-4 text-amber-500 fill-current" />
+                <div className="p-4 bg-[#0B0C10] border border-amber-500/30 rounded-lg text-xs space-y-2">
+                  <p className="font-semibold text-amber-300 flex items-center gap-1.5">
+                    <Star className="w-4 h-4 text-amber-400 fill-current" />
                     Atributos Legendarios de Nacimiento:
                   </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px] font-mono text-[#1c1c1c]">
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px] font-mono text-[#F8FAFC]">
                     <span>Creatividad: 98</span>
                     <span>Ambición: 99</span>
                     <span>Disciplina: 96</span>
@@ -810,9 +785,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* Section 4: Punto de Partida / Nivel Inicial */}
-            <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-xl p-5 space-y-4">
-              <div className="flex items-center gap-2 text-[#1c1c1c] font-semibold text-xs uppercase tracking-wider border-b border-[#eceae4] pb-3">
-                <Sliders className="w-4 h-4 text-[#1c1c1c]" />
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-xl p-5 space-y-4 shadow-md">
+              <div className="flex items-center gap-2 text-[#F8FAFC] font-semibold text-xs uppercase tracking-wider border-b border-[#2A2E3D] pb-3">
+                <Sliders className="w-4 h-4 text-[#06B6D4]" />
                 <span>4. Punto de Partida (Nivel Inicial)</span>
               </div>
 
@@ -849,26 +824,26 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     onClick={() => setStartingLevel(lvl.id as any)}
                     className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer relative ${
                       startingLevel === lvl.id
-                        ? 'bg-[#eceae4] border-[#1c1c1c] text-[#1c1c1c]'
-                        : 'bg-[#f7f4ed] border-[#eceae4] text-[#5f5f5d] hover:text-[#1c1c1c] hover:border-[rgba(28,28,28,0.4)]'
+                        ? 'bg-[#1C1F2B] border-[#8B5CF6] text-[#F8FAFC] ring-1 ring-[#8B5CF6]'
+                        : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/50'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-[#1c1c1c]">{lvl.title}</span>
-                      <span className="text-[9px] bg-[#eceae4] px-2 py-0.5 rounded-full font-mono text-[#1c1c1c]">
+                      <span className="text-xs font-semibold text-[#F8FAFC]">{lvl.title}</span>
+                      <span className="text-[9px] bg-[#2A2E3D] px-2 py-0.5 rounded-full font-mono text-[#F8FAFC]">
                         {lvl.badge}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#5f5f5d] leading-relaxed">{lvl.desc}</p>
+                    <p className="text-[11px] text-[#94A3B8] leading-relaxed">{lvl.desc}</p>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Section 5: Paleta Visual del Artista */}
-            <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-xl p-5 space-y-4">
-              <div className="flex items-center gap-2 text-[#1c1c1c] font-semibold text-xs uppercase tracking-wider border-b border-[#eceae4] pb-3">
-                <Sparkles className="w-4 h-4 text-[#1c1c1c]" />
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-xl p-5 space-y-4 shadow-md">
+              <div className="flex items-center gap-2 text-[#F8FAFC] font-semibold text-xs uppercase tracking-wider border-b border-[#2A2E3D] pb-3">
+                <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
                 <span>5. Estilo Visual / Avatar</span>
               </div>
 
@@ -878,8 +853,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     type="button"
                     key={g.id}
                     onClick={() => setAvatarColor(g.val)}
-                    className={`h-11 rounded-lg bg-gradient-to-tr ${g.val} transition-all cursor-pointer relative flex items-center justify-center border border-[#eceae4] ${
-                      avatarColor === g.val ? 'ring-2 ring-[#1c1c1c] scale-105 shadow-sm' : 'opacity-80 hover:opacity-100'
+                    className={`h-11 rounded-lg bg-gradient-to-tr ${g.val} transition-all cursor-pointer relative flex items-center justify-center border border-[#2A2E3D] ${
+                      avatarColor === g.val ? 'ring-2 ring-white scale-105 shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'opacity-70 hover:opacity-100'
                     }`}
                     title={g.label}
                   >
@@ -895,103 +870,96 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           {/* Right Column: Live Artist Preview & Launch Card */}
           <div className="space-y-6">
             {/* Live Artist Profile Card */}
-            <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-xl p-6 shadow-sm sticky top-6 space-y-6">
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-xl p-6 shadow-2xl sticky top-6 space-y-6">
               <div className="text-center space-y-3">
                 <div
-                  className={`w-20 h-20 mx-auto rounded-xl bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white text-2xl font-semibold shadow-sm border border-[#eceae4]`}
+                  className={`w-20 h-20 mx-auto rounded-xl bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white text-2xl font-semibold shadow-lg border-2 border-white/20`}
                 >
                   {name.substring(0, 2).toUpperCase() || 'AR'}
                 </div>
 
                 <div>
-                  <h2
-                    className="text-xl font-semibold text-[#1c1c1c] tracking-tight"
-                    style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-                  >
+                  <h2 className="text-xl font-semibold text-[#F8FAFC] tracking-tight">
                     {name || 'Nuevo Artista'}
                   </h2>
-                  <p className="text-xs text-[#5f5f5d]">
+                  <p className="text-xs text-[#94A3B8]">
                     {realName ? `"${realName}"` : ''} • {age} Años
                   </p>
-                  <p className="text-xs text-[#5f5f5d] flex items-center justify-center gap-1 mt-0.5">
-                    <MapPin className="w-3 h-3 text-[#1c1c1c]" />
+                  <p className="text-xs text-[#94A3B8] flex items-center justify-center gap-1 mt-0.5">
+                    <MapPin className="w-3 h-3 text-[#06B6D4]" />
                     <span>{isCustomCity && customCityText ? customCityText : city}, {country}</span>
                   </p>
                 </div>
 
                 {isProdigy && (
-                  <div className="bg-[#1c1c1c] text-[#fcfbf8] px-3 py-1 rounded-full text-[11px] font-semibold flex items-center justify-center gap-1.5 mx-auto">
+                  <div className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1 rounded-full text-[11px] font-semibold flex items-center justify-center gap-1.5 mx-auto">
                     <Crown className="w-3.5 h-3.5 text-amber-300" />
                     <span>🌟 Prodigio Musical (x3 Stats)</span>
                   </div>
                 )}
 
                 <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-                  <span className="px-2.5 py-0.5 bg-[#eceae4] text-[#1c1c1c] rounded-full text-xs font-semibold">
+                  <span className="px-2.5 py-0.5 bg-[#0B0C10] border border-[#2A2E3D] text-[#F8FAFC] rounded-full text-xs font-semibold">
                     {selectedMainGenre?.name || 'Género'}
                   </span>
-                  <span className="px-2 py-0.5 bg-[#eceae4] text-[#5f5f5d] rounded-full text-[11px] font-mono">
+                  <span className="px-2 py-0.5 bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8] rounded-full text-[11px] font-mono">
                     {startingLevel.toUpperCase()}
                   </span>
                 </div>
               </div>
 
               {/* Starting Stats Breakdown */}
-              <div className="border-t border-[#eceae4] pt-4 space-y-2 text-xs">
-                <h3 className="text-xs font-semibold text-[#5f5f5d] uppercase tracking-wider mb-2">
+              <div className="border-t border-[#2A2E3D] pt-4 space-y-2 text-xs">
+                <h3 className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
                   Condiciones Iniciales (Año 1)
                 </h3>
 
-                <div className="flex justify-between items-center bg-[#f7f4ed] px-3 py-2 rounded-md border border-[#eceae4]">
-                  <span className="text-[#5f5f5d] flex items-center gap-1.5">
-                    <DollarSign className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                <div className="flex justify-between items-center bg-[#0B0C10] px-3 py-2 rounded-md border border-[#2A2E3D]">
+                  <span className="text-[#94A3B8] flex items-center gap-1.5">
+                    <DollarSign className="w-3.5 h-3.5 text-[#10B981]" />
                     Fondos Iniciales
                   </span>
-                  <span className="font-semibold text-[#1c1c1c] font-mono">
+                  <span className="font-semibold text-[#F8FAFC] font-mono">
                     ${computedStats.funds.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center bg-[#f7f4ed] px-3 py-2 rounded-md border border-[#eceae4]">
-                  <span className="text-[#5f5f5d] flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                <div className="flex justify-between items-center bg-[#0B0C10] px-3 py-2 rounded-md border border-[#2A2E3D]">
+                  <span className="text-[#94A3B8] flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-[#06B6D4]" />
                     Comunidad de Fans
                   </span>
-                  <span className="font-semibold text-[#1c1c1c] font-mono">
+                  <span className="font-semibold text-[#F8FAFC] font-mono">
                     {computedStats.fansCount.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center bg-[#f7f4ed] px-3 py-2 rounded-md border border-[#eceae4]">
-                  <span className="text-[#5f5f5d] flex items-center gap-1.5">
-                    <TrendingUp className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                <div className="flex justify-between items-center bg-[#0B0C10] px-3 py-2 rounded-md border border-[#2A2E3D]">
+                  <span className="text-[#94A3B8] flex items-center gap-1.5">
+                    <TrendingUp className="w-3.5 h-3.5 text-[#8B5CF6]" />
                     Popularidad
                   </span>
-                  <span className="font-semibold text-[#1c1c1c] font-mono">
+                  <span className="font-semibold text-[#F8FAFC] font-mono">
                     {computedStats.popularity} / 100
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center bg-[#f7f4ed] px-3 py-2 rounded-md border border-[#eceae4]">
-                  <span className="text-[#5f5f5d] flex items-center gap-1.5">
-                    <Flame className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                <div className="flex justify-between items-center bg-[#0B0C10] px-3 py-2 rounded-md border border-[#2A2E3D]">
+                  <span className="text-[#94A3B8] flex items-center gap-1.5">
+                    <Flame className="w-3.5 h-3.5 text-orange-400" />
                     Hype Inicial
                   </span>
-                  <span className="font-semibold text-[#1c1c1c] font-mono">
+                  <span className="font-semibold text-[#F8FAFC] font-mono">
                     {computedStats.hype}
                   </span>
                 </div>
               </div>
 
-              {/* Action Button - Dark with inset shadow */}
+              {/* Action Button - Neon CTA */}
               <button
                 type="submit"
                 id="btn-confirm-create-artist"
-                className="w-full py-3.5 px-6 rounded-md bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] cursor-pointer"
-                style={{
-                  boxShadow:
-                    '0 0 20px rgba(147, 51, 234, 0.3), rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                }}
+                className="w-full py-3.5 px-6 rounded-md bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-[0_0_20px_rgba(139,92,246,0.4)]"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Comenzar Carrera</span>

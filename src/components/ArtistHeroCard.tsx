@@ -139,7 +139,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
   return (
     <div
-      className={`bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-6 md:p-8 relative overflow-hidden shadow-sm space-y-6 ${className}`}
+      className={`bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 md:p-8 relative overflow-hidden shadow-lg space-y-6 text-[#F8FAFC] ${className}`}
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* Top Main Section: Portrait, Bio & Quick Metrics */}
@@ -148,10 +148,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 md:gap-6 w-full lg:w-auto">
           {/* Professional Portrait Container (aspect 1:1 or 4:5 with aesthetic frame) */}
           <div className="relative shrink-0 group">
-            <div
-              onClick={handleOpenModal}
-              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 aspect-square rounded-[16px] overflow-hidden border-2 border-[#eceae4] bg-[#fcfbf8] shadow-sm cursor-pointer relative group-hover:border-[rgba(28,28,28,0.4)] transition-all duration-300"
-            >
+            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[14px] overflow-hidden border-2 border-[#2A2E3D] group-hover:border-[#8B5CF6]/60 transition-colors shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-[#0B0C10]">
               {player.avatarUrl ? (
                 <img
                   src={player.avatarUrl}
@@ -160,118 +157,98 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                 />
               ) : (
                 <div
-                  className={`w-full h-full bg-gradient-to-tr ${player.avatarColor || 'from-amber-500 to-rose-600'} flex items-center justify-center text-[#fcfbf8] font-bold text-3xl sm:text-4xl group-hover:scale-105 transition-transform duration-300`}
-                  style={{
-                    boxShadow:
-                      'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-                  }}
+                  className={`w-full h-full bg-gradient-to-tr ${
+                    player.avatarColor || 'from-[#8B5CF6] to-[#EC4899]'
+                  } text-white font-extrabold text-3xl sm:text-4xl flex items-center justify-center`}
                 >
-                  {player.name ? player.name.charAt(0).toUpperCase() : 'A'}
+                  {player.name.charAt(0)}
                 </div>
               )}
-
-              {/* Hover Overlay Button */}
-              <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[11px] font-semibold gap-1 backdrop-blur-[1px]">
-                <Camera className="w-5 h-5 text-white" />
-                <span>Cambiar Foto</span>
-              </div>
             </div>
 
-            {/* Floating Quick Action Badge */}
+            {/* Quick Edit Overlay Button */}
             <button
               onClick={handleOpenModal}
-              title="Cambiar Foto / Avatar"
-              className="absolute -bottom-1.5 -right-1.5 p-1.5 rounded-full bg-[#1c1c1c] text-[#fcfbf8] shadow-sm hover:opacity-90 transition-all border border-[#f7f4ed] cursor-pointer"
-              style={{
-                boxShadow:
-                  'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-              }}
+              className="absolute bottom-1 right-1 p-2 rounded-full bg-[#0B0C10]/90 hover:bg-[#8B5CF6] text-[#F8FAFC] border border-[#2A2E3D] shadow-md transition-all cursor-pointer group-hover:scale-110"
+              title="Cambiar Retrato / Avatar"
             >
               <Camera className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Artist Hierarchy & Info */}
-          <div className="space-y-2.5 flex-1">
-            {/* Artist Name & Level / Tier Badges */}
+          {/* Artist Identity & Metadata Details */}
+          <div className="space-y-2.5">
+            {/* Header: Artist Stage Name + Badges */}
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-1.2px] text-[#1c1c1c] leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-1px] text-[#F8FAFC] leading-tight">
                 {player.name}
               </h1>
 
-              {/* Tier / Stage Pill Badge */}
+              {/* Career Stage Pill */}
               <span
-                className={`px-3 py-1 rounded-[9999px] text-xs font-semibold border ${stageBadge.bg} ${stageBadge.text} ${stageBadge.border} shadow-2xs`}
+                className={`px-3 py-1 rounded-[9999px] text-xs font-bold uppercase tracking-wider bg-[#8B5CF6]/15 text-[#C084FC] border border-[#8B5CF6]/40 shadow-xs`}
               >
                 {stageBadge.label}
               </span>
 
-              {/* Prodigy Badge */}
-              {player.isProdigy && (
-                <span className="px-3 py-1 rounded-[9999px] text-xs font-bold bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 flex items-center gap-1 shadow-2xs border border-amber-300">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-900 fill-current" />
-                  Prodigio x3
-                </span>
-              )}
-
-              {/* Record Label Badge */}
+              {/* Label Badge */}
               {currentLabel && (
-                <span className="px-3 py-1 rounded-[9999px] text-xs font-normal bg-[#fcfbf8] text-[#5f5f5d] border border-[#eceae4] flex items-center gap-1.5">
-                  <Building2 className="w-3 h-3 text-[#5f5f5d]" />
+                <span className="px-3 py-1 rounded-[9999px] text-xs font-normal bg-[#16181F] text-[#CBD5E1] border border-[#2A2E3D] flex items-center gap-1.5">
+                  <Building2 className="w-3 h-3 text-[#94A3B8]" />
                   {currentLabel.name}
                 </span>
               )}
 
               {/* Manager Badge */}
               {currentManager && (
-                <span className="px-3 py-1 rounded-[9999px] text-xs font-normal bg-[#fcfbf8] text-[#5f5f5d] border border-[#eceae4] flex items-center gap-1.5">
-                  <User className="w-3 h-3 text-[#5f5f5d]" />
+                <span className="px-3 py-1 rounded-[9999px] text-xs font-normal bg-[#16181F] text-[#CBD5E1] border border-[#2A2E3D] flex items-center gap-1.5">
+                  <User className="w-3 h-3 text-[#94A3B8]" />
                   Mgr: {currentManager.name}
                 </span>
               )}
             </div>
 
             {/* High-Contrast Subtitle: Real Name, City, Country & Main Genre */}
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5f5f5d] font-normal flex-wrap">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-[#94A3B8] font-normal flex-wrap">
               {player.realName ? (
                 <>
-                  <span className="text-[#1c1c1c] font-medium">{player.realName}</span>
-                  <span className="text-[#5f5f5d]/60">•</span>
+                  <span className="text-[#F8FAFC] font-medium">{player.realName}</span>
+                  <span className="text-[#94A3B8]/60">•</span>
                 </>
               ) : null}
               <span>
                 {player.city}, {player.country}
               </span>
-              <span className="text-[#5f5f5d]/60">•</span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900 border border-purple-300">
+              <span className="text-[#94A3B8]/60">•</span>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">
                 {mainGenreName}
               </span>
             </div>
 
             {/* Compact Discography & Legacy Badges */}
-            <div className="flex items-center gap-2 sm:gap-3 text-xs text-[#5f5f5d] flex-wrap pt-0.5">
+            <div className="flex items-center gap-2 sm:gap-3 text-xs text-[#94A3B8] flex-wrap pt-0.5">
               <button
                 onClick={handleOpenModal}
-                className="flex items-center gap-1.5 text-[#1c1c1c] bg-[#fcfbf8] hover:bg-[#eceae4] border border-[#eceae4] px-3 py-1 rounded-[8px] text-xs font-semibold cursor-pointer transition-colors shadow-2xs"
+                className="flex items-center gap-1.5 text-[#F8FAFC] bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 px-3 py-1 rounded-[8px] text-xs font-semibold cursor-pointer transition-colors shadow-xs"
               >
-                <Edit3 className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                <Edit3 className="w-3.5 h-3.5 text-[#8B5CF6]" />
                 <span>Editar Retrato</span>
               </button>
 
-              <span className="inline-flex items-center gap-1.5 bg-purple-50/80 px-2.5 py-1 rounded-[8px] border border-purple-200 text-purple-950 font-medium text-xs">
-                <Disc3 className="w-3.5 h-3.5 text-purple-700" />
+              <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
+                <Disc3 className="w-3.5 h-3.5 text-[#8B5CF6]" />
                 <span>{computedSongsCount} Singles</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-indigo-50/80 px-2.5 py-1 rounded-[8px] border border-indigo-200 text-indigo-950 font-medium text-xs">
-                <Layers className="w-3.5 h-3.5 text-indigo-700" />
+              <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
+                <Layers className="w-3.5 h-3.5 text-[#06B6D4]" />
                 <span>{computedAlbumsCount} Álbumes</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-amber-50/80 px-2.5 py-1 rounded-[8px] border border-amber-200 text-amber-950 font-medium text-xs">
-                <Award className="w-3.5 h-3.5 text-amber-600" />
+              <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
+                <Award className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>
-                  Legado: <strong className="font-semibold text-amber-950">{player.legacyScore}/100</strong>
+                  Legado: <strong className="font-semibold text-[#FBBF24]">{player.legacyScore}/100</strong>
                 </span>
               </span>
             </div>
@@ -281,59 +258,59 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
         {/* Right Side: 4 Colorful Quick Metric Tiles */}
         <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto shrink-0 min-w-[280px] xl:min-w-[340px]">
           {/* Tile 1: Oyentes Mensuales */}
-          <div className="bg-emerald-50/90 border border-emerald-300/80 rounded-[12px] p-3 text-left shadow-2xs">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3 text-emerald-600" />
+          <div className="bg-[#16181F] border border-emerald-500/30 rounded-[12px] p-3 text-left shadow-xs hover:border-emerald-500/60 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+              <TrendingUp className="w-3 h-3 text-emerald-400" />
               Oyentes Mensuales
             </span>
-            <span className="text-lg sm:text-xl font-bold text-emerald-950 font-mono block mt-0.5">
+            <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono block mt-0.5">
               {player.stats.monthlyListeners.toLocaleString()}
             </span>
-            <span className="text-[10px] text-emerald-700 font-medium block">
+            <span className="text-[10px] text-emerald-500/80 font-medium block">
               +12.4% este semestre
             </span>
           </div>
 
           {/* Tile 2: Streams Totales */}
-          <div className="bg-indigo-50/90 border border-indigo-300/80 rounded-[12px] p-3 text-left shadow-2xs">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 flex items-center gap-1">
-              <Disc3 className="w-3 h-3 text-indigo-600" />
+          <div className="bg-[#16181F] border border-[#8B5CF6]/30 rounded-[12px] p-3 text-left shadow-xs hover:border-[#8B5CF6]/60 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#C084FC] flex items-center gap-1">
+              <Disc3 className="w-3 h-3 text-[#8B5CF6]" />
               Streams Globales
             </span>
-            <span className="text-lg sm:text-xl font-bold text-indigo-950 font-mono block mt-0.5">
+            <span className="text-lg sm:text-xl font-bold text-[#C084FC] font-mono block mt-0.5">
               {player.stats.totalStreams >= 1_000_000
                 ? `${(player.stats.totalStreams / 1_000_000).toFixed(1)}M`
                 : player.stats.totalStreams.toLocaleString()}
             </span>
-            <span className="text-[10px] text-indigo-700 font-medium block">
+            <span className="text-[10px] text-[#C084FC]/80 font-medium block">
               Catálogo activo
             </span>
           </div>
 
           {/* Tile 3: Hype Escénico */}
-          <div className="bg-orange-50/90 border border-orange-300/80 rounded-[12px] p-3 text-left shadow-2xs">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-orange-800 flex items-center gap-1">
-              <Flame className="w-3 h-3 text-orange-600" />
+          <div className="bg-[#16181F] border border-orange-500/30 rounded-[12px] p-3 text-left shadow-xs hover:border-orange-500/60 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1">
+              <Flame className="w-3 h-3 text-orange-400" />
               Hype Escénico
             </span>
-            <span className="text-lg sm:text-xl font-bold text-orange-950 font-mono block mt-0.5">
+            <span className="text-lg sm:text-xl font-bold text-orange-400 font-mono block mt-0.5">
               {player.stats.hype}%
             </span>
-            <span className="text-[10px] text-orange-700 font-medium block">
+            <span className="text-[10px] text-orange-500/80 font-medium block">
               {player.stats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
             </span>
           </div>
 
           {/* Tile 4: Fama / Popularidad */}
-          <div className="bg-amber-50/90 border border-amber-300/80 rounded-[12px] p-3 text-left shadow-2xs">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1">
-              <Crown className="w-3 h-3 text-amber-600" />
+          <div className="bg-[#16181F] border border-amber-500/30 rounded-[12px] p-3 text-left shadow-xs hover:border-amber-500/60 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
+              <Crown className="w-3 h-3 text-amber-400" />
               Popularidad
             </span>
-            <span className="text-lg sm:text-xl font-bold text-amber-950 font-mono block mt-0.5">
+            <span className="text-lg sm:text-xl font-bold text-amber-400 font-mono block mt-0.5">
               {player.stats.popularity}/100
             </span>
-            <span className="text-[10px] text-amber-700 font-medium block">
+            <span className="text-[10px] text-amber-500/80 font-medium block">
               Fidelidad: {player.stats.fanbaseLoyalty}%
             </span>
           </div>

@@ -181,8 +181,9 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
         return { label: '💬 Debate', class: 'bg-purple-100 text-purple-900 border-purple-200' };
       case 'negative':
         return { label: '💀 Crítica', class: 'bg-rose-100 text-rose-900 border-rose-200' };
+        return { label: '💀 Crítica', class: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
       default:
-        return { label: '✨ Social', class: 'bg-zinc-100 text-zinc-900 border-zinc-200' };
+        return { label: '✨ Social', class: 'bg-slate-700/50 text-slate-300 border-slate-600' };
     }
   };
 
@@ -192,14 +193,14 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
   return (
     <aside
-      className={`bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-5 space-y-4 shadow-sm sticky top-20 flex flex-col justify-between ${className}`}
+      className={`bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 space-y-4 shadow-lg sticky top-20 flex flex-col justify-between text-[#F8FAFC] ${className}`}
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* Top Header: Dual Tabs Selector ([Prensa & Industria] vs [Feed de Redes Sociales]) */}
-      <div className="space-y-3 border-b border-[#eceae4] pb-3.5">
+      <div className="space-y-3 border-b border-[#2A2E3D] pb-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-[6px] bg-[#1c1c1c] text-[#fcfbf8]">
+            <div className="p-1.5 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D] text-white">
               {activeTab === 'press' ? (
                 <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
               ) : (
@@ -207,56 +208,40 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
               )}
             </div>
             <div>
-              <h3 className="text-xs sm:text-sm font-bold text-[#1c1c1c] uppercase tracking-wider">
+              <h3 className="text-xs sm:text-sm font-bold text-[#F8FAFC] uppercase tracking-wider">
                 {activeTab === 'press' ? 'Prensa & Noticias' : 'Feed de Redes'}
               </h3>
-              <span className="text-[10px] text-[#5f5f5d]">
+              <span className="text-[10px] text-[#94A3B8]">
                 {activeTab === 'press' ? 'Cobertura oficial de la industria' : 'Comunidad y tendencias en vivo'}
               </span>
             </div>
           </div>
 
-          <span className="text-[10px] text-emerald-900 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-[9999px] font-bold flex items-center gap-1 shadow-2xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping" />
+          <span className="text-[10px] text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 rounded-[9999px] font-bold flex items-center gap-1 shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
             EN VIVO
           </span>
         </div>
 
         {/* Dual Tab Buttons */}
-        <div className="flex items-center bg-[#eceae4] p-1 rounded-[8px] gap-1 text-xs">
+        <div className="flex items-center bg-[#0B0C10] p-1 rounded-[8px] gap-1 text-xs border border-[#2A2E3D]">
           <button
             onClick={() => setActiveTab('press')}
-            className={`flex-1 py-1.5 px-3 rounded-[6px] font-semibold text-center transition-all cursor-pointer ${
+            className={`flex-1 py-1.5 px-3 rounded-[6px] font-bold text-center transition-all cursor-pointer ${
               activeTab === 'press'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-xs'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-[#8B5CF6] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
-            style={
-              activeTab === 'press'
-                ? {
-                    boxShadow:
-                      'rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                  }
-                : {}
-            }
           >
             Prensa & Industria
           </button>
           <button
             onClick={() => setActiveTab('social')}
-            className={`flex-1 py-1.5 px-3 rounded-[6px] font-semibold text-center transition-all cursor-pointer ${
+            className={`flex-1 py-1.5 px-3 rounded-[6px] font-bold text-center transition-all cursor-pointer ${
               activeTab === 'social'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-xs'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-[#8B5CF6] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
-            style={
-              activeTab === 'social'
-                ? {
-                    boxShadow:
-                      'rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                  }
-                : {}
-            }
           >
             Feed de Redes Sociales
           </button>
@@ -282,8 +267,8 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                 onClick={() => setSelectedNewsCategory(f.id)}
                 className={`px-2.5 py-1 rounded-[6px] font-medium whitespace-nowrap transition-all cursor-pointer ${
                   selectedNewsCategory === f.id
-                    ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-2xs font-semibold'
-                    : 'bg-[#fcfbf8] text-[#5f5f5d] hover:text-[#1c1c1c] hover:bg-[#eceae4] border border-[#eceae4]'
+                    ? 'bg-[#8B5CF6] text-white shadow-xs font-semibold'
+                    : 'bg-[#0B0C10] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#2A2E3D]'
                 }`}
               >
                 {f.label}
@@ -294,7 +279,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           {/* Scrollable Live News Items Feed */}
           <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1 flex-1`}>
             {filteredNews.length === 0 ? (
-              <div className="p-6 text-center text-xs text-[#5f5f5d] bg-[#fcfbf8] border border-dashed border-[#eceae4] rounded-[12px]">
+              <div className="p-6 text-center text-xs text-[#94A3B8] bg-[#0B0C10] border border-dashed border-[#2A2E3D] rounded-[12px]">
                 No hay noticias registradas en esta categoría.
               </div>
             ) : (
@@ -307,10 +292,10 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                 return (
                   <article
                     key={news.id}
-                    className={`p-3.5 rounded-[12px] bg-[#fcfbf8] border transition-all text-xs space-y-1.5 shadow-2xs group cursor-default ${
+                    className={`p-3.5 rounded-[12px] bg-[#0B0C10] border transition-all text-xs space-y-1.5 shadow-xs group cursor-default ${
                       isPlayerMentioned
-                        ? 'border-amber-300 bg-amber-50/40 hover:border-amber-400'
-                        : 'border-[#eceae4] hover:border-[rgba(28,28,28,0.4)]'
+                        ? 'border-[#F59E0B]/60 bg-[#F59E0B]/10 hover:border-[#F59E0B]'
+                        : 'border-[#2A2E3D] hover:border-[#8B5CF6]/50'
                     }`}
                   >
                     {/* Meta Top: Thematic Badge + Player mention + Cycle Date */}
@@ -323,24 +308,24 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                         </span>
 
                         {isPlayerMentioned && (
-                          <span className="text-[9px] bg-amber-200 text-amber-950 font-bold px-1.5 py-0.5 rounded-[3px] border border-amber-300">
+                          <span className="text-[9px] bg-[#F59E0B]/20 text-[#FBBF24] font-bold px-1.5 py-0.5 rounded-[3px] border border-[#F59E0B]/40">
                             Tú
                           </span>
                         )}
                       </div>
 
-                      <span className="text-[10px] text-[#5f5f5d] font-mono whitespace-nowrap bg-[#eceae4] px-1.5 py-0.5 rounded-[4px]">
+                      <span className="text-[10px] text-[#94A3B8] font-mono whitespace-nowrap bg-[#16181F] border border-[#2A2E3D] px-1.5 py-0.5 rounded-[4px]">
                         Año {news.year} • M{news.month}
                       </span>
                     </div>
 
                     {/* Bold Headline */}
-                    <h4 className="font-bold text-[#1c1c1c] leading-snug text-xs group-hover:text-black line-clamp-2">
+                    <h4 className="font-bold text-[#F8FAFC] leading-snug text-xs group-hover:text-white line-clamp-2">
                       {news.headline}
                     </h4>
 
                     {/* Short Synopsis */}
-                    <p className="text-[#5f5f5d] text-[11px] line-clamp-2 leading-relaxed font-normal">
+                    <p className="text-[#94A3B8] text-[11px] line-clamp-2 leading-relaxed font-normal">
                       {news.body}
                     </p>
                   </article>
@@ -350,18 +335,18 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           </div>
 
           {/* Industry Pulse Summary Footer */}
-          <div className="p-3.5 rounded-[12px] bg-[#eceae4]/70 border border-[#eceae4] space-y-2 mt-2">
+          <div className="p-3.5 rounded-[12px] bg-[#0B0C10] border border-[#2A2E3D] space-y-2 mt-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-[#1c1c1c] flex items-center gap-1.5">
-                <Globe2 className="w-3.5 h-3.5 text-[#1c1c1c]" />
+              <span className="font-bold text-[#F8FAFC] flex items-center gap-1.5">
+                <Globe2 className="w-3.5 h-3.5 text-[#06B6D4]" />
                 Pulso de la Escena
               </span>
-              <span className="text-[10px] font-mono text-[#5f5f5d] bg-[#fcfbf8] px-1.5 py-0.5 rounded-[4px] border border-[#eceae4]">
+              <span className="text-[10px] font-mono text-[#94A3B8] bg-[#16181F] px-1.5 py-0.5 rounded-[4px] border border-[#2A2E3D]">
                 {monthName} {world.currentYear}
               </span>
             </div>
 
-            <p className="text-[11px] text-[#5f5f5d] leading-relaxed">
+            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
               {activeTrends.length > 0
                 ? `Tendencia activa: "${activeTrends[0].name}". El mercado evoluciona con cada avance.`
                 : 'La escena musical se actualiza automáticamente con cada semestre, galas de premios y lanzamientos.'}
@@ -370,7 +355,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
             {onNavigate && (
               <button
                 onClick={() => onNavigate('industry')}
-                className="w-full text-center text-xs font-semibold text-[#1c1c1c] hover:underline flex items-center justify-center gap-1 pt-1 cursor-pointer"
+                className="w-full text-center text-xs font-semibold text-[#06B6D4] hover:text-[#38BDF8] flex items-center justify-center gap-1 pt-1 cursor-pointer"
               >
                 <span>Explorar Industria & Sellos</span>
                 <ArrowRight className="w-3 h-3" />
@@ -398,8 +383,8 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                 onClick={() => setSelectedSocialFilter(f.id)}
                 className={`px-2.5 py-1 rounded-[6px] font-medium whitespace-nowrap transition-all cursor-pointer ${
                   selectedSocialFilter === f.id
-                    ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-2xs font-semibold'
-                    : 'bg-[#fcfbf8] text-[#5f5f5d] hover:text-[#1c1c1c] hover:bg-[#eceae4] border border-[#eceae4]'
+                    ? 'bg-[#8B5CF6] text-white shadow-xs font-semibold'
+                    : 'bg-[#0B0C10] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#2A2E3D]'
                 }`}
               >
                 {f.label}
@@ -410,7 +395,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           {/* Scrollable Social Feed */}
           <div className={`space-y-3 ${maxHeight} overflow-y-auto pr-1 flex-1`}>
             {filteredSocialPosts.length === 0 ? (
-              <div className="p-6 text-center text-xs text-[#5f5f5d] bg-[#fcfbf8] border border-dashed border-[#eceae4] rounded-[12px]">
+              <div className="p-6 text-center text-xs text-[#94A3B8] bg-[#0B0C10] border border-dashed border-[#2A2E3D] rounded-[12px]">
                 No hay publicaciones sociales recientes.
               </div>
             ) : (
@@ -420,26 +405,26 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                 return (
                   <article
                     key={post.id}
-                    className="p-3.5 rounded-[12px] bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] transition-all text-xs space-y-2 shadow-2xs group"
+                    className="p-3.5 rounded-[12px] bg-[#0B0C10] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 transition-all text-xs space-y-2 shadow-xs group"
                   >
                     {/* Top Row: Author info + Verified + Sentiment */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         {/* Avatar */}
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 shadow-2xs border border-[#eceae4]">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#8B5CF6] to-[#EC4899] text-white font-bold text-[10px] flex items-center justify-center shrink-0 shadow-xs border border-[#2A2E3D]">
                           {post.authorName.charAt(0)}
                         </div>
 
                         <div className="min-w-0">
                           <div className="flex items-center gap-1">
-                            <span className="font-bold text-[#1c1c1c] text-xs truncate">
+                            <span className="font-bold text-[#F8FAFC] text-xs truncate">
                               {post.authorName}
                             </span>
                             {post.authorVerified && (
-                              <CheckCircle className="w-3 h-3 text-blue-500 shrink-0 fill-current" />
+                              <CheckCircle className="w-3 h-3 text-[#06B6D4] shrink-0 fill-current" />
                             )}
                           </div>
-                          <span className="text-[10px] text-[#5f5f5d] flex items-center gap-0.5">
+                          <span className="text-[10px] text-[#94A3B8] flex items-center gap-0.5">
                             <AtSign className="w-2.5 h-2.5" />
                             {post.authorHandle}
                           </span>
@@ -454,33 +439,9 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                     </div>
 
                     {/* Post Content */}
-                    <p className="text-xs text-[#1c1c1c] leading-relaxed font-normal">
+                    <p className="text-[#CBD5E1] text-[11px] leading-relaxed">
                       {post.content}
                     </p>
-
-                    {/* Engagement Metrics Bar */}
-                    <div className="flex items-center justify-between pt-2 border-t border-[#eceae4]/70 text-[11px] text-[#5f5f5d]">
-                      <div className="flex items-center gap-3.5">
-                        <span className="flex items-center gap-1 hover:text-rose-600 cursor-pointer transition-colors">
-                          <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
-                          <span className="font-mono text-[10px]">{post.likes.toLocaleString()}</span>
-                        </span>
-
-                        <span className="flex items-center gap-1 hover:text-emerald-600 cursor-pointer transition-colors">
-                          <Repeat className="w-3.5 h-3.5 text-emerald-600" />
-                          <span className="font-mono text-[10px]">{post.retweetsOrShares.toLocaleString()}</span>
-                        </span>
-
-                        <span className="flex items-center gap-1 hover:text-indigo-600 cursor-pointer transition-colors">
-                          <MessageCircle className="w-3.5 h-3.5 text-indigo-600" />
-                          <span className="font-mono text-[10px]">{post.commentsCount.toLocaleString()}</span>
-                        </span>
-                      </div>
-
-                      <span className="text-[9px] font-mono text-[#5f5f5d]">
-                        {monthName.slice(0, 3)} {post.year}
-                      </span>
-                    </div>
                   </article>
                 );
               })
@@ -488,12 +449,12 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           </div>
 
           {/* Social Trends Summary Footer */}
-          <div className="p-3 rounded-[12px] bg-[#eceae4]/70 border border-[#eceae4] text-xs text-[#5f5f5d] flex items-center justify-between gap-2 mt-2">
-            <div className="flex items-center gap-1.5 font-semibold text-[#1c1c1c] text-[11px]">
-              <Flame className="w-3.5 h-3.5 text-orange-600" />
+          <div className="p-3 rounded-[12px] bg-[#0B0C10] border border-[#2A2E3D] text-xs text-[#94A3B8] flex items-center justify-between gap-2 mt-2">
+            <div className="flex items-center gap-1.5 font-semibold text-[#F8FAFC] text-[11px]">
+              <Flame className="w-3.5 h-3.5 text-orange-400" />
               <span>Tendencia #1: #{player?.name.replace(/\s+/g, '') || 'ElArtista'}</span>
             </div>
-            <span className="text-[10px] bg-[#fcfbf8] px-1.5 py-0.5 rounded-[4px] border border-[#eceae4] font-mono">
+            <span className="text-[10px] bg-[#16181F] text-[#94A3B8] px-1.5 py-0.5 rounded-[4px] border border-[#2A2E3D] font-mono">
               +14.2k posts
             </span>
           </div>

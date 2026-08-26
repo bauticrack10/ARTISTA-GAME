@@ -92,43 +92,43 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         {/* ========================================================================= */}
         {/* TARJETA 1: ESTUDIO & ÁLBUMES */}
         {/* ========================================================================= */}
-        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-purple-400 rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
+        <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/60 border-l-4 border-l-[#8B5CF6] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] flex flex-col justify-between h-full space-y-4">
           <div className="space-y-3">
             {/* Header Icon + Category Badge */}
             <div className="flex items-center justify-between">
-              <div className="p-2.5 bg-purple-100 text-purple-900 rounded-[8px] border border-purple-200 shadow-xs flex items-center justify-center">
+              <div className="p-2.5 bg-[#8B5CF6]/15 text-[#C084FC] rounded-[8px] border border-[#8B5CF6]/30 shadow-xs flex items-center justify-center">
                 <Disc3 className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-purple-900 bg-purple-100/90 px-2.5 py-0.5 rounded-[9999px] border border-purple-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#C084FC] bg-[#8B5CF6]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#8B5CF6]/30">
                 Producción Musical
               </span>
             </div>
 
             {/* Title & Description */}
             <div>
-              <h3 className="text-base font-bold text-[#1c1c1c] tracking-[-0.3px] group-hover:text-black transition-colors">
+              <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
                 Estudio & Álbumes
               </h3>
-              <p className="text-xs text-[#5f5f5d] mt-1 font-normal leading-relaxed">
+              <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
                 Componer singles, estructurar álbumes y colaborar con productores de élite.
               </p>
             </div>
 
             {/* Energy / Cost Summary Block */}
-            <div className="bg-[#fcfbf8] group-hover:bg-[#f7f4ed] border border-[#eceae4] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
+            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
               <div className="flex items-center justify-between text-[11px]">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-amber-600" />
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-[#F59E0B]" />
                   Costo de Energía:
                 </span>
-                <span className="font-semibold text-[#1c1c1c]">-15 por single</span>
+                <span className="font-semibold text-[#F8FAFC]">-15 por single</span>
               </div>
-              <div className="flex items-center justify-between text-[11px] border-t border-[#eceae4]/60 pt-1">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <Layers className="w-3 h-3 text-purple-600" />
+              <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <Layers className="w-3 h-3 text-[#8B5CF6]" />
                   Cupo Anual:
                 </span>
-                <span className="font-semibold text-[#1c1c1c]">
+                <span className="font-semibold text-[#F8FAFC]">
                   {world ? `${singlesThisYear}/5 singles este año` : 'Hasta 5 singles/año'}
                 </span>
               </div>
@@ -138,11 +138,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           {/* Action CTA Button */}
           <button
             onClick={() => onNavigate('studio')}
-            className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:opacity-90 active:scale-[0.98] text-[#fcfbf8] font-semibold text-xs py-2.5 px-3 rounded-[6px] transition-all cursor-pointer shadow-xs"
-            style={buttonInsetShadow}
+            className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#8B5CF6] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#8B5CF6] font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(139,92,246,0.3)]"
             title="Entrar al Estudio de Grabación"
           >
-            <Mic2 className="w-3.5 h-3.5 text-purple-300" />
+            <Mic2 className="w-3.5 h-3.5 text-[#C084FC] group-hover:text-white" />
             <span>Entrar a Grabar</span>
             <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
           </button>
@@ -151,45 +150,45 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         {/* ========================================================================= */}
         {/* TARJETA 2: TIENDA & LUJO */}
         {/* ========================================================================= */}
-        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-cyan-400 rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
+        <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#06B6D4]/60 border-l-4 border-l-[#06B6D4] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] flex flex-col justify-between h-full space-y-4">
           <div className="space-y-3">
             {/* Header Icon + Category Badge */}
             <div className="flex items-center justify-between">
-              <div className="p-2.5 bg-cyan-100 text-cyan-900 rounded-[8px] border border-cyan-200 shadow-xs flex items-center justify-center">
+              <div className="p-2.5 bg-[#06B6D4]/15 text-[#06B6D4] rounded-[8px] border border-[#06B6D4]/30 shadow-xs flex items-center justify-center">
                 <ShoppingBag className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-cyan-900 bg-cyan-100/90 px-2.5 py-0.5 rounded-[9999px] border border-cyan-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#06B6D4] bg-[#06B6D4]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#06B6D4]/30">
                 Buffs Pasivos
               </span>
             </div>
 
             {/* Title & Description */}
             <div>
-              <h3 className="text-base font-bold text-[#1c1c1c] tracking-[-0.3px] group-hover:text-black transition-colors">
+              <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
                 Tienda & Lujo
               </h3>
-              <p className="text-xs text-[#5f5f5d] mt-1 font-normal leading-relaxed">
+              <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
                 Micrófonos Neumann, consolas SSL, mansiones y autos para buffs permanentes.
               </p>
             </div>
 
             {/* Passive Buffs Indicator Block */}
-            <div className="bg-[#fcfbf8] group-hover:bg-[#f7f4ed] border border-[#eceae4] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
+            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
               <div className="flex items-center justify-between text-[11px]">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <Sliders className="w-3 h-3 text-cyan-600" />
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <Sliders className="w-3 h-3 text-[#06B6D4]" />
                   Mejoras Compradas:
                 </span>
-                <span className="font-semibold text-[#1c1c1c]">
+                <span className="font-semibold text-[#F8FAFC]">
                   {ownedUpgradesCount} de {totalLifestyleItemsCount}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-[11px] border-t border-[#eceae4]/60 pt-1">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-cyan-600" />
+              <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-[#06B6D4]" />
                   Efectos Activos:
                 </span>
-                <span className="font-semibold text-[#1c1c1c] truncate max-w-[130px]" title={lifestyleBuffsSummary}>
+                <span className="font-semibold text-[#06B6D4] truncate max-w-[130px]" title={lifestyleBuffsSummary}>
                   {lifestyleBuffsSummary}
                 </span>
               </div>
@@ -199,11 +198,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           {/* Action CTA Button */}
           <button
             onClick={() => onNavigate('lifestyle')}
-            className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:opacity-90 active:scale-[0.98] text-[#fcfbf8] font-semibold text-xs py-2.5 px-3 rounded-[6px] transition-all cursor-pointer shadow-xs"
-            style={buttonInsetShadow}
+            className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#06B6D4] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#06B6D4] font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]"
             title="Ver Catálogo de Mejoras y Bienes de Lujo"
           >
-            <ShoppingBag className="w-3.5 h-3.5 text-cyan-300" />
+            <ShoppingBag className="w-3.5 h-3.5 text-[#06B6D4] group-hover:text-white" />
             <span>Explorar Tienda</span>
             <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
           </button>
@@ -215,8 +213,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         <div
           className={`group relative rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4 border ${
             isTourReady
-              ? 'bg-[#f7f4ed] hover:bg-[#fcfbf8] border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-amber-400'
-              : 'bg-rose-50/70 hover:bg-rose-50/90 border-rose-200 border-l-4 border-l-rose-400'
+              ? 'bg-[#16181F] hover:bg-[#1C1F28] border-[#2A2E3D] hover:border-[#F59E0B]/60 border-l-4 border-l-[#F59E0B] hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+              : 'bg-[#16181F]/70 border-[#2A2E3D] border-l-4 border-l-rose-500/80'
           }`}
         >
           <div className="space-y-3">
@@ -225,29 +223,29 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               <div
                 className={`p-2.5 rounded-[8px] border shadow-xs flex items-center justify-center ${
                   isTourReady
-                    ? 'bg-amber-100 text-amber-900 border-amber-200'
-                    : 'bg-rose-100 text-rose-900 border-rose-200'
+                    ? 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30'
+                    : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
                 }`}
               >
                 <Ticket className="w-5 h-5" />
               </div>
               <span
-                className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-[9999px] border ${
+                className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[9999px] border ${
                   isTourReady
-                    ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                    : 'bg-rose-100 text-rose-900 border-rose-300'
+                    ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                    : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
                 }`}
               >
-                {isTourReady ? 'Disponible (≥85% Energía)' : 'Bloqueado por baja energía (<85%)'}
+                {isTourReady ? 'Disponible (≥85% Energía)' : 'Bloqueado (<85% Energía)'}
               </span>
             </div>
 
             {/* Title & Description */}
             <div>
-              <h3 className="text-base font-bold text-[#1c1c1c] tracking-[-0.3px] group-hover:text-black transition-colors">
+              <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
                 Giras & Shows
               </h3>
-              <p className="text-xs text-[#5f5f5d] mt-1 font-normal leading-relaxed">
+              <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
                 {isTourReady
                   ? 'Organizar fechas, llenar estadios y recaudar ingresos millonarios de taquilla.'
                   : 'Requiere al menos 85% de energía vital para soportar el desgaste físico. ¡Tomá descanso!'}
@@ -256,27 +254,23 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
 
             {/* Integrated Live Status Block */}
             <div
-              className={`border rounded-[8px] p-2.5 space-y-1.5 transition-colors ${
-                isTourReady
-                  ? 'bg-[#fcfbf8] group-hover:bg-[#f7f4ed] border-[#eceae4]'
-                  : 'bg-rose-100/50 border-rose-200'
-              }`}
+              className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1.5 transition-colors"
             >
               <div className="flex items-center justify-between text-[11px]">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <Zap className={`w-3 h-3 ${isTourReady ? 'text-emerald-600' : 'text-rose-600'}`} />
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <Zap className={`w-3 h-3 ${isTourReady ? 'text-emerald-400' : 'text-rose-400'}`} />
                   Energía del Artista:
                 </span>
-                <span className={`font-bold ${isTourReady ? 'text-emerald-800' : 'text-rose-800'}`}>
+                <span className={`font-bold ${isTourReady ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {player.stats.energy}/100 {isTourReady ? '(Apto)' : '(Baja)'}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-[11px] border-t border-[#eceae4]/60 pt-1">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-600" />
+              <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-[#F59E0B]" />
                   Requisito Gira:
                 </span>
-                <span className="font-semibold text-[#1c1c1c]">Mínimo ≥85% Vitalidad</span>
+                <span className="font-semibold text-[#F8FAFC]">Mínimo ≥85% Vitalidad</span>
               </div>
             </div>
           </div>
@@ -289,15 +283,14 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               }
             }}
             disabled={!isTourReady}
-            className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[6px] transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer ${
               isTourReady
-                ? 'bg-[#1c1c1c] text-[#fcfbf8] hover:opacity-90 active:scale-[0.98] shadow-xs'
-                : 'bg-[#eceae4] text-[#5f5f5d] cursor-not-allowed opacity-75'
+                ? 'bg-[#16181F] hover:bg-[#F59E0B] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#F59E0B] shadow-xs group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-60'
             }`}
-            style={isTourReady ? buttonInsetShadow : {}}
             title={isTourReady ? 'Armar y calendarizar gira musical' : 'Energía insuficiente para salir de gira (requiere ≥85%)'}
           >
-            <Ticket className={`w-3.5 h-3.5 ${isTourReady ? 'text-amber-300' : ''}`} />
+            <Ticket className={`w-3.5 h-3.5 ${isTourReady ? 'text-[#F59E0B] group-hover:text-white' : ''}`} />
             <span>Armar Gira</span>
             <ArrowRight
               className={`w-3.5 h-3.5 ml-auto transition-all ${
@@ -310,43 +303,43 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         {/* ========================================================================= */}
         {/* TARJETA 4: DESCANSO */}
         {/* ========================================================================= */}
-        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-emerald-400 rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
+        <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#10B981]/60 border-l-4 border-l-[#10B981] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] flex flex-col justify-between h-full space-y-4">
           <div className="space-y-3">
             {/* Header Icon + Dedicated Highlight Badge */}
             <div className="flex items-center justify-between">
-              <div className="p-2.5 bg-emerald-100 text-emerald-900 rounded-[8px] border border-emerald-200 shadow-xs flex items-center justify-center">
+              <div className="p-2.5 bg-emerald-500/15 text-emerald-400 rounded-[8px] border border-emerald-500/30 shadow-xs flex items-center justify-center">
                 <Coffee className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-900 bg-emerald-100 px-2.5 py-0.5 rounded-[9999px] border border-emerald-300 shadow-2xs">
-                +50 Energía • Consume 6 Meses
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-[9999px] border border-emerald-500/30 shadow-xs">
+                +50 Energía • 6 Meses
               </span>
             </div>
 
             {/* Title & Description */}
             <div>
-              <h3 className="text-base font-bold text-[#1c1c1c] tracking-[-0.3px] group-hover:text-black transition-colors">
+              <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
                 Descanso
               </h3>
-              <p className="text-xs text-[#5f5f5d] mt-1 font-normal leading-relaxed">
+              <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
                 Vacaciones de 6 meses para desconectar de la prensa, recuperar vitalidad y percibir regalías.
               </p>
             </div>
 
             {/* Recharge Breakdown Block */}
-            <div className="bg-[#fcfbf8] group-hover:bg-[#f7f4ed] border border-[#eceae4] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
+            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
               <div className="flex items-center justify-between text-[11px]">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <BatteryCharging className="w-3 h-3 text-emerald-600" />
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <BatteryCharging className="w-3 h-3 text-emerald-400" />
                   Recarga Inmediata:
                 </span>
-                <span className="font-bold text-emerald-800">+50 Vitalidad (Tope 100)</span>
+                <span className="font-bold text-emerald-400">+50 Vitalidad (Tope 100)</span>
               </div>
-              <div className="flex items-center justify-between text-[11px] border-t border-[#eceae4]/60 pt-1">
-                <span className="text-[#5f5f5d] flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-emerald-600" />
+              <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-emerald-400" />
                   Tiempo Empleado:
                 </span>
-                <span className="font-semibold text-[#1c1c1c]">Semestre Sabático (6M)</span>
+                <span className="font-semibold text-[#F8FAFC]">Semestre Sabático (6M)</span>
               </div>
             </div>
           </div>
@@ -355,11 +348,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           <button
             id="btn-take-vacation"
             onClick={onRest}
-            className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:opacity-90 active:scale-[0.98] text-[#fcfbf8] font-semibold text-xs py-2.5 px-3 rounded-[6px] transition-all cursor-pointer shadow-xs"
-            style={buttonInsetShadow}
+            className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#10B981] text-[#F8FAFC] hover:text-black border border-[#2A2E3D] hover:border-[#10B981] font-bold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
             title="Tomar 6 meses de descanso y recuperar +50 de energía vital"
           >
-            <Zap className="w-3.5 h-3.5 text-amber-300 fill-current" />
+            <Zap className="w-3.5 h-3.5 text-emerald-400 group-hover:text-black fill-current" />
             <span>Tomar Vacaciones</span>
             <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
           </button>

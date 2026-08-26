@@ -191,62 +191,46 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 
   return (
     <div
-      className={`bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] p-6 space-y-5 shadow-sm text-[#1c1c1c] ${className}`}
+      className={`bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 space-y-5 shadow-lg text-[#F8FAFC] ${className}`}
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* Encabezado con Título y Selector de Pestañas */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#eceae4] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2A2E3D] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-[6px] bg-[#eceae4] text-[#1c1c1c]">
-              <Sliders className="w-4 h-4 text-[#1c1c1c]" />
+            <div className="p-1.5 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D] text-white">
+              <Sliders className="w-4 h-4 text-[#8B5CF6]" />
             </div>
-            <h2 className="text-base font-semibold text-[#1c1c1c] tracking-[-0.4px]">
+            <h2 className="text-base font-bold text-[#F8FAFC] tracking-[-0.4px]">
               Perfil & Atributos del Artista
             </h2>
           </div>
-          <p className="text-xs text-[#5f5f5d] mt-0.5">
+          <p className="text-xs text-[#94A3B8] mt-0.5">
             Métricas de rendimiento en vivo y habilidades intrínsecas con lectura visual rápida.
           </p>
         </div>
 
         {/* 1. Pestañas internas: Alternancia limpia */}
-        <div className="flex items-center gap-1 bg-[#eceae4] p-1 rounded-[6px] shrink-0 self-start sm:self-auto">
+        <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D] shrink-0 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setActiveTab('main')}
-            className={`px-3.5 py-1.5 text-xs rounded-[4px] font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 text-xs rounded-[6px] font-bold transition-all cursor-pointer ${
               activeTab === 'main'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8]'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-[#8B5CF6] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
-            style={
-              activeTab === 'main'
-                ? {
-                    boxShadow:
-                      'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-                  }
-                : {}
-            }
           >
             Métricas Clave
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('personality')}
-            className={`px-3.5 py-1.5 text-xs rounded-[4px] font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 text-xs rounded-[6px] font-bold transition-all cursor-pointer ${
               activeTab === 'personality'
-                ? 'bg-[#1c1c1c] text-[#fcfbf8]'
-                : 'text-[#5f5f5d] hover:text-[#1c1c1c]'
+                ? 'bg-[#8B5CF6] text-white shadow-xs'
+                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
             }`}
-            style={
-              activeTab === 'personality'
-                ? {
-                    boxShadow:
-                      'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-                  }
-                : {}
-            }
           >
             Personalidad & Skills
           </button>
@@ -263,27 +247,27 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
             return (
               <div
                 key={metric.id}
-                className={`bg-[#fcfbf8] rounded-[12px] p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs border hover:scale-[1.02] hover:shadow-md ${
+                className={`bg-[#0B0C10] rounded-[12px] p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs border hover:scale-[1.02] hover:shadow-md ${
                   isEnergy && !isTourReady
-                    ? 'border-rose-200 bg-rose-50/40'
-                    : 'border-[#eceae4] hover:border-[rgba(28,28,28,0.4)]'
+                    ? 'border-rose-500/40 bg-rose-500/10'
+                    : 'border-[#2A2E3D] hover:border-[#8B5CF6]/50'
                 }`}
               >
                 {/* Header de la tarjeta */}
                 <div className="flex items-center justify-between text-xs">
-                  <span className={`font-semibold ${metric.textAccent}`}>
+                  <span className={`font-bold text-[#F8FAFC]`}>
                     {metric.label}
                   </span>
-                  <div className="p-1 rounded-[6px] bg-[#eceae4]/60">
+                  <div className="p-1 rounded-[6px] bg-[#16181F] border border-[#2A2E3D]">
                     <Icon className={`w-3.5 h-3.5 ${metric.iconColor}`} />
                   </div>
                 </div>
 
                 {/* Valor numérico & Badges de Estado */}
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-2xl font-bold text-[#1c1c1c] tracking-tight font-mono tabular-nums">
+                  <p className="text-2xl font-bold text-[#F8FAFC] tracking-tight font-mono tabular-nums">
                     {metric.value}
-                    <span className="text-xs text-[#5f5f5d] font-normal font-sans">/100</span>
+                    <span className="text-xs text-[#94A3B8] font-normal font-sans">/100</span>
                   </p>
 
                   {/* 3. Claridad en Requisitos y Badges para Energía Vital */}
@@ -296,19 +280,19 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                       }
                       className={`text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 border transition-colors ${
                         isTourReady
-                          ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                          : 'bg-rose-100 text-rose-900 border-rose-300'
+                          ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                          : 'bg-rose-500/20 text-rose-400 border-rose-500/30'
                       }`}
                     >
                       {isTourReady ? (
                         <>
-                          <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                          <span>Estado: Apto para Giras (Req. ≥85%)</span>
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                          <span>Apto Giras (≥85%)</span>
                         </>
                       ) : (
                         <>
-                          <AlertTriangle className="w-3 h-3 text-rose-700" />
-                          <span>Bloqueado por fatiga (&lt;85%)</span>
+                          <AlertTriangle className="w-3 h-3 text-rose-400" />
+                          <span>Fatiga (&lt;85%)</span>
                         </>
                       )}
                     </span>
@@ -316,15 +300,15 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                 </div>
 
                 {/* 2. Barra de progreso temática con degradado específico */}
-                <div className={`w-full ${metric.bgTrack} h-3.5 rounded-full overflow-hidden p-0.5`}>
+                <div className="w-full bg-[#16181F] border border-[#2A2E3D] h-3.5 rounded-full overflow-hidden p-0.5">
                   <div
-                    className={`bg-gradient-to-r ${metric.gradient} h-full rounded-full transition-all duration-500`}
+                    className={`bg-gradient-to-r ${metric.gradient} h-full rounded-full transition-all duration-500 shadow-sm`}
                     style={{ width: `${Math.min(100, Math.max(0, metric.value))}%` }}
                   />
                 </div>
 
                 {/* Descripción de impacto visual rápido */}
-                <p className="text-[11px] text-[#5f5f5d] leading-relaxed">
+                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
                   {metric.description}
                 </p>
               </div>
@@ -342,29 +326,29 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
             return (
               <div
                 key={trait.id}
-                className="bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] rounded-[12px] p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs hover:scale-[1.02] hover:shadow-md"
+                className="bg-[#0B0C10] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 rounded-[12px] p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs hover:scale-[1.02] hover:shadow-md"
               >
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <div className="p-1 rounded-[6px] bg-[#eceae4]/60">
+                    <div className="p-1 rounded-[6px] bg-[#16181F] border border-[#2A2E3D]">
                       <Icon className={`w-3.5 h-3.5 ${trait.iconColor}`} />
                     </div>
-                    <span className="font-semibold text-[#1c1c1c]">{trait.label}</span>
+                    <span className="font-bold text-[#F8FAFC]">{trait.label}</span>
                   </div>
-                  <span className="font-mono tabular-nums text-[#1c1c1c] font-bold text-xs bg-[#eceae4] px-2 py-0.5 rounded-[4px]">
-                    {trait.val}<span className="text-[10px] text-[#5f5f5d] font-normal font-sans">/100</span>
+                  <span className="font-mono tabular-nums text-[#F8FAFC] font-bold text-xs bg-[#16181F] border border-[#2A2E3D] px-2 py-0.5 rounded-[4px]">
+                    {trait.val}<span className="text-[10px] text-[#94A3B8] font-normal font-sans">/100</span>
                   </span>
                 </div>
 
                 {/* Barra gruesa temática (h-3.5) */}
-                <div className={`w-full ${trait.bgTrack} h-3.5 rounded-full overflow-hidden p-0.5`}>
+                <div className="w-full bg-[#16181F] border border-[#2A2E3D] h-3.5 rounded-full overflow-hidden p-0.5">
                   <div
-                    className={`bg-gradient-to-r ${trait.gradient} h-full rounded-full transition-all duration-500`}
+                    className={`bg-gradient-to-r ${trait.gradient} h-full rounded-full transition-all duration-500 shadow-sm`}
                     style={{ width: `${Math.min(100, Math.max(0, trait.val))}%` }}
                   />
                 </div>
 
-                <p className="text-[11px] text-[#5f5f5d] leading-relaxed">
+                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
                   {trait.description}
                 </p>
               </div>
@@ -374,16 +358,16 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
       )}
 
       {/* Pie del Panel con Micro-leyenda de balance */}
-      <div className="pt-3 border-t border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-[#5f5f5d]">
+      <div className="pt-3 border-t border-[#2A2E3D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-[#94A3B8]">
         <div className="flex items-center gap-1.5">
-          <Info className="w-3.5 h-3.5 text-[#5f5f5d]" />
+          <Info className="w-3.5 h-3.5 text-[#06B6D4]" />
           <span>
             {activeTab === 'main'
               ? 'Las métricas se actualizan dinámicamente con tus lanzamientos, eventos y giras.'
               : 'Las habilidades influyen en la calidad de grabación, química con productores y rendimiento en shows.'}
           </span>
         </div>
-        <span className="text-[11px] font-semibold text-[#1c1c1c]">
+        <span className="text-[11px] font-bold text-[#C084FC]">
           {player.name} • {player.careerStage}
         </span>
       </div>

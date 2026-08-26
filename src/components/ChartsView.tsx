@@ -29,55 +29,51 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
   ];
 
   return (
-    <div className="space-y-6 pb-12 text-[#1c1c1c]">
+    <div className="space-y-6 pb-12 text-[#F8FAFC]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#f7f4ed] p-6 rounded-[16px] border border-[#eceae4] shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#16181F] p-6 rounded-[16px] border border-[#2A2E3D] shadow-sm">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] uppercase font-bold tracking-wider bg-blue-100 text-blue-900 border border-blue-200 px-2.5 py-0.5 rounded-[4px]">
+            <span className="text-[10px] uppercase font-bold tracking-wider bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 px-2.5 py-0.5 rounded-[4px]">
               Rankings Oficiales
             </span>
-            <span className="text-xs text-[#5f5f5d]">
+            <span className="text-xs text-[#94A3B8]">
               Año {world.currentYear} • Mes {world.currentMonth}
             </span>
           </div>
-          <h1 className="text-2xl font-semibold text-[#1c1c1c] tracking-[-0.9px] flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-blue-600" />
+          <h1 className="text-2xl font-semibold text-[#F8FAFC] tracking-[-0.9px] flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-[#06B6D4]" />
             Charts Oficiales de Streaming & Ventas
           </h1>
-          <p className="text-xs text-[#5f5f5d] mt-1">
+          <p className="text-xs text-[#94A3B8] mt-1">
             Rankings oficiales actualizados mensualmente en base al consumo real de streaming y rotación radial.
           </p>
         </div>
 
         {/* Region Selector */}
-        <div className="flex items-center gap-1 overflow-x-auto bg-[#fcfbf8] p-1.5 rounded-[8px] border border-[#eceae4] max-w-full text-xs shadow-xs">
+        <div className="flex items-center gap-1 overflow-x-auto bg-[#0B0C10] p-1.5 rounded-[8px] border border-[#2A2E3D] max-w-full text-xs shadow-xs">
           {regions.map(r => {
             const isActive = selectedRegion === r.id;
-            const isGlobal = r.id === 'Global';
-            const activeClasses = isGlobal
-              ? 'bg-purple-100 border border-purple-300 text-purple-900 shadow-sm'
-              : 'bg-blue-100 border border-blue-300 text-blue-900 shadow-sm';
             return (
-            <button
-              key={r.id}
-              onClick={() => setSelectedRegion(r.id)}
-              className={`px-3 py-1.5 rounded-[6px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                isActive
-                  ? activeClasses
-                  : 'text-[#5f5f5d] hover:text-[#1c1c1c] hover:bg-[#eceae4]'
-              }`}
-            >
-              {r.label}
-            </button>
+              <button
+                key={r.id}
+                onClick={() => setSelectedRegion(r.id)}
+                className={`px-3 py-1.5 rounded-[6px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#8B5CF6] text-white shadow-[0_0_12px_rgba(139,92,246,0.3)]'
+                    : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#16181F]'
+                }`}
+              >
+                {r.label}
+              </button>
             );
           })}
         </div>
       </div>
 
       {/* Chart List Table */}
-      <div className="bg-[#f7f4ed] border border-[#eceae4] rounded-[14px] overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-[#eceae4] flex items-center justify-between text-xs text-[#5f5f5d] font-bold uppercase tracking-wider bg-[#fcfbf8]">
+      <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[14px] overflow-hidden shadow-sm">
+        <div className="p-4 border-b border-[#2A2E3D] flex items-center justify-between text-xs text-[#94A3B8] font-bold uppercase tracking-wider bg-[#16181F]">
           <div className="flex items-center gap-4">
             <span className="w-10 text-center">Posición</span>
             <span>Canción & Artista</span>
@@ -90,32 +86,32 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
         </div>
 
         {currentChart.entries.length === 0 ? (
-          <div className="p-12 text-center text-[#5f5f5d] text-xs">
+          <div className="p-12 text-center text-[#94A3B8] text-xs">
             Aún no hay suficientes datos de streaming computados para este ranking regional. Avanzá el mes para procesar los charts.
           </div>
         ) : (
-          <div className="divide-y divide-[#eceae4]">
+          <div className="divide-y divide-[#2A2E3D]">
             {currentChart.entries.map((entry, idx) => {
               const isPlayerSong = entry.artistId === player.id;
-              let movement = <Minus className="w-3.5 h-3.5 text-[#5f5f5d]" />;
+              let movement = <Minus className="w-3.5 h-3.5 text-[#94A3B8]" />;
 
               if (entry.lastRank === null) {
                 movement = (
-                  <span className="text-[10px] font-bold text-purple-800 uppercase bg-purple-100 border border-purple-200 px-1.5 py-0.2 rounded-[4px]">
+                  <span className="text-[10px] font-bold text-purple-300 uppercase bg-purple-950/60 border border-purple-500/40 px-1.5 py-0.2 rounded-[4px]">
                     NEW
                   </span>
                 );
               } else if (entry.lastRank > entry.rank) {
                 movement = (
-                  <span className="flex items-center text-[11px] font-bold text-emerald-700">
-                    <TrendingUp className="w-3.5 h-3.5 mr-0.5 text-emerald-600" />
+                  <span className="flex items-center text-[11px] font-bold text-emerald-400">
+                    <TrendingUp className="w-3.5 h-3.5 mr-0.5 text-emerald-400" />
                     +{entry.lastRank - entry.rank}
                   </span>
                 );
               } else if (entry.lastRank < entry.rank) {
                 movement = (
-                  <span className="flex items-center text-[11px] font-semibold text-rose-700">
-                    <TrendingDown className="w-3.5 h-3.5 mr-0.5 text-rose-600" />
+                  <span className="flex items-center text-[11px] font-semibold text-rose-400">
+                    <TrendingDown className="w-3.5 h-3.5 mr-0.5 text-rose-400" />
                     -{entry.rank - entry.lastRank}
                   </span>
                 );
@@ -128,29 +124,29 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
               return (
                 <div
                   key={entry.songId}
-                  className={`p-3.5 flex items-center justify-between gap-3 text-xs transition-colors ${
+                  className={`p-3.5 flex items-center justify-between gap-3 text-xs transition-colors hover:bg-[#1C1F28] ${
                     isPlayerSong
-                      ? 'bg-purple-50/40 border-l-4 border-l-purple-600'
+                      ? 'bg-[#8B5CF6]/15 border-l-4 border-l-[#8B5CF6]'
                       : isNo1
-                      ? 'bg-amber-50/30'
+                      ? 'bg-amber-500/10'
                       : idx % 2 === 0
-                      ? 'bg-[#f7f4ed] hover:bg-[#fcfbf8]'
-                      : 'bg-[#fcfbf8] hover:bg-[#f7f4ed]'
+                      ? 'bg-[#16181F]'
+                      : 'bg-[#0B0C10]'
                   }`}
                 >
                   {/* Position & Info */}
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="w-10 flex flex-col items-center justify-center font-mono">
                       <div className="flex items-center gap-1">
-                        {isNo1 && <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />}
+                        {isNo1 && <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />}
                         <span className={`text-base font-bold ${
                           isNo1
-                            ? 'text-amber-700 font-extrabold text-lg'
+                            ? 'text-amber-400 font-extrabold text-lg drop-shadow-[0_0_8px_rgba(251,191,36,0.4)]'
                             : isTop3
-                            ? 'text-indigo-700'
+                            ? 'text-[#8B5CF6]'
                             : isTop10
-                            ? 'text-blue-700'
-                            : 'text-[#5f5f5d]'
+                            ? 'text-[#06B6D4]'
+                            : 'text-[#94A3B8]'
                         }`}>
                           #{entry.rank}
                         </span>
@@ -159,20 +155,20 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
                     </div>
 
                     <div className="min-w-0">
-                      <h4 className="font-semibold text-[#1c1c1c] text-sm line-clamp-1 flex items-center gap-2">
+                      <h4 className="font-semibold text-[#F8FAFC] text-sm line-clamp-1 flex items-center gap-2">
                         {entry.title}
                         {isPlayerSong && (
-                          <span className="text-[9px] bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-2 py-0.5 rounded-[4px] shadow-xs">
+                          <span className="text-[9px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold px-2 py-0.5 rounded-[4px] shadow-[0_0_8px_rgba(139,92,246,0.4)]">
                             TU TEMA
                           </span>
                         )}
                         {isNo1 && (
-                          <span className="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 font-bold px-1.5 py-0.2 rounded-[4px]">
+                          <span className="text-[9px] bg-amber-950/60 text-amber-300 border border-amber-500/40 font-bold px-1.5 py-0.2 rounded-[4px]">
                             #1 HIT
                           </span>
                         )}
                       </h4>
-                      <p className="text-[#5f5f5d] text-xs line-clamp-1">
+                      <p className="text-[#94A3B8] text-xs line-clamp-1">
                         {entry.artistName}
                       </p>
                     </div>
@@ -180,13 +176,13 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
 
                   {/* Right metrics */}
                   <div className="flex items-center gap-6 sm:gap-12 font-mono text-xs text-right whitespace-nowrap">
-                    <span className="hidden sm:inline font-bold text-purple-900">
+                    <span className="hidden sm:inline font-bold text-[#8B5CF6]">
                       {entry.streamsThisWeek.toLocaleString()}
                     </span>
-                    <span className={`font-bold w-8 text-center ${entry.peakRank === 1 ? 'text-amber-700 font-extrabold' : 'text-[#1c1c1c]'}`}>
+                    <span className={`font-bold w-8 text-center ${entry.peakRank === 1 ? 'text-amber-400 font-extrabold' : 'text-[#F8FAFC]'}`}>
                       #{entry.peakRank}
                     </span>
-                    <span className="text-[#5f5f5d] w-8 text-center">
+                    <span className="text-[#94A3B8] w-8 text-center">
                       {entry.weeksOnChart}
                     </span>
                   </div>

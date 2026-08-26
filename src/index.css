@@ -2,63 +2,51 @@
 
 @layer base {
   :root {
-    /* Base Warm Studio Theme */
-    --bg-cream: #f7f4ed;
-    --text-charcoal: #1c1c1c;
-    --text-muted: #50504e;
-    --border-light: #eceae4;
-    --border-interactive: rgba(28, 28, 28, 0.4);
-    --btn-text: #fcfbf8;
+    /* Studio After Dark / Synthwave Moderno Theme */
+    --bg-main: #0b0c10;
+    --bg-surface: #16181f;
+    --border-card: #2a2e3d;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-interactive: rgba(139, 92, 246, 0.5);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
 
-    /* Ultra Dark Cyber-Music Studio Theme (#0b0d13 / #0f1117) */
-    --bg-cyber-deep: #0b0d13;
-    --bg-cyber-surface: #0f1117;
-    --bg-cyber-card: rgba(15, 23, 42, 0.6);
-    --border-cyber-subtle: rgba(255, 255, 255, 0.1);
-    --border-cyber-hover: rgba(255, 255, 255, 0.3);
+    /* Accent Palette */
+    --accent-purple: #8b5cf6;
+    --accent-magenta: #ec4899;
+    --accent-emerald: #10b981;
+    --accent-cyan: #06b6d4;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
     
-    /* Radial Aurora Colors */
-    --aurora-cyan: rgba(6, 182, 212, 0.15);
-    --aurora-purple: rgba(147, 51, 234, 0.15);
-    --aurora-magenta: rgba(236, 72, 153, 0.12);
+    /* Radial Ambient Stage Lights */
+    --ambient-purple: rgba(139, 92, 246, 0.18);
+    --ambient-magenta: rgba(236, 72, 153, 0.15);
+    --ambient-cyan: rgba(6, 182, 212, 0.12);
+    --ambient-emerald: rgba(16, 185, 129, 0.12);
 
-    /* Chromatic Attribute Color Encoding */
-    --attr-popularity-from: #fbbf24;
-    --attr-popularity-to: #eab308;
-    --attr-reputation-from: #22d3ee;
-    --attr-reputation-to: #3b82f6;
-    --attr-credibility-from: #a855f7;
-    --attr-credibility-to: #6366f1;
-    --attr-loyalty-from: #ec4899;
-    --attr-loyalty-to: #e11d48;
-    --attr-hype-from: #f97316;
-    --attr-hype-to: #d97706;
-    --attr-energy-from: #34d399;
-    --attr-energy-to: #14b8a6;
-    
-    /* Vibrant Accent Colors for Musical Studio Simulation */
-    --accent-trap: #8b5cf6;
-    --accent-reggaeton: #f59e0b;
-    --accent-pop: #ec4899;
-    --accent-rnb: #6366f1;
-    --accent-drill: #e11d48;
-    --accent-rock: #10b981;
-    --accent-hiphop: #d97706;
-    --accent-electronic: #06b6d4;
-    --accent-afrobeat: #f97316;
-    --accent-corridos: #b45309;
-    --accent-gold: #eab308;
+    /* Inset Button Shadows */
+    --shadow-neon-purple: 0 0 20px rgba(139, 92, 246, 0.4);
+    --shadow-neon-emerald: 0 0 16px rgba(16, 185, 129, 0.35);
+    --shadow-neon-cyan: 0 0 16px rgba(6, 182, 212, 0.35);
   }
 
   body {
-    background-color: #f7f4ed;
-    color: #1c1c1c;
+    background-color: #0b0c10;
+    color: #f8fafc;
     font-family: 'Camera Plain Variable', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight: 400;
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.12), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 30%, rgba(236, 72, 153, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 0% 70%, rgba(6, 182, 212, 0.08), transparent);
+    background-attachment: fixed;
   }
 
   /* Custom Warm & Dark Studio Scrollbar */
@@ -433,44 +421,95 @@
 .btn-ghost-outline:hover {
   background-color: rgba(28, 28, 28, 0.04);
 }
-
 .btn-ghost-outline:active {
   opacity: 0.8;
 }
 
-.btn-cream-surface {
-  background-color: #f7f4ed;
-  color: #1c1c1c;
-  border: 1px solid #eceae4;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 400;
+.btn-primary-dark,
+.btn-neon-primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 10px 20px;
   font-size: 14px;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background-color 0.15s ease, opacity 0.15s ease, border-color 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
-.btn-cream-surface:hover {
-  background-color: #eceae4;
-  border-color: rgba(28, 28, 28, 0.2);
+.btn-primary-dark:hover,
+.btn-neon-primary:hover {
+  opacity: 0.95;
+  transform: scale(1.015);
+  box-shadow: 0 0 26px rgba(139, 92, 246, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-.btn-cream-surface:active {
-  opacity: 0.8;
+.btn-primary-dark:active,
+.btn-neon-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-ghost-outline,
+.btn-ghost-dark {
+  background-color: rgba(22, 24, 31, 0.6);
+  color: #94a3b8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #2a2e3d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-ghost-outline:hover,
+.btn-ghost-dark:hover {
+  background-color: #16181f;
+  color: #f8fafc;
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.btn-cream-surface,
+.btn-slate-surface {
+  background-color: #16181f;
+  color: #f8fafc;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #2a2e3d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-cream-surface:hover,
+.btn-slate-surface:hover {
+  background-color: #1d202a;
+  border-color: rgba(139, 92, 246, 0.4);
 }
 
 .btn-pill {
   border-radius: 9999px;
   padding: 6px 14px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  border: 1px solid #eceae4;
-  background-color: #f7f4ed;
-  color: #1c1c1c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(22, 24, 31, 0.8);
+  color: #cbd5e1;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -479,20 +518,23 @@
 }
 
 .btn-pill:hover {
-  background-color: #eceae4;
-  border-color: rgba(28, 28, 28, 0.2);
+  background-color: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #f8fafc;
 }
 
-.card-cream {
-  background-color: #f7f4ed;
-  border: 1px solid #eceae4;
+.card-cream,
+.card-slate-glass {
+  background-color: #16181f;
+  border: 1px solid #2a2e3d;
   border-radius: 12px;
 }
 
 .card-cream-subtle {
-  background-color: #fcfbf8;
-  border: 1px solid #eceae4;
+  background-color: rgba(22, 24, 31, 0.7);
+  border: 1px solid #2a2e3d;
   border-radius: 12px;
+  backdrop-filter: blur(8px);
 }
 
 /* Micro-interaction interactive card hover */
@@ -502,25 +544,25 @@
 
 .hover-card-interactive:hover {
   transform: scale(1.02);
-  border-color: rgba(28, 28, 28, 0.35);
-  box-shadow: 0 4px 16px rgba(28, 28, 28, 0.06);
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(139, 92, 246, 0.15);
 }
 
-/* Typography Hierarchy according to design.md */
+/* Typography Hierarchy */
 .display-hero {
   font-size: clamp(2.25rem, 5vw, 3.75rem);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.05;
   letter-spacing: -1.5px;
-  color: #1c1c1c;
+  color: #f8fafc;
 }
 
 .section-heading {
   font-size: clamp(1.75rem, 3.5vw, 3rem);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.1;
   letter-spacing: -1.2px;
-  color: #1c1c1c;
+  color: #f8fafc;
 }
 
 .sub-heading {
@@ -528,7 +570,7 @@
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.9px;
-  color: #1c1c1c;
+  color: #f8fafc;
 }
 
 /* High Contrast Secondary Text (WCAG AA Compliant >= 4.5:1 ratio) */

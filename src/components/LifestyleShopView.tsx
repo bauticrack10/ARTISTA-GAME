@@ -95,23 +95,23 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
 
   const getItemIcon = (iconName: string, category: LifestyleCategory) => {
     switch (iconName) {
-      case 'Mic': return <Mic className="w-5 h-5 text-cyan-700" />;
-      case 'Radio': return <Radio className="w-5 h-5 text-cyan-700" />;
-      case 'Sliders': return <Sliders className="w-5 h-5 text-cyan-700" />;
-      case 'Disc3': return <Disc3 className="w-5 h-5 text-cyan-700" />;
-      case 'Home': return <Home className="w-5 h-5 text-emerald-700" />;
-      case 'Building2': return <Building2 className="w-5 h-5 text-emerald-700" />;
-      case 'Crown': return <Crown className="w-5 h-5 text-emerald-700" />;
-      case 'Sparkles': return <Sparkles className="w-5 h-5 text-emerald-700" />;
-      case 'Truck': return <Truck className="w-5 h-5 text-rose-700" />;
-      case 'ShieldCheck': return <ShieldCheck className="w-5 h-5 text-rose-700" />;
-      case 'Flame': return <Flame className="w-5 h-5 text-rose-700" />;
-      case 'Zap': return <Zap className="w-5 h-5 text-rose-700" />;
-      case 'GraduationCap': return <GraduationCap className="w-5 h-5 text-purple-700" />;
-      case 'Award': return <Award className="w-5 h-5 text-purple-700" />;
-      case 'Users': return <Users className="w-5 h-5 text-purple-700" />;
-      case 'Heart': return <Heart className="w-5 h-5 text-purple-700" />;
-      default: return <ShoppingBag className="w-5 h-5 text-indigo-700" />;
+      case 'Mic': return <Mic className="w-5 h-5 text-[#06B6D4]" />;
+      case 'Radio': return <Radio className="w-5 h-5 text-[#06B6D4]" />;
+      case 'Sliders': return <Sliders className="w-5 h-5 text-[#06B6D4]" />;
+      case 'Disc3': return <Disc3 className="w-5 h-5 text-[#06B6D4]" />;
+      case 'Home': return <Home className="w-5 h-5 text-emerald-400" />;
+      case 'Building2': return <Building2 className="w-5 h-5 text-emerald-400" />;
+      case 'Crown': return <Crown className="w-5 h-5 text-emerald-400" />;
+      case 'Sparkles': return <Sparkles className="w-5 h-5 text-emerald-400" />;
+      case 'Truck': return <Truck className="w-5 h-5 text-rose-400" />;
+      case 'ShieldCheck': return <ShieldCheck className="w-5 h-5 text-rose-400" />;
+      case 'Flame': return <Flame className="w-5 h-5 text-rose-400" />;
+      case 'Zap': return <Zap className="w-5 h-5 text-rose-400" />;
+      case 'GraduationCap': return <GraduationCap className="w-5 h-5 text-[#C084FC]" />;
+      case 'Award': return <Award className="w-5 h-5 text-[#C084FC]" />;
+      case 'Users': return <Users className="w-5 h-5 text-[#C084FC]" />;
+      case 'Heart': return <Heart className="w-5 h-5 text-[#C084FC]" />;
+      default: return <ShoppingBag className="w-5 h-5 text-[#8B5CF6]" />;
     }
   };
 
@@ -128,44 +128,69 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     }
   };
 
+  const getCategoryColorClasses = (cat: LifestyleCategory) => {
+    switch (cat) {
+      case 'studio':
+        return {
+          accentText: 'text-[#06B6D4]',
+          buffBadge: 'bg-[#06B6D4]/10 text-[#06B6D4] border-[#06B6D4]/30'
+        };
+      case 'real_estate':
+        return {
+          accentText: 'text-emerald-400',
+          buffBadge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+        };
+      case 'vehicles':
+        return {
+          accentText: 'text-rose-400',
+          buffBadge: 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+        };
+      case 'coaching':
+        return {
+          accentText: 'text-[#C084FC]',
+          buffBadge: 'bg-purple-500/10 text-[#C084FC] border-purple-500/30'
+        };
+    }
+  };
+
   return (
-    <div className="space-y-8 pb-16 font-sans text-[#1c1c1c] bg-[#f7f4ed] min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl border border-[#eceae4]">
-      {/* Header Banner - Strict design.md warmth with vibrant accents */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#eceae4] pb-6">
+    <div className="space-y-8 pb-16 font-sans text-[#F8FAFC] bg-[#16181F] min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl border border-[#2A2E3D]">
+      {/* Header Banner - Studio After Dark Theme with vibrant accents */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#2A2E3D] pb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-200 tracking-tight">
+            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-[#06B6D4]/20 text-[#06B6D4] border border-[#06B6D4]/40 tracking-tight">
               Inversión & Bienestar
             </span>
             {player.isProdigy && (
-              <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-amber-950 border border-amber-300 flex items-center gap-1 shadow-sm">
-                <Crown className="w-3 h-3 text-amber-900 fill-current" />
+              <span className="px-3 py-0.5 rounded-full text-[11px] font-bold bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-amber-300 border border-amber-400/40 flex items-center gap-1 shadow-sm">
+                <Crown className="w-3 h-3 text-amber-400 fill-current" />
                 Prodigio x3
               </span>
             )}
           </div>
           <h1
-            className="text-3xl sm:text-4xl font-semibold tracking-[-0.9px] text-[#1c1c1c] flex items-center gap-2.5"
+            className="text-3xl sm:text-4xl font-semibold tracking-[-0.9px] text-[#F8FAFC] flex items-center gap-2.5"
             style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
           >
-            <ShoppingBag className="w-7 h-7 text-cyan-600" />
+            <ShoppingBag className="w-7 h-7 text-[#06B6D4]" />
             Tienda & Estilo de Vida
           </h1>
-          <p className="text-sm text-[#5f5f5d] mt-1.5 max-w-2xl font-normal leading-relaxed">
+          <p className="text-sm text-[#94A3B8] mt-1.5 max-w-2xl font-normal leading-relaxed">
             Invertí los fondos generados por tus lanzamientos y giras en mejoras tangibles con beneficios pasivos permanentes: calidad de estudio, recuperación de energía, mitigación de fatiga y prestigio.
           </p>
         </div>
 
         {/* Balance Card */}
-        <div className="bg-[#fcfbf8] border border-emerald-200/80 rounded-xl p-4 sm:p-5 flex items-center gap-5 shrink-0 shadow-sm">
-          <div className="p-3 bg-emerald-100 rounded-full text-emerald-700 border border-emerald-200">
+        <div className="bg-[#0B0C10] border border-emerald-500/40 rounded-xl p-4 sm:p-5 flex items-center gap-5 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+          <div className="p-3 bg-emerald-950/60 rounded-full text-emerald-400 border border-emerald-500/40">
             <DollarSign className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs text-[#5f5f5d] block font-normal uppercase tracking-wider text-[10px]">
+            <span className="text-xs text-[#94A3B8] block font-normal uppercase tracking-wider text-[10px]">
               Fondos Disponibles
             </span>
-            <span className="text-2xl font-bold text-emerald-800 font-mono tracking-tight">
+            <span className="text-2xl font-bold text-emerald-400 font-mono tracking-tight">
               ${player.stats.funds.toLocaleString()}
             </span>
           </div>
@@ -175,58 +200,58 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       {/* Feedback Toast */}
       {feedback && (
         <div
-          className={`p-4 rounded-md border text-sm font-semibold flex items-center gap-2.5 transition-all shadow-sm ${
+          className={`p-4 rounded-md border text-sm font-semibold flex items-center gap-2.5 transition-all shadow-md ${
             feedback.isError
-              ? 'bg-rose-50 border-rose-300 text-rose-900'
-              : 'bg-emerald-50 border-emerald-300 text-emerald-900'
+              ? 'bg-rose-950/60 border-rose-500/40 text-rose-200'
+              : 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
           }`}
         >
           {feedback.isError ? (
-            <Info className="w-4 h-4 text-rose-600 shrink-0" />
+            <Info className="w-4 h-4 text-rose-400 shrink-0" />
           ) : (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           )}
           <span>{feedback.text}</span>
         </div>
       )}
 
       {/* Active Buffs Summary Bar with Rich Palette */}
-      <div className="bg-[#fcfbf8] border border-[#eceae4] rounded-xl p-5 space-y-3 shadow-sm">
-        <div className="flex items-center justify-between border-b border-[#eceae4] pb-2.5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-[#1c1c1c] flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-purple-600" />
+      <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-xl p-5 space-y-3 shadow-md">
+        <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-2.5">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
+            <TrendingUp className="w-4 h-4 text-[#8B5CF6]" />
             Resumen de Buffs Pasivos Activos ({ownedUpgrades.length} Adquiridos)
           </h2>
-          <span className="text-xs text-[#5f5f5d] font-mono">
-            Mantenimiento Total: <strong className="text-rose-700 font-bold">${activeBuffs.monthlyUpkeep.toLocaleString()}/mes</strong>
+          <span className="text-xs text-[#94A3B8] font-mono">
+            Mantenimiento Total: <strong className="text-rose-400 font-bold">${activeBuffs.monthlyUpkeep.toLocaleString()}/mes</strong>
           </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 text-xs">
-          <div className="p-3 bg-cyan-50/50 border border-cyan-200 rounded-lg space-y-1">
-            <span className="text-cyan-900 block text-[11px] font-semibold">Bono de Calidad</span>
-            <span className="text-base font-bold text-cyan-800 font-mono">
+          <div className="p-3 bg-[#06B6D4]/10 border border-[#06B6D4]/30 rounded-lg space-y-1">
+            <span className="text-[#06B6D4] block text-[11px] font-semibold">Bono de Calidad</span>
+            <span className="text-base font-bold text-[#06B6D4] font-mono">
               +{activeBuffs.qualityBonus} Calidad
             </span>
           </div>
 
-          <div className="p-3 bg-emerald-50/50 border border-emerald-200 rounded-lg space-y-1">
-            <span className="text-emerald-900 block text-[11px] font-semibold">Energía Pasiva</span>
-            <span className="text-base font-bold text-emerald-800 font-mono">
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg space-y-1">
+            <span className="text-emerald-300 block text-[11px] font-semibold">Energía Pasiva</span>
+            <span className="text-base font-bold text-emerald-400 font-mono">
               +{activeBuffs.passiveEnergy} / mes
             </span>
           </div>
 
-          <div className="p-3 bg-rose-50/50 border border-rose-200 rounded-lg space-y-1">
-            <span className="text-rose-900 block text-[11px] font-semibold">Mitigación de Gira</span>
-            <span className="text-base font-bold text-rose-800 font-mono">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg space-y-1">
+            <span className="text-rose-300 block text-[11px] font-semibold">Mitigación de Gira</span>
+            <span className="text-base font-bold text-rose-400 font-mono">
               -{Math.round(activeBuffs.tourFatigueReduction * 100)}% Fatiga
             </span>
           </div>
 
-          <div className="p-3 bg-amber-50/50 border border-amber-200 rounded-lg space-y-1">
-            <span className="text-amber-900 block text-[11px] font-semibold">Estabilidad de Hype</span>
-            <span className="text-base font-bold text-amber-800 font-mono">
+          <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg space-y-1">
+            <span className="text-amber-300 block text-[11px] font-semibold">Estabilidad de Hype</span>
+            <span className="text-base font-bold text-amber-400 font-mono">
               +{Math.round(activeBuffs.hypeDecayReduction * 100)}% Retención
             </span>
           </div>
@@ -238,11 +263,11 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         {CATEGORY_TABS.map(tab => {
           const isActive = activeCategory === tab.id;
           const activeClasses: Record<string, string> = {
-            all: 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold shadow-sm',
-            studio: 'bg-cyan-100 border-cyan-300 text-cyan-900 font-semibold shadow-sm',
-            real_estate: 'bg-emerald-100 border-emerald-300 text-emerald-900 font-semibold shadow-sm',
-            vehicles: 'bg-rose-100 border-rose-300 text-rose-900 font-semibold shadow-sm',
-            coaching: 'bg-purple-100 border-purple-300 text-purple-900 font-semibold shadow-sm'
+            all: 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_15px_rgba(139,92,246,0.4)] border-transparent',
+            studio: 'bg-[#06B6D4]/25 border border-[#06B6D4] text-[#06B6D4] font-bold shadow-[0_0_12px_rgba(6,182,212,0.3)]',
+            real_estate: 'bg-emerald-500/25 border border-emerald-400 text-emerald-300 font-bold shadow-[0_0_12px_rgba(16,185,129,0.3)]',
+            vehicles: 'bg-rose-500/25 border border-rose-400 text-rose-300 font-bold shadow-[0_0_12px_rgba(244,63,94,0.3)]',
+            coaching: 'bg-purple-500/25 border border-purple-400 text-[#C084FC] font-bold shadow-[0_0_12px_rgba(139,92,246,0.3)]'
           };
           return (
             <button
@@ -251,7 +276,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               className={`px-4 py-2 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
                 isActive
                   ? activeClasses[tab.id] || activeClasses.all
-                  : 'bg-[#fcfbf8] text-[#1c1c1c] border-[#eceae4] hover:border-[#1c1c1c]/40'
+                  : 'bg-[#0B0C10] text-[#94A3B8] border-[#2A2E3D] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/40'
               }`}
             >
               {tab.label}
@@ -265,46 +290,46 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         {filteredItems.map(item => {
           const isOwned = ownedUpgrades.includes(item.id);
           const canAfford = player.stats.funds >= item.price;
-          const theme = getCategoryTheme(item.category);
+          const colorClasses = getCategoryColorClasses(item.category);
 
           const categoryBorderLeft: Record<string, string> = {
-            studio: 'border-l-4 border-l-cyan-400',
+            studio: 'border-l-4 border-l-[#06B6D4]',
             real_estate: 'border-l-4 border-l-emerald-400',
-            vehicles: 'border-l-4 border-l-rose-400',
-            coaching: 'border-l-4 border-l-purple-400'
+            vehicles: 'border-l-4 border-l-rose-500',
+            coaching: 'border-l-4 border-l-[#8B5CF6]'
           };
 
           return (
             <div
               key={item.id}
-              className={`bg-[#fcfbf8] border rounded-xl p-5 flex flex-col justify-between transition-all shadow-xs hover:scale-[1.02] hover:shadow-md ${categoryBorderLeft[item.category] || ''} ${
+              className={`bg-[#0B0C10] border rounded-xl p-5 flex flex-col justify-between transition-all shadow-md hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] ${categoryBorderLeft[item.category] || ''} ${
                 isOwned
-                  ? 'border-emerald-300 ring-1 ring-emerald-300/40'
-                  : theme.cardBorder
+                  ? 'border-emerald-500/50 ring-1 ring-emerald-500/40'
+                  : 'border-[#2A2E3D] hover:border-[#8B5CF6]/50'
               }`}
             >
               <div className="space-y-3">
                 {/* Card Top: Icon, Title & Category */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2.5 rounded-lg shrink-0 ${theme.iconBg}`}>
+                    <div className="p-2.5 rounded-lg shrink-0 bg-[#16181F] border border-[#2A2E3D]">
                       {getItemIcon(item.iconName, item.category)}
                     </div>
                     <div>
                       <h3
-                        className="text-base font-semibold text-[#1c1c1c] tracking-normal leading-snug"
+                        className="text-base font-semibold text-[#F8FAFC] tracking-normal leading-snug"
                         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
                       >
                         {item.name}
                       </h3>
-                      <span className={`text-[11px] font-semibold block mt-0.5 ${theme.accentText}`}>
+                      <span className={`text-[11px] font-semibold block mt-0.5 ${colorClasses.accentText}`}>
                         {getCategoryLabel(item.category)}
                       </span>
                     </div>
                   </div>
 
                   {isOwned && (
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shrink-0">
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/40 flex items-center gap-1 shrink-0">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       En Posesión
                     </span>
@@ -312,24 +337,24 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 </div>
 
                 {/* Description */}
-                <p className="text-xs text-[#5f5f5d] font-normal leading-relaxed">
+                <p className="text-xs text-[#94A3B8] font-normal leading-relaxed">
                   {item.description}
                 </p>
 
                 {/* Passive Buff Pill */}
-                <div className={`p-2.5 rounded-lg border text-xs font-semibold flex items-center gap-2 ${theme.badge}`}>
+                <div className={`p-2.5 rounded-lg border text-xs font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
                   <span>{item.buffDescription}</span>
                 </div>
               </div>
 
               {/* Card Footer: Cost & Action Button */}
-              <div className="mt-5 pt-4 border-t border-[#eceae4] flex items-center justify-between gap-3">
+              <div className="mt-5 pt-4 border-t border-[#2A2E3D] flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-lg font-bold text-[#1c1c1c] font-mono tracking-tight">
+                  <div className="text-lg font-bold text-[#F8FAFC] font-mono tracking-tight">
                     ${item.price.toLocaleString()}
                   </div>
-                  <span className="text-[11px] text-[#5f5f5d] font-mono block">
+                  <span className="text-[11px] text-[#94A3B8] font-mono block">
                     {item.monthlyUpkeep > 0 ? `+$${item.monthlyUpkeep}/mes mantenimiento` : 'Sin mantenimiento mensual'}
                   </span>
                 </div>
@@ -337,7 +362,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 {isOwned ? (
                   <button
                     disabled
-                    className="px-4 py-2 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold cursor-not-allowed"
+                    className="px-4 py-2 rounded-md bg-emerald-950/40 text-emerald-400 border border-emerald-500/40 text-xs font-bold cursor-not-allowed"
                   >
                     Adquirido ✓
                   </button>
@@ -345,22 +370,11 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                   <button
                     onClick={() => handlePurchase(item)}
                     disabled={!canAfford}
-                    className={`px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
+                    className={`px-4 py-2 text-xs font-bold rounded-[6px] transition-all cursor-pointer ${
                       canAfford
-                        ? 'btn-primary-dark active:opacity-80'
-                        : 'bg-[#eceae4] text-[#5f5f5d] border border-[#eceae4] cursor-not-allowed'
+                        ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-85'
+                        : 'bg-[#16181F] text-[#64748B] border border-[#2A2E3D] cursor-not-allowed'
                     }`}
-                    style={
-                      canAfford
-                        ? {
-                            backgroundColor: '#1c1c1c',
-                            color: '#fcfbf8',
-                            borderRadius: '6px',
-                            boxShadow:
-                              'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
-                          }
-                        : {}
-                    }
                   >
                     {canAfford ? 'Comprar Mejora' : 'Fondos Insuficientes'}
                   </button>
