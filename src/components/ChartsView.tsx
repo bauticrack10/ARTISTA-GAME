@@ -52,19 +52,26 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
 
         {/* Region Selector */}
         <div className="flex items-center gap-1 overflow-x-auto bg-[#fcfbf8] p-1.5 rounded-[8px] border border-[#eceae4] max-w-full text-xs shadow-xs">
-          {regions.map(r => (
+          {regions.map(r => {
+            const isActive = selectedRegion === r.id;
+            const isGlobal = r.id === 'Global';
+            const activeClasses = isGlobal
+              ? 'bg-purple-100 border border-purple-300 text-purple-900 shadow-sm'
+              : 'bg-blue-100 border border-blue-300 text-blue-900 shadow-sm';
+            return (
             <button
               key={r.id}
               onClick={() => setSelectedRegion(r.id)}
               className={`px-3 py-1.5 rounded-[6px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                selectedRegion === r.id
-                  ? 'bg-[#1c1c1c] text-[#fcfbf8] shadow-sm'
+                isActive
+                  ? activeClasses
                   : 'text-[#5f5f5d] hover:text-[#1c1c1c] hover:bg-[#eceae4]'
               }`}
             >
               {r.label}
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -88,7 +95,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
           </div>
         ) : (
           <div className="divide-y divide-[#eceae4]">
-            {currentChart.entries.map((entry) => {
+            {currentChart.entries.map((entry, idx) => {
               const isPlayerSong = entry.artistId === player.id;
               let movement = <Minus className="w-3.5 h-3.5 text-[#5f5f5d]" />;
 
@@ -126,7 +133,9 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
                       ? 'bg-purple-50/40 border-l-4 border-l-purple-600'
                       : isNo1
                       ? 'bg-amber-50/30'
-                      : 'hover:bg-[#fcfbf8]'
+                      : idx % 2 === 0
+                      ? 'bg-[#f7f4ed] hover:bg-[#fcfbf8]'
+                      : 'bg-[#fcfbf8] hover:bg-[#f7f4ed]'
                   }`}
                 >
                   {/* Position & Info */}

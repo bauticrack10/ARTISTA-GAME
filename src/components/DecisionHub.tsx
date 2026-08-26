@@ -92,7 +92,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         {/* ========================================================================= */}
         {/* TARJETA 1: ESTUDIO & ÁLBUMES */}
         {/* ========================================================================= */}
-        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
+        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-purple-400 rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
           <div className="space-y-3">
             {/* Header Icon + Category Badge */}
             <div className="flex items-center justify-between">
@@ -142,7 +142,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
             style={buttonInsetShadow}
             title="Entrar al Estudio de Grabación"
           >
-            <Mic2 className="w-3.5 h-3.5" />
+            <Mic2 className="w-3.5 h-3.5 text-purple-300" />
             <span>Entrar a Grabar</span>
             <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
           </button>
@@ -151,7 +151,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         {/* ========================================================================= */}
         {/* TARJETA 2: TIENDA & LUJO */}
         {/* ========================================================================= */}
-        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
+        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-cyan-400 rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
           <div className="space-y-3">
             {/* Header Icon + Category Badge */}
             <div className="flex items-center justify-between">
@@ -203,7 +203,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
             style={buttonInsetShadow}
             title="Ver Catálogo de Mejoras y Bienes de Lujo"
           >
-            <ShoppingBag className="w-3.5 h-3.5" />
+            <ShoppingBag className="w-3.5 h-3.5 text-cyan-300" />
             <span>Explorar Tienda</span>
             <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
           </button>
@@ -215,8 +215,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         <div
           className={`group relative rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4 border ${
             isTourReady
-              ? 'bg-[#f7f4ed] hover:bg-[#fcfbf8] border-[#eceae4] hover:border-[rgba(28,28,28,0.4)]'
-              : 'bg-rose-50/70 hover:bg-rose-50/90 border-rose-200'
+              ? 'bg-[#f7f4ed] hover:bg-[#fcfbf8] border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-amber-400'
+              : 'bg-rose-50/70 hover:bg-rose-50/90 border-rose-200 border-l-4 border-l-rose-400'
           }`}
         >
           <div className="space-y-3">
@@ -297,7 +297,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
             style={isTourReady ? buttonInsetShadow : {}}
             title={isTourReady ? 'Armar y calendarizar gira musical' : 'Energía insuficiente para salir de gira (requiere ≥85%)'}
           >
-            <Ticket className="w-3.5 h-3.5" />
+            <Ticket className={`w-3.5 h-3.5 ${isTourReady ? 'text-amber-300' : ''}`} />
             <span>Armar Gira</span>
             <ArrowRight
               className={`w-3.5 h-3.5 ml-auto transition-all ${
@@ -310,7 +310,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         {/* ========================================================================= */}
         {/* TARJETA 4: DESCANSO */}
         {/* ========================================================================= */}
-        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
+        <div className="group relative bg-[#f7f4ed] hover:bg-[#fcfbf8] border border-[#eceae4] hover:border-[rgba(28,28,28,0.4)] border-l-4 border-l-emerald-400 rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4">
           <div className="space-y-3">
             {/* Header Icon + Dedicated Highlight Badge */}
             <div className="flex items-center justify-between">

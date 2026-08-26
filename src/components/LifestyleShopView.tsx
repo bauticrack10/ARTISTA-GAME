@@ -237,14 +237,21 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {CATEGORY_TABS.map(tab => {
           const isActive = activeCategory === tab.id;
+          const activeClasses: Record<string, string> = {
+            all: 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold shadow-sm',
+            studio: 'bg-cyan-100 border-cyan-300 text-cyan-900 font-semibold shadow-sm',
+            real_estate: 'bg-emerald-100 border-emerald-300 text-emerald-900 font-semibold shadow-sm',
+            vehicles: 'bg-rose-100 border-rose-300 text-rose-900 font-semibold shadow-sm',
+            coaching: 'bg-purple-100 border-purple-300 text-purple-900 font-semibold shadow-sm'
+          };
           return (
             <button
               key={tab.id}
               onClick={() => setActiveCategory(tab.id)}
-              className={`px-4 py-2 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
                 isActive
-                  ? 'bg-[#1c1c1c] text-[#fcfbf8] font-semibold shadow-sm'
-                  : 'bg-[#fcfbf8] text-[#1c1c1c] border border-[#eceae4] hover:border-[#1c1c1c]/40'
+                  ? activeClasses[tab.id] || activeClasses.all
+                  : 'bg-[#fcfbf8] text-[#1c1c1c] border-[#eceae4] hover:border-[#1c1c1c]/40'
               }`}
             >
               {tab.label}
@@ -254,16 +261,23 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       </div>
 
       {/* Items Grid with Categorized Themes & Icons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {filteredItems.map(item => {
           const isOwned = ownedUpgrades.includes(item.id);
           const canAfford = player.stats.funds >= item.price;
           const theme = getCategoryTheme(item.category);
 
+          const categoryBorderLeft: Record<string, string> = {
+            studio: 'border-l-4 border-l-cyan-400',
+            real_estate: 'border-l-4 border-l-emerald-400',
+            vehicles: 'border-l-4 border-l-rose-400',
+            coaching: 'border-l-4 border-l-purple-400'
+          };
+
           return (
             <div
               key={item.id}
-              className={`bg-[#fcfbf8] border rounded-xl p-5 flex flex-col justify-between transition-all shadow-xs ${
+              className={`bg-[#fcfbf8] border rounded-xl p-5 flex flex-col justify-between transition-all shadow-xs hover:scale-[1.02] hover:shadow-md ${categoryBorderLeft[item.category] || ''} ${
                 isOwned
                   ? 'border-emerald-300 ring-1 ring-emerald-300/40'
                   : theme.cardBorder

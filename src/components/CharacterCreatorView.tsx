@@ -535,7 +535,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Ej: Warren Rovers"
-                    className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-[rgba(28,28,28,0.4)] rounded-md px-3.5 py-2 text-sm text-[#1c1c1c] focus:outline-none transition-colors"
+                    className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-purple-400 rounded-md px-3.5 py-2 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors"
                   />
                 </div>
 
@@ -548,7 +548,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={realName}
                     onChange={e => setRealName(e.target.value)}
                     placeholder="Ej: Warren Alexander"
-                    className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-[rgba(28,28,28,0.4)] rounded-md px-3.5 py-2 text-sm text-[#1c1c1c] focus:outline-none transition-colors"
+                    className="w-full bg-[#f7f4ed] border border-[#eceae4] focus:border-purple-400 rounded-md px-3.5 py-2 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors"
                   />
                 </div>
               </div>
@@ -679,6 +679,26 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     .filter(g => g.id !== mainGenreId)
                     .map(g => {
                       const isSelected = secondaryGenres.includes(g.id);
+                      // Genre-specific accent colors from design.md palette
+                      const genreColorMap: Record<string, string> = {
+                        trap_latino: 'bg-purple-600 text-white border-purple-600',
+                        reggaeton: 'bg-amber-500 text-white border-amber-500',
+                        pop: 'bg-pink-500 text-white border-pink-500',
+                        pop_latino: 'bg-fuchsia-500 text-white border-fuchsia-500',
+                        rnb: 'bg-indigo-600 text-white border-indigo-600',
+                        rock: 'bg-emerald-600 text-white border-emerald-600',
+                        rock_argentino: 'bg-emerald-700 text-white border-emerald-700',
+                        drill: 'bg-rose-600 text-white border-rose-600',
+                        hip_hop_rap: 'bg-violet-600 text-white border-violet-600',
+                        cumbia: 'bg-orange-500 text-white border-orange-500',
+                        electronica: 'bg-cyan-600 text-white border-cyan-600',
+                        dembow: 'bg-amber-600 text-white border-amber-600',
+                        salsa: 'bg-red-500 text-white border-red-500',
+                        bachata: 'bg-rose-500 text-white border-rose-500',
+                        corridos_tumbados: 'bg-amber-700 text-white border-amber-700',
+                        folk: 'bg-teal-600 text-white border-teal-600',
+                      };
+                      const selectedColor = genreColorMap[g.id] || 'bg-[#1c1c1c] text-[#fcfbf8] border-[#1c1c1c]';
                       return (
                         <button
                           type="button"
@@ -686,7 +706,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           onClick={() => toggleSecondaryGenre(g.id)}
                           className={`px-3 py-1.5 rounded-full border text-xs font-normal transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#1c1c1c] text-[#fcfbf8] border-[#1c1c1c] font-semibold'
+                              ? `${selectedColor} font-semibold shadow-sm`
                               : 'bg-[#f7f4ed] border-[#eceae4] text-[#1c1c1c] hover:border-[rgba(28,28,28,0.4)]'
                           }`}
                         >
@@ -743,11 +763,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   {archetype === 'custom' && (
                     <div className="p-4 bg-[#f7f4ed] border border-[#eceae4] rounded-lg space-y-3 pt-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                        {Object.entries(customTraits).map(([traitKey, val]) => (
+                        {Object.entries(customTraits).map(([traitKey, val]) => {
+                          const valueColor = val > 70 ? 'text-emerald-700' : val >= 40 ? 'text-amber-700' : 'text-rose-700';
+                          const accentColor = val > 70 ? 'accent-emerald-600' : val >= 40 ? 'accent-amber-600' : 'accent-rose-600';
+                          return (
                           <div key={traitKey} className="space-y-1">
                             <div className="flex justify-between text-[11px] text-[#1c1c1c] font-medium capitalize">
                               <span>{traitKey.replace(/([A-Z])/g, ' $1')}</span>
-                              <span className="font-mono text-[#1c1c1c] font-semibold">{val}</span>
+                              <span className={`font-mono font-semibold ${valueColor}`}>{val}</span>
                             </div>
                             <input
                               type="range"
@@ -755,10 +778,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               max={99}
                               value={val}
                               onChange={e => setCustomTraits({ ...customTraits, [traitKey]: Number(e.target.value) })}
-                              className="w-full accent-[#1c1c1c] cursor-pointer h-1.5 bg-[#eceae4] rounded-lg"
+                              className={`w-full cursor-pointer h-1.5 bg-[#eceae4] rounded-lg ${accentColor}`}
                             />
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -963,10 +987,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <button
                 type="submit"
                 id="btn-confirm-create-artist"
-                className="w-full py-3.5 px-6 rounded-md bg-[#1c1c1c] text-[#fcfbf8] font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-opacity active:opacity-80 cursor-pointer"
+                className="w-full py-3.5 px-6 rounded-md bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] cursor-pointer"
                 style={{
                   boxShadow:
-                    'rgba(0,0,0,0) 0px 0px 0px 0px, rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
+                    '0 0 20px rgba(147, 51, 234, 0.3), rgba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px'
                 }}
               >
                 <Sparkles className="w-4 h-4" />

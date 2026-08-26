@@ -9,6 +9,41 @@ interface ToursViewProps {
   onBookTour: (tier: TourTier, name: string) => void;
 }
 
+// Color mapping for venue tiers — matches the accent palette from design.md
+const TIER_BORDER_COLORS: Record<TourTier, string> = {
+  club: 'border-l-emerald-400',
+  theater: 'border-l-blue-400',
+  arena: 'border-l-blue-400',
+  festival_circuit: 'border-l-purple-400',
+  stadium: 'border-l-amber-400',
+  world_tour: 'border-l-amber-400'
+};
+
+const TIER_BG_ACCENT: Record<TourTier, string> = {
+  club: 'bg-emerald-50',
+  theater: 'bg-blue-50',
+  arena: 'bg-blue-50',
+  festival_circuit: 'bg-purple-50',
+  stadium: 'bg-amber-50',
+  world_tour: 'bg-amber-50'
+};
+
+const TIER_BADGE_COLORS: Record<TourTier, string> = {
+  club: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  theater: 'bg-blue-100 text-blue-800 border-blue-200',
+  arena: 'bg-blue-100 text-blue-800 border-blue-200',
+  festival_circuit: 'bg-purple-100 text-purple-800 border-purple-200',
+  stadium: 'bg-amber-100 text-amber-800 border-amber-200',
+  world_tour: 'bg-amber-100 text-amber-800 border-amber-200'
+};
+
+const getTicketBadge = (sold: number, capacity: number) => {
+  const ratio = capacity > 0 ? sold / capacity : 0;
+  if (ratio >= 0.95) return { label: 'SOLD OUT', cls: 'bg-emerald-100 text-emerald-800 border border-emerald-200' };
+  if (ratio >= 0.60) return { label: `${Math.round(ratio * 100)}% vendido`, cls: 'bg-amber-100 text-amber-800 border border-amber-200' };
+  return { label: `${Math.round(ratio * 100)}% vendido`, cls: 'bg-rose-100 text-rose-800 border border-rose-200' };
+};
+
 export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour }) => {
   const [tourName, setTourName] = useState('');
   const [selectedTier, setSelectedTier] = useState<TourTier>('club');
@@ -79,7 +114,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-12">
       {/* Header */}
       <div className="bg-[#f7f4ed] p-6 rounded-[12px] border border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -92,13 +127,26 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#f7f4ed] px-3.5 py-1.5 rounded-[6px] border border-[#eceae4] text-xs">
-          <Zap className={`w-4 h-4 ${isEnergySufficient ? 'text-emerald-700' : 'text-rose-700'}`} />
+        <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-[6px] border text-xs ${
+          !isEnergySufficient
+            ? 'bg-rose-50 border-rose-200'
+            : player.stats.energy < MIN_TOUR_ENERGY + 15
+            ? 'bg-amber-50 border-amber-200'
+            : 'bg-[#f7f4ed] border-[#eceae4]'
+        }`}>
+          <Zap className={`w-4 h-4 ${
+            !isEnergySufficient ? 'text-rose-700' : player.stats.energy < MIN_TOUR_ENERGY + 15 ? 'text-amber-600' : 'text-emerald-700'
+          }`} />
           <span className="text-[#5f5f5d]">Energía Actual:</span>
-          <span className={`font-semibold ${isEnergySufficient ? 'text-[#1c1c1c]' : 'text-rose-700'}`}>
+          <span className={`font-semibold ${
+            !isEnergySufficient ? 'text-rose-700' : player.stats.energy < MIN_TOUR_ENERGY + 15 ? 'text-amber-700' : 'text-[#1c1c1c]'
+          }`}>
             {player.stats.energy}%
           </span>
           <span className="text-[#5f5f5d]">/ Mín {MIN_TOUR_ENERGY}%</span>
+          {player.stats.energy < MIN_TOUR_ENERGY + 15 && isEnergySufficient && (
+            <span className="text-[10px] bg-amber-100 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded-[4px] font-semibold uppercase ml-1">⚠ Baja</span>
+          )}
         </div>
       </div>
 
@@ -171,7 +219,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
         </div>
 
         {/* Selected Tier Info Card */}
-        <div className="bg-[#f7f4ed] p-4 rounded-[8px] border border-[#eceae4] space-y-2">
+        <div className={`p-4 rounded-[8px] border border-[#eceae4] space-y-2 border-l-4 ${TIER_BORDER_COLORS[selectedTier]} ${TIER_BG_ACCENT[selectedTier]}`}>
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-sm text-[#1c1c1c]">
               {tierDetails[selectedTier].title}
@@ -239,13 +287,18 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
           </div>
         ) : (
           <div className="space-y-3">
-            {playerTours.map(t => (
-              <div key={t.id} className="bg-[#f7f4ed] p-4 rounded-[8px] border border-[#eceae4] flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {playerTours.map(t => {
+              const ticketBadge = getTicketBadge(t.totalTicketsSold, t.totalCapacity);
+              return (
+              <div key={t.id} className={`p-4 rounded-[8px] border border-[#eceae4] flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 ${TIER_BORDER_COLORS[t.tier]} hover:scale-[1.02] hover:shadow-md transition-all`}>
                 <div>
                   <h3 className="text-sm font-semibold text-[#1c1c1c] flex items-center gap-2">
                     {t.name}
-                    <span className="text-[10px] bg-[#eceae4] text-[#1c1c1c] px-2 py-0.5 rounded-[4px] font-semibold uppercase">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-semibold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
                       {t.tier}
+                    </span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-semibold ${ticketBadge.cls}`}>
+                      {ticketBadge.label}
                     </span>
                   </h3>
                   <p className="text-xs text-[#5f5f5d] mt-1 font-normal">
@@ -255,12 +308,13 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
 
                 <div className="text-right">
                   <span className="text-xs text-[#5f5f5d] block font-normal">Ganancia Neta</span>
-                  <span className="text-sm font-semibold text-[#1c1c1c]">
+                  <span className="text-sm font-semibold text-emerald-700">
                     +${t.netArtistProfit.toLocaleString()}
                   </span>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

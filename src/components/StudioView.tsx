@@ -432,8 +432,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           !style.isUnlocked
                             ? 'opacity-50 bg-[#eceae4]/20 border-[#eceae4] cursor-not-allowed'
                             : isSelected
-                            ? 'bg-gradient-to-r from-purple-700 to-indigo-800 text-[#fcfbf8] border-purple-700 shadow-md cursor-pointer'
-                            : 'bg-[#fcfbf8] hover:bg-purple-50/50 border-[#eceae4] text-[#1c1c1c] cursor-pointer'
+                            ? `bg-gradient-to-r ${primaryGenreTheme.gradient} text-[#fcfbf8] ${primaryGenreTheme.borderClass} shadow-md cursor-pointer`
+                            : `bg-[#fcfbf8] hover:bg-purple-50/50 border-[#eceae4] text-[#1c1c1c] cursor-pointer`
                         }`}
                       >
                         <div className="flex items-center justify-between">
@@ -502,11 +502,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
               {/* Budgets Sliders */}
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="bg-[#fcfbf8] p-4 rounded-xl border border-blue-200/80 space-y-1">
-                  <span className="block text-[11px] font-semibold text-blue-900 mb-1">
+                <div className="bg-[#fcfbf8] p-4 rounded-xl border border-amber-200/80 space-y-1">
+                  <span className="block text-[11px] font-semibold text-amber-900 mb-1">
                     Producción & Mezcla
                   </span>
-                  <div className="text-sm font-bold font-mono text-blue-800 mb-2">
+                  <div className="text-sm font-bold font-mono text-amber-800 mb-2">
                     ${singleProdBudget.toLocaleString()}
                   </div>
                   <input
@@ -516,15 +516,15 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     step="500"
                     value={singleProdBudget}
                     onChange={e => setSingleProdBudget(Number(e.target.value))}
-                    className="w-full accent-blue-600"
+                    className="w-full accent-amber-600"
                   />
                 </div>
 
-                <div className="bg-[#fcfbf8] p-4 rounded-xl border border-orange-200/80 space-y-1">
-                  <span className="block text-[11px] font-semibold text-orange-900 mb-1">
+                <div className="bg-[#fcfbf8] p-4 rounded-xl border border-emerald-200/80 space-y-1">
+                  <span className="block text-[11px] font-semibold text-emerald-900 mb-1">
                     Marketing & Campaña
                   </span>
-                  <div className="text-sm font-bold font-mono text-orange-800 mb-2">
+                  <div className="text-sm font-bold font-mono text-emerald-800 mb-2">
                     ${singleMktBudget.toLocaleString()}
                   </div>
                   <input
@@ -534,7 +534,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     step="500"
                     value={singleMktBudget}
                     onChange={e => setSingleMktBudget(Number(e.target.value))}
-                    className="w-full accent-orange-600"
+                    className="w-full accent-emerald-600"
                   />
                 </div>
               </div>
@@ -792,11 +792,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
               {/* Budgets */}
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="bg-[#fcfbf8] p-4 rounded-xl border border-blue-200 space-y-1">
-                  <span className="block text-[11px] font-semibold text-blue-900 mb-1">
+                <div className="bg-[#fcfbf8] p-4 rounded-xl border border-amber-200 space-y-1">
+                  <span className="block text-[11px] font-semibold text-amber-900 mb-1">
                     Producción & Mastering
                   </span>
-                  <div className="text-sm font-bold font-mono text-blue-800 mb-2">
+                  <div className="text-sm font-bold font-mono text-amber-800 mb-2">
                     ${albumProdBudget.toLocaleString()}
                   </div>
                   <input
@@ -806,7 +806,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     step="1000"
                     value={albumProdBudget}
                     onChange={e => setAlbumProdBudget(Number(e.target.value))}
-                    className="w-full accent-blue-600"
+                    className="w-full accent-amber-600"
                   />
                 </div>
 
