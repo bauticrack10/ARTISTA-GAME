@@ -12,7 +12,13 @@
 
 ## Activación Obligatoria del Equipo de Agentes
 
-- **Despliegue Previo del Equipo:** Ante cualquier solicitud de desarrollo, diseño, nueva mecánica, corrección o acción sobre la aplicación, se debe activar y coordinar primero al equipo de agentes especializados (`teamwork_preview` o subagentes definidos: Orchestrator, UI/UX Motion Designer, Frontend WebAudio, Backend API & Database, Copy & Virality, QA Tester) para planificar, auditar y ejecutar la tarea en conjunto.
+- **Despliegue Sistemático del Equipo en Cada Prompt:** Ante CUALQUIER solicitud, prompt, corrección o tarea técnica que envíe el usuario, el agente principal DEBE desplegar e invocar inmediatamente al equipo de subagentes especializados utilizando `invoke_subagent` (o definiendo subagentes especializados con `define_subagent` si es necesario):
+  - **Orchestrator / Architect:** Planificación estratégica y desglose de tareas.
+  - **UI/UX Motion Designer:** Auditoría y respeto estricto a `design.md`.
+  - **Frontend & WebAudio Specialist:** Implementación técnica, componentes React/Vite y síntesis/efectos de audio.
+  - **Backend & Data Specialist:** Gestión de estado, persistencia y APIs.
+  - **QA Tester & Auditor:** Verificación de tipos, build y prevención de regresiones.
+- **Flujo de Ejecución Multi-Agente:** Ninguna tarea se ejecutará de forma aislada; siempre se debe distribuir la carga entre los subagentes pertinentes, recopilar sus reportes y sincronizar el resultado final.
 
 ## Automatización y Flujo de Trabajo (Git & GitHub)
 
