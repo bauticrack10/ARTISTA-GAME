@@ -13,6 +13,7 @@ import {
 } from '../types';
 import { getArtistDerivedStyles, SUBGENRE_DETAILS } from '../data/genres';
 import { GameEngine } from '../core/GameEngine';
+import { IndustryEngine } from '../systems/IndustryEngine';
 import {
   Disc3,
   Sparkles,
@@ -187,59 +188,19 @@ export interface ProducerLockInfo {
   minCareerStage: CareerStage;
 }
 
-export const getProducerRequirements = (producer: Producer): { minPopularity: number; minCareerStage: CareerStage } => {
-  if (producer.reputation >= 95 || producer.id === 'prod_bizarrap' || producer.id === 'prod_metro_boomin' || producer.id === 'prod_tainy') {
-    return { minPopularity: producer.minPopularity ?? 65, minCareerStage: 'Established' };
-  }
-  if (producer.reputation >= 75 || producer.id === 'prod_oniria' || producer.id === 'prod_synth_alchemist') {
-    return { minPopularity: producer.minPopularity ?? 35, minCareerStage: 'Breakout' };
-  }
-  if (producer.reputation >= 45 || producer.id === 'prod_club_hustle') {
-    return { minPopularity: producer.minPopularity ?? 10, minCareerStage: 'Emerging' };
-  }
-  return { minPopularity: producer.minPopularity ?? 0, minCareerStage: 'Underground' };
-};
-
 export const getProducerLockStatus = (
   producer: Producer,
   player: Artist
 ): ProducerLockInfo => {
-  const req = getProducerRequirements(producer);
-  const playerStageRank = CAREER_STAGE_RANK[player.careerStage] ?? 0;
-  const reqStageRank = CAREER_STAGE_RANK[req.minCareerStage] ?? 0;
-
-  const hasPop = player.stats.popularity >= req.minPopularity;
-  const hasStage = playerStageRank >= reqStageRank;
-
-  if (!hasPop && !hasStage) {
-    return {
-      isUnlocked: false,
-      lockReason: `Req. ${req.minPopularity}% Pop y Etapa ${req.minCareerStage}`,
-      minPopularity: req.minPopularity,
-      minCareerStage: req.minCareerStage
-    };
-  }
-  if (!hasPop) {
-    return {
-      isUnlocked: false,
-      lockReason: `Req. ${req.minPopularity}% Popularidad (Tienes ${player.stats.popularity}%)`,
-      minPopularity: req.minPopularity,
-      minCareerStage: req.minCareerStage
-    };
-  }
-  if (!hasStage) {
-    return {
-      isUnlocked: false,
-      lockReason: `Req. Etapa ${req.minCareerStage} (Eres ${player.careerStage})`,
-      minPopularity: req.minPopularity,
-      minCareerStage: req.minCareerStage
-    };
-  }
+  const check = IndustryEngine.canWorkWithProducer(player, producer);
+  const minPop = producer.requirements?.minPopularity ?? 0;
+  const minStage: CareerStage = minPop >= 70 ? 'Established' : minPop >= 35 ? 'Breakout' : 'Underground';
 
   return {
-    isUnlocked: true,
-    minPopularity: req.minPopularity,
-    minCareerStage: req.minCareerStage
+    isUnlocked: check.canWork,
+    lockReason: check.missingReasons.join(' • '),
+    minPopularity: minPop,
+    minCareerStage: minStage
   };
 };
 
@@ -418,6 +379,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
       return;
     }
 
+    if (singleProducer) {
+      const prodObj = world.producers[singleProducer];
+      if (prodObj) {
+        const check = getProducerLockStatus(prodObj, player);
+        if (!check.isUnlocked) {
+          alert(`No cumples los requisitos para contratar a ${prodObj.name}: ${check.lockReason}`);
+          return;
+        }
+      }
+    }
+
     onReleaseSong({
       title: singleTitle,
       genreId: styleDerivation.primaryGenreId,
@@ -426,7 +398,6 @@ export const StudioView: React.FC<StudioViewProps> = ({
       producerId: singleProducer || undefined,
       budgetProduction: singleProdBudget,
       budgetMarketing: singleMktBudget,
-      longevityCurve: 'steady',
       musicVideo: hasMusicVideo ? {
         concept: selectedVideoConcept,
         budget: videoCost,
@@ -452,6 +423,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
     if (totalAlbumTracksCount < minTracksRequired) {
       alert(`Un proyecto en formato ${albumType.toUpperCase()} requiere al menos ${minTracksRequired} canciones. Tienes ${totalAlbumTracksCount}.`);
       return;
+    }
+
+    if (albumProducer) {
+      const prodObj = world.producers[albumProducer];
+      if (prodObj) {
+        const check = getProducerLockStatus(prodObj, player);
+        if (!check.isUnlocked) {
+          alert(`No cumples los requisitos para contratar a ${prodObj.name}: ${check.lockReason}`);
+          return;
+        }
+      }
     }
 
     const prodFee = albumProducer ? (world.producers[albumProducer]?.costPerTrack || 0) * Math.min(newTrackTitles.length, 6) : 0;
