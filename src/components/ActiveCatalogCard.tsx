@@ -216,37 +216,50 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                     </div>
                   </div>
 
-                  {/* Tags Row: Viral, Hit Top 10, Clásico, Peak */}
-                  {(song.wentViral || isHitTop10 || song.isClassic || peakGlobal) && (
-                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                      {song.wentViral && (
-                        <span className="text-[10px] font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs">
-                          <Flame className="w-2.5 h-2.5 fill-current" />
-                          Viral
-                        </span>
-                      )}
+                  {/* Tags Row: Viral, Hit Top 10, Clásico, Peak, Certificaciones */}
+                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                    {/* Certificación por Streams */}
+                    {song.streamsTotal >= 10_000_000 ? (
+                      <span className="text-[10px] font-bold bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs border border-cyan-300">
+                        💎 Diamante
+                      </span>
+                    ) : song.streamsTotal >= 2_000_000 ? (
+                      <span className="text-[10px] font-bold bg-gradient-to-r from-slate-200 via-stone-100 to-slate-300 text-slate-900 px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs border border-slate-300">
+                        💿 Platino
+                      </span>
+                    ) : song.streamsTotal >= 500_000 ? (
+                      <span className="text-[10px] font-bold bg-gradient-to-r from-amber-300 to-yellow-500 text-amber-950 px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs border border-amber-400">
+                        📀 Disco de Oro
+                      </span>
+                    ) : null}
 
-                      {isHitTop10 && (
-                        <span className="text-[10px] font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs">
-                          <TrendingUp className="w-2.5 h-2.5" />
-                          Hit Top 10
-                        </span>
-                      )}
+                    {song.wentViral && (
+                      <span className="text-[10px] font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs">
+                        <Flame className="w-2.5 h-2.5 fill-current" />
+                        Viral
+                      </span>
+                    )}
 
-                      {song.isClassic && (
-                        <span className="text-[10px] font-bold bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-950 px-2 py-0.5 rounded-[4px] border border-amber-300 flex items-center gap-1 shadow-xs">
-                          <Award className="w-2.5 h-2.5" />
-                          Clásico
-                        </span>
-                      )}
+                    {isHitTop10 && (
+                      <span className="text-[10px] font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs">
+                        <TrendingUp className="w-2.5 h-2.5" />
+                        Hit Top 10
+                      </span>
+                    )}
 
-                      {peakGlobal && (
-                        <span className="text-[10px] font-semibold bg-[#eceae4] text-[#1c1c1c] px-2 py-0.5 rounded-[4px] font-mono">
-                          Peak #{peakGlobal} Global
-                        </span>
-                      )}
-                    </div>
-                  )}
+                    {song.isClassic && (
+                      <span className="text-[10px] font-bold bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-950 px-2 py-0.5 rounded-[4px] border border-amber-300 flex items-center gap-1 shadow-xs">
+                        <Award className="w-2.5 h-2.5" />
+                        Clásico
+                      </span>
+                    )}
+
+                    {peakGlobal && (
+                      <span className="text-[10px] font-semibold bg-[#eceae4] text-[#1c1c1c] px-2 py-0.5 rounded-[4px] font-mono">
+                        Peak #{peakGlobal} Global
+                      </span>
+                    )}
+                  </div>
 
                   {/* Streams Metric Row: Monthly & Cumulative */}
                   <div className="flex items-center justify-between pt-2 border-t border-[#eceae4]/70 text-xs">

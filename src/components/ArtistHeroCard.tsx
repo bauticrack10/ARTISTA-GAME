@@ -232,71 +232,109 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             </div>
 
             {/* High-Contrast Subtitle: Real Name, City, Country & Main Genre */}
-            <p className="text-xs sm:text-sm text-[#5f5f5d] font-normal leading-normal">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5f5f5d] font-normal flex-wrap">
               {player.realName ? (
                 <>
                   <span className="text-[#1c1c1c] font-medium">{player.realName}</span>
-                  <span className="mx-1.5 text-[#5f5f5d]/60">•</span>
+                  <span className="text-[#5f5f5d]/60">•</span>
                 </>
               ) : null}
               <span>
                 {player.city}, {player.country}
               </span>
-              <span className="mx-1.5 text-[#5f5f5d]/60">•</span>
-              <strong className="text-[#1c1c1c] font-semibold">{mainGenreName}</strong>
-            </p>
+              <span className="text-[#5f5f5d]/60">•</span>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900 border border-purple-300">
+                {mainGenreName}
+              </span>
+            </div>
 
             {/* Compact Discography & Legacy Badges */}
             <div className="flex items-center gap-2 sm:gap-3 text-xs text-[#5f5f5d] flex-wrap pt-0.5">
               <button
                 onClick={handleOpenModal}
-                className="flex items-center gap-1 text-[#1c1c1c] bg-[#fcfbf8] hover:bg-[#eceae4] border border-[#eceae4] px-2.5 py-1 rounded-[6px] text-xs font-semibold cursor-pointer transition-colors shadow-2xs"
+                className="flex items-center gap-1.5 text-[#1c1c1c] bg-[#fcfbf8] hover:bg-[#eceae4] border border-[#eceae4] px-3 py-1 rounded-[8px] text-xs font-semibold cursor-pointer transition-colors shadow-2xs"
               >
-                <Edit3 className="w-3 h-3 text-[#1c1c1c]" />
-                <span>Cambiar Foto</span>
+                <Edit3 className="w-3.5 h-3.5 text-[#1c1c1c]" />
+                <span>Editar Retrato</span>
               </button>
 
-              <span className="inline-flex items-center gap-1 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] text-[#1c1c1c] font-medium text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-purple-50/80 px-2.5 py-1 rounded-[8px] border border-purple-200 text-purple-950 font-medium text-xs">
                 <Disc3 className="w-3.5 h-3.5 text-purple-700" />
                 <span>{computedSongsCount} Singles</span>
               </span>
 
-              <span className="inline-flex items-center gap-1 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] text-[#1c1c1c] font-medium text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-indigo-50/80 px-2.5 py-1 rounded-[8px] border border-indigo-200 text-indigo-950 font-medium text-xs">
                 <Layers className="w-3.5 h-3.5 text-indigo-700" />
                 <span>{computedAlbumsCount} Álbumes</span>
               </span>
 
-              <span className="inline-flex items-center gap-1 bg-[#fcfbf8] px-2.5 py-1 rounded-[6px] border border-[#eceae4] text-[#1c1c1c] font-medium text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-amber-50/80 px-2.5 py-1 rounded-[8px] border border-amber-200 text-amber-950 font-medium text-xs">
                 <Award className="w-3.5 h-3.5 text-amber-600" />
                 <span>
-                  Legado: <strong className="font-semibold text-[#1c1c1c]">{player.legacyScore}/100</strong>
+                  Legado: <strong className="font-semibold text-amber-950">{player.legacyScore}/100</strong>
                 </span>
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Quick Metrics Panel (Large numbers & Tabular Figures) */}
-        <div className="bg-[#fcfbf8] border border-[#eceae4] rounded-[12px] p-4 sm:p-5 flex gap-6 sm:gap-8 items-center w-full lg:w-auto justify-around shadow-2xs shrink-0">
-          <div className="text-center min-w-[110px]">
-            <span className="text-xs text-[#5f5f5d] block font-normal mb-1">
+        {/* Right Side: 4 Colorful Quick Metric Tiles */}
+        <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto shrink-0 min-w-[280px] xl:min-w-[340px]">
+          {/* Tile 1: Oyentes Mensuales */}
+          <div className="bg-emerald-50/90 border border-emerald-300/80 rounded-[12px] p-3 text-left shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1">
+              <TrendingUp className="w-3 h-3 text-emerald-600" />
               Oyentes Mensuales
             </span>
-            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1c1c1c] tracking-tight font-mono">
+            <span className="text-lg sm:text-xl font-bold text-emerald-950 font-mono block mt-0.5">
               {player.stats.monthlyListeners.toLocaleString()}
+            </span>
+            <span className="text-[10px] text-emerald-700 font-medium block">
+              +12.4% este semestre
             </span>
           </div>
 
-          <div className="h-10 w-px bg-[#eceae4]" />
-
-          <div className="text-center min-w-[110px]">
-            <span className="text-xs text-[#5f5f5d] block font-normal mb-1">
-              Streams Totales
+          {/* Tile 2: Streams Totales */}
+          <div className="bg-indigo-50/90 border border-indigo-300/80 rounded-[12px] p-3 text-left shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 flex items-center gap-1">
+              <Disc3 className="w-3 h-3 text-indigo-600" />
+              Streams Globales
             </span>
-            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1c1c1c] tracking-tight font-mono">
-              {player.stats.totalStreams >= 1000000
-                ? `${(player.stats.totalStreams / 1000000).toFixed(1)}M`
+            <span className="text-lg sm:text-xl font-bold text-indigo-950 font-mono block mt-0.5">
+              {player.stats.totalStreams >= 1_000_000
+                ? `${(player.stats.totalStreams / 1_000_000).toFixed(1)}M`
                 : player.stats.totalStreams.toLocaleString()}
+            </span>
+            <span className="text-[10px] text-indigo-700 font-medium block">
+              Catálogo activo
+            </span>
+          </div>
+
+          {/* Tile 3: Hype Escénico */}
+          <div className="bg-orange-50/90 border border-orange-300/80 rounded-[12px] p-3 text-left shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-orange-800 flex items-center gap-1">
+              <Flame className="w-3 h-3 text-orange-600" />
+              Hype Escénico
+            </span>
+            <span className="text-lg sm:text-xl font-bold text-orange-950 font-mono block mt-0.5">
+              {player.stats.hype}%
+            </span>
+            <span className="text-[10px] text-orange-700 font-medium block">
+              {player.stats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
+            </span>
+          </div>
+
+          {/* Tile 4: Fama / Popularidad */}
+          <div className="bg-amber-50/90 border border-amber-300/80 rounded-[12px] p-3 text-left shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1">
+              <Crown className="w-3 h-3 text-amber-600" />
+              Popularidad
+            </span>
+            <span className="text-lg sm:text-xl font-bold text-amber-950 font-mono block mt-0.5">
+              {player.stats.popularity}/100
+            </span>
+            <span className="text-[10px] text-amber-700 font-medium block">
+              Fidelidad: {player.stats.fanbaseLoyalty}%
             </span>
           </div>
         </div>

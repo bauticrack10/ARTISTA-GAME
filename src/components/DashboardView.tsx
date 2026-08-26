@@ -77,11 +77,104 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     setIsAvatarModalOpen(false);
   };
 
+  const trendingGenre = world.genres && world.genres[player.mainGenreId]
+    ? world.genres[player.mainGenreId].name
+    : 'Trap & Urbano';
+
   return (
     <div
       className="space-y-6 pb-8 text-[#1c1c1c]"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
+      {/* ========================================================================= */}
+      {/* TOP LIVE CAREER PULSE & SCENE RADAR RIBBON (4 Colorful KPI Cards) */}
+      {/* ========================================================================= */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        {/* Card 1: Estatus de Carrera */}
+        <button
+          onClick={() => onNavigate('career')}
+          className="bg-[#fcfbf8] hover:bg-[#eceae4]/60 border border-amber-300/80 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-2xs group flex items-center justify-between"
+        >
+          <div>
+            <span className="text-[10px] font-bold tracking-wider uppercase text-amber-800 block">
+              Fase Actual
+            </span>
+            <span className="text-sm font-bold text-[#1c1c1c] block truncate mt-0.5">
+              {player.careerStage}
+            </span>
+            <span className="text-[10px] text-[#5f5f5d] truncate block">
+              {player.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1].name : 'Era Inicial'}
+            </span>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200 group-hover:scale-110 transition-transform">
+            🌟
+          </div>
+        </button>
+
+        {/* Card 2: Radar de Streaming */}
+        <button
+          onClick={() => onNavigate('charts')}
+          className="bg-[#fcfbf8] hover:bg-[#eceae4]/60 border border-emerald-300/80 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-2xs group flex items-center justify-between"
+        >
+          <div>
+            <span className="text-[10px] font-bold tracking-wider uppercase text-emerald-800 block">
+              Oyentes Mensuales
+            </span>
+            <span className="text-sm font-bold text-emerald-950 block font-mono mt-0.5">
+              {player.stats.monthlyListeners.toLocaleString()}
+            </span>
+            <span className="text-[10px] text-emerald-700 truncate block">
+              {playerSongs.length} temas lanzados
+            </span>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 border border-emerald-200 group-hover:scale-110 transition-transform">
+            🎧
+          </div>
+        </button>
+
+        {/* Card 3: Tendencia Sonora */}
+        <button
+          onClick={() => onNavigate('studio')}
+          className="bg-[#fcfbf8] hover:bg-[#eceae4]/60 border border-purple-300/80 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-2xs group flex items-center justify-between"
+        >
+          <div>
+            <span className="text-[10px] font-bold tracking-wider uppercase text-purple-800 block">
+              Tendencia Sonora
+            </span>
+            <span className="text-sm font-bold text-purple-950 block truncate mt-0.5">
+              {trendingGenre}
+            </span>
+            <span className="text-[10px] text-purple-700 truncate block">
+              Hype: {player.stats.hype}% en alza
+            </span>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center shrink-0 border border-purple-200 group-hover:scale-110 transition-transform">
+            🔥
+          </div>
+        </button>
+
+        {/* Card 4: Galas & Premios */}
+        <button
+          onClick={() => onNavigate('awards')}
+          className="bg-[#fcfbf8] hover:bg-[#eceae4]/60 border border-indigo-300/80 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-2xs group flex items-center justify-between"
+        >
+          <div>
+            <span className="text-[10px] font-bold tracking-wider uppercase text-indigo-800 block">
+              Gala Anual
+            </span>
+            <span className="text-sm font-bold text-indigo-950 block truncate mt-0.5">
+              {player.awardsWon.length > 0 ? `${player.awardsWon.length} Galardones` : 'Próxima Temporada'}
+            </span>
+            <span className="text-[10px] text-indigo-700 truncate block">
+              Reputación: {player.stats.reputation}/100
+            </span>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-800 flex items-center justify-center shrink-0 border border-indigo-200 group-hover:scale-110 transition-transform">
+            🏆
+          </div>
+        </button>
+      </div>
+
       {/* 2-Column Responsive Layout: Main Area (8 cols) vs News Sidebar (4 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ========================================================================= */}
