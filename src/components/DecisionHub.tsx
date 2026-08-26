@@ -13,10 +13,13 @@ import {
   Sliders,
   BatteryCharging,
   Layers,
-  Clock
+  DollarSign,
+  CheckCircle2,
+  AlertTriangle,
+  Info
 } from 'lucide-react';
 import { playSound } from '../utils/audioSystem';
-
+import { useTourRequirements } from '../hooks/useTourRequirements';
 
 export interface DecisionHubProps {
   player: Artist;
@@ -35,7 +38,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   onRest,
   className = ''
 }) => {
-  const isTourReady = isTourReadyProp !== undefined ? isTourReadyProp : player.stats.energy >= 85;
+  const tourGates = useTourRequirements(player, world);
+  const isTourReady = isTourReadyProp !== undefined ? isTourReadyProp : tourGates.canTour;
   const ownedUpgradesCount = player.lifestyleUpgrades?.length || 0;
   const totalLifestyleItemsCount = LIFESTYLE_ITEMS.length;
 
@@ -43,10 +47,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   const singlesThisYear = React.useMemo(() => {
     if (world && world.songs) {
       const playerSongs = (Object.values(world.songs) as Song[]).filter(
-        s => s.artistId === player.id
+        (s) => s.artistId === player.id
       );
       return playerSongs.filter(
-        s => s.releaseYear === world.currentYear && s.isSingle
+        (s) => s.releaseYear === world.currentYear && s.isSingle
       ).length;
     }
     return 0;
@@ -57,7 +61,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
     if (!player.lifestyleUpgrades || player.lifestyleUpgrades.length === 0) {
       return 'Sin mejoras activas';
     }
-    const itemMap = new Map(LIFESTYLE_ITEMS.map(i => [i.id, i]));
+    const itemMap = new Map(LIFESTYLE_ITEMS.map((i) => [i.id, i]));
     let qualityBonus = 0;
     let passiveEnergy = 0;
     let tourFatigueReduction = 0;
@@ -77,11 +81,6 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
     if (tourFatigueReduction > 0) buffs.push(`-${Math.round(tourFatigueReduction * 100)}% Fatiga`);
     return buffs.length > 0 ? buffs.join(' • ') : `${player.lifestyleUpgrades.length} activas`;
   }, [player.lifestyleUpgrades]);
-
-  const buttonInsetShadow = {
-    boxShadow:
-      'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-  };
 
   return (
     <div
@@ -216,7 +215,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         </div>
 
         {/* ========================================================================= */}
-        {/* TARJETA 3: GIRAS & SHOWS */}
+        {/* TARJETA 3: GIRAS & SHOWS (Con Compuertas de Gira & Tooltip Explicativo) */}
         {/* ========================================================================= */}
         <div
           className={`group relative rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-md flex flex-col justify-between h-full space-y-4 border ${
@@ -243,42 +242,78 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                     : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
                 }`}
+                title={tourGates.tooltipText}
               >
-                {isTourReady ? 'Disponible (≥85% Energía)' : 'Bloqueado (<85% Energía)'}
+                {isTourReady ? 'Compuertas Listas (3/3)' : 'Bloqueado (Requisitos)'}
               </span>
             </div>
 
             {/* Title & Description */}
             <div>
-              <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
-                Giras & Shows
+              <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors flex items-center justify-between">
+                <span>Giras & Shows</span>
+                <span
+                  className="cursor-help text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
+                  title={tourGates.tooltipText}
+                >
+                  <Info className="w-3.5 h-3.5" />
+                </span>
               </h3>
               <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
                 {isTourReady
                   ? 'Organizar fechas, llenar estadios y recaudar ingresos millonarios de taquilla.'
-                  : 'Requiere al menos 85% de energía vital para soportar el desgaste físico. ¡Tomá descanso!'}
+                  : 'Requiere catálogo (≥2 singles o 1 EP), audiencia (≥1.000 oyentes) y energía (≥85%).'}
               </p>
             </div>
 
-            {/* Integrated Live Status Block */}
+            {/* Integrated Live Status Block (Checklist de las 3 Compuertas) */}
             <div
               className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1.5 transition-colors"
+              title={tourGates.tooltipText}
             >
+              {/* Gate 1: Catálogo */}
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-[#94A3B8] flex items-center gap-1">
-                  <Zap className={`w-3 h-3 ${isTourReady ? 'text-emerald-400' : 'text-rose-400'}`} />
-                  Energía del Artista:
+                  {tourGates.hasCatalog ? (
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  ) : (
+                    <AlertTriangle className="w-3 h-3 text-rose-400" />
+                  )}
+                  Catálogo (≥2S / 1EP):
                 </span>
-                <span className={`font-bold ${isTourReady ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {player.stats.energy}/100 {isTourReady ? '(Apto)' : '(Baja)'}
+                <span className={`font-semibold ${tourGates.hasCatalog ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  {tourGates.songsCount}S • {tourGates.albumsCount}EP
                 </span>
               </div>
+
+              {/* Gate 2: Oyentes */}
               <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
                 <span className="text-[#94A3B8] flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-[#F59E0B]" />
-                  Requisito Gira:
+                  {tourGates.hasAudience ? (
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  ) : (
+                    <AlertTriangle className="w-3 h-3 text-rose-400" />
+                  )}
+                  Oyentes (≥1.000):
                 </span>
-                <span className="font-semibold text-[#F8FAFC]">Mínimo ≥85% Vitalidad</span>
+                <span className={`font-semibold ${tourGates.hasAudience ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  {player.stats.monthlyListeners.toLocaleString()}
+                </span>
+              </div>
+
+              {/* Gate 3: Energía */}
+              <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
+                <span className="text-[#94A3B8] flex items-center gap-1">
+                  {tourGates.hasEnergy ? (
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  ) : (
+                    <AlertTriangle className="w-3 h-3 text-rose-400" />
+                  )}
+                  Energía (≥85%):
+                </span>
+                <span className={`font-semibold ${tourGates.hasEnergy ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  {player.stats.energy} / 100
+                </span>
               </div>
             </div>
           </div>
@@ -292,15 +327,15 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               }
             }}
             disabled={!isTourReady}
-            className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all ${
               isTourReady
-                ? 'bg-[#16181F] hover:bg-[#F59E0B] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#F59E0B] shadow-xs group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                ? 'bg-[#16181F] hover:bg-[#F59E0B] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#F59E0B] shadow-xs group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] cursor-pointer'
                 : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-60'
             }`}
-            title={isTourReady ? 'Armar y calendarizar gira musical' : 'Energía insuficiente para salir de gira (requiere ≥85%)'}
+            title={tourGates.tooltipText}
           >
             <Ticket className={`w-3.5 h-3.5 ${isTourReady ? 'text-[#F59E0B] group-hover:text-white' : ''}`} />
-            <span>Armar Gira</span>
+            <span>{isTourReady ? 'Armar Gira' : 'Gira Bloqueada'}</span>
             <ArrowRight
               className={`w-3.5 h-3.5 ml-auto transition-all ${
                 isTourReady ? 'opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5' : 'opacity-30'

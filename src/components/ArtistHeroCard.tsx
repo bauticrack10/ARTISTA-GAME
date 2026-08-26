@@ -300,7 +300,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
                 <Award className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>
-                  Legado: <strong className="font-semibold text-[#FBBF24]">{player.legacyScore}/100</strong>
+                  Legado: <strong className="font-semibold text-[#FBBF24]">{player.legacyScore} / 100</strong>
                 </span>
               </span>
             </div>
@@ -344,7 +344,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               Hype Escénico
             </span>
             <span className="text-lg sm:text-xl font-bold text-orange-400 font-mono block mt-0.5">
-              {player.stats.hype}/100
+              {player.stats.hype} / 100
             </span>
             <span className="text-[10px] text-orange-500/80 font-medium block">
               {player.stats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
@@ -358,10 +358,10 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               Popularidad
             </span>
             <span className="text-lg sm:text-xl font-bold text-amber-400 font-mono block mt-0.5">
-              {player.stats.popularity}/100
+              {player.stats.popularity} / 100
             </span>
             <span className="text-[10px] text-amber-500/80 font-medium block">
-              Fidelidad: {player.stats.fanbaseLoyalty}%
+              Fidelidad: {player.stats.fanbaseLoyalty} / 100
             </span>
           </div>
         </div>

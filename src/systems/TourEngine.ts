@@ -1,16 +1,39 @@
-import { Artist, Tour, TourTier, TourStop } from '../types';
+import { Artist, Tour, TourTier, TourStop, WorldState } from '../types';
 import { CITIES_BY_REGION } from '../data/proceduralNames';
 
 export const MIN_TOUR_ENERGY = 85;
+export const MIN_TOUR_LISTENERS = 1000;
+export const MIN_TOUR_SONGS = 2;
 
 export class TourEngine {
-  static canStartTour(artist: Artist): { allowed: boolean; reason?: string } {
-    if (artist.stats.energy < MIN_TOUR_ENERGY) {
+  static canStartTour(
+    artist: Artist,
+    songsOrWorld: number | WorldState = 0,
+    albumsCount: number = 0
+  ): { allowed: boolean; reason?: string } {
+    let songs = 0;
+    let albums = 0;
+
+    if (typeof songsOrWorld === 'object' && songsOrWorld !== null && 'songs' in songsOrWorld) {
+      const world = songsOrWorld as WorldState;
+      songs = Object.values(world.songs || {}).filter(s => s.artistId === artist.id).length;
+      albums = Object.values(world.albums || {}).filter(a => a.artistId === artist.id).length;
+    } else if (typeof songsOrWorld === 'number') {
+      songs = songsOrWorld;
+      albums = albumsCount;
+    }
+
+    const hasCatalog = songs >= MIN_TOUR_SONGS || albums >= 1;
+    const hasAudience = artist.stats.monthlyListeners >= MIN_TOUR_LISTENERS;
+    const hasEnergy = artist.stats.energy >= MIN_TOUR_ENERGY;
+
+    if (!hasCatalog || !hasAudience || !hasEnergy) {
       return {
         allowed: false,
-        reason: `Tu artista tiene ${artist.stats.energy}% de energía. Se requiere un mínimo estricto de ${MIN_TOUR_ENERGY}% de energía para organizar y salir de gira debido al desgaste de viajes y conciertos continuos.`
+        reason: 'Necesitas catálogo y fans para vender entradas (mín. 2 temas o 1 EP, ≥1.000 oyentes y ≥85% energía).'
       };
     }
+
     return { allowed: true };
   }
 
@@ -32,11 +55,13 @@ export class TourEngine {
     tier: TourTier,
     tourName: string,
     currentYear: number,
-    currentMonth: number
+    currentMonth: number,
+    songsOrWorld: number | WorldState = 2,
+    albumsCount: number = 0
   ): Tour {
-    const validation = this.canStartTour(artist);
+    const validation = this.canStartTour(artist, songsOrWorld, albumsCount);
     if (!validation.allowed) {
-      throw new Error(validation.reason || `Energía insuficiente para iniciar una gira (mínimo ${MIN_TOUR_ENERGY}%).`);
+      throw new Error(validation.reason || 'Necesitas catálogo y fans para vender entradas (mín. 2 temas o 1 EP, ≥1.000 oyentes y ≥85% energía).');
     }
     const stops: TourStop[] = [];
     let ticketPrice = 25;

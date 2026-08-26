@@ -363,11 +363,24 @@ export class GameEngine {
 
   public static readonly MAX_SINGLES_PER_YEAR = 5;
 
-  public getPlayerSinglesReleasedThisYear(): number {
+  public getPlayerSinglesReleasedThisYear(targetYear?: number): number {
     const player = this.getPlayer();
+    if (!player) return 0;
+    const yearToCheck = targetYear !== undefined ? targetYear : this.world.currentYear;
     return Object.values(this.world.songs).filter(
-      s => s.artistId === player.id && s.releaseYear === this.world.currentYear && s.isSingle
+      s => s.artistId === player.id && s.releaseYear === yearToCheck && Boolean(s.isSingle)
     ).length;
+  }
+
+  public getSinglesQuotaInfo(): { releasedCount: number; maxLimit: number; remainingQuota: number; isLimitReached: boolean } {
+    const releasedCount = this.getPlayerSinglesReleasedThisYear();
+    const maxLimit = GameEngine.MAX_SINGLES_PER_YEAR;
+    return {
+      releasedCount,
+      maxLimit,
+      remainingQuota: Math.max(0, maxLimit - releasedCount),
+      isLimitReached: releasedCount >= maxLimit
+    };
   }
 
   // --- ACTIONS ---
@@ -390,7 +403,7 @@ export class GameEngine {
     const player = this.getPlayer();
     const currentYearSingles = this.getPlayerSinglesReleasedThisYear();
     if (currentYearSingles >= GameEngine.MAX_SINGLES_PER_YEAR) {
-      throw new Error(`Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año).`);
+      throw new Error(`Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año). El cupo se reiniciará en enero (Semestre 1).`);
     }
 
     const songId = `song_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
@@ -574,7 +587,6 @@ export class GameEngine {
 
     rawNewTitles.forEach((st, idx) => {
       const sId = `song_alb_${player.id}_${this.world.currentYear}_${idx}_${Math.floor(Math.random() * 1000)}`;
-      const isLeadSingle = idx === 0 && includedIds.length === 0;
       const song: Song = {
         id: sId,
         title: st,
@@ -595,7 +607,7 @@ export class GameEngine {
         peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
         weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
         longevityCurve: idx === 0 ? 'explosive_drop' : idx === 1 ? 'instant_classic' : 'steady',
-        isSingle: isLeadSingle,
+        isSingle: false,
         albumId,
         receptionRating: Math.floor(avgQuality / 20),
         isClassic: false,
@@ -678,12 +690,19 @@ export class GameEngine {
 
   public bookTour(tier: TourTier, name: string): Tour {
     const player = this.getPlayer();
-    const tourValidation = TourEngine.canStartTour(player);
+    const tourValidation = TourEngine.canStartTour(player, this.world);
     if (!tourValidation.allowed) {
-      throw new Error(tourValidation.reason || 'Energía insuficiente para salir de gira (mínimo 85%).');
+      throw new Error(tourValidation.reason || 'Necesitas catálogo y fans para vender entradas (mín. 2 temas o 1 EP, ≥1.000 oyentes y ≥85% energía).');
     }
 
-    const tour = TourEngine.generateTourPlan(player, tier, name, this.world.currentYear, this.world.currentMonth);
+    const tour = TourEngine.generateTourPlan(
+      player,
+      tier,
+      name,
+      this.world.currentYear,
+      this.world.currentMonth,
+      this.world
+    );
     const lifestyleBuffs = this.getPlayerLifestyleBuffs();
     const reducedFatigue = Math.max(5, Math.floor(tour.energyFatigue * (1 - lifestyleBuffs.tourFatigueReduction)));
 
@@ -797,27 +816,31 @@ export class GameEngine {
 
   public takeVacation(cost: number = 400) {
     const player = this.getPlayer();
+    if (!player) return;
+
     // 1. Descontar costo módico de fondos si tiene saldo disponible
-    const actualCost = Math.min(player.stats.funds, cost);
-    player.stats.funds = Math.max(0, player.stats.funds - actualCost);
+    const actualCost = Math.min(Math.max(0, player.stats.funds), cost);
+    if (actualCost > 0) {
+      player.stats.funds -= actualCost;
+    }
 
     // 2. Recuperar energía vital (+50 hasta un tope de 100)
     player.stats.energy = Math.min(100, player.stats.energy + 50);
 
-    // 3. Registrar noticia de bienestar
+    // 3. Registrar noticia positiva de bienestar
     this.world.news.unshift({
       id: `news_vacation_${Date.now()}`,
-      headline: `Bienestar & Pausa: ${player.name} realiza un retiro de descanso`,
-      body: `El artista recupera vitalidad (+50% de energía) y renueva su enfoque creativo para las próximas producciones sin alterar el calendario de la temporada.`,
+      headline: `Bienestar & Salud: ${player.name} prioriza su descanso`,
+      body: `${player.name} dedicó tiempo y recursos${actualCost > 0 ? ` (${formatMoney(actualCost)})` : ''} a un retiro de bienestar físico y mental, recargando vitalidad (+50%) para afrontar sus próximos proyectos artísticos con máxima energía.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'culture',
       relatedArtistIds: [player.id],
       sentiment: 'positive',
-      importance: 2
+      importance: 3
     });
 
-    // 4. Notificar actualización de estado sin forzar avance de semestre duplicado
+    // 4. Sincronizar y notificar listeners del estado del juego
     this.notify();
   }
 
@@ -1016,12 +1039,9 @@ export class GameEngine {
       const lifestyleBuffs = this.getPlayerLifestyleBuffs();
 
       // 1. Natural monthly energy recovery (plus lifestyle passive bonus) & hype decay
-      if (!isVacation) {
-        player.stats.energy = Math.min(100, player.stats.energy + 3 + lifestyleBuffs.passiveEnergyPerMonth);
-      } else {
-        player.stats.energy = Math.min(100, player.stats.energy + lifestyleBuffs.passiveEnergyPerMonth);
-      }
-      const decayFactor = Math.min(0.99, 0.95 + lifestyleBuffs.hypeDecayReduction);
+      player.stats.energy = Math.min(100, player.stats.energy + 3 + lifestyleBuffs.passiveEnergyPerMonth);
+      // Calibración suave del decaimiento de Hype (~8% semestral en vez de colapso rápido)
+      const decayFactor = Math.min(0.995, 0.985 + lifestyleBuffs.hypeDecayReduction);
       player.stats.hype = Math.max(10, Math.floor(player.stats.hype * decayFactor));
 
       // 2. World Simulation (NPC releases, autonomous evolution)

@@ -6,8 +6,6 @@ import { NewsSidebar } from './dashboard/NewsSidebar';
 import { ArtistAttributesPanel } from './dashboard/ArtistAttributesPanel';
 import { DecisionHub } from './dashboard/DecisionHub';
 import { ActiveCatalogCard } from './dashboard/ActiveCatalogCard';
-import { formatListeners } from '../utils/formatters';
-
 // Re-export modular components for flexible consumption
 export { ArtistHeroCard } from './dashboard/ArtistHeroCard';
 export { NewsSidebar } from './dashboard/NewsSidebar';
@@ -48,14 +46,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [selectedColor, setSelectedColor] = useState(player.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const playerSongs = (Object.values(world.songs) as Song[]).filter(s => s.artistId === player.id);
-  const playerAlbums = (Object.values(world.albums) as Album[]).filter(a => a.artistId === player.id);
+  const playerSongs = (Object.values(world.songs || {}) as Song[]).filter(s => s.artistId === player.id);
+  const playerAlbums = (Object.values(world.albums || {}) as Album[]).filter(a => a.artistId === player.id);
 
   const topSongs = [...playerSongs]
-    .sort((a, b) => b.streamsLastMonth - a.streamsLastMonth)
+    .sort((a, b) => (b.streamsLastMonth || 0) - (a.streamsLastMonth || 0))
     .slice(0, 4);
 
-  const isTourReady = player.stats.energy >= 85;
+  const hasCatalog = playerSongs.length >= 2 || playerAlbums.length >= 1;
+  const hasAudience = (player.stats?.monthlyListeners || 0) >= 1000;
+  const hasEnergy = (player.stats?.energy || 0) >= 85;
+  const isTourReady = hasCatalog && hasAudience && hasEnergy;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,104 +79,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     setIsAvatarModalOpen(false);
   };
 
-  const trendingGenre = world.genres && world.genres[player.mainGenreId]
-    ? world.genres[player.mainGenreId].name
-    : 'Trap & Urbano';
-
   return (
     <div
       className="space-y-6 pb-8 text-[#F8FAFC]"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
-      {/* ========================================================================= */}
-      {/* TOP LIVE CAREER PULSE & SCENE RADAR RIBBON (4 Colorful KPI Cards) */}
-      {/* ========================================================================= */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-        {/* Card 1: Estatus de Carrera */}
-        <button
-          onClick={() => onNavigate('career')}
-          className="bg-[#16181F] hover:bg-[#1C1F28] border border-[#F59E0B]/30 hover:border-[#F59E0B]/60 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-md group flex items-center justify-between"
-        >
-          <div>
-            <span className="text-[10px] font-bold tracking-wider uppercase text-[#F59E0B] block">
-              Fase Actual
-            </span>
-            <span className="text-sm font-bold text-[#F8FAFC] block truncate mt-0.5">
-              {player.careerStage}
-            </span>
-            <span className="text-[10px] text-[#94A3B8] truncate block">
-              {player.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1].name : 'Era Inicial'}
-            </span>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-[#F59E0B]/15 text-[#FBBF24] flex items-center justify-center shrink-0 border border-[#F59E0B]/30 group-hover:scale-110 transition-transform">
-            🌟
-          </div>
-        </button>
-
-        {/* Card 2: Radar de Streaming */}
-        <button
-          onClick={() => onNavigate('charts')}
-          className="bg-[#16181F] hover:bg-[#1C1F28] border border-emerald-500/30 hover:border-emerald-500/60 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-md group flex items-center justify-between"
-        >
-          <div>
-            <span className="text-[10px] font-bold tracking-wider uppercase text-emerald-400 block">
-              Oyentes Mensuales
-            </span>
-            <span className="text-sm font-bold text-emerald-400 block font-mono mt-0.5">
-              {formatListeners(player.stats.monthlyListeners)}
-            </span>
-            <span className="text-[10px] text-emerald-500/80 truncate block">
-              {playerSongs.length} temas lanzados
-            </span>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:scale-110 transition-transform">
-            🎧
-          </div>
-        </button>
-
-        {/* Card 3: Tendencia Sonora */}
-        <button
-          onClick={() => onNavigate('studio')}
-          className="bg-[#16181F] hover:bg-[#1C1F28] border border-[#8B5CF6]/30 hover:border-[#8B5CF6]/60 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-md group flex items-center justify-between"
-        >
-          <div>
-            <span className="text-[10px] font-bold tracking-wider uppercase text-[#C084FC] block">
-              Tendencia Sonora
-            </span>
-            <span className="text-sm font-bold text-[#F8FAFC] block truncate mt-0.5">
-              {trendingGenre}
-            </span>
-            <span className="text-[10px] text-[#C084FC]/80 truncate block">
-              Hype: {player.stats.hype}% en alza
-            </span>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-[#8B5CF6]/15 text-[#C084FC] flex items-center justify-center shrink-0 border border-[#8B5CF6]/30 group-hover:scale-110 transition-transform">
-            🔥
-          </div>
-        </button>
-
-        {/* Card 4: Galas & Premios */}
-        <button
-          onClick={() => onNavigate('awards')}
-          className="bg-[#16181F] hover:bg-[#1C1F28] border border-[#06B6D4]/30 hover:border-[#06B6D4]/60 rounded-[12px] p-3 text-left transition-all hover:scale-[1.01] cursor-pointer shadow-md group flex items-center justify-between"
-        >
-          <div>
-            <span className="text-[10px] font-bold tracking-wider uppercase text-[#06B6D4] block">
-              Gala Anual
-            </span>
-            <span className="text-sm font-bold text-[#F8FAFC] block truncate mt-0.5">
-              {player.awardsWon.length > 0 ? `${player.awardsWon.length} Galardones` : 'Próxima Temporada'}
-            </span>
-            <span className="text-[10px] text-[#06B6D4]/80 truncate block">
-              Reputación: {player.stats.reputation}/100
-            </span>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-[#06B6D4]/15 text-[#06B6D4] flex items-center justify-center shrink-0 border border-[#06B6D4]/30 group-hover:scale-110 transition-transform">
-            🏆
-          </div>
-        </button>
-      </div>
-
       {/* 2-Column Responsive Layout: Main Area (8 cols) vs News Sidebar (4 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ========================================================================= */}

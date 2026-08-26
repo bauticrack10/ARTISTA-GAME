@@ -647,13 +647,13 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                 <div className="p-3 bg-[#16181F] rounded-[6px] border border-[#2A2E3D]">
                   <span className="text-[#94A3B8] block">Popularidad Mínima:</span>
                   <span className={`font-semibold text-sm ${player.stats.popularity >= 40 ? 'text-[#10B981]' : 'text-amber-400'}`}>
-                    40% (Tenés {player.stats.popularity}%)
+                    40 / 100 (Tenés {player.stats.popularity} / 100)
                   </span>
                 </div>
                 <div className="p-3 bg-[#16181F] rounded-[6px] border border-[#2A2E3D]">
                   <span className="text-[#94A3B8] block">Reputación en la Escena:</span>
                   <span className={`font-semibold text-sm ${player.stats.reputation >= 40 ? 'text-[#10B981]' : 'text-amber-400'}`}>
-                    40% (Tenés {player.stats.reputation}%)
+                    40 / 100 (Tenés {player.stats.reputation} / 100)
                   </span>
                 </div>
               </div>

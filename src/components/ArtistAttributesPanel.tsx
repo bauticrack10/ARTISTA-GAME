@@ -267,7 +267,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="text-2xl font-bold text-[#F8FAFC] tracking-tight font-mono tabular-nums">
                     {metric.value}
-                    <span className="text-xs text-[#94A3B8] font-normal font-sans">/100</span>
+                    <span className="text-xs text-[#94A3B8] font-normal font-sans"> / 100</span>
                   </p>
 
                   {/* 3. Claridad en Requisitos y Badges para Energía Vital */}
@@ -336,7 +336,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                     <span className="font-bold text-[#F8FAFC]">{trait.label}</span>
                   </div>
                   <span className="font-mono tabular-nums text-[#F8FAFC] font-bold text-xs bg-[#16181F] border border-[#2A2E3D] px-2 py-0.5 rounded-[4px]">
-                    {trait.val}<span className="text-[10px] text-[#94A3B8] font-normal font-sans">/100</span>
+                    {trait.val}<span className="text-[10px] text-[#94A3B8] font-normal font-sans"> / 100</span>
                   </span>
                 </div>
 

@@ -19,13 +19,11 @@ import {
   TrendingUp,
   Crown,
   Volume2,
-  VolumeX,
-  Headphones
+  VolumeX
 } from 'lucide-react';
 import {
   formatMoney,
   formatFans,
-  formatListeners,
   cleanParentheses
 } from '../utils/formatters';
 
@@ -195,20 +193,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Derecha: Píldoras de recursos indispensables y métricas con tooltips y etiquetas explícitas */}
+        {/* Derecha: Píldoras de recursos indispensables (Fondos, Fans, Energía) */}
         <div className="flex items-center gap-2 text-xs shrink-0">
-          
-          {/* Oyentes Mensuales */}
-          <div
-            className="hidden xl:flex items-center gap-1.5 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
-            title={`Oyentes Mensuales en Plataformas: ${player.stats.monthlyListeners.toLocaleString()}`}
-          >
-            <Headphones className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="text-[11px] font-bold text-emerald-400 font-mono">
-              {formatListeners(player.stats.monthlyListeners)}
-            </span>
-          </div>
-
           {/* Dinero / Fondos */}
           <div
             className="flex items-center gap-1.5 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
