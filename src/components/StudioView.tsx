@@ -53,6 +53,7 @@ import {
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
 import { playSound } from '../utils/audioSystem';
+import { formatMoney, cleanCountTag, cleanQuotes } from '../utils/formatters';
 
 export interface VideoConceptOption {
   id: MusicVideoConcept;
@@ -1055,7 +1056,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC]">
-                    Incluir Singles Previos ({includedSingleIds.length} Seleccionados)
+                    Incluir Singles Previos ({cleanCountTag(includedSingleIds.length, availablePreviousSingles.length, 'seleccionados')})
                   </label>
                   <span className="text-[11px] text-[#94A3B8]">
                     Aportan streams y ventas iniciales
@@ -1104,7 +1105,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC]">
-                    Tracklist Inédito ({totalAlbumTracksCount} / min {minTracksRequired} canciones)
+                    Tracklist Inédito ({totalAlbumTracksCount}/{minTracksRequired} canciones mínimas)
                   </label>
                   <button
                     type="button"

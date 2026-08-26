@@ -19,8 +19,15 @@ import {
   TrendingUp,
   Crown,
   Volume2,
-  VolumeX
+  VolumeX,
+  Headphones
 } from 'lucide-react';
+import {
+  formatMoney,
+  formatFans,
+  formatListeners,
+  cleanParentheses
+} from '../utils/formatters';
 
 interface NavbarProps {
   player: Artist;
@@ -63,21 +70,21 @@ export const Navbar: React.FC<NavbarProps> = ({
   const getEnergyBadge = () => {
     if (player.stats.energy >= 85) {
       return {
-        bg: 'bg-emerald-50 border-emerald-200 text-emerald-950',
-        icon: 'text-emerald-600',
-        bar: 'bg-emerald-500'
+        bg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+        icon: 'text-emerald-400',
+        bar: 'bg-emerald-400'
       };
     } else if (player.stats.energy >= 40) {
       return {
-        bg: 'bg-[#16181F] text-amber-400 border-amber-500/30',
+        bg: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
         icon: 'text-amber-400',
-        bar: 'bg-amber-500'
+        bar: 'bg-amber-400'
       };
     }
     return {
-      bg: 'bg-[#16181F] text-emerald-400 border-emerald-500/30',
-      icon: 'text-emerald-400',
-      bar: 'bg-emerald-500'
+      bg: 'bg-rose-500/10 border-rose-500/30 text-rose-400',
+      icon: 'text-rose-400',
+      bar: 'bg-rose-400'
     };
   };
 
@@ -88,10 +95,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       className="sticky top-0 z-40 bg-[#0B0C10]/95 backdrop-blur-md border-b border-[#2A2E3D] text-[#F8FAFC]"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
-      {/* Fila 1: Logo + Selector de Tiempo + Botonera de Avance (CTA Principal) + Píldoras de Recursos Vitales */}
+      {/* Fila 1: Logo + Tiempo actual + Botonera de Avance (CTA Principal) + Métricas Normalizadas */}
       <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3 sm:gap-4 border-b border-[#2A2E3D] overflow-x-auto scrollbar-none">
         
-        {/* Izquierda: Logo ("EL ARTISTA") con enlace al Menú Principal */}
+        {/* Izquierda: Logo ("EL ARTISTA") */}
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => {
@@ -120,12 +127,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
 
-        {/* Centro: Indicador de Tiempo actual (`Enero 2026 • 1er Semestre`) + Botonera de avance integrada */}
+        {/* Centro: Indicador de Tiempo actual + Botonera de avance */}
         <div className="flex items-center gap-2 shrink-0">
           {/* Selector de Tiempo Condensado */}
           <div
             className="flex items-center gap-2 bg-[#16181F] px-3 py-1.5 rounded-[8px] border border-[#2A2E3D] text-xs shadow-xs whitespace-nowrap"
-            title={`Fecha actual: ${monthName} ${world.currentYear} (${semesterShort})`}
+            title={`Fecha actual en la industria: ${monthName} ${world.currentYear} (${semesterShort})`}
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 ring-2 ring-emerald-400/30" />
             <span className="font-bold text-[#F8FAFC]">
@@ -181,40 +188,62 @@ export const Navbar: React.FC<NavbarProps> = ({
               title={`Avanzar ciclo de ${cycleMonths === 6 ? '6 meses' : '1 año'} y simular lanzamientos, charts y eventos`}
             >
               <Play className="w-3.5 h-3.5 fill-white text-white group-hover:scale-110 transition-transform shrink-0" />
-              <span className="tracking-tight">
-                Avanzar Ciclo (+{cycleMonths === 6 ? '6M' : '1Y'})
+              <span className="tracking-tight font-semibold">
+                Avanzar Ciclo ({cycleMonths === 6 ? '+6M' : '+1Y'})
               </span>
             </button>
           </div>
         </div>
 
-        {/* Derecha: Píldoras compactas de recursos indispensables (Oyentes, Energía, Fondos, Fans, Avatar, Audio FX Toggle) */}
+        {/* Derecha: Píldoras de recursos indispensables y métricas con tooltips y etiquetas explícitas */}
         <div className="flex items-center gap-2 text-xs shrink-0">
-          {/* Oyentes Mensuales Pill */}
+          
+          {/* Oyentes Mensuales */}
           <div
             className="hidden xl:flex items-center gap-1.5 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
             title={`Oyentes Mensuales en Plataformas: ${player.stats.monthlyListeners.toLocaleString()}`}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            <Headphones className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             <span className="text-[11px] font-bold text-emerald-400 font-mono">
-              {player.stats.monthlyListeners >= 1_000_000
-                ? `${(player.stats.monthlyListeners / 1_000_000).toFixed(1)}M`
-                : player.stats.monthlyListeners >= 1_000
-                ? `${(player.stats.monthlyListeners / 1_000).toFixed(0)}K`
-                : player.stats.monthlyListeners}{' '}
-              <span className="text-emerald-500/80 font-sans text-[10px]">oyentes</span>
+              {formatListeners(player.stats.monthlyListeners)}
+            </span>
+          </div>
+
+          {/* Dinero / Fondos */}
+          <div
+            className="flex items-center gap-1.5 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
+            title={`Fondos Monetarios Disponibles: ${formatMoney(player.stats.funds)}`}
+          >
+            <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span className="font-bold text-emerald-400 font-mono">
+              {formatMoney(player.stats.funds)}
+            </span>
+            <span className="text-[10px] text-emerald-500/80 font-sans hidden lg:inline">
+              Fondos
+            </span>
+          </div>
+
+          {/* Comunidad de Fans (formateado explícitamente como "4.15k Fans" / "150 Fans") */}
+          <div
+            className="flex items-center gap-1.5 bg-[#16181F] border border-[#8B5CF6]/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-[#C084FC]"
+            title={`Comunidad de Fans Activos: ${player.stats.fansCount.toLocaleString()} fans`}
+          >
+            <Users className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
+            <span className="font-bold text-[#C084FC] font-mono">
+              {formatFans(player.stats.fansCount)}
             </span>
           </div>
 
           {/* Energía Vital con micro-barra */}
           <div
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] border text-xs shadow-xs ${energyStyle.bg}`}
-            title={`Energía Vital: ${player.stats.energy}% ${
-              player.stats.energy < 85 ? '(Giras Bloqueadas <85%)' : '(Giras Habilitadas)'
+            title={`Energía Vital del Artista: ${player.stats.energy}% ${
+              player.stats.energy < 85 ? '(Giras Bloqueadas: Requiere ≥85%)' : '(Giras Habilitadas)'
             }`}
           >
             <Zap className={`w-3.5 h-3.5 shrink-0 ${energyStyle.icon}`} />
             <span className="font-bold font-mono text-[#F8FAFC]">{player.stats.energy}%</span>
+            <span className="text-[10px] text-[#94A3B8] font-sans hidden sm:inline">Energía</span>
             <div className="w-5 sm:w-6 h-1.5 bg-white/10 rounded-full overflow-hidden shrink-0 hidden sm:block">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${energyStyle.bar}`}
@@ -223,42 +252,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Dinero / Fondos */}
-          <div
-            className="flex items-center gap-1.5 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
-            title={`Fondos Monetarios Disponibles: $${player.stats.funds.toLocaleString()}`}
-          >
-            <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="font-bold text-emerald-400 font-mono">
-              ${player.stats.funds.toLocaleString()}
-            </span>
-          </div>
-
-          {/* Seguidores / Fans */}
-          <div
-            className="flex items-center gap-1.5 bg-[#16181F] border border-[#8B5CF6]/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-[#C084FC]"
-            title={`Comunidad de Fans Activos: ${player.stats.fansCount.toLocaleString()}`}
-          >
-            <Users className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
-            <span className="font-bold text-[#C084FC] font-mono">
-              {player.stats.fansCount >= 1_000_000
-                ? `${(player.stats.fansCount / 1_000_000).toFixed(1)}M`
-                : player.stats.fansCount.toLocaleString()}
-            </span>
-          </div>
-
           {/* Badge Prodigio */}
           {player.isProdigy && (
             <div
               className="hidden 2xl:flex items-center gap-1 bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/40 px-2 py-1 rounded-[8px] text-[11px] font-bold shadow-xs"
-              title="Rasgo: Promesa / Prodigio • x3 Ganancia permanente"
+              title="Rasgo: Promesa / Prodigio • x3 Ganancia permanente en progreso"
             >
               <Crown className="w-3 h-3 text-[#F59E0B] fill-current shrink-0" />
               <span>x3 PRODIGIO</span>
             </div>
           )}
 
-          {/* Control de Audio / SFX Engine con Visualizador Equalizer */}
+          {/* Control de Audio / SFX Engine */}
           <div className="flex items-center gap-1.5 bg-[#16181F] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 p-1 rounded-[8px] transition-colors">
             <button
               id="btn-toggle-audio-sfx"
@@ -282,7 +287,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Audio Reactive Equalizer Bars */}
             <div className="px-1 py-0.5 flex items-center" title={soundEnabled ? 'Equalizador de audio' : 'Audio Silenciado'}>
-              <AudioEqualizer size="xs" barsCount={4} colorScheme="synthwave" />
+              <AudioEqualizer isPlaying={soundEnabled} />
             </div>
           </div>
 
@@ -290,7 +295,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={() => handleTabClick('dashboard')}
             className="flex items-center gap-2 pl-1 pr-2 sm:pr-2.5 py-1 rounded-[8px] bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 text-xs transition-colors cursor-pointer shrink-0 shadow-xs"
-            title={`Perfil de ${player.name} • Ir a Inicio`}
+            title={`Perfil de ${player.name} • Ir al Inicio`}
           >
             {player.avatarUrl ? (
               <img
@@ -314,7 +319,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Fila 2: Menú de Navegación Horizontal con Scroll Suave */}
+      {/* Fila 2: Menú de Navegación Horizontal */}
       <nav className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 overflow-x-auto py-2 scrollbar-none text-xs font-normal scroll-smooth">
         {[
           { id: 'dashboard', label: 'Inicio', icon: Compass, color: 'text-amber-400' },

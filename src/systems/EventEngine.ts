@@ -2,6 +2,7 @@ import { EventDefinition, EventContext, EventOutcome, EventChoice, WorldState, A
 import { CORE_EVENT_TEMPLATES } from '../data/eventTemplates';
 import { IndustryEngine } from './IndustryEngine';
 import { RelationshipEngine } from './RelationshipEngine';
+import { formatMoney } from '../utils/formatters';
 
 export class EventEngine {
   static selectNextEvent(
@@ -239,8 +240,8 @@ export class EventEngine {
       choices: () => {
         const choices: EventChoice[] = biddingOffers.map(({ label, contract }) => ({
           id: `c_sign_${label.id}`,
-          text: `Firmar con ${label.name}: $${contract.signingBonus.toLocaleString()} adelanto, ${contract.royaltyPercentage}% regalías, ${contract.albumsRequired} álbum(es)`,
-          consequencesDescription: `+$${contract.signingBonus.toLocaleString()} Anticipo, ${contract.royaltyPercentage}% Regalías, ${contract.marketingPower}% Marketing`,
+          text: `Firmar con ${label.name}: ${formatMoney(contract.signingBonus)} adelanto, ${contract.royaltyPercentage}% regalías, ${contract.albumsRequired} álbum(es)`,
+          consequencesDescription: `+${formatMoney(contract.signingBonus)} Anticipo, ${contract.royaltyPercentage}% Regalías, ${contract.marketingPower}% Marketing`,
           apply: () => ({
             narrativeText: `Has sellado tu acuerdo oficial con ${label.name}. La discográfica activa de inmediato tu presupuesto promocional.`,
             fundsChange: contract.signingBonus,
@@ -249,7 +250,7 @@ export class EventEngine {
             newContract: contract,
             newsGenerated: {
               headline: `¡Fichaje Confirmado! ${context.player.name} firma con ${label.name}`,
-              body: `El acuerdo incluye un adelanto de $${contract.signingBonus.toLocaleString()} y un compromiso de ${contract.albumsRequired} álbumes de estudio.`,
+              body: `El acuerdo incluye un adelanto de ${formatMoney(contract.signingBonus)} y un compromiso de ${contract.albumsRequired} álbumes de estudio.`,
               sentiment: 'positive',
               category: 'industry'
             }

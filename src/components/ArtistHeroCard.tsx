@@ -16,8 +16,16 @@ import {
   Layers,
   Flame,
   TrendingUp,
-  User
+  User,
+  Headphones
 } from 'lucide-react';
+import {
+  formatMoney,
+  formatFans,
+  formatListeners,
+  formatStreams,
+  cleanQuotes
+} from '../utils/formatters';
 
 export interface ArtistHeroCardProps {
   player: Artist;
@@ -31,13 +39,13 @@ export interface ArtistHeroCardProps {
 }
 
 const COLOR_OPTIONS = [
-  { id: 'amber_rose', label: 'Ámbar & Rosa', class: 'from-amber-500 to-rose-600' },
-  { id: 'purple_indigo', label: 'Púrpura & Índigo', class: 'from-purple-600 to-indigo-700' },
-  { id: 'emerald_teal', label: 'Esmeralda & Teal', class: 'from-emerald-500 to-teal-700' },
-  { id: 'blue_cyan', label: 'Azul & Cian', class: 'from-blue-600 to-cyan-600' },
-  { id: 'rose_pink', label: 'Rosa & Fucsia', class: 'from-rose-500 to-pink-600' },
-  { id: 'gold_amber', label: 'Oro & Ámbar', class: 'from-amber-400 via-amber-500 to-yellow-600' },
-  { id: 'dark_zinc', label: 'Carbón & Grafito', class: 'from-neutral-800 to-zinc-950' }
+  { id: 'synth_purple', label: 'Violeta Synth', class: 'from-[#8B5CF6] via-[#9333EA] to-[#6366F1]' },
+  { id: 'cyber_magenta', label: 'Neón Magenta', class: 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]' },
+  { id: 'electric_cyan', label: 'Cian Eléctrico', class: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]' },
+  { id: 'emerald_studio', label: 'Esmeralda Studio', class: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]' },
+  { id: 'gold_master', label: 'Oro Master', class: 'from-[#F59E0B] via-[#D97706] to-[#B45309]' },
+  { id: 'sunset_urban', label: 'Atardecer Urbano', class: 'from-[#F97316] via-[#E11D48] to-[#9333EA]' },
+  { id: 'dark_obsidian', label: 'Obsidiana & Carbón', class: 'from-neutral-800 to-zinc-950' }
 ];
 
 export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
@@ -52,7 +60,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [customAvatarUrl, setCustomAvatarUrl] = useState(player.avatarUrl || '');
-  const [selectedColor, setSelectedColor] = useState(player.avatarColor || 'from-amber-500 to-rose-600');
+  const [selectedColor, setSelectedColor] = useState(player.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const currentEra = player.eras && player.eras.length > 0
@@ -80,7 +88,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
       onOpenAvatarModal();
     } else {
       setCustomAvatarUrl(player.avatarUrl || '');
-      setSelectedColor(player.avatarColor || 'from-amber-500 to-rose-600');
+      setSelectedColor(player.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
       setIsAvatarModalOpen(true);
     }
   };
@@ -109,29 +117,29 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   const getCareerStageBadge = (stage: CareerStage) => {
     switch (stage) {
       case 'Underground':
-        return { bg: 'bg-[#eceae4]', text: 'text-[#1c1c1c]', border: 'border-[#eceae4]', label: 'Underground' };
+        return { bg: 'bg-[#16181F]', text: 'text-[#94A3B8]', border: 'border-[#2A2E3D]', label: 'Underground' };
       case 'Emerging':
-        return { bg: 'bg-emerald-100', text: 'text-emerald-900', border: 'border-emerald-300', label: 'Emergente' };
+        return { bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30', label: 'Emergente' };
       case 'Breakout':
-        return { bg: 'bg-cyan-100', text: 'text-cyan-900', border: 'border-cyan-300', label: 'En Ascenso' };
+        return { bg: 'bg-cyan-500/15', text: 'text-[#06B6D4]', border: 'border-[#06B6D4]/30', label: 'En Ascenso' };
       case 'Established':
-        return { bg: 'bg-blue-100', text: 'text-blue-900', border: 'border-blue-300', label: 'Consagrado' };
+        return { bg: 'bg-blue-500/15', text: 'text-blue-400', border: 'border-blue-500/30', label: 'Consagrado' };
       case 'Mainstream':
-        return { bg: 'bg-purple-100', text: 'text-purple-900', border: 'border-purple-300', label: 'Mainstream' };
+        return { bg: 'bg-purple-500/15', text: 'text-[#C084FC]', border: 'border-[#8B5CF6]/30', label: 'Mainstream' };
       case 'Superstar':
-        return { bg: 'bg-amber-100', text: 'text-amber-950', border: 'border-amber-300', label: 'Superestrella' };
+        return { bg: 'bg-amber-500/15', text: 'text-amber-400', border: 'border-amber-500/30', label: 'Superestrella' };
       case 'Legend':
-        return { bg: 'bg-gradient-to-r from-amber-200 to-rose-200', text: 'text-[#1c1c1c]', border: 'border-amber-400', label: 'Leyenda' };
+        return { bg: 'bg-gradient-to-r from-amber-500/20 to-purple-500/20', text: 'text-amber-300', border: 'border-amber-400/40', label: 'Leyenda' };
       case 'Comeback':
-        return { bg: 'bg-orange-100', text: 'text-orange-950', border: 'border-orange-300', label: 'Regreso Triunfal' };
+        return { bg: 'bg-orange-500/15', text: 'text-orange-400', border: 'border-orange-500/30', label: 'Regreso Triunfal' };
       case 'Veteran':
-        return { bg: 'bg-slate-200', text: 'text-slate-900', border: 'border-slate-300', label: 'Veterano' };
+        return { bg: 'bg-slate-500/15', text: 'text-slate-300', border: 'border-slate-500/30', label: 'Veterano' };
       case 'Declining':
-        return { bg: 'bg-rose-100', text: 'text-rose-900', border: 'border-rose-300', label: 'En Declive' };
+        return { bg: 'bg-rose-500/15', text: 'text-rose-400', border: 'border-rose-500/30', label: 'En Declive' };
       case 'Retired':
-        return { bg: 'bg-stone-200', text: 'text-stone-800', border: 'border-stone-300', label: 'Retirado' };
+        return { bg: 'bg-stone-500/15', text: 'text-stone-400', border: 'border-stone-500/30', label: 'Retirado' };
       default:
-        return { bg: 'bg-[#eceae4]', text: 'text-[#1c1c1c]', border: 'border-[#eceae4]', label: stage };
+        return { bg: 'bg-[#16181F]', text: 'text-[#94A3B8]', border: 'border-[#2A2E3D]', label: stage };
     }
   };
 
@@ -146,7 +154,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         {/* Left Side: Avatar / Portrait + Info Hierarchy */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 md:gap-6 w-full lg:w-auto">
-          {/* Professional Portrait Container (aspect 1:1 or 4:5 with aesthetic frame) */}
+          {/* Professional Portrait Container */}
           <div className="relative shrink-0 group">
             <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[14px] overflow-hidden border-2 border-[#2A2E3D] group-hover:border-[#8B5CF6]/60 transition-colors shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-[#0B0C10]">
               {player.avatarUrl ? (
@@ -158,7 +166,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               ) : (
                 <div
                   className={`w-full h-full bg-gradient-to-tr ${
-                    player.avatarColor || 'from-[#8B5CF6] to-[#EC4899]'
+                    player.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]'
                   } text-white font-extrabold text-3xl sm:text-4xl flex items-center justify-center`}
                 >
                   {player.name.charAt(0)}
@@ -186,14 +194,14 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
               {/* Career Stage Pill */}
               <span
-                className={`px-3 py-1 rounded-[9999px] text-xs font-bold uppercase tracking-wider bg-[#8B5CF6]/15 text-[#C084FC] border border-[#8B5CF6]/40 shadow-xs`}
+                className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${stageBadge.bg} ${stageBadge.text} border ${stageBadge.border} shadow-xs`}
               >
                 {stageBadge.label}
               </span>
 
               {/* Label Badge */}
               {currentLabel && (
-                <span className="px-3 py-1 rounded-[9999px] text-xs font-normal bg-[#16181F] text-[#CBD5E1] border border-[#2A2E3D] flex items-center gap-1.5">
+                <span className="px-3 py-1 rounded-full text-xs font-normal bg-[#16181F] text-[#CBD5E1] border border-[#2A2E3D] flex items-center gap-1.5">
                   <Building2 className="w-3 h-3 text-[#94A3B8]" />
                   {currentLabel.name}
                 </span>
@@ -201,7 +209,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
               {/* Manager Badge */}
               {currentManager && (
-                <span className="px-3 py-1 rounded-[9999px] text-xs font-normal bg-[#16181F] text-[#CBD5E1] border border-[#2A2E3D] flex items-center gap-1.5">
+                <span className="px-3 py-1 rounded-full text-xs font-normal bg-[#16181F] text-[#CBD5E1] border border-[#2A2E3D] flex items-center gap-1.5">
                   <User className="w-3 h-3 text-[#94A3B8]" />
                   Mgr: {currentManager.name}
                 </span>
@@ -212,7 +220,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             <div className="flex items-center gap-2 text-xs sm:text-sm text-[#94A3B8] font-normal flex-wrap">
               {player.realName ? (
                 <>
-                  <span className="text-[#F8FAFC] font-medium">{player.realName}</span>
+                  <span className="text-[#F8FAFC] font-medium">"{cleanQuotes(player.realName)}"</span>
                   <span className="text-[#94A3B8]/60">•</span>
                 </>
               ) : null}
@@ -260,11 +268,11 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
           {/* Tile 1: Oyentes Mensuales */}
           <div className="bg-[#16181F] border border-emerald-500/30 rounded-[12px] p-3 text-left shadow-xs hover:border-emerald-500/60 transition-colors">
             <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3 text-emerald-400" />
+              <Headphones className="w-3 h-3 text-emerald-400" />
               Oyentes Mensuales
             </span>
             <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono block mt-0.5">
-              {player.stats.monthlyListeners.toLocaleString()}
+              {formatListeners(player.stats.monthlyListeners)}
             </span>
             <span className="text-[10px] text-emerald-500/80 font-medium block">
               +12.4% este semestre
@@ -278,9 +286,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               Streams Globales
             </span>
             <span className="text-lg sm:text-xl font-bold text-[#C084FC] font-mono block mt-0.5">
-              {player.stats.totalStreams >= 1_000_000
-                ? `${(player.stats.totalStreams / 1_000_000).toFixed(1)}M`
-                : player.stats.totalStreams.toLocaleString()}
+              {formatStreams(player.stats.totalStreams)}
             </span>
             <span className="text-[10px] text-[#C084FC]/80 font-medium block">
               Catálogo activo
@@ -294,7 +300,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               Hype Escénico
             </span>
             <span className="text-lg sm:text-xl font-bold text-orange-400 font-mono block mt-0.5">
-              {player.stats.hype}%
+              {player.stats.hype}/100
             </span>
             <span className="text-[10px] text-orange-500/80 font-medium block">
               {player.stats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
@@ -319,21 +325,21 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
       {/* Bottom Block: Current Era Highlight Box */}
       {currentEra && (
-        <div className="pt-4 border-t border-[#eceae4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-[#fcfbf8] p-4 rounded-[12px] border border-[#eceae4]">
+        <div className="pt-4 border-t border-[#2A2E3D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-[8px] bg-[#eceae4] text-[#1c1c1c] shrink-0">
-              <Sparkles className="w-4 h-4 text-amber-600 fill-current" />
+            <div className="p-2.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC] shrink-0">
+              <Sparkles className="w-4 h-4 text-amber-400 fill-current" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8]">
                   Era Actual:
                 </span>
-                <span className="text-xs font-bold text-[#1c1c1c]">
+                <span className="text-xs font-bold text-[#F8FAFC]">
                   {currentEra.name}
                 </span>
               </div>
-              <p className="text-xs text-[#5f5f5d] mt-0.5 leading-relaxed">
+              <p className="text-xs text-[#94A3B8] mt-0.5 leading-relaxed">
                 {currentEra.highlightSummary}
               </p>
             </div>
@@ -341,7 +347,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
           <button
             onClick={() => onNavigate('career')}
-            className="text-xs text-[#1c1c1c] hover:underline flex items-center gap-1.5 font-semibold cursor-pointer whitespace-nowrap px-3 py-1.5 rounded-[6px] bg-[#f7f4ed] hover:bg-[#eceae4] border border-[#eceae4] transition-colors"
+            className="text-xs text-[#F8FAFC] hover:text-[#C084FC] flex items-center gap-1.5 font-semibold cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-[8px] bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 transition-colors shadow-xs"
           >
             <span>Ver Trayectoria</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -351,45 +357,46 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
       {/* Interactive Avatar & Profile Picture Modal */}
       {isAvatarModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
           <div
-            className="bg-[#f7f4ed] border border-[#eceae4] rounded-[16px] max-w-lg w-full p-6 space-y-5 text-[#1c1c1c] shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] max-w-lg w-full p-6 space-y-5 text-[#F8FAFC] shadow-2xl max-h-[90vh] overflow-y-auto"
             style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#eceae4] pb-3">
+            <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
               <div className="flex items-center gap-2">
-                <Camera className="w-5 h-5 text-[#1c1c1c]" />
-                <h3 className="text-lg font-semibold tracking-[-0.4px]">
+                <Camera className="w-5 h-5 text-[#8B5CF6]" />
+                <h3 className="text-lg font-bold tracking-[-0.4px] text-[#F8FAFC]">
                   Retrato / Foto del Artista
                 </h3>
               </div>
               <button
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="p-1.5 rounded-[6px] hover:bg-[#eceae4] text-[#5f5f5d] hover:text-[#1c1c1c] cursor-pointer"
+                className="p-1.5 rounded-[6px] hover:bg-[#1C1F2B] text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer transition-colors"
+                title="Cerrar modal"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Current Preview */}
-            <div className="flex items-center gap-4 bg-[#fcfbf8] p-4 rounded-[12px] border border-[#eceae4]">
+            <div className="flex items-center gap-4 bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D]">
               {customAvatarUrl ? (
                 <img
                   src={customAvatarUrl}
                   alt="Preview"
-                  className="w-16 h-16 rounded-[12px] object-cover border-2 border-[#eceae4] shadow-sm shrink-0"
+                  className="w-16 h-16 rounded-[12px] object-cover border-2 border-[#2A2E3D] shadow-sm shrink-0"
                 />
               ) : (
                 <div
-                  className={`w-16 h-16 rounded-[12px] bg-gradient-to-tr ${selectedColor} flex items-center justify-center text-white text-2xl font-bold border-2 border-[#eceae4] shadow-sm shrink-0`}
+                  className={`w-16 h-16 rounded-[12px] bg-gradient-to-tr ${selectedColor} flex items-center justify-center text-white text-2xl font-bold border-2 border-[#2A2E3D] shadow-sm shrink-0`}
                 >
                   {player.name ? player.name.charAt(0).toUpperCase() : 'A'}
                 </div>
               )}
               <div className="space-y-0.5">
-                <h4 className="text-sm font-bold text-[#1c1c1c]">{player.name}</h4>
-                <p className="text-xs text-[#5f5f5d]">
+                <h4 className="text-sm font-bold text-[#F8FAFC]">{player.name}</h4>
+                <p className="text-xs text-[#94A3B8]">
                   Vista previa de tu avatar visual en el panel y cartas del juego.
                 </p>
               </div>
@@ -397,7 +404,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
             {/* File Upload Button */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#5f5f5d] block">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
                 Subir Imagen desde tu Computadora
               </label>
               <input
@@ -409,16 +416,16 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 bg-[#fcfbf8] border border-[#eceae4] hover:bg-[#eceae4] text-[#1c1c1c] text-xs font-semibold py-2.5 px-4 rounded-[6px] cursor-pointer transition-all shadow-2xs"
+                className="w-full flex items-center justify-center gap-2 bg-[#0B0C10] border border-[#2A2E3D] hover:bg-[#1C1F2B] text-[#F8FAFC] text-xs font-semibold py-2.5 px-4 rounded-[8px] cursor-pointer transition-all shadow-xs"
               >
-                <ImageIcon className="w-4 h-4 text-[#1c1c1c]" />
+                <ImageIcon className="w-4 h-4 text-[#8B5CF6]" />
                 <span>Seleccionar Archivo de Foto (JPG, PNG, WebP)</span>
               </button>
             </div>
 
             {/* Direct URL Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#5f5f5d] block">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
                 O pegar enlace URL de imagen
               </label>
               <input
@@ -426,13 +433,13 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                 value={customAvatarUrl}
                 onChange={(e) => setCustomAvatarUrl(e.target.value)}
                 placeholder="https://ejemplo.com/mifoto.jpg"
-                className="w-full bg-[#fcfbf8] border border-[#eceae4] rounded-[6px] px-3.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1c1c1c]"
+                className="w-full bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] px-3.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] text-[#F8FAFC] placeholder:text-[#64748B]"
               />
             </div>
 
             {/* Avatar Presets Selection */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#5f5f5d] block">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
                 O elegir un Avatar Estilizado del Catálogo
               </label>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1">
@@ -442,16 +449,16 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                     onClick={() => setCustomAvatarUrl(preset.url)}
                     className={`p-1.5 rounded-[8px] border transition-all text-center group cursor-pointer ${
                       customAvatarUrl === preset.url
-                        ? 'border-[#1c1c1c] bg-[#eceae4] shadow-2xs ring-1 ring-[#1c1c1c]'
-                        : 'border-[#eceae4] bg-[#fcfbf8] hover:border-[rgba(28,28,28,0.4)]'
+                        ? 'border-[#8B5CF6] bg-[#8B5CF6]/20 shadow-xs'
+                        : 'border-[#2A2E3D] bg-[#0B0C10] hover:border-[#8B5CF6]/50'
                     }`}
                   >
                     <img
                       src={preset.url}
                       alt={preset.name}
-                      className="w-full h-14 rounded-[6px] object-cover"
+                      className="w-full h-14 rounded-[6px] object-cover group-hover:opacity-90"
                     />
-                    <span className="text-[9px] font-semibold text-[#1c1c1c] block mt-1 truncate">
+                    <span className="text-[9px] font-semibold text-[#F8FAFC] block mt-1 truncate">
                       {preset.name}
                     </span>
                   </button>
@@ -459,9 +466,9 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               </div>
             </div>
 
-            {/* Gradient Options (if no image) */}
+            {/* Gradient Options */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#5f5f5d] block">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
                 Gradiente de Fondo (si no usas foto)
               </label>
               <div className="flex items-center gap-2 flex-wrap">
@@ -475,8 +482,8 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                     title={c.label}
                     className={`w-7 h-7 rounded-full bg-gradient-to-tr ${c.class} border-2 transition-transform cursor-pointer ${
                       !customAvatarUrl && selectedColor === c.class
-                        ? 'scale-110 border-[#1c1c1c] shadow-sm'
-                        : 'border-[#eceae4] hover:scale-105'
+                        ? 'scale-110 border-[#8B5CF6] shadow-sm ring-1 ring-white'
+                        : 'border-[#2A2E3D] hover:scale-105'
                     }`}
                   />
                 ))}
@@ -484,30 +491,26 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#eceae4]">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#2A2E3D]">
               {customAvatarUrl && (
                 <button
                   onClick={() => setCustomAvatarUrl('')}
-                  className="px-3 py-2 text-xs text-rose-700 hover:underline cursor-pointer mr-auto"
+                  className="px-3 py-2 text-xs text-rose-400 hover:underline cursor-pointer mr-auto font-medium"
                 >
                   Quitar Foto
                 </button>
               )}
               <button
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="px-4 py-2 rounded-[6px] text-xs font-semibold bg-[#fcfbf8] text-[#1c1c1c] border border-[#eceae4] hover:bg-[#eceae4] cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-[8px] text-xs font-semibold bg-[#0B0C10] text-[#94A3B8] border border-[#2A2E3D] hover:text-[#F8FAFC] hover:bg-[#1C1F2B] cursor-pointer transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveAvatar}
-                className="flex items-center gap-1.5 bg-[#1c1c1c] text-[#fcfbf8] px-5 py-2 rounded-[6px] text-xs font-semibold hover:opacity-90 cursor-pointer shadow-sm"
-                style={{
-                  boxShadow:
-                    'rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px'
-                }}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white px-5 py-2 rounded-[8px] text-xs font-bold hover:opacity-90 cursor-pointer shadow-[0_0_15px_rgba(139,92,246,0.4)] active:scale-98 transition-all"
               >
-                <Check className="w-4 h-4 text-emerald-400" />
+                <Check className="w-4 h-4 text-white" />
                 <span>Guardar Cambios</span>
               </button>
             </div>

@@ -6,6 +6,7 @@ import { NewsSidebar } from './dashboard/NewsSidebar';
 import { ArtistAttributesPanel } from './dashboard/ArtistAttributesPanel';
 import { DecisionHub } from './dashboard/DecisionHub';
 import { ActiveCatalogCard } from './dashboard/ActiveCatalogCard';
+import { formatListeners } from '../utils/formatters';
 
 // Re-export modular components for flexible consumption
 export { ArtistHeroCard } from './dashboard/ArtistHeroCard';
@@ -121,7 +122,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               Oyentes Mensuales
             </span>
             <span className="text-sm font-bold text-emerald-400 block font-mono mt-0.5">
-              {player.stats.monthlyListeners.toLocaleString()}
+              {formatListeners(player.stats.monthlyListeners)}
             </span>
             <span className="text-[10px] text-emerald-500/80 truncate block">
               {playerSongs.length} temas lanzados

@@ -23,6 +23,7 @@ import { CORE_EVENT_TEMPLATES, getCreativeDroughtEvent } from '../data/eventTemp
 import { WorldSimulation } from '../systems/WorldSimulation';
 import { ChartEngine } from '../systems/ChartEngine';
 import { AwardEngine } from '../systems/AwardEngine';
+import { formatMoney } from '../utils/formatters';
 import { GenreTrendEngine } from '../systems/GenreTrendEngine';
 import { EventEngine } from '../systems/EventEngine';
 import { EconomyEngine } from '../systems/EconomyEngine';
@@ -305,7 +306,7 @@ export class GameEngine {
     if (player.stats.funds < item.price) {
       return {
         success: false,
-        message: `Fondos insuficientes. Cuesta $${item.price.toLocaleString()} y tienes $${player.stats.funds.toLocaleString()}.`
+        message: `Fondos insuficientes. Cuesta ${formatMoney(item.price)} y tienes ${formatMoney(player.stats.funds)}.`
       };
     }
 
@@ -338,7 +339,7 @@ export class GameEngine {
     this.world.news.unshift({
       id: `news_lifestyle_${Date.now()}`,
       headline: `Estilo de Vida: ${player.name} adquiere "${item.name}"`,
-      body: `${player.name} invirtió $${item.price.toLocaleString()} en ${item.name.toLowerCase()}, potenciando su estatus y recursos artísticos.`,
+      body: `${player.name} invirtió ${formatMoney(item.price)} en ${item.name.toLowerCase()}, potenciando su estatus y recursos artísticos.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'culture',
@@ -686,7 +687,7 @@ export class GameEngine {
     this.world.news.unshift({
       id: `news_tour_${tour.id}`,
       headline: `Gira Consagratoria: ${tour.name} culmina con ${tour.totalTicketsSold.toLocaleString()} tickets vendidos`,
-      body: `${player.name} brilló en cada una de sus fechas, generando una ganancia neta de $${tour.netArtistProfit.toLocaleString()}.`,
+      body: `${player.name} brilló en cada una de sus fechas, generando una ganancia neta de ${formatMoney(tour.netArtistProfit)}.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'tour',

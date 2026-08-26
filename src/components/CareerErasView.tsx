@@ -30,6 +30,7 @@ import {
   RELEASE_BADGES,
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
+import { formatMoney, cleanQuotes, cleanParentheses } from '../utils/formatters';
 
 interface CareerErasViewProps {
   player: Artist;
@@ -172,9 +173,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       year: tour.year,
       month: tour.month,
       type: 'tour',
-      title: `Gira: "${tour.name}" (${tour.tier.toUpperCase()})`,
+      title: `Gira: "${cleanQuotes(tour.name)}" (${tour.tier.toUpperCase()})`,
       description: `Tour de ${tour.stops.length} fechas por ${tour.stops.map(s => s.city).slice(0, 3).join(', ')}...`,
-      metrics: `$${tour.grossRevenue.toLocaleString()} recaudación • ${tour.totalTicketsSold.toLocaleString()} tickets vendidos`,
+      metrics: `${formatMoney(tour.grossRevenue)} recaudación • ${tour.totalTicketsSold.toLocaleString()} tickets vendidos`,
       badge: tour.id === bestTour?.id ? 'Mejor Gira ⭐' : 'Tour',
       badgeClass: tour.id === bestTour?.id ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 font-bold' : 'bg-orange-900/40 text-orange-300 border-orange-500/40',
       icon: Sparkles,
@@ -210,7 +211,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       month: 1,
       type: 'contract',
       title: `Firma de Contrato con ${label?.name || 'Sello Discográfico'}`,
-      description: `Acuerdo discográfico por ${player.activeContract.albumsRequired} álbumes (${player.activeContract.royaltyPercentage}% de regalías, adelanto de $${player.activeContract.signingBonus.toLocaleString()}).`,
+      description: `Acuerdo discográfico por ${player.activeContract.albumsRequired} álbumes (${player.activeContract.royaltyPercentage}% de regalías, adelanto de ${formatMoney(player.activeContract.signingBonus)}).`,
       badge: 'Contrato',
       badgeClass: 'bg-emerald-900/40 text-emerald-300 border-emerald-500/40',
       icon: Building2,

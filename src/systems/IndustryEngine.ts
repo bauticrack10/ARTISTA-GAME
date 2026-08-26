@@ -1,4 +1,5 @@
 import { Artist, RecordLabel, LabelContract, WorldState, Manager } from '../types';
+import { formatMoney } from '../utils/formatters';
 
 export interface ScoutRadarStatus {
   monthlyListeners: number;
@@ -176,7 +177,7 @@ export class IndustryEngine {
     }
 
     if (artist.stats.funds < manager.requirements.hiringFee) {
-      missing.push(`Requiere $${manager.requirements.hiringFee.toLocaleString()} de tarifa inicial de contratación (tenés $${artist.stats.funds.toLocaleString()})`);
+      missing.push(`Requiere ${formatMoney(manager.requirements.hiringFee)} de tarifa inicial de contratación (tenés ${formatMoney(artist.stats.funds)})`);
     }
 
     return {

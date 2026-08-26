@@ -25,6 +25,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { LIFESTYLE_THEMES } from '../utils/themeColors';
+import { formatMoney, sanitizeString } from '../utils/formatters';
 
 interface LifestyleShopViewProps {
   player: Artist;
@@ -352,10 +353,10 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               <div className="mt-5 pt-4 border-t border-[#2A2E3D] flex items-center justify-between gap-3">
                 <div>
                   <div className="text-lg font-bold text-[#F8FAFC] font-mono tracking-tight">
-                    ${item.price.toLocaleString()}
+                    {formatMoney(item.price)}
                   </div>
                   <span className="text-[11px] text-[#94A3B8] font-mono block">
-                    {item.monthlyUpkeep > 0 ? `+$${item.monthlyUpkeep}/mes mantenimiento` : 'Sin mantenimiento mensual'}
+                    {item.monthlyUpkeep > 0 ? `+${formatMoney(item.monthlyUpkeep)}/mes mantenimiento` : 'Sin mantenimiento mensual'}
                   </span>
                 </div>
 

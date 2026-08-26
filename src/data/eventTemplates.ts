@@ -1,4 +1,5 @@
 import { EventDefinition, EventContext, EventOutcome, CareerStage } from '../types';
+import { formatMoney } from '../utils/formatters';
 
 export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
   // --- UNDERGROUND / YEAR 1 FIRST STEPS EVENTS ---
@@ -272,8 +273,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       return [
         {
           id: 'c_sign_major_war',
-          text: `Firmar con la Major (Sony/Universal): $${advanceMajor.toLocaleString()} de adelanto, 22% regalías, 3 álbumes`,
-          consequencesDescription: `+$${advanceMajor.toLocaleString()} Adelanto inmediato, 22% Regalías, 96% Marketing Masivo, 45% Control Creativo`,
+          text: `Firmar con la Major (Sony/Universal): ${formatMoney(advanceMajor)} de adelanto, 22% regalías, 3 álbumes`,
+          consequencesDescription: `+${formatMoney(advanceMajor)} Adelanto inmediato, 22% Regalías, 96% Marketing Masivo, 45% Control Creativo`,
           apply: () => ({
             narrativeText: `Firmaste el contrato con la Major Multinacional. El adelanto multimillonario ingresa a tus cuentas y la maquinaria promocional global se activa de inmediato.`,
             fundsChange: advanceMajor,
@@ -303,8 +304,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         },
         {
           id: 'c_sign_indie_war',
-          text: `Firmar con Sello Independiente Líder (Dale Play / Rimas): $${advanceIndie.toLocaleString()} de adelanto, 60% regalías, 2 álbumes`,
-          consequencesDescription: `+$${advanceIndie.toLocaleString()} Adelanto, 60% Regalías Artista, 88% Marketing, 82% Control Creativo`,
+          text: `Firmar con Sello Independiente Líder (Dale Play / Rimas): ${formatMoney(advanceIndie)} de adelanto, 60% regalías, 2 álbumes`,
+          consequencesDescription: `+${formatMoney(advanceIndie)} Adelanto, 60% Regalías Artista, 88% Marketing, 82% Control Creativo`,
           apply: () => ({
             narrativeText: `Optaste por el camino independiente de élite. Conservás el 60% de tus regalías y libertad total en la producción con respaldo estratégico de primer nivel.`,
             fundsChange: advanceIndie,

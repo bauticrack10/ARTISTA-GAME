@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Volume2
 } from 'lucide-react';
+import { formatMoney, sanitizeString, cleanParentheses } from '../utils/formatters';
 
 interface EventModalProps {
   event: EventDefinition;
@@ -297,7 +298,7 @@ export const EventModal: React.FC<EventModalProps> = ({
 
               if (choice.costFunds && player.stats.funds < choice.costFunds) {
                 isEligible = false;
-                unmetReasons.push(`Requiere $${choice.costFunds.toLocaleString()} (tienes $${player.stats.funds.toLocaleString()})`);
+                unmetReasons.push(`Requiere ${formatMoney(choice.costFunds)} (tienes ${formatMoney(player.stats.funds)})`);
               }
               if (choice.costEnergy && player.stats.energy < choice.costEnergy) {
                 isEligible = false;
@@ -337,14 +338,14 @@ export const EventModal: React.FC<EventModalProps> = ({
                         [0{idx + 1}]
                       </span>
                       <h4 className="text-sm sm:text-base font-semibold text-[#F8FAFC] group-hover:text-[#8B5CF6] transition-colors leading-snug">
-                        {choice.text}
+                        {sanitizeString(choice.text)}
                       </h4>
                     </div>
 
                     {/* Narrative Consequence */}
                     {choice.consequencesDescription && (
                       <p className="text-xs text-[#94A3B8] leading-relaxed font-normal">
-                        {choice.consequencesDescription}
+                        {sanitizeString(choice.consequencesDescription)}
                       </p>
                     )}
 
