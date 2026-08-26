@@ -1,99 +1,91 @@
 /**
- * Helper global de formateo, sanitización de strings y nombres contextuales
- * Proyecto: El Artista — Music Career Simulator
+ * Utilities for String Formatting, Typography Sanitation, Regional Names and Financial Values
  */
 
 /**
- * Sanitiza espacios parásitos dentro de paréntesis
- * Ejemplos: `( 15 )` -> `(15)`, `(MES 1 )` -> `(Mes 1)`, `(+ 1Y )` -> `(+1Y)`
- */
-export function cleanParentheses(text: string): string {
-  if (!text) return '';
-  return text
-    .replace(/\(\s*MES\s*(\d+)\s*\)/gi, '(Mes $1)')
-    .replace(/\(\s*Mes\s*(\d+)\s*\)/gi, '(Mes $1)')
-    .replace(/\(\s*\+\s*(\d+)\s*(Y|M|Años?|Meses?)\s*\)/gi, '(+$1$2)')
-    .replace(/\(\s+/g, '(')
-    .replace(/\s+\)/g, ')')
-    .replace(/\(\s*([^\(\)]+?)\s*\)/g, '($1)');
-}
-
-/**
- * Sanitiza espacios parásitos dentro de comillas
- * Ejemplo: `" Cielo "` -> `"Cielo"`
- */
-export function cleanQuotes(text: string): string {
-  if (!text) return '';
-  return text
-    .replace(/"\s+([^"]*?)\s+"/g, '"$1"')
-    .replace(/"\s+([^"]*?)"/g, '"$1"')
-    .replace(/"([^"]*?)\s+"/g, '"$1"');
-}
-
-/**
- * Corrige duplicaciones de símbolos monetarios
- * Ejemplo: `$ $0` -> `$0`, `$$100` -> `$100`
- */
-export function cleanCurrency(text: string): string {
-  if (!text) return '';
-  return text
-    .replace(/\$\s*\$+/g, '$')
-    .replace(/\$\s+(\d+)/g, '$$$1');
-}
-
-/**
- * Formatea tags de selección y conteo
- * Ejemplo: `1/3 seleccionados`
- */
-export function cleanCountTag(count: number, total: number, suffix = 'seleccionados'): string {
-  return `${count}/${total}${suffix ? ` ${suffix}` : ''}`;
-}
-
-/**
- * Sanitizador global completo que aplica todas las reglas de limpieza tipográfica
+ * Sanitiza una cadena eliminando espacios parásitos dentro de paréntesis, comillas y barras
  */
 export function sanitizeString(text: string): string {
   if (!text) return '';
-  let result = text;
-  result = cleanCurrency(result);
-  result = cleanParentheses(result);
-  result = cleanQuotes(result);
-  // Normalizar dobles espacios accidentales
-  result = result.replace(/ {2,}/g, ' ');
-  return result;
+
+  return text
+    // Elimina espacios redundantes dentro de paréntesis: "( 15 )" -> "(15)", "(4 )" -> "(4)"
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')')
+    // Elimina espacios redundantes dentro de corchetes: "[ 01 ]" -> "[01]"
+    .replace(/\[\s+/g, '[')
+    .replace(/\s+\]/g, ']')
+    // Normaliza signos de avance o modificadores: "(+ 1Y )" -> "(+1Y)", "(+ 6M)" -> "(+6M)"
+    .replace(/\(\s*\+\s*([0-9]+[A-Za-z]+)\s*\)/g, '(+$1)')
+    // Normaliza meses con números: "(MES 1 )" -> "(Mes 1)", "( MES 12)" -> "(Mes 12)"
+    .replace(/\(\s*MES\s*([0-9]+)\s*\)/gi, '(Mes $1)')
+    // Normaliza comillas con espacios parásitos: '" Cielo "' -> '"Cielo"'
+    .replace(/"\s+([^"]*?)\s+"/g, '"$1"')
+    // Evita duplicación de signos de moneda: "$ $0" o "$$0" -> "$0"
+    .replace(/\$\s*\$+/g, '$')
+    // Normaliza barras oblicuas en conteos: "1 /3" o "1 / 3" -> "1/3"
+    .replace(/\s*\/\s*/g, '/')
+    // Limpia espacios duplicados consecutivos
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
 }
 
 /**
- * Formatea cantidades de dinero evitando duplicar el símbolo $
+ * Formatea un conteo con total y sufijo opcional de forma limpia
+ * Ejemplo: cleanCountTag(1, 3, 'seleccionados') -> "1/3 seleccionados"
  */
-export function formatMoney(amount: number): string {
-  const safeAmount = isNaN(amount) ? 0 : Math.max(0, Math.floor(amount));
+export function cleanCountTag(count: number, total: number, suffix?: string): string {
+  const base = `${count}/${total}`;
+  return suffix ? `${base} ${suffix}`.trim() : base;
+}
+
+/**
+ * Elimina espacios innecesarios dentro de paréntesis
+ */
+export function cleanParentheses(text: string): string {
+  if (!text) return '';
+  return text.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
+}
+
+/**
+ * Elimina espacios innecesarios dentro de comillas
+ */
+export function cleanQuotes(text: string): string {
+  if (!text) return '';
+  return text.replace(/"\s+([^"]*?)\s+"/g, '"$1"');
+}
+
+/**
+ * Normaliza y formatea montos monetarios con símbolo de dólar único y separadores de miles
+ * Ejemplo: formatMoney(0) -> "$0", formatMoney(1500) -> "$1.500"
+ */
+export function formatMoney(amount: number | string | undefined | null): string {
+  if (amount === undefined || amount === null) return '$0';
+  const num = typeof amount === 'string' ? parseFloat(amount.replace(/[^0-9.-]+/g, '')) : amount;
+  const safeAmount = isNaN(num) ? 0 : Math.round(num);
   return `$${safeAmount.toLocaleString('es-AR')}`;
 }
 
 /**
- * Formatea números grandes con sufijos compactos (k, M, B)
+ * Formatea un número en notación compacta (1.2k, 3.4M, 1.1B)
  */
 export function formatCompactNumber(num: number): string {
-  if (num === undefined || num === null || isNaN(num)) return '0';
-  const abs = Math.abs(num);
-  if (abs >= 1_000_000_000) {
+  if (isNaN(num) || num === 0) return '0';
+  if (num >= 1_000_000_000) {
     return `${(num / 1_000_000_000).toFixed(2).replace(/\.00$/, '')}B`;
   }
-  if (abs >= 1_000_000) {
+  if (num >= 1_000_000) {
     return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
   }
-  if (abs >= 10_000) {
-    return `${(num / 1_000).toFixed(0)}k`;
-  }
-  if (abs >= 1_000) {
+  if (num >= 1_000) {
     return `${(num / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
   }
   return num.toLocaleString('es-AR');
 }
 
 /**
- * Formatea métrica de Fans con etiqueta explícita
+ * Formatea métrica de Fans con etiqueta explícita para evitar valores huérfanos
+ * Ejemplo: formatFans(150) -> "150 Fans", formatFans(4150) -> "4.15k Fans"
  */
 export function formatFans(count: number): string {
   const formatted = formatCompactNumber(count);
@@ -128,91 +120,166 @@ export interface RegionalNameData {
 export const REGIONAL_NAME_POOLS: Record<string, RegionalNameData> = {
   Argentina: {
     stageNames: [
-      'Duki Nova', 'Bizar', 'Khea Flow', 'Tiago Z', 'Milo J', 'Wosky', 'Trueno Sound', 'Cazzu V',
-      'Ysy Vibe', 'Bhavi', 'Lucho SSJ', 'Ca7riel', 'Paco B', 'Seven Kayne', 'Zeballos', 'Dillom Ghost',
-      'Neo Pistea', 'Tomi Trap', 'Enzo Flow', 'Ciro Sound', 'Valen Ghost', 'Jota Beats', 'Sombra Sur'
+      'Duki', 'Wos', 'Tiago PZK', 'Khea', 'Milo J', 'Ysy A', 'Trueno', 'Bhavi', 'Seven Kayne',
+      'C.R.O', 'Lucho SSJ', 'Ca7riel', 'Paco Amoroso', 'Dillom', 'Neo Pistea', 'Acru', 'Lit Killah',
+      'Rusherking', 'Taichu', 'Saramalacara', 'Lara91k', 'Zeballos', 'Replik', 'Mecha', 'Papo MC',
+      'Klan', 'Wolf', 'Sub', 'Stuart', 'Blunted Vato', 'Cazzu', 'Nicki Nicole', 'Tini', 'Emilia Mernes',
+      'Maria Becerra', 'La Joaqui', 'Luck Ra', 'Callejero Fino', 'Duki Nova', 'Bizar', 'Khea Flow',
+      'Wosky', 'Trueno Sound', 'Cazzu V', 'Ysy Vibe', 'Seven Sound', 'Zeballos Flow', 'Dillom Ghost',
+      'Tomi Trap', 'Enzo Flow', 'Ciro Sound', 'Valen Ghost', 'Jota Beats', 'Sombra Sur', 'El Duko'
     ],
-    firstNames: ['Mateo', 'Valentín', 'Ignacio', 'Facundo', 'Joaquín', 'Martín', 'Franco', 'Tomás', 'Santiago', 'Lucía', 'Martina', 'Camila', 'Sofía', 'Julieta'],
-    lastNames: ['Palacios', 'Morales', 'Lombardo', 'Giménez', 'Castro', 'Rossi', 'Mendoza', 'Silva', 'Benítez', 'Navarro', 'Herrera', 'Alonso']
+    firstNames: [
+      'Mateo', 'Valentín', 'Ignacio', 'Facundo', 'Joaquín', 'Martín', 'Franco', 'Tomás', 'Santiago',
+      'Lucía', 'Martina', 'Camila', 'Sofía', 'Julieta', 'Lautaro', 'Agustín', 'Enzo', 'Thiago',
+      'Bruno', 'Nicolás', 'Lucas', 'Delfina', 'Milagros', 'Zoe', 'Jazmín', 'Catalina', 'Abril', 'Rocío'
+    ],
+    lastNames: [
+      'Palacios', 'Morales', 'Lombardo', 'Giménez', 'Castro', 'Rossi', 'Mendoza', 'Silva', 'Benítez',
+      'Navarro', 'Herrera', 'Alonso', 'Cabrera', 'Acosta', 'Suárez', 'Romero', 'Vega', 'Rojas',
+      'Ríos', 'Castillo', 'Paredes', 'Guerrero', 'Sosa'
+    ]
   },
   España: {
     stageNames: [
-      'Quevedo Sound', 'Rels Vibe', 'Morad Kid', 'Saiko Flame', 'C. Tang', 'Dellafuente', 'Kidd Keo',
-      'Cruz Cafuné', 'Recycled', 'Maikel Delacalle', 'Yung Beef', 'Soto Asa', 'Natos', 'Waor', 'Hard GZ'
+      'Quevedo', 'Rels B', 'Morad', 'Saiko', 'C. Tangana', 'Dellafuente', 'Kidd Keo', 'Cruz Cafuné',
+      'Recycled J', 'Maikel Delacalle', 'Yung Beef', 'Soto Asa', 'Natos', 'Waor', 'Hard GZ', 'Ayax',
+      'Prok', 'Lola Indigo', 'Bad Gyal', 'Rosalía', 'Ptazeta', 'Judeline', 'Bejo', 'Abhir', 'Hoke',
+      'Sticky M.A.', 'Quevedo Sound', 'Rels Vibe', 'Morad Kid', 'Saiko Flame', 'Cruz Sound'
     ],
-    firstNames: ['Alejandro', 'Pablo', 'Daniel', 'Hugo', 'Lucas', 'Manuel', 'Álvaro', 'David', 'Paula', 'Sara', 'Elena', 'Carmen', 'Alba'],
-    lastNames: ['García', 'Rodríguez', 'González', 'Fernández', 'López', 'Martínez', 'Sánchez', 'Pérez', 'Gómez', 'Martín', 'Ruiz']
+    firstNames: [
+      'Alejandro', 'Pablo', 'Daniel', 'Hugo', 'Lucas', 'Manuel', 'Álvaro', 'David', 'Paula', 'Sara',
+      'Elena', 'Carmen', 'Alba', 'Adrián', 'Marcos', 'Javier', 'Mario', 'Sergio', 'Lucía', 'María', 'Marta'
+    ],
+    lastNames: [
+      'García', 'Rodríguez', 'González', 'Fernández', 'López', 'Martínez', 'Sánchez', 'Pérez', 'Gómez',
+      'Martín', 'Ruiz', 'Hernández', 'Díaz', 'Moreno', 'Álvarez', 'Romero', 'Alonso', 'Gutiérrez'
+    ]
   },
   'Puerto Rico': {
     stageNames: [
-      'Eladio V', 'Myke Wave', 'Mora Sound', 'Rauw Star', 'Jhayco', 'Álvaro Díaz', 'De La G',
-      'Lunay', 'Brytiago', 'Noriel', 'Darell', 'Mikyle', 'Jova King', 'Jovany Flow', 'Tainy Kid'
+      'Eladio Carrión', 'Myke Towers', 'Mora', 'Rauw Alejandro', 'Jhayco', 'Álvaro Díaz', 'De La Ghetto',
+      'Lunay', 'Brytiago', 'Noriel', 'Darell', 'Tainy', 'Chencho Corleone', 'Arcángel', 'Farruko',
+      'Ozuna', 'Anuel', 'Bad Bunny', 'Young Miko', 'Luar La L', 'Hades66', 'Yovngchimi', 'Omar Courtz',
+      'Roa', 'Dei V', 'Villano Antillano', 'Eladio V', 'Myke Wave', 'Mora Sound', 'Rauw Star'
     ],
-    firstNames: ['Carlos', 'José', 'Luis', 'Ángel', 'Gabriel', 'Bryan', 'Kevin', 'Javier', 'Sebastián', 'Valeria', 'Alondra', 'Camila'],
-    lastNames: ['Rivera', 'Ortiz', 'Torres', 'Colón', 'Morales', 'Reyes', 'Cruz', 'Santiago', 'Ramos', 'Díaz', 'Feliciano']
+    firstNames: [
+      'Carlos', 'José', 'Luis', 'Ángel', 'Gabriel', 'Bryan', 'Kevin', 'Javier', 'Sebastián', 'Valeria',
+      'Alondra', 'Camila', 'Christian', 'Emmanuel', 'Kenneth', 'Jean', 'Alexis', 'Paola', 'Andrea'
+    ],
+    lastNames: [
+      'Rivera', 'Ortiz', 'Torres', 'Colón', 'Morales', 'Reyes', 'Cruz', 'Santiago', 'Ramos', 'Díaz',
+      'Feliciano', 'Vázquez', 'Rosario', 'Nieves', 'Soto', 'Medina', 'Vega', 'Delgado'
+    ]
   },
   México: {
     stageNames: [
-      'Natanael King', 'Junior H Flame', 'Peso Vibe', 'Gera MX Sound', 'Alemán Beat', 'Santa Fe Kid',
-      'Gabito Ball', 'Tornillo', 'Eslabón Arm', 'Dan Sánchez', 'Fuerza R', 'Oscar Maydon', 'Victor Cibrian'
+      'Natanael Cano', 'Junior H', 'Peso Pluma', 'Gera MX', 'Alemán', 'Santa Fe Klan', 'Gabito Ballesteros',
+      'Tornillo', 'Eslabón Armado', 'Dan Sánchez', 'Fuerza Regida', 'Oscar Maydon', 'Victor Cibrian',
+      'Chino Pacas', 'Xavi', 'Tito Double P', 'Cartel de Santa', 'Dharius', 'Snow Tha Product',
+      'Kenia Os', 'Danna Paola', 'Bellakath', 'Natanael King', 'Junior H Flame', 'Peso Vibe'
     ],
-    firstNames: ['Emiliano', 'Santiago', 'Mateo', 'Leonardo', 'Diego', 'Sebastián', 'Rodrigo', 'Gael', 'Ximena', 'Valentina', 'Regina'],
-    lastNames: ['Hernández', 'García', 'Martínez', 'López', 'González', 'Pérez', 'Rodríguez', 'Sánchez', 'Ramírez', 'Flores', 'Vázquez']
+    firstNames: [
+      'Emiliano', 'Santiago', 'Mateo', 'Leonardo', 'Diego', 'Sebastián', 'Rodrigo', 'Gael', 'Ximena',
+      'Valentina', 'Regina', 'Sofía', 'Camila', 'Alejandro', 'Maximiliano', 'Daniel', 'Eduardo'
+    ],
+    lastNames: [
+      'Hernández', 'García', 'Martínez', 'López', 'González', 'Pérez', 'Rodríguez', 'Sánchez',
+      'Ramírez', 'Flores', 'Vázquez', 'Morales', 'Reyes', 'Jiménez', 'Torres', 'Díaz', 'Gutiérrez', 'Mendoza'
+    ]
   },
   Colombia: {
     stageNames: [
-      'Feid Wave', 'Blessd Kid', 'Ryan Flow', 'Manuel V', 'Kapla', 'Miky Wood', 'Nanpa',
-      'Crissin', 'Totoy', 'Beéle Sound', 'Reykon King', 'Llane Star', 'Ovy Drums'
+      'Feid', 'Blessd', 'Ryan Castro', 'Manuel Turizo', 'Kapla & Miky', 'Nanpa Básico', 'Crissin',
+      'Totoy El Frío', 'Beéle', 'Reykon', 'Llane', 'Ovy On The Drums', 'Sky Rompiendo', 'Karol G',
+      'Greeicy', 'Farina', 'Pirlo 420', 'Sog', 'Esteban Rojas', 'Feid Wave', 'Blessd Kid', 'Ryan Flow'
     ],
-    firstNames: ['Juan', 'Andrés', 'David', 'Felipe', 'Camilo', 'Esteban', 'Nicolás', 'Daniel', 'Mariana', 'Salomé', 'Isabella'],
-    lastNames: ['Gómez', 'Rodríguez', 'Zapata', 'Restrepo', 'Jaramillo', 'Ospina', 'Henao', 'Bedoya', 'Montoya', 'Castrillón']
+    firstNames: [
+      'Juan', 'Andrés', 'David', 'Felipe', 'Camilo', 'Esteban', 'Nicolás', 'Daniel', 'Mariana',
+      'Salomé', 'Isabella', 'Sofía', 'Valentina', 'Santiago', 'Sebastián', 'Alejandro', 'Samuel'
+    ],
+    lastNames: [
+      'Gómez', 'Rodríguez', 'Zapata', 'Restrepo', 'Jaramillo', 'Ospina', 'Henao', 'Bedoya',
+      'Montoya', 'Castrillón', 'Correa', 'Álvarez', 'Londoño', 'Echeverri', 'Ramírez', 'Cano', 'Gallego'
+    ]
   },
   Chile: {
     stageNames: [
-      'Cris MJ Vibe', 'Standly', 'Polimá West', 'Pablo Chill-E', 'Pailita Kid', 'Jordan 23',
-      'Harry Nach', 'Marcianeke', 'Galea Star', 'Kidd Voodoo', 'DrefQuila', 'Julianno'
+      'Cris MJ', 'Standly', 'Polimá Westcoast', 'Pablo Chill-E', 'Pailita', 'El Jordan 23', 'Harry Nach',
+      'Marcianeke', 'Galea', 'Kidd Voodoo', 'DrefQuila', 'Julianno Sosa', 'King Savagge', 'Gino Mella',
+      'Jere Klein', 'Nickoog Clk', 'Ak4:20', 'Young Cister', 'Cris MJ Vibe', 'Pablo West'
     ],
-    firstNames: ['Matías', 'Benjamín', 'Vicente', 'Agustín', 'Tomás', 'Joaquín', 'Cristóbal', 'Catalina', 'Constanza', 'Florencia'],
-    lastNames: ['González', 'Muñoz', 'Rojas', 'Díaz', 'Pérez', 'Soto', 'Contreras', 'Silva', 'Martínez', 'Sepúlveda']
+    firstNames: [
+      'Matías', 'Benjamín', 'Vicente', 'Agustín', 'Tomás', 'Joaquín', 'Cristóbal', 'Catalina',
+      'Constanza', 'Florencia', 'Isidora', 'Sofía', 'Martín', 'Maximiliano', 'Lucas', 'Ignacio', 'Antonia'
+    ],
+    lastNames: [
+      'González', 'Muñoz', 'Rojas', 'Díaz', 'Pérez', 'Soto', 'Contreras', 'Silva', 'Martínez',
+      'Sepúlveda', 'Morales', 'Rodríguez', 'López', 'Fuentes', 'Hernández', 'Torres', 'Araya', 'Espinoza'
+    ]
   },
   Uruguay: {
     stageNames: [
-      'Zeballos Sound', 'Knack Vibe', 'Peke 77', 'Mesita Kid', 'Gula Beat', 'Agus Flow',
-      'Millo V', 'Franux BB', 'Davo Star', 'Ciro Sound'
+      'Zeballos', 'Knack', 'Peke 77', 'Mesita', 'Gula', 'Agus Padilla', 'Franux BB', 'Davo',
+      'Cardellino', 'Santi Mostaffa', 'Kung-Fú Ombijam', 'Arquero', 'Zeballos Sound', 'Knack Vibe'
     ],
-    firstNames: ['Facundo', 'Santiago', 'Mateo', 'Agustín', 'Lucas', 'Joaquín', 'Federico', 'Martina', 'Lucía', 'Julieta'],
-    lastNames: ['Rodríguez', 'González', 'Fernández', 'López', 'Pérez', 'Martínez', 'García', 'Silva', 'Suárez', 'Olivera']
+    firstNames: [
+      'Facundo', 'Santiago', 'Mateo', 'Agustín', 'Lucas', 'Joaquín', 'Federico', 'Martina',
+      'Lucía', 'Julieta', 'Bruno', 'Rodrigo', 'Gonzalo', 'Valentina', 'Camila'
+    ],
+    lastNames: [
+      'Rodríguez', 'González', 'Fernández', 'López', 'Pérez', 'Martínez', 'García', 'Silva',
+      'Suárez', 'Olivera', 'Pereira', 'Silvera', 'Morales', 'Acosta', 'Giménez'
+    ]
   },
   'República Dominicana': {
     stageNames: [
-      'Rochy King', 'El Alfa Beat', 'Amenazzy Wave', 'Tokischa Star', 'Yailin Flow', 'Bulin Kid',
-      'Jey One', 'Angel Dior', 'Tivi Gunz', 'Dowba Montana', 'Kiko El Crazy'
+      'Rochy RD', 'El Alfa', 'Amenazzy', 'Tokischa', 'Yailin La Más Viral', 'Bulin 47', 'Jey One',
+      'Angel Dior', 'Tivi Gunz', 'Dowba Montana', 'Kiko El Crazy', 'Chimbala', 'Lirico En La Casa',
+      'El Mayor Clásico', 'Braulio Fogón', 'Rochy King', 'El Alfa Beat'
     ],
-    firstNames: ['Kelvin', 'Manuel', 'Ángel', 'Jean', 'Carlos', 'José', 'Yohan', 'Yomaira', 'Génesis', 'Ashley'],
-    lastNames: ['Rodríguez', 'Pérez', 'Martínez', 'García', 'Reyes', 'Díaz', 'Peña', 'Jiménez', 'Santana', 'Castillo']
+    firstNames: [
+      'Kelvin', 'Manuel', 'Ángel', 'Jean', 'Carlos', 'José', 'Yohan', 'Yomaira', 'Génesis',
+      'Ashley', 'Wander', 'Brayan', 'Dariel', 'Yuleisy', 'Lisbeth'
+    ],
+    lastNames: [
+      'Rodríguez', 'Pérez', 'Martínez', 'García', 'Reyes', 'Díaz', 'Peña', 'Jiménez',
+      'Santana', 'Castillo', 'De La Cruz', 'Rosario', 'Guzmán', 'Paulino', 'Encarnación'
+    ]
   },
   'Estados Unidos': {
     stageNames: [
-      'Neo Wolf', 'Vibe Kid', 'Aura Nova', 'Kidd Rush', 'Nova Silver', 'Jaxen Flame',
-      'Zeta Black', 'Dante Vox', 'Kira Gold', 'Milo Cruz', 'Chase Wave', 'Ryder Stone'
+      'Travis Wolf', 'Kidd Rush', 'Nova Wave', 'Jaxen Flame', 'Zeta Black', 'Dante Vox', 'Kira Gold',
+      'Chase Wave', 'Ryder Stone', 'Saint Mirage', 'Future Vibe', 'Young Echo', 'Neo Wolf', 'Vibe Kid'
     ],
-    firstNames: ['Warren', 'Alexander', 'Ethan', 'Liam', 'Noah', 'Mason', 'Oliver', 'Lucas', 'Logan', 'Emma', 'Olivia', 'Ava', 'Sophia'],
-    lastNames: ['Miller', 'Johnson', 'Smith', 'Williams', 'Brown', 'Jones', 'Davis', 'Wilson', 'Anderson', 'Taylor', 'Thomas']
+    firstNames: [
+      'Marcus', 'Alexander', 'Ethan', 'Liam', 'Noah', 'Mason', 'Oliver', 'Lucas', 'Logan',
+      'Emma', 'Olivia', 'Ava', 'Sophia', 'James', 'Jayden', 'Jackson'
+    ],
+    lastNames: [
+      'Miller', 'Johnson', 'Smith', 'Williams', 'Brown', 'Jones', 'Davis', 'Wilson',
+      'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee'
+    ]
   },
   'Reino Unido': {
     stageNames: [
-      'Storm Kid', 'Central Flow', 'Dave Wave', 'Aitch Beat', 'Skepta Sound', 'Headie Star',
-      'Digga D', 'Russ Millions', 'ArrDee', 'K-Trap', 'Fred Again'
+      'Central Flow', 'Stormzy Wave', 'Dave Sound', 'Aitch Beat', 'Skepta Kid', 'Headie Star',
+      'Digga D', 'Russ Millions', 'ArrDee', 'K-Trap', 'Fred Again', 'Little Simz', 'Storm Kid'
     ],
-    firstNames: ['George', 'Harry', 'Jack', 'Oliver', 'Arthur', 'Leo', 'Oscar', 'Charlie', 'Amelia', 'Isla', 'Ava', 'Mia'],
-    lastNames: ['Smith', 'Jones', 'Taylor', 'Brown', 'Williams', 'Wilson', 'Johnson', 'Davies', 'Robinson', 'Wright', 'Thompson']
+    firstNames: [
+      'George', 'Harry', 'Jack', 'Oliver', 'Arthur', 'Leo', 'Oscar', 'Charlie', 'Amelia',
+      'Isla', 'Ava', 'Mia', 'Henry', 'Freddie', 'Archie'
+    ],
+    lastNames: [
+      'Smith', 'Jones', 'Taylor', 'Brown', 'Williams', 'Wilson', 'Johnson', 'Davies',
+      'Robinson', 'Wright', 'Thompson', 'Evans', 'Walker', 'White'
+    ]
   }
 };
 
 /**
- * Genera nombres realistas contextualizados por país
+ * Genera nombres realistas y artísticos contextualizados por país y ciudad
  */
-export function generateRandomArtistName(country = 'Argentina'): { stageName: string; realName: string } {
+export function generateArtistName(country = 'Argentina', _city?: string): { stageName: string; realName: string } {
   const pool = REGIONAL_NAME_POOLS[country] || REGIONAL_NAME_POOLS['Argentina'];
   const stageName = pool.stageNames[Math.floor(Math.random() * pool.stageNames.length)];
   const firstName = pool.firstNames[Math.floor(Math.random() * pool.firstNames.length)];
@@ -222,4 +289,16 @@ export function generateRandomArtistName(country = 'Argentina'): { stageName: st
     stageName,
     realName: `${firstName} ${lastName}`
   };
+}
+
+/**
+ * Función helper de compatibilidad para generar nombres aleatorios por país o seed
+ */
+export function generateRandomArtistName(countryOrSeed: string | number = 'Argentina', city?: string): { stageName: string; realName: string } {
+  if (typeof countryOrSeed === 'number') {
+    const countries = Object.keys(REGIONAL_NAME_POOLS);
+    const country = countries[countryOrSeed % countries.length];
+    return generateArtistName(country, city);
+  }
+  return generateArtistName(countryOrSeed, city);
 }

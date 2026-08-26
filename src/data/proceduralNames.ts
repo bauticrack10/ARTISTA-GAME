@@ -1,3 +1,7 @@
+import { REGIONAL_NAME_POOLS, generateArtistName, generateRandomArtistName } from '../utils/formatters';
+
+export { REGIONAL_NAME_POOLS, generateArtistName, generateRandomArtistName };
+
 export const ARTIST_FIRST_NAMES = [
   'Mateo', 'Valentín', 'Lucía', 'Joaquín', 'Camila', 'Santiago', 'Sofía', 'Felipe', 'Martina', 'Agustín',
   'Julieta', 'Franco', 'Ignacio', 'Rocío', 'Tomás', 'Delfina', 'Facundo', 'Milagros', 'Enzo', 'Zoe',
@@ -12,13 +16,13 @@ export const ARTIST_LAST_NAMES = [
 ];
 
 export const ARTIST_STAGE_PREFIXES = [
-  'Young', 'Lil', 'El', 'La', 'Kid', 'Baby', 'Big', 'MC', 'Don', 'King',
-  'Saint', 'Dark', 'Nova', 'Ultra', 'Lord', 'G', 'Cyber', 'Aura', 'Ghost', 'Neo'
+  'El', 'La', 'Don', 'MC', 'Lil', 'Baby', 'Young', 'Big', 'King', 'Saint',
+  'Dark', 'Nova', 'Ultra', 'Lord', 'G', 'Cyber', 'Aura', 'Ghost', 'Neo'
 ];
 
 export const ARTIST_STAGE_NAMES = [
-  'Killa', 'Vibe', 'Zion', 'Aura', 'Fuego', 'Storm', 'Shadow', 'Blade', 'Flaco', 'Rider',
-  'Echo', 'Drift', 'Phantom', 'Glow', 'Venom', 'Pulse', 'Spark', 'Zenith', 'Flow', 'Nova',
+  'Duko', 'Wos', 'Flow', 'Fuego', 'Storm', 'Shadow', 'Blade', 'Flaco', 'Rider',
+  'Echo', 'Drift', 'Phantom', 'Glow', 'Venom', 'Pulse', 'Spark', 'Zenith', 'Nova',
   'Bandido', 'Príncipe', 'Dorado', 'Klan', 'Rebel', 'Cruz', 'Mamba', 'Lobo', 'Sirena', 'Specter'
 ];
 
@@ -91,28 +95,7 @@ export const CITIES_BY_REGION: Record<string, Array<{ name: string; country: str
   ]
 };
 
-export function generateRandomArtistName(seedIndex: number): { stageName: string; realName: string } {
-  const isPrefix = seedIndex % 3 === 0;
-  const isSolo = seedIndex % 5 === 0;
-  const p = ARTIST_STAGE_PREFIXES[seedIndex % ARTIST_STAGE_PREFIXES.length];
-  const s = ARTIST_STAGE_NAMES[(seedIndex * 7) % ARTIST_STAGE_NAMES.length];
-  const f = ARTIST_FIRST_NAMES[(seedIndex * 13) % ARTIST_FIRST_NAMES.length];
-  const l = ARTIST_LAST_NAMES[(seedIndex * 11) % ARTIST_LAST_NAMES.length];
-
-  let stageName = `${p} ${s}`;
-  if (isSolo) {
-    stageName = s;
-  } else if (!isPrefix) {
-    stageName = `${f} ${s}`;
-  }
-
-  return {
-    stageName,
-    realName: `${f} ${l}`
-  };
-}
-
-export function generateSongTitle(index: number, genreId?: string): string {
+export function generateSongTitle(index: number, _genreId?: string): string {
   const noun = SONG_TITLE_NOUNS[(index * 13 + 7) % SONG_TITLE_NOUNS.length];
   const adj = SONG_TITLE_ADJECTIVES[(index * 17 + 3) % SONG_TITLE_ADJECTIVES.length];
   const mod = index % 5;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Artist, WorldState, Genre, CareerStage } from '../types';
 import {
   Sparkles,
@@ -21,9 +21,11 @@ import {
   Star,
   Check,
   RotateCcw,
-  ShieldCheck
+  ShieldCheck,
+  Palette
 } from 'lucide-react';
 import {
+  generateArtistName,
   generateRandomArtistName,
   formatMoney,
   formatFans,
@@ -80,7 +82,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const [mainGenreId, setMainGenreId] = useState('trap_latino');
   const [secondaryGenres, setSecondaryGenres] = useState<string[]>(['hip_hop_rap']);
 
-  // 3. Personality Archetype
+  // 3. Personality Archetype & Concept
   const [archetype, setArchetype] = useState<'visionary' | 'entrepreneur' | 'showman' | 'disciplined' | 'experimental' | 'custom'>('visionary');
   const [customTraits, setCustomTraits] = useState({
     creativity: 85,
@@ -101,24 +103,37 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   // 5. Visual Identity / Avatar Palette
   const [avatarColor, setAvatarColor] = useState('from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
 
-  // 6. Prodigy Rare Trait (0.001% chance / 1 in 100,000) - Appears at the culmination
+  // 6. Prodigy Rare Trait (0.001% chance / 1 in 100,000) - Appears strictly at the culmination
   const [isProdigy, setIsProdigy] = useState<boolean>(() => Math.random() < 0.00001);
   const [rollCount, setRollCount] = useState(0);
   const [rollMessage, setRollMessage] = useState<string | null>(null);
 
   // Initialize with authentic regional name
   useEffect(() => {
-    const generated = generateRandomArtistName('Argentina');
+    const generated = generateArtistName('Argentina');
     setName(generated.stageName);
     setRealName(generated.realName);
   }, []);
 
+  // Developer testing keyboard shortcut (Shift+Alt+P in dev mode only)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.altKey && (e.key === 'p' || e.key === 'P')) {
+        setIsProdigy(prev => !prev);
+        setRollMessage('🔧 Modo Dev: Rasgo Prodigio alternado con atajo de desarrollo.');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleRandomizeName = () => {
-    const generated = generateRandomArtistName(country);
+    const finalCity = isCustomCity && customCityText.trim() ? customCityText.trim() : city;
+    const generated = generateArtistName(country, finalCity);
     setName(generated.stageName);
     setRealName(generated.realName);
 
-    // Minor secret chance to proc prodigy on randomizer
+    // Minor secret chance to proc prodigy on randomizer (1 in 100,000)
     if (Math.random() < 0.00001) {
       setIsProdigy(true);
       setRollMessage('¡INCREÍBLE! ¡Has desbloqueado el rasgo Promesa / Prodigio (1 en 100.000)!');
@@ -133,7 +148,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     setCustomCityText('');
 
     // Generate new regional name matching selected country
-    const generated = generateRandomArtistName(newCountry);
+    const generated = generateArtistName(newCountry, cities[0]);
     setName(generated.stageName);
     setRealName(generated.realName);
   };
@@ -396,7 +411,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
   const selectedMainGenre = world.genres[mainGenreId];
   const computedStats = getStartingStats();
-  const agePercent = ((age - 16) / (35 - 16)) * 100;
 
   return (
     <div
@@ -422,7 +436,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </span>
               </h1>
               <p className="text-xs text-[#94A3B8] mt-0.5">
-                Diseñá tu identidad musical, seleccioná tu punto de partida e iniciá tu viaje en la industria.
+                Diseñá tu identidad musical, seleccioná tu concepto artístico e iniciá tu viaje en la industria.
               </p>
             </div>
           </div>
@@ -430,7 +444,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
         {/* Main Form + Live Preview Layout */}
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          {/* Left Columns (2 cols): All Creation Steps */}
+          {/* Left Columns (2 cols): Ordered Creation Steps */}
           <div className="lg:col-span-2 space-y-6">
             
             {/* ========================================================================= */}
@@ -599,65 +613,79 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 2: Estilo Musical & Géneros */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-4 shadow-lg">
-              <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider border-b border-[#2A2E3D] pb-3">
-                <Music2 className="w-4 h-4 text-[#EC4899]" />
-                <span>2. Estilo Musical & Géneros</span>
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="border-b border-[#2A2E3D] pb-3">
+                <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
+                  <Disc3 className="w-4 h-4 text-[#8B5CF6]" />
+                  <span>2. Estilo Musical & Géneros</span>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
-                  Género Principal (Identidad Central)
+              {/* Main Genre Selection Grid */}
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                  Género Musical Principal *
                 </label>
-                <select
-                  value={mainGenreId}
-                  onChange={e => {
-                    const val = e.target.value;
-                    setMainGenreId(val);
-                    setSecondaryGenres(secondaryGenres.filter(g => g !== val));
-                  }}
-                  className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer font-medium"
-                >
-                  {(Object.values(world.genres) as Genre[]).map(g => (
-                    <option key={g.id} value={g.id} className="bg-[#0B0C10] text-[#F8FAFC]">
-                      {g.name} ({g.originCountry}) — {g.lifecycle.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-                {selectedMainGenre && (
-                  <p className="text-[11px] text-[#94A3B8] mt-1.5 italic">
-                    "{cleanQuotes(selectedMainGenre.aestheticTone)}"
-                  </p>
-                )}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {Object.values(world.genres).map((g: Genre) => {
+                    const isSelected = mainGenreId === g.id;
+                    return (
+                      <button
+                        type="button"
+                        key={g.id}
+                        onClick={() => {
+                          setMainGenreId(g.id);
+                          setSecondaryGenres(secondaryGenres.filter(sg => sg !== g.id));
+                        }}
+                        className={`p-3 rounded-[10px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                          isSelected
+                            ? 'bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.25)] ring-1 ring-[#8B5CF6]'
+                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-[#F8FAFC]">
+                            {g.name}
+                          </span>
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />}
+                        </div>
+                        <span className="text-[10px] text-[#94A3B8] line-clamp-1">
+                          {g.description}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
+              {/* Secondary Subgenres (Chips/Badges) */}
+              <div className="space-y-2 pt-2">
+                <div className="flex justify-between items-center">
                   <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    Géneros Secundarios / Sub-estilos (Máximo 3)
+                    Influencias & Subgéneros Secundarios
                   </label>
-                  <span className="text-[11px] text-[#C084FC] font-mono font-semibold">
+                  <span className="text-[11px] font-mono text-[#C084FC]">
                     {cleanCountTag(secondaryGenres.length, 3, 'seleccionados')}
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {(Object.values(world.genres) as Genre[])
-                    .filter(g => g.id !== mainGenreId)
-                    .map(g => {
+                <div className="flex flex-wrap gap-2">
+                  {Object.values(world.genres)
+                    .filter((g: Genre) => g.id !== mainGenreId)
+                    .map((g: Genre) => {
                       const isSelected = secondaryGenres.includes(g.id);
                       return (
                         <button
                           type="button"
                           key={g.id}
                           onClick={() => toggleSecondaryGenre(g.id)}
-                          className={`px-3 py-1.5 rounded-full border text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
                             isSelected
-                              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold border-transparent shadow-[0_0_12px_rgba(139,92,246,0.35)] scale-102'
-                              : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/50'
+                              ? 'bg-[#8B5CF6]/25 border-[#8B5CF6] text-white shadow-xs'
+                              : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/40'
                           }`}
                         >
-                          {isSelected && <Check className="w-3 h-3 text-white" />}
-                          <span>{g.name}</span>
+                          {isSelected ? '✓ ' : '+ '}
+                          {g.name}
                         </button>
                       );
                     })}
@@ -666,237 +694,234 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 3: Personalidad & Enfoque Artístico */}
+            {/* PASO 3: Arquetipo & Filosofía Creativa */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-4 shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="border-b border-[#2A2E3D] pb-3">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Brain className="w-4 h-4 text-[#10B981]" />
-                  <span>3. Personalidad & Enfoque Artístico</span>
+                  <Brain className="w-4 h-4 text-[#8B5CF6]" />
+                  <span>3. Arquetipo Artístico & Filosofía</span>
                 </div>
-                {isProdigy && (
-                  <span className="text-[11px] font-bold text-amber-300 bg-amber-400/15 border border-amber-400/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                    <Crown className="w-3 h-3 text-amber-400" />
-                    Maximizados por Prodigio (95-100)
-                  </span>
-                )}
               </div>
 
-              {!isProdigy ? (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {[
-                      {
-                        id: 'visionary',
-                        title: 'Visionario',
-                        chips: ['+Originalidad', '+Creatividad', '+Riesgo'],
-                        desc: 'Innovador que busca definir nuevos sonidos.'
-                      },
-                      {
-                        id: 'entrepreneur',
-                        title: 'Emprendedor',
-                        chips: ['+Ambición', '+Comercial', '+Sociable'],
-                        desc: 'Estratega del negocio y alianzas de la industria.'
-                      },
-                      {
-                        id: 'showman',
-                        title: 'Showman',
-                        chips: ['+Carisma', '+Hype', '+Comercial'],
-                        desc: 'Atracción escénica nata y magnetismo viral.'
-                      },
-                      {
-                        id: 'disciplined',
-                        title: 'Disciplinado',
-                        chips: ['+Técnica', '+Constancia', '+Enfoque'],
-                        desc: 'Obsesión por la maestría y la ética de trabajo.'
-                      },
-                      {
-                        id: 'experimental',
-                        title: 'Experimental',
-                        chips: ['+Vanguardia', '+Originalidad', '-Comercial'],
-                        desc: 'Ruptura radical con las fórmulas preestablecidas.'
-                      },
-                      {
-                        id: 'custom',
-                        title: 'Personalizado',
-                        chips: ['Ajuste Manual', '10 Atributos'],
-                        desc: 'Configurá cada faceta de tu personalidad a medida.'
-                      }
-                    ].map(a => (
-                      <button
-                        type="button"
-                        key={a.id}
-                        onClick={() => setArchetype(a.id as any)}
-                        className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                          archetype === a.id
-                            ? 'bg-[#1C1F2B] border-[#8B5CF6] text-[#F8FAFC] font-semibold ring-1 ring-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.2)]'
-                            : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/50'
-                        }`}
-                      >
-                        <div>
-                          <p className="text-xs font-bold text-[#F8FAFC]">{a.title}</p>
-                          <p className="text-[11px] text-[#94A3B8] mt-1 leading-tight">{a.desc}</p>
+              {/* Archetypes Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  {
+                    id: 'visionary',
+                    label: 'El Visionario',
+                    desc: 'Prioriza originalidad radical y experimentación. Gran impacto en la crítica.',
+                    chips: ['+Originalidad', '+Creatividad', '-Comercial'],
+                    badgeBg: 'bg-[#8B5CF6]/20 text-[#C084FC] border-[#8B5CF6]/30'
+                  },
+                  {
+                    id: 'entrepreneur',
+                    label: 'El Estratega',
+                    desc: 'Negociador nato, enfoque comercial y control de marca. Maximiza ingresos.',
+                    chips: ['+Comercial', '+Ambición', '+Sociabilidad'],
+                    badgeBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                  },
+                  {
+                    id: 'showman',
+                    label: 'El Showman',
+                    desc: 'Carisma magnético, viralidad en redes y presencia escénica arrolladora.',
+                    chips: ['+Carisma', '+Hype', '+Fans'],
+                    badgeBg: 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                  },
+                  {
+                    id: 'disciplined',
+                    label: 'El Perfeccionista',
+                    desc: 'Técnica vocal excelsa, horas infinitas en estudio y consistencia de calidad.',
+                    chips: ['+Habilidad', '+Disciplina', '+Constancia'],
+                    badgeBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                  },
+                  {
+                    id: 'experimental',
+                    label: 'Vanguardia Pura',
+                    desc: 'Rompe barreras sonoras sin atarse a tendencias ni algoritmos comerciales.',
+                    chips: ['+Credibilidad', '+Riesgo', '+Innovación'],
+                    badgeBg: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                  },
+                  {
+                    id: 'custom',
+                    label: 'Personalizado',
+                    desc: 'Ajuste manual y minucioso de cada rasgo psicológico y artístico.',
+                    chips: ['Ajuste Libre', 'Custom Stats'],
+                    badgeBg: 'bg-slate-500/20 text-slate-300 border-slate-500/30'
+                  }
+                ].map((item) => {
+                  const isSelected = archetype === item.id;
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      onClick={() => setArchetype(item.id as any)}
+                      className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.25)] ring-1 ring-[#8B5CF6]'
+                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-[#F8FAFC]">
+                            {item.label}
+                          </span>
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />}
                         </div>
-                        <div className="flex flex-wrap gap-1 mt-2.5 pt-2 border-t border-[#2A2E3D]/50">
-                          {a.chips.map((chip, idx) => (
-                            <span
-                              key={idx}
-                              className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[#16181F] text-[#CBD5E1] border border-[#2A2E3D]"
-                            >
-                              {chip}
-                            </span>
-                          ))}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Custom Sliders if 'custom' is selected */}
-                  {archetype === 'custom' && (
-                    <div className="p-4 bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] space-y-3 pt-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-                        {Object.entries(customTraits).map(([traitKey, val]) => {
-                          const valueColor = val > 75 ? 'text-[#10B981]' : val >= 50 ? 'text-[#38BDF8]' : 'text-amber-400';
-                          return (
-                            <div key={traitKey} className="space-y-1">
-                              <div className="flex justify-between text-[11px] text-[#F8FAFC] font-medium capitalize">
-                                <span>{traitKey.replace(/([A-Z])/g, ' $1')}</span>
-                                <span className={`font-mono font-bold ${valueColor}`}>{val}/100</span>
-                              </div>
-                              <input
-                                type="range"
-                                min={30}
-                                max={99}
-                                value={val}
-                                onChange={e => setCustomTraits({ ...customTraits, [traitKey]: Number(e.target.value) })}
-                                className="w-full cursor-pointer h-1.5 bg-[#16181F] rounded-lg accent-[#8B5CF6]"
-                              />
-                            </div>
-                          );
-                        })}
+                        <p className="text-[11px] text-[#94A3B8] leading-relaxed mb-2.5">
+                          {item.desc}
+                        </p>
                       </div>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="p-4 bg-[#0B0C10] border border-amber-500/30 rounded-[12px] text-xs space-y-2.5">
-                  <p className="font-bold text-amber-300 flex items-center gap-1.5">
-                    <Star className="w-4 h-4 text-amber-400 fill-current" />
-                    Atributos Legendarios de Nacimiento:
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px] font-mono text-[#F8FAFC]">
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Creatividad: 98/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Ambición: 99/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Disciplina: 96/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Carisma: 99/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Habilidad: 99/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Comercial: 97/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Originalidad: 98/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Riesgo: 94/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Sociabilidad: 94/100</span>
-                    <span className="bg-[#16181F] p-1.5 rounded-[6px] border border-[#2A2E3D]">Independencia: 95/100</span>
+
+                      {/* Trait Chips */}
+                      <div className="flex items-center gap-1 flex-wrap">
+                        {item.chips.map((chip, idx) => (
+                          <span
+                            key={idx}
+                            className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${item.badgeBg}`}
+                          >
+                            {chip}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Custom Sliders (Only if Custom archetype) */}
+              {archetype === 'custom' && (
+                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] space-y-3 pt-4">
+                  <span className="text-xs font-bold text-[#C084FC] block uppercase tracking-wider">
+                    Ajuste Fino de Rasgos Personalizados
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {Object.entries(customTraits).map(([key, val]) => (
+                      <div key={key} className="space-y-1">
+                        <div className="flex justify-between text-xs text-[#94A3B8] capitalize">
+                          <span>{key}</span>
+                          <span className="font-mono font-bold text-[#F8FAFC]">{val}/100</span>
+                        </div>
+                        <input
+                          type="range"
+                          min={50}
+                          max={99}
+                          value={val}
+                          onChange={e =>
+                            setCustomTraits({
+                              ...customTraits,
+                              [key]: Number(e.target.value)
+                            })
+                          }
+                          className="w-full h-1.5 bg-[#16181F] rounded-lg accent-[#8B5CF6] cursor-pointer"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 4: Punto de Partida / Nivel Inicial */}
+            {/* PASO 4: Punto de Partida / Background */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-4 shadow-lg">
-              <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider border-b border-[#2A2E3D] pb-3">
-                <Sliders className="w-4 h-4 text-[#06B6D4]" />
-                <span>4. Punto de Partida (Nivel Inicial)</span>
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="border-b border-[#2A2E3D] pb-3">
+                <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
+                  <TrendingUp className="w-4 h-4 text-[#8B5CF6]" />
+                  <span>4. Punto de Partida / Background</span>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   {
                     id: 'underground',
-                    title: 'Underground Crudo (⭐ Recomendado)',
-                    desc: 'Iniciás desde cero: micrófono casero, $500 de fondos, 150 seguidores locales y 0 streams.',
-                    badge: 'Auténtico',
-                    badgeColor: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                    label: 'Desde Cero (Underground)',
+                    desc: 'Home studio casero, $500 de ahorro y un puñado de oyentes leales.',
+                    badge: '$500 • 35 Oyentes'
                   },
                   {
                     id: 'local',
-                    title: 'Artista de Escena Local',
-                    desc: 'Presentaciones en bares, $1,200 de fondos, 900 fans y 2.2k streams acumulados.',
-                    badge: 'Barrial',
-                    badgeColor: 'bg-blue-500/15 text-blue-400 border-blue-500/30'
-                  },
-                  {
-                    id: 'independent',
-                    title: 'Independiente con Base',
-                    desc: 'Home studio propio, $3,500 de fondos, 4,500 fans activos y 14k streams acumulados.',
-                    badge: 'Equipado',
-                    badgeColor: 'bg-purple-500/15 text-[#C084FC] border-[#8B5CF6]/30'
+                    label: 'Escena Local / Batallas',
+                    desc: 'Fogueado en competencias de freestyle barriales con $1.200 y 650 oyentes.',
+                    badge: '$1.200 • 650 Oyentes'
                   },
                   {
                     id: 'emerging',
-                    title: 'Promesa Emergente',
-                    desc: 'Cierto hype en redes, $2,500 de fondos, 2,500 fans y 8.5k streams acumulados.',
-                    badge: 'En Alza',
-                    badgeColor: 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                    label: 'Promesa en Ascenso',
+                    desc: 'Un par de singles virales en TikTok, $2.500 y 2.400 oyentes mensuales.',
+                    badge: '$2.500 • 2.4K Oyentes'
+                  },
+                  {
+                    id: 'independent',
+                    label: 'Autogestión Profesional',
+                    desc: 'Equipamiento semiprofesional, $3.500 y base sólida de 3.800 oyentes.',
+                    badge: '$3.500 • 3.8K Oyentes'
                   }
-                ].map(lvl => (
-                  <button
-                    type="button"
-                    key={lvl.id}
-                    onClick={() => setStartingLevel(lvl.id as any)}
-                    className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer relative ${
-                      startingLevel === lvl.id
-                        ? 'bg-[#1C1F2B] border-[#8B5CF6] text-[#F8FAFC] ring-1 ring-[#8B5CF6] shadow-sm'
-                        : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-bold text-[#F8FAFC]">{lvl.title}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${lvl.badgeColor}`}>
-                        {lvl.badge}
+                ].map((item) => {
+                  const isSelected = startingLevel === item.id;
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      onClick={() => setStartingLevel(item.id as any)}
+                      className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.25)] ring-1 ring-[#8B5CF6]'
+                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-[#F8FAFC]">
+                            {item.label}
+                          </span>
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />}
+                        </div>
+                        <p className="text-[11px] text-[#94A3B8] leading-relaxed mb-2">
+                          {item.desc}
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-[4px] border border-emerald-500/30 w-fit">
+                        {item.badge}
                       </span>
-                    </div>
-                    <p className="text-[11px] text-[#94A3B8] leading-relaxed">{lvl.desc}</p>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 5: Identidad Visual / Paleta de Color */}
+            {/* PASO 5: Estética Visual & Paleta Cromática */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-4 shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
+            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="border-b border-[#2A2E3D] pb-3">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
-                  <span>5. Identidad Visual / Paleta Cromática</span>
+                  <Palette className="w-4 h-4 text-[#8B5CF6]" />
+                  <span>5. Estética Visual & Paleta Cromática</span>
                 </div>
-                <span className="text-[11px] text-[#94A3B8]">
-                  Define el aura del artista en la interfaz
-                </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {PALETTE_OPTIONS.map(p => {
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {PALETTE_OPTIONS.map((p) => {
                   const isSelected = avatarColor === p.val;
                   return (
                     <button
                       type="button"
                       key={p.id}
                       onClick={() => setAvatarColor(p.val)}
-                      className={`p-3 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col gap-2 ${
+                      className={`p-2.5 rounded-[10px] border flex items-center gap-2.5 transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#1C1F2B] border-[#8B5CF6] ring-1 ring-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.3)]'
-                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/50'
+                          ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] shadow-xs ring-1 ring-[#8B5CF6]'
+                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className={`w-8 h-8 rounded-[8px] bg-gradient-to-tr ${p.val} border border-white/20 flex items-center justify-center shadow-xs`}>
-                          {isSelected && <Check className="w-4 h-4 text-white drop-shadow" />}
-                        </div>
-                        <span className={`text-[10px] font-mono ${isSelected ? 'text-[#C084FC] font-bold' : 'text-[#64748B]'}`}>
-                          {isSelected ? 'ACTIVO' : ''}
-                        </span>
+                      <div
+                        className={`w-6 h-6 rounded-full bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 shadow-xs`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 text-white mx-auto mt-1" />}
                       </div>
                       <span className="text-xs font-semibold text-[#F8FAFC] truncate">
                         {p.label}
@@ -951,7 +976,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   </div>
                 </div>
 
-                {/* Player-only interaction */}
+                {/* Player-only interaction - No debug tools exposed */}
                 <div className="flex items-center gap-2 shrink-0">
                   {!isProdigy ? (
                     <button
