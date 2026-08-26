@@ -10,6 +10,10 @@
   - **Botones:** Botón oscuro con sombra *inset* característica (gba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px), radio 6px para botones rectangulares y 9999px únicamente para píldoras/iconos.
   - **Tipografía y Jerarquía:** Camera Plain Variable (o fallbacks ui-sans-serif, system-ui), pesos 400 y 600, con espaciado negativo en titulares grandes.
 
+## Activación Obligatoria del Equipo de Agentes
+
+- **Despliegue Previo del Equipo:** Ante cualquier solicitud de desarrollo, diseño, nueva mecánica, corrección o acción sobre la aplicación, se debe activar y coordinar primero al equipo de agentes especializados (`teamwork_preview` o subagentes definidos: Orchestrator, UI/UX Motion Designer, Frontend WebAudio, Backend API & Database, Copy & Virality, QA Tester) para planificar, auditar y ejecutar la tarea en conjunto.
+
 ## Automatización y Flujo de Trabajo (Git & GitHub)
 
 - **Sincronización Automática con GitHub:** Siempre que se complete cualquier modificación, refactorización, nueva funcionalidad o corrección en el código, se debe verificar la compilación (`npm run build`), añadir todos los cambios (`git add -A`), realizar un commit descriptivo y hacer `git push origin main` al repositorio de GitHub automáticamente, sin esperar una petición manual del usuario.
