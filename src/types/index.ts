@@ -462,13 +462,16 @@ export interface EcosystemNPC {
   name: string;
   nickname: string;
   type: EcosystemNPCType;
+  roleType?: EcosystemNPCType;
   roleTitle: string;
   avatarGradient: string;
   avatarUrl?: string;
   bio: string;
+  description?: string;
   affinity: number;       // -100 to +100
   respect: number;        // 0 to 100
   tensionLevel: number;   // 0 to 100 (for rival/hater/manager)
+  tension?: number;
   loyalty: number;        // 0 to 100 (for beatmaker)
   isEncountered: boolean;
   history: string[];
@@ -482,6 +485,9 @@ export interface BeefState {
   targetName: string;
   stage: BeefStage;
   hypeMultiplier: number;
+  hypeGenerated?: number;
+  tensionLevel?: number;
+  dissTracksExchanged?: string[];
   turnsActive: number;
   lastActionDescription: string;
   playerWon?: boolean;
@@ -549,8 +555,9 @@ export interface EventOutcome {
 export interface EventDefinition {
   id: string;
   title: string;
-  category: 'career' | 'music' | 'industry' | 'relationships' | 'media' | 'shows' | 'awards' | 'community' | 'personal';
-  rarity: 'common' | 'uncommon' | 'rare' | 'legendary';
+  category: 'career' | 'music' | 'industry' | 'relationships' | 'media' | 'shows' | 'awards' | 'community' | 'personal' | 'crisis' | 'scandal' | 'rivalry';
+  rarity: 'common' | 'uncommon' | 'rare' | 'legendary' | 'crisis';
+  eventYear?: number;
   narrativeChainId?: string;
   minCareerStage?: CareerStage;
   maxCareerStage?: CareerStage;

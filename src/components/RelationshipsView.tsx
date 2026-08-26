@@ -36,8 +36,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   const [filter, setFilter] = useState<'all' | 'ecosystem' | 'friends' | 'rivals' | 'feuds'>('all');
 
   const otherArtists = (Object.values(world.artists) as Artist[]).filter(a => a.id !== player.id && !a.isRetired);
-  const ecosystemContacts = Object.values(world.ecosystemContacts || {});
-  const activeBeefs = Object.values(world.activeBeefs || {});
+  const ecosystemContacts = (Object.values(world.ecosystemContacts || {}) as EcosystemNPC[]);
+  const activeBeefs = (Object.values(world.activeBeefs || {}) as BeefState[]);
 
   const filteredArtists = otherArtists.filter(a => {
     const rel = player.relationships[a.id];
@@ -47,7 +47,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     return true;
   });
 
-  const getEcosystemBadge = (roleType: EcosystemNPC['roleType']) => {
+  const getEcosystemBadge = (roleType?: EcosystemNPC['type'] | EcosystemNPC['roleType']) => {
     switch (roleType) {
       case 'beatmaker_barrio':
         return { label: 'Beatmaker de Confianza', color: 'bg-teal-500/20 text-teal-300 border-teal-500/40' };
@@ -268,7 +268,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {ecosystemContacts.map((npc) => {
-              const badge = getEcosystemBadge(npc.roleType);
+              const role = npc.roleType || npc.type;
+              const badge = getEcosystemBadge(role);
 
               return (
                 <div
@@ -293,7 +294,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                     </div>
 
                     <p className="text-[11px] text-[#94A3B8] leading-relaxed line-clamp-3">
-                      {npc.description}
+                      {npc.description || npc.bio}
                     </p>
                   </div>
 
@@ -309,14 +310,14 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#94A3B8]">Tensión Acumulada</span>
-                      <span className={`font-mono font-semibold ${npc.tension > 40 ? 'text-rose-400 font-bold' : 'text-[#F8FAFC]'}`}>{npc.tension}%</span>
+                      <span className={`font-mono font-semibold ${(npc.tension ?? npc.tensionLevel ?? 0) > 40 ? 'text-rose-400 font-bold' : 'text-[#F8FAFC]'}`}>{(npc.tension ?? npc.tensionLevel ?? 0)}%</span>
                     </div>
                   </div>
 
                   {/* NPC Interaction Actions */}
                   {onInteractEcosystemNPC && (
                     <div className="grid grid-cols-2 gap-1.5 pt-1">
-                      {npc.roleType === 'beatmaker_barrio' && (
+                      {role === 'beatmaker_barrio' && (
                         <>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'collab_beat')}
@@ -337,7 +338,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         </>
                       )}
 
-                      {npc.roleType === 'manager_chanta' && (
+                      {role === 'manager_chanta' && (
                         <>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'hang_out')}
@@ -358,7 +359,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         </>
                       )}
 
-                      {npc.roleType === 'critico_hater' && (
+                      {role === 'critico_hater' && (
                         <>
                           <button
                             onClick={() => onInteractEcosystemNPC(npc.id, 'call_out')}
@@ -371,7 +372,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         </>
                       )}
 
-                      {npc.roleType === 'rival_escena' && onInteractBeef && (
+                      {role === 'rival_escena' && onInteractBeef && (
                         <>
                           <button
                             onClick={() => onInteractBeef(npc.name, npc.id, 'respond_social')}

@@ -824,7 +824,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />}
                         </div>
                         <span className="text-[10px] text-[#94A3B8] line-clamp-1">
-                          {g.description}
+                          {g.aestheticTone || g.originCountry || ''}
                         </span>
                       </button>
                     );

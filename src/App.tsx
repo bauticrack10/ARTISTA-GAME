@@ -120,7 +120,7 @@ export default function App() {
     }
 
     // 4. Check Gold record milestone (500K total streams on a single song)
-    const songs = Object.values(world.songs).filter(s => s.artistId === player.id);
+    const songs = (Object.values(world.songs) as Song[]).filter(s => s.artistId === player.id);
     const goldSong = songs.find(s => s.streamsTotal >= 500000);
     if (goldSong && !milestonesAchievedRef.current.has(`gold_${goldSong.id}`)) {
       milestonesAchievedRef.current.add(`gold_${goldSong.id}`);

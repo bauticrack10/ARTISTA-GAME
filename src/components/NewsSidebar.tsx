@@ -187,7 +187,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
     }
   };
 
-  const activeTrends = Object.values(world.trends || {}).filter(
+  const activeTrends = (Object.values(world.trends || {}) as MusicTrend[]).filter(
     (t) => t.stage !== 'exhausted'
   );
 

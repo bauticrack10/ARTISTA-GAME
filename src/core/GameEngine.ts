@@ -58,7 +58,7 @@ export class GameEngine {
         avatarIcon: customPlayer.avatarIcon,
         country: customPlayer.country || 'Argentina',
         city: customPlayer.city || 'Buenos Aires',
-        birthYear: customPlayer.birthYear || 2006,
+        birthYear: customPlayer.birthYear || ((customPlayer.careerStartYear || 2026) - 18),
         careerStartYear: customPlayer.careerStartYear || 2026,
         mainGenreId: customPlayer.mainGenreId || 'trap_latino',
         subGenreIds: customPlayer.subGenreIds || [],
@@ -875,6 +875,14 @@ export class GameEngine {
 
     const chosen = choices[choiceIndex];
     if (!chosen) return null;
+
+    // Financial & Energy Safety Guards
+    if (chosen.costFunds && player.stats.funds < chosen.costFunds) {
+      return null;
+    }
+    if (chosen.costEnergy && player.stats.energy < chosen.costEnergy) {
+      return null;
+    }
 
     const outcome = chosen.apply({
       player,

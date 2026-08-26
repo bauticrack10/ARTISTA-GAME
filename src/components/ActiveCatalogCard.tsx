@@ -165,7 +165,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
               const genreTheme = getGenreTheme(song.genreId);
               const isHitTop10 = Boolean(
                 (song.peakPosition?.Global && song.peakPosition.Global <= 10) ||
-                Object.values(song.peakPosition || {}).some(pos => pos !== null && pos <= 10)
+                Object.values(song.peakPosition || {}).some(pos => pos !== null && Number(pos) <= 10)
               );
               const peakGlobal = song.peakPosition?.Global;
 

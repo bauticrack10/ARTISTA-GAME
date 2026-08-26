@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Artist, WorldState, Song, Album, CareerStage } from '../types';
 import { AVATAR_PRESETS } from '../data/avatarPresets';
+import { TimeSystem } from '../systems/TimeSystem';
 import {
   Camera,
   Sparkles,
@@ -260,7 +261,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               )}
             </div>
 
-            {/* High-Contrast Subtitle: Real Name, City, Country & Main Genre */}
+            {/* High-Contrast Subtitle: Real Name, City, Country, Age & Main Genre */}
             <div className="flex items-center gap-2 text-xs sm:text-sm text-[#94A3B8] font-normal flex-wrap">
               {player.realName ? (
                 <>
@@ -270,6 +271,10 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               ) : null}
               <span>
                 {player.city}, {player.country}
+              </span>
+              <span className="text-[#94A3B8]/60">•</span>
+              <span className="font-mono text-[#F8FAFC]">
+                {TimeSystem.calculateAge(player.birthYear, world.currentYear)} años
               </span>
               <span className="text-[#94A3B8]/60">•</span>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">

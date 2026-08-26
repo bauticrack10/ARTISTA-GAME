@@ -61,10 +61,12 @@ export class TimeSystem {
   }
 
   static calculateAge(birthYear: number, currentYear: number): number {
-    return Math.max(16, currentYear - birthYear);
+    if (!birthYear || isNaN(birthYear)) return 18;
+    return Math.max(0, currentYear - birthYear);
   }
 
   static calculateCareerLengthYears(careerStartYear: number, currentYear: number): number {
+    if (!careerStartYear || isNaN(careerStartYear)) return 0;
     return Math.max(0, currentYear - careerStartYear);
   }
 }

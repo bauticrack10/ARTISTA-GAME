@@ -75,6 +75,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_buy_exclusive',
         text: 'Pagarle $150 por los derechos exclusivos de la pista',
+        costFunds: 150,
         consequencesDescription: '-$150 Fondos, +100% Derechos y másters, +Reputación profesional',
         apply: () => ({
           narrativeText: 'El productor quedó sorprendido por tu seriedad comercial. La instrumental ahora es 100% tuya.',
@@ -150,6 +151,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_music_video_lowbudget',
         text: 'Filmar un video casero con celular y estética VHS en las calles',
+        costFunds: 80,
         consequencesDescription: '-$80 Fondos, +Identidad estética, +Hype (+18), +Fans (+450)',
         apply: () => ({
           narrativeText: 'El video capturó la vibra callejera y auténtica de tu barrio. Varios canales de música independiente lo repostearon.',
@@ -637,104 +639,192 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
   // --- MANDATORY ANNUAL CREATIVE DROUGHT EVENT ---
   {
     id: 'evt_creative_drought_mandatory',
-    title: 'Alerta de Industria: Sequía Creativa y Año en Silencio',
-    category: 'career',
-    rarity: 'legendary',
+    title: 'Alerta Artística: Sequía Creativa y Año en Silencio',
+    category: 'crisis',
+    rarity: 'crisis',
     cooldownMonths: 0,
     weight: 100,
     condition: () => true,
-    getDescription: (ctx) =>
-      `Ha finalizado el año ${ctx.currentYear} y no publicaste ninguna canción ni proyecto musical. Los medios de prensa, los algoritmos de streaming y tu comunidad de oyentes castigan la inactividad prolongada. Tu equipo te exige tomar una decisión inmediata.`,
-    choices: (ctx) => [
-      {
-        id: 'c_drought_emergency_single',
-        text: 'Encerrarse de urgencia en el estudio y publicar una maqueta acústica / espontánea',
-        consequencesDescription: '-$600 Fondos, -25 Energía, +14 Hype, Lanza un single espontáneo de rescate',
-        apply: () => {
-          const songId = `song_drought_${ctx.player.id}_${ctx.currentYear}_${Math.floor(Math.random() * 1000)}`;
-          const emergencySong = {
-            id: songId,
-            title: 'Sesión Nocturna (Lanzamiento de Emergencia)',
-            artistId: ctx.player.id,
-            featuredArtistIds: [],
-            genreId: ctx.player.mainGenreId,
-            subGenreIds: [],
-            releaseYear: ctx.currentYear,
-            releaseMonth: 12,
-            quality: Math.min(100, Math.floor(ctx.player.personality.skill * 0.7 + ctx.player.personality.creativity * 0.3)),
-            commercialAppeal: Math.min(100, Math.floor(ctx.player.personality.commercialAppeal * 0.6 + 15)),
-            originality: ctx.player.personality.originality,
-            hypeAtRelease: ctx.player.stats.hype + 14,
-            streamsTotal: 0,
-            streamsLastMonth: 0,
-            monthlyStreamsHistory: [],
-            peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-            weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
-            longevityCurve: 'slow_burn' as const,
-            isSingle: true,
-            receptionRating: 3,
-            isClassic: false,
-            wentViral: false
-          };
-          ctx.world.songs[songId] = emergencySong;
-          ctx.player.lastReleaseYear = ctx.currentYear;
-          ctx.player.lastReleaseMonth = 12;
+    getDescription: (ctx) => {
+      const droughtYear = ctx.eventYear ?? (ctx.currentMonth === 1 ? ctx.currentYear - 1 : ctx.currentYear);
+      const hasManager = Boolean(ctx.player.managerId);
+      const hasLabel = Boolean(ctx.player.labelId);
+      const isUnderground = !hasLabel && !hasManager;
 
-          return {
-            narrativeText: `Te encerraste toda la noche y grabaste una pieza espontánea y cruda. "${emergencySong.title}" ya está en plataformas y detuvo la sangría de oyentes.`,
-            fundsChange: -600,
-            energyChange: -25,
-            hypeChange: 14,
-            popularityChange: 2,
-            newsGenerated: {
-              headline: `¡Rompe el silencio! ${ctx.player.name} publica un tema inédito de medianoche`,
-              body: `Tras meses sin lanzamientos, ${ctx.player.name} sorprende a sus seguidores con una grabación íntima de último momento.`,
-              sentiment: 'positive',
-              category: 'release'
-            }
-          };
-        }
-      },
-      {
-        id: 'c_drought_accept_consequences',
-        text: 'Aceptar la sequía creativa y asumir las duras penalizaciones del algoritmo',
-        consequencesDescription: '-25 Hype, -8 Popularidad, -15% Fans, Caída abrupta de oyentes mensuales',
-        apply: () => ({
-          narrativeText: 'Decidiste no forzar lanzamientos sin inspiración. Tu presencia en playlists cayó drásticamente y la prensa musical comienza a preguntarse si perdiste el rumbo.',
-          hypeChange: -25,
-          popularityChange: -8,
-          fansChange: -Math.floor(ctx.player.stats.fansCount * 0.15),
-          reputationChange: -4,
-          newsGenerated: {
-            headline: `¿Dónde está ${ctx.player.name}? Preocupación por un año completo sin música`,
-            body: `El silencio prolongado de ${ctx.player.name} pasa factura en las estadísticas de streaming.`,
-            sentiment: 'negative',
-            category: 'culture'
-          }
-        })
-      },
-      {
-        id: 'c_drought_announce_sabbatical',
-        text: 'Anunciar un retiro reflexivo / año sabático para reconstruir tu sonido',
-        consequencesDescription: '-35 Hype, -12 Popularidad, +8 Creatividad, +6 Originalidad, +40 Energía',
-        apply: () => ({
-          narrativeText: 'Emitiste un comunicado anunciando una pausa estratégica para reinventarte. Aunque el hype cayó en picada, tu salud mental y tus ideas artísticas se revitalizaron.',
-          hypeChange: -35,
-          popularityChange: -12,
-          energyChange: 40,
-          personalityChanges: {
-            creativity: Math.min(100, ctx.player.personality.creativity + 8),
-            originality: Math.min(100, ctx.player.personality.originality + 6)
-          },
-          newsGenerated: {
-            headline: `${ctx.player.name} anuncia un retiro temporal en busca de una nueva era musical`,
-            body: `El artista decidió pausar sus lanzamientos para enfocarse en la evolución de su propuesta artística.`,
-            sentiment: 'neutral',
-            category: 'culture'
-          }
-        })
+      if (isUnderground) {
+        return `Ha finalizado el año ${droughtYear} y no publicaste ninguna canción ni proyecto musical. En tu home studio de ${ctx.player.city}, entre maquetas a medio terminar en tu DAW y noches de desmotivación frente al micrófono, sientes el peso del bloqueo creativo. Sin un equipo detrás ni contratos que cumplir, toda la presión de reactivar tu música recae sobre ti.`;
       }
-    ]
+      return `Ha finalizado el año ${droughtYear} y no publicaste ninguna canción ni proyecto musical. Los algoritmos de streaming y tu audiencia castigan la inactividad prolongada de tu catálogo. Debes tomar una decisión inmediata para reactivar tu proyecto.`;
+    },
+    choices: (ctx) => {
+      const droughtYear = ctx.eventYear ?? (ctx.currentMonth === 1 ? ctx.currentYear - 1 : ctx.currentYear);
+      const hasManager = Boolean(ctx.player.managerId);
+      const hasLabel = Boolean(ctx.player.labelId);
+      const isUnderground = !hasLabel && !hasManager;
+
+      // Penalizaciones proporcionales exactas
+      const popLoss = Math.max(1, Math.floor(ctx.player.stats.popularity * 0.25));
+      const hypeLoss = Math.max(2, Math.floor(ctx.player.stats.hype * 0.4));
+      const fansLoss = Math.max(0, Math.floor(ctx.player.stats.fansCount * 0.08));
+
+      return [
+        {
+          id: 'c_drought_emergency_single_free',
+          text: 'Encerrarte una noche en el home studio y subir una maqueta acústica / cruda sin mezclar ($0)',
+          costFunds: 0,
+          costEnergy: 20,
+          consequencesDescription: 'Coste: $0 Fondos, -20 Energía, +8 Hype, +1 Popularidad. Lanza una maqueta espontánea para frenar la sangría',
+          apply: () => {
+            const songId = `song_drought_${ctx.player.id}_${droughtYear}_${Math.floor(Math.random() * 1000)}`;
+            const emergencySong = {
+              id: songId,
+              title: isUnderground ? 'Maqueta Nocturna (Acústico Casero)' : 'Sesión Nocturna (Lanzamiento de Emergencia)',
+              artistId: ctx.player.id,
+              featuredArtistIds: [],
+              genreId: ctx.player.mainGenreId,
+              subGenreIds: [],
+              releaseYear: droughtYear,
+              releaseMonth: 12,
+              quality: Math.min(100, Math.floor(ctx.player.personality.skill * 0.65 + ctx.player.personality.creativity * 0.35)),
+              commercialAppeal: Math.min(100, Math.floor(ctx.player.personality.commercialAppeal * 0.55 + 10)),
+              originality: ctx.player.personality.originality,
+              hypeAtRelease: ctx.player.stats.hype + 8,
+              streamsTotal: 0,
+              streamsLastMonth: 0,
+              monthlyStreamsHistory: [],
+              peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+              weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+              longevityCurve: 'slow_burn' as const,
+              isSingle: true,
+              receptionRating: 3,
+              isClassic: false,
+              wentViral: false
+            };
+            ctx.world.songs[songId] = emergencySong;
+            ctx.player.lastReleaseYear = droughtYear;
+            ctx.player.lastReleaseMonth = 12;
+
+            return {
+              narrativeText: isUnderground
+                ? `Te encerraste en tu habitación y grabaste una maqueta sincera y cruda. "${emergencySong.title}" ya está disponible en plataformas y frenó la pérdida de oyentes sin gastar un centavo.`
+                : `Te encerraste en el estudio y grabaste una pieza espontánea. "${emergencySong.title}" ya está en plataformas y reactivó el algoritmo.`,
+              fundsChange: 0,
+              energyChange: -20,
+              hypeChange: 8,
+              popularityChange: 1,
+              newsGenerated: {
+                headline: isUnderground
+                  ? `${ctx.player.name} rompe el silencio con una grabación íntima casera`
+                  : `¡Lanzamiento de último momento! ${ctx.player.name} publica tema inédito`,
+                body: `Tras un año sin lanzamientos, ${ctx.player.name} comparte música nueva directamente con sus seguidores.`,
+                sentiment: 'positive',
+                category: 'release'
+              }
+            };
+          }
+        },
+        {
+          id: 'c_drought_emergency_single_mastered',
+          text: 'Pagar una mezcla y master express para rescatar un track de tu DAW ($150)',
+          costFunds: 150,
+          costEnergy: 15,
+          consequencesDescription: '-$150 Fondos, -15 Energía, +14 Hype, +2 Popularidad. Lanza un single con acabado profesional',
+          apply: () => {
+            const songId = `song_drought_${ctx.player.id}_${droughtYear}_${Math.floor(Math.random() * 1000)}`;
+            const emergencySong = {
+              id: songId,
+              title: isUnderground ? 'Rescate de Medianoche (Mix & Master)' : 'Sesión Nocturna (Single Masterizado)',
+              artistId: ctx.player.id,
+              featuredArtistIds: [],
+              genreId: ctx.player.mainGenreId,
+              subGenreIds: [],
+              releaseYear: droughtYear,
+              releaseMonth: 12,
+              quality: Math.min(100, Math.floor(ctx.player.personality.skill * 0.75 + ctx.player.personality.creativity * 0.25)),
+              commercialAppeal: Math.min(100, Math.floor(ctx.player.personality.commercialAppeal * 0.65 + 15)),
+              originality: ctx.player.personality.originality,
+              hypeAtRelease: ctx.player.stats.hype + 14,
+              streamsTotal: 0,
+              streamsLastMonth: 0,
+              monthlyStreamsHistory: [],
+              peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+              weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+              longevityCurve: 'slow_burn' as const,
+              isSingle: true,
+              receptionRating: 3,
+              isClassic: false,
+              wentViral: false
+            };
+            ctx.world.songs[songId] = emergencySong;
+            ctx.player.lastReleaseYear = droughtYear;
+            ctx.player.lastReleaseMonth = 12;
+
+            return {
+              narrativeText: `Invertiste $150 en una mezcla y master rápido para pulir un proyecto que tenías guardado. "${emergencySong.title}" salió a tiempo para cerrar el año con sonido competitivo.`,
+              fundsChange: -150,
+              energyChange: -15,
+              hypeChange: 14,
+              popularityChange: 2,
+              newsGenerated: {
+                headline: `Lanzamiento sorpresa: ${ctx.player.name} publica nuevo sencillo`,
+                body: `Justo antes de finalizar el año, ${ctx.player.name} presentó una canción inédita para reactivar su catálogo.`,
+                sentiment: 'positive',
+                category: 'release'
+              }
+            };
+          }
+        },
+        {
+          id: 'c_drought_accept_consequences',
+          text: 'Aceptar el bache creativo y asumir el enfriamiento en plataformas ($0)',
+          costFunds: 0,
+          consequencesDescription: `Coste: $0. -${hypeLoss} Hype, -${popLoss} Popularidad, -${fansLoss} Oyentes fieles`,
+          apply: () => {
+            return {
+              narrativeText: isUnderground
+                ? 'Decidiste no forzar canciones sin inspiración. Tus oyentes se enfrían con el paso de los meses, pero mantienes la calma y tu visión artística intacta.'
+                : 'Decidiste no forzar lanzamientos comerciales sin convicción. Tu presencia en listas se redujo de forma moderada pero mantienes tu autenticidad artística.',
+              hypeChange: -hypeLoss,
+              popularityChange: -popLoss,
+              fansChange: -fansLoss,
+              reputationChange: -1,
+              newsGenerated: {
+                headline: `Año en silencio: ${ctx.player.name} concluye el año sin publicaciones oficiales`,
+                body: `El proyecto de ${ctx.player.name} cierra el calendario sin nuevos temas, tomándose un respiro compositivo.`,
+                sentiment: 'neutral',
+                category: 'culture'
+              }
+            };
+          }
+        },
+        {
+          id: 'c_drought_announce_sabbatical',
+          text: 'Tomar una pausa reflexiva y retiro artístico para descansar y reconstruir tu sonido ($0)',
+          costFunds: 0,
+          consequencesDescription: `Coste: $0. -${hypeLoss} Hype, -${popLoss} Popularidad, +35 Energía, +6 Creatividad, +5 Originalidad`,
+          apply: () => {
+            return {
+              narrativeText: isUnderground
+                ? 'Te desconectaste de la frustración en el home studio para escuchar nueva música, descansar y recargar pilas. La pausa renovó tus ideas.'
+                : 'Emitiste un comunicado anunciando una pausa artística para profundizar en tu sonido. Aunque el hype cayó proporcionalmente, tu salud mental y tus ideas artísticas se renovaron.',
+              hypeChange: -hypeLoss,
+              popularityChange: -popLoss,
+              energyChange: 35,
+              personalityChanges: {
+                creativity: Math.min(100, ctx.player.personality.creativity + 6),
+                originality: Math.min(100, ctx.player.personality.originality + 5)
+              },
+              newsGenerated: {
+                headline: `${ctx.player.name} en periodo de introspección artística`,
+                body: `El artista prioriza el descanso y la búsqueda de nuevas influencias antes de su próximo proyecto.`,
+                sentiment: 'neutral',
+                category: 'culture'
+              }
+            };
+          }
+        }
+      ];
+    }
   },
 
   // --- URBAN DRAMA & MORAL DILEMMAS (EL ÍDOLO STYLE) ---
@@ -1380,6 +1470,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_settle_sample_privately',
         text: 'Pagar un acuerdo extrajudicial confidencial para conservar el tema online',
+        costFunds: 25000,
         consequencesDescription: '-$25,000 Fondos, Mantiene la canción en plataformas sin escándalo mediático',
         apply: () => ({
           narrativeText:
@@ -1413,6 +1504,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_fight_sample_in_court',
         text: 'Ir a juicio y defender el derecho a la interpolación y sampling en la cultura hip hop',
+        costFunds: 12000,
         consequencesDescription: '+24 Hype de rebeldía, -$12,000 en costas legales, Tensión mediática prolongada',
         apply: () => ({
           narrativeText:
@@ -1435,18 +1527,27 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
 ];
 
 export function getCreativeDroughtEvent(ctx: EventContext): EventDefinition {
+  const droughtYear = ctx.currentYear;
   const droughtEvent = CORE_EVENT_TEMPLATES.find(e => e.id === 'evt_creative_drought_mandatory');
-  if (droughtEvent) return droughtEvent;
+  if (droughtEvent) {
+    return {
+      ...droughtEvent,
+      eventYear: droughtYear,
+      getDescription: (c) => droughtEvent.getDescription({ ...c, currentYear: droughtYear, eventYear: droughtYear }),
+      choices: (c) => droughtEvent.choices({ ...c, currentYear: droughtYear, eventYear: droughtYear })
+    };
+  }
 
   return {
     id: 'evt_creative_drought_mandatory',
-    title: 'Alerta de Industria: Sequía Creativa y Año en Silencio',
-    category: 'career',
-    rarity: 'legendary',
+    title: 'Alerta Artística: Sequía Creativa y Año en Silencio',
+    category: 'crisis',
+    rarity: 'crisis',
+    eventYear: droughtYear,
     cooldownMonths: 0,
     weight: 100,
     condition: () => true,
-    getDescription: () => `Ha finalizado el año ${ctx.currentYear} sin lanzamientos de ${ctx.player.name}.`,
+    getDescription: () => `Ha finalizado el año ${droughtYear} sin lanzamientos de ${ctx.player.name}.`,
     choices: () => []
   };
 }
