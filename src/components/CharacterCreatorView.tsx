@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Artist, WorldState, Genre, CareerStage } from '../types';
+import { AVATAR_PRESETS, AvatarPreset } from '../data/avatarPresets';
 import {
   Sparkles,
   User,
@@ -22,7 +23,14 @@ import {
   Check,
   RotateCcw,
   ShieldCheck,
-  Palette
+  Palette,
+  Mic,
+  Radio,
+  Upload,
+  Image as ImageIcon,
+  AlertCircle,
+  X,
+  Trash2
 } from 'lucide-react';
 import {
   generateArtistName,
@@ -54,8 +62,8 @@ const COUNTRY_CITIES: Record<string, string[]> = {
 };
 
 const PALETTE_OPTIONS = [
-  { id: 'synth_purple', label: 'Violeta & Púrpura Synth', val: 'from-[#8B5CF6] via-[#9333EA] to-[#6366F1]' },
-  { id: 'cyber_magenta', label: 'Neón Violeta & Magenta', val: 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]' },
+  { id: 'synth_violet', label: 'Violeta Primario Synth', val: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]' },
+  { id: 'cyber_magenta', label: 'Violeta & Magenta Neón', val: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]' },
   { id: 'electric_cyan', label: 'Cian & Azul Eléctrico', val: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]' },
   { id: 'emerald_studio', label: 'Esmeralda & Jade Studio', val: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]' },
   { id: 'gold_master', label: 'Oro & Ámbar Master', val: 'from-[#F59E0B] via-[#D97706] to-[#B45309]' },
@@ -63,6 +71,44 @@ const PALETTE_OPTIONS = [
   { id: 'midnight_obsidian', label: 'Obsidiana & Índigo', val: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]' },
   { id: 'graphite_slate', label: 'Grafito & Platino', val: 'from-[#64748B] via-[#475569] to-[#1E293B]' }
 ];
+
+const SYMBOL_OPTIONS = [
+  { id: 'mic', label: 'Micrófono Pro', icon: Mic },
+  { id: 'crown', label: 'Corona Real', icon: Crown },
+  { id: 'flame', label: 'Fuego / Hype', icon: Flame },
+  { id: 'disc', label: 'Vinilo / Master', icon: Disc3 },
+  { id: 'sparkles', label: 'Destello / Estrella', icon: Sparkles },
+  { id: 'zap', label: 'Rayo Eléctrico', icon: Zap },
+  { id: 'music', label: 'Nota Musical', icon: Music2 },
+  { id: 'radio', label: 'Onda / Radio', icon: Radio },
+  { id: 'user', label: 'Silueta Artista', icon: User }
+];
+
+interface TraitChipProps {
+  label: string;
+  variant?: 'purple' | 'emerald' | 'amber' | 'cyan' | 'rose' | 'slate';
+}
+
+const TraitChip: React.FC<TraitChipProps> = ({ label, variant = 'purple' }) => {
+  let styleClasses = 'bg-[#8B5CF6]/20 text-[#C084FC] border-[#8B5CF6]/30';
+  if (label.startsWith('-') || variant === 'rose') {
+    styleClasses = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+  } else if (variant === 'emerald' || label.includes('Comercial') || label.includes('Ambición') || label.includes('Sociabilidad')) {
+    styleClasses = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+  } else if (variant === 'amber' || label.includes('Carisma') || label.includes('Hype') || label.includes('Fans')) {
+    styleClasses = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+  } else if (variant === 'cyan' || label.includes('Habilidad') || label.includes('Disciplina') || label.includes('Constancia') || label.includes('Credibilidad')) {
+    styleClasses = 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+  } else if (variant === 'slate') {
+    styleClasses = 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+  }
+
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border tracking-wide select-none transition-all shadow-xs ${styleClasses}`}>
+      {label}
+    </span>
+  );
+};
 
 export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   world,
@@ -100,10 +146,20 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   // 4. Initial Level / Starting Point
   const [startingLevel, setStartingLevel] = useState<'underground' | 'emerging' | 'local' | 'independent'>('underground');
 
-  // 5. Visual Identity / Avatar Palette
-  const [avatarColor, setAvatarColor] = useState('from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
+  // 5. Visual Identity / Avatar State
+  const [avatarType, setAvatarType] = useState<'preset' | 'symbol' | 'upload' | 'initials'>('preset');
+  const [selectedPresetId, setSelectedPresetId] = useState<string | null>('urban_trap_1');
+  const [avatarUrl, setAvatarUrl] = useState<string>(
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80'
+  );
+  const [avatarIcon, setAvatarIcon] = useState<string>('mic');
+  const [avatarColor, setAvatarColor] = useState('from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
+  const [avatarCategoryFilter, setAvatarCategoryFilter] = useState<string>('all');
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // 6. Prodigy Rare Trait (0.001% chance / 1 in 100,000) - Appears strictly at the culmination
+  // 6. Prodigy Rare Trait (0.001% chance / 1 in 100,000)
   const [isProdigy, setIsProdigy] = useState<boolean>(() => Math.random() < 0.00001);
   const [rollCount, setRollCount] = useState(0);
   const [rollMessage, setRollMessage] = useState<string | null>(null);
@@ -128,8 +184,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   }, []);
 
   const handleRandomizeName = () => {
-    const finalCity = isCustomCity && customCityText.trim() ? customCityText.trim() : city;
-    const generated = generateArtistName(country, finalCity);
+    const effectiveCity = isCustomCity && customCityText.trim().length >= 3 ? customCityText.trim() : city;
+    const generated = generateArtistName(country, effectiveCity);
     setName(generated.stageName);
     setRealName(generated.realName);
 
@@ -161,6 +217,54 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
       if (secondaryGenres.length < 3) {
         setSecondaryGenres([...secondaryGenres, genreId]);
       }
+    }
+  };
+
+  const processUploadedFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Formato no soportado. Por favor selecciona una imagen PNG, JPG, WEBP o SVG.');
+      return;
+    }
+    if (file.size > 3 * 1024 * 1024) {
+      setUploadError('El archivo es demasiado grande. Selecciona una imagen de hasta 3MB.');
+      return;
+    }
+    setUploadError(null);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        setAvatarUrl(base64);
+        setAvatarType('upload');
+        setSelectedPresetId(null);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processUploadedFile(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processUploadedFile(file);
     }
   };
 
@@ -337,9 +441,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     }
   };
 
+  const isCustomCityValid = customCityText.trim().length >= 3;
+  const finalResolvedCity = isCustomCity
+    ? (isCustomCityValid ? customCityText.trim() : (COUNTRY_CITIES[country]?.[0] || 'Buenos Aires'))
+    : city;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const finalCity = isCustomCity && customCityText.trim() ? customCityText.trim() : city;
     const finalPersonality = getComputedPersonality();
     const startStats = getStartingStats();
     const uniqueId = `artist_${Math.random().toString(36).substring(2, 9)}`;
@@ -347,11 +455,15 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     const birthYear = currentYear - age;
 
     const historicalNotes = [
-      `Inició su carrera musical en el año ${currentYear} en ${finalCity}, ${country}.`
+      `Inició su carrera musical en el año ${currentYear} en ${finalResolvedCity}, ${country}.`
     ];
     if (isProdigy) {
       historicalNotes.push('Considerado un prodigio generacional irrepetible (1 en 100.000) con multiplicador x3 permanente.');
     }
+
+    const resolvedAvatarUrl = (avatarType === 'preset' || avatarType === 'upload') && avatarUrl
+      ? avatarUrl
+      : undefined;
 
     const newArtist: Partial<Artist> = {
       id: uniqueId,
@@ -359,12 +471,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
       realName: realName.trim() || name.trim(),
       isPlayer: true,
       country,
-      city: finalCity,
+      city: finalResolvedCity,
       birthYear,
       careerStartYear: currentYear,
       mainGenreId,
       subGenreIds: secondaryGenres,
-      avatarColor,
+      avatarUrl: resolvedAvatarUrl,
+      avatarColor: avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
+      avatarIcon: avatarIcon || undefined,
       personality: finalPersonality,
       stats: {
         popularity: startStats.popularity,
@@ -391,8 +505,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           genreFocus: mainGenreId,
           stage: startStats.careerStage,
           highlightSummary: isProdigy
-            ? `Irrumpió en la escena en ${currentYear} en ${finalCity}, ${country}. Habilidad innata deslumbrante y aura de talento histórico.`
-            : `Inició su carrera musical en ${currentYear} en ${finalCity}, ${country}. Búsqueda del sonido propio y primeras grabaciones autogestionadas.`
+            ? `Irrumpió en la escena en ${currentYear} en ${finalResolvedCity}, ${country}. Habilidad innata deslumbrante y aura de talento histórico.`
+            : `Inició su carrera musical en ${currentYear} en ${finalResolvedCity}, ${country}. Búsqueda del sonido propio y primeras grabaciones autogestionadas.`
         }
       ],
       awardsWon: [],
@@ -412,6 +526,25 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const selectedMainGenre = world.genres[mainGenreId];
   const computedStats = getStartingStats();
 
+  const filteredPresets = useMemo(() => {
+    if (avatarCategoryFilter === 'all') return AVATAR_PRESETS;
+    return AVATAR_PRESETS.filter(p => p.category === avatarCategoryFilter);
+  }, [avatarCategoryFilter]);
+
+  const selectedSymbolObj = SYMBOL_OPTIONS.find(s => s.id === avatarIcon) || SYMBOL_OPTIONS[0];
+  const SelectedSymbolIcon = selectedSymbolObj.icon;
+
+  // Age category text helper
+  const getAgeCategory = (a: number) => {
+    if (a <= 20) return { label: 'Joven Promesa', color: 'text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30' };
+    if (a <= 27) return { label: 'Plena Juventud', color: 'text-[#06B6D4] bg-[#06B6D4]/10 border-[#06B6D4]/30' };
+    return { label: 'Madurez Artística', color: 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/30' };
+  };
+  const ageCat = getAgeCategory(age);
+
+  // Exact math percentage for age slider progress track: (age - 16) / (35 - 16) * 100
+  const agePercentage = ((age - 16) / (35 - 16)) * 100;
+
   return (
     <div
       className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] p-4 sm:p-6 lg:p-8 font-sans"
@@ -423,7 +556,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           <div className="flex items-center gap-3.5">
             <button
               onClick={onBackToMenu}
-              className="p-2.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-[#8B5CF6]/50 transition-all cursor-pointer shadow-xs"
+              className="p-2.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-[#7C3AED]/50 transition-all cursor-pointer shadow-xs"
               title="Volver al Menú Principal"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -431,7 +564,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-[#F8FAFC] tracking-[-0.8px] flex items-center gap-2.5">
                 <span>Creación del Artista</span>
-                <span className="text-xs bg-[#16181F] text-[#C084FC] border border-[#8B5CF6]/40 px-2.5 py-0.5 rounded-full font-bold">
+                <span className="text-xs bg-[#16181F] text-[#C084FC] border border-[#7C3AED]/40 px-2.5 py-0.5 rounded-full font-bold">
                   Año 1 • 2026
                 </span>
               </h1>
@@ -453,13 +586,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
               <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <User className="w-4 h-4 text-[#8B5CF6]" />
+                  <User className="w-4 h-4 text-[#7C3AED]" />
                   <span>1. Identidad & Origen</span>
                 </div>
                 <button
                   type="button"
                   onClick={handleRandomizeName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC] text-xs font-semibold hover:bg-[#1C1F2B] hover:border-[#8B5CF6]/50 transition-all cursor-pointer shadow-xs group"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC] text-xs font-semibold hover:bg-[#1C1F2B] hover:border-[#7C3AED]/50 transition-all cursor-pointer shadow-xs group"
                   title="Generar nombre contextualizado para el país seleccionado"
                 >
                   <Shuffle className="w-3.5 h-3.5 text-[#06B6D4] group-hover:rotate-180 transition-transform duration-300" />
@@ -479,7 +612,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Ej: Duki Nova"
-                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[8px] px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] transition-colors font-medium"
+                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#7C3AED] transition-colors font-medium"
                   />
                 </div>
 
@@ -492,21 +625,26 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={realName}
                     onChange={e => setRealName(e.target.value)}
                     placeholder="Ej: Mateo Morales"
-                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[8px] px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] transition-colors font-medium"
+                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#7C3AED] transition-colors font-medium"
                   />
                 </div>
               </div>
 
-              {/* Age Slider with Accurately Positioned Visual Ticks */}
+              {/* Age Slider with Accurately Positioned Visual Ticks (0%, 47.37%, 100%) */}
               <div className="space-y-2 pt-1">
                 <div className="flex justify-between items-center text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
                   <span>Edad Inicial</span>
-                  <span className="text-[#F8FAFC] font-mono text-sm font-bold bg-[#0B0C10] px-2.5 py-0.5 rounded-[6px] border border-[#2A2E3D]">
-                    {age} Años <span className="text-[#94A3B8] text-xs font-sans">(Nacido en {2026 - age})</span>
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ageCat.color}`}>
+                      {ageCat.label}
+                    </span>
+                    <span className="text-[#F8FAFC] font-mono text-sm font-bold bg-[#0B0C10] px-2.5 py-0.5 rounded-[6px] border border-[#2A2E3D]">
+                      {age} Años <span className="text-[#94A3B8] text-xs font-sans">(Nacido en {2026 - age})</span>
+                    </span>
+                  </div>
                 </div>
                 
-                <div className="relative pt-1 pb-4">
+                <div className="relative pt-1 pb-6">
                   <input
                     type="range"
                     min={16}
@@ -514,25 +652,44 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     step={1}
                     value={age}
                     onChange={e => setAge(Number(e.target.value))}
-                    className="w-full h-2 bg-[#0B0C10] border border-[#2A2E3D] rounded-lg accent-[#8B5CF6] cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #7C3AED 0%, #8B5CF6 ${agePercentage}%, #0B0C10 ${agePercentage}%, #0B0C10 100%)`
+                    }}
+                    className="w-full h-2 rounded-lg border border-[#2A2E3D] accent-[#7C3AED] cursor-pointer"
                   />
                   
-                  {/* Positioned Marker Ticks */}
-                  <div className="relative w-full text-[10px] text-[#94A3B8] font-mono select-none mt-1">
-                    <span className="absolute left-0 -translate-x-0">
-                      16 Años <span className="text-[#10B981] font-sans font-semibold">(Joven Promesa)</span>
+                  {/* Positioned Marker Ticks with Exact Mathematical Alignment */}
+                  <div className="relative w-full text-[10px] text-[#94A3B8] font-mono select-none mt-1.5 h-4">
+                    {/* 16 Años: 0% */}
+                    <span
+                      onClick={() => setAge(16)}
+                      className="absolute left-0 -translate-x-0 text-left cursor-pointer hover:text-emerald-400"
+                    >
+                      <span className="font-bold text-[#F8FAFC]">16 Años</span>{' '}
+                      <span className="text-[#10B981] font-sans font-medium">(Joven Promesa)</span>
                     </span>
-                    <span className="absolute left-[47.37%] -translate-x-1/2 text-center text-[#F8FAFC]">
-                      25 Años
+                    
+                    {/* 25 Años: 47.37% -> (25 - 16) / (35 - 16) * 100% = 47.368% */}
+                    <span
+                      onClick={() => setAge(25)}
+                      className="absolute left-[47.37%] -translate-x-1/2 text-center cursor-pointer hover:text-[#C084FC]"
+                    >
+                      <span className="font-bold text-[#F8FAFC]">25 Años</span>
                     </span>
-                    <span className="absolute right-0 translate-x-0 text-right">
-                      35 Años <span className="text-[#F59E0B] font-sans font-semibold">(Veterano)</span>
+                    
+                    {/* 35 Años: 100% */}
+                    <span
+                      onClick={() => setAge(35)}
+                      className="absolute right-0 translate-x-0 text-right cursor-pointer hover:text-amber-400"
+                    >
+                      <span className="font-bold text-[#F8FAFC]">35 Años</span>{' '}
+                      <span className="text-[#F59E0B] font-sans font-medium">(Veterano)</span>
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Country & Unified City Selector */}
+              {/* Country & Hometown Selector with Friction-free Custom City */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
                   <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
@@ -541,7 +698,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <select
                     value={country}
                     onChange={e => handleCountryChange(e.target.value)}
-                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
+                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
                   >
                     {Object.keys(COUNTRY_CITIES).map(c => (
                       <option key={c} value={c} className="bg-[#0B0C10] text-[#F8FAFC]">
@@ -564,7 +721,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           setCustomCityText('');
                         }
                       }}
-                      className="text-[11px] text-[#06B6D4] hover:text-[#38BDF8] flex items-center gap-1 cursor-pointer font-semibold"
+                      className="text-[11px] text-[#06B6D4] hover:text-[#38BDF8] flex items-center gap-1 cursor-pointer font-semibold transition-colors"
                     >
                       {isCustomCity ? (
                         <>
@@ -578,26 +735,43 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   </div>
 
                   {isCustomCity ? (
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        autoFocus
-                        value={customCityText}
-                        onChange={e => setCustomCityText(e.target.value)}
-                        placeholder="Escribe tu ciudad o barrio..."
-                        className="w-full bg-[#0B0C10] border border-[#06B6D4]/60 focus:border-[#06B6D4] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none"
-                      />
-                      {customCityText.trim() && (
-                        <span className="p-2 rounded-[6px] bg-[#06B6D4]/20 text-[#06B6D4] border border-[#06B6D4]/40 shrink-0">
-                          <Check className="w-3.5 h-3.5" />
-                        </span>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="text"
+                          autoFocus
+                          value={customCityText}
+                          onChange={e => setCustomCityText(e.target.value)}
+                          placeholder="Escribe tu ciudad o barrio (mín. 3 letras)..."
+                          className={`w-full bg-[#0B0C10] border rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-colors ${
+                            customCityText.trim().length > 0 && !isCustomCityValid
+                              ? 'border-amber-500/60 focus:border-amber-500'
+                              : isCustomCityValid
+                              ? 'border-emerald-500/60 focus:border-emerald-500'
+                              : 'border-[#06B6D4]/60 focus:border-[#06B6D4]'
+                          }`}
+                        />
+                        {isCustomCityValid && (
+                          <span
+                            className="p-2 rounded-[6px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0"
+                            title="Ciudad válida"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                          </span>
+                        )}
+                      </div>
+                      {customCityText.trim().length > 0 && !isCustomCityValid && (
+                        <p className="text-[10px] text-amber-400 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3 shrink-0" />
+                          <span>Ingresa al menos 3 caracteres para tu ciudad personalizada.</span>
+                        </p>
                       )}
                     </div>
                   ) : (
                     <select
                       value={city}
                       onChange={e => setCity(e.target.value)}
-                      className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
+                      className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
                     >
                       {(COUNTRY_CITIES[country] || []).map(ci => (
                         <option key={ci} value={ci} className="bg-[#0B0C10] text-[#F8FAFC]">
@@ -616,7 +790,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
               <div className="border-b border-[#2A2E3D] pb-3">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Disc3 className="w-4 h-4 text-[#8B5CF6]" />
+                  <Disc3 className="w-4 h-4 text-[#7C3AED]" />
                   <span>2. Estilo Musical & Géneros</span>
                 </div>
               </div>
@@ -639,8 +813,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         }}
                         className={`p-3 rounded-[10px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
                           isSelected
-                            ? 'bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.25)] ring-1 ring-[#8B5CF6]'
-                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
+                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-[#7C3AED]'
+                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
@@ -680,8 +854,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           onClick={() => toggleSecondaryGenre(g.id)}
                           className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
                             isSelected
-                              ? 'bg-[#8B5CF6]/25 border-[#8B5CF6] text-white shadow-xs'
-                              : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/40'
+                              ? 'bg-[#7C3AED]/25 border-[#7C3AED] text-white shadow-xs'
+                              : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#7C3AED]/40'
                           }`}
                         >
                           {isSelected ? '✓ ' : '+ '}
@@ -699,12 +873,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
               <div className="border-b border-[#2A2E3D] pb-3">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Brain className="w-4 h-4 text-[#8B5CF6]" />
+                  <Brain className="w-4 h-4 text-[#7C3AED]" />
                   <span>3. Arquetipo Artístico & Filosofía</span>
                 </div>
               </div>
 
-              {/* Archetypes Grid */}
+              {/* Archetypes Grid with Stylized TraitChip components */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   {
@@ -712,42 +886,42 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     label: 'El Visionario',
                     desc: 'Prioriza originalidad radical y experimentación. Gran impacto en la crítica.',
                     chips: ['+Originalidad', '+Creatividad', '-Comercial'],
-                    badgeBg: 'bg-[#8B5CF6]/20 text-[#C084FC] border-[#8B5CF6]/30'
+                    variant: 'purple' as const
                   },
                   {
                     id: 'entrepreneur',
                     label: 'El Estratega',
                     desc: 'Negociador nato, enfoque comercial y control de marca. Maximiza ingresos.',
                     chips: ['+Comercial', '+Ambición', '+Sociabilidad'],
-                    badgeBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    variant: 'emerald' as const
                   },
                   {
                     id: 'showman',
                     label: 'El Showman',
                     desc: 'Carisma magnético, viralidad en redes y presencia escénica arrolladora.',
                     chips: ['+Carisma', '+Hype', '+Fans'],
-                    badgeBg: 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                    variant: 'amber' as const
                   },
                   {
                     id: 'disciplined',
                     label: 'El Perfeccionista',
                     desc: 'Técnica vocal excelsa, horas infinitas en estudio y consistencia de calidad.',
                     chips: ['+Habilidad', '+Disciplina', '+Constancia'],
-                    badgeBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                    variant: 'cyan' as const
                   },
                   {
                     id: 'experimental',
                     label: 'Vanguardia Pura',
                     desc: 'Rompe barreras sonoras sin atarse a tendencias ni algoritmos comerciales.',
                     chips: ['+Credibilidad', '+Riesgo', '+Innovación'],
-                    badgeBg: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                    variant: 'purple' as const
                   },
                   {
                     id: 'custom',
                     label: 'Personalizado',
                     desc: 'Ajuste manual y minucioso de cada rasgo psicológico y artístico.',
                     chips: ['Ajuste Libre', 'Custom Stats'],
-                    badgeBg: 'bg-slate-500/20 text-slate-300 border-slate-500/30'
+                    variant: 'slate' as const
                   }
                 ].map((item) => {
                   const isSelected = archetype === item.id;
@@ -758,8 +932,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       onClick={() => setArchetype(item.id as any)}
                       className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.25)] ring-1 ring-[#8B5CF6]'
-                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
+                          ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-[#7C3AED]'
+                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
                       }`}
                     >
                       <div>
@@ -774,15 +948,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         </p>
                       </div>
 
-                      {/* Trait Chips */}
-                      <div className="flex items-center gap-1 flex-wrap">
+                      {/* Trait Chips as Stylized Components */}
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         {item.chips.map((chip, idx) => (
-                          <span
-                            key={idx}
-                            className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${item.badgeBg}`}
-                          >
-                            {chip}
-                          </span>
+                          <TraitChip key={idx} label={chip} variant={item.variant} />
                         ))}
                       </div>
                     </button>
@@ -814,7 +983,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               [key]: Number(e.target.value)
                             })
                           }
-                          className="w-full h-1.5 bg-[#16181F] rounded-lg accent-[#8B5CF6] cursor-pointer"
+                          className="w-full h-1.5 bg-[#16181F] rounded-lg accent-[#7C3AED] cursor-pointer"
                         />
                       </div>
                     ))}
@@ -829,7 +998,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
               <div className="border-b border-[#2A2E3D] pb-3">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <TrendingUp className="w-4 h-4 text-[#8B5CF6]" />
+                  <TrendingUp className="w-4 h-4 text-[#7C3AED]" />
                   <span>4. Punto de Partida / Background</span>
                 </div>
               </div>
@@ -869,8 +1038,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       onClick={() => setStartingLevel(item.id as any)}
                       className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.25)] ring-1 ring-[#8B5CF6]'
-                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
+                          ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-[#7C3AED]'
+                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
                       }`}
                     >
                       <div>
@@ -884,7 +1053,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           {item.desc}
                         </p>
                       </div>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-[4px] border border-emerald-500/30 w-fit">
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30 w-fit">
                         {item.badge}
                       </span>
                     </button>
@@ -894,41 +1063,315 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 5: Estética Visual & Paleta Cromática */}
+            {/* PASO 5: Identidad Visual / Avatar Completo */}
             {/* ========================================================================= */}
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="border-b border-[#2A2E3D] pb-3">
+              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3 flex-wrap gap-2">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Palette className="w-4 h-4 text-[#8B5CF6]" />
-                  <span>5. Estética Visual & Paleta Cromática</span>
+                  <Palette className="w-4 h-4 text-[#7C3AED]" />
+                  <span>5. Identidad Visual & Avatar del Artista</span>
+                </div>
+                
+                {/* Mode Selector Tabs */}
+                <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D]">
+                  <button
+                    type="button"
+                    onClick={() => setAvatarType('preset')}
+                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      avatarType === 'preset'
+                        ? 'bg-[#7C3AED] text-white shadow-xs'
+                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    }`}
+                  >
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    <span>Galería</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAvatarType('symbol')}
+                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      avatarType === 'symbol'
+                        ? 'bg-[#7C3AED] text-white shadow-xs'
+                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    }`}
+                  >
+                    <Crown className="w-3.5 h-3.5" />
+                    <span>Ícono / Símbolo</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAvatarType('upload')}
+                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      avatarType === 'upload'
+                        ? 'bg-[#7C3AED] text-white shadow-xs'
+                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    }`}
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Subir Foto</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAvatarType('initials')}
+                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      avatarType === 'initials'
+                        ? 'bg-[#7C3AED] text-white shadow-xs'
+                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>Iniciales</span>
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {PALETTE_OPTIONS.map((p) => {
-                  const isSelected = avatarColor === p.val;
-                  return (
-                    <button
-                      type="button"
-                      key={p.id}
-                      onClick={() => setAvatarColor(p.val)}
-                      className={`p-2.5 rounded-[10px] border flex items-center gap-2.5 transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] shadow-xs ring-1 ring-[#8B5CF6]'
-                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-[#1C1F2B]'
-                      }`}
-                    >
-                      <div
-                        className={`w-6 h-6 rounded-full bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 shadow-xs`}
+              {/* Mode 1: Presets Gallery */}
+              {avatarType === 'preset' && (
+                <div className="space-y-4">
+                  {/* Category filters */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[11px] text-[#94A3B8] font-semibold mr-1">Filtrar:</span>
+                    {[
+                      { id: 'all', label: 'Todos' },
+                      { id: 'urban', label: 'Urbano / Trap' },
+                      { id: 'pop', label: 'Pop & Divas' },
+                      { id: 'rock', label: 'Rock & Indie' },
+                      { id: 'electronic', label: 'Electrónica & DJ' },
+                      { id: 'artistic', label: 'Conceptual' }
+                    ].map(cat => (
+                      <button
+                        type="button"
+                        key={cat.id}
+                        onClick={() => setAvatarCategoryFilter(cat.id)}
+                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                          avatarCategoryFilter === cat.id
+                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] text-[#C084FC]'
+                            : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC]'
+                        }`}
                       >
-                        {isSelected && <Check className="w-3.5 h-3.5 text-white mx-auto mt-1" />}
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Presets Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                    {filteredPresets.map((preset) => {
+                      const isSelected = selectedPresetId === preset.id && avatarUrl === preset.url;
+                      return (
+                        <button
+                          type="button"
+                          key={preset.id}
+                          onClick={() => {
+                            setSelectedPresetId(preset.id);
+                            setAvatarUrl(preset.url);
+                          }}
+                          className={`group relative rounded-[12px] overflow-hidden border transition-all cursor-pointer flex flex-col items-center bg-[#0B0C10] ${
+                            isSelected
+                              ? 'border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.4)] ring-2 ring-[#7C3AED]'
+                              : 'border-[#2A2E3D] hover:border-[#7C3AED]/50'
+                          }`}
+                        >
+                          <div className="w-full aspect-square relative overflow-hidden bg-neutral-900">
+                            <img
+                              src={preset.url}
+                              alt={preset.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            {isSelected && (
+                              <div className="absolute inset-0 bg-[#7C3AED]/25 flex items-center justify-center">
+                                <span className="p-1 rounded-full bg-[#7C3AED] text-white shadow-md">
+                                  <Check className="w-3.5 h-3.5" />
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <span className="p-1.5 text-[10px] font-medium text-[#CBD5E1] line-clamp-1 text-center w-full">
+                            {preset.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Mode 2: Icons & Symbols */}
+              {avatarType === 'symbol' && (
+                <div className="space-y-4">
+                  <p className="text-xs text-[#94A3B8]">
+                    Selecciona un símbolo escénico para representar tu marca artística sobre la paleta de color activa:
+                  </p>
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                    {SYMBOL_OPTIONS.map((sym) => {
+                      const isSelected = avatarIcon === sym.id;
+                      const IconComp = sym.icon;
+                      return (
+                        <button
+                          type="button"
+                          key={sym.id}
+                          onClick={() => setAvatarIcon(sym.id)}
+                          className={`p-3.5 rounded-[12px] border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
+                            isSelected
+                              ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.3)] ring-1 ring-[#7C3AED]'
+                              : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/50 hover:bg-[#1C1F2B]'
+                          }`}
+                        >
+                          <div
+                            className={`p-3 rounded-full bg-gradient-to-tr ${avatarColor} text-white shadow-xs`}
+                          >
+                            <IconComp className="w-5 h-5" />
+                          </div>
+                          <span className="text-[11px] font-semibold text-[#F8FAFC]">
+                            {sym.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Mode 3: Custom File Upload */}
+              {avatarType === 'upload' && (
+                <div className="space-y-4">
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-[14px] p-6 text-center transition-colors cursor-pointer ${
+                      isDragging
+                        ? 'border-[#7C3AED] bg-[#7C3AED]/10'
+                        : 'border-[#2A2E3D] hover:border-[#7C3AED]/60 bg-[#0B0C10]'
+                    }`}
+                  >
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileUpload}
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                      className="hidden"
+                    />
+
+                    {avatarUrl && avatarType === 'upload' ? (
+                      <div className="space-y-3">
+                        <div className="w-24 h-24 mx-auto rounded-[14px] overflow-hidden border-2 border-[#7C3AED] shadow-lg bg-neutral-900">
+                          <img src={avatarUrl} alt="Avatar personalizado" className="w-full h-full object-cover" />
+                        </div>
+                        <p className="text-xs text-emerald-400 font-semibold flex items-center justify-center gap-1">
+                          <Check className="w-3.5 h-3.5" />
+                          <span>¡Imagen cargada correctamente!</span>
+                        </p>
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              fileInputRef.current?.click();
+                            }}
+                            className="px-3 py-1.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-xs text-[#F8FAFC] hover:border-[#7C3AED] transition-colors cursor-pointer"
+                          >
+                            Cambiar imagen
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAvatarUrl('');
+                              setAvatarType('preset');
+                              setSelectedPresetId('urban_trap_1');
+                            }}
+                            className="px-3 py-1.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-xs text-rose-400 hover:border-rose-500 transition-colors cursor-pointer"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
                       </div>
-                      <span className="text-xs font-semibold text-[#F8FAFC] truncate">
-                        {p.label}
-                      </span>
-                    </button>
-                  );
-                })}
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="p-3 bg-[#16181F] text-[#7C3AED] rounded-full w-12 h-12 mx-auto flex items-center justify-center border border-[#2A2E3D]">
+                          <Upload className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-[#F8FAFC]">
+                            Haz clic o arrastra para subir tu foto de artista, logo SVG o render
+                          </p>
+                          <p className="text-[11px] text-[#94A3B8]">
+                            Formatos soportados: SVG, PNG, JPG, WEBP (hasta 3MB)
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            fileInputRef.current?.click();
+                          }}
+                          className="mt-2 px-4 py-2 rounded-[8px] bg-[#7C3AED] text-white text-xs font-bold shadow-[0_0_15px_rgba(124,58,237,0.4)] hover:bg-[#6D28D9] transition-all cursor-pointer"
+                        >
+                          Seleccionar Archivo Local
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {uploadError && (
+                    <div className="p-3 rounded-[8px] bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{uploadError}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Mode 4: Initials only notice */}
+              {avatarType === 'initials' && (
+                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] text-center space-y-2">
+                  <div
+                    className={`w-16 h-16 mx-auto rounded-[12px] bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white text-xl font-black shadow-md`}
+                  >
+                    {name ? name.substring(0, 2).toUpperCase() : 'AR'}
+                  </div>
+                  <p className="text-xs text-[#94A3B8]">
+                    Tu avatar se generará dinámicamente con las iniciales de tu nombre artístico sobre la paleta cromática seleccionada.
+                  </p>
+                </div>
+              )}
+
+              {/* Palette Selector (Available in all modes as accent background) */}
+              <div className="space-y-2 pt-2 border-t border-[#2A2E3D]">
+                <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                  Paleta de Color de Acento (Atmósfera Visual Primaria)
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {PALETTE_OPTIONS.map((p) => {
+                    const isSelected = avatarColor === p.val;
+                    return (
+                      <button
+                        type="button"
+                        key={p.id}
+                        onClick={() => setAvatarColor(p.val)}
+                        className={`p-2 rounded-[10px] border flex items-center gap-2.5 transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-xs ring-1 ring-[#7C3AED]'
+                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
+                        }`}
+                      >
+                        <div
+                          className={`w-5 h-5 rounded-full bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 shadow-xs flex items-center justify-center`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                        </div>
+                        <span className="text-[11px] font-semibold text-[#F8FAFC] truncate">
+                          {p.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -948,7 +1391,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     className={`p-3 rounded-full ${
                       isProdigy
                         ? 'bg-amber-400 text-stone-950 shadow-[0_0_12px_rgba(251,191,36,0.5)]'
-                        : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#8B5CF6]'
+                        : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#7C3AED]'
                     }`}
                   >
                     {isProdigy ? <Crown className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
@@ -1008,12 +1451,30 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           <div className="space-y-6 lg:sticky lg:top-6">
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 shadow-2xl space-y-6">
               
-              {/* Avatar & Header */}
+              {/* Avatar Live Display */}
               <div className="text-center space-y-3">
-                <div
-                  className={`w-20 h-20 mx-auto rounded-[14px] bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white text-2xl font-black shadow-lg border-2 border-white/20`}
-                >
-                  {name ? name.substring(0, 2).toUpperCase() : 'AR'}
+                <div className="relative inline-block mx-auto">
+                  <div className="w-24 h-24 mx-auto rounded-[16px] overflow-hidden border-2 border-[#2A2E3D] shadow-xl bg-[#0B0C10] flex items-center justify-center">
+                    {(avatarType === 'preset' || avatarType === 'upload') && avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={name || 'Avatar'}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : avatarType === 'symbol' ? (
+                      <div
+                        className={`w-full h-full bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white shadow-inner`}
+                      >
+                        <SelectedSymbolIcon className="w-10 h-10 drop-shadow-md" />
+                      </div>
+                    ) : (
+                      <div
+                        className={`w-full h-full bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white text-2xl font-black shadow-inner`}
+                      >
+                        {name ? name.substring(0, 2).toUpperCase() : 'AR'}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -1025,7 +1486,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   </p>
                   <p className="text-xs text-[#94A3B8] flex items-center justify-center gap-1 mt-0.5">
                     <MapPin className="w-3 h-3 text-[#06B6D4]" />
-                    <span>{isCustomCity && customCityText ? customCityText : city}, {country}</span>
+                    <span>{finalResolvedCity}, {country}</span>
                   </p>
                 </div>
 
@@ -1074,7 +1535,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                 <div className="flex justify-between items-center bg-[#0B0C10] px-3.5 py-2.5 rounded-[8px] border border-[#2A2E3D]">
                   <span className="text-[#94A3B8] flex items-center gap-2">
-                    <TrendingUp className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                    <TrendingUp className="w-3.5 h-3.5 text-[#7C3AED]" />
                     Popularidad
                   </span>
                   <span className="font-bold text-[#C084FC] font-mono">
@@ -1097,7 +1558,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <button
                 type="submit"
                 id="btn-confirm-create-artist"
-                className="w-full py-3.5 px-6 rounded-[8px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:opacity-95 active:scale-[0.98] cursor-pointer shadow-[0_0_20px_rgba(139,92,246,0.4)] border border-white/20"
+                className="w-full py-3.5 px-6 rounded-[8px] bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:opacity-95 active:scale-[0.98] cursor-pointer shadow-[0_0_20px_rgba(124,58,237,0.4)] border border-white/20"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Comenzar Carrera Musical</span>

@@ -14,7 +14,7 @@ export const NewArtistModal: React.FC<NewArtistModalProps> = ({ world, onClose, 
   const [country, setCountry] = useState('Argentina');
   const [city, setCity] = useState('Buenos Aires');
   const [mainGenreId, setMainGenreId] = useState('trap_latino');
-  const [avatarColor, setAvatarColor] = useState('from-amber-500 to-rose-600');
+  const [avatarColor, setAvatarColor] = useState('from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
 
   const [archetype, setArchetype] = useState<'prodigy' | 'commercial' | 'visionary' | 'hitmaker'>('commercial');
 
@@ -73,11 +73,11 @@ export const NewArtistModal: React.FC<NewArtistModalProps> = ({ world, onClose, 
   };
 
   const gradients = [
-    { label: 'Fuego & Rubí', val: 'from-amber-500 to-rose-600' },
-    { label: 'Neón Cyberpunk', val: 'from-fuchsia-600 to-indigo-600' },
-    { label: 'Esmeralda', val: 'from-emerald-500 to-teal-700' },
-    { label: 'Oro & Bronce', val: 'from-yellow-400 to-amber-700' },
-    { label: 'Púrpura Profundo', val: 'from-purple-700 to-zinc-950' }
+    { label: 'Violeta Synth Primario', val: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]' },
+    { label: 'Neón Violeta & Magenta', val: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]' },
+    { label: 'Cian & Azul Eléctrico', val: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]' },
+    { label: 'Esmeralda Studio', val: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]' },
+    { label: 'Oro & Ámbar Master', val: 'from-[#F59E0B] via-[#D97706] to-[#B45309]' }
   ];
 
   return (

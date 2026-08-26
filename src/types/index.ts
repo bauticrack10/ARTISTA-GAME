@@ -67,6 +67,7 @@ export interface Artist {
   isPlayer: boolean;
   avatarUrl?: string;
   avatarColor?: string;
+  avatarIcon?: string;
   country: string;
   city: string;
   birthYear: number;

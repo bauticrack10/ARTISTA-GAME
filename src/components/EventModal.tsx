@@ -249,7 +249,7 @@ export const EventModal: React.FC<EventModalProps> = ({
               ) : (
                 <div
                   className={`w-14 h-14 rounded-[12px] bg-gradient-to-tr ${
-                    player.avatarColor || 'from-amber-500 to-rose-600'
+                    player.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]'
                   } flex items-center justify-center text-white text-xl font-bold border-2 border-[#2A2E3D] shadow-md`}
                 >
                   {player.name.charAt(0)}

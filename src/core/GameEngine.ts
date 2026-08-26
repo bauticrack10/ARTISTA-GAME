@@ -53,7 +53,8 @@ export class GameEngine {
         realName: customPlayer.realName || 'Nombre Real',
         isPlayer: true,
         avatarUrl: customPlayer.avatarUrl,
-        avatarColor: customPlayer.avatarColor || 'from-amber-500 to-rose-600',
+        avatarColor: customPlayer.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]',
+        avatarIcon: customPlayer.avatarIcon,
         country: customPlayer.country || 'Argentina',
         city: customPlayer.city || 'Buenos Aires',
         birthYear: customPlayer.birthYear || 2006,
@@ -84,27 +85,34 @@ export class GameEngine {
           fanbaseLoyalty: 75,
           hype: 55
         },
-        careerStage: 'Underground',
-        labelId: null,
-        managerId: null,
-        relationships: {},
-        eras: [
+        careerStage: customPlayer.careerStage || 'Underground',
+        labelId: customPlayer.labelId !== undefined ? customPlayer.labelId : null,
+        managerId: customPlayer.managerId !== undefined ? customPlayer.managerId : null,
+        activeContract: customPlayer.activeContract || null,
+        relationships: customPlayer.relationships || {},
+        eras: customPlayer.eras && customPlayer.eras.length > 0 ? customPlayer.eras : [
           {
             id: `era_${this.playerId}_debut`,
             name: 'Los Primeros Pasos & Grabaciones Caseras',
             startYear: 2026,
             startMonth: 1,
             genreFocus: customPlayer.mainGenreId || 'trap_latino',
-            stage: 'Underground',
+            stage: customPlayer.careerStage || 'Underground',
             highlightSummary: 'Inicios del camino artístico y primeras grabaciones en el estudio.'
           }
         ],
-        awardsWon: [],
-        legacyScore: 12,
-        isRetired: false,
-        historicalNotes: ['Comenzó su carrera artística en 2026.'],
-        generationIndex: 1,
-        influences: []
+        awardsWon: customPlayer.awardsWon || [],
+        legacyScore: customPlayer.legacyScore !== undefined ? customPlayer.legacyScore : 12,
+        isRetired: customPlayer.isRetired || false,
+        retirementYear: customPlayer.retirementYear,
+        lastReleaseYear: customPlayer.lastReleaseYear,
+        lastReleaseMonth: customPlayer.lastReleaseMonth,
+        historicalNotes: customPlayer.historicalNotes && customPlayer.historicalNotes.length > 0 ? customPlayer.historicalNotes : ['Comenzó su carrera artística en 2026.'],
+        generationIndex: customPlayer.generationIndex || 1,
+        influences: customPlayer.influences || [],
+        lifestyleUpgrades: customPlayer.lifestyleUpgrades || [],
+        isProdigy: customPlayer.isProdigy,
+        prodigyMultiplier: customPlayer.prodigyMultiplier
       };
       this.world.artists[this.playerId] = playerArtist;
     } else {
@@ -225,11 +233,12 @@ export class GameEngine {
     this.notify();
   }
 
-  public updatePlayerAvatar(avatarUrl?: string, avatarColor?: string) {
+  public updatePlayerAvatar(avatarUrl?: string, avatarColor?: string, avatarIcon?: string) {
     const player = this.getPlayer();
     if (player) {
       if (avatarUrl !== undefined) player.avatarUrl = avatarUrl;
       if (avatarColor !== undefined) player.avatarColor = avatarColor;
+      if (avatarIcon !== undefined) player.avatarIcon = avatarIcon;
       this.world.artists[this.playerId] = { ...player };
       this.notify();
     }

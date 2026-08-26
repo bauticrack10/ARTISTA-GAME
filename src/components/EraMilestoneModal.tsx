@@ -402,7 +402,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
                   ) : (
                     <div
                       className={`w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr ${
-                        player.avatarColor || 'from-amber-500 to-rose-600'
+                        player.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]'
                       } flex items-center justify-center text-white text-4xl sm:text-5xl font-black border-4 border-white shadow-2xl`}
                     >
                       {player.name.charAt(0)}

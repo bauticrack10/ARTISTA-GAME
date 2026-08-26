@@ -45,7 +45,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [customAvatarUrl, setCustomAvatarUrl] = useState(player.avatarUrl || '');
-  const [selectedColor, setSelectedColor] = useState(player.avatarColor || 'from-amber-500 to-rose-600');
+  const [selectedColor, setSelectedColor] = useState(player.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const playerSongs = (Object.values(world.songs) as Song[]).filter(s => s.artistId === player.id);
