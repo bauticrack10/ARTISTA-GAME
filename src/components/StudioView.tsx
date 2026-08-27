@@ -9,8 +9,10 @@ import {
   Producer,
   MusicVideoConcept,
   MusicVideoDirectorTier,
-  CareerStage
+  CareerStage,
+  ReleaseConfirmationData
 } from '../types';
+import { ReleaseConfirmationModal } from './ReleaseConfirmationModal';
 import { getArtistDerivedStyles, SUBGENRE_DETAILS } from '../data/genres';
 import { GameEngine } from '../core/GameEngine';
 import { IndustryEngine } from '../systems/IndustryEngine';
@@ -272,6 +274,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const singlesThisYear = playerSongs.filter(s => s.releaseYear === world.currentYear && s.isSingle).length;
   const isSinglesLimitReached = singlesThisYear >= MAX_SINGLES;
 
+  // Release confirmation and duplicate click prevention state
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  const [confirmedRelease, setConfirmedRelease] = useState<ReleaseConfirmationData | null>(null);
+
   // Single State
   const [singleTitle, setSingleTitle] = useState('');
   const [selectedSubgenreId, setSelectedSubgenreId] = useState<string>(
@@ -360,9 +366,37 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }
   };
 
+  // Close confirmation modal & clear form only now
+  const handleCloseConfirmation = () => {
+    if (confirmedRelease) {
+      if (confirmedRelease.type === 'single') {
+        setSingleTitle('');
+        setHasMusicVideo(false);
+        setSingleProdBudget(0);
+        setSingleMktBudget(0);
+        setSingleProducer('');
+      } else {
+        setAlbumTitle('');
+        setIncludedSingleIds([]);
+        setAlbumProducer('');
+        setNewTrackTitles([
+          'Intro (Declaración)',
+          'Fuego en las Calles',
+          'Noches de Gloria',
+          'Diamantes y Cicatrices',
+          'Bajo las Luces del Neón',
+          'Outro (El Legado)'
+        ]);
+      }
+    }
+    setConfirmedRelease(null);
+    setActiveTab('catalog');
+  };
+
   // Handlers
   const handleCreateSingle = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPublishing) return;
     if (!singleTitle.trim()) return;
 
     if (isSinglesLimitReached) {
@@ -390,34 +424,74 @@ export const StudioView: React.FC<StudioViewProps> = ({
       }
     }
 
-    onReleaseSong({
-      title: singleTitle,
-      genreId: styleDerivation.primaryGenreId,
-      subGenreIds: selectedSubgenreId ? [selectedSubgenreId] : [],
-      featuredArtistIds: [],
-      producerId: singleProducer || undefined,
-      budgetProduction: singleProdBudget,
-      budgetMarketing: singleMktBudget,
-      musicVideo: hasMusicVideo ? {
-        concept: selectedVideoConcept,
-        budget: videoCost,
-        directorTier: selectedDirectorTier
-      } : undefined
-    });
+    try {
+      setIsPublishing(true);
 
-    playSound('release');
-    setNotification(
-      hasMusicVideo
-        ? `¡El single "${singleTitle}" y su Videoclip Oficial (${selectedVideoConcept}) han sido estrenados mundialmente!`
-        : `¡El single "${singleTitle}" ha sido lanzado al mercado mundial!`
-    );
-    setSingleTitle('');
-    setHasMusicVideo(false);
-    setTimeout(() => setNotification(null), 5000);
+      const prodObj = singleProducer ? world.producers[singleProducer] : undefined;
+      const subObj = selectedSubgenreId ? SUBGENRE_DETAILS[selectedSubgenreId] : undefined;
+      const genreName = world.genres[styleDerivation.primaryGenreId]?.name || styleDerivation.primaryGenreId;
+
+      onReleaseSong({
+        title: singleTitle.trim(),
+        genreId: styleDerivation.primaryGenreId,
+        subGenreIds: selectedSubgenreId ? [selectedSubgenreId] : [],
+        featuredArtistIds: [],
+        producerId: singleProducer || undefined,
+        budgetProduction: singleProdBudget,
+        budgetMarketing: singleMktBudget,
+        musicVideo: hasMusicVideo ? {
+          concept: selectedVideoConcept,
+          budget: videoCost,
+          directorTier: selectedDirectorTier
+        } : undefined
+      });
+
+      const releaseData: ReleaseConfirmationData = {
+        type: 'single',
+        title: singleTitle.trim(),
+        coverGradient: ARTISTIC_COVER_GRADIENTS[Math.floor(Math.random() * ARTISTIC_COVER_GRADIENTS.length)],
+        songCount: 1,
+        trackTitles: [singleTitle.trim()],
+        genreId: styleDerivation.primaryGenreId,
+        genreName,
+        subGenreId: selectedSubgenreId || undefined,
+        subGenreName: subObj?.name || undefined,
+        producerName: prodObj?.name || undefined,
+        musicVideo: hasMusicVideo ? {
+          concept: selectedVideoConcept,
+          budget: videoCost,
+          directorTier: selectedDirectorTier
+        } : undefined,
+        releaseYear: world.currentYear,
+        releaseMonth: world.currentMonth,
+        totalBudget: totalSingleCost,
+        budgetBreakdown: {
+          production: singleProdBudget,
+          marketing: singleMktBudget,
+          producerFee: singleProdFee,
+          videoCost: videoCost
+        }
+      };
+
+      playSound('release');
+      setConfirmedRelease(releaseData);
+      setNotification(
+        hasMusicVideo
+          ? `¡El single "${singleTitle}" y su Videoclip Oficial (${selectedVideoConcept}) han sido estrenados mundialmente!`
+          : `¡El single "${singleTitle}" ha sido lanzado al mercado mundial!`
+      );
+      setTimeout(() => setNotification(null), 5000);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Error al procesar el lanzamiento del single.';
+      alert(`Error en el lanzamiento: ${errMsg}`);
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   const handleCreateAlbum = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPublishing) return;
     if (!albumTitle.trim()) return;
 
     if (totalAlbumTracksCount < minTracksRequired) {
@@ -448,23 +522,61 @@ export const StudioView: React.FC<StudioViewProps> = ({
       return;
     }
 
-    onReleaseAlbum({
-      title: albumTitle,
-      type: albumType,
-      genreId: styleDerivation.primaryGenreId,
-      subGenreIds: selectedAlbumSubgenreId ? [selectedAlbumSubgenreId] : [],
-      newTrackTitles: newTrackTitles.filter(t => t.trim().length > 0),
-      includedSingleIds,
-      budgetProduction: albumProdBudget,
-      budgetMarketing: albumMktBudget,
-      producerId: albumProducer || undefined
-    });
+    try {
+      setIsPublishing(true);
 
-    playSound('release');
-    setNotification(`¡El proyecto "${albumTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`);
-    setAlbumTitle('');
-    setIncludedSingleIds([]);
-    setTimeout(() => setNotification(null), 6000);
+      const prodObj = albumProducer ? world.producers[albumProducer] : undefined;
+      const subObj = selectedAlbumSubgenreId ? SUBGENRE_DETAILS[selectedAlbumSubgenreId] : undefined;
+      const genreName = world.genres[styleDerivation.primaryGenreId]?.name || styleDerivation.primaryGenreId;
+
+      const validNewTracks = newTrackTitles.filter(t => t.trim().length > 0);
+      const includedSingles = includedSingleIds.map(id => playerSongs.find(s => s.id === id)?.title || id);
+      const allTrackTitles = [...includedSingles, ...validNewTracks];
+
+      onReleaseAlbum({
+        title: albumTitle.trim(),
+        type: albumType,
+        genreId: styleDerivation.primaryGenreId,
+        subGenreIds: selectedAlbumSubgenreId ? [selectedAlbumSubgenreId] : [],
+        newTrackTitles: validNewTracks,
+        includedSingleIds,
+        budgetProduction: albumProdBudget,
+        budgetMarketing: albumMktBudget,
+        producerId: albumProducer || undefined
+      });
+
+      const releaseData: ReleaseConfirmationData = {
+        type: albumType,
+        title: albumTitle.trim(),
+        coverGradient: ARTISTIC_COVER_GRADIENTS[Math.floor(Math.random() * ARTISTIC_COVER_GRADIENTS.length)],
+        songCount: allTrackTitles.length,
+        trackTitles: allTrackTitles,
+        genreId: styleDerivation.primaryGenreId,
+        genreName,
+        subGenreId: selectedAlbumSubgenreId || undefined,
+        subGenreName: subObj?.name || undefined,
+        producerName: prodObj?.name || undefined,
+        releaseYear: world.currentYear,
+        releaseMonth: world.currentMonth,
+        totalBudget: totalCost,
+        budgetBreakdown: {
+          production: albumProdBudget,
+          marketing: albumMktBudget,
+          producerFee: prodFee,
+          videoCost: 0
+        }
+      };
+
+      playSound('release');
+      setConfirmedRelease(releaseData);
+      setNotification(`¡El proyecto "${albumTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`);
+      setTimeout(() => setNotification(null), 6000);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Error al procesar el lanzamiento del álbum.';
+      alert(`Error en el lanzamiento: ${errMsg}`);
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   const getScoreColor = (score: number) => {
@@ -1047,16 +1159,18 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
             <button
               type="submit"
-              disabled={isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()}
+              disabled={isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()}
               className={`px-5 py-2.5 rounded-[6px] text-sm transition-all flex items-center gap-2 ${
-                isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()
+                isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()
                   ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-90 cursor-pointer'
               }`}
             >
-              <Disc3 className="w-4 h-4 text-white" />
+              <Disc3 className={`w-4 h-4 text-white ${isPublishing ? 'animate-spin' : ''}`} />
               <span>
-                {isFundsInsufficient
+                {isPublishing
+                  ? 'Publicando y Masterizando...'
+                  : isFundsInsufficient
                   ? `Fondos Insuficientes ($${totalSingleCost.toLocaleString()})`
                   : hasMusicVideo
                   ? 'Grabar Single & Estrenar Videoclip'
@@ -1389,16 +1503,18 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
             <button
               type="submit"
-              disabled={isAlbumDisabled}
+              disabled={isPublishing || isAlbumDisabled}
               className={`px-6 py-2.5 rounded-[6px] text-sm transition-all flex items-center gap-2 ${
-                isAlbumDisabled
+                isPublishing || isAlbumDisabled
                   ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-90 cursor-pointer'
               }`}
             >
-              <Layers className="w-4 h-4 text-white" />
+              <Layers className={`w-4 h-4 text-white ${isPublishing ? 'animate-spin' : ''}`} />
               <span>
-                {isAlbumFundsInsufficient
+                {isPublishing
+                  ? 'Publicando y Masterizando...'
+                  : isAlbumFundsInsufficient
                   ? `Fondos Insuficientes ($${totalAlbumCost.toLocaleString()})`
                   : 'Publicar Proyecto Completo'}
               </span>
@@ -1625,6 +1741,15 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
           )}
         </div>
+      )}
+
+      {/* --- RELEASE CONFIRMATION MODAL --- */}
+      {confirmedRelease && (
+        <ReleaseConfirmationModal
+          data={confirmedRelease}
+          onClose={handleCloseConfirmation}
+          onNavigateToCatalog={handleCloseConfirmation}
+        />
       )}
     </div>
   );

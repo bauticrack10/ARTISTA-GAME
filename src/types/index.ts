@@ -234,6 +234,43 @@ export interface Album {
   singlesIncludedCount?: number;
 }
 
+export interface ReleaseBudgetBreakdown {
+  production: number;
+  marketing: number;
+  producerFee: number;
+  videoCost: number;
+}
+
+export interface ReleaseConfirmationData {
+  type: ReleaseType | string;
+  title: string;
+  coverGradient?: string;
+  songCount: number;
+  trackTitles?: string[];
+  genreId: string;
+  genreName: string;
+  subGenreId?: string;
+  subGenreName?: string;
+  featuredArtistNames?: string[];
+  producerName?: string;
+  musicVideo?: {
+    concept: string;
+    budget: number;
+    directorTier: string;
+    views?: number;
+  };
+  releaseYear: number;
+  releaseMonth: number;
+  totalBudget: number;
+  budgetBreakdown?: ReleaseBudgetBreakdown;
+  quality?: number;
+  commercialAppeal?: number;
+  originality?: number;
+  criticalScore?: number;
+  criticalReviewText?: string;
+  firstWeekSales?: number;
+}
+
 export type GenreLifecycle = 'underground' | 'surging' | 'mainstream' | 'oversaturated' | 'reviving' | 'niche' | 'classic';
 
 export interface SubgenreDetail {

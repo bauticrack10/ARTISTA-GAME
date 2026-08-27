@@ -64,7 +64,7 @@ export class GameEngine {
         careerStartYear: customPlayer.careerStartYear || 2026,
         mainGenreId: customPlayer.mainGenreId || 'trap_latino',
         subGenreIds: customPlayer.subGenreIds || [],
-        personality: customPlayer.personality || {
+        personality: {
           creativity: 85,
           ambition: 85,
           discipline: 80,
@@ -74,9 +74,10 @@ export class GameEngine {
           originality: 85,
           riskTolerance: 80,
           sociability: 80,
-          independence: 75
+          independence: 75,
+          ...(customPlayer.personality || {})
         },
-        stats: customPlayer.stats || {
+        stats: {
           popularity: 20,
           reputation: 50,
           artisticCredibility: 60,
@@ -86,7 +87,8 @@ export class GameEngine {
           funds: 4500,
           fansCount: 12000,
           fanbaseLoyalty: 75,
-          hype: 55
+          hype: 55,
+          ...(customPlayer.stats || {})
         },
         careerStage: customPlayer.careerStage || 'Underground',
         labelId: customPlayer.labelId !== undefined ? customPlayer.labelId : null,
@@ -466,9 +468,17 @@ export class GameEngine {
     };
   }): Song {
     const player = this.getPlayer();
+    if (!params.title || !params.title.trim()) {
+      throw new Error('El título de la canción es obligatorio.');
+    }
+
     const currentYearSingles = this.getPlayerSinglesReleasedThisYear();
     if (currentYearSingles >= GameEngine.MAX_SINGLES_PER_YEAR) {
       throw new Error(`Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año). El cupo se reiniciará en enero (Semestre 1).`);
+    }
+
+    if (player.stats.energy < 15) {
+      throw new Error('Energía insuficiente para grabar y publicar un single (requiere al menos 15% de energía).');
     }
 
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
@@ -479,8 +489,9 @@ export class GameEngine {
       }
     }
 
+    const producerFee = prod ? prod.costPerTrack : 0;
     const videoCost = params.musicVideo ? params.musicVideo.budget : 0;
-    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack : 0) + videoCost;
+    const totalCost = params.budgetProduction + params.budgetMarketing + producerFee + videoCost;
 
     if (totalCost > player.stats.funds) {
       throw new Error(`Fondos insuficientes para este lanzamiento. Costo: $${totalCost.toLocaleString()}, Disponibles: $${player.stats.funds.toLocaleString()}`);
@@ -540,7 +551,7 @@ export class GameEngine {
 
     // Deduct player funds and energy
     player.stats.funds = Math.max(0, player.stats.funds - totalCost);
-    player.stats.energy = Math.max(10, player.stats.energy - 15);
+    player.stats.energy = Math.max(0, player.stats.energy - 15);
     player.stats.hype = Math.min(100, player.stats.hype + (params.budgetMarketing > 0 ? Math.floor(params.budgetMarketing / 2000) * 10 : 0) + 15 + mvHypeBonus);
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
@@ -569,11 +580,11 @@ export class GameEngine {
         description: `Honorarios de beatmaker para "${params.title}"`
       });
     }
-    if (params.musicVideo && params.musicVideo.cost > 0) {
+    if (params.musicVideo && videoCost > 0) {
       this.recordFinancialTransaction({
         type: 'expense',
         category: 'production',
-        amount: params.musicVideo.cost,
+        amount: videoCost,
         description: `Producción videoclip oficial "${params.title}"`
       });
     }
@@ -652,6 +663,22 @@ export class GameEngine {
     producerId?: string;
   }): Album {
     const player = this.getPlayer();
+    if (!params.title || !params.title.trim()) {
+      throw new Error('El título del álbum es obligatorio.');
+    }
+
+    const rawNewTitles = (params.newTrackTitles || params.songTitles || []).filter(t => t.trim().length > 0);
+    const includedIds = params.includedSingleIds || [];
+    const totalTracksCount = rawNewTitles.length + includedIds.length;
+    const minTracks = params.type === 'ep' ? 4 : (params.type === 'deluxe' ? 10 : 6);
+    if (totalTracksCount < minTracks) {
+      throw new Error(`Un proyecto en formato ${params.type.toUpperCase()} requiere al menos ${minTracks} canciones. Tienes ${totalTracksCount}.`);
+    }
+
+    if (player.stats.energy < 35) {
+      throw new Error('Energía insuficiente para producir un álbum (requiere al menos 35% de energía).');
+    }
+
     const albumId = `album_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
@@ -663,12 +690,15 @@ export class GameEngine {
     }
     const qualityBoost = prod ? prod.qualityBoost : 0;
 
-    const rawNewTitles = params.newTrackTitles || params.songTitles || [];
-    const includedIds = params.includedSingleIds || [];
+    const prodFee = prod ? prod.costPerTrack * Math.min(rawNewTitles.length, 6) : 0;
+    const totalCost = params.budgetProduction + params.budgetMarketing + prodFee;
 
-    const totalCost = params.budgetProduction + params.budgetMarketing + (prod ? prod.costPerTrack * Math.min(rawNewTitles.length, 6) : 0);
+    if (totalCost > player.stats.funds) {
+      throw new Error(`Fondos insuficientes para este álbum. Costo: $${totalCost.toLocaleString()}, Disponibles: $${player.stats.funds.toLocaleString()}`);
+    }
+
     player.stats.funds = Math.max(0, player.stats.funds - totalCost);
-    player.stats.energy = Math.max(10, player.stats.energy - 35);
+    player.stats.energy = Math.max(0, player.stats.energy - 35);
     player.stats.hype = Math.min(100, player.stats.hype + 35);
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;

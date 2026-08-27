@@ -197,13 +197,13 @@ export class StreamingEngine {
     // 1. Quality & Critical Score computation
     const avgSongQuality = songs.length > 0
       ? songs.reduce((sum, s) => sum + s.quality, 0) / songs.length
-      : artist.personality.skill;
+      : (artist.personality?.skill || 70);
 
     const baseCritical =
       avgSongQuality * 0.45 +
-      artist.personality.originality * 0.25 +
-      artist.stats.artisticCredibility * 0.20 +
-      artist.personality.creativity * 0.10 +
+      (artist.personality?.originality || 70) * 0.25 +
+      (artist.stats?.artisticCredibility || 50) * 0.20 +
+      (artist.personality?.creativity || 70) * 0.10 +
       producerBoost * 0.5;
 
     // Budget per track modifier
@@ -238,21 +238,21 @@ export class StreamingEngine {
       albumType === 'collab_album' ? 1.15 : 0.60; // ep
 
     // Core fan sales
-    const loyaltyRatio = Math.max(0.1, artist.stats.fanbaseLoyalty / 100);
-    const coreFanSales = Math.floor(artist.stats.fansCount * loyaltyRatio * 0.18);
+    const loyaltyRatio = Math.max(0.1, (artist.stats?.fanbaseLoyalty || 70) / 100);
+    const coreFanSales = Math.floor((artist.stats?.fansCount || 1000) * loyaltyRatio * 0.18);
 
     // Mainstream popularity scaling
-    const popRatio = Math.max(0.01, artist.stats.popularity / 100);
-    const algorithmicPopularitySales = Math.pow(popRatio, 2.3) * 220000 + (artist.stats.popularity * 80);
+    const popRatio = Math.max(0.01, (artist.stats?.popularity || 10) / 100);
+    const algorithmicPopularitySales = Math.pow(popRatio, 2.3) * 220000 + ((artist.stats?.popularity || 10) * 80);
 
     // Marketing impact
     const marketingMultiplier = 1.0 + Math.min(1.8, marketingBudget / 20000);
 
     // Hype impact
-    const hypeFactor = 0.6 + (artist.stats.hype / 100) * 0.8;
+    const hypeFactor = 0.6 + ((artist.stats?.hype || 30) / 100) * 0.8;
 
     // Previous singles momentum carry-over
-    const singlesMomentumSales = Math.floor(Math.min(45000, includedSinglesTotalStreams * 0.0015));
+    const singlesMomentumSales = Math.floor(Math.min(45000, (includedSinglesTotalStreams || 0) * 0.0015));
 
     const calculatedFirstWeekSales = Math.floor(
       (coreFanSales + algorithmicPopularitySales + singlesMomentumSales) *
@@ -262,12 +262,12 @@ export class StreamingEngine {
     );
 
     // Baseline minimum sales
-    const minSales = Math.max(50, Math.floor(artist.stats.popularity * 15 + artist.stats.fansCount * 0.05));
+    const minSales = Math.max(50, Math.floor((artist.stats?.popularity || 10) * 15 + (artist.stats?.fansCount || 1000) * 0.05));
     const firstWeekSales = Math.max(minSales, calculatedFirstWeekSales);
 
     // 3. Commercial score (0 - 100)
     const commercialScore = Math.floor(
-      Math.min(100, (artist.personality.commercialAppeal * 0.4 + artist.stats.popularity * 0.4 + (marketingBudget / 30000) * 20))
+      Math.min(100, ((artist.personality?.commercialAppeal || 70) * 0.4 + (artist.stats?.popularity || 10) * 0.4 + (marketingBudget / 30000) * 20))
     );
 
     return {
