@@ -514,6 +514,292 @@ export class SocialFeedEngine {
   }
 
   /**
+   * Genera publicaciones en redes tras un elogio público (shoutout)
+   */
+  static generateShoutoutPosts(
+    world: WorldState,
+    player: Artist,
+    target: Artist,
+    isTargetHostile: boolean,
+    shoutoutCount: number
+  ): SocialPost[] {
+    const posts: SocialPost[] = [];
+    const year = world.currentYear;
+    const month = world.currentMonth;
+    const pHandle = `@${player.name.toLowerCase().replace(/\s+/g, '')}`;
+    const tHandle = `@${target.name.toLowerCase().replace(/\s+/g, '')}`;
+
+    if (isTargetHostile) {
+      // Mofa por adulación a un enemigo/rival
+      posts.push({
+        id: `shoutout_mock_${Date.now()}_1`,
+        platform: 'twitter',
+        authorName: 'Trap & Flow Argentina',
+        authorHandle: '@trapflow_arg',
+        authorVerified: true,
+        authorType: 'media',
+        authorAvatarGradient: 'from-purple-700 to-indigo-900',
+        badge: 'Polémica',
+        year,
+        month,
+        content: `🚨 INESPERADO: ${pHandle} le dedicó un elogio público a su rival ${tHandle}. En la escena no paran de debatir si se trata de un pacto de tregua o de debilidad.`,
+        likes: Math.floor(2800 + Math.random() * 800),
+        retweetsOrShares: Math.floor(650 + Math.random() * 200),
+        commentsCount: Math.floor(480 + Math.random() * 150),
+        sentiment: 'polarizing',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `shoutout_mock_${Date.now()}_2`,
+        platform: 'twitter',
+        authorName: 'Anti-Hype 💀',
+        authorHandle: '@antihype_real',
+        authorVerified: false,
+        authorType: 'hater',
+        authorAvatarGradient: 'from-zinc-800 to-black',
+        year,
+        month,
+        content: `JAJAJAJA ${pHandle} pidiéndole perdón y tirándole flores a ${tHandle} después de todo lo que pasó 🤡 La falta de postura es total`,
+        likes: Math.floor(750 + Math.random() * 300),
+        retweetsOrShares: Math.floor(180 + Math.random() * 80),
+        commentsCount: Math.floor(190 + Math.random() * 90),
+        sentiment: 'negative',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `shoutout_mock_${Date.now()}_3`,
+        platform: 'tiktok',
+        authorName: 'Camila ⚡',
+        authorHandle: '@cami_musica',
+        authorVerified: false,
+        authorType: 'fan',
+        authorAvatarGradient: 'from-pink-500 to-purple-600',
+        year,
+        month,
+        content: `No entiendo nada... ${pHandle} elogiando a ${tHandle}?? Quedé en shock total 😭 espero que sea sarcasmo`,
+        likes: Math.floor(1200 + Math.random() * 500),
+        retweetsOrShares: Math.floor(280 + Math.random() * 100),
+        commentsCount: Math.floor(210 + Math.random() * 80),
+        sentiment: 'meme',
+        relatedArtistId: player.id
+      });
+    } else {
+      // Elogio positivo entre colegas
+      posts.push({
+        id: `shoutout_pos_${Date.now()}_1`,
+        platform: 'twitter',
+        authorName: 'Billboard Sonoro',
+        authorHandle: '@billboard_radar',
+        authorVerified: true,
+        authorType: 'media',
+        authorAvatarGradient: 'from-amber-600 to-orange-700',
+        badge: 'Cultura Urbana',
+        year,
+        month,
+        content: `🤝 RESPETO MUTUO: ${pHandle} reconoció públicamente el trabajo de ${tHandle}. Gestos de grandeza que unen y fortalecen la escena hispana.`,
+        likes: Math.floor(3400 + Math.random() * 1000),
+        retweetsOrShares: Math.floor(720 + Math.random() * 200),
+        commentsCount: Math.floor(310 + Math.random() * 100),
+        sentiment: 'positive',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `shoutout_pos_${Date.now()}_2`,
+        platform: 'twitter',
+        authorName: 'Matias 808',
+        authorHandle: '@mati_trap',
+        authorVerified: false,
+        authorType: 'fan',
+        authorAvatarGradient: 'from-blue-500 to-indigo-600',
+        year,
+        month,
+        content: `Qué humildad la de ${pHandle} bancando a ${tHandle} 👑 Necesitamos ese junte ya en el estudio lpm`,
+        likes: Math.floor(820 + Math.random() * 300),
+        retweetsOrShares: Math.floor(140 + Math.random() * 50),
+        commentsCount: Math.floor(75 + Math.random() * 30),
+        sentiment: 'hype',
+        relatedArtistId: player.id
+      });
+    }
+
+    return posts;
+  }
+
+  /**
+   * Genera publicaciones en redes tras la resolución lírica de un Diss Track
+   */
+  static generateDissLyricalPosts(
+    world: WorldState,
+    player: Artist,
+    target: Artist,
+    outcomeType: 'lyrical_victory' | 'street_tie' | 'backfire',
+    scorePlayer: number,
+    scoreTarget: number
+  ): SocialPost[] {
+    const posts: SocialPost[] = [];
+    const year = world.currentYear;
+    const month = world.currentMonth;
+    const pHandle = `@${player.name.toLowerCase().replace(/\s+/g, '')}`;
+    const tHandle = `@${target.name.toLowerCase().replace(/\s+/g, '')}`;
+
+    if (outcomeType === 'lyrical_victory') {
+      posts.push({
+        id: `diss_post_vic_${Date.now()}_1`,
+        platform: 'twitter',
+        authorName: 'Billboard Sonoro',
+        authorHandle: '@billboard_radar',
+        authorVerified: true,
+        authorType: 'media',
+        authorAvatarGradient: 'from-amber-600 to-orange-700',
+        badge: 'Impacto Bélico',
+        year,
+        month,
+        content: `💣 MASACRE LÍRICA: ${pHandle} destrozó a ${tHandle} en una tiradera quirúrgica e inapelable (Score Lírico: ${scorePlayer} vs ${scoreTarget}). El tema es #1 global en tendencias.`,
+        likes: Math.floor(8500 + Math.random() * 2500),
+        retweetsOrShares: Math.floor(2600 + Math.random() * 700),
+        commentsCount: Math.floor(1700 + Math.random() * 400),
+        sentiment: 'hype',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `diss_post_vic_${Date.now()}_2`,
+        platform: 'tiktok',
+        authorName: 'Trap Connoisseur',
+        authorHandle: '@trap_connoisseur',
+        authorVerified: false,
+        authorType: 'fan',
+        authorAvatarGradient: 'from-violet-600 to-fuchsia-600',
+        year,
+        month,
+        content: `PARÁ UN POCO LO ASESINÓ EN VIVO 💀🔥 Las métricas del tercer verso no tienen sentido, ${tHandle} no se levanta más de esta`,
+        likes: Math.floor(5400 + Math.random() * 1500),
+        retweetsOrShares: Math.floor(1500 + Math.random() * 400),
+        commentsCount: Math.floor(620 + Math.random() * 200),
+        sentiment: 'hype',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `diss_post_vic_${Date.now()}_3`,
+        platform: 'twitter',
+        authorName: 'Claudio Varela',
+        authorHandle: '@cvarela_critica',
+        authorVerified: true,
+        authorType: 'critic',
+        authorAvatarGradient: 'from-amber-700 to-stone-800',
+        badge: 'Crítica Especializada',
+        year,
+        month,
+        content: `Análisis técnico: ${pHandle} demostró superioridad absoluta en estructura métrica, rimas asonantes encadenadas y credibilidad de calle frente a ${tHandle}. Victoria lírica rotunda.`,
+        likes: Math.floor(2100 + Math.random() * 600),
+        retweetsOrShares: Math.floor(410 + Math.random() * 120),
+        commentsCount: Math.floor(180 + Math.random() * 60),
+        sentiment: 'positive',
+        relatedArtistId: player.id
+      });
+    } else if (outcomeType === 'street_tie') {
+      posts.push({
+        id: `diss_post_tie_${Date.now()}_1`,
+        platform: 'twitter',
+        authorName: 'Trap & Flow Argentina',
+        authorHandle: '@trapflow_arg',
+        authorVerified: true,
+        authorType: 'media',
+        authorAvatarGradient: 'from-purple-700 to-indigo-900',
+        badge: 'Fuego Cruzado',
+        year,
+        month,
+        content: `⚔️ CHOQUE DE TITANES: Tensión al límite entre ${pHandle} y ${tHandle} (${scorePlayer} vs ${scoreTarget}). La escena está completamente dividida sobre quién se llevó el asalto.`,
+        likes: Math.floor(6200 + Math.random() * 1800),
+        retweetsOrShares: Math.floor(1800 + Math.random() * 500),
+        commentsCount: Math.floor(1300 + Math.random() * 300),
+        sentiment: 'polarizing',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `diss_post_tie_${Date.now()}_2`,
+        platform: 'twitter',
+        authorName: 'Franco B',
+        authorHandle: '@francorimas',
+        authorVerified: false,
+        authorType: 'fan',
+        authorAvatarGradient: 'from-cyan-500 to-blue-600',
+        year,
+        month,
+        content: `Estuvo parejísimo loco 🔥 ${pHandle} le metió con furia pero ${tHandle} aguantó bien los trapos. Necesitamos un round 2 urgente!`,
+        likes: Math.floor(1800 + Math.random() * 600),
+        retweetsOrShares: Math.floor(390 + Math.random() * 120),
+        commentsCount: Math.floor(240 + Math.random() * 70),
+        sentiment: 'hype',
+        relatedArtistId: player.id
+      });
+    } else {
+      // Backfire
+      posts.push({
+        id: `diss_post_bf_${Date.now()}_1`,
+        platform: 'twitter',
+        authorName: 'Anti-Hype 💀',
+        authorHandle: '@antihype_real',
+        authorVerified: false,
+        authorType: 'hater',
+        authorAvatarGradient: 'from-zinc-800 to-black',
+        year,
+        month,
+        content: `JAJAJAJA qué papelón la tiradera de ${pHandle} 🤡 Rimas de jardín de infantes, ${tHandle} ni se tiene que molestar en contestarle`,
+        likes: Math.floor(4100 + Math.random() * 1500),
+        retweetsOrShares: Math.floor(950 + Math.random() * 300),
+        commentsCount: Math.floor(820 + Math.random() * 200),
+        sentiment: 'negative',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `diss_post_bf_${Date.now()}_2`,
+        platform: 'tiktok',
+        authorName: 'Juani Bot',
+        authorHandle: '@juani_critico',
+        authorVerified: false,
+        authorType: 'hater',
+        authorAvatarGradient: 'from-slate-700 to-slate-950',
+        year,
+        month,
+        content: `POV: Quisiste matar la carrera de ${tHandle} y terminaste siendo el meme del mes 💀🦗🦗`,
+        likes: Math.floor(5800 + Math.random() * 2000),
+        retweetsOrShares: Math.floor(1400 + Math.random() * 400),
+        commentsCount: Math.floor(750 + Math.random() * 200),
+        sentiment: 'meme',
+        relatedArtistId: player.id
+      });
+
+      posts.push({
+        id: `diss_post_bf_${Date.now()}_3`,
+        platform: 'twitter',
+        authorName: 'Claudio Varela',
+        authorHandle: '@cvarela_critica',
+        authorVerified: true,
+        authorType: 'critic',
+        authorAvatarGradient: 'from-amber-700 to-stone-800',
+        badge: 'Opinión Técnica',
+        year,
+        month,
+        content: `Una tiradera apresurada y con falencias líricas evidentes por parte de ${pHandle} (${scorePlayer} vs ${scoreTarget}). Se expuso innecesariamente perdiendo reputación y credibilidad.`,
+        likes: Math.floor(1600 + Math.random() * 400),
+        retweetsOrShares: Math.floor(290 + Math.random() * 80),
+        commentsCount: Math.floor(130 + Math.random() * 40),
+        sentiment: 'negative',
+        relatedArtistId: player.id
+      });
+    }
+
+    return posts;
+  }
+
+  /**
    * Genera el feed inicial para una nueva partida
    */
   static getInitialFeed(world: WorldState, player: Artist): SocialPost[] {

@@ -385,7 +385,27 @@ export default function App() {
             player={player}
             world={world}
             onOpenCollabModal={handleOpenCollabModal}
-            onInteract={(targetId, type) => getEngine().interactWithArtist(targetId, type)}
+            onInteract={(targetId, type) => {
+              try {
+                getEngine().interactWithArtist(targetId, type);
+              } catch (err: any) {
+                alert(err.message || 'No se pudo realizar la acción.');
+              }
+            }}
+            onInteractEcosystemNPC={(npcId, action) => {
+              try {
+                getEngine().interactWithEcosystemNPC(npcId, action);
+              } catch (err: any) {
+                alert(err.message || 'No se pudo interactuar.');
+              }
+            }}
+            onInteractBeef={(targetName, targetId, action) => {
+              try {
+                getEngine().interactWithBeef(targetName, targetId, action);
+              } catch (err: any) {
+                alert(err.message || 'No se pudo procesar el feudo.');
+              }
+            }}
           />
         )}
 

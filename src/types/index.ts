@@ -41,11 +41,78 @@ export interface ArtistStats {
 
 export interface ArtistRelationship {
   targetArtistId: string;
-  relationType: 'friend' | 'rival' | 'mentor' | 'protege' | 'feud' | 'collaborator' | 'neutral';
+  relationType: 'neutral' | 'respect' | 'friend' | 'collaborator' | 'rival' | 'feud' | 'mentor' | 'protege';
   affinity: number;          // -100 to +100
   respect: number;           // 0 to 100
   pastCollabsCount: number;
   history: string[];
+  lastShoutoutYear?: number;
+  lastShoutoutMonth?: number;
+  lastDissYear?: number;
+  lastDissMonth?: number;
+  shoutoutCount?: number;
+  dissCount?: number;
+  activeRivalry?: boolean;
+  recentInteractionsCount?: number;
+}
+
+export interface SocialActionResult {
+  success: boolean;
+  actionType: 'shoutout' | 'diss' | 'collab_request';
+  targetArtistId: string;
+  targetArtistName: string;
+  outcomeType?: 'lyrical_victory' | 'street_tie' | 'backfire' | 'shoutout_success' | 'shoutout_mocked';
+  outcomeDescription: string;
+  statChanges?: Partial<ArtistStats>;
+  personalityChanges?: Partial<PersonalityTraits>;
+  hypeChange?: number;
+  reputationChange?: number;
+  credibilityChange?: number;
+  disciplineChange?: number;
+  energyChange?: number;
+  affinityDelta?: number;
+  respectDelta?: number;
+  newRelationType?: ArtistRelationship['relationType'];
+  beefState?: BeefState;
+  socialPosts?: SocialPost[];
+  newsItem?: NewsItem;
+  lyricalScorePlayer?: number;
+  lyricalScoreTarget?: number;
+  cooldownRemainingMonths?: number;
+  nextAvailableDate?: string;
+  error?: string;
+}
+
+export interface ActionCooldownResult {
+  canPerform: boolean;
+  cooldownRemainingMonths: number;
+  availableYear: number;
+  availableMonth: number;
+  reason?: string;
+  probableConsequence: string;
+}
+
+export interface InteractionResult {
+  title: string;
+  badge: {
+    label: string;
+    variant: 'success' | 'warning' | 'danger' | 'purple' | 'info';
+  };
+  narrativeText: string;
+  pressHeadline: string;
+  pressBody: string;
+  statDeltas: {
+    hype?: number;
+    affinity?: number;
+    respect?: number;
+    popularity?: number;
+    energy?: number;
+    discipline?: number;
+    credibility?: number;
+  };
+  newRelationType?: ArtistRelationship['relationType'];
+  targetArtistName: string;
+  actionType: 'shoutout' | 'diss';
 }
 
 export type CollabProjectType = 'single_feat' | 'album_track' | 'collab_ep' | 'collab_album' | 'collab_mixtape';

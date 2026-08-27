@@ -21,7 +21,10 @@ import {
   ReleaseType,
   CollabProjectType,
   CreditOrderType,
-  CollabFeasibilityResult
+  CollabFeasibilityResult,
+  SocialActionResult,
+  InteractionResult,
+  NewsItem
 } from '../types';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
@@ -1442,10 +1445,46 @@ export class GameEngine {
     this.notify();
   }
 
-  public interactWithArtist(targetArtistId: string, actionType: 'collab_request' | 'shoutout' | 'diss') {
+  public canSendShoutout(targetArtistId: string): {
+    canSend: boolean;
+    cooldownRemainingMonths: number;
+    nextAvailableDate: string;
+    reason?: string;
+  } {
     const player = this.getPlayer();
     const target = this.world.artists[targetArtistId];
-    if (!target) return;
+    if (!target) {
+      return { canSend: false, cooldownRemainingMonths: 0, nextAvailableDate: '', reason: 'Artista objetivo no encontrado.' };
+    }
+    return RelationshipEngine.canSendShoutout(player, target, this.world.currentYear, this.world.currentMonth);
+  }
+
+  public canSendDiss(targetArtistId: string): {
+    canSend: boolean;
+    cooldownRemainingMonths: number;
+    nextAvailableDate: string;
+    reason?: string;
+  } {
+    const player = this.getPlayer();
+    const target = this.world.artists[targetArtistId];
+    if (!target) {
+      return { canSend: false, cooldownRemainingMonths: 0, nextAvailableDate: '', reason: 'Artista objetivo no encontrado.' };
+    }
+    return RelationshipEngine.canSendDiss(player, target, this.world.currentYear, this.world.currentMonth);
+  }
+
+  public interactWithArtist(
+    targetArtistId: string,
+    actionType: 'collab_request' | 'shoutout' | 'diss'
+  ): SocialActionResult | InteractionResult {
+    const player = this.getPlayer();
+    const target = this.world.artists[targetArtistId];
+    if (!target) {
+      throw new Error('El artista objetivo no existe en la escena musical.');
+    }
+    if (target.id === player.id) {
+      throw new Error('No puedes interactuar contigo mismo.');
+    }
 
     if (actionType === 'collab_request') {
       const result = RelationshipEngine.calculateCollabFeasibility(player, target);
@@ -1459,52 +1498,130 @@ export class GameEngine {
           `Aceptaron colaborar juntos en ${this.world.currentYear}.`
         );
         player.stats.hype = Math.min(100, player.stats.hype + 18);
-        this.world.news.unshift({
+        const headline = `Alianza confirmada: ${player.name} y ${target.name} anuncian colaboración`;
+        const body = `Los fanáticos celebran la unión de dos fuerzas musicales complementarias.`;
+        const newsItem: NewsItem = {
           id: `news_collab_${Date.now()}`,
-          headline: `Alianza confirmada: ${player.name} y ${target.name} anuncian colaboración`,
-          body: `Los fanáticos celebran la unión de dos fuerzas musicales complementarias.`,
+          headline,
+          body,
           year: this.world.currentYear,
           month: this.world.currentMonth,
           category: 'culture',
           relatedArtistIds: [player.id, target.id],
           sentiment: 'positive',
           importance: 3
-        });
+        };
+        this.world.news.unshift(newsItem);
+        this.notify();
+        return {
+          success: true,
+          actionType: 'collab_request',
+          targetArtistId: target.id,
+          targetArtistName: target.name,
+          outcomeDescription: `${target.name} aceptó la solicitud de colaboración con entusiasmo.`,
+          hypeChange: 18,
+          affinityDelta: 20,
+          respectDelta: 15,
+          newRelationType: 'collaborator',
+          newsItem
+        };
       } else {
         RelationshipEngine.modifyRelationship(player, target, -5, 0, undefined, `Propuesta de colaboración rechazada en ${this.world.currentYear}.`);
+        this.notify();
+        return {
+          success: false,
+          actionType: 'collab_request',
+          targetArtistId: target.id,
+          targetArtistName: target.name,
+          outcomeDescription: result.reason,
+          affinityDelta: -5,
+          error: result.reason
+        };
       }
     } else if (actionType === 'shoutout') {
-      RelationshipEngine.modifyRelationship(player, target, 15, 10, 'friend', `Mención pública elogiosa en ${this.world.currentYear}.`);
-      player.stats.hype = Math.min(100, player.stats.hype + 5);
-      this.world.news.unshift({
-        id: `news_shoutout_${Date.now()}`,
-        headline: `Respeto mutuo: ${player.name} elogia públicamente a ${target.name}`,
-        body: `Un gesto de camaradería artística que fortalece los lazos de la escena.`,
-        year: this.world.currentYear,
-        month: this.world.currentMonth,
-        category: 'culture',
-        relatedArtistIds: [player.id, target.id],
-        sentiment: 'positive',
-        importance: 2
-      });
+      const check = RelationshipEngine.canSendShoutout(player, target, this.world.currentYear, this.world.currentMonth);
+      if (!check.canSend && !check.canPerform) {
+        throw new Error(check.reason);
+      }
+      const result = RelationshipEngine.processShoutout(player, target, this.world.currentYear, this.world.currentMonth, this.world);
+      this.notify();
+      return result;
     } else if (actionType === 'diss') {
-      const beef = RelationshipEngine.triggerBeef(player, target, this.world.currentYear, this.world.currentMonth);
-      this.world.activeBeefs[beef.id] = beef;
-      player.stats.hype = Math.min(100, player.stats.hype + 22);
-      this.world.news.unshift({
-        id: `news_diss_${Date.now()}`,
-        headline: `¡Guerra declarada! ${player.name} lanza un diss track contra ${target.name}`,
-        body: `La escena musical estalla ante el cruce de rimas y declaraciones directas entre ambos artistas.`,
-        year: this.world.currentYear,
-        month: this.world.currentMonth,
-        category: 'rivalry',
-        relatedArtistIds: [player.id, target.id],
-        sentiment: 'shocking',
-        importance: 5
-      });
+      const check = RelationshipEngine.canSendDiss(player, target, this.world.currentYear, this.world.currentMonth);
+      if (!check.canSend && !check.canPerform) {
+        throw new Error(check.reason);
+      }
+      const result = RelationshipEngine.processDiss(player, target, this.world.currentYear, this.world.currentMonth, this.world);
+      this.notify();
+      return result;
     }
 
+    throw new Error(`Tipo de acción no reconocida: ${actionType}`);
+  }
+
+  public interactWithEcosystemNPC(
+    npcId: string,
+    action: 'collab_beat' | 'buy_exclusive' | 'hang_out' | 'call_out'
+  ) {
+    const player = this.getPlayer();
+    if (action === 'buy_exclusive') {
+      if (player.stats.funds < 500) {
+        throw new Error('Fondos insuficientes ($500 necesarios).');
+      }
+      player.stats.funds -= 500;
+      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+        affinity: 15,
+        loyalty: 10,
+        historyNote: `Compraste una instrumental exclusiva ($500) en ${this.world.currentYear}.`
+      });
+      player.stats.hype = Math.min(100, player.stats.hype + 5);
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: 500,
+        description: 'Compra de beat exclusivo al productor del barrio'
+      });
+    } else if (action === 'collab_beat') {
+      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+        affinity: 10,
+        loyalty: 5,
+        historyNote: `Sesión de producción en home studio en ${this.world.currentYear}.`
+      });
+      player.stats.hype = Math.min(100, player.stats.hype + 4);
+    } else if (action === 'hang_out') {
+      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+        affinity: 8,
+        tension: -10,
+        historyNote: `Reunión de negocios en reservado en ${this.world.currentYear}.`
+      });
+    } else if (action === 'call_out') {
+      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
+        affinity: -20,
+        tension: 25,
+        historyNote: `Confrontación directa en ${this.world.currentYear}.`
+      });
+      player.stats.hype = Math.min(100, player.stats.hype + 10);
+    }
     this.notify();
+  }
+
+  public interactWithBeef(
+    targetName: string,
+    targetId: string,
+    action: 'respond_social' | 'drop_diss' | 'ignore'
+  ) {
+    const player = this.getPlayer();
+    const result = RelationshipEngine.processBeefInteraction(player, targetName, targetId, action, this.world);
+    player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + result.hypeChange));
+    player.stats.energy = Math.max(0, Math.min(100, player.stats.energy + result.energyChange));
+    if (player.stats.artisticCredibility !== undefined) {
+      player.stats.artisticCredibility = Math.max(0, Math.min(100, player.stats.artisticCredibility + result.credibilityChange));
+    }
+    if (player.personality?.discipline !== undefined) {
+      player.personality.discipline = Math.max(0, Math.min(100, player.personality.discipline + result.disciplineChange));
+    }
+    this.notify();
+    return result;
   }
 
   public restAndRecharge() {
@@ -1684,74 +1801,6 @@ export class GameEngine {
 
     this.notify();
     return outcome;
-  }
-
-  public interactWithBeef(targetName: string, targetId: string, action: 'respond_social' | 'drop_diss' | 'ignore') {
-    const player = this.getPlayer();
-    const result = RelationshipEngine.processBeefInteraction(player, targetName, targetId, action, this.world);
-
-    if (result.hypeChange) player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + result.hypeChange));
-    if (result.disciplineChange) player.personality.discipline = Math.max(0, Math.min(100, player.personality.discipline + result.disciplineChange));
-    if (result.credibilityChange) player.stats.artisticCredibility = Math.max(0, Math.min(100, player.stats.artisticCredibility + result.credibilityChange));
-    if (result.energyChange) player.stats.energy = Math.max(5, Math.min(100, player.stats.energy + result.energyChange));
-
-    this.world.news.unshift({
-      id: `news_beef_${Date.now()}`,
-      headline: action === 'drop_diss' ? `¡Tiradera Directa! ${player.name} contra ${targetName}` : action === 'respond_social' ? `Cruce en Redes: ${player.name} y ${targetName}` : `${player.name} ignora provocaciones de ${targetName}`,
-      body: result.outcomeText,
-      year: this.world.currentYear,
-      month: this.world.currentMonth,
-      category: 'rivalry',
-      relatedArtistIds: [player.id],
-      sentiment: action === 'drop_diss' ? 'shocking' : 'positive',
-      importance: 4
-    });
-
-    this.notify();
-  }
-
-  public interactWithEcosystemNPC(npcId: string, action: 'collab_beat' | 'buy_exclusive' | 'hang_out' | 'call_out') {
-    const player = this.getPlayer();
-    if (!this.world.ecosystemContacts) {
-      this.world.ecosystemContacts = RelationshipEngine.getInitialEcosystemContacts();
-    }
-    const npc = this.world.ecosystemContacts[npcId];
-    if (!npc) return;
-
-    if (action === 'collab_beat') {
-      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
-        affinity: 15,
-        loyalty: 10,
-        historyNote: `Sesión de producción compartida en ${this.world.currentYear}.`
-      });
-      player.stats.hype = Math.min(100, player.stats.hype + 10);
-      player.stats.energy = Math.max(5, player.stats.energy - 8);
-    } else if (action === 'buy_exclusive') {
-      if (player.stats.funds >= 500) {
-        player.stats.funds -= 500;
-        RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
-          affinity: 20,
-          respect: 15,
-          historyNote: `Compró derechos exclusivos de producción por $500 en ${this.world.currentYear}.`
-        });
-        player.stats.artisticCredibility = Math.min(100, player.stats.artisticCredibility + 3);
-      }
-    } else if (action === 'hang_out') {
-      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
-        affinity: 10,
-        historyNote: `Compartieron un momento distendido en ${this.world.currentYear}.`
-      });
-      player.stats.energy = Math.min(100, player.stats.energy + 5);
-    } else if (action === 'call_out') {
-      RelationshipEngine.modifyEcosystemNPC(this.world, npcId, {
-        affinity: -25,
-        tension: 30,
-        historyNote: `Cruce y discusión pública en ${this.world.currentYear}.`
-      });
-      player.stats.hype = Math.min(100, player.stats.hype + 15);
-    }
-
-    this.notify();
   }
 
   public advanceMonth() {

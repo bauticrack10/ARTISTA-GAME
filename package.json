@@ -12,7 +12,8 @@
     "test:awards": "tsx test-awards-engine.ts",
     "test:industry": "tsx test-industry-contracts.ts",
     "test:release": "tsx test-release-confirmation.ts",
-    "test:collab": "tsx test-collaborations.ts"
+    "test:collab": "tsx test-collaborations.ts",
+    "test:social": "tsx test-social-actions.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

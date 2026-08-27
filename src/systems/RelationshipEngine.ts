@@ -5,13 +5,21 @@ import {
   BeefState,
   WorldState,
   SocialPost,
+  NewsItem,
   CollabProjectType,
   CreditOrderType,
-  CollabFeasibilityResult
+  CollabFeasibilityResult,
+  SocialActionResult,
+  ActionCooldownResult,
+  InteractionResult
 } from '../types';
 import { SocialFeedEngine } from './SocialFeedEngine';
 
 export class RelationshipEngine {
+  public static readonly SHOUTOUT_COOLDOWN_MONTHS = 3;
+  public static readonly DISS_COOLDOWN_MONTHS = 6;
+  public static readonly GLOBAL_DISS_COOLDOWN_MONTHS = 4;
+
   /**
    * Inicializa los personajes recurrentes del ecosistema si aún no existen
    */
@@ -88,10 +96,625 @@ export class RelationshipEngine {
         affinity: 0,
         respect: 50,
         pastCollabsCount: 0,
-        history: []
+        history: [],
+        shoutoutCount: 0,
+        dissCount: 0,
+        activeRivalry: false,
+        recentInteractionsCount: 0
       };
     }
     return artist.relationships[targetArtistId];
+  }
+
+  /**
+   * Valida si el jugador puede enviar un elogio (shoutout) al artista objetivo
+   */
+  static canSendShoutout(
+    player: Artist,
+    target: Artist,
+    currentYear: number,
+    currentMonth: number
+  ): {
+    canPerform: boolean;
+    canSend: boolean;
+    cooldownRemainingMonths: number;
+    nextAvailableDate: string;
+    availableYear: number;
+    availableMonth: number;
+    reason?: string;
+    probableConsequence: string;
+  } {
+    if (!target || player.id === target.id) {
+      return {
+        canPerform: false,
+        canSend: false,
+        cooldownRemainingMonths: 0,
+        availableYear: currentYear,
+        availableMonth: currentMonth,
+        nextAvailableDate: `Año ${currentYear} • Mes ${currentMonth}`,
+        reason: 'No puedes enviarte un elogio a ti mismo.',
+        probableConsequence: ''
+      };
+    }
+
+    if (target.isRetired) {
+      return {
+        canPerform: false,
+        canSend: false,
+        cooldownRemainingMonths: 0,
+        availableYear: currentYear,
+        availableMonth: currentMonth,
+        nextAvailableDate: `Año ${currentYear} • Mes ${currentMonth}`,
+        reason: 'El artista está retirado de la escena musical.',
+        probableConsequence: ''
+      };
+    }
+
+    const rel = player.relationships[target.id];
+    if (rel?.lastShoutoutYear !== undefined && rel?.lastShoutoutMonth !== undefined) {
+      const monthsElapsed = (currentYear - rel.lastShoutoutYear) * 12 + (currentMonth - rel.lastShoutoutMonth);
+      if (monthsElapsed < this.SHOUTOUT_COOLDOWN_MONTHS) {
+        const cooldownRemainingMonths = this.SHOUTOUT_COOLDOWN_MONTHS - monthsElapsed;
+        const totalTargetMonths = rel.lastShoutoutYear * 12 + (rel.lastShoutoutMonth - 1) + this.SHOUTOUT_COOLDOWN_MONTHS;
+        const nextAvailYear = Math.floor(totalTargetMonths / 12);
+        const nextAvailMonth = (totalTargetMonths % 12) + 1;
+        const nextAvailableDate = `Año ${nextAvailYear} • Mes ${nextAvailMonth}`;
+        return {
+          canPerform: false,
+          canSend: false,
+          cooldownRemainingMonths,
+          availableYear: nextAvailYear,
+          availableMonth: nextAvailMonth,
+          nextAvailableDate,
+          reason: `Debes esperar ${cooldownRemainingMonths} mes(es) para volver a elogiar a ${target.name} (disponible en ${nextAvailableDate}).`,
+          probableConsequence: `Disponible en ${nextAvailableDate}`
+        };
+      }
+    }
+
+    return {
+      canPerform: true,
+      canSend: true,
+      cooldownRemainingMonths: 0,
+      availableYear: currentYear,
+      availableMonth: currentMonth,
+      nextAvailableDate: `Año ${currentYear} • Mes ${currentMonth}`,
+      probableConsequence: 'Elogio público • Consecuencia: +Afinidad, +Respeto y +Hype en la escena musical.'
+    };
+  }
+
+  /**
+   * Valida si el jugador puede lanzar una tiradera (diss) al artista objetivo
+   */
+  static canSendDiss(
+    player: Artist,
+    target: Artist,
+    currentYear: number,
+    currentMonth: number
+  ): {
+    canPerform: boolean;
+    canSend: boolean;
+    cooldownRemainingMonths: number;
+    nextAvailableDate: string;
+    availableYear: number;
+    availableMonth: number;
+    reason?: string;
+    probableConsequence: string;
+  } {
+    if (!target || player.id === target.id) {
+      return {
+        canPerform: false,
+        canSend: false,
+        cooldownRemainingMonths: 0,
+        availableYear: currentYear,
+        availableMonth: currentMonth,
+        nextAvailableDate: `Año ${currentYear} • Mes ${currentMonth}`,
+        reason: 'No puedes lanzarte una tiradera a ti mismo.',
+        probableConsequence: ''
+      };
+    }
+
+    if (target.isRetired) {
+      return {
+        canPerform: false,
+        canSend: false,
+        cooldownRemainingMonths: 0,
+        availableYear: currentYear,
+        availableMonth: currentMonth,
+        nextAvailableDate: `Año ${currentYear} • Mes ${currentMonth}`,
+        reason: 'El artista está retirado de la escena musical.',
+        probableConsequence: ''
+      };
+    }
+
+    // 1. Cooldown global para el jugador (mínimo 4 meses entre cualquier diss en la escena)
+    let latestDissTotalMonths = -1;
+    let latestDissYear = 0;
+    let latestDissMonth = 0;
+
+    for (const rel of Object.values(player.relationships || {})) {
+      if (rel.lastDissYear !== undefined && rel.lastDissMonth !== undefined) {
+        const totalM = rel.lastDissYear * 12 + (rel.lastDissMonth - 1);
+        if (totalM > latestDissTotalMonths) {
+          latestDissTotalMonths = totalM;
+          latestDissYear = rel.lastDissYear;
+          latestDissMonth = rel.lastDissMonth;
+        }
+      }
+    }
+
+    if (latestDissTotalMonths >= 0) {
+      const currentTotalMonths = currentYear * 12 + (currentMonth - 1);
+      const monthsSinceGlobal = currentTotalMonths - latestDissTotalMonths;
+      if (monthsSinceGlobal < this.GLOBAL_DISS_COOLDOWN_MONTHS) {
+        const cooldownRemainingMonths = this.GLOBAL_DISS_COOLDOWN_MONTHS - monthsSinceGlobal;
+        const totalAvailMonths = latestDissTotalMonths + this.GLOBAL_DISS_COOLDOWN_MONTHS;
+        const nextAvailYear = Math.floor(totalAvailMonths / 12);
+        const nextAvailMonth = (totalAvailMonths % 12) + 1;
+        const nextAvailableDate = `Año ${nextAvailYear} • Mes ${nextAvailMonth}`;
+        return {
+          canPerform: false,
+          canSend: false,
+          cooldownRemainingMonths,
+          availableYear: nextAvailYear,
+          availableMonth: nextAvailMonth,
+          nextAvailableDate,
+          reason: `Cooldown global de tiraderas activo: debes esperar ${cooldownRemainingMonths} mes(es) para lanzar otro diss en la escena (disponible en ${nextAvailableDate}).`,
+          probableConsequence: `Disponible en ${nextAvailableDate}`
+        };
+      }
+    }
+
+    // 2. Cooldown específico por artista objetivo (mínimo 6 meses)
+    const rel = player.relationships[target.id];
+    if (rel?.lastDissYear !== undefined && rel?.lastDissMonth !== undefined) {
+      const monthsSinceTarget = (currentYear - rel.lastDissYear) * 12 + (currentMonth - rel.lastDissMonth);
+      if (monthsSinceTarget < this.DISS_COOLDOWN_MONTHS) {
+        const cooldownRemainingMonths = this.DISS_COOLDOWN_MONTHS - monthsSinceTarget;
+        const totalAvailMonths = rel.lastDissYear * 12 + (rel.lastDissMonth - 1) + this.DISS_COOLDOWN_MONTHS;
+        const nextAvailYear = Math.floor(totalAvailMonths / 12);
+        const nextAvailMonth = (totalAvailMonths % 12) + 1;
+        const nextAvailableDate = `Año ${nextAvailYear} • Mes ${nextAvailMonth}`;
+        return {
+          canPerform: false,
+          canSend: false,
+          cooldownRemainingMonths,
+          availableYear: nextAvailYear,
+          availableMonth: nextAvailMonth,
+          nextAvailableDate,
+          reason: `Ya le tiraste un diss a ${target.name} recientemente. Debes esperar ${cooldownRemainingMonths} mes(es) para volver a tirarle (disponible en ${nextAvailableDate}).`,
+          probableConsequence: `Disponible en ${nextAvailableDate}`
+        };
+      }
+    }
+
+    return {
+      canPerform: true,
+      canSend: true,
+      cooldownRemainingMonths: 0,
+      availableYear: currentYear,
+      availableMonth: currentMonth,
+      nextAvailableDate: `Año ${currentYear} • Mes ${currentMonth}`,
+      probableConsequence: 'Tiradera / Diss Track • Consecuencia: +Hype masivo, desata Feudo Activo con barras líricas.'
+    };
+  }
+
+  /**
+   * Procesa un elogio público (shoutout) con rendimientos decrecientes y evolución de relación
+   */
+  static processShoutout(
+    player: Artist,
+    target: Artist,
+    currentYear: number,
+    currentMonth: number,
+    world: WorldState
+  ): SocialActionResult {
+    const check = this.canSendShoutout(player, target, currentYear, currentMonth);
+    if (!check.canSend) {
+      throw new Error(check.reason || 'No puedes enviar un elogio debido al cooldown.');
+    }
+
+    const relA = this.getOrCreateRelationship(player, target.id);
+    const relB = this.getOrCreateRelationship(target, player.id);
+
+    // Rendimientos decrecientes: 1er elogio (+12 af, +10 resp, +8 hype), 2do elogio (+6 af, +5 resp, +4 hype), 3er+ (+2 af, +1 resp, +1 hype)
+    const currentCount = relA.shoutoutCount || 0;
+    let affinityDelta = 2;
+    let respectDelta = 1;
+    let hypeGain = 1;
+
+    if (currentCount === 0) {
+      affinityDelta = 12;
+      respectDelta = 10;
+      hypeGain = 8;
+    } else if (currentCount === 1) {
+      affinityDelta = 6;
+      respectDelta = 5;
+      hypeGain = 4;
+    } else {
+      affinityDelta = 2;
+      respectDelta = 1;
+      hypeGain = 1;
+    }
+
+    // Si target es 'rival' o 'feud': mofa en redes por adulación (-4 credibilidad, -5 disciplina)
+    const isTargetHostile = relA.relationType === 'rival' || relA.relationType === 'feud';
+    let credibilityChange = 0;
+    let disciplineChange = 0;
+
+    if (isTargetHostile) {
+      credibilityChange = -4;
+      disciplineChange = -5;
+      player.stats.artisticCredibility = Math.max(0, player.stats.artisticCredibility - 4);
+      player.personality.discipline = Math.max(0, player.personality.discipline - 5);
+    }
+
+    // Modificar afinidad, respeto y hype
+    relA.affinity = Math.max(-100, Math.min(100, relA.affinity + affinityDelta));
+    relA.respect = Math.max(0, Math.min(100, relA.respect + respectDelta));
+    relB.affinity = Math.max(-100, Math.min(100, relB.affinity + affinityDelta));
+    relB.respect = Math.max(0, Math.min(100, relB.respect + respectDelta));
+    player.stats.hype = Math.min(100, player.stats.hype + hypeGain);
+
+    // Evolución de relación: si afinidad >= 20 y respeto >= 60 -> 'respect'; si afinidad >= 50 y respeto >= 50 -> 'friend'
+    let newRelType: ArtistRelationship['relationType'] = relA.relationType;
+    if (relA.affinity >= 50 && relA.respect >= 50) {
+      newRelType = 'friend';
+      relA.activeRivalry = false;
+      relB.activeRivalry = false;
+    } else if (relA.affinity >= 20 && relA.respect >= 60) {
+      newRelType = 'respect';
+      relA.activeRivalry = false;
+      relB.activeRivalry = false;
+    }
+    relA.relationType = newRelType;
+    relB.relationType = newRelType;
+
+    // Actualizar timestamps y contadores de interacción
+    const nextCount = currentCount + 1;
+    relA.lastShoutoutYear = currentYear;
+    relA.lastShoutoutMonth = currentMonth;
+    relA.shoutoutCount = nextCount;
+    relA.recentInteractionsCount = (relA.recentInteractionsCount || 0) + 1;
+
+    relB.lastShoutoutYear = currentYear;
+    relB.lastShoutoutMonth = currentMonth;
+    relB.shoutoutCount = nextCount;
+    relB.recentInteractionsCount = (relB.recentInteractionsCount || 0) + 1;
+
+    const historyNote = isTargetHostile
+      ? `Elogio público inesperado a su rival ${target.name} (Elogio #${nextCount}) en Año ${currentYear} - Mes ${currentMonth}. Desató burlas por adulación (-4 Credibilidad, -5 Disciplina).`
+      : `Elogio público y reconocimiento a ${target.name} (Elogio #${nextCount}) en Año ${currentYear} - Mes ${currentMonth}. Afinidad +${affinityDelta}, Respeto +${respectDelta}, Hype +${hypeGain}.`;
+
+    relA.history.push(historyNote);
+    relB.history.push(historyNote);
+
+    // Generar noticia en world.news
+    const headline = isTargetHostile
+      ? `Polémica en la escena: ${player.name} elogia públicamente a su rival ${target.name}`
+      : `Respeto y camaradería: ${player.name} elogia públicamente a ${target.name}`;
+
+    const body = isTargetHostile
+      ? `En un giro inesperado que generó desconcierto y burlas en redes, ${player.name} dedicó halagos a su rival ${target.name}. La escena urbana debate si se trata de adulación o pérdida de postura (-4 Credibilidad, -5 Disciplina).`
+      : `${player.name} destacó la calidad artística y el impacto de ${target.name} en declaraciones públicas. El gesto fortalece los lazos en la industria (+${affinityDelta} Afinidad, +${respectDelta} Respeto, +${hypeGain} Hype).`;
+
+    const newsItem: NewsItem = {
+      id: `news_shoutout_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      headline,
+      body,
+      year: currentYear,
+      month: currentMonth,
+      category: isTargetHostile ? 'scandal' : 'culture',
+      relatedArtistIds: [player.id, target.id],
+      sentiment: isTargetHostile ? 'shocking' : 'positive',
+      importance: isTargetHostile ? 3 : 2
+    };
+    if (!world.news) world.news = [];
+    world.news.unshift(newsItem);
+
+    // Generar reacciones en redes sociales
+    const socialPosts = SocialFeedEngine.generateShoutoutPosts(world, player, target, isTargetHostile, nextCount);
+    if (!world.socialFeed) world.socialFeed = [];
+    world.socialFeed.unshift(...socialPosts);
+
+    const outcomeDescription = isTargetHostile
+      ? `Elogiaste a ${target.name}. Al ser tu rival/enemigo, la escena se mofó en redes por adulación (-4 Credibilidad, -5 Disciplina, +${affinityDelta} Afinidad, +${respectDelta} Respeto).`
+      : `Elogiaste públicamente a ${target.name} (Elogio #${nextCount}: +${affinityDelta} Afinidad, +${respectDelta} Respeto, +${hypeGain} Hype).`;
+
+    return {
+      success: true,
+      actionType: 'shoutout',
+      targetArtistId: target.id,
+      targetArtistName: target.name,
+      outcomeType: isTargetHostile ? 'shoutout_mocked' : 'shoutout_success',
+      outcomeDescription,
+      statChanges: {
+        hype: player.stats.hype,
+        artisticCredibility: player.stats.artisticCredibility
+      },
+      personalityChanges: {
+        discipline: player.personality.discipline
+      },
+      hypeChange: hypeGain,
+      credibilityChange,
+      disciplineChange,
+      affinityDelta,
+      respectDelta,
+      newRelationType: newRelType,
+      newsItem,
+      socialPosts
+    };
+  }
+
+  /**
+   * Procesa el lanzamiento de una tiradera (diss track) con evaluación lírica y consecuencias estratégicas
+   */
+  static processDiss(
+    player: Artist,
+    target: Artist,
+    currentYear: number,
+    currentMonth: number,
+    world: WorldState
+  ): SocialActionResult {
+    const check = this.canSendDiss(player, target, currentYear, currentMonth);
+    if (!check.canSend) {
+      throw new Error(check.reason || 'No puedes lanzar una tiradera debido al cooldown.');
+    }
+
+    // Consumo de energía
+    player.stats.energy = Math.max(5, player.stats.energy - 15);
+
+    // Evaluación lírica del jugador vs target (skill * 0.4 + originality * 0.35 + credibility * 0.25 vs target)
+    const lyricalScorePlayer = Number((player.personality.skill * 0.40 + player.personality.originality * 0.35 + player.stats.artisticCredibility * 0.25).toFixed(1));
+    const lyricalScoreTarget = Number((target.personality.skill * 0.40 + target.personality.originality * 0.35 + target.stats.artisticCredibility * 0.25).toFixed(1));
+    const diff = lyricalScorePlayer - lyricalScoreTarget;
+
+    let outcomeType: 'lyrical_victory' | 'street_tie' | 'backfire' = 'street_tie';
+    let hypeChange = 28;
+    let respectDelta = 5;
+    let credibilityChange = 0;
+    let reputationChange = 0;
+    let affinityDelta = -35;
+    let newRelationType: ArtistRelationship['relationType'] = 'rival';
+    let outcomeDescription = '';
+
+    if (diff >= 4) {
+      // Victoria Lírica (+40 Hype, +15 Respeto, +5 Credibilidad, -50 Afinidad, nuevo estado 'feud' o 'rival')
+      outcomeType = 'lyrical_victory';
+      hypeChange = 40;
+      respectDelta = 15;
+      credibilityChange = 5;
+      affinityDelta = -50;
+      newRelationType = 'feud';
+      player.stats.hype = Math.min(100, player.stats.hype + 40);
+      player.stats.artisticCredibility = Math.min(100, player.stats.artisticCredibility + 5);
+      outcomeDescription = `¡Victoria Lírica demoledora! Tus barras y métricas superaron con creces a ${target.name} (${lyricalScorePlayer} vs ${lyricalScoreTarget}). La escena te corona ganador indiscutido (+40 Hype, +15 Respeto, +5 Credibilidad, -50 Afinidad).`;
+    } else if (diff > -4) {
+      // Cruce Callejero / Empate (+28 Hype, +5 Respeto, -35 Afinidad, nuevo estado 'rival')
+      outcomeType = 'street_tie';
+      hypeChange = 28;
+      respectDelta = 5;
+      affinityDelta = -35;
+      newRelationType = 'rival';
+      player.stats.hype = Math.min(100, player.stats.hype + 28);
+      outcomeDescription = `Cruce Callejero parejo e intenso. Tu tiradera y la respuesta de ${target.name} chocaron con fuerzas similares (${lyricalScorePlayer} vs ${lyricalScoreTarget}), encendiendo el debate en la escena (+28 Hype, +5 Respeto, -35 Afinidad).`;
+    } else {
+      // Tiro por la Culata (-15 Reputación, -10 Credibilidad, +15 Hype meme, -40 Afinidad)
+      outcomeType = 'backfire';
+      hypeChange = 15;
+      respectDelta = 0;
+      reputationChange = -15;
+      credibilityChange = -10;
+      affinityDelta = -40;
+      newRelationType = 'rival';
+      player.stats.reputation = Math.max(0, player.stats.reputation - 15);
+      player.stats.artisticCredibility = Math.max(0, player.stats.artisticCredibility - 10);
+      player.stats.hype = Math.min(100, player.stats.hype + 15);
+      outcomeDescription = `¡Tiro por la culata! Tu tiradera no alcanzó el nivel técnico y la credibilidad de ${target.name} (${lyricalScorePlayer} vs ${lyricalScoreTarget}). Las redes se llenaron de burlas y memes (-15 Reputación, -10 Credibilidad, +15 Hype meme, -40 Afinidad).`;
+    }
+
+    const relA = this.getOrCreateRelationship(player, target.id);
+    const relB = this.getOrCreateRelationship(target, player.id);
+
+    relA.affinity = Math.max(-100, Math.min(100, relA.affinity + affinityDelta));
+    relA.respect = Math.max(0, Math.min(100, relA.respect + respectDelta));
+    relA.relationType = newRelationType;
+    relA.activeRivalry = true;
+
+    relB.affinity = Math.max(-100, Math.min(100, relB.affinity + affinityDelta));
+    relB.respect = Math.max(0, Math.min(100, relB.respect + respectDelta));
+    relB.relationType = newRelationType;
+    relB.activeRivalry = true;
+
+    relA.lastDissYear = currentYear;
+    relA.lastDissMonth = currentMonth;
+    relA.dissCount = (relA.dissCount || 0) + 1;
+    relA.recentInteractionsCount = (relA.recentInteractionsCount || 0) + 1;
+
+    relB.lastDissYear = currentYear;
+    relB.lastDissMonth = currentMonth;
+    relB.dissCount = (relB.dissCount || 0) + 1;
+    relB.recentInteractionsCount = (relB.recentInteractionsCount || 0) + 1;
+
+    relA.history.push(`Lanzó tiradera contra ${target.name} [${outcomeType}] (Lírica: ${lyricalScorePlayer} vs ${lyricalScoreTarget}) en Año ${currentYear} - Mes ${currentMonth}.`);
+    relB.history.push(`Recibió tiradera de ${player.name} [${outcomeType}] (Lírica: ${lyricalScorePlayer} vs ${lyricalScoreTarget}) en Año ${currentYear} - Mes ${currentMonth}.`);
+
+    // Iniciar o recrudecer feudo en world.activeBeefs
+    if (!world.activeBeefs) world.activeBeefs = {};
+    const beefId = `beef_${target.id}`;
+    const existingBeef = world.activeBeefs[beefId];
+
+    let nextStage: BeefState['stage'] = 'diss_tracks';
+    if (existingBeef) {
+      if (existingBeef.stage === 'tension' || existingBeef.stage === 'social_beef') {
+        nextStage = 'diss_tracks';
+      } else if (existingBeef.stage === 'diss_tracks') {
+        nextStage = 'all_out_war';
+      } else {
+        nextStage = existingBeef.stage;
+      }
+    }
+
+    const dissTrackTitle = `Tiradera de ${player.name} vs ${target.name} (${currentYear})`;
+    const dissTracksExchanged = existingBeef?.dissTracksExchanged ? [...existingBeef.dissTracksExchanged, dissTrackTitle] : [dissTrackTitle];
+
+    const updatedBeef: BeefState = {
+      id: beefId,
+      targetId: target.id,
+      targetName: target.name,
+      stage: nextStage,
+      hypeMultiplier: outcomeType === 'lyrical_victory' ? 1.6 : outcomeType === 'street_tie' ? 1.4 : 1.2,
+      hypeGenerated: (existingBeef?.hypeGenerated || 0) + hypeChange,
+      tensionLevel: Math.min(100, (existingBeef?.tensionLevel || 50) + 30),
+      dissTracksExchanged,
+      turnsActive: (existingBeef?.turnsActive || 0) + 1,
+      lastActionDescription: outcomeDescription,
+      playerWon: outcomeType === 'lyrical_victory' ? true : outcomeType === 'backfire' ? false : undefined
+    };
+    world.activeBeefs[beefId] = updatedBeef;
+
+    // Generar breaking news en world.news
+    const headline = outcomeType === 'lyrical_victory'
+      ? `¡Guerra Lírica! ${player.name} destrona a ${target.name} con un diss track demoledor`
+      : outcomeType === 'street_tie'
+      ? `¡Choque de Titanes! ${player.name} y ${target.name} protagonizan un fuego cruzado de barras`
+      : `¡Controversia & Memes! El diss track de ${player.name} contra ${target.name} se vuelve viral por las razones equivocadas`;
+
+    const newsItem: NewsItem = {
+      id: `news_diss_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      headline,
+      body: outcomeDescription,
+      year: currentYear,
+      month: currentMonth,
+      category: 'rivalry',
+      relatedArtistIds: [player.id, target.id],
+      sentiment: outcomeType === 'backfire' ? 'negative' : 'shocking',
+      importance: 5
+    };
+    if (!world.news) world.news = [];
+    world.news.unshift(newsItem);
+
+    // Generar reacciones en redes sociales
+    const socialPosts = SocialFeedEngine.generateDissLyricalPosts(world, player, target, outcomeType, lyricalScorePlayer, lyricalScoreTarget);
+    if (!world.socialFeed) world.socialFeed = [];
+    world.socialFeed.unshift(...socialPosts);
+
+    return {
+      success: true,
+      actionType: 'diss',
+      targetArtistId: target.id,
+      targetArtistName: target.name,
+      outcomeType,
+      outcomeDescription,
+      statChanges: {
+        hype: player.stats.hype,
+        artisticCredibility: player.stats.artisticCredibility,
+        reputation: player.stats.reputation,
+        energy: player.stats.energy
+      },
+      hypeChange,
+      credibilityChange,
+      reputationChange,
+      energyChange: -15,
+      affinityDelta,
+      respectDelta,
+      newRelationType,
+      beefState: updatedBeef,
+      newsItem,
+      socialPosts,
+      lyricalScorePlayer,
+      lyricalScoreTarget
+    };
+  }
+
+  /**
+   * Transforma un SocialActionResult en un InteractionResult completo para el Modal Narrativo
+   */
+  static toInteractionResult(res: SocialActionResult): InteractionResult {
+    let title = 'Interacción Completada';
+    let badgeLabel = 'Escena Urbana';
+    let badgeVariant: InteractionResult['badge']['variant'] = 'info';
+
+    if (res.actionType === 'shoutout') {
+      if (res.outcomeType === 'shoutout_mocked') {
+        title = 'Tiro por la Culata';
+        badgeLabel = 'Adulación Cuestionada';
+        badgeVariant = 'warning';
+      } else if ((res.affinityDelta || 0) >= 10) {
+        title = '¡Elogio Aceptado & Viral!';
+        badgeLabel = 'Conexión en la Escena';
+        badgeVariant = 'purple';
+      } else {
+        title = 'Gesto de Respeto Agradecido';
+        badgeLabel = 'Respeto Mutuo';
+        badgeVariant = 'success';
+      }
+    } else if (res.actionType === 'diss') {
+      if (res.outcomeType === 'lyrical_victory') {
+        title = '¡Victoria Lírica!';
+        badgeLabel = 'Dominio de Barras';
+        badgeVariant = 'danger';
+      } else if (res.outcomeType === 'backfire') {
+        title = 'Tiro por la Culata';
+        badgeLabel = 'Polémica Dividida';
+        badgeVariant = 'warning';
+      } else {
+        title = '¡Guerra de Tiraderas Abierta!';
+        badgeLabel = 'Feudo Activo';
+        badgeVariant = 'danger';
+      }
+    }
+
+    return {
+      title,
+      badge: {
+        label: badgeLabel,
+        variant: badgeVariant
+      },
+      narrativeText: res.outcomeDescription,
+      pressHeadline: res.newsItem?.headline || `Repercusión en la escena: ${res.targetArtistName}`,
+      pressBody: res.newsItem?.body || res.outcomeDescription,
+      statDeltas: {
+        hype: res.hypeChange,
+        affinity: res.affinityDelta,
+        respect: res.respectDelta,
+        credibility: res.credibilityChange,
+        discipline: res.disciplineChange,
+        reputation: res.reputationChange,
+        energy: res.energyChange
+      },
+      newRelationType: res.newRelationType,
+      targetArtistName: res.targetArtistName,
+      actionType: res.actionType === 'diss' ? 'diss' : 'shoutout'
+    };
+  }
+
+  /**
+   * Ejecuta un elogio y retorna el InteractionResult estructurado
+   */
+  static executeShoutout(
+    player: Artist,
+    target: Artist,
+    currentYear: number,
+    currentMonth: number,
+    world: WorldState
+  ): InteractionResult {
+    const actionRes = this.processShoutout(player, target, currentYear, currentMonth, world);
+    return this.toInteractionResult(actionRes);
+  }
+
+  /**
+   * Ejecuta una tiradera y retorna el InteractionResult estructurado
+   */
+  static executeDiss(
+    player: Artist,
+    target: Artist,
+    currentYear: number,
+    currentMonth: number,
+    world: WorldState
+  ): InteractionResult {
+    const actionRes = this.processDiss(player, target, currentYear, currentMonth, world);
+    return this.toInteractionResult(actionRes);
   }
 
   static modifyRelationship(
@@ -238,11 +861,11 @@ export class RelationshipEngine {
       history: []
     };
 
-    // 1. Rechazo tajante si hay feudo abierto o afinidad fuertemente negativa (< -20)
-    if (rel.relationType === 'feud') {
+    // 1. Rechazo tajante si hay feudo abierto, rivalidad activa o afinidad fuertemente negativa (< -20)
+    if (rel.relationType === 'feud' || rel.relationType === 'rival' || rel.activeRivalry) {
       return {
         willAccept: false,
-        reason: `${target.name} tiene un feudo abierto con vos y rechazó la propuesta de colaboración tajantemente.`,
+        reason: `${target.name} está en conflicto / rivalidad activa con vos y rechazó la propuesta de colaboración tajantemente.`,
         chemistryScore: 0,
         crossFanbasePotential: 0,
         acceptanceProbability: 0,
