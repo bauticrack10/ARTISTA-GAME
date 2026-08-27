@@ -95,7 +95,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
 
         {totalCount > 0 && (
           <button
-            onClick={handleAction}
+            onClick={() => onNavigate?.('catalog')}
             className="text-xs text-[#94A3B8] hover:text-[#C084FC] hover:underline cursor-pointer flex items-center gap-1 font-semibold transition-colors"
           >
             <span>Ver Catálogo Completo ({totalCount})</span>
@@ -149,7 +149,13 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
           {/* Direct CTA Button */}
           <button
             id="btn-record-first-single"
-            onClick={handleAction}
+            onClick={() => {
+              if (onNavigate) {
+                onNavigate('studio');
+              } else if (onRecordFirstSingle) {
+                onRecordFirstSingle();
+              }
+            }}
             className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white hover:opacity-90 active:scale-98 text-xs sm:text-sm font-bold px-6 py-3 rounded-[8px] transition-all cursor-pointer shadow-[0_0_15px_rgba(139,92,246,0.4)]"
           >
             <Mic2 className="w-4 h-4 text-white" />
@@ -277,7 +283,13 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
               </span>
             </div>
             <button
-              onClick={handleAction}
+              onClick={() => {
+                if (onNavigate) {
+                  onNavigate('studio');
+                } else if (onRecordFirstSingle) {
+                  onRecordFirstSingle();
+                }
+              }}
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#06B6D4] hover:text-[#38BDF8] hover:underline cursor-pointer whitespace-nowrap"
             >
               <span>Grabar Nueva Canción en Estudio</span>

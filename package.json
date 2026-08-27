@@ -13,7 +13,8 @@
     "test:industry": "tsx test-industry-contracts.ts",
     "test:release": "tsx test-release-confirmation.ts",
     "test:collab": "tsx test-collaborations.ts",
-    "test:social": "tsx test-social-actions.ts"
+    "test:social": "tsx test-social-actions.ts",
+    "test:buttons": "tsx test-all-buttons-and-nav.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

@@ -33,7 +33,7 @@ import { playSound } from '../utils/audioSystem';
 interface RelationshipsViewProps {
   player: Artist;
   world: WorldState;
-  onInteract: (targetArtistId: string, actionType: 'collab_request' | 'shoutout' | 'diss') => void;
+  onInteract: (targetArtistId: string, actionType: 'collab_request' | 'shoutout' | 'diss') => InteractionResult | SocialActionResult | any;
   onOpenCollabModal?: (artistId: string) => void;
   onInteractEcosystemNPC?: (npcId: string, action: 'collab_beat' | 'buy_exclusive' | 'hang_out' | 'call_out') => void;
   onInteractBeef?: (targetName: string, targetId: string, action: 'respond_social' | 'drop_diss' | 'ignore') => void;
@@ -187,7 +187,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       if (onOpenCollabModal) {
         onOpenCollabModal(targetArtist.id);
       } else {
-        onInteract(targetArtist.id, 'collab_request');
+        const res = onInteract(targetArtist.id, 'collab_request');
+        if (res && typeof res === 'object' && 'badge' in res) {
+          setActiveModalResult(res as InteractionResult);
+        }
       }
       return;
     }
@@ -198,22 +201,19 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
         alert(check.reason || 'Acción en cooldown');
         return;
       }
-
       playSound('release');
-      const modalRes = RelationshipEngine.executeShoutout(player, targetArtist, world.currentYear, world.currentMonth, world);
-      onInteract(targetArtist.id, 'shoutout');
-      setActiveModalResult(modalRes);
     } else if (actionType === 'diss') {
       const check = RelationshipEngine.canSendDiss(player, targetArtist, world.currentYear, world.currentMonth);
       if (!check.canPerform && !check.canSend) {
         alert(check.reason || 'Acción en cooldown');
         return;
       }
-
       playSound('chart_no1');
-      const modalRes = RelationshipEngine.executeDiss(player, targetArtist, world.currentYear, world.currentMonth, world);
-      onInteract(targetArtist.id, 'diss');
-      setActiveModalResult(modalRes);
+    }
+
+    const res = onInteract(targetArtist.id, actionType);
+    if (res && typeof res === 'object' && 'badge' in res) {
+      setActiveModalResult(res as InteractionResult);
     }
   };
 

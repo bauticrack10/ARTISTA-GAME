@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Artist,
   WorldState,
@@ -210,6 +210,8 @@ export const getProducerLockStatus = (
 interface StudioViewProps {
   player: Artist;
   world: WorldState;
+  initialTab?: 'single' | 'album' | 'catalog';
+  onTabChange?: (tab: 'single' | 'album' | 'catalog') => void;
   onOpenCollabModal?: (artistId?: string) => void;
   onReleaseSong: (params: {
     title: string;
@@ -260,12 +262,20 @@ const TITLE_SUGGESTIONS = [
 export const StudioView: React.FC<StudioViewProps> = ({
   player,
   world,
+  initialTab,
+  onTabChange,
   onOpenCollabModal,
   onReleaseSong,
   onReleaseAlbum
 }) => {
-  const [activeTab, setActiveTab] = useState<'single' | 'album' | 'catalog'>('single');
+  const [activeTab, setActiveTab] = useState<'single' | 'album' | 'catalog'>(initialTab || 'single');
   const [catalogFilter, setCatalogFilter] = useState<'all' | 'singles' | 'albums'>('all');
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   const currentEra = player.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1] : undefined;
   const styleDerivation = getArtistDerivedStyles(player, currentEra, world.genres);
@@ -358,16 +368,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const isAlbumFundsInsufficient = totalAlbumCost > player.stats.funds;
   const isAlbumTracksInsufficient = totalAlbumTracksCount < minTracksRequired;
   const isAlbumEnergyInsufficient = player.stats.energy < 35;
-  const isAlbumDisabled = isAlbumTracksInsufficient || isAlbumFundsInsufficient || isAlbumEnergyInsufficient || !albumTitle.trim();
+  const isAlbumDisabled = isAlbumTracksInsufficient || isAlbumFundsInsufficient || isAlbumEnergyInsufficient;
 
   // Quick title suggestion
-  const generateRandomTitle = (isAlbum: boolean) => {
+  const generateRandomTitle = (isAlbum: boolean): string => {
     const random = TITLE_SUGGESTIONS[Math.floor(Math.random() * TITLE_SUGGESTIONS.length)];
     if (isAlbum) {
       setAlbumTitle(random);
     } else {
       setSingleTitle(random);
     }
+    return random;
   };
 
   const toggleSingleInclusion = (id: string) => {
@@ -405,13 +416,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }
     setConfirmedRelease(null);
     setActiveTab('catalog');
+    onTabChange?.('catalog');
   };
 
   // Handlers
   const handleCreateSingle = (e: React.FormEvent) => {
     e.preventDefault();
     if (isPublishing) return;
-    if (!singleTitle.trim()) return;
+    let finalTitle = singleTitle.trim();
+    if (!finalTitle) {
+      finalTitle = generateRandomTitle(false);
+    }
 
     if (isSinglesLimitReached) {
       alert(`Has alcanzado el límite anual de lanzamientos (${MAX_SINGLES} singles en ${world.currentYear}). Avanza al próximo año o graba un Álbum Completo.`);
@@ -447,7 +462,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       const genreName = world.genres[styleDerivation.primaryGenreId]?.name || styleDerivation.primaryGenreId;
 
       onReleaseSong({
-        title: singleTitle.trim(),
+        title: finalTitle,
         genreId: styleDerivation.primaryGenreId,
         subGenreIds: selectedSubgenreId ? [selectedSubgenreId] : [],
         featuredArtistIds: singleFeaturedArtist ? [singleFeaturedArtist] : [],
@@ -463,10 +478,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       const releaseData: ReleaseConfirmationData = {
         type: 'single',
-        title: singleTitle.trim(),
+        title: finalTitle,
         coverGradient: ARTISTIC_COVER_GRADIENTS[Math.floor(Math.random() * ARTISTIC_COVER_GRADIENTS.length)],
         songCount: 1,
-        trackTitles: [singleTitle.trim()],
+        trackTitles: [finalTitle],
         genreId: styleDerivation.primaryGenreId,
         genreName,
         subGenreId: selectedSubgenreId || undefined,
@@ -493,8 +508,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
       setConfirmedRelease(releaseData);
       setNotification(
         hasMusicVideo
-          ? `¡El single "${singleTitle}" y su Videoclip Oficial (${selectedVideoConcept}) han sido estrenados mundialmente!`
-          : `¡El single "${singleTitle}" ha sido lanzado al mercado mundial!`
+          ? `¡El single "${finalTitle}" y su Videoclip Oficial (${selectedVideoConcept}) han sido estrenados mundialmente!`
+          : `¡El single "${finalTitle}" ha sido lanzado al mercado mundial!`
       );
       setTimeout(() => setNotification(null), 5000);
     } catch (err: unknown) {
@@ -508,7 +523,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const handleCreateAlbum = (e: React.FormEvent) => {
     e.preventDefault();
     if (isPublishing) return;
-    if (!albumTitle.trim()) return;
+    let finalTitle = albumTitle.trim();
+    if (!finalTitle) {
+      finalTitle = generateRandomTitle(true);
+    }
 
     if (totalAlbumTracksCount < minTracksRequired) {
       alert(`Un proyecto en formato ${albumType.toUpperCase()} requiere al menos ${minTracksRequired} canciones. Tienes ${totalAlbumTracksCount}.`);
@@ -550,7 +568,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       const allTrackTitles = [...includedSingles, ...validNewTracks];
 
       onReleaseAlbum({
-        title: albumTitle.trim(),
+        title: finalTitle,
         type: albumType,
         genreId: styleDerivation.primaryGenreId,
         subGenreIds: selectedAlbumSubgenreId ? [selectedAlbumSubgenreId] : [],
@@ -565,7 +583,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       const releaseData: ReleaseConfirmationData = {
         type: albumType,
-        title: albumTitle.trim(),
+        title: finalTitle,
         coverGradient: ARTISTIC_COVER_GRADIENTS[Math.floor(Math.random() * ARTISTIC_COVER_GRADIENTS.length)],
         songCount: allTrackTitles.length,
         trackTitles: allTrackTitles,
@@ -588,7 +606,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       playSound('release');
       setConfirmedRelease(releaseData);
-      setNotification(`¡El proyecto "${albumTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`);
+      setNotification(`¡El proyecto "${finalTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`);
       setTimeout(() => setNotification(null), 6000);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'Error al procesar el lanzamiento del álbum.';
@@ -628,7 +646,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
         {/* Tab Selector Buttons */}
         <div className="flex items-center gap-1.5 p-1 bg-[#0B0C10] rounded-[8px] border border-[#2A2E3D] text-xs font-semibold">
           <button
-            onClick={() => setActiveTab('single')}
+            onClick={() => {
+              setActiveTab('single');
+              onTabChange?.('single');
+            }}
             className={`px-3.5 py-2 rounded-[6px] transition-all cursor-pointer ${
               activeTab === 'single'
                 ? 'bg-[#8B5CF6] text-white shadow-[0_0_12px_rgba(139,92,246,0.4)]'
@@ -638,7 +659,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
             Lanzar Single
           </button>
           <button
-            onClick={() => setActiveTab('album')}
+            onClick={() => {
+              setActiveTab('album');
+              onTabChange?.('album');
+            }}
             className={`px-3.5 py-2 rounded-[6px] transition-all cursor-pointer ${
               activeTab === 'album'
                 ? 'bg-[#8B5CF6] text-white shadow-[0_0_12px_rgba(139,92,246,0.4)]'
@@ -648,7 +672,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
             Grabar Álbum / EP
           </button>
           <button
-            onClick={() => setActiveTab('catalog')}
+            onClick={() => {
+              setActiveTab('catalog');
+              onTabChange?.('catalog');
+            }}
             className={`px-3.5 py-2 rounded-[6px] transition-all cursor-pointer ${
               activeTab === 'catalog'
                 ? 'bg-[#8B5CF6] text-white shadow-[0_0_12px_rgba(139,92,246,0.4)]'
@@ -761,7 +788,6 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </div>
                 <input
                   type="text"
-                  required
                   placeholder="Ej: Medianoche en Tokio, Barrio Fino..."
                   value={singleTitle}
                   onChange={e => setSingleTitle(e.target.value)}
@@ -1225,9 +1251,9 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
             <button
               type="submit"
-              disabled={isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()}
+              disabled={isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15}
               className={`px-5 py-2.5 rounded-[6px] text-sm transition-all flex items-center gap-2 ${
-                isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15 || !singleTitle.trim()
+                isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15
                   ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-90 cursor-pointer'
               }`}
@@ -1278,7 +1304,6 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </div>
                 <input
                   type="text"
-                  required
                   placeholder="Ej: Crónicas de una Noche, Génesis..."
                   value={albumTitle}
                   onChange={e => setAlbumTitle(e.target.value)}

@@ -41,9 +41,28 @@ export default function App() {
   const [activeGala, setActiveGala] = useState<AwardCeremony | null>(null);
   const [activeMilestone, setActiveMilestone] = useState<EraMilestoneData | null>(null);
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
+  const [studioSubTab, setStudioSubTab] = useState<'single' | 'album' | 'catalog'>('single');
   const [isCollabModalOpen, setIsCollabModalOpen] = useState<boolean>(false);
   const [selectedCollabArtistId, setSelectedCollabArtistId] = useState<string | undefined>(undefined);
   const [confirmedCollabRelease, setConfirmedCollabRelease] = useState<ReleaseConfirmationData | null>(null);
+
+  const handleNavigate = (tab: string, subTab?: 'single' | 'album' | 'catalog') => {
+    if (tab === 'catalog') {
+      setCurrentTab('studio');
+      setStudioSubTab('catalog');
+    } else if (tab === 'record' || tab === 'studio_single') {
+      setCurrentTab('studio');
+      setStudioSubTab('single');
+    } else if (tab === 'studio_album') {
+      setCurrentTab('studio');
+      setStudioSubTab('album');
+    } else if (tab === 'studio') {
+      setCurrentTab('studio');
+      setStudioSubTab(subTab || 'single');
+    } else {
+      setCurrentTab(tab);
+    }
+  };
 
   const prevErasCountRef = useRef<number>(player.eras?.length || 1);
   const milestonesAchievedRef = useRef<Set<string>>(new Set());
@@ -319,7 +338,7 @@ export default function App() {
         player={player}
         world={world}
         currentTab={currentTab}
-        onTabChange={setCurrentTab}
+        onTabChange={handleNavigate}
         onAdvanceCycle={handleAdvanceCycle}
         onReturnToTitle={() => setAppMode('start_screen')}
       />
@@ -330,7 +349,7 @@ export default function App() {
           <DashboardView
             player={player}
             world={world}
-            onNavigate={setCurrentTab}
+            onNavigate={handleNavigate}
             onRest={handleRest}
             onUpdateAvatar={(url, color) => getEngine().updatePlayerAvatar(url, color)}
             onUpdateProfile={(updates) => getEngine().updatePlayerProfile(updates)}
@@ -342,6 +361,8 @@ export default function App() {
           <StudioView
             player={player}
             world={world}
+            initialTab={studioSubTab}
+            onTabChange={setStudioSubTab}
             onOpenCollabModal={handleOpenCollabModal}
             onReleaseSong={(params) => getEngine().releaseSong(params)}
             onReleaseAlbum={(params) => getEngine().releaseAlbum(params)}
@@ -387,7 +408,7 @@ export default function App() {
             onOpenCollabModal={handleOpenCollabModal}
             onInteract={(targetId, type) => {
               try {
-                getEngine().interactWithArtist(targetId, type);
+                return getEngine().interactWithArtist(targetId, type);
               } catch (err: any) {
                 alert(err.message || 'No se pudo realizar la acción.');
               }
@@ -446,7 +467,7 @@ export default function App() {
           onClose={() => setConfirmedCollabRelease(null)}
           onNavigateToCatalog={() => {
             setConfirmedCollabRelease(null);
-            setCurrentTab('studio');
+            handleNavigate('catalog');
           }}
         />
       )}
