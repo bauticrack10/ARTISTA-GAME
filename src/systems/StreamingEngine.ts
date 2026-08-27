@@ -15,7 +15,8 @@ export class StreamingEngine {
     currentYear: number,
     currentMonth: number,
     activeTrends: MusicTrend[],
-    genre: Genre | undefined
+    genre: Genre | undefined,
+    allArtists?: Record<string, Artist>
   ): { streams: number; wentViralNow: boolean; becomesClassicNow: boolean } {
     const ageMonths = (currentYear - song.releaseYear) * 12 + (currentMonth - song.releaseMonth);
     if (ageMonths < 0) return { streams: 0, wentViralNow: false, becomesClassicNow: false };
@@ -61,8 +62,25 @@ export class StreamingEngine {
     const songAppealScore = (qualityFactor * 0.35 + commercialFactor * 0.45 + originalityFactor * 0.20) * (0.6 + hypeFactor * 0.6);
     const algorithmicStreams = maxAlgorithmicPool * songAppealScore * trendBoost * genreBoost;
 
+    // 4.1 Impulso de alcance algorítmico y cross-fanbase derivado del artista colaborador
+    let collabBoost = 0;
+    if (song.featuredArtistIds && song.featuredArtistIds.length > 0) {
+      for (const featId of song.featuredArtistIds) {
+        const featArtist = allArtists ? allArtists[featId] : undefined;
+        const featPop = featArtist ? featArtist.stats.popularity : 30;
+        const featPopFactor = Math.max(0.01, featPop / 100);
+        const featAlgoPool = Math.pow(featPopFactor, 2.3) * 28000000 + (featPop * 250);
+        const featFans = featArtist ? featArtist.stats.fansCount : 5000;
+        const featLoyalty = featArtist ? Math.max(0.2, featArtist.stats.fanbaseLoyalty / 100) : 0.6;
+        const featFanMultiplier = ageMonths === 0 ? 3.0 : ageMonths === 1 ? 1.8 : ageMonths <= 3 ? 0.8 : 0.2;
+        const featFanStreams = (featFans * featLoyalty * 0.15) * featFanMultiplier;
+
+        collabBoost += (featAlgoPool * songAppealScore * trendBoost * genreBoost * 0.60) + featFanStreams;
+      }
+    }
+
     // Base total potential per month
-    const baseTotalStreams = fanStreamBase + algorithmicStreams;
+    const baseTotalStreams = fanStreamBase + algorithmicStreams + collabBoost;
 
     // 5. Music Video Boost (Initial streaming velocity & viral chance multiplier)
     let musicVideoVelocityMultiplier = 1.0;

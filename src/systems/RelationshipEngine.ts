@@ -1,4 +1,14 @@
-import { Artist, ArtistRelationship, EcosystemNPC, BeefState, WorldState, SocialPost } from '../types';
+import {
+  Artist,
+  ArtistRelationship,
+  EcosystemNPC,
+  BeefState,
+  WorldState,
+  SocialPost,
+  CollabProjectType,
+  CreditOrderType,
+  CollabFeasibilityResult
+} from '../types';
 import { SocialFeedEngine } from './SocialFeedEngine';
 
 export class RelationshipEngine {
@@ -215,8 +225,10 @@ export class RelationshipEngine {
   static calculateCollabFeasibility(
     requester: Artist,
     target: Artist,
-    offeredCutPercentage: number = 50
-  ): { willAccept: boolean; reason: string; successBoost: number } {
+    projectType: CollabProjectType = 'single_feat',
+    budgetProduction: number = 0,
+    creditOrder: CreditOrderType | string = 'player_feat_target'
+  ): CollabFeasibilityResult {
     const rel = requester.relationships[target.id] || {
       targetArtistId: target.id,
       relationType: 'neutral',
@@ -225,35 +237,180 @@ export class RelationshipEngine {
       pastCollabsCount: 0,
       history: []
     };
-    const popDiff = target.stats.popularity - requester.stats.popularity;
 
-    // Base score from target's sociability, affinity and respect
-    let score = target.personality.sociability * 0.3 + (rel.affinity + 100) * 0.25 + (rel.respect) * 0.25;
-
-    // Penalty if requester is vastly less popular unless target is generous or high affinity
-    if (popDiff > 25) {
-      score -= (popDiff * 1.2);
-    } else if (popDiff < -10) {
-      score += 15; // Target loves collaborating with bigger artists
-    }
-
+    // 1. Rechazo tajante si hay feudo abierto o afinidad fuertemente negativa (< -20)
     if (rel.relationType === 'feud') {
-      return { willAccept: false, reason: `${target.name} tiene un feudo abierto con vos y rechazó la propuesta tajantemente.`, successBoost: 0 };
-    }
-
-    if (score >= 45) {
-      const chemistry = ((requester.personality.creativity + target.personality.creativity) / 200) * 20;
-      return {
-        willAccept: true,
-        reason: `${target.name} aceptó la colaboración entusiasmado por la propuesta sonora.`,
-        successBoost: Math.floor(chemistry)
-      };
-    } else {
       return {
         willAccept: false,
-        reason: `${target.name} consideró que sus agendas o visiones artísticas no coinciden en este momento.`,
+        reason: `${target.name} tiene un feudo abierto con vos y rechazó la propuesta de colaboración tajantemente.`,
+        chemistryScore: 0,
+        crossFanbasePotential: 0,
+        acceptanceProbability: 0,
         successBoost: 0
       };
     }
+
+    if (rel.affinity < -20) {
+      return {
+        willAccept: false,
+        reason: `${target.name} siente una marcada antipatía hacia vos (afinidad: ${rel.affinity}) y rechazó la propuesta de plano.`,
+        chemistryScore: 0,
+        crossFanbasePotential: 0,
+        acceptanceProbability: 0,
+        successBoost: 0
+      };
+    }
+
+    // 2. Afinidad mutua (-100 a 100) y Respeto profesional (0 a 100)
+    // Afinidad normalizada (0 a 100)
+    const affinityNormalized = Math.max(0, Math.min(100, (rel.affinity + 100) / 2));
+    const affinityScore = (affinityNormalized - 50) * 0.50; // -25 a +25
+    const respectScore = ((rel.respect || 50) - 50) * 0.35;  // -17.5 a +17.5
+
+    // 3. Diferencia de popularidad
+    const popDiff = target.stats.popularity - requester.stats.popularity;
+    let popScore = 0;
+    if (popDiff > 0) {
+      // El colaborador es más popular: exige más mérito/respeto/presupuesto
+      popScore = -Math.min(45, popDiff * 1.0);
+    } else {
+      // El solicitante es más popular: el target se entusiasma
+      popScore = Math.min(25, Math.abs(popDiff) * 0.6);
+    }
+
+    // 4. Compatibilidad de géneros (mismo género o subgénero afín)
+    let genreScore = 0;
+    let isGenreCompatible = false;
+    if (requester.mainGenreId === target.mainGenreId) {
+      genreScore = 20;
+      isGenreCompatible = true;
+    } else {
+      const requesterSub = requester.subGenreIds || [];
+      const targetSub = target.subGenreIds || [];
+      const hasSubOverlap = requesterSub.some(sg => targetSub.includes(sg)) ||
+        targetSub.includes(requester.mainGenreId) ||
+        requesterSub.includes(target.mainGenreId);
+
+      if (hasSubOverlap) {
+        genreScore = 15;
+        isGenreCompatible = true;
+      } else {
+        // Familias urbanas afines
+        const urbanGenres = ['trap_latino', 'reggaeton', 'rap_urbano', 'r_and_b', 'drill', 'neoperreo', 'pluggnb', 'trap_argentino', 'mambo_urbano'];
+        const bothUrban = urbanGenres.includes(requester.mainGenreId) && urbanGenres.includes(target.mainGenreId);
+        if (bothUrban) {
+          genreScore = 10;
+          isGenreCompatible = true;
+        } else {
+          genreScore = -10;
+        }
+      }
+    }
+
+    // 5. Presupuesto de producción ofrecido
+    let budgetScore = 0;
+    const isAlbumProject = projectType === 'collab_ep' || projectType === 'collab_album' || projectType === 'collab_mixtape';
+    if (!isAlbumProject) {
+      if (budgetProduction >= 10000) budgetScore = 25;
+      else if (budgetProduction >= 5000) budgetScore = 18;
+      else if (budgetProduction >= 2500) budgetScore = 12;
+      else if (budgetProduction >= 1000) budgetScore = 6;
+      else budgetScore = 0;
+    } else {
+      if (budgetProduction >= 30000) budgetScore = 30;
+      else if (budgetProduction >= 15000) budgetScore = 20;
+      else if (budgetProduction >= 8000) budgetScore = 12;
+      else if (budgetProduction >= 4000) budgetScore = 5;
+      else budgetScore = -8;
+    }
+
+    // 6. Orden de créditos (Credit Order)
+    let creditScore = 0;
+    if (creditOrder === 'target_feat_player') {
+      creditScore = 8; // El colaborador tiene crédito principal
+    } else if (creditOrder === 'player_and_target' || creditOrder === 'player_x_target') {
+      creditScore = 5; // Crédito compartido / co-lead
+    } else {
+      creditScore = 0; // player_feat_target
+    }
+
+    // 7. Rasgos de personalidad y colaboraciones previas
+    const sociabilityScore = (target.personality.sociability || 50) * 0.15;
+    const pastCollabsScore = Math.min(20, (rel.pastCollabsCount || 0) * 6);
+
+    // 8. Cálculo de Probabilidad de Aceptación
+    const baseScore = 48 + affinityScore + respectScore + popScore + genreScore + budgetScore + creditScore + sociabilityScore + pastCollabsScore;
+    const acceptanceProbability = Math.max(5, Math.min(99, Math.round(baseScore)));
+    const willAccept = acceptanceProbability >= 50;
+
+    // 9. Cálculo de Química Musical (Chemistry Score de 5 a 25)
+    const creativityAvg = ((requester.personality.creativity || 70) + (target.personality.creativity || 70)) / 2;
+    const skillAvg = ((requester.personality.skill || 70) + (target.personality.skill || 70)) / 2;
+    const origAvg = ((requester.personality.originality || 70) + (target.personality.originality || 70)) / 2;
+    const affinityBonus = Math.max(0, rel.affinity / 25);
+    const rawChemistry = (creativityAvg * 0.08) + (skillAvg * 0.08) + (origAvg * 0.05) + (isGenreCompatible ? 3 : 1) + affinityBonus;
+    const chemistryScore = Math.max(5, Math.min(25, Math.round(rawChemistry)));
+
+    // 10. Cálculo de Potencial de Cruce de Fanbase (Cross Fanbase Potential)
+    const targetPop = target.stats.popularity || 10;
+    const targetFans = target.stats.fansCount || 500;
+    const crossFanbasePotential = Math.max(
+      150,
+      Math.floor((targetPop * 160 + targetFans * 0.06) * (chemistryScore / 18))
+    );
+
+    // 11. Redacción de motivo realista
+    let reason = '';
+    if (willAccept) {
+      if (budgetScore >= 18) {
+        reason = `${target.name} aceptó la colaboración entusiasmado por la contundente propuesta de producción y presupuesto ($${budgetProduction.toLocaleString()}).`;
+      } else if (rel.affinity > 35 || rel.respect > 70) {
+        reason = `${target.name} aceptó inmediatamente debido a la sólida afinidad y respeto profesional que los une.`;
+      } else if (popDiff < -15) {
+        reason = `${target.name} aceptó encantado la oportunidad de compartir barras y estudio con vos.`;
+      } else {
+        reason = `${target.name} aceptó la colaboración motivado por la propuesta sonora y la química artística.`;
+      }
+    } else {
+      if (popDiff > 25 && budgetScore < 15) {
+        reason = `${target.name} consideró que la brecha de exposición actual es muy amplia y el presupuesto ofrecido no justifica el junte en este momento.`;
+      } else if (genreScore < 0) {
+        reason = `${target.name} evaluó que sus estilos y visiones sonoras no son compatibles para este proyecto.`;
+      } else if (rel.affinity < 0 || (rel.respect || 50) < 40) {
+        reason = `${target.name} no siente suficiente conexión ni afinidad artística con la propuesta en este momento.`;
+      } else {
+        reason = `${target.name} consideró que sus agendas o direcciones estéticas no coinciden en este momento.`;
+      }
+    }
+
+    return {
+      willAccept,
+      reason,
+      chemistryScore,
+      crossFanbasePotential,
+      acceptanceProbability,
+      successBoost: chemistryScore
+    };
+  }
+
+  static triggerBeef(
+    player: Artist,
+    target: Artist,
+    currentYear: number,
+    currentMonth: number
+  ): BeefState {
+    const beefId = `beef_${target.id}`;
+    return {
+      id: beefId,
+      targetId: target.id,
+      targetName: target.name,
+      stage: 'tension',
+      hypeMultiplier: 1.2,
+      hypeGenerated: 25,
+      tensionLevel: 45,
+      dissTracksExchanged: [],
+      turnsActive: 1,
+      lastActionDescription: `${player.name} inició un cruce público contra ${target.name} en ${currentYear}.`
+    };
   }
 }

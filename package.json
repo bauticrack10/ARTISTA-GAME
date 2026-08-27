@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "test:awards": "tsx test-awards-engine.ts",
     "test:industry": "tsx test-industry-contracts.ts",
-    "test:release": "tsx test-release-confirmation.ts"
+    "test:release": "tsx test-release-confirmation.ts",
+    "test:collab": "tsx test-collaborations.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

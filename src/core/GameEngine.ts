@@ -15,7 +15,13 @@ import {
   BeefState,
   SocialPost,
   FinancialTransaction,
-  TransactionCategory
+  TransactionCategory,
+  ReleaseConfirmationData,
+  LongevityCurve,
+  ReleaseType,
+  CollabProjectType,
+  CreditOrderType,
+  CollabFeasibilityResult
 } from '../types';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
@@ -860,6 +866,462 @@ export class GameEngine {
     return newAlbum;
   }
 
+  public proposeAndExecuteCollab(params: {
+    targetArtistId: string;
+    type: 'single_feat' | 'album_track' | 'collab_ep' | 'collab_album' | 'collab_mixtape';
+    title: string;
+    creditOrder: 'player_feat_target' | 'target_feat_player' | 'player_and_target' | 'player_x_target';
+    genreId: string;
+    subGenreIds: string[];
+    producerId?: string;
+    budgetProduction: number;
+    budgetMarketing: number;
+    longevityCurve?: LongevityCurve;
+    newTrackTitles?: string[];
+  }): {
+    success: boolean;
+    reason?: string;
+    song?: Song;
+    album?: Album;
+    confirmationData?: ReleaseConfirmationData;
+  } {
+    const player = this.getPlayer();
+    const target = this.world.artists[params.targetArtistId];
+
+    // 1. Validar que targetArtistId exista, no sea el propio jugador
+    if (!target) {
+      return { success: false, reason: 'El artista colaborador no existe en el mundo musical.' };
+    }
+    if (target.id === player.id) {
+      return { success: false, reason: 'No puedes realizar una colaboración contigo mismo.' };
+    }
+    if (!params.title || !params.title.trim()) {
+      return { success: false, reason: 'El título del proyecto es obligatorio.' };
+    }
+
+    const isAlbum = params.type === 'collab_ep' || params.type === 'collab_album' || params.type === 'collab_mixtape';
+
+    // Validar cupo anual de singles si aplica
+    if (params.type === 'single_feat') {
+      const currentYearSingles = this.getPlayerSinglesReleasedThisYear();
+      if (currentYearSingles >= GameEngine.MAX_SINGLES_PER_YEAR) {
+        return {
+          success: false,
+          reason: `Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año). El cupo se reiniciará en enero.`
+        };
+      }
+    }
+
+    // 2. Validar energía (>=15% single, >=35% álbum)
+    const requiredEnergy = isAlbum ? 35 : 15;
+    if (player.stats.energy < requiredEnergy) {
+      return {
+        success: false,
+        reason: `Energía insuficiente para este proyecto colaborativo (requiere al menos ${requiredEnergy}% de energía).`
+      };
+    }
+
+    // Validar productor si fue seleccionado
+    const prod = params.producerId && params.producerId !== 'self' ? this.world.producers[params.producerId] : undefined;
+    if (prod) {
+      const prodCheck = IndustryEngine.canWorkWithProducer(player, prod);
+      if (!prodCheck.canWork) {
+        return {
+          success: false,
+          reason: `Requisitos no cumplidos para contratar a ${prod.name}: ${prodCheck.missingReasons.join(', ')}`
+        };
+      }
+    }
+
+    // Validar títulos de canciones de álbum
+    const rawTrackTitles = (params.newTrackTitles || []).filter(t => t.trim().length > 0);
+    const minTracks = params.type === 'collab_ep' ? 4 : 6;
+    if (isAlbum && rawTrackTitles.length < minTracks) {
+      return {
+        success: false,
+        reason: `Un proyecto en formato ${params.type.toUpperCase()} requiere al menos ${minTracks} canciones. Tienes ${rawTrackTitles.length}.`
+      };
+    }
+
+    // Validar fondos totales requeridos
+    const trackCount = isAlbum ? Math.max(minTracks, rawTrackTitles.length) : 1;
+    const producerFee = prod ? (isAlbum ? prod.costPerTrack * Math.min(trackCount, 6) : prod.costPerTrack) : 0;
+    const totalCost = params.budgetProduction + params.budgetMarketing + producerFee;
+
+    if (totalCost > player.stats.funds) {
+      return {
+        success: false,
+        reason: `Fondos insuficientes para este lanzamiento. Costo total: $${totalCost.toLocaleString()}, Disponibles: $${player.stats.funds.toLocaleString()}`
+      };
+    }
+
+    // 3. Ejecutar RelationshipEngine.calculateCollabFeasibility
+    const feas = RelationshipEngine.calculateCollabFeasibility(
+      player,
+      target,
+      params.type,
+      params.budgetProduction,
+      params.creditOrder
+    );
+
+    // 4. Si es rechazada: registrar en histórico, reducir levemente afinidad (-3 a -5), notificar y retornar sin descontar fondos ni crear entidades
+    if (!feas.willAccept) {
+      RelationshipEngine.modifyRelationship(
+        player,
+        target,
+        -4,
+        0,
+        undefined,
+        `Propuesta de colaboración (${params.type}) rechazada en ${this.world.currentYear}: "${feas.reason}"`
+      );
+      this.notify();
+      return {
+        success: false,
+        reason: feas.reason
+      };
+    }
+
+    // 5. Si es aceptada:
+    // 5.1 Formatear créditos y display según creditOrder
+    let creditDisplay = `${player.name} (ft. ${target.name})`;
+    if (params.creditOrder === 'target_feat_player') {
+      creditDisplay = `${target.name} (ft. ${player.name})`;
+    } else if (params.creditOrder === 'player_and_target') {
+      creditDisplay = `${player.name} & ${target.name}`;
+    } else if (params.creditOrder === 'player_x_target') {
+      creditDisplay = `${player.name} x ${target.name}`;
+    }
+
+    const chemistryBonus = feas.chemistryScore;
+    const lifestyleBuffs = this.getPlayerLifestyleBuffs();
+    const subDetail = params.subGenreIds && params.subGenreIds.length > 0 ? SUBGENRE_DETAILS[params.subGenreIds[0]] : undefined;
+    const subOrigBonus = subDetail?.originalityBonus || 0;
+    const subCommBonus = subDetail?.commercialBonus || 0;
+
+    // 5.2 Derivar performance sonora e impacto
+    const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
+      artist: player,
+      productionBudget: params.budgetProduction,
+      marketingBudget: params.budgetMarketing,
+      producer: prod,
+      subGenreId: params.subGenreIds?.[0],
+      qualityBonus: lifestyleBuffs.qualityBonus + Math.floor(chemistryBonus * 0.3)
+    });
+
+    const baseQuality = Math.min(100, Math.max(20, Math.floor(
+      player.personality.skill * 0.35 +
+      target.personality.skill * 0.25 +
+      trackPerf.productionQuality * 0.30 +
+      chemistryBonus * 0.4
+    )));
+
+    const commercialAppeal = Math.min(100, Math.max(20, Math.floor(
+      player.personality.commercialAppeal * 0.35 +
+      target.personality.commercialAppeal * 0.25 +
+      trackPerf.marketingInvestment * 0.30 +
+      chemistryBonus * 0.3 +
+      subCommBonus
+    )));
+
+    const originality = Math.min(100, Math.max(20, Math.floor(
+      player.personality.originality * 0.50 +
+      target.personality.originality * 0.30 +
+      chemistryBonus * 0.4 +
+      subOrigBonus
+    )));
+
+    // 5.3 Descontar fondos y energía de forma atómica
+    player.stats.funds = Math.max(0, player.stats.funds - totalCost);
+    player.stats.energy = Math.max(0, player.stats.energy - requiredEnergy);
+    player.lastReleaseYear = this.world.currentYear;
+    player.lastReleaseMonth = this.world.currentMonth;
+
+    if (params.budgetProduction > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: params.budgetProduction,
+        description: `Producción de colaboración "${params.title}" (${creditDisplay})`
+      });
+    }
+    if (params.budgetMarketing > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'marketing',
+        amount: params.budgetMarketing,
+        description: `Marketing & difusión de colaboración "${params.title}" (${creditDisplay})`
+      });
+    }
+    if (prod && producerFee > 0) {
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'production',
+        amount: producerFee,
+        description: `Honorarios de ${prod.name} para "${params.title}"`
+      });
+    }
+
+    // 5.4 Cross-pollination de fanbase y stats
+    const fansGained = Math.max(200, Math.floor(feas.crossFanbasePotential * 0.65 + (target.stats.popularity * 35) * (chemistryBonus / 12)));
+    player.stats.fansCount += fansGained;
+    const popGained = Math.max(1, Math.floor((target.stats.popularity / 18) * (chemistryBonus / 12)));
+    player.stats.popularity = Math.min(100, player.stats.popularity + popGained);
+
+    target.stats.fansCount += Math.floor(fansGained * 0.5);
+    target.stats.popularity = Math.min(100, target.stats.popularity + Math.floor(popGained * 0.5));
+
+    // 5.5 Aumentar afinidad (+15), respeto (+15), pastCollabsCount (+1), hype y notas históricas en ambos artistas
+    const relA = RelationshipEngine.getOrCreateRelationship(player, target.id);
+    const relB = RelationshipEngine.getOrCreateRelationship(target, player.id);
+    relA.pastCollabsCount = (relA.pastCollabsCount || 0) + 1;
+    relB.pastCollabsCount = (relB.pastCollabsCount || 0) + 1;
+
+    const newRelType = (relA.relationType === 'friend' || relA.relationType === 'mentor') ? relA.relationType : 'collaborator';
+    const historyNote = `Colaboración exitosa en "${params.title}" (${creditDisplay}) en ${this.world.currentYear}. Química: ${chemistryBonus}/25.`;
+    RelationshipEngine.modifyRelationship(player, target, 15, 15, newRelType, historyNote);
+
+    const hypeGain = Math.min(45, Math.floor(18 + target.stats.popularity * 0.20 + chemistryBonus * 0.6));
+    player.stats.hype = Math.min(100, player.stats.hype + hypeGain);
+
+    const genreName = this.world.genres[params.genreId]?.name || params.genreId;
+
+    // 5.6 Crear Entidades: Single o Álbum
+    if (!isAlbum) {
+      const songId = `song_collab_${player.id}_${target.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
+      const createdSong: Song = {
+        id: songId,
+        title: params.title.trim(),
+        artistId: player.id,
+        featuredArtistIds: [target.id],
+        producerId: params.producerId,
+        genreId: params.genreId,
+        subGenreIds: params.subGenreIds,
+        releaseYear: this.world.currentYear,
+        releaseMonth: this.world.currentMonth,
+        quality: baseQuality,
+        commercialAppeal,
+        originality,
+        hypeAtRelease: player.stats.hype,
+        streamsTotal: 0,
+        streamsLastMonth: 0,
+        monthlyStreamsHistory: [],
+        peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+        weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+        longevityCurve: params.longevityCurve || trackPerf.longevityCurve,
+        isSingle: params.type === 'single_feat',
+        receptionRating: Math.floor(trackPerf.performanceScore / 20),
+        isClassic: false,
+        wentViral: chemistryBonus >= 22
+      };
+
+      this.world.songs[songId] = createdSong;
+
+      const confirmationData: ReleaseConfirmationData = {
+        type: params.type,
+        title: params.title.trim(),
+        songCount: 1,
+        trackTitles: [`${params.title.trim()} (${creditDisplay})`],
+        genreId: params.genreId,
+        genreName,
+        subGenreId: params.subGenreIds?.[0],
+        subGenreName: subDetail?.name,
+        featuredArtistNames: [target.name],
+        producerName: prod?.name,
+        releaseYear: this.world.currentYear,
+        releaseMonth: this.world.currentMonth,
+        totalBudget: totalCost,
+        budgetBreakdown: {
+          production: params.budgetProduction,
+          marketing: params.budgetMarketing,
+          producerFee,
+          videoCost: 0
+        },
+        quality: baseQuality,
+        commercialAppeal,
+        originality
+      };
+
+      // 5.7 Publicar noticias y social feed
+      this.world.news.unshift({
+        id: `news_collab_${songId}`,
+        headline: `¡Colaboración Explosiva! "${params.title}" une a ${player.name} y ${target.name}`,
+        body: `La escena celebra el junte más esperado: "${params.title}" (${creditDisplay}). Ambos artistas combinan estilos con una química calculada en ${chemistryBonus}/25.`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: 'release',
+        relatedArtistIds: [player.id, target.id],
+        sentiment: 'positive',
+        importance: 4
+      });
+
+      if (!this.world.socialFeed) this.world.socialFeed = [];
+      const socialPosts = SocialFeedEngine.generateReleasePosts(this.world, player, createdSong);
+      this.world.socialFeed.unshift(...socialPosts);
+
+      this.notify();
+      return { success: true, song: createdSong, confirmationData };
+    } else {
+      // Album / EP / Mixtape
+      const albumId = `album_collab_${player.id}_${target.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
+      const trackTitles = rawTrackTitles.length > 0
+        ? rawTrackTitles
+        : (params.type === 'collab_ep' ? ['Cruce de Caminos', 'Frecuencias Altas', 'Código de Oro', 'La Última Sesión'] : ['Génesis Conjunta', 'Fuego Cruzado', 'Diamantes & Calles', 'Pacto Sagrado', 'Bajo las Luces', 'El Legado Infinito']);
+
+      const songIds: string[] = [];
+      const albumSongs: Song[] = [];
+
+      trackTitles.forEach((tTitle, idx) => {
+        const sId = `song_collab_alb_${player.id}_${target.id}_${this.world.currentYear}_${idx}_${Math.floor(Math.random() * 1000)}`;
+        const sQuality = Math.min(100, Math.max(20, Math.floor(baseQuality + Math.floor(Math.random() * 6 - 3))));
+        const sSong: Song = {
+          id: sId,
+          title: tTitle,
+          artistId: player.id,
+          featuredArtistIds: [target.id],
+          producerId: params.producerId,
+          genreId: params.genreId,
+          subGenreIds: params.subGenreIds,
+          releaseYear: this.world.currentYear,
+          releaseMonth: this.world.currentMonth,
+          quality: sQuality,
+          commercialAppeal,
+          originality,
+          hypeAtRelease: player.stats.hype,
+          streamsTotal: 0,
+          streamsLastMonth: 0,
+          monthlyStreamsHistory: [],
+          peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+          weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+          longevityCurve: trackPerf.longevityCurve,
+          isSingle: idx === 0,
+          albumId,
+          receptionRating: Math.floor(trackPerf.performanceScore / 20),
+          isClassic: false,
+          wentViral: false
+        };
+        this.world.songs[sId] = sSong;
+        songIds.push(sId);
+        albumSongs.push(sSong);
+      });
+
+      const relType: ReleaseType = params.type === 'collab_ep' ? 'ep' : params.type === 'collab_mixtape' ? 'mixtape' : 'collab_album';
+      const impact = StreamingEngine.calculateAlbumImpact({
+        albumType: relType,
+        songs: albumSongs,
+        artist: player,
+        producerBoost: prod ? prod.qualityBoost : 0,
+        productionBudget: params.budgetProduction,
+        marketingBudget: params.budgetMarketing,
+        includedSinglesTotalStreams: 0
+      });
+
+      const createdAlbum: Album = {
+        id: albumId,
+        title: params.title.trim(),
+        artistId: player.id,
+        collaboratorArtistId: target.id,
+        type: relType,
+        songIds,
+        genreId: params.genreId,
+        subGenreIds: params.subGenreIds,
+        releaseYear: this.world.currentYear,
+        releaseMonth: this.world.currentMonth,
+        totalStreams: 0,
+        firstWeekSales: impact.firstWeekSales,
+        criticalScore: impact.criticalScore,
+        criticalReviewText: `Proyecto conjunto de alto calibre sonoro: "${creditDisplay}". ${impact.criticalReviewText}`,
+        commercialScore: impact.commercialScore,
+        productionBudget: params.budgetProduction,
+        marketingBudget: params.budgetMarketing,
+        producerId: params.producerId,
+        singlesIncludedCount: 0,
+        peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+        awards: [],
+        coverGradient: 'from-violet-600 via-fuchsia-600 to-indigo-950'
+      };
+      this.world.albums[albumId] = createdAlbum;
+
+      const confirmationData: ReleaseConfirmationData = {
+        type: relType,
+        title: params.title.trim(),
+        coverGradient: createdAlbum.coverGradient,
+        songCount: songIds.length,
+        trackTitles,
+        genreId: params.genreId,
+        genreName,
+        subGenreId: params.subGenreIds?.[0],
+        subGenreName: subDetail?.name,
+        featuredArtistNames: [target.name],
+        producerName: prod?.name,
+        releaseYear: this.world.currentYear,
+        releaseMonth: this.world.currentMonth,
+        totalBudget: totalCost,
+        budgetBreakdown: {
+          production: params.budgetProduction,
+          marketing: params.budgetMarketing,
+          producerFee,
+          videoCost: 0
+        },
+        criticalScore: impact.criticalScore,
+        criticalReviewText: createdAlbum.criticalReviewText,
+        firstWeekSales: impact.firstWeekSales
+      };
+
+      this.world.news.unshift({
+        id: `news_collab_alb_${albumId}`,
+        headline: `¡Hito Colaborativo! "${params.title}" de ${player.name} & ${target.name} debuta con fuerza`,
+        body: `El proyecto en formato ${relType.toUpperCase()} de ${creditDisplay} presenta ${songIds.length} canciones inéditas y una calificación crítica de ${impact.criticalScore}/100.`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: 'release',
+        relatedArtistIds: [player.id, target.id],
+        sentiment: 'positive',
+        importance: 5
+      });
+
+      if (!this.world.socialFeed) this.world.socialFeed = [];
+      const socialPosts = SocialFeedEngine.generateReleasePosts(this.world, player, createdAlbum);
+      this.world.socialFeed.unshift(...socialPosts);
+
+      IndustryEngine.onAlbumReleased(player, this.world);
+
+      this.notify();
+      return { success: true, album: createdAlbum, confirmationData };
+    }
+  }
+
+  public releaseCollaboration(params: {
+    collaboratorId: string;
+    format: 'single_feat' | 'album_track' | 'ep_collab' | 'collab_album' | 'mixtape_collab';
+    title: string;
+    creditFormat: 'player_feat_target' | 'target_feat_player' | 'player_and_target' | 'player_x_target';
+    genreId: string;
+    subGenreIds: string[];
+    producerId?: string;
+    budgetProduction: number;
+    budgetMarketing: number;
+    longevityCurve: LongevityCurve;
+    customTrackTitles?: string[];
+  }): ReleaseConfirmationData {
+    const res = this.proposeAndExecuteCollab({
+      targetArtistId: params.collaboratorId,
+      type: params.format === 'ep_collab' ? 'collab_ep' : params.format === 'mixtape_collab' ? 'collab_mixtape' : params.format,
+      title: params.title,
+      creditOrder: params.creditFormat,
+      genreId: params.genreId,
+      subGenreIds: params.subGenreIds,
+      producerId: params.producerId,
+      budgetProduction: params.budgetProduction,
+      budgetMarketing: params.budgetMarketing,
+      longevityCurve: params.longevityCurve,
+      newTrackTitles: params.customTrackTitles
+    });
+    if (!res.success) {
+      throw new Error(res.reason || 'Colaboración rechazada');
+    }
+    return res.confirmationData!;
+  }
+
   public bookTour(tier: TourTier, name: string): Tour {
     const player = this.getPlayer();
     const tourValidation = TourEngine.canStartTour(player, this.world);
@@ -1325,7 +1787,8 @@ export class GameEngine {
           this.world.currentYear,
           this.world.currentMonth,
           activeTrends,
-          this.world.genres[song.genreId]
+          this.world.genres[song.genreId],
+          this.world.artists
         );
         song.streamsLastMonth = streamRes.streams;
         song.streamsTotal += streamRes.streams;

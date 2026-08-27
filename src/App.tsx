@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GameEngine } from './core/GameEngine';
-import { WorldState, Artist, EventDefinition, LongevityCurve, TourTier, Album, AwardCeremony, Song } from './types';
+import { WorldState, Artist, EventDefinition, LongevityCurve, TourTier, Album, AwardCeremony, Song, ReleaseConfirmationData } from './types';
 import { StartScreen } from './components/StartScreen';
 import { CharacterCreatorView } from './components/CharacterCreatorView';
 import { Navbar } from './components/Navbar';
@@ -16,6 +16,8 @@ import { AwardsView } from './components/AwardsView';
 import { AwardsGalaModal } from './components/AwardsGalaModal';
 import { EventModal } from './components/EventModal';
 import { EraMilestoneModal, EraMilestoneData } from './components/EraMilestoneModal';
+import { CollaborationModal } from './components/CollaborationModal';
+import { ReleaseConfirmationModal } from './components/ReleaseConfirmationModal';
 import { playSound } from './utils/audioSystem';
 
 
@@ -39,6 +41,9 @@ export default function App() {
   const [activeGala, setActiveGala] = useState<AwardCeremony | null>(null);
   const [activeMilestone, setActiveMilestone] = useState<EraMilestoneData | null>(null);
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
+  const [isCollabModalOpen, setIsCollabModalOpen] = useState<boolean>(false);
+  const [selectedCollabArtistId, setSelectedCollabArtistId] = useState<string | undefined>(undefined);
+  const [confirmedCollabRelease, setConfirmedCollabRelease] = useState<ReleaseConfirmationData | null>(null);
 
   const prevErasCountRef = useRef<number>(player.eras?.length || 1);
   const milestonesAchievedRef = useRef<Set<string>>(new Set());
@@ -243,6 +248,32 @@ export default function App() {
     playSound('money');
   };
 
+  const handleOpenCollabModal = (artistId?: string) => {
+    setSelectedCollabArtistId(artistId);
+    setIsCollabModalOpen(true);
+    playSound('click');
+  };
+
+  const handleExecuteCollab = (params: {
+    collaboratorId: string;
+    format: 'single_feat' | 'album_track' | 'ep_collab' | 'collab_album' | 'mixtape_collab';
+    title: string;
+    creditFormat: 'player_feat_target' | 'target_feat_player' | 'player_and_target' | 'player_x_target';
+    genreId: string;
+    subGenreIds: string[];
+    producerId?: string;
+    budgetProduction: number;
+    budgetMarketing: number;
+    longevityCurve: LongevityCurve;
+  }) => {
+    return getEngine().releaseCollaboration(params);
+  };
+
+  const handleCollabSuccess = (releaseData: ReleaseConfirmationData) => {
+    setConfirmedCollabRelease(releaseData);
+    setIsCollabModalOpen(false);
+  };
+
   // 1. START SCREEN
   if (appMode === 'start_screen') {
     return (
@@ -311,6 +342,7 @@ export default function App() {
           <StudioView
             player={player}
             world={world}
+            onOpenCollabModal={handleOpenCollabModal}
             onReleaseSong={(params) => getEngine().releaseSong(params)}
             onReleaseAlbum={(params) => getEngine().releaseAlbum(params)}
           />
@@ -352,6 +384,7 @@ export default function App() {
           <RelationshipsView
             player={player}
             world={world}
+            onOpenCollabModal={handleOpenCollabModal}
             onInteract={(targetId, type) => getEngine().interactWithArtist(targetId, type)}
           />
         )}
@@ -372,6 +405,31 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Collaboration Modal */}
+      {isCollabModalOpen && (
+        <CollaborationModal
+          isOpen={isCollabModalOpen}
+          onClose={() => setIsCollabModalOpen(false)}
+          player={player}
+          world={world}
+          preselectedArtistId={selectedCollabArtistId}
+          onExecuteCollab={handleExecuteCollab}
+          onCollabSuccess={handleCollabSuccess}
+        />
+      )}
+
+      {/* Global / Collab Release Confirmation Modal */}
+      {confirmedCollabRelease && (
+        <ReleaseConfirmationModal
+          data={confirmedCollabRelease}
+          onClose={() => setConfirmedCollabRelease(null)}
+          onNavigateToCatalog={() => {
+            setConfirmedCollabRelease(null);
+            setCurrentTab('studio');
+          }}
+        />
+      )}
 
       {/* Event Dilemma Dialog */}
       {currentEvent && (

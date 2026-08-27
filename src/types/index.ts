@@ -48,6 +48,19 @@ export interface ArtistRelationship {
   history: string[];
 }
 
+export type CollabProjectType = 'single_feat' | 'album_track' | 'collab_ep' | 'collab_album' | 'collab_mixtape';
+
+export type CreditOrderType = 'player_feat_target' | 'target_feat_player' | 'player_and_target' | 'player_x_target';
+
+export interface CollabFeasibilityResult {
+  willAccept: boolean;
+  reason: string;
+  chemistryScore: number;
+  crossFanbasePotential: number;
+  acceptanceProbability: number;
+  successBoost?: number;
+}
+
 export interface CareerEra {
   id: string;
   name: string;

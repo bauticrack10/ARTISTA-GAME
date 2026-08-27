@@ -73,10 +73,21 @@ export class ChartEngine {
         }
         item.song.weeksOnChart[region] = weeks;
 
+        // Format artist name including featured artists (e.g. "Artista Principal (ft. Artista Invitado)")
+        let formattedArtistName = item.artist ? item.artist.name : 'Desconocido';
+        if (item.song.featuredArtistIds && item.song.featuredArtistIds.length > 0) {
+          const featNames = item.song.featuredArtistIds
+            .map(id => allArtists[id]?.name)
+            .filter(Boolean);
+          if (featNames.length > 0) {
+            formattedArtistName = `${formattedArtistName} (ft. ${featNames.join(', ')})`;
+          }
+        }
+
         // Check for #1 news or milestone
         if (rank === 1 && lastRank !== 1 && item.artist) {
           chartMilestoneNews.push({
-            headline: `¡#1 en ${region}! "${item.song.title}" de ${item.artist.name} conquista la cima`,
+            headline: `¡#1 en ${region}! "${item.song.title}" de ${formattedArtistName} conquista la cima`,
             body: `El single alcanzó el primer puesto de los charts oficiales en ${region} con cifras récord de streaming.`,
             relatedArtistId: item.artist.id
           });
@@ -88,7 +99,7 @@ export class ChartEngine {
           artistId: item.song.artistId,
           featuredArtistIds: item.song.featuredArtistIds,
           title: item.song.title,
-          artistName: item.artist ? item.artist.name : 'Desconocido',
+          artistName: formattedArtistName,
           streamsThisWeek: Math.floor(item.score),
           lastRank,
           peakRank: item.song.peakPosition[region] || rank,

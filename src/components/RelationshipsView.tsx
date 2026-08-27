@@ -22,6 +22,7 @@ interface RelationshipsViewProps {
   player: Artist;
   world: WorldState;
   onInteract: (targetArtistId: string, actionType: 'collab_request' | 'shoutout' | 'diss') => void;
+  onOpenCollabModal?: (artistId: string) => void;
   onInteractEcosystemNPC?: (npcId: string, action: 'collab_beat' | 'buy_exclusive' | 'hang_out' | 'call_out') => void;
   onInteractBeef?: (targetName: string, targetId: string, action: 'respond_social' | 'drop_diss' | 'ignore') => void;
 }
@@ -30,6 +31,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   player,
   world,
   onInteract,
+  onOpenCollabModal,
   onInteractEcosystemNPC,
   onInteractBeef
 }) => {
@@ -493,12 +495,18 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   {/* Interaction Actions */}
                   <div className="grid grid-cols-3 gap-2 pt-1">
                     <button
-                      onClick={() => onInteract(artist.id, 'collab_request')}
-                      className="bg-[#0B0C10] hover:bg-white/[0.04] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 py-1.5 px-2 text-[11px] font-medium rounded-[6px] flex flex-col items-center gap-1 transition-all cursor-pointer"
-                      title="Proponer Colaboración"
+                      onClick={() => {
+                        if (onOpenCollabModal) {
+                          onOpenCollabModal(artist.id);
+                        } else {
+                          onInteract(artist.id, 'collab_request');
+                        }
+                      }}
+                      className="bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 hover:from-[#8B5CF6] hover:to-[#EC4899] text-[#F8FAFC] hover:text-white border border-[#8B5CF6]/50 hover:border-[#EC4899] py-1.5 px-2 text-[11px] font-bold rounded-[6px] flex flex-col items-center gap-1 transition-all cursor-pointer shadow-[0_0_10px_rgba(139,92,246,0.25)] hover:shadow-[0_0_15px_rgba(236,72,153,0.4)]"
+                      title="Proponer Colaboración Musical Personalizada"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#8B5CF6]" />
-                      <span>Colab</span>
+                      <Sparkles className="w-3.5 h-3.5 text-[#C084FC] group-hover:text-white" />
+                      <span>Proponer Colab</span>
                     </button>
 
                     <button

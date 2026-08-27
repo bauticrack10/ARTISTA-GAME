@@ -19,6 +19,7 @@ import { IndustryEngine } from '../systems/IndustryEngine';
 import {
   Disc3,
   Sparkles,
+  Users,
   Mic,
   Sliders,
   DollarSign,
@@ -209,6 +210,7 @@ export const getProducerLockStatus = (
 interface StudioViewProps {
   player: Artist;
   world: WorldState;
+  onOpenCollabModal?: (artistId?: string) => void;
   onReleaseSong: (params: {
     title: string;
     genreId: string;
@@ -258,6 +260,7 @@ const TITLE_SUGGESTIONS = [
 export const StudioView: React.FC<StudioViewProps> = ({
   player,
   world,
+  onOpenCollabModal,
   onReleaseSong,
   onReleaseAlbum
 }) => {
@@ -267,6 +270,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const currentEra = player.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1] : undefined;
   const styleDerivation = getArtistDerivedStyles(player, currentEra, world.genres);
   const primaryGenreTheme = getGenreTheme(styleDerivation.primaryGenreId);
+
+  // Available scene artists for features
+  const sceneArtists = useMemo(() => {
+    return (Object.values(world.artists) as Artist[]).filter(
+      a => a.id !== player.id && !a.isRetired
+    );
+  }, [world.artists, player.id]);
 
   // Singles released this year
   const MAX_SINGLES = GameEngine.MAX_SINGLES_PER_YEAR;
@@ -280,6 +290,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   // Single State
   const [singleTitle, setSingleTitle] = useState('');
+  const [singleFeaturedArtist, setSingleFeaturedArtist] = useState<string>('');
   const [selectedSubgenreId, setSelectedSubgenreId] = useState<string>(
     styleDerivation.availableStyles[0]?.id || ''
   );
@@ -300,6 +311,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   // Album State
   const [albumTitle, setAlbumTitle] = useState('');
+  const [albumFeaturedArtist, setAlbumFeaturedArtist] = useState<string>('');
   const [albumType, setAlbumType] = useState<Album['type']>('album');
   const [selectedAlbumSubgenreId, setSelectedAlbumSubgenreId] = useState<string>(
     styleDerivation.availableStyles[0]?.id || ''
@@ -371,12 +383,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
     if (confirmedRelease) {
       if (confirmedRelease.type === 'single') {
         setSingleTitle('');
+        setSingleFeaturedArtist('');
         setHasMusicVideo(false);
         setSingleProdBudget(0);
         setSingleMktBudget(0);
         setSingleProducer('');
       } else {
         setAlbumTitle('');
+        setAlbumFeaturedArtist('');
         setIncludedSingleIds([]);
         setAlbumProducer('');
         setNewTrackTitles([
@@ -429,13 +443,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       const prodObj = singleProducer ? world.producers[singleProducer] : undefined;
       const subObj = selectedSubgenreId ? SUBGENRE_DETAILS[selectedSubgenreId] : undefined;
+      const featObj = singleFeaturedArtist ? world.artists[singleFeaturedArtist] : undefined;
       const genreName = world.genres[styleDerivation.primaryGenreId]?.name || styleDerivation.primaryGenreId;
 
       onReleaseSong({
         title: singleTitle.trim(),
         genreId: styleDerivation.primaryGenreId,
         subGenreIds: selectedSubgenreId ? [selectedSubgenreId] : [],
-        featuredArtistIds: [],
+        featuredArtistIds: singleFeaturedArtist ? [singleFeaturedArtist] : [],
         producerId: singleProducer || undefined,
         budgetProduction: singleProdBudget,
         budgetMarketing: singleMktBudget,
@@ -456,6 +471,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         genreName,
         subGenreId: selectedSubgenreId || undefined,
         subGenreName: subObj?.name || undefined,
+        featuredArtistNames: featObj ? [featObj.name] : undefined,
         producerName: prodObj?.name || undefined,
         musicVideo: hasMusicVideo ? {
           concept: selectedVideoConcept,
@@ -545,6 +561,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
         producerId: albumProducer || undefined
       });
 
+      const featObj = albumFeaturedArtist ? world.artists[albumFeaturedArtist] : undefined;
+
       const releaseData: ReleaseConfirmationData = {
         type: albumType,
         title: albumTitle.trim(),
@@ -555,6 +573,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         genreName,
         subGenreId: selectedAlbumSubgenreId || undefined,
         subGenreName: subObj?.name || undefined,
+        featuredArtistNames: featObj ? [featObj.name] : undefined,
         producerName: prodObj?.name || undefined,
         releaseYear: world.currentYear,
         releaseMonth: world.currentMonth,
@@ -795,6 +814,53 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     );
                   })}
                 </div>
+              </div>
+
+              {/* Featured Artist Selector & Collab Hub Shortcut */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                    Artista Invitado (Feat)
+                  </label>
+                  {onOpenCollabModal && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenCollabModal(singleFeaturedArtist || undefined)}
+                      className="text-[11px] text-[#C084FC] hover:text-[#E879F9] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Abrir el panel interactivo completo de colaboraciones"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      Estudio de Colaboración Avanzada
+                    </button>
+                  )}
+                </div>
+                <select
+                  value={singleFeaturedArtist}
+                  onChange={e => setSingleFeaturedArtist(e.target.value)}
+                  className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
+                >
+                  <option value="">Sin artista invitado (Solista)</option>
+                  {sceneArtists.map(artist => {
+                    const rel = player.relationships[artist.id];
+                    const affinityText = rel?.affinity !== undefined ? (rel.affinity > 0 ? `+${rel.affinity}` : `${rel.affinity}`) : '0';
+                    return (
+                      <option key={artist.id} value={artist.id} className="bg-[#0B0C10] text-[#F8FAFC]">
+                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {(artist.stats.monthlyListeners / 1000000).toFixed(1)}M • Afinidad: {affinityText})
+                      </option>
+                    );
+                  })}
+                </select>
+                {singleFeaturedArtist && world.artists[singleFeaturedArtist] && (
+                  <div className="mt-2 p-2.5 rounded-lg bg-[#0B0C10] border border-[#8B5CF6]/30 flex items-center justify-between text-[11px]">
+                    <span className="text-[#94A3B8]">
+                      Afinidad con <strong className="text-[#F8FAFC]">{world.artists[singleFeaturedArtist].name}</strong>:
+                    </span>
+                    <span className="text-emerald-400 font-bold font-mono">
+                      {(player.relationships[singleFeaturedArtist]?.affinity || 0) > 0 ? `+${player.relationships[singleFeaturedArtist]?.affinity}` : player.relationships[singleFeaturedArtist]?.affinity || 0} Afinidad • {player.relationships[singleFeaturedArtist]?.respect || 50}% Respeto
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Producer */}
@@ -1259,6 +1325,43 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     })}
                   </select>
                 </div>
+              </div>
+
+              {/* Featured Artist Selector & Collab Hub Shortcut for Album */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                    Artista Invitado Principal (Feat)
+                  </label>
+                  {onOpenCollabModal && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenCollabModal(albumFeaturedArtist || undefined)}
+                      className="text-[11px] text-[#C084FC] hover:text-[#E879F9] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Abrir el panel para crear un Álbum Colaborativo completo"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      Álbum Colaborativo ("Oasis")
+                    </button>
+                  )}
+                </div>
+                <select
+                  value={albumFeaturedArtist}
+                  onChange={e => setAlbumFeaturedArtist(e.target.value)}
+                  className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
+                >
+                  <option value="">Proyecto Solista (Sin Feat Principal)</option>
+                  {sceneArtists.map(artist => {
+                    const rel = player.relationships[artist.id];
+                    const affinityText = rel?.affinity !== undefined ? (rel.affinity > 0 ? `+${rel.affinity}` : `${rel.affinity}`) : '0';
+                    return (
+                      <option key={artist.id} value={artist.id} className="bg-[#0B0C10] text-[#F8FAFC]">
+                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {(artist.stats.monthlyListeners / 1000000).toFixed(1)}M • Afinidad: {affinityText})
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
 
               {/* Sub-style Selection for Album */}
