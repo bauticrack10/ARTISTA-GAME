@@ -22,4 +22,11 @@
 
 ## Automatización y Flujo de Trabajo (Git & GitHub)
 
-- **Sincronización Automática con GitHub:** Siempre que se complete cualquier modificación, refactorización, nueva funcionalidad o corrección en el código, se debe verificar la compilación (`npm run build`), añadir todos los cambios (`git add -A`), realizar un commit descriptivo y hacer `git push origin main` al repositorio de GitHub automáticamente, sin esperar una petición manual del usuario.
+- **Sincronización Automática y Documentación para Agentes IA:** Siempre que se complete cualquier modificación, refactorización, nueva funcionalidad o corrección en el código:
+  1. Verificar la compilación (`npm run build`).
+  2. Añadir todos los cambios (`git add -A`).
+  3. Realizar un commit descriptivo y estructurado especificando:
+     - Qué se modificó y por qué.
+     - Qué sistemas, módulos, tipos o componentes fueron afectados.
+     - Contexto técnico clave para que cualquier otro agente de IA (Antigravity u otros) o colaborador entienda el estado exacto del proyecto.
+  4. Ejecutar `git push origin main` automáticamente sin esperar petición manual.
