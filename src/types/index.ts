@@ -306,12 +306,16 @@ export interface LabelContract {
   breakoutClause?: number;   // Cláusula de rescisión / compra de contrato
   durationYears: number;
   signedYear: number;
+  isDistributor?: boolean;
+  annualFee?: number;
 }
+
+export type RecordLabelType = 'distributor' | 'local_indie' | 'indie' | 'major' | 'boutique' | 'artist_owned';
 
 export interface RecordLabel {
   id: string;
   name: string;
-  type: 'major' | 'indie' | 'boutique' | 'artist_owned';
+  type: RecordLabelType;
   country: string;
   prestige: number;          // 0 - 100
   budget: number;            // available funding
@@ -321,6 +325,11 @@ export interface RecordLabel {
   favoredGenreIds: string[];
   ownerArtistId?: string;
   scoutingCriteria?: string; // Descripción del perfil de artista buscado
+  minMonthlyListeners?: number;
+  annualFee?: number;
+  commissionPct?: number;
+  advancePayment?: number;
+  features?: string[];
 }
 
 export type ManagerTier = 'underground' | 'regional' | 'national' | 'elite_global';

@@ -879,25 +879,60 @@ export class GameEngine {
 
   public signContract(contract: LabelContract) {
     const player = this.getPlayer();
+    const label = this.world.labels[contract.labelId];
+
+    // 1. Deducir cuota anual si aplica
+    if (contract.annualFee && contract.annualFee > 0) {
+      player.stats.funds = Math.max(0, player.stats.funds - contract.annualFee);
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'contract',
+        amount: contract.annualFee,
+        description: `Cuota anual de distribución (${label ? label.name : 'Distribuidora'})`
+      });
+    }
+
+    // 2. Acreditar anticipo / bono de firma si aplica
+    if (contract.signingBonus > 0) {
+      player.stats.funds += contract.signingBonus;
+      this.recordFinancialTransaction({
+        type: 'income',
+        category: 'contract',
+        amount: contract.signingBonus,
+        description: `Anticipo / Bono de firma (${label ? label.name : 'Sello'})`
+      });
+    }
+
+    if (player.labelId && player.labelId !== contract.labelId && this.world.labels[player.labelId]) {
+      const prevLabel = this.world.labels[player.labelId];
+      if (prevLabel.rosterArtistIds) {
+        prevLabel.rosterArtistIds = prevLabel.rosterArtistIds.filter(id => id !== player.id);
+      }
+    }
+
     player.labelId = contract.labelId;
     player.activeContract = { ...contract };
-    player.stats.funds += contract.signingBonus;
-    const label = this.world.labels[contract.labelId];
+
     if (label) {
       if (!label.rosterArtistIds.includes(player.id)) {
         label.rosterArtistIds.push(player.id);
       }
     }
 
-    if (contract.signingBonus > 0) {
-      this.recordFinancialTransaction({
-        type: 'income',
-        category: 'contract',
-        amount: contract.signingBonus,
-        description: `Bono de firma discográfica (${label ? label.name : 'Sello'})`
-      });
-    }
     this.notify();
+  }
+
+  public signDeal(labelId: string): { success: boolean; contract?: LabelContract; error?: string } {
+    const player = this.getPlayer();
+    const label = this.world.labels[labelId];
+    if (!label) {
+      return { success: false, error: 'Sello o distribuidora no encontrada.' };
+    }
+    const result = IndustryEngine.signDeal(player, label, this.world);
+    if (result.success && result.contract) {
+      this.notify();
+    }
+    return result;
   }
 
   public hireManager(managerId: string) {

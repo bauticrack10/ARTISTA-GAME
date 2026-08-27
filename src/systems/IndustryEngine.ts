@@ -20,13 +20,248 @@ export interface ScoutRadarStatus {
   statusMessage: string;
 }
 
+export interface DealValidationResult {
+  canSign: boolean;
+  missingReasons: string[];
+}
+
+export interface DealSignResult {
+  success: boolean;
+  contract?: LabelContract;
+  error?: string;
+  transactionDescription?: string;
+}
+
+export interface DistributionOrLabelOption {
+  label: RecordLabel;
+  category: RecordLabel['type'];
+  canSign: boolean;
+  missingReasons: string[];
+  contractOffer: LabelContract;
+  isCurrent: boolean;
+}
+
 export class IndustryEngine {
   public static readonly MIN_MONTHLY_LISTENERS_FOR_MAJOR_SCOUTS = 100000;
-  public static readonly MIN_MONTHLY_LISTENERS_FOR_UNDERGROUND_BOUTIQUE = 20000;
+  public static readonly MIN_MONTHLY_LISTENERS_FOR_UNDERGROUND_BOUTIQUE = 8000;
+
+  /**
+   * Obtiene la escalera completa de distribución y sellos discográficos disponibles en el mundo,
+   * clasificándolos por categoría (distribuidoras, sellos independientes locales, boutiques, indies consagrados, majors).
+   */
+  static getAvailableDistributionAndLabels(
+    artist: Artist,
+    world: WorldState
+  ): DistributionOrLabelOption[] {
+    const allLabels = Object.values(world.labels);
+
+    const typeOrder: Record<RecordLabel['type'], number> = {
+      distributor: 1,
+      local_indie: 2,
+      boutique: 3,
+      indie: 4,
+      major: 5,
+      artist_owned: 6
+    };
+
+    const options: DistributionOrLabelOption[] = allLabels.map(label => {
+      const validation = this.canSignDeal(artist, label);
+      const contractOffer = this.generateDynamicLabelOffer(artist, label, world.currentYear);
+      const isCurrent = artist.labelId === label.id;
+
+      return {
+        label,
+        category: label.type,
+        canSign: validation.canSign,
+        missingReasons: validation.missingReasons,
+        contractOffer,
+        isCurrent
+      };
+    });
+
+    options.sort((a, b) => {
+      const orderA = typeOrder[a.label.type] || 99;
+      const orderB = typeOrder[b.label.type] || 99;
+      if (orderA !== orderB) return orderA - orderB;
+      const minA = a.label.minMonthlyListeners || 0;
+      const minB = b.label.minMonthlyListeners || 0;
+      return minA - minB;
+    });
+
+    return options;
+  }
+
+  /**
+   * Valida si el artista cumple con los requisitos previos de oyentes, fondos para cuota anual o exclusividad
+   * para firmar con una distribuidora o sello discográfico.
+   */
+  static canSignDeal(
+    artist: Artist,
+    label: RecordLabel
+  ): DealValidationResult {
+    const missing: string[] = [];
+
+    if (artist.labelId === label.id) {
+      missing.push('Ya tienes un acuerdo activo con esta distribuidora o sello discográfico.');
+    }
+
+    // Si tiene contrato activo no distribuidor y aún le restan álbumes por entregar
+    if (
+      artist.activeContract &&
+      !artist.activeContract.isDistributor &&
+      artist.activeContract.albumsRequired > artist.activeContract.albumsDelivered &&
+      label.type !== 'distributor'
+    ) {
+      missing.push(`Tienes un contrato discográfico exclusivo vigente (${artist.activeContract.albumsDelivered}/${artist.activeContract.albumsRequired} entregados).`);
+    }
+
+    // Validación de cuota anual
+    if (label.annualFee && label.annualFee > 0 && artist.stats.funds < label.annualFee) {
+      missing.push(`Requiere ${formatMoney(label.annualFee)} para la cuota anual (tienes ${formatMoney(artist.stats.funds)})`);
+    }
+
+    // Validación de oyentes mensuales mínimos
+    if (label.minMonthlyListeners !== undefined && label.minMonthlyListeners > 0 && artist.stats.monthlyListeners < label.minMonthlyListeners) {
+      missing.push(`Requiere al menos ${label.minMonthlyListeners.toLocaleString()} oyentes mensuales (tienes ${artist.stats.monthlyListeners.toLocaleString()})`);
+    }
+
+    // Sellos propios pertenecientes a otros artistas
+    if (label.type === 'artist_owned' && label.ownerArtistId && label.ownerArtistId !== artist.id) {
+      missing.push('Este sello discográfico es propiedad exclusiva de otro artista.');
+    }
+
+    return {
+      canSign: missing.length === 0,
+      missingReasons: missing
+    };
+  }
+
+  /**
+   * Firma un acuerdo de distribución o contrato discográfico, deduciendo cuotas anuales o acreditando anticipos
+   * y sincronizando el estado del artista y transacciones del ledger financiero.
+   */
+  static signDeal(
+    artist: Artist,
+    label: RecordLabel,
+    world: WorldState
+  ): DealSignResult {
+    const validation = this.canSignDeal(artist, label);
+    if (!validation.canSign) {
+      return {
+        success: false,
+        error: validation.missingReasons.join(' • ')
+      };
+    }
+
+    const contract = this.generateDynamicLabelOffer(artist, label, world.currentYear);
+
+    // 1. Deducir cuota anual de distribución si aplica
+    if (contract.annualFee && contract.annualFee > 0) {
+      artist.stats.funds = Math.max(0, artist.stats.funds - contract.annualFee);
+      const tx = {
+        id: `tx_fee_${world.currentYear}_${world.currentMonth}_${Date.now()}`,
+        year: world.currentYear,
+        month: world.currentMonth,
+        type: 'expense' as const,
+        category: 'contract' as const,
+        amount: contract.annualFee,
+        description: `Cuota anual de distribución (${label.name})`,
+        resultingBalance: artist.stats.funds,
+        balanceAfter: artist.stats.funds,
+        dateStr: `Año ${world.currentYear} - Mes ${world.currentMonth}`,
+        timestamp: Date.now()
+      };
+      if (!artist.financialLedger) artist.financialLedger = [];
+      artist.financialLedger.unshift(tx);
+      if (!world.financialLedger) world.financialLedger = [];
+      world.financialLedger.unshift(tx);
+    }
+
+    // 2. Acreditar anticipo / bono de firma si aplica
+    if (contract.signingBonus > 0) {
+      artist.stats.funds += contract.signingBonus;
+      const tx = {
+        id: `tx_adv_${world.currentYear}_${world.currentMonth}_${Date.now()}`,
+        year: world.currentYear,
+        month: world.currentMonth,
+        type: 'income' as const,
+        category: 'contract' as const,
+        amount: contract.signingBonus,
+        description: `Anticipo / Bono de firma (${label.name})`,
+        resultingBalance: artist.stats.funds,
+        balanceAfter: artist.stats.funds,
+        dateStr: `Año ${world.currentYear} - Mes ${world.currentMonth}`,
+        timestamp: Date.now()
+      };
+      if (!artist.financialLedger) artist.financialLedger = [];
+      artist.financialLedger.unshift(tx);
+      if (!world.financialLedger) world.financialLedger = [];
+      world.financialLedger.unshift(tx);
+    }
+
+    // 3. Actualizar contrato y roster
+    if (artist.labelId && artist.labelId !== label.id && world.labels[artist.labelId]) {
+      const prevLabel = world.labels[artist.labelId];
+      if (prevLabel.rosterArtistIds) {
+        prevLabel.rosterArtistIds = prevLabel.rosterArtistIds.filter(id => id !== artist.id);
+      }
+    }
+
+    artist.labelId = label.id;
+    artist.activeContract = { ...contract };
+
+    if (!label.rosterArtistIds.includes(artist.id)) {
+      label.rosterArtistIds.push(artist.id);
+    }
+
+    // 4. Generar noticia contextual
+    let headline = '';
+    let body = '';
+    let importance = 3;
+
+    if (label.type === 'distributor') {
+      headline = `Distribución Digital: ${artist.name} se une a ${label.name}`;
+      body = `${artist.name} activó la distribución global de su catálogo musical con ${label.name}, conservando el ${contract.royaltyPercentage}% de sus regalías de streaming y control total de másters.`;
+      importance = 2;
+    } else if (label.type === 'local_indie') {
+      headline = `Alianza en la Escena: ${artist.name} firma con el sello local ${label.name}`;
+      body = `El artista emergente sumó fuerzas con ${label.name} tras acordar un anticipo de ${formatMoney(contract.signingBonus)} y ${contract.creativeControl}% de libertad creativa.`;
+      importance = 3;
+    } else if (label.type === 'indie' || label.type === 'boutique') {
+      headline = `Fichaje Independiente: ${artist.name} sella acuerdo con ${label.name}`;
+      body = `${label.name} anunció la incorporación de ${artist.name} a su prestigioso catálogo con un contrato de ${contract.albumsRequired} álbum(es) y ${contract.royaltyPercentage}% de regalías discográficas.`;
+      importance = 4;
+    } else if (label.type === 'major') {
+      headline = `¡Bomba en la Industria! ${artist.name} firma un contrato estelar con ${label.name}`;
+      body = `La multinacional ${label.name} cerró la contratación de ${artist.name} con un mega anticipo de ${formatMoney(contract.signingBonus)} y un plan de rotación y marketing mundial.`;
+      importance = 5;
+    } else {
+      headline = `Independencia Total: ${artist.name} opera bajo su propio sello "${label.name}"`;
+      body = `Con el 100% del control artístico y fonográfico, ${artist.name} encabeza sus proyectos de manera autogestionada.`;
+      importance = 4;
+    }
+
+    world.news.unshift({
+      id: `news_deal_${Date.now()}`,
+      headline,
+      body,
+      year: world.currentYear,
+      month: world.currentMonth,
+      category: 'industry',
+      relatedArtistIds: [artist.id],
+      sentiment: 'positive',
+      importance
+    });
+
+    return {
+      success: true,
+      contract
+    };
+  }
 
   /**
    * Evalúa el estado del radar de cazatalentos (A&R) para el artista.
-   * No ofrece contratos a demanda estáticos, sino que mide el interés y los sellos en seguimiento.
+   * Mide el interés de los sellos discográficos y distribuidoras según el crecimiento de oyentes y credibilidad.
    */
   static evaluateScoutRadar(
     artist: Artist,
@@ -37,26 +272,30 @@ export class IndustryEngine {
     const progressPercentage = Math.min(100, Math.floor((listeners / threshold) * 100));
 
     let scoutInterestLevel: ScoutRadarStatus['scoutInterestLevel'] = 'unnoticed';
-    let statusMessage = 'Los cazatalentos de las Majors aún no tienen tus métricas en el radar comercial masivo.';
+    let statusMessage = 'Los cazatalentos de las Majors aún no tienen tus métricas en el radar comercial masivo. Las distribuidoras digitales y sellos locales están listos para tus primeros lanzamientos.';
 
     if (listeners >= threshold) {
       scoutInterestLevel = 'bidding_war_target';
       statusMessage = '¡Objetivo de mercado! Múltiples directivos de A&R compiten activamente por presentar ofertas millonarias en eventos emergentes.';
     } else if (listeners >= 60000) {
       scoutInterestLevel = 'high_priority';
-      statusMessage = 'Prioridad alta en mesas de A&R. Sellos independientes y majors siguen tus lanzamientos a la espera de consolidar 100.000 oyentes.';
-    } else if (listeners >= this.MIN_MONTHLY_LISTENERS_FOR_UNDERGROUND_BOUTIQUE) {
+      statusMessage = 'Prioridad alta en mesas de A&R. Sellos independientes consagrados y majors siguen tus lanzamientos a la espera de consolidar 100.000 oyentes.';
+    } else if (listeners >= 12000) {
       scoutInterestLevel = 'emerging_scouting';
-      statusMessage = 'Colectivos independientes y sellos boutique underground están monitoreando tu crecimiento en la escena.';
+      statusMessage = 'Sellos independientes locales y colectivos boutique están monitoreando tu crecimiento y tracción en la escena.';
+    } else if (listeners >= 5000) {
+      scoutInterestLevel = 'emerging_scouting';
+      statusMessage = 'Sellos independientes de barrio y locales muestran interés en tus primeras métricas de streaming.';
     }
 
     // Filtrar sellos afines al género o escena
     const scoutingLabels = Object.values(world.labels).filter(l => {
       const genreMatch = l.favoredGenreIds.includes(artist.mainGenreId) || l.favoredGenreIds.length === 0;
-      if (l.type === 'boutique') {
-        return genreMatch && (listeners >= this.MIN_MONTHLY_LISTENERS_FOR_UNDERGROUND_BOUTIQUE || artist.stats.artisticCredibility >= 60);
-      }
-      return genreMatch && listeners >= 30000;
+      const minReq = l.minMonthlyListeners || 0;
+      if (l.type === 'distributor') return true;
+      if (l.type === 'local_indie') return genreMatch && (listeners >= minReq || listeners >= 3000);
+      if (l.type === 'boutique') return genreMatch && (listeners >= minReq || artist.stats.artisticCredibility >= 60);
+      return genreMatch && listeners >= (minReq > 0 ? minReq * 0.6 : 30000);
     });
 
     return {
@@ -70,15 +309,59 @@ export class IndustryEngine {
   }
 
   /**
-   * Genera una propuesta de contrato dinámico y personalizado según métricas reales del artista y filosofía del sello.
+   * Genera una propuesta de contrato dinámico y personalizado según métricas reales del artista y filosofía del sello o distribuidora.
    */
   static generateDynamicLabelOffer(
     artist: Artist,
     label: RecordLabel,
     currentYear: number
   ): LabelContract {
-    const listeners = Math.max(10000, artist.stats.monthlyListeners);
+    const listeners = Math.max(0, artist.stats.monthlyListeners);
     const pop = artist.stats.popularity;
+
+    if (label.type === 'distributor') {
+      const commission = label.commissionPct !== undefined ? label.commissionPct : 0;
+      const royaltyPercentage = Math.max(0, 100 - commission);
+      return {
+        labelId: label.id,
+        signingBonus: 0,
+        royaltyPercentage,
+        albumsRequired: 0,
+        albumsDelivered: 0,
+        creativeControl: 100,
+        marketingPower: label.marketingPower,
+        marketingBudgetPerRelease: 0,
+        breakoutClause: 0,
+        durationYears: 1,
+        signedYear: currentYear,
+        isDistributor: true,
+        annualFee: label.annualFee || 0
+      };
+    }
+
+    if (label.type === 'local_indie') {
+      const advance = label.advancePayment !== undefined ? label.advancePayment : Math.floor(2000 + (listeners * 0.15) + (pop * 50));
+      const commission = label.commissionPct !== undefined ? label.commissionPct : 32;
+      const royaltyPercentage = Math.max(50, 100 - commission);
+      const creativeControl = label.creativeFreedomAllowed;
+      const marketingBudget = Math.floor(5000 + (label.marketingPower * 100));
+
+      return {
+        labelId: label.id,
+        signingBonus: advance,
+        royaltyPercentage,
+        albumsRequired: 1,
+        albumsDelivered: 0,
+        creativeControl,
+        marketingPower: label.marketingPower,
+        marketingBudgetPerRelease: marketingBudget,
+        breakoutClause: Math.floor(advance * 1.5),
+        durationYears: 2,
+        signedYear: currentYear,
+        isDistributor: false,
+        annualFee: 0
+      };
+    }
 
     let advance = 0;
     let royaltyPct = 20;
@@ -89,34 +372,50 @@ export class IndustryEngine {
 
     if (label.type === 'major') {
       // Majors: Grandes adelantos, altos presupuestos, menores regalías para el artista, menor control
-      advance = Math.floor(100000 + (listeners * 0.45) + (pop * 2000) + (label.budget * 0.03));
-      royaltyPct = 20 + Math.min(6, Math.floor(artist.personality.ambition / 25));
+      const baseAdvance = label.advancePayment || 100000;
+      advance = Math.floor(baseAdvance + (listeners * 0.45) + (pop * 2000) + (label.budget * 0.02));
+      royaltyPct = label.commissionPct !== undefined
+        ? (100 - label.commissionPct)
+        : (20 + Math.min(6, Math.floor(artist.personality.ambition / 25)));
       creativeControl = Math.min(50, label.creativeFreedomAllowed);
       requiredAlbums = 3 + (listeners > 500000 ? 1 : 0);
       marketingBudgetPerRelease = Math.floor(35000 + (label.marketingPower * 600));
       breakoutClause = advance * 3;
     } else if (label.type === 'indie') {
-      // Indie: Regalías justas (55-65%), libertad creativa alta, adelantos moderados
-      advance = Math.floor(35000 + (listeners * 0.25) + (pop * 1200));
-      royaltyPct = 58 + Math.min(10, Math.floor(artist.personality.independence / 15));
+      // Indie: Regalías justas (55-70%), libertad creativa alta, adelantos moderados
+      const baseAdvance = label.advancePayment || 35000;
+      advance = Math.floor(baseAdvance + (listeners * 0.25) + (pop * 1200));
+      royaltyPct = label.commissionPct !== undefined
+        ? (100 - label.commissionPct)
+        : (58 + Math.min(10, Math.floor(artist.personality.independence / 15)));
       creativeControl = Math.min(88, label.creativeFreedomAllowed + 5);
       requiredAlbums = 2;
       marketingBudgetPerRelease = Math.floor(15000 + (label.marketingPower * 350));
       breakoutClause = advance * 2;
     } else if (label.type === 'boutique') {
       // Boutique: Máxima libertad creativa (90-98%), 75-80% de regalías, adelantos boutique
-      advance = Math.floor(10000 + (listeners * 0.1) + (artist.stats.artisticCredibility * 300));
-      royaltyPct = 75 + Math.min(8, Math.floor(artist.stats.artisticCredibility / 20));
+      const baseAdvance = label.advancePayment || 10000;
+      advance = Math.floor(baseAdvance + (listeners * 0.1) + (artist.stats.artisticCredibility * 300));
+      royaltyPct = label.commissionPct !== undefined
+        ? (100 - label.commissionPct)
+        : (75 + Math.min(8, Math.floor(artist.stats.artisticCredibility / 20)));
       creativeControl = 95;
       requiredAlbums = 1;
       marketingBudgetPerRelease = Math.floor(5000 + (label.marketingPower * 180));
       breakoutClause = advance * 1.5;
+    } else if (label.type === 'artist_owned') {
+      advance = 0;
+      royaltyPct = 95;
+      creativeControl = 100;
+      requiredAlbums = 1;
+      marketingBudgetPerRelease = 20000;
+      breakoutClause = 0;
     }
 
     return {
       labelId: label.id,
       signingBonus: advance,
-      royaltyPercentage: Math.min(95, royaltyPct),
+      royaltyPercentage: Math.min(98, Math.max(10, royaltyPct)),
       albumsRequired: requiredAlbums,
       albumsDelivered: 0,
       creativeControl,
@@ -124,7 +423,9 @@ export class IndustryEngine {
       marketingBudgetPerRelease,
       breakoutClause,
       durationYears: requiredAlbums + 1,
-      signedYear: currentYear
+      signedYear: currentYear,
+      isDistributor: false,
+      annualFee: 0
     };
   }
 
@@ -135,11 +436,11 @@ export class IndustryEngine {
     artist: Artist,
     world: WorldState
   ): Array<{ label: RecordLabel; contract: LabelContract }> {
-    const candidateLabels = Object.values(world.labels).filter(l => l.id !== artist.labelId);
-    
+    const candidateLabels = Object.values(world.labels).filter(l => l.id !== artist.labelId && l.type !== 'distributor');
+
     // Filtrar candidatos afines
-    const majors = candidateLabels.filter(l => l.type === 'major');
-    const indies = candidateLabels.filter(l => l.type === 'indie');
+    const majors = candidateLabels.filter(l => l.type === 'major' && (artist.stats.monthlyListeners >= (l.minMonthlyListeners || 0) * 0.7));
+    const indies = candidateLabels.filter(l => (l.type === 'indie' || l.type === 'local_indie'));
     const boutiques = candidateLabels.filter(l => l.type === 'boutique');
 
     const selected: RecordLabel[] = [];
@@ -260,12 +561,20 @@ export class IndustryEngine {
   ): { contractCompleted: boolean; labelName?: string; remainingAlbums?: number } {
     if (!artist.activeContract) return { contractCompleted: false };
 
+    // Los acuerdos de distribución digital no tienen cuotas de álbumes obligatorios para finalizar
+    if (artist.activeContract.isDistributor || artist.activeContract.albumsRequired <= 0) {
+      return { contractCompleted: false };
+    }
+
     artist.activeContract.albumsDelivered += 1;
     const remaining = artist.activeContract.albumsRequired - artist.activeContract.albumsDelivered;
 
     if (remaining <= 0) {
       const label = world.labels[artist.activeContract.labelId];
       const labelName = label ? label.name : 'su discográfica';
+      if (label && label.rosterArtistIds) {
+        label.rosterArtistIds = label.rosterArtistIds.filter(id => id !== artist.id);
+      }
 
       artist.activeContract = null;
       artist.labelId = null;

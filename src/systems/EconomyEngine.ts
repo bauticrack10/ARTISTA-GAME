@@ -22,15 +22,25 @@ export class EconomyEngine {
   } {
     const grossStreaming = (totalMonthlyStreams / 1000) * this.STREAM_PAYOUT_PER_THOUSAND;
 
-    // Label royalty split
+    // Label & distributor royalty split
     let artistRoyaltyPct = 100;
     if (artist.activeContract) {
       artistRoyaltyPct = artist.activeContract.royaltyPercentage;
     } else if (label) {
-      if (label.type === 'major') artistRoyaltyPct = 22;
-      else if (label.type === 'indie') artistRoyaltyPct = 65;
-      else if (label.type === 'boutique') artistRoyaltyPct = 75;
-      else if (label.type === 'artist_owned') artistRoyaltyPct = 95;
+      if (label.type === 'distributor') {
+        // 85% for free distributors (15% commission) or 100% for annual fee distributors (0% commission)
+        artistRoyaltyPct = label.commissionPct !== undefined ? (100 - label.commissionPct) : (label.annualFee && label.annualFee > 0 ? 100 : 85);
+      } else if (label.type === 'local_indie') {
+        artistRoyaltyPct = label.commissionPct !== undefined ? (100 - label.commissionPct) : 68;
+      } else if (label.type === 'major') {
+        artistRoyaltyPct = label.commissionPct !== undefined ? (100 - label.commissionPct) : 22;
+      } else if (label.type === 'indie') {
+        artistRoyaltyPct = label.commissionPct !== undefined ? (100 - label.commissionPct) : 65;
+      } else if (label.type === 'boutique') {
+        artistRoyaltyPct = label.commissionPct !== undefined ? (100 - label.commissionPct) : 75;
+      } else if (label.type === 'artist_owned') {
+        artistRoyaltyPct = 95;
+      }
     }
 
     const artistStreamingNet = grossStreaming * (artistRoyaltyPct / 100);

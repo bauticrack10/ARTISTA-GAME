@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "test:awards": "tsx test-awards-engine.ts"
+    "test:awards": "tsx test-awards-engine.ts",
+    "test:industry": "tsx test-industry-contracts.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
