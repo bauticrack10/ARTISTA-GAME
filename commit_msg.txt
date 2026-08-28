@@ -1,9 +1,0 @@
-fix(core-career): garantizar inicio fluido de carrera y fallback automatico de nombre
-
-- Modificaciones:
-  1. CharacterCreatorView.tsx: 'handleSubmit' ahora genera un nombre artístico de respaldo automático ('effectiveStageName' / 'effectiveRealName') si el campo está vacío, evitando bloqueos silenciosos de validación en navegadores.
-  2. Botón de acceso rápido 'Comenzar Carrera' añadido en la barra superior de CharacterCreatorView para iniciar de forma instantánea sin necesidad de recorrer todo el scroll.
-  3. App.tsx: estandarización de contenedores modales a 'bg-[#0B0C10] text-[#F8FAFC]' para transiciones fluidas sin parpadeos.
-  4. Suite diagnóstica de integración 'test-start-career-diagnosis.ts' ejecutada con 100% de éxito.
-- Componentes/Sistemas: src/components/CharacterCreatorView.tsx, src/App.tsx, test-start-career-diagnosis.ts.
-- Contexto para Agentes IA: Elimina fricciones en la creación de partidas y asegura que la transición de StartScreen -> CharacterCreator -> Dashboard ocurra sin bloqueos ni errores de renderizado.
