@@ -142,45 +142,44 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
     if (item.importance >= 5) {
       return {
         label: 'EN VIVO',
-        style: 'bg-rose-100 text-rose-900 border-rose-300 font-bold animate-pulse'
+        style: 'bg-rose-500/20 text-rose-300 border-rose-500/40 font-bold animate-pulse'
       };
     }
 
     switch (item.category) {
       case 'industry':
-        return { label: 'INDUSTRIA', style: 'bg-blue-100 text-blue-900 border-blue-300' };
+        return { label: 'INDUSTRIA', style: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
       case 'chart':
-        return { label: 'CHARTS', style: 'bg-amber-100 text-amber-950 border-amber-300' };
+        return { label: 'CHARTS', style: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
       case 'culture':
-        return { label: 'CULTURA', style: 'bg-purple-100 text-purple-900 border-purple-300' };
+        return { label: 'CULTURA', style: 'bg-purple-500/20 text-purple-300 border-purple-500/30' };
       case 'award':
-        return { label: 'PREMIOS', style: 'bg-yellow-100 text-yellow-950 border-yellow-300' };
+        return { label: 'PREMIOS', style: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' };
       case 'release':
-        return { label: 'LANZAMIENTOS', style: 'bg-teal-100 text-teal-900 border-teal-300' };
+        return { label: 'LANZAMIENTOS', style: 'bg-teal-500/20 text-teal-300 border-teal-500/30' };
       case 'rivalry':
       case 'scandal':
-        return { label: 'POLÉMICA', style: 'bg-rose-100 text-rose-900 border-rose-300' };
+        return { label: 'POLÉMICA', style: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
       case 'trend':
-        return { label: 'TENDENCIAS', style: 'bg-cyan-100 text-cyan-900 border-cyan-300' };
+        return { label: 'TENDENCIAS', style: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' };
       case 'tour':
-        return { label: 'GIRAS', style: 'bg-emerald-100 text-emerald-900 border-emerald-300' };
+        return { label: 'GIRAS', style: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
       default:
-        return { label: 'EN VIVO', style: 'bg-emerald-100 text-emerald-900 border-emerald-300' };
+        return { label: 'EN VIVO', style: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
     }
   };
 
   const getSocialSentimentBadge = (sentiment: SocialPost['sentiment']) => {
     switch (sentiment) {
       case 'hype':
-        return { label: '🔥 Hype', class: 'bg-orange-100 text-orange-900 border-orange-200' };
+        return { label: '🔥 Hype', class: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
       case 'positive':
-        return { label: '💖 Fan Love', class: 'bg-pink-100 text-pink-900 border-pink-200' };
+        return { label: '💖 Fan Love', class: 'bg-pink-500/20 text-pink-400 border-pink-500/30' };
       case 'meme':
-        return { label: '😂 Viral', class: 'bg-emerald-100 text-emerald-900 border-emerald-200' };
+        return { label: '😂 Viral', class: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
       case 'polarizing':
-        return { label: '💬 Debate', class: 'bg-purple-100 text-purple-900 border-purple-200' };
+        return { label: '💬 Debate', class: 'bg-purple-500/20 text-purple-400 border-purple-500/30' };
       case 'negative':
-        return { label: '💀 Crítica', class: 'bg-rose-100 text-rose-900 border-rose-200' };
         return { label: '💀 Crítica', class: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
       default:
         return { label: '✨ Social', class: 'bg-slate-700/50 text-slate-300 border-slate-600' };

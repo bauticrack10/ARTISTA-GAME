@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { WorldState, MusicRegion, Artist, ChartEntry } from '../types';
 import { BarChart3, Trophy, Flame, TrendingUp, TrendingDown, Minus, Sparkles, Disc3, Crown } from 'lucide-react';
 import { RELEASE_BADGES } from '../utils/themeColors';
+import { MUSIC_REGION_CONFIG, formatMusicRegion, formatMusicRegionLabel } from '../utils/formatters';
 
 interface ChartsViewProps {
   world: WorldState;
@@ -19,13 +20,13 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
   };
 
   const regions: Array<{ id: MusicRegion; label: string }> = [
-    { id: 'Global', label: '🌍 Global Top 50' },
-    { id: 'Argentina', label: '🇦🇷 Argentina' },
-    { id: 'LatinAmerica', label: '🌎 Latinoamérica' },
-    { id: 'USA', label: '🇺🇸 Estados Unidos' },
-    { id: 'Spain', label: '🇪🇸 España' },
-    { id: 'Mexico', label: '🇲🇽 México' },
-    { id: 'Europe', label: '🇪🇺 Europa' }
+    { id: 'Global', label: formatMusicRegionLabel('Global') },
+    { id: 'Argentina', label: formatMusicRegionLabel('Argentina') },
+    { id: 'LatinAmerica', label: formatMusicRegionLabel('LatinAmerica') },
+    { id: 'USA', label: formatMusicRegionLabel('USA') },
+    { id: 'Spain', label: formatMusicRegionLabel('Spain') },
+    { id: 'Mexico', label: formatMusicRegionLabel('Mexico') },
+    { id: 'Europe', label: formatMusicRegionLabel('Europe') }
   ];
 
   return (

@@ -30,7 +30,7 @@ import {
   RELEASE_BADGES,
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
-import { formatMoney, cleanQuotes, cleanParentheses } from '../utils/formatters';
+import { formatMoney, cleanQuotes, cleanParentheses, formatCityCountry } from '../utils/formatters';
 
 interface CareerErasViewProps {
   player: Artist;
@@ -103,7 +103,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
     month: 1,
     type: 'era',
     title: `Debut Artístico en la Escena`,
-    description: `Comienzo formal de la trayectoria artística en ${player.city}, ${player.country}. Enfoque sonoro inicial: ${world.genres[player.mainGenreId]?.name || player.mainGenreId}.`,
+    description: `Comienzo formal de la trayectoria artística en ${formatCityCountry(player.city, player.country)}. Enfoque sonoro inicial: ${world.genres[player.mainGenreId]?.name || player.mainGenreId}.`,
     badge: 'Inicio de Carrera',
     badgeClass: 'bg-purple-900/40 text-purple-300 border-purple-500/40',
     icon: Sparkles,
@@ -158,7 +158,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       type: 'single',
       title: `Single: "${single.title}"${hasVideo ? ' 🎬 (Videoclip Oficial)' : ''}`,
       description: `Sencillo de calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" (Dir. ${mv.directorTier}, ${(mv.views / 1000).toFixed(0)}k vistas).` : ''}`,
-      metrics: `${(single.streamsTotal / 1000000).toFixed(1)}M streams${hasVideo && mv ? ` • ${(mv.views / 1000000).toFixed(1)}M vistas en video` : ''} • Pico #${single.peakPosition?.Global || '-'} Global`,
+      metrics: `${(single.streamsTotal / 1000000).toFixed(1)}M streams${hasVideo && mv ? ` • ${(mv.views / 1000000).toFixed(1)}M vistas en video` : ''} • Pico #${single.peakPosition?.Global || '-'} Mundial`,
       badge: hasVideo ? '🎬 Videoclip Oficial' : isHit ? 'Hit Top 10 🔥' : 'Single',
       badgeClass: hasVideo ? 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40 font-bold' : isHit ? 'bg-purple-900/50 text-purple-300 border-purple-500/40 font-bold' : 'bg-purple-950/50 text-purple-300 border-purple-500/40',
       icon: hasVideo ? Video : Disc3,

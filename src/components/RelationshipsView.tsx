@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { playSound } from '../utils/audioSystem';
-import { formatCompactNumber } from '../utils/formatters';
+import { formatCompactNumber, cleanQuotes, sanitizeString } from '../utils/formatters';
 
 interface RelationshipsViewProps {
   player: Artist;
@@ -747,7 +747,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                       {rel.history && rel.history.length > 0 && (
                         <div className="pt-2 border-t border-[#2A2E3D] text-[10px] text-[#94A3B8] italic line-clamp-1">
-                          Último: "{rel.history[rel.history.length - 1]}"
+                          Último: "{cleanQuotes(rel.history[rel.history.length - 1])}"
                         </div>
                       )}
                     </div>
@@ -999,7 +999,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                     <span>Año {world.currentYear} • Mes {world.currentMonth}</span>
                   </div>
                   <h5 className="text-sm sm:text-base font-bold text-[#F8FAFC] tracking-tight leading-snug">
-                    "{activeModalResult.pressHeadline}"
+                    "{cleanQuotes(activeModalResult.pressHeadline)}"
                   </h5>
                   <p className="text-xs text-[#94A3B8] leading-relaxed">
                     {activeModalResult.pressBody}

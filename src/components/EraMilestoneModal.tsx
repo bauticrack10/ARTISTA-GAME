@@ -19,6 +19,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { formatCityCountry, cleanQuotes } from '../utils/formatters';
 
 export type MagazinePreset = 'rolling_stone' | 'billboard' | 'underground_zine' | 'the_fader';
 
@@ -102,7 +103,8 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
   // Helper to format social text
   const getSocialShareText = (): string => {
     const genreName = world.genres[player.mainGenreId]?.name || player.mainGenreId;
-    return `🔥 ¡HITO HISTÓRICO EN "EL ARTISTA"! 🏆\n\n📰 Portada de Revista: ${getMagazineName(selectedPreset)}\n🌟 Artista: ${player.name} (${player.city}, ${player.country})\n🎯 Logro: ${milestone.title}\n📊 ${milestone.milestoneLabel || 'Etapa'}: ${milestone.statValue || player.careerStage}\n🎵 Sonido: ${genreName}\n\n"${customHeadline}"\n\n#ElArtista #MusicaIndie #${player.name.replace(/\s+/g, '')} #RollingStone #Billboard`;
+    const location = formatCityCountry(player.city, player.country);
+    return `🔥 ¡HITO HISTÓRICO EN "EL ARTISTA"! 🏆\n\n📰 Portada de Revista: ${getMagazineName(selectedPreset)}\n🌟 Artista: ${player.name} (${location})\n🎯 Logro: ${milestone.title}\n📊 ${milestone.milestoneLabel || 'Etapa'}: ${milestone.statValue || player.careerStage}\n🎵 Sonido: ${genreName}\n\n"${cleanQuotes(customHeadline)}"\n\n#ElArtista #MusicaIndie #${player.name.replace(/\s+/g, '')} #RollingStone #Billboard`;
   };
 
   const handleCopyShareText = async () => {
@@ -235,7 +237,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
       // 6. Draw Sub-lines and Barcode
       ctx.font = '30px sans-serif';
       ctx.fillStyle = selectedPreset === 'billboard' ? '#64748b' : '#94a3b8';
-      ctx.fillText(`Etapa: ${player.careerStage} • Ciudad: ${player.city}, ${player.country}`, 600, 1380);
+      ctx.fillText(`Etapa: ${player.careerStage} • Ciudad: ${formatCityCountry(player.city, player.country)}`, 600, 1380);
       ctx.fillText(`Música: ${world.genres[player.mainGenreId]?.name || player.mainGenreId} • Legado: ${player.legacyScore}/100`, 600, 1430);
 
       // Barcode box
@@ -421,7 +423,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
                     {player.name}
                   </h2>
                   <p className="text-[10px] sm:text-xs opacity-75 font-mono uppercase">
-                    {player.careerStage} • {player.city}, {player.country}
+                    {player.careerStage} • {formatCityCountry(player.city, player.country)}
                   </p>
                 </div>
               </div>

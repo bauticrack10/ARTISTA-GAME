@@ -996,7 +996,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
     weight: 14,
     condition: (ctx) => ctx.player.stats.popularity >= 30,
     getDescription: (ctx) =>
-      `Un productor comercial con múltiples discos de platino te contacta y ofrece producir gratis el corte principal de tu proyecto, con una sola condición: descartar la pista que produjo tu amigo de la infancia del barrio (Nico '808').`,
+      `Un productor comercial con múltiples discos de platino te contacta y ofrece producir gratis el corte principal de tu proyecto, con una sola condición: descartar la pista que produjo tu amigo de la infancia del barrio (Nico "808").`,
     choices: (ctx) => [
       {
         id: 'c_loyalty_barrio_beatmaker',

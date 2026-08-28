@@ -40,7 +40,9 @@ import {
   formatFans,
   cleanCountTag,
   cleanQuotes,
-  cleanParentheses
+  cleanParentheses,
+  formatCityCountry,
+  sanitizeString
 } from '../utils/formatters';
 
 interface CharacterCreatorViewProps {
@@ -464,7 +466,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const isCustomCityValid = customCityText.trim().length >= 3;
   const finalResolvedCity = isCustomCity
     ? (isCustomCityValid ? customCityText.trim() : (COUNTRY_CITIES[country]?.[0] || 'Buenos Aires'))
-    : city;
+    : city.trim();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -473,9 +475,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     const uniqueId = `artist_${Math.random().toString(36).substring(2, 9)}`;
     const currentYear = 2026;
     const birthYear = currentYear - age;
+    const locationString = formatCityCountry(finalResolvedCity, country);
 
     const historicalNotes = [
-      `Inició su carrera musical en el año ${currentYear} en ${finalResolvedCity}, ${country}.`
+      `Inició su carrera musical en el año ${currentYear} en ${locationString}.`
     ];
     if (isProdigy) {
       historicalNotes.push('Considerado un prodigio generacional irrepetible (1 en 100.000) con multiplicador x3 permanente.');
@@ -488,7 +491,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     const newArtist: Partial<Artist> = {
       id: uniqueId,
       name: name.trim() || 'Nuevo Artista',
-      realName: realName.trim() || name.trim(),
+      realName: cleanQuotes(realName.trim()) || name.trim(),
       isPlayer: true,
       country,
       city: finalResolvedCity,
@@ -525,8 +528,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           genreFocus: mainGenreId,
           stage: startStats.careerStage,
           highlightSummary: isProdigy
-            ? `Irrumpió en la escena en ${currentYear} en ${finalResolvedCity}, ${country}. Habilidad innata deslumbrante y aura de talento histórico.`
-            : `Inició su carrera musical en ${currentYear} en ${finalResolvedCity}, ${country}. Búsqueda del sonido propio y primeras grabaciones autogestionadas.`
+            ? `Irrumpió en la escena en ${currentYear} en ${locationString}. Habilidad innata deslumbrante y aura de talento histórico.`
+            : `Inició su carrera musical en ${currentYear} en ${locationString}. Búsqueda del sonido propio y primeras grabaciones autogestionadas.`
         }
       ],
       awardsWon: [],
@@ -1506,7 +1509,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   </p>
                   <p className="text-xs text-[#94A3B8] flex items-center justify-center gap-1 mt-0.5">
                     <MapPin className="w-3 h-3 text-[#06B6D4]" />
-                    <span>{finalResolvedCity}, {country}</span>
+                    <span>{formatCityCountry(finalResolvedCity, country)}</span>
                   </p>
                 </div>
 

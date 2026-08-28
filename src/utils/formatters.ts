@@ -1,24 +1,37 @@
+import { MusicRegion } from '../types';
+
 /**
  * Utilities for String Formatting, Typography Sanitation, Regional Names and Financial Values
  */
 
 /**
- * Sanitiza una cadena eliminando espacios parásitos dentro de paréntesis, comillas y barras
+ * Sanitiza una cadena eliminando espacios parásitos antes de signos de puntuación,
+ * dentro de paréntesis, comillas, asteriscos huérfanos y barras.
  */
 export function sanitizeString(text: string): string {
   if (!text) return '';
 
   return text
-    // Elimina espacios redundantes dentro de paréntesis: "( 15 )" -> "(15)", "(4 )" -> "(4)"
+    // Elimina espacios parásitos antes de signos de puntuación: "Buenos Aires , Argentina" -> "Buenos Aires, Argentina"
+    .replace(/\s+([,;:.!?])/g, '$1')
+    // Elimina espacios redundantes dentro de paréntesis: "( 15 )" -> "(15)", "(4 )" -> "(4)", "(+6M )" -> "(+6M)"
     .replace(/\(\s+/g, '(')
     .replace(/\s+\)/g, ')')
     // Elimina espacios redundantes dentro de corchetes: "[ 01 ]" -> "[01]"
     .replace(/\[\s+/g, '[')
     .replace(/\s+\]/g, ']')
-    // Normaliza signos de avance o modificadores: "(+ 1Y )" -> "(+1Y)", "(+ 6M)" -> "(+6M)"
+    // Normaliza signos de avance o modificadores: "(+ 1Y )" -> "(+1Y)", "(+ 6M )" -> "(+6M)", "(+6M )" -> "(+6M)"
     .replace(/\(\s*\+\s*([0-9]+[A-Za-z]+)\s*\)/g, '(+$1)')
     // Normaliza meses con números: "(MES 1 )" -> "(Mes 1)", "( MES 12)" -> "(Mes 12)"
     .replace(/\(\s*MES\s*([0-9]+)\s*\)/gi, '(Mes $1)')
+    // Limpia comillas con asteriscos o artefactos mal escapados: '"Bruno Romero" *"*' -> '"Bruno Romero"'
+    .replace(/\s+\*"\*\s*$/g, '')
+    .replace(/\s*\*\s*"\s*\*\s*/g, '')
+    .replace(/^\s*\*\s*"\s*/g, '"')
+    .replace(/\s*"\s*\*\s*$/g, '"')
+    .replace(/"\s*\*\s*"/g, '"')
+    .replace(/\*\s*"\s*\*/g, '')
+    .replace(/\s*\*+\s*$/g, '')
     // Normaliza comillas con espacios parásitos: '" Cielo "' -> '"Cielo"'
     .replace(/"\s+([^"]*?)\s+"/g, '"$1"')
     // Evita duplicación de signos de moneda: "$ $0" o "$$0" -> "$0"
@@ -28,6 +41,17 @@ export function sanitizeString(text: string): string {
     // Limpia espacios duplicados consecutivos
     .replace(/[ \t]{2,}/g, ' ')
     .trim();
+}
+
+/**
+ * Formatea de forma segura Ciudad y País sin espacios huérfanos antes de la coma.
+ * Ejemplo: formatCityCountry('Buenos Aires ', ' Argentina') -> "Buenos Aires, Argentina"
+ */
+export function formatCityCountry(city?: string, country?: string): string {
+  const c = city?.replace(/\s+,/g, ',').trim() || '';
+  const k = country?.trim() || '';
+  if (c && k) return `${c}, ${k}`;
+  return c || k || '';
 }
 
 /**
@@ -48,11 +72,21 @@ export function cleanParentheses(text: string): string {
 }
 
 /**
- * Elimina espacios innecesarios dentro de comillas
+ * Elimina comillas externas redundantes, asteriscos huérfanos y espacios parásitos dentro de comillas
  */
 export function cleanQuotes(text: string): string {
   if (!text) return '';
-  return text.replace(/"\s+([^"]*?)\s+"/g, '"$1"');
+  return text
+    .replace(/^["'«»“”„*]+|["'«»“”„*]+$/g, '')
+    .replace(/\s+\*"\*\s*$/g, '')
+    .replace(/\s*\*\s*"\s*\*\s*/g, '')
+    .replace(/^\s*\*\s*"\s*/g, '')
+    .replace(/\s*"\s*\*\s*$/g, '')
+    .replace(/"\s+([^"]*?)\s+"/g, '"$1"')
+    .replace(/"\s+([^"]*?)"/g, '"$1"')
+    .replace(/"([^"]*?)\s+"/g, '"$1"')
+    .replace(/\s+([,;:.!?])/g, '$1')
+    .trim();
 }
 
 /**
@@ -66,7 +100,6 @@ export function formatMoney(amount: number | string | undefined | null): string 
   return `$${safeAmount.toLocaleString('es-AR')}`;
 }
 
-/**
 /**
  * Formatea un número en notación compacta (1.2k, 3.4M, 1.1B) con manejo de negativos y ceros
  */
@@ -111,6 +144,110 @@ export function formatListeners(count: number): string {
 export function formatStreams(count: number): string {
   const formatted = formatCompactNumber(count);
   return `${formatted} ${Math.abs(count) === 1 ? 'Stream' : 'Streams'}`;
+}
+
+/**
+ * Configuración canónica de visualización de regiones musicales en español uniforme
+ */
+export interface RegionDisplayConfig {
+  id: MusicRegion;
+  name: string;           // "Mundial", "Latinoamérica", "España", "EE. UU.", etc.
+  label: string;          // "🌍 Mundial Top 50", "🌎 Latinoamérica", etc.
+  flag: string;           // "🌍", "🇦🇷", "🌎", "🇺🇸", "🇪🇸", "🇲🇽", "🇪🇺"
+  inPhrase: string;       // "a nivel mundial", "en Latinoamérica", "en EE. UU.", etc.
+  no1Headline: string;    // "¡#1 a Nivel Mundial!", "¡#1 en Latinoamérica!", etc.
+}
+
+export const MUSIC_REGION_CONFIG: Record<MusicRegion, RegionDisplayConfig> = {
+  Global: {
+    id: 'Global',
+    name: 'Mundial',
+    label: '🌍 Mundial Top 50',
+    flag: '🌍',
+    inPhrase: 'a nivel mundial',
+    no1Headline: '¡#1 a Nivel Mundial!'
+  },
+  Argentina: {
+    id: 'Argentina',
+    name: 'Argentina',
+    label: '🇦🇷 Argentina',
+    flag: '🇦🇷',
+    inPhrase: 'en Argentina',
+    no1Headline: '¡#1 en Argentina!'
+  },
+  LatinAmerica: {
+    id: 'LatinAmerica',
+    name: 'Latinoamérica',
+    label: '🌎 Latinoamérica',
+    flag: '🌎',
+    inPhrase: 'en Latinoamérica',
+    no1Headline: '¡#1 en Latinoamérica!'
+  },
+  USA: {
+    id: 'USA',
+    name: 'EE. UU.',
+    label: '🇺🇸 EE. UU.',
+    flag: '🇺🇸',
+    inPhrase: 'en EE. UU.',
+    no1Headline: '¡#1 en EE. UU.!'
+  },
+  Spain: {
+    id: 'Spain',
+    name: 'España',
+    label: '🇪🇸 España',
+    flag: '🇪🇸',
+    inPhrase: 'en España',
+    no1Headline: '¡#1 en España!'
+  },
+  Mexico: {
+    id: 'Mexico',
+    name: 'México',
+    label: '🇲🇽 México',
+    flag: '🇲🇽',
+    inPhrase: 'en México',
+    no1Headline: '¡#1 en México!'
+  },
+  Europe: {
+    id: 'Europe',
+    name: 'Europa',
+    label: '🇪🇺 Europa',
+    flag: '🇪🇺',
+    inPhrase: 'en Europa',
+    no1Headline: '¡#1 en Europa!'
+  }
+};
+
+/**
+ * Obtiene el nombre normalizado en español de una región de charts.
+ * "Global" -> "Mundial", "LatinAmerica" -> "Latinoamérica", "USA" -> "EE. UU.", "Spain" -> "España", "Europe" -> "Europa"
+ */
+export function formatMusicRegion(region: MusicRegion): string {
+  return MUSIC_REGION_CONFIG[region]?.name || region;
+}
+
+/**
+ * Obtiene la etiqueta para botones y selectores de charts con emoji/bandera.
+ */
+export function formatMusicRegionLabel(region: MusicRegion): string {
+  return MUSIC_REGION_CONFIG[region]?.label || region;
+}
+
+/**
+ * Genera el titular de noticia cuando una canción alcanza el puesto #1 en un chart regional.
+ */
+export function formatChartMilestoneHeadline(region: MusicRegion, songTitle: string, artistName: string): string {
+  const config = MUSIC_REGION_CONFIG[region];
+  const prefix = config?.no1Headline || `¡#1 en ${region}!`;
+  return `${prefix} "${songTitle}" de ${artistName} conquista la cima`;
+}
+
+/**
+ * Genera el cuerpo de noticia cuando una canción alcanza el puesto #1 en un chart regional.
+ */
+export function formatChartMilestoneBody(region: MusicRegion): string {
+  const config = MUSIC_REGION_CONFIG[region];
+  const phrase = config?.inPhrase || `en ${region}`;
+  return `El single alcanzó el primer puesto de los charts oficiales ${phrase} con cifras récord de streaming.`;
 }
 
 /**

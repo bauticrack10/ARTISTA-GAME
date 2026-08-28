@@ -27,7 +27,8 @@ import {
   formatListeners,
   formatStreams,
   formatCompactNumber,
-  cleanQuotes
+  cleanQuotes,
+  formatCityCountry
 } from '../utils/formatters';
 
 export interface ArtistHeroCardProps {
@@ -298,7 +299,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                 </>
               ) : null}
               <span>
-                {player.city}, {player.country}
+                {formatCityCountry(player.city, player.country)}
               </span>
               <span className="text-[#94A3B8]/60">•</span>
               <span className="font-mono text-[#F8FAFC]">
@@ -341,7 +342,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
                 <Award className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>
-                  Legado: <strong className="font-semibold text-[#FBBF24]">{player.legacyScore} / 100</strong>
+                  Legado: <strong className="font-semibold text-[#FBBF24]">{player.legacyScore}/100</strong>
                 </span>
               </span>
             </div>

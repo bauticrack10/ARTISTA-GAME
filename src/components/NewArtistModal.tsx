@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Artist, WorldState, Genre } from '../types';
 import { Sparkles, User, MapPin, Disc3, Sliders, X } from 'lucide-react';
+import { cleanQuotes } from '../utils/formatters';
 
 interface NewArtistModalProps {
   world: WorldState;
@@ -50,10 +51,10 @@ export const NewArtistModal: React.FC<NewArtistModalProps> = ({ world, onClose, 
 
     onCreatePlayer({
       id: `artist_custom_${Date.now()}`,
-      name,
-      realName,
-      country,
-      city,
+      name: name.trim() || 'Nuevo Artista',
+      realName: cleanQuotes(realName.trim()) || name.trim(),
+      country: country.trim(),
+      city: city.trim(),
       mainGenreId,
       avatarColor,
       personality,

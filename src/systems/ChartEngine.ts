@@ -1,4 +1,5 @@
 import { Song, Artist, RegionalChart, MusicRegion, ChartEntry, HistoricalRecord, WorldState } from '../types';
+import { formatChartMilestoneHeadline, formatChartMilestoneBody } from '../utils/formatters';
 
 export interface ChartValidationResult {
   isValid: boolean;
@@ -153,8 +154,8 @@ export class ChartEngine {
         // Check for #1 news milestone (only when newly hitting #1)
         if (rank === 1 && lastRank !== 1 && item.artist) {
           chartMilestoneNews.push({
-            headline: `¡#1 en ${region}! "${item.song.title}" de ${formattedArtistName} conquista la cima`,
-            body: `El single alcanzó el primer puesto de los charts oficiales en ${region} con cifras récord de streaming.`,
+            headline: formatChartMilestoneHeadline(region, item.song.title, formattedArtistName),
+            body: formatChartMilestoneBody(region),
             relatedArtistId: item.artist.id
           });
         }
