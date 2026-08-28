@@ -16,6 +16,8 @@ export function sanitizeString(text: string): string {
     .replace(/\s+([,;:.!?])/g, '$1')
     // Normaliza fracciones y ratios en paréntesis: "( 80 /100)" o "( 80 / 100 )" -> "(80/100)"
     .replace(/\(\s*([0-9]+)\s*\/\s*([0-9]+)\s*\)/g, '($1/$2)')
+    // Normaliza conteos y estados en paréntesis: "( 0 activos)" -> "(0 activos)", "( 0 ADQUIRIDOS)" -> "(0 ADQUIRIDOS)"
+    .replace(/\(\s*([0-9]+)\s+([A-Za-z]+)\s*\)/g, '($1 $2)')
     // Elimina espacios redundantes dentro de paréntesis: "( 15 )" -> "(15)", "(2 )" -> "(2)", "(+6M )" -> "(+6M)", "( TRAP LATINO )" -> "(TRAP LATINO)"
     .replace(/\(\s+/g, '(')
     .replace(/\s+\)/g, ')')
@@ -38,11 +40,44 @@ export function sanitizeString(text: string): string {
     .replace(/"\s+([^"]*?)\s+"/g, '"$1"')
     // Evita duplicación de signos de moneda: "$ $0" o "$$0" -> "$0"
     .replace(/\$\s*\$+/g, '$')
+    // Elimina espacios entre signo de dólar y número: "$ 140" -> "$140"
+    .replace(/\$\s+([0-9]+)/g, '$$$1')
+    // Normaliza sufijos por mes: "+ 0 / mes" -> "+0/mes", "/ mes" -> "/mes"
+    .replace(/\s*\/\s*mes\b/gi, '/mes')
+    // Normaliza signos más con espacios antes de números: "+ 0 Calidad" -> "+0 Calidad", "+ 0" -> "+0"
+    .replace(/\+\s+([0-9]+)/g, '+$1')
     // Normaliza barras oblicuas en conteos: "1 /3" o "1 / 3" -> "1/3"
     .replace(/\s*\/\s*/g, '/')
     // Limpia espacios duplicados consecutivos
     .replace(/[ \t]{2,}/g, ' ')
     .trim();
+}
+
+/**
+ * Formatea el buff de mitigación de fatiga de gira.
+ * Si el porcentaje es 0, retorna "0% Fatiga".
+ * Si es > 0, retorna "-X% Fatiga".
+ */
+export function formatTourFatigueBuff(reduction: number): string {
+  const pct = Math.round(reduction * 100);
+  if (pct <= 0) return '0% Fatiga';
+  return `-${pct}% Fatiga`;
+}
+
+/**
+ * Formatea el buff de calidad.
+ * Ejemplo: formatQualityBuff(0) -> "+0 Calidad", formatQualityBuff(5) -> "+5 Calidad"
+ */
+export function formatQualityBuff(qualityBonus: number): string {
+  return `+${qualityBonus} Calidad`;
+}
+
+/**
+ * Formatea el buff de energía pasiva mensual.
+ * Ejemplo: formatPassiveEnergyBuff(0) -> "+0/mes", formatPassiveEnergyBuff(3) -> "+3/mes"
+ */
+export function formatPassiveEnergyBuff(energyPerMonth: number): string {
+  return `+${energyPerMonth}/mes`;
 }
 
 /**

@@ -422,7 +422,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {formatMoney(operationalCosts.semiAnnualLiving)}
             </div>
             <span className="text-[10px] text-[#94A3B8] font-mono block">
-              {formatMoney(operationalCosts.monthlyBaseLiving)} / mes (Vivienda & Crew)
+              {`${formatMoney(operationalCosts.monthlyBaseLiving)}/mes (Vivienda & Crew)`}
             </span>
           </div>
 
@@ -433,7 +433,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {formatMoney(operationalCosts.semiAnnualUpkeep)}
             </div>
             <span className="text-[10px] text-[#94A3B8] font-mono block">
-              {formatMoney(operationalCosts.monthlyUpkeep)} / mes ({ownedUpgrades.length} activos)
+              {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes (${ownedUpgrades.length} activos)`}
             </span>
           </div>
 
@@ -447,7 +447,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {operationalCosts.runwayMonths >= 99 ? '∞ Meses' : `${operationalCosts.runwayMonths.toFixed(1)} meses`}
             </div>
             <span className="text-[10px] text-emerald-500/80 font-mono block">
-              Con saldo actual de ${player.stats.funds.toLocaleString()}
+              {`Con saldo actual de ${formatMoney(player.stats.funds)}`}
             </span>
           </div>
         </div>
@@ -515,28 +515,30 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           <div className="p-3 bg-[#06B6D4]/10 border border-[#06B6D4]/30 rounded-lg space-y-1">
             <span className="text-[#06B6D4] block text-[11px] font-semibold">Bono de Calidad</span>
             <span className="text-base font-bold text-[#06B6D4] font-mono">
-              +{activeBuffs.qualityBonus} Calidad
+              {`+${activeBuffs.qualityBonus} Calidad`}
             </span>
           </div>
 
           <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg space-y-1">
             <span className="text-emerald-300 block text-[11px] font-semibold">Energía Pasiva</span>
             <span className="text-base font-bold text-emerald-400 font-mono">
-              +{activeBuffs.passiveEnergy} / mes
+              {`+${activeBuffs.passiveEnergy}/mes`}
             </span>
           </div>
 
           <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg space-y-1">
             <span className="text-rose-300 block text-[11px] font-semibold">Mitigación de Gira</span>
             <span className="text-base font-bold text-rose-400 font-mono">
-              -{Math.round(activeBuffs.tourFatigueReduction * 100)}% Fatiga
+              {Math.round(activeBuffs.tourFatigueReduction * 100) > 0
+                ? `-${Math.round(activeBuffs.tourFatigueReduction * 100)}% Fatiga`
+                : '0% Fatiga'}
             </span>
           </div>
 
           <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg space-y-1">
             <span className="text-amber-300 block text-[11px] font-semibold">Estabilidad de Hype</span>
             <span className="text-base font-bold text-amber-400 font-mono">
-              +{Math.round(activeBuffs.hypeDecayReduction * 100)}% Retención
+              {`+${Math.round(activeBuffs.hypeDecayReduction * 100)}% Retención`}
             </span>
           </div>
         </div>
