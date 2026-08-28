@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Artist, WorldState, Song, Album, CareerStage } from '../types';
 import { AVATAR_PRESETS } from '../data/avatarPresets';
 import { TimeSystem } from '../systems/TimeSystem';
