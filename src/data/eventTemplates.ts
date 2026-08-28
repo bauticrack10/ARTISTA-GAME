@@ -1,5 +1,6 @@
 import { EventDefinition, EventContext, EventOutcome, CareerStage } from '../types';
 import { formatMoney } from '../utils/formatters';
+import { TimeSystem } from '../systems/TimeSystem';
 
 export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
   // --- UNDERGROUND / YEAR 1 FIRST STEPS EVENTS ---
@@ -643,25 +644,32 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
   // --- MANDATORY ANNUAL CREATIVE DROUGHT EVENT ---
   {
     id: 'evt_creative_drought_mandatory',
-    title: 'Alerta Artística: Sequía Creativa y Año en Silencio',
+    title: 'Alerta Artística: Sequía Creativa y Silencio Discográfico',
     category: 'crisis',
     rarity: 'crisis',
     cooldownMonths: 0,
     weight: 100,
-    condition: () => true,
+    // Note: Condition is false so selectNextEvent never triggers this event randomly.
+    // It is triggered strictly and exclusively at year-end via getCreativeDroughtEvent when 0 songs were released.
+    condition: () => false,
     getDescription: (ctx) => {
       const droughtYear = ctx.eventYear ?? (ctx.currentMonth === 1 ? ctx.currentYear - 1 : ctx.currentYear);
+      const timingDesc = ctx.currentMonth === 12 
+        ? `Ha finalizado el año ${droughtYear}` 
+        : `${TimeSystem.getTimingPhrase(ctx.currentMonth, droughtYear)}`;
       const hasManager = Boolean(ctx.player.managerId);
       const hasLabel = Boolean(ctx.player.labelId);
       const isUnderground = !hasLabel && !hasManager;
 
       if (isUnderground) {
-        return `Ha finalizado el año ${droughtYear} y no publicaste ninguna canción ni proyecto musical. En tu home studio de ${ctx.player.city}, entre maquetas a medio terminar en tu DAW y noches de desmotivación frente al micrófono, sientes el peso del bloqueo creativo. Sin un equipo detrás ni contratos que cumplir, toda la presión de reactivar tu música recae sobre ti.`;
+        return `${timingDesc} y no publicaste ninguna canción ni proyecto musical. En tu home studio de ${ctx.player.city}, entre maquetas a medio terminar en tu DAW y noches de desmotivación frente al micrófono, sientes el peso del bloqueo creativo. Sin un equipo detrás ni contratos que cumplir, toda la presión de reactivar tu música recae sobre ti.`;
       }
-      return `Ha finalizado el año ${droughtYear} y no publicaste ninguna canción ni proyecto musical. Los algoritmos de streaming y tu audiencia castigan la inactividad prolongada de tu catálogo. Debes tomar una decisión inmediata para reactivar tu proyecto.`;
+      return `${timingDesc} y no publicaste ninguna canción ni proyecto musical. Los algoritmos de streaming y tu audiencia castigan la inactividad prolongada de tu catálogo. Debes tomar una decisión inmediata para reactivar tu proyecto.`;
     },
     choices: (ctx) => {
       const droughtYear = ctx.eventYear ?? (ctx.currentMonth === 1 ? ctx.currentYear - 1 : ctx.currentYear);
+      const isYearEnd = ctx.currentMonth === 12 || ctx.currentMonth === 1;
+      const timingWord = TimeSystem.getTimingPhrase(ctx.currentMonth, droughtYear);
       const hasManager = Boolean(ctx.player.managerId);
       const hasLabel = Boolean(ctx.player.labelId);
       const isUnderground = !hasLabel && !hasManager;
@@ -688,7 +696,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
               genreId: ctx.player.mainGenreId,
               subGenreIds: [],
               releaseYear: droughtYear,
-              releaseMonth: 12,
+              releaseMonth: ctx.currentMonth,
               quality: Math.min(100, Math.floor(ctx.player.personality.skill * 0.65 + ctx.player.personality.creativity * 0.35)),
               commercialAppeal: Math.min(100, Math.floor(ctx.player.personality.commercialAppeal * 0.55 + 10)),
               originality: ctx.player.personality.originality,
@@ -706,7 +714,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             };
             ctx.world.songs[songId] = emergencySong;
             ctx.player.lastReleaseYear = droughtYear;
-            ctx.player.lastReleaseMonth = 12;
+            ctx.player.lastReleaseMonth = ctx.currentMonth;
 
             return {
               narrativeText: isUnderground
@@ -720,7 +728,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
                 headline: isUnderground
                   ? `${ctx.player.name} rompe el silencio con una grabación íntima casera`
                   : `¡Lanzamiento de último momento! ${ctx.player.name} publica tema inédito`,
-                body: `Tras un año sin lanzamientos, ${ctx.player.name} comparte música nueva directamente con sus seguidores.`,
+                body: `${timingWord}, ${ctx.player.name} comparte música nueva directamente con sus seguidores para reactivar su catálogo.`,
                 sentiment: 'positive',
                 category: 'release'
               }
@@ -743,7 +751,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
               genreId: ctx.player.mainGenreId,
               subGenreIds: [],
               releaseYear: droughtYear,
-              releaseMonth: 12,
+              releaseMonth: ctx.currentMonth,
               quality: Math.min(100, Math.floor(ctx.player.personality.skill * 0.75 + ctx.player.personality.creativity * 0.25)),
               commercialAppeal: Math.min(100, Math.floor(ctx.player.personality.commercialAppeal * 0.65 + 15)),
               originality: ctx.player.personality.originality,
@@ -761,17 +769,17 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             };
             ctx.world.songs[songId] = emergencySong;
             ctx.player.lastReleaseYear = droughtYear;
-            ctx.player.lastReleaseMonth = 12;
+            ctx.player.lastReleaseMonth = ctx.currentMonth;
 
             return {
-              narrativeText: `Invertiste $150 en una mezcla y master rápido para pulir un proyecto que tenías guardado. "${emergencySong.title}" salió a tiempo para cerrar el año con sonido competitivo.`,
+              narrativeText: `Invertiste $150 en una mezcla y master rápido para pulir un proyecto que tenías guardado. "${emergencySong.title}" salió a tiempo en ${TimeSystem.getMonthName(ctx.currentMonth)} para competir con sonido profesional.`,
               fundsChange: -150,
               energyChange: -15,
               hypeChange: 14,
               popularityChange: 2,
               newsGenerated: {
                 headline: `Lanzamiento sorpresa: ${ctx.player.name} publica nuevo sencillo`,
-                body: `Justo antes de finalizar el año, ${ctx.player.name} presentó una canción inédita para reactivar su catálogo.`,
+                body: `${timingWord}, ${ctx.player.name} presentó una canción inédita para reactivar su catálogo en plataformas.`,
                 sentiment: 'positive',
                 category: 'release'
               }
@@ -793,8 +801,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
               fansChange: -fansLoss,
               reputationChange: -1,
               newsGenerated: {
-                headline: `Año en silencio: ${ctx.player.name} concluye el año sin publicaciones oficiales`,
-                body: `El proyecto de ${ctx.player.name} cierra el calendario sin nuevos temas, tomándose un respiro compositivo.`,
+                headline: `${isYearEnd ? 'Año en silencio' : 'Silencio discográfico'}: ${ctx.player.name} ${isYearEnd ? 'concluye el año' : 'continúa la temporada'} sin publicaciones oficiales`,
+                body: `${isYearEnd ? `El proyecto de ${ctx.player.name} cierra el calendario sin nuevos temas, tomándose un respiro compositivo.` : `${timingWord}, ${ctx.player.name} prioriza la introspección artística sin lanzamientos oficiales.`}`,
                 sentiment: 'neutral',
                 category: 'culture'
               }

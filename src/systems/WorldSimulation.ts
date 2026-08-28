@@ -1,5 +1,5 @@
 import { WorldState, Artist, Song, Album, CareerStage } from '../types';
-import { generateRandomArtistName, generateSongTitle, generateAlbumTitle } from '../data/proceduralNames';
+import { generateRandomArtistName, generateSongTitle, generateAlbumTitle, generateUniqueSongTitle, generateUniqueAlbumTitle } from '../data/proceduralNames';
 import { StreamingEngine } from './StreamingEngine';
 import { LegacyEngine } from './LegacyEngine';
 import { TimeSystem } from './TimeSystem';
@@ -159,14 +159,24 @@ export class WorldSimulation {
         artist.stats.hype = Math.min(100, artist.stats.hype + 25);
 
         if (isAlbum) {
-          const albumTitle = generateAlbumTitle(Object.keys(world.albums).length + 1);
-          const albumId = `album_${artist.id}_${world.currentYear}_${world.currentMonth}`;
+          const albumTitle = generateUniqueAlbumTitle({
+            existingTitles: world.albums,
+            artistName: artist.name,
+            genreId: artist.mainGenreId,
+            seedIndex: Object.keys(world.albums).length + 1
+          });
+          const albumId = `album_${artist.id}_${world.currentYear}_${world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
           const songCount = 8 + Math.floor(Math.random() * 6);
           const albumSongIds: string[] = [];
 
           for (let i = 0; i < songCount; i++) {
-            const sTitle = generateSongTitle(Object.keys(world.songs).length + i + 1, artist.mainGenreId);
-            const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${i}`;
+            const sTitle = generateUniqueSongTitle({
+              existingTitles: world.songs,
+              artistName: artist.name,
+              genreId: artist.mainGenreId,
+              seedIndex: Object.keys(world.songs).length + i + 1
+            });
+            const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${i}_${Math.floor(Math.random() * 1000)}`;
 
             const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
               artist,
@@ -237,8 +247,13 @@ export class WorldSimulation {
           newAlbumsGenerated.push(newAlbum);
         } else {
           // Drop Single
-          const sTitle = generateSongTitle(Object.keys(world.songs).length + 1, artist.mainGenreId);
-          const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}`;
+          const sTitle = generateUniqueSongTitle({
+            existingTitles: world.songs,
+            artistName: artist.name,
+            genreId: artist.mainGenreId,
+            seedIndex: Object.keys(world.songs).length + 1
+          });
+          const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 
           const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
             artist,

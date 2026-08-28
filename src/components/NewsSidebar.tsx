@@ -314,8 +314,11 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                         )}
                       </div>
 
-                      <span className="text-[10px] text-[#94A3B8] font-mono whitespace-nowrap bg-[#16181F] border border-[#2A2E3D] px-1.5 py-0.5 rounded-[4px]">
-                        Año {news.year} • M{news.month}
+                      <span 
+                        className="text-[10px] text-[#94A3B8] font-mono whitespace-nowrap bg-[#16181F] border border-[#2A2E3D] px-1.5 py-0.5 rounded-[4px]"
+                        title={TimeSystem.getCalendarLabel(news.month, news.year)}
+                      >
+                        Año {news.year} • {TimeSystem.getMonthName(news.month)} (M{news.month})
                       </span>
                     </div>
 

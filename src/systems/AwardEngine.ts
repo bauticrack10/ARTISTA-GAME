@@ -7,7 +7,7 @@ import {
   AwardNominee,
   WorldState
 } from '../types';
-import { generateSongTitle, generateAlbumTitle } from '../data/proceduralNames';
+import { generateSongTitle, generateAlbumTitle, generateUniqueSongTitle, generateUniqueAlbumTitle, normalizeTitle } from '../data/proceduralNames';
 
 /**
  * Constant: Exactly 4 nominees per category across all award categories
@@ -26,12 +26,7 @@ export class AwardEngine {
    * Strips accents, punctuation, and whitespace, converting to lowercase alphanumeric.
    */
   public static normalizeTitle(title: string): string {
-    return title
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]/g, '');
+    return normalizeTitle(title);
   }
 
   /**
@@ -48,8 +43,13 @@ export class AwardEngine {
       const needed = NOMINEES_PER_CATEGORY - existingSongsCount;
       for (let i = 0; i < needed; i++) {
         const artist = activeNPCs[i % activeNPCs.length];
-        const songId = `song_award_fallback_${year}_${i}_${artist.id}`;
-        const title = generateSongTitle(existingSongsCount + i + 10, artist.mainGenreId);
+        const songId = `song_award_fallback_${year}_${i}_${artist.id}_${Math.floor(Math.random() * 1000)}`;
+        const title = generateUniqueSongTitle({
+          existingTitles: world.songs,
+          artistName: artist.name,
+          genreId: artist.mainGenreId,
+          seedIndex: existingSongsCount + i + 10
+        });
         const song: Song = {
           id: songId,
           title,
@@ -98,8 +98,13 @@ export class AwardEngine {
       ];
       for (let i = 0; i < needed; i++) {
         const artist = activeNPCs[(i + 2) % activeNPCs.length];
-        const albumId = `album_award_fallback_${year}_${i}_${artist.id}`;
-        const title = generateAlbumTitle(existingAlbumsCount + i + 10);
+        const albumId = `album_award_fallback_${year}_${i}_${artist.id}_${Math.floor(Math.random() * 1000)}`;
+        const title = generateUniqueAlbumTitle({
+          existingTitles: world.albums,
+          artistName: artist.name,
+          genreId: artist.mainGenreId,
+          seedIndex: existingAlbumsCount + i + 10
+        });
         const album: Album = {
           id: albumId,
           title,

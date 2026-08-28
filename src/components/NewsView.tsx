@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { WorldState, NewsItem } from '../types';
 import { Newspaper, Radio, Flame, Sparkles, TrendingUp, Award, Swords } from 'lucide-react';
+import { TimeSystem } from '../systems/TimeSystem';
 
 interface NewsViewProps {
   world: WorldState;
@@ -72,8 +73,11 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
                 <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC]">
                   {item.category}
                 </span>
-                <span className="text-xs font-mono text-[#94A3B8]">
-                  Año {item.year} • Mes {item.month}
+                <span 
+                  className="text-xs font-mono text-[#94A3B8]"
+                  title={TimeSystem.getCalendarLabel(item.month, item.year)}
+                >
+                  Año {item.year} • {TimeSystem.getMonthName(item.month)} (M{item.month})
                 </span>
               </div>
 

@@ -1,4 +1,5 @@
 import { SocialPost, WorldState, Artist, Song, Album, EventDefinition, EventOutcome } from '../types';
+import { TimeSystem } from './TimeSystem';
 
 export class SocialFeedEngine {
   private static FAN_HANDLES = [
@@ -501,7 +502,7 @@ export class SocialFeedEngine {
         badge: 'Artista Verificado',
         year,
         month,
-        content: `Cocinando cosas grandes en el estudio... no están listos para lo que se viene este año 🤫💿`,
+        content: `Cocinando cosas grandes en el estudio... no están listos para lo que se viene ${TimeSystem.isYearEnd(month) ? 'el próximo año' : TimeSystem.isMidYear(month) ? 'este 2do semestre' : 'en esta temporada'} 🤫💿`,
         likes: Math.floor(4500 + randomPeer.stats.popularity * 120),
         retweetsOrShares: Math.floor(320 + Math.random() * 150),
         commentsCount: Math.floor(280 + Math.random() * 100),
