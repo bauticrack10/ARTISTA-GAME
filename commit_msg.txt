@@ -1,9 +1,0 @@
-fix(studio-single): vincular costo total de single con fondos y deshabilitar grabacion por saldo insuficiente
-
-- Modificaciones:
-  1. Vinculación reactiva del costo total (Producción + Marketing + Fee del Productor + Videoclip) en 'StudioView.tsx' contra los fondos actuales del jugador ($140).
-  2. Resaltado en rojo del campo 'Costo Total del Sencillo' cuando supera el saldo disponible: fondo 'bg-rose-950/40', borde 'border-rose-500/50', texto 'text-rose-400 font-extrabold' y badge 'Excede Fondos'.
-  3. Deshabilitación del botón 'Grabar & Publicar Single' (disabled, opacity-50, cursor-not-allowed) con tooltip contextual en title: 'Fondos insuficientes ($X / $Y)' y texto explicativo del déficit monetario.
-  4. Suite de pruebas automatizada 'test-single-compose-funds-validation.ts' con 13/13 pruebas superadas.
-- Componentes/Sistemas: src/components/StudioView.tsx, test-single-compose-funds-validation.ts.
-- Contexto para Agentes IA: Garantiza consistencia transaccional en el estudio de grabación evitando que el jugador lance singles con costos que excedan su saldo disponible.
