@@ -318,8 +318,7 @@ export class GameEngine {
       hitsCount
     );
     if (player.stats.popularity < targetPop) {
-      const step = Math.min(6, Math.max(1, Math.floor((targetPop - player.stats.popularity) * 0.45)));
-      player.stats.popularity = Math.min(targetPop, player.stats.popularity + step);
+      player.stats.popularity = targetPop;
     }
 
     // 4. Garantizar coherencia matemática en streams totales
@@ -2037,7 +2036,7 @@ export class GameEngine {
         hitsCount
       );
       if (player.stats.popularity < targetPop) {
-        const step = Math.min(5, Math.max(1, Math.floor((targetPop - player.stats.popularity) * 0.40)));
+        const step = Math.min(8, Math.max(2, Math.floor((targetPop - player.stats.popularity) * 0.50)));
         player.stats.popularity = Math.min(targetPop, player.stats.popularity + step);
       } else if (player.stats.popularity > targetPop && playerTotalMonthlyStreams < 200000) {
         player.stats.popularity = Math.max(targetPop, player.stats.popularity - 1);
