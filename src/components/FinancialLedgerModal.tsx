@@ -161,8 +161,8 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
               <span className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider block">
                 Saldo Actual Disponible
               </span>
-              <span className="text-xl font-bold text-[#F8FAFC] font-mono tracking-tight mt-0.5 block">
-                ${currentFunds.toLocaleString()}
+              <span className="text-xl font-bold text-[#F8FAFC] font-mono tracking-tight mt-0.5 block whitespace-nowrap">
+                {formatMoney(currentFunds)}
               </span>
             </div>
             <div className="p-2.5 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">

@@ -288,17 +288,17 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
 
         {/* Balance & Financial History Triggers */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-          {/* Balance Card */}
-          <div className="bg-[#0B0C10] border border-emerald-500/40 rounded-xl p-4 flex items-center gap-4 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-            <div className="p-3 bg-emerald-950/60 rounded-full text-emerald-400 border border-emerald-500/40">
+          {/* Balance Card: FONDOS DISPONIBLES */}
+          <div className="bg-[#0B0C10] border border-emerald-500/40 rounded-xl p-4 flex items-center flex-row gap-3.5 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+            <div className="p-3 bg-emerald-950/60 rounded-full text-emerald-400 border border-emerald-500/40 shrink-0">
               <DollarSign className="w-6 h-6" />
             </div>
-            <div>
+            <div className="flex flex-col justify-center">
               <span className="text-[10px] text-[#94A3B8] block font-semibold uppercase tracking-wider">
                 Fondos Disponibles
               </span>
-              <span className="text-2xl font-bold text-emerald-400 font-mono tracking-tight">
-                ${player.stats.funds.toLocaleString()}
+              <span className="text-2xl font-bold text-emerald-400 font-mono tracking-tight whitespace-nowrap inline-flex items-center">
+                {formatMoney(player.stats.funds)}
               </span>
             </div>
           </div>

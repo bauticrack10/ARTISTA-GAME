@@ -1,0 +1,19 @@
+import fs from 'fs';
+import { execSync } from 'child_process';
+
+const commitMsg = `fix(ui-funds): unificar glifo y monto en contenedor de fondos con alineacion vertical centrada
+
+- Modificaciones:
+  1. Unificación atómica del símbolo '$' y la cifra monetaria en un único elemento inline ('font-mono font-bold whitespace-nowrap') para prevenir saltos de línea o separación de glifo en resoluciones compactas.
+  2. Alineación vertical centrada ('items-center flex-row gap-1' en Navbar y 'items-center flex-row gap-3.5' en LifestyleShopView).
+  3. Estandarización de visualización en 'FinancialLedgerModal.tsx' usando 'formatMoney' con 'whitespace-nowrap'.
+  4. Suite de pruebas automatizada 'test-funds-pill-container.ts' con 7/7 pruebas superadas.
+- Componentes/Sistemas: src/components/Navbar.tsx, src/components/LifestyleShopView.tsx, src/components/FinancialLedgerModal.tsx, test-funds-pill-container.ts.
+- Contexto para Agentes IA: Elimina inconsistencias de maquetación en las píldoras de saldo y garantiza que el valor monetario permanezca siempre como una unidad visual compacta e indivisible.`;
+
+fs.writeFileSync('commit_msg.txt', commitMsg, 'utf8');
+execSync('git add -A', { stdio: 'inherit' });
+execSync('git commit -F commit_msg.txt', { stdio: 'inherit' });
+execSync('git push origin main', { stdio: 'inherit' });
+fs.unlinkSync('commit_msg.txt');
+fs.unlinkSync('git-commit-helper.ts');

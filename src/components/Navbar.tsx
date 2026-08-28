@@ -197,11 +197,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-2 text-xs shrink-0">
           {/* Dinero / Fondos */}
           <div
-            className="flex items-center gap-1.5 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
+            className="flex items-center flex-row gap-1 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
             title={`Fondos Monetarios Disponibles: ${formatMoney(player.stats.funds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="font-bold text-emerald-400 font-mono">
+            <span className="font-bold text-emerald-400 font-mono whitespace-nowrap">
               {formatMoney(player.stats.funds)}
             </span>
             <span className="text-[10px] text-emerald-500/80 font-sans hidden lg:inline">
