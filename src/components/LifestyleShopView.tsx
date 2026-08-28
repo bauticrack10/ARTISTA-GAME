@@ -259,7 +259,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
   };
 
   return (
-    <div className="space-y-8 pb-16 font-sans text-[#F8FAFC] bg-[#16181F] min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl border border-[#2A2E3D]">
+    <div className="space-y-8 pb-24 sm:pb-28 lg:pb-32 font-sans text-[#F8FAFC] bg-[#16181F] min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl border border-[#2A2E3D]">
       {/* Header Banner - Studio After Dark Theme with vibrant accents */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#2A2E3D] pb-6">
         <div>
@@ -576,7 +576,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       </div>
 
       {/* Items Grid with Categorized Themes & Icons */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-16">
         {filteredItems.map(item => {
           const isOwned = ownedUpgrades.includes(item.id);
           const canAfford = player.stats.funds >= item.price;
@@ -642,35 +642,37 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
 
               {/* Card Footer: Cost & Action Button */}
               <div className="mt-5 pt-4 border-t border-[#2A2E3D] flex items-center justify-between gap-3">
-                <div>
-                  <div className="text-lg font-bold text-[#F8FAFC] font-mono tracking-tight">
+                <div className="min-w-0 flex-1">
+                  <div className="text-lg font-bold text-[#F8FAFC] font-mono tracking-tight whitespace-nowrap">
                     {formatMoney(item.price)}
                   </div>
-                  <span className="text-[11px] text-[#94A3B8] font-mono block">
-                    {item.monthlyUpkeep > 0 ? `+${formatMoney(item.monthlyUpkeep)}/mes mantenimiento` : 'Sin mantenimiento mensual'}
+                  <span className="text-[11px] text-[#94A3B8] font-mono block truncate">
+                    {item.monthlyUpkeep > 0 ? `+${formatMoney(item.monthlyUpkeep)}/mes` : 'Sin costo mensual'}
                   </span>
                 </div>
 
-                {isOwned ? (
-                  <button
-                    disabled
-                    className="px-4 py-2 rounded-md bg-emerald-950/40 text-emerald-400 border border-emerald-500/40 text-xs font-bold cursor-not-allowed"
-                  >
-                    Adquirido ✓
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handlePurchase(item)}
-                    disabled={!canAfford}
-                    className={`px-4 py-2 text-xs font-bold rounded-[6px] transition-all cursor-pointer ${
-                      canAfford
-                        ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-85'
-                        : 'bg-[#16181F] text-[#64748B] border border-[#2A2E3D] cursor-not-allowed'
-                    }`}
-                  >
-                    {canAfford ? 'Comprar Mejora' : 'Fondos Insuficientes'}
-                  </button>
-                )}
+                <div className="shrink-0">
+                  {isOwned ? (
+                    <button
+                      disabled
+                      className="h-10 min-h-[40px] px-4 rounded-[6px] bg-emerald-950/40 text-emerald-400 border border-emerald-500/40 text-xs font-bold cursor-not-allowed flex items-center justify-center whitespace-nowrap shrink-0"
+                    >
+                      Adquirido ✓
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handlePurchase(item)}
+                      disabled={!canAfford}
+                      className={`h-10 min-h-[40px] px-4 text-xs font-bold rounded-[6px] transition-all flex items-center justify-center whitespace-nowrap shrink-0 ${
+                        canAfford
+                          ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-85 cursor-pointer'
+                          : 'bg-[#16181F] text-[#64748B] border border-[#2A2E3D] cursor-not-allowed opacity-60'
+                      }`}
+                    >
+                      {canAfford ? 'Comprar Mejora' : 'Fondos Insuficientes'}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           );
