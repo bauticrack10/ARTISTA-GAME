@@ -30,7 +30,7 @@ import {
   RELEASE_BADGES,
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
-import { formatMoney, cleanQuotes, cleanParentheses, formatCityCountry } from '../utils/formatters';
+import { formatMoney, cleanQuotes, cleanParentheses, formatCityCountry, formatReleaseDate } from '../utils/formatters';
 
 interface CareerErasViewProps {
   player: Artist;
@@ -131,13 +131,18 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
 
   // Albums
   playerAlbums.forEach(album => {
+    const albumMonth = TimeSystem.getMonthName(album.releaseMonth || 1);
+    const prodName = album.producerId && world?.producers?.[album.producerId]
+      ? world.producers[album.producerId].name
+      : 'Producción Propia';
+
     timelineItems.push({
       id: `traj_alb_${album.id}`,
       year: album.releaseYear,
       month: album.releaseMonth,
       type: 'album',
       title: `Lanzamiento de Álbum: "${album.title}"`,
-      description: `Álbum de ${album.songIds.length} canciones (${album.type.toUpperCase()}). Calificación crítica: ${album.criticalScore}/100.`,
+      description: `Álbum producido en ${albumMonth} ${album.releaseYear} (${prodName}) con ${album.songIds.length} canciones (${album.type.toUpperCase()}). Calificación crítica: ${album.criticalScore}/100.`,
       metrics: `${((album.totalStreams || 0) / 1000000).toFixed(1)}M streams • ${(album.firstWeekSales || 0).toLocaleString('es-AR')} ventas debut`,
       badge: album.id === bestAlbum?.id ? 'Mejor Disco ⭐' : 'Disco Oficial',
       badgeClass: album.id === bestAlbum?.id ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 font-bold' : 'bg-indigo-900/40 text-indigo-300 border-indigo-500/40',
@@ -151,6 +156,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
     const isHit = (single.peakPosition?.Global ?? 99) <= 10;
     const hasVideo = Boolean(single.musicVideo);
     const mv = single.musicVideo;
+    const singleMonth = TimeSystem.getMonthName(single.releaseMonth || 1);
+    const prodName = single.producerId && world?.producers?.[single.producerId]
+      ? world.producers[single.producerId].name
+      : 'Producción Propia';
 
     timelineItems.push({
       id: `traj_sng_${single.id}`,
@@ -158,7 +167,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       month: single.releaseMonth,
       type: 'single',
       title: `Single: "${single.title}"${hasVideo ? ' 🎬 (Videoclip Oficial)' : ''}`,
-      description: `Sencillo de calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" (Dir. ${mv.directorTier}, ${((mv.views || 0) / 1000).toFixed(0)}k vistas).` : ''}`,
+      description: `Sencillo producido en ${singleMonth} ${single.releaseYear} (${prodName}). Calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" (Dir. ${mv.directorTier}, ${((mv.views || 0) / 1000).toFixed(0)}k vistas).` : ''}`,
       metrics: `${((single.streamsTotal || 0) / 1000000).toFixed(1)}M streams${hasVideo && mv ? ` • ${((mv.views || 0) / 1000000).toFixed(1)}M vistas en video` : ''} • Pico #${single.peakPosition?.Global || '-'} Mundial`,
       badge: hasVideo ? '🎬 Videoclip Oficial' : isHit ? 'Hit Top 10 🔥' : 'Single',
       badgeClass: hasVideo ? 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40 font-bold' : isHit ? 'bg-purple-900/50 text-purple-300 border-purple-500/40 font-bold' : 'bg-purple-950/50 text-purple-300 border-purple-500/40',
@@ -384,7 +393,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono text-[#94A3B8]">
-                      Lanzado en {bestAlbum.releaseYear} (Mes {bestAlbum.releaseMonth})
+                      Lanzado en {formatReleaseDate(bestAlbum.releaseMonth, bestAlbum.releaseYear, 'long')} (Mes {bestAlbum.releaseMonth || 1})
                     </span>
                     <span className="text-xs font-bold px-2 py-0.5 rounded-[4px] bg-emerald-950/60 text-emerald-400 border border-emerald-500/40">
                       Crítica: {bestAlbum.criticalScore}/100
@@ -720,7 +729,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                       <div className="space-y-0.5 flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-mono text-[#94A3B8]">
-                            {album.releaseYear}
+                            {TimeSystem.getMonthName(album.releaseMonth || 1)} {album.releaseYear}
                           </span>
                           {isBest && (
                             <span className="bg-amber-950/60 text-amber-300 border border-amber-500/40 text-[9px] font-bold px-1.5 py-0.5 rounded-[3px]">

@@ -49,8 +49,11 @@ import {
   Eye,
   Crown,
   Zap,
-  Play
+  Play,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
+import { TimeSystem } from '../systems/TimeSystem';
 import {
   getGenreTheme,
   getGenreBadgeClass,
@@ -58,7 +61,14 @@ import {
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
 import { playSound } from '../utils/audioSystem';
-import { formatMoney, cleanCountTag, cleanQuotes, formatCompactNumber } from '../utils/formatters';
+import {
+  formatMoney,
+  cleanCountTag,
+  cleanQuotes,
+  formatCompactNumber,
+  formatReleaseDate,
+  formatProducerLabel
+} from '../utils/formatters';
 
 export interface VideoConceptOption {
   id: MusicVideoConcept;
@@ -297,6 +307,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
   // Release confirmation and duplicate click prevention state
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const [confirmedRelease, setConfirmedRelease] = useState<ReleaseConfirmationData | null>(null);
+  const [expandedAlbumIds, setExpandedAlbumIds] = useState<Record<string, boolean>>({});
+
+  const toggleAlbumExpanded = (albumId: string) => {
+    setExpandedAlbumIds(prev => ({
+      ...prev,
+      [albumId]: !prev[albumId]
+    }));
+  };
 
   // Single State
   const [singleTitle, setSingleTitle] = useState('');
@@ -1477,6 +1495,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                     {availablePreviousSingles.map(single => {
                       const isChecked = includedSingleIds.includes(single.id);
+                      const singleReleaseDate = formatReleaseDate(single.releaseMonth, single.releaseYear, 'short');
+                      const prodName = formatProducerCredit(single.producerId, world.producers, { short: true });
                       return (
                         <div
                           key={single.id}
@@ -1487,15 +1507,20 @@ export const StudioView: React.FC<StudioViewProps> = ({
                               : 'bg-[#16181F] hover:bg-white/[0.04] border-[#2A2E3D] hover:border-[#8B5CF6]/40 text-[#F8FAFC]'
                           }`}
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
                             {isChecked ? (
-                              <CheckSquare className="w-4 h-4 text-white" />
+                              <CheckSquare className="w-4 h-4 text-white shrink-0" />
                             ) : (
-                              <Square className="w-4 h-4 text-[#94A3B8]" />
+                              <Square className="w-4 h-4 text-[#94A3B8] shrink-0" />
                             )}
-                            <span className="font-semibold">{single.title}</span>
+                            <div className="min-w-0">
+                              <span className="font-semibold truncate block">{single.title}</span>
+                              <span className={`text-[10px] ${isChecked ? 'text-white/80' : 'text-[#94A3B8]'}`}>
+                                {singleReleaseDate} (Mes {single.releaseMonth || 1}) • {prodName}
+                              </span>
+                            </div>
                           </div>
-                          <span className={`text-[11px] font-mono ${isChecked ? 'text-white/90' : 'text-emerald-400'}`}>
+                          <span className={`text-[11px] font-mono shrink-0 ${isChecked ? 'text-white/90' : 'text-emerald-400'}`}>
                             {(single.streamsTotal / 1000).toFixed(0)}k streams
                           </span>
                         </div>
@@ -1526,11 +1551,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   {/* Display Included Singles First */}
                   {includedSingleIds.map((sId, i) => {
                     const single = playerSongs.find(s => s.id === sId);
+                    const singleMonth = TimeSystem.getMonthName(single?.releaseMonth || 1);
                     return (
-                      <div key={sId} className="flex items-center gap-2 bg-[#8B5CF6]/20 px-3 py-2 rounded-[6px] border border-[#8B5CF6]/40 text-xs">
-                        <span className="font-mono text-xs text-[#C084FC] w-6 font-bold">{i + 1}.</span>
-                        <span className="font-semibold text-[#F8FAFC] flex-1">{single?.title || sId}</span>
-                        <span className="text-[10px] uppercase font-bold bg-[#8B5CF6]/30 text-[#E9D5FF] px-2 py-0.5 rounded-full border border-[#8B5CF6]/40">
+                      <div key={sId} className="flex items-center justify-between bg-[#8B5CF6]/20 px-3 py-2 rounded-[6px] border border-[#8B5CF6]/40 text-xs">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-mono text-xs text-[#C084FC] w-6 font-bold">{i + 1}.</span>
+                          <span className="font-semibold text-[#F8FAFC] truncate">{single?.title || sId}</span>
+                          <span className="text-[10px] text-[#CBD5E1] font-mono shrink-0">
+                            ({singleMonth} {single?.releaseYear})
+                          </span>
+                        </div>
+                        <span className="text-[10px] uppercase font-bold bg-[#8B5CF6]/30 text-[#E9D5FF] px-2 py-0.5 rounded-full border border-[#8B5CF6]/40 shrink-0">
                           Single Previo
                         </span>
                       </div>
@@ -1800,6 +1831,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   {playerAlbums.map((album, aIdx) => {
                     const albumTheme = getGenreTheme(album.genreId);
                     const coverGrad = album.coverGradient || ARTISTIC_COVER_GRADIENTS[aIdx % ARTISTIC_COVER_GRADIENTS.length];
+                    const albumReleaseDateStr = formatReleaseDate(album.releaseMonth, album.releaseYear, 'long');
+                    const albumReleaseDateFull = formatReleaseDate(album.releaseMonth, album.releaseYear, 'full');
+                    const albumProducerName = formatProducerCredit(album.producerId, world.producers, { short: false });
+                    const isExpanded = Boolean(expandedAlbumIds[album.id]);
+
                     return (
                       <div
                         key={album.id}
@@ -1812,7 +1848,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             {album.type}
                           </div>
 
-                          <div className="space-y-1 flex-1 min-w-0">
+                          <div className="space-y-1.5 flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#8B5CF6]/20 border border-[#8B5CF6]/40 text-[#C084FC]">
                                 {world.genres[album.genreId]?.name || album.genreId}
@@ -1824,9 +1860,19 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             <h4 className="text-base font-semibold text-[#F8FAFC] tracking-tight truncate pt-0.5">
                               {album.title}
                             </h4>
-                            <p className="text-xs text-[#94A3B8]">
-                              Lanzado en {album.releaseYear} • {album.songIds.length} Pistas
-                            </p>
+                            <div className="flex items-center gap-2 flex-wrap text-xs text-[#94A3B8]">
+                              <span className="inline-flex items-center gap-1 text-[#CBD5E1]" title={albumReleaseDateFull}>
+                                <Calendar className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
+                                <span>Lanzamiento: <strong className="text-[#F8FAFC] font-semibold">{albumReleaseDateStr}</strong> <span className="text-[#94A3B8] font-normal">(Mes {album.releaseMonth || 1})</span></span>
+                              </span>
+                              <span>•</span>
+                              <span className="inline-flex items-center gap-1 text-cyan-300">
+                                <Sliders className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                <span>{albumProducerName}</span>
+                              </span>
+                              <span>•</span>
+                              <span>{album.songIds.length} Pistas</span>
+                            </div>
                           </div>
 
                           <div className="text-right shrink-0">
@@ -1856,6 +1902,74 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             </p>
                           )}
                         </div>
+
+                        {/* Expandable Tracklist Toggle */}
+                        {album.songIds && album.songIds.length > 0 && (
+                          <div className="pt-1">
+                            <button
+                              type="button"
+                              onClick={() => toggleAlbumExpanded(album.id)}
+                              className="w-full flex items-center justify-between py-1.5 px-2.5 rounded-[6px] bg-[#16181F] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 text-xs text-[#CBD5E1] hover:text-[#F8FAFC] transition-colors cursor-pointer"
+                            >
+                              <span className="flex items-center gap-1.5 font-medium">
+                                <Music2 className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                                Tracklist oficial ({album.songIds.length} pistas)
+                              </span>
+                              {isExpanded ? (
+                                <span className="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+                                  Ocultar <ChevronUp className="w-3.5 h-3.5" />
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+                                  Ver pistas <ChevronDown className="w-3.5 h-3.5" />
+                                </span>
+                              )}
+                            </button>
+
+                            {isExpanded && (
+                              <div className="mt-2 space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                                {album.songIds.map((sId, trackIdx) => {
+                                  const trk = world.songs[sId];
+                                  if (!trk) return null;
+                                  const trkReleaseMonth = trk.releaseMonth || album.releaseMonth || 1;
+                                  const trkReleaseYear = trk.releaseYear || album.releaseYear;
+                                  const trkDateStr = formatReleaseDate(trkReleaseMonth, trkReleaseYear, 'short');
+                                  const trkProducer = formatProducerCredit(trk.producerId || album.producerId, world.producers, { short: true });
+
+                                  return (
+                                    <div
+                                      key={sId}
+                                      className="flex items-center justify-between p-2 rounded-[6px] bg-[#16181F]/80 border border-[#2A2E3D] text-xs"
+                                    >
+                                      <div className="flex items-center gap-2 min-w-0">
+                                        <span className="font-mono text-[10px] text-[#94A3B8] w-4">{trackIdx + 1}.</span>
+                                        <span className="font-semibold text-[#F8FAFC] truncate max-w-[150px] sm:max-w-[200px]" title={trk.title}>
+                                          {trk.title}
+                                        </span>
+                                        {trk.isSingle && (
+                                          <span className="text-[9px] uppercase font-bold bg-[#8B5CF6]/30 text-[#E9D5FF] px-1.5 py-0.2 rounded border border-[#8B5CF6]/40">
+                                            Single
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div className="flex items-center gap-3 text-[11px] text-[#94A3B8] font-mono shrink-0">
+                                        <span className="text-[#CBD5E1]">
+                                          {trkDateStr} (Mes {trkReleaseMonth})
+                                        </span>
+                                        <span className="text-cyan-300">
+                                          {trkProducer}
+                                        </span>
+                                        <span className="text-emerald-400 font-semibold">
+                                          Q: {trk.quality}%
+                                        </span>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -1881,13 +1995,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   {playerSongs.map(song => {
                     const subgenre = song.subGenreIds && song.subGenreIds.length > 0 ? SUBGENRE_DETAILS[song.subGenreIds[0]] : undefined;
                     const isHit = (song.peakPosition?.Global ?? 99) <= 10;
+                    const releaseDateStr = formatReleaseDate(song.releaseMonth, song.releaseYear, 'long');
+                    const releaseDateFull = formatReleaseDate(song.releaseMonth, song.releaseYear, 'full');
+                    const producerName = formatProducerCredit(song.producerId, world.producers, { short: false });
+                    const albumParent = song.albumId ? world.albums?.[song.albumId] : undefined;
 
                     return (
                       <div
                         key={song.id}
                         className="bg-[#0B0C10] border border-[#2A2E3D] p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs hover:border-[#8B5CF6]/50 transition-all"
                       >
-                        <div className="space-y-1">
+                        <div className="space-y-1.5 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <h4 className="text-sm font-semibold text-[#F8FAFC]">
                               {song.title}
@@ -1898,6 +2016,22 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             {subgenre && (
                               <span className="text-[10px] font-medium bg-[#16181F] border border-[#2A2E3D] text-[#CBD5E1] px-2 py-0.5 rounded-full">
                                 {subgenre.name}
+                              </span>
+                            )}
+                            {albumParent ? (
+                              <span className="text-[10px] font-medium bg-indigo-950/60 border border-indigo-500/40 text-indigo-300 px-2 py-0.5 rounded-full flex items-center gap-1" title={`Pertenece al álbum "${albumParent.title}"`}>
+                                <Layers className="w-2.5 h-2.5 text-indigo-400" />
+                                Álbum: {albumParent.title}
+                              </span>
+                            ) : song.isSingle ? (
+                              <span className="text-[10px] font-medium bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 text-[#E9D5FF] px-2 py-0.5 rounded-full">
+                                Single Oficial
+                              </span>
+                            ) : null}
+                            {song.musicVideo && (
+                              <span className="text-[10px] font-bold bg-cyan-950/70 text-cyan-300 border border-cyan-500/50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <Video className="w-2.5 h-2.5 text-cyan-400" />
+                                🎬 Videoclip
                               </span>
                             )}
                             {song.wentViral && (
@@ -1917,12 +2051,26 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             )}
                           </div>
 
+                          {/* Release Date and Producer Information */}
+                          <div className="flex items-center gap-2 flex-wrap text-xs text-[#94A3B8]">
+                            <span className="inline-flex items-center gap-1 text-[#CBD5E1]" title={releaseDateFull}>
+                              <Calendar className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
+                              <span>Lanzamiento: <strong className="text-[#F8FAFC] font-semibold">{releaseDateStr}</strong> <span className="text-[#94A3B8] font-normal">(Mes {song.releaseMonth || 1})</span></span>
+                            </span>
+                            <span>•</span>
+                            <span className="inline-flex items-center gap-1 text-cyan-300">
+                              <Sliders className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                              <span>{producerName}</span>
+                            </span>
+                          </div>
+
+                          {/* Musical Attributes */}
                           <p className="text-xs text-[#94A3B8]">
-                            Lanzado: {song.releaseYear} • Calidad: <strong className="text-emerald-400">{song.quality}%</strong> • Comercial: <strong className="text-[#C084FC]">{song.commercialAppeal}%</strong>
+                            Calidad: <strong className="text-emerald-400">{song.quality}%</strong> • Comercial: <strong className="text-[#C084FC]">{song.commercialAppeal}%</strong> • Originalidad: <strong className="text-amber-400">{song.originality}%</strong>
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-6 text-xs font-mono">
+                        <div className="flex items-center gap-6 text-xs font-mono shrink-0">
                           <div>
                             <span className="text-[#94A3B8] block text-[10px] uppercase">Peak Global</span>
                             <span className={`font-bold text-sm ${song.peakPosition?.Global === 1 ? 'text-[#F59E0B] font-extrabold' : song.peakPosition?.Global && song.peakPosition.Global <= 10 ? 'text-[#C084FC]' : 'text-[#F8FAFC]'}`}>

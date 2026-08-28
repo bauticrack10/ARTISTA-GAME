@@ -10,10 +10,12 @@ import {
   Mic2,
   Sparkles,
   ArrowUpRight,
-  Video
+  Video,
+  Calendar,
+  Sliders
 } from 'lucide-react';
 import { getGenreTheme } from '../utils/themeColors';
-import { formatCompactNumber } from '../utils/formatters';
+import { formatCompactNumber, formatReleaseDate, formatProducerCredit } from '../utils/formatters';
 
 export interface ActiveCatalogCardProps {
   songs?: Song[];
@@ -66,8 +68,9 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
     ? playerSongsCount
     : (songs ? songs.length : activeSongsList.length);
 
-  // Resolve genre dictionary
+  // Resolve genre and producer dictionaries
   const genreDict: Record<string, Genre> = genres || world?.genres || {};
+  const producerDict = world?.producers || {};
 
   const handleAction = () => {
     if (onRecordFirstSingle) {
@@ -176,13 +179,17 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                 Object.values(song.peakPosition || {}).some(pos => pos !== null && Number(pos) <= 10)
               );
               const peakGlobal = song.peakPosition?.Global;
+              const releaseDateStr = formatReleaseDate(song.releaseMonth, song.releaseYear, 'short');
+              const fullDateStr = formatReleaseDate(song.releaseMonth, song.releaseYear, 'full');
+              const producerCredit = formatProducerCredit(song.producerId, producerDict, { short: true });
+              const producerFullCredit = formatProducerCredit(song.producerId, producerDict, { short: false });
 
               return (
                 <div
                   key={song.id}
                   className="p-4 rounded-[12px] bg-[#0B0C10] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 transition-all duration-200 flex flex-col justify-between gap-3 shadow-xs group"
                 >
-                  {/* Top Row: Rank, Title, Genre Badge */}
+                  {/* Top Row: Rank, Title, Genre Badge & Date */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0">
                       <span className="text-xs font-bold text-[#94A3B8] w-6 h-6 rounded-[6px] bg-[#16181F] border border-[#2A2E3D] flex items-center justify-center shrink-0">
@@ -201,16 +208,32 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                           >
                             {genreName}
                           </span>
+                          <span
+                            className="text-[10px] text-[#94A3B8] font-mono flex items-center gap-1"
+                            title={fullDateStr}
+                          >
+                            <Calendar className="w-2.5 h-2.5 text-[#8B5CF6] shrink-0" />
+                            <span>{releaseDateStr}</span>
+                          </span>
                           <span className="text-[10px] text-[#94A3B8] font-mono">
-                            {song.releaseYear} • Calidad <strong className="text-emerald-400 font-semibold">{song.quality}%</strong>
+                            • Calidad <strong className="text-emerald-400 font-semibold">{song.quality}%</strong>
                           </span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Tags Row */}
+                  {/* Tags Row: Producer, Music Video, Viral, Hits */}
                   <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                    {/* Producer Credit Pill */}
+                    <span
+                      className="text-[10px] font-medium bg-[#16181F] border border-[#2A2E3D] text-[#94A3B8] px-2 py-0.5 rounded-[4px] flex items-center gap-1 truncate max-w-[150px] shadow-xs"
+                      title={producerFullCredit}
+                    >
+                      <Sliders className="w-2.5 h-2.5 text-[#8B5CF6] shrink-0" />
+                      <span className="truncate">{producerCredit}</span>
+                    </span>
+
                     {song.musicVideo && (
                       <span
                         className="text-[10px] font-bold bg-cyan-950/70 text-cyan-300 border border-cyan-500/50 px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs"

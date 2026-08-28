@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ReleaseConfirmationData } from '../types';
-import { playSound } from '../utils/audioSystem';
-import { formatMoney } from '../utils/formatters';
+import { formatMoney, formatReleaseDate } from '../utils/formatters';
+import { TimeSystem } from '../systems/TimeSystem';
 
 export interface ReleaseConfirmationModalProps {
   data: ReleaseConfirmationData;
@@ -201,9 +201,9 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
                   <TypeIcon className="w-3.5 h-3.5" />
                   <span>{typeConfig.label}</span>
                 </span>
-                <span className="px-2.5 py-1 rounded-[6px] text-xs font-semibold bg-[#16181F] border border-[#2A2E3D] text-[#94A3B8] flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-[#8B5CF6]" />
-                  <span>Año {data.releaseYear} • Mes {data.releaseMonth}</span>
+                <span className="px-2.5 py-1 rounded-[6px] text-xs font-semibold bg-[#16181F] border border-[#2A2E3D] text-[#CBD5E1] flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                  <span>Lanzamiento: <strong className="text-[#F8FAFC]">{formatReleaseDate(data.releaseMonth, data.releaseYear, 'long')}</strong> <span className="text-[#94A3B8] font-normal">(Mes {data.releaseMonth || 1})</span></span>
                 </span>
               </div>
 
@@ -233,13 +233,11 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
                   </span>
                 )}
 
-                {/* Hired Producer */}
-                {data.producerName && (
-                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 flex items-center gap-1">
-                    <Sliders className="w-3 h-3 text-cyan-400" />
-                    <span>Prod: {data.producerName}</span>
-                  </span>
-                )}
+                {/* Hired Producer / Production Credit */}
+                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 flex items-center gap-1">
+                  <Sliders className="w-3 h-3 text-cyan-400" />
+                  <span>{data.producerName ? `Prod: ${data.producerName}` : 'Producción: Propia (Home Studio)'}</span>
+                </span>
 
                 {/* Featured Artists */}
                 {data.featuredArtistNames && data.featuredArtistNames.length > 0 && (

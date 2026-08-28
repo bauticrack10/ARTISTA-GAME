@@ -489,3 +489,161 @@ export function generateRandomArtistName(countryOrSeed: string | number = 'Argen
   }
   return generateArtistName(countryOrSeed, city);
 }
+
+/**
+ * Nombres de los meses del año en español
+ */
+export const SPANISH_MONTHS = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre'
+] as const;
+
+/**
+ * Abreviaturas de tres letras de los meses en español
+ */
+export const SPANISH_MONTHS_SHORT = [
+  'Ene',
+  'Feb',
+  'Mar',
+  'Abr',
+  'May',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dic'
+] as const;
+
+/**
+ * Retorna el nombre completo del mes en español (1 = Enero, 12 = Diciembre)
+ */
+export function formatMonthName(month?: number | null): string {
+  if (!month || isNaN(month)) return 'Enero';
+  const idx = Math.max(0, Math.min(11, Math.floor(month) - 1));
+  return SPANISH_MONTHS[idx];
+}
+
+/**
+ * Retorna la abreviatura de tres letras del mes en español (1 = Ene, 12 = Dic)
+ */
+export function formatMonthShort(month?: number | null): string {
+  if (!month || isNaN(month)) return 'Ene';
+  const idx = Math.max(0, Math.min(11, Math.floor(month) - 1));
+  return SPANISH_MONTHS_SHORT[idx];
+}
+
+export type ReleaseDateFormat = 'short' | 'long' | 'full' | 'badge' | 'monthYear';
+
+/**
+ * Formatea una fecha de lanzamiento / producción en español de manera consistente y legible.
+ * - 'short': "Ene 2026"
+ * - 'long' / 'monthYear': "Enero 2026"
+ * - 'full': "Enero 2026 (Mes 1)"
+ * - 'badge': "Mes 1 • Ene 2026"
+ */
+export function formatReleaseDate(
+  month?: number | null,
+  year?: number | null,
+  format: ReleaseDateFormat = 'short'
+): string {
+  if (!year) {
+    if (!month || isNaN(month)) return '';
+    return formatMonthName(month);
+  }
+
+  if (!month || isNaN(month)) {
+    return `${year}`;
+  }
+
+  const safeMonth = Math.max(1, Math.min(12, Math.floor(month)));
+  const shortM = formatMonthShort(safeMonth);
+  const fullM = formatMonthName(safeMonth);
+
+  switch (format) {
+    case 'long':
+    case 'monthYear':
+      return `${fullM} ${year}`;
+    case 'full':
+      return `${fullM} ${year} (Mes ${safeMonth})`;
+    case 'badge':
+      return `Mes ${safeMonth} • ${shortM} ${year}`;
+    case 'short':
+    default:
+      return `${shortM} ${year}`;
+  }
+}
+
+/**
+ * Formatea el crédito del productor de una canción o proyecto discográfico.
+ * - Si producerId corresponde a un productor del roster, devuelve su nombre comercial/limpio (o "Prod. [Nombre]").
+ * - Si es autoproducida o no se especificó productor externo, devuelve "Autoproducido" o texto configurado.
+ */
+export function formatProducerCredit(
+  producerId?: string | null,
+  producers?: Record<string, { name: string; [key: string]: any }> | Array<{ id: string; name: string; [key: string]: any }>,
+  options?: {
+    short?: boolean;
+    prefix?: boolean;
+    selfProducedText?: string;
+  }
+): string {
+  const {
+    short = true,
+    prefix = true,
+    selfProducedText = 'Autoproducido'
+  } = options || {};
+
+  if (!producerId || producerId === 'self' || producerId === 'none' || producerId.trim() === '') {
+    return selfProducedText;
+  }
+
+  let prodName = '';
+
+  if (producers) {
+    if (Array.isArray(producers)) {
+      const found = producers.find(p => p.id === producerId);
+      if (found) prodName = found.name;
+    } else if (typeof producers === 'object' && producers[producerId]) {
+      prodName = producers[producerId].name;
+    }
+  }
+
+  // Fallback si no está en el mapa pero se proporcionó un ID con prefijo
+  if (!prodName) {
+    prodName = producerId.replace(/^prod_/, '').replace(/_/g, ' ');
+    prodName = prodName.charAt(0).toUpperCase() + prodName.slice(1);
+  }
+
+  // Simplificar nombres largos con aclaraciones entre paréntesis (ej: "Nico 'Home Studio' (Beatmaker de Barrio)")
+  if (short) {
+    const parenIdx = prodName.indexOf('(');
+    if (parenIdx > 0) {
+      prodName = prodName.substring(0, parenIdx).trim();
+    }
+  }
+
+  if (prefix) {
+    return `Prod. ${prodName}`;
+  }
+
+  return prodName;
+}
+
+/**
+ * Alias de compatibilidad para formatProducerCredit
+ */
+export const formatProducerLabel = formatProducerCredit;
+
+
