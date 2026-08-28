@@ -468,14 +468,18 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     ? (isCustomCityValid ? customCityText.trim() : (COUNTRY_CITIES[country]?.[0] || 'Buenos Aires'))
     : city.trim();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     const finalPersonality = getComputedPersonality();
     const startStats = getStartingStats();
     const uniqueId = `artist_${Math.random().toString(36).substring(2, 9)}`;
     const currentYear = 2026;
     const birthYear = currentYear - age;
     const locationString = formatCityCountry(finalResolvedCity, country);
+    const effectiveStageName = name.trim() || generateArtistName(country, finalResolvedCity).stageName;
+    const effectiveRealName = cleanQuotes(realName.trim()) || effectiveStageName;
 
     const historicalNotes = [
       `Inició su carrera musical en el año ${currentYear} en ${locationString}.`
@@ -490,8 +494,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
     const newArtist: Partial<Artist> = {
       id: uniqueId,
-      name: name.trim() || 'Nuevo Artista',
-      realName: cleanQuotes(realName.trim()) || name.trim(),
+      name: effectiveStageName,
+      realName: effectiveRealName,
       isPlayer: true,
       country,
       city: finalResolvedCity,
@@ -595,6 +599,19 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 Diseñá tu identidad musical, seleccioná tu concepto artístico e iniciá tu viaje en la industria.
               </p>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              id="btn-quick-start-top"
+              onClick={() => handleSubmit()}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-[8px] bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white font-bold text-xs shadow-[0_0_15px_rgba(124,58,237,0.35)] hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer border border-white/20"
+              title="Comenzar Carrera Directamente"
+            >
+              <Sparkles className="w-4 h-4 text-white" />
+              <span>Comenzar Carrera</span>
+            </button>
           </div>
         </div>
 

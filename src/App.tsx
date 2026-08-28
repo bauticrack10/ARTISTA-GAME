@@ -296,7 +296,7 @@ export default function App() {
   // 1. START SCREEN
   if (appMode === 'start_screen') {
     return (
-      <div className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c]">
+      <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
         <StartScreen
           onNewCareer={handleStartNewCareer}
           onContinue={handleContinueSavedGame}
@@ -310,7 +310,7 @@ export default function App() {
   // 2. CHARACTER CREATOR
   if (appMode === 'character_creator') {
     return (
-      <div className="min-h-screen bg-[#f7f4ed] text-[#1c1c1c]">
+      <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
         <CharacterCreatorView
           world={world}
           onBackToMenu={() => setAppMode('start_screen')}
