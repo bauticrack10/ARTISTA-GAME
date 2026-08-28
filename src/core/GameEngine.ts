@@ -2005,7 +2005,8 @@ export class GameEngine {
           this.world.currentMonth,
           activeTrends,
           this.world.genres[song.genreId],
-          this.world.artists
+          this.world.artists,
+          playerSongs
         );
         song.streamsLastMonth = streamRes.streams;
         song.streamsTotal += streamRes.streams;

@@ -16,7 +16,8 @@ export class StreamingEngine {
     currentMonth: number,
     activeTrends: MusicTrend[],
     genre: Genre | undefined,
-    allArtists?: Record<string, Artist>
+    allArtists?: Record<string, Artist>,
+    artistCatalog?: Song[]
   ): { streams: number; wentViralNow: boolean; becomesClassicNow: boolean } {
     const ageMonths = (currentYear - song.releaseYear) * 12 + (currentMonth - song.releaseMonth);
     if (ageMonths < 0) return { streams: 0, wentViralNow: false, becomesClassicNow: false };
@@ -39,30 +40,50 @@ export class StreamingEngine {
     // 2. Genre health multiplier
     const genreBoost = genre ? Math.max(0.5, genre.currentPopularity / 70) : 1.0;
 
-    // 3. Core Fan Streams: Active fans replay new songs frequently
-    // Engaged fan count:
+    // 3. Catalog Context & Song Tier Analysis
+    const catalog = (artistCatalog || []).filter(s => {
+      const sAge = (currentYear - s.releaseYear) * 12 + (currentMonth - s.releaseMonth);
+      return sAge >= 0;
+    });
+
+    let topHitSong = song;
+    if (catalog.length > 0) {
+      topHitSong = catalog.reduce((best, s) => {
+        const bestScore = (best.streamsTotal || 0) + (best.isClassic ? 500000 : 0) + ((best.peakPosition?.Global ?? 99) <= 10 ? 1000000 : 0);
+        const sScore = (s.streamsTotal || 0) + (s.isClassic ? 500000 : 0) + ((s.peakPosition?.Global ?? 99) <= 10 ? 1000000 : 0);
+        return sScore > bestScore ? s : best;
+      }, catalog[0]);
+    }
+
+    const isSingleOrPromoted = Boolean(song.isSingle) || Boolean(song.musicVideo) || Boolean(song.isClassic) || ((song.peakPosition?.Global ?? 99) <= 40);
+    const isTopHit = catalog.length > 0
+      ? song.id === topHitSong.id
+      : (isSingleOrPromoted && (song.isClassic || (song.streamsTotal && song.streamsTotal > 1000000)));
+    const isDeepCut = !isTopHit && !isSingleOrPromoted;
+
+    // 4. Core Fan Streams: Active fans replay new songs frequently and sustain catalog hits
     const activeFans = Math.max(10, Math.floor(artist.stats.fansCount * loyaltyFactor));
     let fanPlaysPerMonth = 0;
     if (ageMonths === 0) {
-      fanPlaysPerMonth = 5.5; // ~5-6 plays in release month per fan
+      fanPlaysPerMonth = isTopHit ? 5.5 : isSingleOrPromoted ? 4.5 : 2.2;
     } else if (ageMonths === 1) {
-      fanPlaysPerMonth = 3.2;
+      fanPlaysPerMonth = isTopHit ? 3.2 : isSingleOrPromoted ? 2.4 : 1.1;
     } else if (ageMonths <= 3) {
-      fanPlaysPerMonth = 1.8;
+      fanPlaysPerMonth = isTopHit ? 1.8 : isSingleOrPromoted ? 1.3 : 0.55;
     } else if (ageMonths <= 12) {
-      fanPlaysPerMonth = 0.8;
+      fanPlaysPerMonth = isTopHit ? 0.9 : isSingleOrPromoted ? 0.55 : 0.20;
     } else {
-      fanPlaysPerMonth = song.isClassic ? 0.4 : 0.15;
+      if (isTopHit) {
+        fanPlaysPerMonth = song.isClassic ? 0.65 : 0.45;
+      } else if (isSingleOrPromoted) {
+        fanPlaysPerMonth = song.isClassic ? 0.40 : 0.25;
+      } else {
+        fanPlaysPerMonth = 0.08;
+      }
     }
     const fanStreamBase = activeFans * fanPlaysPerMonth;
 
-    // 4. Algorithmic / Discovery / Playlist reach based on realistic scale
-    // Calibrated segmented progression curve across career stages:
-    // Underground (pop <= 20): 50 to 5,000 base pool
-    // Emerging (pop 21 - 40): 5,000 to 75,000 base pool
-    // Breakout (pop 41 - 65): 75,000 to 1,800,000 base pool
-    // Mainstream (pop 66 - 85): 1.8M to 16M base pool
-    // Superstar (pop > 85): 16M to 55M base pool
+    // 5. Algorithmic / Discovery / Playlist reach based on realistic scale
     let maxAlgorithmicPool = 0;
     if (artist.stats.popularity <= 20) {
       maxAlgorithmicPool = Math.pow(popFactor / 0.20, 2.8) * 4500 + (artist.stats.popularity * 15);
@@ -80,10 +101,11 @@ export class StreamingEngine {
       maxAlgorithmicPool = 16000000 + Math.pow(ratio, 1.4) * 39000000;
     }
 
+    const singlePromotedMultiplier = isTopHit ? 1.0 : isSingleOrPromoted ? 0.85 : 0.38;
     const songAppealScore = (qualityFactor * 0.35 + commercialFactor * 0.45 + originalityFactor * 0.20) * (0.55 + hypeFactor * 0.45);
-    const algorithmicStreams = maxAlgorithmicPool * songAppealScore * trendBoost * genreBoost;
+    const algorithmicStreams = maxAlgorithmicPool * songAppealScore * trendBoost * genreBoost * singlePromotedMultiplier;
 
-    // 4.1 Impulso de alcance algorítmico y cross-fanbase derivado del artista colaborador
+    // 5.1 Impulso de alcance algorítmico y cross-fanbase derivado del artista colaborador
     let collabBoost = 0;
     if (song.featuredArtistIds && song.featuredArtistIds.length > 0) {
       for (const featId of song.featuredArtistIds) {
@@ -118,10 +140,10 @@ export class StreamingEngine {
       }
     }
 
-    // Base total potential per month
+    // Base total potential per month for active lifecycle
     const baseTotalStreams = fanStreamBase + algorithmicStreams + collabBoost;
 
-    // 5. Music Video Boost (Initial streaming velocity & viral chance multiplier)
+    // 6. Music Video Boost (Initial streaming velocity & viral chance multiplier)
     let musicVideoVelocityMultiplier = 1.0;
     let viralChanceBonus = 0;
     if (song.musicVideo) {
@@ -134,13 +156,12 @@ export class StreamingEngine {
         else if (ageMonths <= 5) musicVideoVelocityMultiplier = 1.15;
         viralChanceBonus = 0.015; // +1.5% viral chance
       } else {
-        // Director Emergente
         if (ageMonths <= 2) musicVideoVelocityMultiplier = 1.15;
         viralChanceBonus = 0.005; // +0.5% viral chance
       }
     }
 
-    // 6. Longevity curves & decay over time
+    // 7. Longevity curves & decay over time
     let ageMultiplier = 1.0;
     let wentViralNow = false;
     let becomesClassicNow = false;
@@ -187,24 +208,145 @@ export class StreamingEngine {
       ageMultiplier *= 2.5;
     }
 
-    let calculatedStreams = Math.floor(baseTotalStreams * ageMultiplier * musicVideoVelocityMultiplier);
+    // 8. Catalog Halo Effect (Efecto Marea):
+    // El artista transfiere descubrimiento continuo a sus canciones activas según su
+    // popularidad y oyentes mensuales actuales (oyentes que exploran discografía, playlists de catálogo, autoplay)
+    let catalogHaloStreams = 0;
+    const effectiveListeners = Math.max(
+      artist.stats.monthlyListeners || 0,
+      Math.floor(artist.stats.popularity * 1800 + artist.stats.fansCount * 0.6)
+    );
 
-    // 7. Momentum de inercia y rotación radial/playlist:
-    // Si la canción ya venía generando cientos de miles o millones de reproducciones,
-    // retiene un piso de inercia (~78% a 90% mes a mes) para evitar colapsos irreales
-    if (song.streamsLastMonth && song.streamsLastMonth > 50000 && ageMonths > 0) {
-      const retentionRate = Math.min(0.92, 0.76 + (qualityFactor * 0.14));
+    if (effectiveListeners > 0) {
+      // Proporción de oyentes que exploran el catálogo (~4.5% a 15% según popularidad y hype del artista)
+      const haloExplorationRate = (0.045 + Math.pow(popFactor, 1.5) * 0.08) * (1.0 + (hypeFactor - 0.5) * 0.25);
+
+      // Ponderación de atracción según jerarquía del tema:
+      // Hit estrella absorbe la mayor atracción (~50%), singles destacados (~25%), deep cuts (~8%)
+      let songHaloWeight = 1.0;
+      if (isTopHit) {
+        songHaloWeight = 1.0 + (song.isClassic ? 0.35 : 0);
+      } else if (isSingleOrPromoted) {
+        songHaloWeight = 0.45 + (song.isClassic ? 0.20 : 0);
+      } else {
+        // Deep cut
+        songHaloWeight = 0.12 + (qualityFactor * 0.08);
+      }
+
+      const haloTrackAppeal = (qualityFactor * 0.40 + commercialFactor * 0.40 + originalityFactor * 0.20) * trendBoost * genreBoost;
+
+      if (catalog.length > 0) {
+        const totalCatalogWeight = catalog.reduce((sum, s) => {
+          if (s.id === topHitSong.id) return sum + 1.0 + (s.isClassic ? 0.35 : 0);
+          if (s.isSingle || s.musicVideo || s.isClassic) return sum + 0.45 + (s.isClassic ? 0.20 : 0);
+          return sum + 0.15;
+        }, 0);
+
+        const poolStreams = Math.floor(effectiveListeners * haloExplorationRate);
+        catalogHaloStreams = Math.floor(poolStreams * (songHaloWeight / Math.max(1, totalCatalogWeight)) * haloTrackAppeal);
+      } else {
+        catalogHaloStreams = Math.floor(effectiveListeners * haloExplorationRate * songHaloWeight * 0.15 * haloTrackAppeal);
+      }
+    }
+
+    // 9. Combinación de ciclo activo + descubrimiento de catálogo Halo
+    let calculatedStreams = Math.floor(baseTotalStreams * ageMultiplier * musicVideoVelocityMultiplier);
+    if (ageMonths >= 1) {
+      calculatedStreams = Math.max(calculatedStreams, Math.floor(fanStreamBase + catalogHaloStreams));
+    }
+
+    // 10. Decaimiento suave de picos masivos / virales previos hacia su nivel de clásico/catálogo
+    // Si la canción generó un pico masivo o viene de rotación alta, retiene inercia mes a mes
+    if (song.streamsLastMonth && song.streamsLastMonth > 5000 && ageMonths > 0) {
+      let retentionRate = 0.74 + (qualityFactor * 0.12) + (song.isClassic ? 0.06 : 0);
+      if (song.longevityCurve === 'explosive_drop') {
+        retentionRate = Math.min(retentionRate, 0.65 + qualityFactor * 0.08);
+      } else if (song.longevityCurve === 'instant_classic') {
+        retentionRate = Math.max(retentionRate, 0.86 + qualityFactor * 0.08);
+      } else if (song.longevityCurve === 'slow_burn' && ageMonths <= 6) {
+        retentionRate = Math.max(retentionRate, 0.92);
+      }
+      retentionRate = Math.min(0.94, retentionRate);
+
       const momentumFloor = Math.floor(song.streamsLastMonth * retentionRate);
       if (calculatedStreams < momentumFloor) {
         calculatedStreams = momentumFloor;
       }
     }
 
-    // Minimum stream floor scaled realistically
-    const minFloor = artist.stats.popularity > 20 ? 50 : Math.max(5, Math.floor(activeFans * 0.05));
+    // 11. Piso de streams de catálogo que escala con el tamaño actual del artista
+    // Evita que temas antiguos caigan a números insignificantes si el artista se volvió masivo
+    let tierPopFloor = 10;
+    if (artist.stats.popularity <= 20) {
+      // Underground: 10 a 60
+      tierPopFloor = 10 + Math.floor(artist.stats.popularity * 2.5);
+    } else if (artist.stats.popularity <= 40) {
+      // Emerging: 60 a 800
+      const r = (artist.stats.popularity - 20) / 20;
+      tierPopFloor = 60 + Math.floor(Math.pow(r, 1.8) * 740);
+    } else if (artist.stats.popularity <= 65) {
+      // Breakout: 800 a 12,000
+      const r = (artist.stats.popularity - 40) / 25;
+      tierPopFloor = 800 + Math.floor(Math.pow(r, 1.7) * 11200);
+    } else if (artist.stats.popularity <= 85) {
+      // Mainstream: 12,000 a 120,000
+      const r = (artist.stats.popularity - 65) / 20;
+      tierPopFloor = 12000 + Math.floor(Math.pow(r, 1.5) * 108000);
+    } else {
+      // Superstar: 120,000 a 450,000+
+      const r = (artist.stats.popularity - 85) / 15;
+      tierPopFloor = 120000 + Math.floor(Math.pow(r, 1.3) * 330000);
+    }
+
+    let roleFloorMultiplier = 1.0;
+    if (isTopHit) {
+      roleFloorMultiplier = 1.8 + (song.isClassic ? 0.6 : 0);
+    } else if (isSingleOrPromoted) {
+      roleFloorMultiplier = 0.55 + (song.isClassic ? 0.25 : 0);
+    } else {
+      // Deep cut
+      roleFloorMultiplier = 0.12 + (qualityFactor * 0.06);
+    }
+
+    const listenerFloorGuarantee = Math.floor(
+      (artist.stats.monthlyListeners || 0) * (isTopHit ? 0.012 : isSingleOrPromoted ? 0.0035 : 0.0008)
+    );
+
+    const catalogFloor = Math.max(
+      15,
+      Math.floor(tierPopFloor * roleFloorMultiplier * (0.6 + qualityFactor * 0.4)),
+      listenerFloorGuarantee
+    );
+
+    // 12. Garantía de jerarquía de catálogo natural (Hit estrella > Singles destacados > Deep cuts)
+    // En catálogo activo, un deep cut o tema secundario no puede superar al hit insignia del artista
+    // a menos que esté atravesando una explosión viral activa
+    if (ageMonths >= 1 && !wentViralNow && !(song.wentViral && ageMonths <= 2) && catalog.length > 1) {
+      if (!isTopHit) {
+        const leadStreamsLastMonth = topHitSong.streamsLastMonth || 0;
+        const leadHistoricalStreams = topHitSong.streamsTotal || 0;
+        const leadBenchmark = Math.max(leadStreamsLastMonth, catalogFloor * 2.2, Math.floor(leadHistoricalStreams * 0.03));
+
+        if (isDeepCut) {
+          // Un deep cut no puede superar ~35-50% del hit principal en catálogo pasivo
+          const maxAllowedDeepCut = Math.max(catalogFloor, Math.floor(leadBenchmark * (0.35 + qualityFactor * 0.15)));
+          if (calculatedStreams > maxAllowedDeepCut) {
+            calculatedStreams = maxAllowedDeepCut;
+          }
+        } else if (isSingleOrPromoted) {
+          // Un single destacado secundario no puede superar ~75-85% del hit principal
+          const maxAllowedSingle = Math.max(catalogFloor, Math.floor(leadBenchmark * (0.75 + qualityFactor * 0.10)));
+          if (calculatedStreams > maxAllowedSingle) {
+            calculatedStreams = maxAllowedSingle;
+          }
+        }
+      }
+    }
+
+    const finalStreams = Math.max(catalogFloor, calculatedStreams);
 
     return {
-      streams: Math.max(minFloor, calculatedStreams),
+      streams: finalStreams,
       wentViralNow,
       becomesClassicNow
     };

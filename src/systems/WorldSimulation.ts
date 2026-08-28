@@ -302,7 +302,8 @@ export class WorldSimulation {
           world.currentMonth,
           activeTrends,
           world.genres[song.genreId],
-          world.artists
+          world.artists,
+          artistSongs
         );
 
         song.streamsLastMonth = streamResult.streams;

@@ -103,6 +103,7 @@ function runStreamingAndSyncTests() {
     title: 'Goteo Test',
     genreId: 'trap_latino',
     subGenreIds: ['hip_hop_rap'],
+    featuredArtistIds: [],
     budgetProduction: 2000,
     budgetMarketing: 3000,
     longevityCurve: 'steady'
