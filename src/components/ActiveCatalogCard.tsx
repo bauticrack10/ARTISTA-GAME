@@ -145,7 +145,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
             Tu catálogo está esperando tu primer hit underground
           </h3>
           <p className="text-xs sm:text-sm text-[#94A3B8] max-w-lg mt-2.5 leading-relaxed font-normal">
-            Aún no has lanzado canciones. Entrá al estudio de grabación, definí tu dirección sonora y publicá tu primer single para comenzar a acumular oyentes, reproducciones y regalías en los rankings globales.
+            Aún no has lanzado canciones. Entra al estudio de grabación, define tu dirección sonora y publica tu primer single para comenzar a acumular oyentes, reproducciones y regalías en los rankings globales.
           </p>
 
           {/* Direct CTA Button */}

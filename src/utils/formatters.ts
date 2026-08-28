@@ -14,7 +14,9 @@ export function sanitizeString(text: string): string {
   return text
     // Elimina espacios parásitos antes de signos de puntuación: "Buenos Aires , Argentina" -> "Buenos Aires, Argentina"
     .replace(/\s+([,;:.!?])/g, '$1')
-    // Elimina espacios redundantes dentro de paréntesis: "( 15 )" -> "(15)", "(4 )" -> "(4)", "(+6M )" -> "(+6M)"
+    // Normaliza fracciones y ratios en paréntesis: "( 80 /100)" o "( 80 / 100 )" -> "(80/100)"
+    .replace(/\(\s*([0-9]+)\s*\/\s*([0-9]+)\s*\)/g, '($1/$2)')
+    // Elimina espacios redundantes dentro de paréntesis: "( 15 )" -> "(15)", "(2 )" -> "(2)", "(+6M )" -> "(+6M)", "( TRAP LATINO )" -> "(TRAP LATINO)"
     .replace(/\(\s+/g, '(')
     .replace(/\s+\)/g, ')')
     // Elimina espacios redundantes dentro de corchetes: "[ 01 ]" -> "[01]"
@@ -64,11 +66,16 @@ export function cleanCountTag(count: number, total: number, suffix?: string): st
 }
 
 /**
- * Elimina espacios innecesarios dentro de paréntesis
+ * Elimina espacios innecesarios dentro de paréntesis y normaliza ratios internos
  */
 export function cleanParentheses(text: string): string {
   if (!text) return '';
-  return text.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
+  return text
+    .replace(/\(\s*([0-9]+)\s*\/\s*([0-9]+)\s*\)/g, '($1/$2)')
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }
 
 /**

@@ -1161,21 +1161,21 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                   <span className="text-[#94A3B8] block">Inversión Legal Inicial:</span>
                   <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.funds >= 25000 ? 'text-[#10B981]' : 'text-amber-400'}`}>
                     {player.stats.funds >= 25000 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    $25,000 (Tenés {formatMoney(player.stats.funds)})
+                    $25,000 (Tienes {formatMoney(player.stats.funds)})
                   </span>
                 </div>
                 <div className="p-3 bg-[#16181F] rounded-[6px] border border-[#2A2E3D]">
                   <span className="text-[#94A3B8] block">Popularidad Mínima:</span>
                   <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.popularity >= 40 ? 'text-[#10B981]' : 'text-amber-400'}`}>
                     {player.stats.popularity >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    40 / 100 (Tenés {player.stats.popularity}/100)
+                    40/100 (Tienes {player.stats.popularity}/100)
                   </span>
                 </div>
                 <div className="p-3 bg-[#16181F] rounded-[6px] border border-[#2A2E3D]">
                   <span className="text-[#94A3B8] block">Reputación en la Escena:</span>
                   <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.reputation >= 40 ? 'text-[#10B981]' : 'text-amber-400'}`}>
                     {player.stats.reputation >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    40 / 100 (Tenés {player.stats.reputation}/100)
+                    40/100 (Tienes {player.stats.reputation}/100)
                   </span>
                 </div>
               </div>

@@ -254,7 +254,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             Carrera, Discografía & Hitos de {player.name}
           </h1>
           <p className="text-xs text-[#94A3B8] mt-1 max-w-2xl leading-relaxed">
-            Revisá la cronología completa de tu trayectoria: el desempeño de tu discografía, la mejor gira de tu vida, las estatuillas ganadas y la evolución estética entre tus distintas Eras.
+            Revisa la cronología completa de tu trayectoria: el desempeño de tu discografía, la mejor gira de tu vida, las estatuillas ganadas y la evolución estética entre tus distintas Eras.
           </p>
         </div>
 
@@ -692,7 +692,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             <Disc3 className="w-8 h-8 text-[#94A3B8] mx-auto" />
             <h3 className="text-sm font-semibold text-[#F8FAFC]">Sin Discografía Aún</h3>
             <p className="text-xs text-[#94A3B8]">
-              Lanzá tu primer álbum o EP en la pestaña de Estudio para comenzar a construir tu catálogo.
+              Lanza tu primer álbum o EP en la pestaña de Estudio para comenzar a construir tu catálogo.
             </p>
           </div>
         ) : (

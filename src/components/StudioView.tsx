@@ -798,7 +798,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               {/* Sub-style Selector */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] mb-2">
-                  Dirección Sónica de la Era ({styleDerivation.primaryGenreName})
+                  Dirección Sónica de la Era ({styleDerivation.primaryGenreName?.trim() || ''})
                 </label>
                 <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
                   {styleDerivation.availableStyles.map(style => {
@@ -1051,7 +1051,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
                   <p className="text-xs text-[#94A3B8] mt-0.5">
-                    Rodá una pieza audiovisual cinematográfica para disparar el Hype de tu Era, multiplicar el impacto Viral y acelerar el debut en streaming.
+                    Rueda una pieza audiovisual cinematográfica para disparar el Hype de tu Era, multiplicar el impacto Viral y acelerar el debut en streaming.
                   </p>
                 </div>
               </div>

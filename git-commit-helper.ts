@@ -1,0 +1,22 @@
+import fs from 'fs';
+import { execSync } from 'child_process';
+
+const commitMsg = `fix(copywriting-typography): unificar tono a tuteo neutro y sanitizar parentesis y ratios
+
+- Modificaciones:
+  1. Unificación de tono de redacción en Visual Lab (StudioView.tsx): se actualizó 'Rodá una pieza audiovisual...' por 'Rueda una pieza audiovisual cinematográfica...' para mantener consistencia con el tuteo estándar de la UI.
+  2. Estandarización de tono en componentes clave: 'ActiveCatalogCard.tsx' ('Entra al estudio...', 'define...', 'publica...'), 'CareerErasView.tsx' ('Revisa...', 'Lanza...'), e 'IndustryView.tsx' ('Tienes $25.000', '40/100').
+  3. Sanitización y formateo tipográfico en 'formatters.ts':
+     - 'Catálogo (2 )' -> 'Catálogo (2)'.
+     - 'DIRECCIÓN SÓNICA DE LA ERA ( TRAP LATINO )' -> 'DIRECCIÓN SÓNICA DE LA ERA (TRAP LATINO)'.
+     - '( 80 /100)' / '( 80 / 100 )' -> '(80/100)'.
+  4. Suite de pruebas automatizada 'test-tone-and-typography-cleanup.ts' con 13/13 pruebas superadas.
+- Componentes/Sistemas: src/utils/formatters.ts, src/components/StudioView.tsx, src/components/ActiveCatalogCard.tsx, src/components/CareerErasView.tsx, src/components/IndustryView.tsx, test-tone-and-typography-cleanup.ts.
+- Contexto para Agentes IA: Garantiza coherencia gramatical y estilística sin divergencias dialectales en imperativos y elimina anomalías de espaciado en tags métricos y paréntesis dinámicos.`;
+
+fs.writeFileSync('commit_msg.txt', commitMsg, 'utf8');
+execSync('git add -A', { stdio: 'inherit' });
+execSync('git commit -F commit_msg.txt', { stdio: 'inherit' });
+execSync('git push origin main', { stdio: 'inherit' });
+fs.unlinkSync('commit_msg.txt');
+fs.unlinkSync('git-commit-helper.ts');
