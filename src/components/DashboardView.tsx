@@ -42,20 +42,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenMilestone
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
-  const [customAvatarUrl, setCustomAvatarUrl] = useState(player.avatarUrl || '');
-  const [selectedColor, setSelectedColor] = useState(player.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]');
+  const [customAvatarUrl, setCustomAvatarUrl] = useState(player?.avatarUrl || '');
+  const [selectedColor, setSelectedColor] = useState(player?.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const playerSongs = (Object.values(world.songs || {}) as Song[]).filter(s => s.artistId === player.id);
-  const playerAlbums = (Object.values(world.albums || {}) as Album[]).filter(a => a.artistId === player.id);
+  const playerId = player?.id || 'player';
+  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s.artistId === playerId);
+  const playerAlbums = (Object.values(world?.albums || {}) as Album[]).filter(a => a.artistId === playerId);
 
   const topSongs = [...playerSongs]
     .sort((a, b) => (b.streamsLastMonth || 0) - (a.streamsLastMonth || 0))
     .slice(0, 4);
 
   const hasCatalog = playerSongs.length >= 2 || playerAlbums.length >= 1;
-  const hasAudience = (player.stats?.monthlyListeners || 0) >= 1000;
-  const hasEnergy = (player.stats?.energy || 0) >= 85;
+  const hasAudience = (player?.stats?.monthlyListeners || 0) >= 1000;
+  const hasEnergy = (player?.stats?.energy || 0) >= 85;
   const isTourReady = hasCatalog && hasAudience && hasEnergy;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,11 +174,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div
                   className={`w-16 h-16 rounded-[12px] bg-gradient-to-tr ${selectedColor} flex items-center justify-center text-white text-2xl font-bold border-2 border-[#2A2E3D] shadow-xs`}
                 >
-                  {player.name.charAt(0)}
+                  {(player?.name || 'A').charAt(0)}
                 </div>
               )}
               <div>
-                <h4 className="text-sm font-bold text-[#F8FAFC]">{player.name}</h4>
+                <h4 className="text-sm font-bold text-[#F8FAFC]">{player?.name || 'Artista'}</h4>
                 <p className="text-xs text-[#94A3B8]">Vista previa de la foto de perfil en el juego</p>
               </div>
             </div>

@@ -22,14 +22,14 @@ interface AwardsViewProps {
 }
 
 export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGala }) => {
+  const ceremonies = world?.awardsHistory || [];
   const [expandedYear, setExpandedYear] = useState<number | null>(
-    world.awardsHistory.length > 0 ? world.awardsHistory[0].year : null
+    ceremonies.length > 0 ? ceremonies[0].year : null
   );
   const [filterOnlyPlayerWins, setFilterOnlyPlayerWins] = useState<boolean>(false);
 
-  const ceremonies = world.awardsHistory || [];
   const filteredCeremonies = filterOnlyPlayerWins
-    ? ceremonies.filter(c => c.categories.some(cat => cat.winnerArtistId === player.id))
+    ? ceremonies.filter(c => c.categories.some(cat => cat.winnerArtistId === player?.id))
     : ceremonies;
 
   const getCategoryIcon = (name: string) => {

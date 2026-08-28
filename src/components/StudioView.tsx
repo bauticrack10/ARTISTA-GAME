@@ -277,21 +277,21 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }
   }, [initialTab]);
 
-  const currentEra = player.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1] : undefined;
-  const styleDerivation = getArtistDerivedStyles(player, currentEra, world.genres);
+  const currentEra = player?.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1] : undefined;
+  const styleDerivation = getArtistDerivedStyles(player, currentEra, world?.genres || {});
   const primaryGenreTheme = getGenreTheme(styleDerivation.primaryGenreId);
 
   // Available scene artists for features
   const sceneArtists = useMemo(() => {
-    return (Object.values(world.artists) as Artist[]).filter(
-      a => a.id !== player.id && !a.isRetired
+    return (Object.values(world?.artists || {}) as Artist[]).filter(
+      a => a.id !== player?.id && !a.isRetired
     );
-  }, [world.artists, player.id]);
+  }, [world?.artists, player?.id]);
 
   // Singles released this year
   const MAX_SINGLES = GameEngine.MAX_SINGLES_PER_YEAR;
-  const playerSongs = (Object.values(world.songs) as Song[]).filter(s => s.artistId === player.id);
-  const singlesThisYear = playerSongs.filter(s => s.releaseYear === world.currentYear && s.isSingle).length;
+  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s.artistId === player?.id);
+  const singlesThisYear = playerSongs.filter(s => s.releaseYear === world?.currentYear && s.isSingle).length;
   const isSinglesLimitReached = singlesThisYear >= MAX_SINGLES;
 
   // Release confirmation and duplicate click prevention state
@@ -315,9 +315,9 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   const currentDirectorTier = DIRECTOR_TIERS.find(t => t.id === selectedDirectorTier) || DIRECTOR_TIERS[1];
   const videoCost = hasMusicVideo ? currentDirectorTier.cost : 0;
-  const singleProdFee = singleProducer ? (world.producers[singleProducer]?.costPerTrack || 0) : 0;
+  const singleProdFee = singleProducer && world?.producers ? (world.producers[singleProducer]?.costPerTrack || 0) : 0;
   const totalSingleCost = singleProdBudget + singleMktBudget + singleProdFee + videoCost;
-  const isFundsInsufficient = totalSingleCost > player.stats.funds;
+  const isFundsInsufficient = totalSingleCost > (player?.stats?.funds || 0);
 
   // Album State
   const [albumTitle, setAlbumTitle] = useState('');

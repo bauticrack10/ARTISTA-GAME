@@ -67,21 +67,23 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
     // Generate contextual, hyperrealistic social reactions based on current world state & player
     const posts: SocialPost[] = [];
     const playerName = player?.name || 'El Artista';
-    const playerListeners = player?.stats.monthlyListeners || 0;
+    const playerListeners = player?.stats?.monthlyListeners || 0;
     const playerStage = player?.careerStage || 'Underground';
 
     // 1. Post about player's momentum or recent activity
+    const curYear = world?.currentYear || 2026;
+    const curMonth = world?.currentMonth || 1;
     if (player) {
       posts.push({
-        id: `post_p_${world.currentYear}_${world.currentMonth}_1`,
+        id: `post_p_${curYear}_${curMonth}_1`,
         platform: 'twitter',
         authorName: 'Charts & Data Urbano',
         authorHandle: 'DataUrbanoNews',
         authorVerified: true,
         authorType: 'media',
-        content: `${playerName} continúa consolidando su etapa como ${playerStage} con más de ${playerListeners.toLocaleString()} oyentes activos. ¿Se viene la era definitiva? 👀 #ElArtista #Musica`,
-        year: world.currentYear,
-        month: world.currentMonth,
+        content: `${playerName} continúa consolidando su etapa como ${playerStage} con más de ${(playerListeners || 0).toLocaleString('es-AR')} oyentes activos. ¿Se viene la era definitiva? 👀 #ElArtista #Musica`,
+        year: curYear,
+        month: curMonth,
         likes: Math.max(120, Math.floor(playerListeners * 0.08)),
         retweetsOrShares: Math.max(45, Math.floor(playerListeners * 0.02)),
         commentsCount: Math.max(18, Math.floor(playerListeners * 0.01)),
@@ -89,15 +91,15 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
       });
 
       posts.push({
-        id: `post_p_${world.currentYear}_${world.currentMonth}_2`,
+        id: `post_p_${curYear}_${curMonth}_2`,
         platform: 'tiktok',
         authorName: 'Mica • Fan Club',
         authorHandle: 'mica_musicvibes',
         authorVerified: false,
         authorType: 'fan',
         content: `No supero el flow y la dirección sonora de ${playerName} este año. La evolución de las barras y la producción está a otro nivel 💖🔥 #Favorito #Hits #Viral`,
-        year: world.currentYear,
-        month: world.currentMonth,
+        year: curYear,
+        month: curMonth,
         likes: Math.max(850, Math.floor(playerListeners * 0.15)),
         retweetsOrShares: Math.max(120, Math.floor(playerListeners * 0.04)),
         commentsCount: Math.max(64, Math.floor(playerListeners * 0.02)),
@@ -115,8 +117,8 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
         authorVerified: true,
         authorType: idx % 2 === 0 ? 'critic' : 'influencer',
         content: `Reacción en vivo: "${news.headline}". El movimiento de la industria está marcando un antes y después en las listas mundiales. 🎙️`,
-        year: news.year,
-        month: news.month,
+        year: news.year || curYear,
+        month: news.month || curMonth,
         likes: 1400 + idx * 620,
         retweetsOrShares: 320 + idx * 110,
         commentsCount: 95 + idx * 40,
@@ -125,7 +127,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
     });
 
     return posts;
-  }, [world.socialFeed, newsList, player, world.currentYear, world.currentMonth]);
+  }, [world?.socialFeed, newsList, player, world?.currentYear, world?.currentMonth]);
 
   // Filtered social posts
   const filteredSocialPosts = useMemo(() => {
@@ -454,7 +456,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           <div className="p-3 rounded-[12px] bg-[#0B0C10] border border-[#2A2E3D] text-xs text-[#94A3B8] flex items-center justify-between gap-2 mt-2">
             <div className="flex items-center gap-1.5 font-semibold text-[#F8FAFC] text-[11px]">
               <Flame className="w-3.5 h-3.5 text-orange-400" />
-              <span>Tendencia #1: #{player?.name.replace(/\s+/g, '') || 'ElArtista'}</span>
+              <span>Tendencia #1: #{(player?.name || 'ElArtista').replace(/\s+/g, '')}</span>
             </div>
             <span className="text-[10px] bg-[#16181F] text-[#94A3B8] px-1.5 py-0.5 rounded-[4px] border border-[#2A2E3D] font-mono">
               +14.2k posts

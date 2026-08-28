@@ -63,63 +63,80 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   className = ''
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
-  const [customAvatarUrl, setCustomAvatarUrl] = useState(player.avatarUrl || '');
-  const [selectedColor, setSelectedColor] = useState(player.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
+  const [customAvatarUrl, setCustomAvatarUrl] = useState(player?.avatarUrl || '');
+  const [selectedColor, setSelectedColor] = useState(player?.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const currentEra = player.eras && player.eras.length > 0
+  const currentEra = player?.eras && player.eras.length > 0
     ? player.eras[player.eras.length - 1]
     : null;
 
+  const playerId = player?.id || 'player';
+  const playerStats = player?.stats || {
+    popularity: 0,
+    reputation: 0,
+    artisticCredibility: 0,
+    energy: 100,
+    monthlyListeners: 0,
+    totalStreams: 0,
+    funds: 0,
+    fansCount: 0,
+    fanbaseLoyalty: 50,
+    hype: 0
+  };
+
   const computedSongsCount = playerSongsCount !== undefined
     ? playerSongsCount
-    : (Object.values(world.songs || {}) as Song[]).filter((s) => s.artistId === player.id || s.isPlayerSong).length;
+    : (Object.values(world?.songs || {}) as Song[]).filter((s) => s.artistId === playerId || s.isPlayerSong).length;
 
   const computedAlbumsCount = playerAlbumsCount !== undefined
     ? playerAlbumsCount
-    : (Object.values(world.albums || {}) as Album[]).filter((a) => a.artistId === player.id).length;
+    : (Object.values(world?.albums || {}) as Album[]).filter((a) => a.artistId === playerId).length;
 
   const mainGenreName =
-    world.genres && world.genres[player.mainGenreId]?.name
+    world?.genres && player?.mainGenreId && world.genres[player.mainGenreId]?.name
       ? world.genres[player.mainGenreId].name
-      : player.mainGenreId || 'Música Urbana';
+      : player?.mainGenreId || 'Música Urbana';
 
-  const currentLabel = player.labelId && world.labels ? world.labels[player.labelId] : null;
-  const currentManager = player.managerId && world.managers ? world.managers[player.managerId] : null;
+  const currentLabel = player?.labelId && world?.labels ? world.labels[player.labelId] : null;
+  const currentManager = player?.managerId && world?.managers ? world.managers[player.managerId] : null;
 
   // Reactive change detection for live visual feedback on viral surges
-  const prevListenersRef = useRef<number>(player.stats.monthlyListeners);
-  const prevStreamsRef = useRef<number>(player.stats.totalStreams);
+  const prevListenersRef = useRef<number>(playerStats.monthlyListeners || 0);
+  const prevStreamsRef = useRef<number>(playerStats.totalStreams || 0);
   const [isListenersSurging, setIsListenersSurging] = useState<boolean>(false);
   const [isStreamsSurging, setIsStreamsSurging] = useState<boolean>(false);
 
   useEffect(() => {
-    if (player.stats.monthlyListeners > prevListenersRef.current) {
+    const currentListeners = player?.stats?.monthlyListeners || 0;
+    if (currentListeners > prevListenersRef.current) {
       setIsListenersSurging(true);
       const timer = setTimeout(() => setIsListenersSurging(false), 2600);
-      prevListenersRef.current = player.stats.monthlyListeners;
+      prevListenersRef.current = currentListeners;
       return () => clearTimeout(timer);
     }
-    prevListenersRef.current = player.stats.monthlyListeners;
-  }, [player.stats.monthlyListeners]);
+    prevListenersRef.current = currentListeners;
+  }, [player?.stats?.monthlyListeners]);
 
   useEffect(() => {
-    if (player.stats.totalStreams > prevStreamsRef.current) {
+    const currentStreams = player?.stats?.totalStreams || 0;
+    if (currentStreams > prevStreamsRef.current) {
       setIsStreamsSurging(true);
       const timer = setTimeout(() => setIsStreamsSurging(false), 2600);
-      prevStreamsRef.current = player.stats.totalStreams;
+      prevStreamsRef.current = currentStreams;
       return () => clearTimeout(timer);
     }
-    prevStreamsRef.current = player.stats.totalStreams;
-  }, [player.stats.totalStreams]);
+    prevStreamsRef.current = currentStreams;
+  }, [player?.stats?.totalStreams]);
 
   // Dynamic growth percentage calculation for streams/listeners (with 0.0% zero-state)
   const listenerGrowth = React.useMemo(() => {
-    const playerSongs = (Object.values(world.songs || {}) as Song[]).filter(
-      (s) => s.artistId === player.id
+    const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(
+      (s) => s.artistId === playerId
     );
+    const totalStreams = player?.stats?.totalStreams || 0;
     // Estado cero: sin canciones grabadas o streams en cero absoluto
-    if (playerSongs.length === 0 || player.stats.totalStreams === 0) {
+    if (playerSongs.length === 0 || totalStreams === 0) {
       return {
         formatted: '0.0%',
         label: '0.0% este semestre',
@@ -155,7 +172,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
       isPositive: pct > 0,
       isZero: pct === 0
     };
-  }, [world.songs, player.id, player.stats.totalStreams]);
+  }, [world?.songs, playerId, player?.stats?.totalStreams]);
 
   const handleOpenModal = () => {
     if (onOpenAvatarModal) {
@@ -231,19 +248,19 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
           {/* Professional Portrait Container */}
           <div className="relative shrink-0 group">
             <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[14px] overflow-hidden border-2 border-[#2A2E3D] group-hover:border-[#8B5CF6]/60 transition-colors shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-[#0B0C10]">
-              {player.avatarUrl ? (
+              {player?.avatarUrl ? (
                 <img
                   src={player.avatarUrl}
-                  alt={player.name}
+                  alt={player?.name || 'Artista'}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (
                 <div
                   className={`w-full h-full bg-gradient-to-tr ${
-                    player.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]'
+                    player?.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]'
                   } text-white font-extrabold text-3xl sm:text-4xl flex items-center justify-center`}
                 >
-                  {player.name.charAt(0)}
+                  {(player?.name || 'A').charAt(0)}
                 </div>
               )}
             </div>
@@ -263,7 +280,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             {/* Header: Artist Stage Name + Badges */}
             <div className="flex items-center gap-2.5 flex-wrap">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-1px] text-[#F8FAFC] leading-tight">
-                {player.name}
+                {player?.name || 'Artista'}
               </h1>
 
               {/* Career Stage Pill */}
@@ -292,18 +309,18 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
             {/* High-Contrast Subtitle: Real Name, City, Country, Age & Main Genre */}
             <div className="flex items-center gap-2 text-xs sm:text-sm text-[#94A3B8] font-normal flex-wrap">
-              {player.realName ? (
+              {player?.realName ? (
                 <>
                   <span className="text-[#F8FAFC] font-medium">"{cleanQuotes(player.realName)}"</span>
                   <span className="text-[#94A3B8]/60">•</span>
                 </>
               ) : null}
               <span>
-                {formatCityCountry(player.city, player.country)}
+                {formatCityCountry(player?.city, player?.country)}
               </span>
               <span className="text-[#94A3B8]/60">•</span>
               <span className="font-mono text-[#F8FAFC]">
-                {TimeSystem.calculateAge(player.birthYear, world.currentYear)} años
+                {TimeSystem.calculateAge(player?.birthYear || 2008, world?.currentYear || 2026)} años
               </span>
               <span className="text-[#94A3B8]/60">•</span>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">
@@ -323,10 +340,10 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
               <span
                 className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs shadow-xs"
-                title={`Comunidad de fans activos: ${player.stats.fansCount.toLocaleString()} fans`}
+                title={`Comunidad de fans activos: ${(playerStats.fansCount || 0).toLocaleString('es-AR')} fans`}
               >
                 <Users className="w-3.5 h-3.5 text-[#8B5CF6]" />
-                <span>{formatFans(player.stats.fansCount)}</span>
+                <span>{formatFans(playerStats.fansCount)}</span>
               </span>
 
               <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
@@ -342,7 +359,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
                 <Award className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>
-                  Legado: <strong className="font-semibold text-[#FBBF24]">{player.legacyScore}/100</strong>
+                  Legado: <strong className="font-semibold text-[#FBBF24]">{player?.legacyScore ?? 0}/100</strong>
                 </span>
               </span>
             </div>
@@ -371,7 +388,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               )}
             </div>
             <span className="text-xl sm:text-2xl font-bold text-emerald-400 font-mono block mt-0.5 tracking-tight transition-transform">
-              {formatCompactNumber(player.stats.monthlyListeners)}
+              {formatCompactNumber(playerStats.monthlyListeners)}
               <span className="text-xs font-normal text-emerald-500/80 font-sans ml-1">/mes</span>
             </span>
             <span className={`text-[10px] font-medium block ${listenerGrowth.isPositive ? 'text-emerald-500/80' : 'text-[#94A3B8]'}`}>
@@ -399,7 +416,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               )}
             </div>
             <span className="text-xl sm:text-2xl font-bold text-[#C084FC] font-mono block mt-0.5 tracking-tight transition-transform">
-              {formatCompactNumber(player.stats.totalStreams)}
+              {formatCompactNumber(playerStats.totalStreams)}
               <span className="text-xs font-normal text-[#C084FC]/80 font-sans ml-1">tot.</span>
             </span>
             <span className="text-[10px] text-[#C084FC]/80 font-medium block">
@@ -414,10 +431,10 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               Hype Escénico
             </span>
             <span className="text-xl sm:text-2xl font-bold text-orange-400 font-mono block mt-0.5 tracking-tight">
-              {player.stats.hype} / 100
+              {playerStats.hype} / 100
             </span>
             <span className="text-[10px] text-orange-500/80 font-medium block">
-              {player.stats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
+              {playerStats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
             </span>
           </div>
 
@@ -428,10 +445,10 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               Popularidad
             </span>
             <span className="text-xl sm:text-2xl font-bold text-amber-400 font-mono block mt-0.5 tracking-tight">
-              {player.stats.popularity} / 100
+              {playerStats.popularity} / 100
             </span>
             <span className="text-[10px] text-amber-500/80 font-medium block">
-              Fidelidad: {player.stats.fanbaseLoyalty} / 100
+              Fidelidad: {playerStats.fanbaseLoyalty} / 100
             </span>
           </div>
         </div>

@@ -68,7 +68,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
   const tourGates = useTourRequirements(player, world);
   const isTourAllowed = tourGates.canTour;
   const availableTiers = TourEngine.getAvailableTiersForArtist(player);
-  const playerTours = world.tours ? world.tours.filter((t) => t.artistId === player.id) : [];
+  const playerTours = world?.tours ? world.tours.filter((t) => t.artistId === player?.id) : [];
 
   const tierDetails: Record<
     TourTier,
@@ -390,14 +390,14 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
                       </span>
                     </h3>
                     <p className="text-xs text-[#94A3B8] mt-1 font-normal">
-                      Año {t.year} • {t.stops.length} Ciudades • {t.totalTicketsSold.toLocaleString()} de {t.totalCapacity.toLocaleString()} Tickets Vendidos
+                      Año {t.year} • {t.stops?.length || 0} Ciudades • {(t.totalTicketsSold || 0).toLocaleString('es-AR')} de {(t.totalCapacity || 0).toLocaleString('es-AR')} Tickets Vendidos
                     </p>
                   </div>
 
                   <div className="text-right">
                     <span className="text-xs text-[#94A3B8] block font-normal">Ganancia Neta</span>
                     <span className="text-sm font-semibold text-emerald-400 font-mono">
-                      +${t.netArtistProfit.toLocaleString()}
+                      +${(t.netArtistProfit || 0).toLocaleString('es-AR')}
                     </span>
                   </div>
                 </div>

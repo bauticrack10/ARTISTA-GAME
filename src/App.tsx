@@ -18,6 +18,7 @@ import { EventModal } from './components/EventModal';
 import { EraMilestoneModal, EraMilestoneData } from './components/EraMilestoneModal';
 import { CollaborationModal } from './components/CollaborationModal';
 import { ReleaseConfirmationModal } from './components/ReleaseConfirmationModal';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { playSound } from './utils/audioSystem';
 
 
@@ -90,7 +91,11 @@ export default function App() {
 
   // Automatic Milestone Detection & Trigger
   useEffect(() => {
-    if (appMode !== 'game' || !player) return;
+    if (appMode !== 'game' || !player || !player.stats) return;
+
+    const curYear = world?.currentYear || 2026;
+    const curMonth = world?.currentMonth || 1;
+    const monthlyListeners = player.stats.monthlyListeners || 0;
 
     // 1. Check if a new Era was added
     if (player.eras && player.eras.length > prevErasCountRef.current) {
@@ -104,48 +109,48 @@ export default function App() {
         stage: latestEra.stage,
         milestoneLabel: `NUEVA ERA • ${latestEra.stage.toUpperCase()}`,
         statValue: `${latestEra.stage}`,
-        year: world.currentYear,
-        month: world.currentMonth,
+        year: curYear,
+        month: curMonth,
         quote: latestEra.highlightSummary
       });
       return;
     }
 
     // 2. Check 100K Monthly Listeners milestone
-    if (player.stats.monthlyListeners >= 100000 && !milestonesAchievedRef.current.has('100k_listeners')) {
+    if (monthlyListeners >= 100000 && !milestonesAchievedRef.current.has('100k_listeners')) {
       milestonesAchievedRef.current.add('100k_listeners');
       playSound('level_up');
       setActiveMilestone({
         type: 'listeners_milestone',
         title: '¡100,000 Oyentes Mensuales Conquistados!',
         milestoneLabel: '100K OYENTES',
-        statValue: `${player.stats.monthlyListeners.toLocaleString()}`,
-        year: world.currentYear,
-        month: world.currentMonth,
-        quote: `${player.name} rompe la barrera de los 100K oyentes en streaming global.`
+        statValue: `${monthlyListeners.toLocaleString('es-AR')}`,
+        year: curYear,
+        month: curMonth,
+        quote: `${player.name || 'El Artista'} rompe la barrera de los 100K oyentes en streaming global.`
       });
       return;
     }
 
     // 3. Check 1M Monthly Listeners milestone
-    if (player.stats.monthlyListeners >= 1000000 && !milestonesAchievedRef.current.has('1m_listeners')) {
+    if (monthlyListeners >= 1000000 && !milestonesAchievedRef.current.has('1m_listeners')) {
       milestonesAchievedRef.current.add('1m_listeners');
       playSound('chart_no1');
       setActiveMilestone({
         type: 'listeners_milestone',
         title: '¡Superestrella: 1,000,000 de Oyentes Mensuales!',
         milestoneLabel: '1 MILLÓN DE OYENTES',
-        statValue: `${(player.stats.monthlyListeners / 1000000).toFixed(1)}M`,
-        year: world.currentYear,
-        month: world.currentMonth,
+        statValue: `${(monthlyListeners / 1000000).toFixed(1)}M`,
+        year: curYear,
+        month: curMonth,
         quote: `Consagración absoluta en la cima de la industria musical.`
       });
       return;
     }
 
     // 4. Check Gold record milestone (500K total streams on a single song)
-    const songs = (Object.values(world.songs) as Song[]).filter(s => s.artistId === player.id);
-    const goldSong = songs.find(s => s.streamsTotal >= 500000);
+    const songs = (Object.values(world?.songs || {}) as Song[]).filter(s => s.artistId === player.id);
+    const goldSong = songs.find(s => (s.streamsTotal || 0) >= 500000);
     if (goldSong && !milestonesAchievedRef.current.has(`gold_${goldSong.id}`)) {
       milestonesAchievedRef.current.add(`gold_${goldSong.id}`);
       playSound('award');
@@ -153,9 +158,9 @@ export default function App() {
         type: 'gold_record',
         title: `¡Certificación de Oro: "${goldSong.title}"!`,
         milestoneLabel: 'DISCO DE ORO 📀',
-        statValue: `${(goldSong.streamsTotal / 1000).toFixed(0)}K Streams`,
-        year: world.currentYear,
-        month: world.currentMonth,
+        statValue: `${((goldSong.streamsTotal || 0) / 1000).toFixed(0)}K Streams`,
+        year: curYear,
+        month: curMonth,
         quote: `"${goldSong.title}" es certificado con Disco de Oro oficial por su impacto en plataformas.`
       });
     }
@@ -163,16 +168,21 @@ export default function App() {
 
   const handleOpenMilestone = (customData?: Partial<EraMilestoneData>) => {
     playSound('click');
-    const currentEra = player.eras[player.eras.length - 1];
+    const currentEra = player?.eras?.[player.eras.length - 1];
+    const curYear = world?.currentYear || 2026;
+    const curMonth = world?.currentMonth || 1;
+    const totalStreams = player?.stats?.totalStreams || 0;
+    const careerStage = player?.careerStage || 'Underground';
+
     const data: EraMilestoneData = {
       type: 'era_transition',
       title: `Portada Conmemorativa: ${currentEra?.name || 'Era Musical'}`,
       eraName: currentEra?.name,
-      stage: player.careerStage,
-      milestoneLabel: `ERA ${player.careerStage.toUpperCase()}`,
-      statValue: `${(player.stats.totalStreams / 1000000).toFixed(1)}M Streams`,
-      year: world.currentYear,
-      month: world.currentMonth,
+      stage: careerStage,
+      milestoneLabel: `ERA ${careerStage.toUpperCase()}`,
+      statValue: `${(totalStreams / 1000000).toFixed(1)}M Streams`,
+      year: curYear,
+      month: curMonth,
       ...customData
     };
     setActiveMilestone(data);
@@ -192,8 +202,10 @@ export default function App() {
       const loaded = eng.importSaveState(saved);
       if (loaded) {
         engineRef.current = eng;
+        const newPlayer = eng.getPlayer();
+        prevErasCountRef.current = newPlayer.eras?.length || 1;
         setWorld(eng.getWorld());
-        setPlayer(eng.getPlayer());
+        setPlayer(newPlayer);
         setCurrentEvent(eng.getCurrentEvent());
         setActiveGala(eng.getActiveGalaCeremony());
         setAppMode('game');
@@ -208,8 +220,10 @@ export default function App() {
     playSound('click');
     const eng = new GameEngine();
     engineRef.current = eng;
+    const newPlayer = eng.getPlayer();
+    prevErasCountRef.current = newPlayer.eras?.length || 1;
     setWorld(eng.getWorld());
-    setPlayer(eng.getPlayer());
+    setPlayer(newPlayer);
     setCurrentEvent(eng.getCurrentEvent());
     setActiveGala(null);
     setAppMode('game');
@@ -225,8 +239,10 @@ export default function App() {
     const loaded = eng.importSaveState(jsonContent);
     if (loaded) {
       engineRef.current = eng;
+      const newPlayer = eng.getPlayer();
+      prevErasCountRef.current = newPlayer.eras?.length || 1;
       setWorld(eng.getWorld());
-      setPlayer(eng.getPlayer());
+      setPlayer(newPlayer);
       setCurrentEvent(eng.getCurrentEvent());
       setActiveGala(eng.getActiveGalaCeremony());
       setAppMode('game');
@@ -245,8 +261,11 @@ export default function App() {
     playSound('release');
     const eng = new GameEngine(customArtist);
     engineRef.current = eng;
-    setWorld(eng.getWorld());
-    setPlayer(eng.getPlayer());
+    const newWorld = eng.getWorld();
+    const newPlayer = eng.getPlayer();
+    prevErasCountRef.current = newPlayer.eras?.length || 1;
+    setWorld(newWorld);
+    setPlayer(newPlayer);
     setCurrentEvent(eng.getCurrentEvent());
     setActiveGala(null);
     setAppMode('game');
@@ -296,36 +315,41 @@ export default function App() {
   // 1. START SCREEN
   if (appMode === 'start_screen') {
     return (
-      <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
-        <StartScreen
-          onNewCareer={handleStartNewCareer}
-          onContinue={handleContinueSavedGame}
-          onLoadDemo={handleLoadDemoCareer}
-          onImportSave={handleImportSaveState}
-        />
-      </div>
+      <ErrorBoundary>
+        <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
+          <StartScreen
+            onNewCareer={handleStartNewCareer}
+            onContinue={handleContinueSavedGame}
+            onLoadDemo={handleLoadDemoCareer}
+            onImportSave={handleImportSaveState}
+          />
+        </div>
+      </ErrorBoundary>
     );
   }
 
   // 2. CHARACTER CREATOR
   if (appMode === 'character_creator') {
     return (
-      <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
-        <CharacterCreatorView
-          world={world}
-          onBackToMenu={() => setAppMode('start_screen')}
-          onCreatePlayer={handleCreatePlayer}
-        />
-      </div>
+      <ErrorBoundary>
+        <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
+          <CharacterCreatorView
+            world={world}
+            onBackToMenu={() => setAppMode('start_screen')}
+            onCreatePlayer={handleCreatePlayer}
+          />
+        </div>
+      </ErrorBoundary>
     );
   }
 
   // 3. ACTIVE GAME DASHBOARD & SYSTEMS
   return (
-    <div
-      className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] flex flex-col selection:bg-[#8B5CF6]/30 selection:text-white relative overflow-x-hidden"
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-    >
+    <ErrorBoundary>
+      <div
+        className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] flex flex-col selection:bg-[#8B5CF6]/30 selection:text-white relative overflow-x-hidden"
+        style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+      >
       {/* Ambient Stage Backdrop Glows (Contained & Non-blocking) */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-0 left-1/4 w-[600px] h-[300px] bg-[#8B5CF6]/10 blur-[130px]" />
@@ -504,5 +528,6 @@ export default function App() {
         />
       )}
     </div>
+    </ErrorBoundary>
   );
 }

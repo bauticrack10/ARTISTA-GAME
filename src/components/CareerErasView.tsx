@@ -42,10 +42,11 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
   const [timelineFilter, setTimelineFilter] = useState<'all' | 'releases' | 'tours' | 'awards' | 'eras'>('all');
   const [discographySort, setDiscographySort] = useState<'date' | 'streams' | 'score'>('streams');
 
-  const yearsActive = TimeSystem.calculateCareerLengthYears(player.careerStartYear, world.currentYear);
-  const playerSongs = (Object.values(world.songs) as Song[]).filter(s => s.artistId === player.id);
-  const playerAlbums = (Object.values(world.albums) as Album[]).filter(a => a.artistId === player.id);
-  const playerTours = (world.tours || []).filter(t => t.artistId === player.id);
+  const playerId = player?.id || 'player';
+  const yearsActive = TimeSystem.calculateCareerLengthYears(player?.careerStartYear || 2026, world?.currentYear || 2026);
+  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s.artistId === playerId);
+  const playerAlbums = (Object.values(world?.albums || {}) as Album[]).filter(a => a.artistId === playerId);
+  const playerTours = (world?.tours || []).filter(t => t.artistId === playerId);
 
   // Overall Statistics
   const totalNo1s = playerSongs.filter(s => s.peakPosition?.Global === 1 || s.peakPosition?.Argentina === 1).length;

@@ -12,10 +12,12 @@ interface ChartsViewProps {
 export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
   const [selectedRegion, setSelectedRegion] = useState<MusicRegion>('Global');
 
-  const currentChart = world.charts?.[selectedRegion] || {
+  const currentYear = world?.currentYear || 2026;
+  const currentMonth = world?.currentMonth || 1;
+  const currentChart = world?.charts?.[selectedRegion] || {
     region: selectedRegion,
-    year: world.currentYear,
-    month: world.currentMonth,
+    year: currentYear,
+    month: currentMonth,
     entries: []
   };
 
@@ -93,7 +95,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
         ) : (
           <div className="divide-y divide-[#2A2E3D]">
             {currentChart.entries.map((entry, idx) => {
-              const isPlayerSong = entry.artistId === player.id;
+              const isPlayerSong = entry.artistId === player?.id;
               let movement = <Minus className="w-3.5 h-3.5 text-[#94A3B8]" />;
 
               if (entry.lastRank === null) {

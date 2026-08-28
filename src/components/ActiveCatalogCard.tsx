@@ -214,7 +214,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                     {song.musicVideo && (
                       <span
                         className="text-[10px] font-bold bg-cyan-950/70 text-cyan-300 border border-cyan-500/50 px-2 py-0.5 rounded-[4px] flex items-center gap-1 shadow-xs"
-                        title={`Videoclip Oficial: ${song.musicVideo.concept} • Dir: ${song.musicVideo.directorTier} • ${song.musicVideo.views.toLocaleString()} vistas`}
+                        title={`Videoclip Oficial: ${song.musicVideo.concept || 'Video'} • Dir: ${song.musicVideo.directorTier || 'Estándar'} • ${(song.musicVideo.views || 0).toLocaleString('es-AR')} vistas`}
                       >
                         <Video className="w-2.5 h-2.5 text-cyan-400" />
                         🎬 Videoclip Oficial

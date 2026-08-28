@@ -109,7 +109,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
   // Semi-annual operational costs calculations
   const operationalCosts = useMemo(() => {
     let monthlyBaseLiving = 35;
-    const pop = player.stats.popularity || 0;
+    const pop = player?.stats?.popularity || 0;
     if (pop > 85) monthlyBaseLiving = 28000;
     else if (pop > 70) monthlyBaseLiving = 12000;
     else if (pop > 50) monthlyBaseLiving = 3800;
@@ -120,9 +120,9 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     const monthlyUpkeep = activeBuffs.monthlyUpkeep;
 
     let monthlyManagerCommission = 0;
-    if (player.managerId && world.managers && world.managers[player.managerId]) {
+    if (player?.managerId && world?.managers && world.managers[player.managerId]) {
       const manager = world.managers[player.managerId];
-      const estimatedGross = (player.stats.monthlyListeners || 0) * 0.0035 + (player.stats.fansCount || 0) * 0.02;
+      const estimatedGross = (player?.stats?.monthlyListeners || 0) * 0.0035 + (player?.stats?.fansCount || 0) * 0.02;
       monthlyManagerCommission = Math.floor(estimatedGross * (manager.commissionFeePct / 100));
     }
 
@@ -132,7 +132,8 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     const semiAnnualUpkeep = monthlyUpkeep * 6;
     const semiAnnualManager = monthlyManagerCommission * 6;
 
-    const runwayMonths = monthlyTotalBurn > 0 ? player.stats.funds / monthlyTotalBurn : 99;
+    const funds = player?.stats?.funds || 0;
+    const runwayMonths = monthlyTotalBurn > 0 ? funds / monthlyTotalBurn : 99;
 
     let solvencyLevel: 'thriving' | 'stable' | 'warning' | 'critical' = 'thriving';
     let solvencyBadge = 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40';
@@ -176,7 +177,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       solvencyLabel,
       solvencyMessage
     };
-  }, [player.stats.popularity, player.stats.funds, player.stats.monthlyListeners, player.stats.fansCount, player.managerId, world.managers, activeBuffs.monthlyUpkeep]);
+  }, [player?.stats?.popularity, player?.stats?.funds, player?.stats?.monthlyListeners, player?.stats?.fansCount, player?.managerId, world?.managers, activeBuffs.monthlyUpkeep]);
 
   const handlePurchase = (item: LifestyleItem) => {
     const res = onBuyItem(item.id);

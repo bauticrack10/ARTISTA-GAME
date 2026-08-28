@@ -279,9 +279,9 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
   const [notification, setNotification] = useState<string | null>(null);
   const [newLabelName, setNewLabelName] = useState<string>('');
 
-  const currentLabel = player.labelId ? world.labels[player.labelId] : null;
-  const currentManager = player.managerId ? world.managers[player.managerId] : null;
-  const activeContract = player.activeContract;
+  const currentLabel = player?.labelId && world?.labels ? world.labels[player.labelId] : null;
+  const currentManager = player?.managerId && world?.managers ? world.managers[player.managerId] : null;
+  const activeContract = player?.activeContract;
   const scoutRadar = IndustryEngine.evaluateScoutRadar(player, world);
 
   const isCurrentDistributor = player.labelId?.startsWith('distro_') || player.labelId?.startsWith('dist_') || Boolean(activeContract?.isDistributor) || currentLabel?.type === 'distributor';

@@ -46,15 +46,16 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   // Singles released this year
   const singlesThisYear = React.useMemo(() => {
     if (world && world.songs) {
+      const pId = player?.id || 'player';
       const playerSongs = (Object.values(world.songs) as Song[]).filter(
-        (s) => s.artistId === player.id
+        (s) => s.artistId === pId
       );
       return playerSongs.filter(
         (s) => s.releaseYear === world.currentYear && s.isSingle
       ).length;
     }
     return 0;
-  }, [world, player.id]);
+  }, [world, player?.id]);
 
   // Active lifestyle buffs summary
   const lifestyleBuffsSummary = React.useMemo(() => {
@@ -275,7 +276,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   Oyentes (≥1k):
                 </span>
                 <span className={`font-semibold ${tourGates.hasAudience ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {player.stats.monthlyListeners.toLocaleString()}
+                  {(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}
                 </span>
               </div>
 
@@ -290,7 +291,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   Energía (≥85%):
                 </span>
                 <span className={`font-semibold ${tourGates.hasEnergy ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {player.stats.energy} / 100
+                  {player?.stats?.energy ?? 100} / 100
                 </span>
               </div>
             </div>

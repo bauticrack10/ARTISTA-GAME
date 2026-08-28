@@ -33,14 +33,36 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'main' | 'personality'>(defaultTab);
 
-  const isTourReady = propTourReady !== undefined ? propTourReady : player.stats.energy >= 85;
+  const stats = player?.stats || {
+    popularity: 0,
+    reputation: 0,
+    artisticCredibility: 0,
+    fanbaseLoyalty: 50,
+    hype: 0,
+    energy: 100
+  };
+
+  const personality = player?.personality || {
+    creativity: 75,
+    skill: 75,
+    charisma: 75,
+    commercialAppeal: 75,
+    originality: 75,
+    discipline: 75,
+    ambition: 75,
+    riskTolerance: 75,
+    sociability: 75,
+    independence: 75
+  };
+
+  const isTourReady = propTourReady !== undefined ? propTourReady : (stats.energy || 0) >= 85;
 
   // 1. Grid de Atributos Clave (2 filas x 3 columnas = 6 métricas principales)
   const keyMetrics = [
     {
       id: 'popularity',
       label: 'Popularidad',
-      value: player.stats.popularity,
+      value: stats.popularity ?? 0,
       gradient: 'from-amber-400 to-yellow-500',
       bgTrack: 'bg-amber-100/70',
       textAccent: 'text-amber-900',
@@ -51,7 +73,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'reputation',
       label: 'Reputación Crítica',
-      value: player.stats.reputation,
+      value: stats.reputation ?? 0,
       gradient: 'from-cyan-400 to-blue-500',
       bgTrack: 'bg-cyan-100/70',
       textAccent: 'text-cyan-900',
@@ -62,7 +84,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'artisticCredibility',
       label: 'Credibilidad Artística',
-      value: player.stats.artisticCredibility,
+      value: stats.artisticCredibility ?? 0,
       gradient: 'from-purple-500 to-indigo-500',
       bgTrack: 'bg-purple-100/70',
       textAccent: 'text-purple-900',
@@ -73,7 +95,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'fanbaseLoyalty',
       label: 'Fidelidad de Fans',
-      value: player.stats.fanbaseLoyalty,
+      value: stats.fanbaseLoyalty ?? 50,
       gradient: 'from-pink-500 to-rose-600',
       bgTrack: 'bg-pink-100/70',
       textAccent: 'text-rose-900',
@@ -84,7 +106,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'hype',
       label: 'Hype Escénico',
-      value: player.stats.hype,
+      value: stats.hype ?? 0,
       gradient: 'from-orange-500 to-amber-600',
       bgTrack: 'bg-orange-100/70',
       textAccent: 'text-orange-900',
@@ -95,7 +117,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'energy',
       label: 'Energía Vital',
-      value: player.stats.energy,
+      value: stats.energy ?? 100,
       gradient: 'from-emerald-400 to-teal-500',
       bgTrack: isTourReady ? 'bg-emerald-100/70' : 'bg-rose-100/70',
       textAccent: isTourReady ? 'text-emerald-900' : 'text-rose-900',
@@ -110,7 +132,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'creativity',
       label: 'Creatividad & Vanguardia',
-      val: player.personality.creativity,
+      val: personality.creativity ?? 75,
       gradient: 'from-purple-500 to-indigo-600',
       bgTrack: 'bg-purple-100',
       icon: Sparkles,
@@ -120,7 +142,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'skill',
       label: 'Habilidad Musical / Skill',
-      val: player.personality.skill,
+      val: personality.skill ?? 75,
       gradient: 'from-blue-500 to-cyan-400',
       bgTrack: 'bg-blue-100',
       icon: Music2,
@@ -130,7 +152,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'charisma',
       label: 'Carisma & Presencia',
-      val: player.personality.charisma,
+      val: personality.charisma ?? 75,
       gradient: 'from-amber-400 to-orange-500',
       bgTrack: 'bg-amber-100',
       icon: Crown,
@@ -140,7 +162,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'commercialAppeal',
       label: 'Atractivo Comercial',
-      val: player.personality.commercialAppeal,
+      val: personality.commercialAppeal ?? 75,
       gradient: 'from-emerald-400 to-teal-500',
       bgTrack: 'bg-emerald-100',
       icon: DollarSign,
@@ -150,7 +172,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'originality',
       label: 'Originalidad & Identidad',
-      val: player.personality.originality,
+      val: personality.originality ?? 75,
       gradient: 'from-pink-500 to-rose-500',
       bgTrack: 'bg-pink-100',
       icon: Target,
@@ -160,7 +182,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'discipline',
       label: 'Disciplina de Trabajo',
-      val: player.personality.discipline,
+      val: personality.discipline ?? 75,
       gradient: 'from-indigo-500 to-blue-600',
       bgTrack: 'bg-indigo-100',
       icon: ShieldCheck,
@@ -170,7 +192,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'ambition',
       label: 'Ambición de Éxito',
-      val: player.personality.ambition,
+      val: personality.ambition ?? 75,
       gradient: 'from-orange-500 to-red-500',
       bgTrack: 'bg-orange-100',
       icon: Flame,
@@ -180,7 +202,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     {
       id: 'riskTolerance',
       label: 'Tolerancia al Riesgo',
-      val: player.personality.riskTolerance,
+      val: personality.riskTolerance ?? 75,
       gradient: 'from-teal-400 to-emerald-500',
       bgTrack: 'bg-teal-100',
       icon: Zap,
@@ -368,7 +390,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
           </span>
         </div>
         <span className="text-[11px] font-bold text-[#C084FC]">
-          {player.name} • {player.careerStage}
+          {player?.name || 'Artista'} • {player?.careerStage || 'Underground'}
         </span>
       </div>
     </div>

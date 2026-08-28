@@ -62,17 +62,24 @@ export const Navbar: React.FC<NavbarProps> = ({
     onTabChange(tabId);
   };
 
-  const monthName = TimeSystem.getMonthName(world.currentMonth);
-  const semesterShort = world.currentMonth <= 6 ? '1er Semestre' : '2do Semestre';
+  const currentMonth = world?.currentMonth || 1;
+  const currentYear = world?.currentYear || 2026;
+  const monthName = TimeSystem.getMonthName(currentMonth);
+  const semesterShort = currentMonth <= 6 ? '1er Semestre' : '2do Semestre';
+
+  const playerEnergy = player?.stats?.energy ?? 100;
+  const playerFunds = player?.stats?.funds ?? 0;
+  const playerFans = player?.stats?.fansCount ?? 0;
+  const playerName = player?.name || 'Artista';
 
   const getEnergyBadge = () => {
-    if (player.stats.energy >= 85) {
+    if (playerEnergy >= 85) {
       return {
         bg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
         icon: 'text-emerald-400',
         bar: 'bg-emerald-400'
       };
-    } else if (player.stats.energy >= 40) {
+    } else if (playerEnergy >= 40) {
       return {
         bg: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
         icon: 'text-amber-400',
@@ -130,11 +137,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Selector de Tiempo Condensado */}
           <div
             className="flex items-center gap-2 bg-[#16181F] px-3 py-1.5 rounded-[8px] border border-[#2A2E3D] text-xs shadow-xs whitespace-nowrap"
-            title={`Fecha actual en la industria: ${monthName} ${world.currentYear} (${semesterShort})`}
+            title={`Fecha actual en la industria: ${monthName} ${currentYear} (${semesterShort})`}
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 ring-2 ring-emerald-400/30" />
             <span className="font-bold text-[#F8FAFC]">
-              {monthName} {world.currentYear}
+              {monthName} {currentYear}
             </span>
             <span className="text-[#94A3B8] font-medium hidden sm:inline">
               • {semesterShort}
@@ -198,11 +205,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Dinero / Fondos */}
           <div
             className="flex items-center flex-row gap-1 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
-            title={`Fondos Monetarios Disponibles: ${formatMoney(player.stats.funds)}`}
+            title={`Fondos Monetarios Disponibles: ${formatMoney(playerFunds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             <span className="font-bold text-emerald-400 font-mono whitespace-nowrap">
-              {formatMoney(player.stats.funds)}
+              {formatMoney(playerFunds)}
             </span>
             <span className="text-[10px] text-emerald-500/80 font-sans hidden lg:inline">
               Fondos
@@ -212,34 +219,34 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Comunidad de Fans (formateado explícitamente como "4.15k Fans" / "150 Fans") */}
           <div
             className="flex items-center gap-1.5 bg-[#16181F] border border-[#8B5CF6]/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-[#C084FC]"
-            title={`Comunidad de Fans Activos: ${player.stats.fansCount.toLocaleString()} fans`}
+            title={`Comunidad de Fans Activos: ${playerFans.toLocaleString('es-AR')} fans`}
           >
             <Users className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
             <span className="font-bold text-[#C084FC] font-mono">
-              {formatFans(player.stats.fansCount)}
+              {formatFans(playerFans)}
             </span>
           </div>
 
           {/* Energía Vital con micro-barra */}
           <div
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] border text-xs shadow-xs ${energyStyle.bg}`}
-            title={`Energía Vital del Artista: ${player.stats.energy}% ${
-              player.stats.energy < 85 ? '(Giras Bloqueadas: Requiere ≥85%)' : '(Giras Habilitadas)'
+            title={`Energía Vital del Artista: ${playerEnergy}% ${
+              playerEnergy < 85 ? '(Giras Bloqueadas: Requiere ≥85%)' : '(Giras Habilitadas)'
             }`}
           >
             <Zap className={`w-3.5 h-3.5 shrink-0 ${energyStyle.icon}`} />
-            <span className="font-bold font-mono text-[#F8FAFC]">{player.stats.energy}%</span>
+            <span className="font-bold font-mono text-[#F8FAFC]">{playerEnergy}%</span>
             <span className="text-[10px] text-[#94A3B8] font-sans hidden sm:inline">Energía</span>
             <div className="w-5 sm:w-6 h-1.5 bg-white/10 rounded-full overflow-hidden shrink-0 hidden sm:block">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${energyStyle.bar}`}
-                style={{ width: `${Math.min(100, Math.max(0, player.stats.energy))}%` }}
+                style={{ width: `${Math.min(100, Math.max(0, playerEnergy))}%` }}
               />
             </div>
           </div>
 
           {/* Badge Prodigio */}
-          {player.isProdigy && (
+          {player?.isProdigy && (
             <div
               className="hidden 2xl:flex items-center gap-1 bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/40 px-2 py-1 rounded-[8px] text-[11px] font-bold shadow-xs"
               title="Rasgo: Promesa / Prodigio • x3 Ganancia permanente en progreso"
@@ -281,25 +288,25 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={() => handleTabClick('dashboard')}
             className="flex items-center gap-2 pl-1 pr-2 sm:pr-2.5 py-1 rounded-[8px] bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 text-xs transition-colors cursor-pointer shrink-0 shadow-xs"
-            title={`Perfil de ${player.name} • Ir al Inicio`}
+            title={`Perfil de ${playerName} • Ir al Inicio`}
           >
-            {player.avatarUrl ? (
+            {player?.avatarUrl ? (
               <img
                 src={player.avatarUrl}
-                alt={player.name}
+                alt={playerName}
                 className="w-5 h-5 rounded-[4px] object-cover border border-[#2A2E3D] shrink-0"
               />
             ) : (
               <div
                 className={`w-5 h-5 rounded-[4px] bg-gradient-to-tr ${
-                  player.avatarColor || 'from-[#8B5CF6] to-[#EC4899]'
+                  player?.avatarColor || 'from-[#8B5CF6] to-[#EC4899]'
                 } text-white font-bold text-[10px] flex items-center justify-center shrink-0`}
               >
-                {player.name.charAt(0)}
+                {playerName.charAt(0)}
               </div>
             )}
             <span className="font-semibold text-[#F8FAFC] max-w-[80px] sm:max-w-[110px] truncate">
-              {player.name}
+              {playerName}
             </span>
           </button>
         </div>

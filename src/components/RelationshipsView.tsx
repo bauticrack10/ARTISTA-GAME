@@ -52,11 +52,11 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeModalResult, setActiveModalResult] = useState<InteractionResult | null>(null);
 
-  const otherArtists = (Object.values(world.artists || {}) as Artist[]).filter(
-    a => a.id !== player.id && !a.isRetired
+  const otherArtists = (Object.values(world?.artists || {}) as Artist[]).filter(
+    a => a.id !== player?.id && !a.isRetired
   );
-  const ecosystemContacts = Object.values(world.ecosystemContacts || {}) as EcosystemNPC[];
-  const activeBeefs = Object.values(world.activeBeefs || {}) as BeefState[];
+  const ecosystemContacts = Object.values(world?.ecosystemContacts || {}) as EcosystemNPC[];
+  const activeBeefs = Object.values(world?.activeBeefs || {}) as BeefState[];
 
   // Trigger celebration confetti on triumphant interaction results
   useEffect(() => {
