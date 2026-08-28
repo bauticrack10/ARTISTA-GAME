@@ -235,9 +235,9 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
                   <div className="flex items-center justify-between font-semibold mb-1">
                     <span>{req.label}</span>
                     {req.met ? (
-                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-500/30">✓ CUMPLIDO</span>
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">✓ CUMPLIDO</span>
                     ) : (
-                      <span className="text-[10px] font-bold text-rose-400 bg-rose-950/60 px-1.5 py-0.2 rounded border border-rose-500/30">✗ PENDIENTE</span>
+                      <span className="text-[10px] font-bold text-rose-400 bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-500/30">✗ PENDIENTE</span>
                     )}
                   </div>
                   <div className="text-[11px] text-[#94A3B8]">

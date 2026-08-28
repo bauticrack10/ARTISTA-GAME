@@ -47,26 +47,29 @@ export class EconomyEngine {
 
     // Merchandise revenue scales with engaged fanbase and popularity
     const prodigyMerchBoost = artist.isProdigy ? 1.35 : 1.0;
+    const fansCount = artist.stats?.fansCount ?? 0;
+    const fanbaseLoyalty = artist.stats?.fanbaseLoyalty ?? 50;
+    const popularity = artist.stats?.popularity ?? 10;
     const merchRevenue = Math.floor(
-      (artist.stats.fansCount * 0.03) *
-      (artist.stats.fanbaseLoyalty / 100) *
-      (Math.max(5, artist.stats.popularity) / 100) *
+      (fansCount * 0.03) *
+      (fanbaseLoyalty / 100) *
+      (Math.max(5, popularity) / 100) *
       prodigyMerchBoost
     );
 
     // Baseline living & crew expenses scaled to career stage (underground costs are gentle and realistic, $35/mes)
     let baseLivingExpenses = 35;
-    if (artist.careerStage === 'Underground' || artist.stats.popularity <= 10) {
+    if (artist.careerStage === 'Underground' || popularity <= 10) {
       baseLivingExpenses = 35;
-    } else if (artist.stats.popularity > 85) {
+    } else if (popularity > 85) {
       baseLivingExpenses = 28000;
-    } else if (artist.stats.popularity > 70) {
+    } else if (popularity > 70) {
       baseLivingExpenses = 12000;
-    } else if (artist.stats.popularity > 50) {
+    } else if (popularity > 50) {
       baseLivingExpenses = 3800;
-    } else if (artist.stats.popularity > 30) {
+    } else if (popularity > 30) {
       baseLivingExpenses = 1200;
-    } else if (artist.stats.popularity > 15) {
+    } else if (popularity > 15) {
       baseLivingExpenses = 400;
     } else {
       baseLivingExpenses = 100;

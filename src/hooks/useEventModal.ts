@@ -227,6 +227,7 @@ export function useEventModal({
   }), [player, world]);
 
   const rawChoices: EventChoice[] = useMemo(() => {
+    if (Array.isArray(event.choices)) return event.choices;
     return typeof event.choices === 'function' ? event.choices(context) : [];
   }, [event, context]);
 
@@ -399,23 +400,26 @@ export function useEventModal({
       const costFunds = extractCostFunds(choice);
       const costEnergy = extractCostEnergy(choice);
 
-      const isAffordable = player.stats.funds >= costFunds;
-      const hasEnoughEnergy = player.stats.energy >= costEnergy;
+      const playerFunds = player?.stats?.funds ?? 0;
+      const playerEnergy = player?.stats?.energy ?? 100;
+
+      const isAffordable = playerFunds >= costFunds;
+      const hasEnoughEnergy = playerEnergy >= costEnergy;
 
       let hasRequiredStat = true;
       const unmetReasons: string[] = [];
 
       if (!isAffordable && costFunds > 0) {
-        unmetReasons.push(`Fondos insuficientes: Requiere ${formatMoney(costFunds)} (tienes ${formatMoney(player.stats.funds)})`);
+        unmetReasons.push(`Fondos insuficientes: Requiere ${formatMoney(costFunds)} (tienes ${formatMoney(playerFunds)})`);
       }
 
       if (!hasEnoughEnergy && costEnergy > 0) {
-        unmetReasons.push(`Energía insuficiente: Requiere ${costEnergy}% (tienes ${player.stats.energy}%)`);
+        unmetReasons.push(`Energía insuficiente: Requiere ${costEnergy}% (tienes ${playerEnergy}%)`);
       }
 
       if (choice.requiresStat) {
         const statKey = choice.requiresStat.stat;
-        const statVal = (player.stats as any)[statKey] ?? (player.personality as any)[statKey] ?? 0;
+        const statVal = (player?.stats as any)?.[statKey] ?? (player?.personality as any)?.[statKey] ?? 0;
         if (statVal < choice.requiresStat.min) {
           hasRequiredStat = false;
           unmetReasons.push(`Requiere ${String(statKey)} ≥ ${choice.requiresStat.min} (tienes ${statVal})`);
@@ -440,7 +444,7 @@ export function useEventModal({
         unmetReasons
       };
     });
-  }, [rawChoices, player.stats.funds, player.stats.energy, player.stats, player.personality]);
+  }, [rawChoices, player?.stats?.funds, player?.stats?.energy, player?.stats, player?.personality]);
 
   const handleSelectChoice = useCallback((choiceIndex: number) => {
     const choice = choices[choiceIndex];

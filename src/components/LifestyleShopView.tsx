@@ -132,8 +132,8 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     const semiAnnualUpkeep = monthlyUpkeep * 6;
     const semiAnnualManager = monthlyManagerCommission * 6;
 
-    const funds = player?.stats?.funds || 0;
-    const runwayMonths = monthlyTotalBurn > 0 ? funds / monthlyTotalBurn : 99;
+    const funds = Math.max(0, player?.stats?.funds || 0);
+    const runwayMonths = monthlyTotalBurn > 0 ? Math.max(0, funds / monthlyTotalBurn) : 99;
 
     let solvencyLevel: 'thriving' | 'stable' | 'warning' | 'critical' = 'thriving';
     let solvencyBadge = 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40';
@@ -320,7 +320,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 <span className="text-[10px] text-[#C084FC] font-bold uppercase tracking-wider">
                   Historial Financiero
                 </span>
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-[#8B5CF6]/20 text-white">
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#8B5CF6]/20 text-white">
                   {player.financialLedger?.length || 0}
                 </span>
               </div>
@@ -448,7 +448,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {operationalCosts.runwayMonths >= 99 ? '∞ Meses' : `${operationalCosts.runwayMonths.toFixed(1)} meses`}
             </div>
             <span className="text-[10px] text-emerald-500/80 font-mono block">
-              {`Con saldo actual de ${formatMoney(player.stats.funds)}`}
+              {`Con saldo actual de ${formatMoney(player?.stats?.funds || 0)}`}
             </span>
           </div>
         </div>

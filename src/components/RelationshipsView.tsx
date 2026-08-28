@@ -213,8 +213,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     }
 
     const res = onInteract(targetArtist.id, actionType);
-    if (res && typeof res === 'object' && 'badge' in res) {
-      setActiveModalResult(res as InteractionResult);
+    if (res && typeof res === 'object') {
+      if ('badge' in res) {
+        setActiveModalResult(res as InteractionResult);
+      } else {
+        setActiveModalResult(RelationshipEngine.toInteractionResult(res as any));
+      }
     }
   };
 

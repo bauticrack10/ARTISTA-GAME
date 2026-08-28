@@ -1321,9 +1321,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setAvatarUrl('');
+                              const defaultPreset = AVATAR_PRESETS.find(p => p.id === 'urban_trap_1') || AVATAR_PRESETS[0];
+                              setAvatarUrl(defaultPreset?.url || '');
                               setAvatarType('preset');
-                              setSelectedPresetId('urban_trap_1');
+                              setSelectedPresetId(defaultPreset?.id || 'urban_trap_1');
                             }}
                             className="px-3 py-1.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-xs text-rose-400 hover:border-rose-500 transition-colors cursor-pointer"
                           >

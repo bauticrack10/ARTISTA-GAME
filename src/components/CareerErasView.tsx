@@ -51,15 +51,15 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
   // Overall Statistics
   const totalNo1s = playerSongs.filter(s => s.peakPosition?.Global === 1 || s.peakPosition?.Argentina === 1).length;
   const totalHits = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
-  const totalTourGross = playerTours.reduce((sum, t) => sum + t.grossRevenue, 0);
-  const totalTourProfit = playerTours.reduce((sum, t) => sum + t.netArtistProfit, 0);
-  const totalTicketsSold = playerTours.reduce((sum, t) => sum + t.totalTicketsSold, 0);
+  const totalTourGross = playerTours.reduce((sum, t) => sum + (t.grossRevenue || 0), 0);
+  const totalTourProfit = playerTours.reduce((sum, t) => sum + (t.netArtistProfit || 0), 0);
+  const totalTicketsSold = playerTours.reduce((sum, t) => sum + (t.totalTicketsSold || 0), 0);
 
   // 1. MEJOR DISCO (Album with highest accumulated streams + sales score)
   const bestAlbum: Album | null = playerAlbums.length > 0
     ? [...playerAlbums].sort((a, b) => {
-        const scoreA = a.totalStreams + a.firstWeekSales * 15;
-        const scoreB = b.totalStreams + b.firstWeekSales * 15;
+        const scoreA = (a.totalStreams || 0) + (a.firstWeekSales || 0) * 15;
+        const scoreB = (b.totalStreams || 0) + (b.firstWeekSales || 0) * 15;
         return scoreB - scoreA;
       })[0]
     : null;
@@ -138,7 +138,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       type: 'album',
       title: `Lanzamiento de Álbum: "${album.title}"`,
       description: `Álbum de ${album.songIds.length} canciones (${album.type.toUpperCase()}). Calificación crítica: ${album.criticalScore}/100.`,
-      metrics: `${(album.totalStreams / 1000000).toFixed(1)}M streams • ${album.firstWeekSales.toLocaleString()} ventas debut`,
+      metrics: `${((album.totalStreams || 0) / 1000000).toFixed(1)}M streams • ${(album.firstWeekSales || 0).toLocaleString('es-AR')} ventas debut`,
       badge: album.id === bestAlbum?.id ? 'Mejor Disco ⭐' : 'Disco Oficial',
       badgeClass: album.id === bestAlbum?.id ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 font-bold' : 'bg-indigo-900/40 text-indigo-300 border-indigo-500/40',
       icon: Disc3,
@@ -158,8 +158,8 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       month: single.releaseMonth,
       type: 'single',
       title: `Single: "${single.title}"${hasVideo ? ' 🎬 (Videoclip Oficial)' : ''}`,
-      description: `Sencillo de calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" (Dir. ${mv.directorTier}, ${(mv.views / 1000).toFixed(0)}k vistas).` : ''}`,
-      metrics: `${(single.streamsTotal / 1000000).toFixed(1)}M streams${hasVideo && mv ? ` • ${(mv.views / 1000000).toFixed(1)}M vistas en video` : ''} • Pico #${single.peakPosition?.Global || '-'} Mundial`,
+      description: `Sencillo de calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" (Dir. ${mv.directorTier}, ${((mv.views || 0) / 1000).toFixed(0)}k vistas).` : ''}`,
+      metrics: `${((single.streamsTotal || 0) / 1000000).toFixed(1)}M streams${hasVideo && mv ? ` • ${((mv.views || 0) / 1000000).toFixed(1)}M vistas en video` : ''} • Pico #${single.peakPosition?.Global || '-'} Mundial`,
       badge: hasVideo ? '🎬 Videoclip Oficial' : isHit ? 'Hit Top 10 🔥' : 'Single',
       badgeClass: hasVideo ? 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40 font-bold' : isHit ? 'bg-purple-900/50 text-purple-300 border-purple-500/40 font-bold' : 'bg-purple-950/50 text-purple-300 border-purple-500/40',
       icon: hasVideo ? Video : Disc3,
@@ -176,7 +176,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       type: 'tour',
       title: `Gira: "${cleanQuotes(tour.name)}" (${tour.tier.toUpperCase()})`,
       description: `Tour de ${tour.stops.length} fechas por ${tour.stops.map(s => s.city).slice(0, 3).join(', ')}...`,
-      metrics: `${formatMoney(tour.grossRevenue)} recaudación • ${tour.totalTicketsSold.toLocaleString()} tickets vendidos`,
+      metrics: `${formatMoney(tour.grossRevenue || 0)} recaudación • ${(tour.totalTicketsSold || 0).toLocaleString('es-AR')} tickets vendidos`,
       badge: tour.id === bestTour?.id ? 'Mejor Gira ⭐' : 'Tour',
       badgeClass: tour.id === bestTour?.id ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 font-bold' : 'bg-orange-900/40 text-orange-300 border-orange-500/40',
       icon: Sparkles,
@@ -423,7 +423,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 <div className="bg-indigo-950/40 p-2 rounded-[6px] border border-indigo-500/30">
                   <span className="text-[10px] text-indigo-300 uppercase block font-semibold">Ventas Debut</span>
                   <span className="text-xs sm:text-sm font-bold text-indigo-400">
-                    {bestAlbum.firstWeekSales.toLocaleString()}
+                    {(bestAlbum.firstWeekSales || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="bg-emerald-950/40 p-2 rounded-[6px] border border-emerald-500/30">
@@ -488,19 +488,19 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 <div className="bg-emerald-950/40 p-2 rounded-[6px] border border-emerald-500/30">
                   <span className="text-[10px] text-emerald-300 uppercase block font-semibold">Recaudación Bruta</span>
                   <span className="text-xs sm:text-sm font-bold text-emerald-400">
-                    ${bestTour.grossRevenue.toLocaleString()}
+                    ${(bestTour.grossRevenue || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="bg-blue-950/40 p-2 rounded-[6px] border border-blue-500/30">
                   <span className="text-[10px] text-blue-300 uppercase block font-semibold">Beneficio Neto</span>
                   <span className="text-xs sm:text-sm font-bold text-blue-400">
-                    ${bestTour.netArtistProfit.toLocaleString()}
+                    ${(bestTour.netArtistProfit || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="bg-purple-950/40 p-2 rounded-[6px] border border-purple-500/30">
                   <span className="text-[10px] text-purple-300 uppercase block font-semibold">Asistencia</span>
                   <span className="text-xs sm:text-sm font-bold text-purple-400">
-                    {bestTour.totalTicketsSold.toLocaleString()}
+                    {(bestTour.totalTicketsSold || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
               </div>
@@ -587,7 +587,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   <div className="flex flex-wrap items-center gap-3 text-xs text-[#94A3B8] pt-1">
                     <div className="flex items-center gap-1.5">
                       <span>Enfoque Sonoro:</span>
-                      <span className={`text-[10px] font-bold px-2 py-0.2 rounded-full ${eraGenreTheme.badgeBg} ${eraGenreTheme.badgeText}`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${eraGenreTheme.badgeBg} ${eraGenreTheme.badgeText}`}>
                         {world.genres[era.genreFocus]?.name || era.genreFocus}
                       </span>
                     </div>
@@ -734,7 +734,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                         </h3>
 
                         <div className="flex items-center gap-1.5 pt-0.5">
-                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full ${albumGenre.badgeBg} ${albumGenre.badgeText}`}>
+                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${albumGenre.badgeBg} ${albumGenre.badgeText}`}>
                             {world.genres[album.genreId]?.name || album.genreId}
                           </span>
                           <span className="text-[10px] text-[#94A3B8]">
@@ -751,7 +751,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                       </div>
                       <div className="bg-indigo-950/40 p-1.5 rounded-[4px] border border-indigo-500/30">
                         <span className="text-[9px] text-indigo-300 uppercase block font-semibold">Ventas</span>
-                        <span className="font-bold text-indigo-400">{album.firstWeekSales.toLocaleString()}</span>
+                        <span className="font-bold text-indigo-400">{(album.firstWeekSales || 0).toLocaleString('es-AR')}</span>
                       </div>
                       <div className="bg-emerald-950/40 p-1.5 rounded-[4px] border border-emerald-500/30">
                         <span className="text-[9px] text-emerald-300 uppercase block font-semibold">Crítica</span>
@@ -835,7 +835,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className={`text-[10px] font-bold uppercase px-2 py-0.2 rounded-[4px] border ${item.badgeClass || 'bg-[#16181F] text-[#F8FAFC] border-[#2A2E3D]'}`}>
+                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-[4px] border ${item.badgeClass || 'bg-[#16181F] text-[#F8FAFC] border-[#2A2E3D]'}`}>
                             {item.badge}
                           </span>
                         )}

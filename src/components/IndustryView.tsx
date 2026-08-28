@@ -30,6 +30,7 @@ interface IndustryViewProps {
   world: WorldState;
   onSignContract: (contract: LabelContract) => void;
   onHireManager: (managerId: string) => void;
+  onFireManager?: () => void;
 }
 
 export type IndustryTab = 'current' | 'distribution_labels' | 'radar' | 'managers' | 'own_label';
@@ -372,7 +373,11 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
 
   const handleFireManager = () => {
     playSound('click');
-    IndustryEngine.fireManager(player, world);
+    if (onFireManager) {
+      onFireManager();
+    } else {
+      IndustryEngine.fireManager(player, world);
+    }
     setNotification('Has finalizado el contrato con tu representante.');
     setTimeout(() => setNotification(null), 4000);
   };

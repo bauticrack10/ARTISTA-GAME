@@ -249,7 +249,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#94A3B8]">
                       Categoría {currentCategoryIndex + 1} de {categories.length}
                     </span>
-                    {(currentCategory.playerNominated || currentCategory.nomineeArtistIds.includes(player.id)) && (
+                    {(currentCategory.playerNominated || currentCategory.nomineeArtistIds?.includes(player.id) || currentCategory.nominees?.some(n => n.artistId === player.id)) && (
                       <span className="text-[10px] font-bold text-purple-300 bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 rounded-[4px] inline-flex items-center gap-1 shadow-xs">
                         <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
                         ¡Estás Nominado!
@@ -288,8 +288,8 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] flex items-center gap-1.5">
                     <span>Artistas y Obras Nominadas</span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-[4px] bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC]">
-                      {currentCategory.nominees?.length || currentCategory.nomineeArtistIds.length}
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-[4px] bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC]">
+                      {currentCategory.nominees?.length || currentCategory.nomineeArtistIds?.length || 0}
                     </span>
                   </span>
                   {isCurrentRevealed && (

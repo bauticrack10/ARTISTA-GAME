@@ -422,6 +422,7 @@ export default function App() {
             world={world}
             onSignContract={(contract) => getEngine().signContract(contract)}
             onHireManager={(managerId) => getEngine().hireManager(managerId)}
+            onFireManager={() => getEngine().fireManager()}
           />
         )}
 

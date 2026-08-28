@@ -1709,7 +1709,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               title={
                 isAlbumFundsInsufficient
                   ? `Fondos insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalAlbumCost.toLocaleString('es-AR')})`
-                  : !isAlbumLengthValid
+                  : isAlbumTracksInsufficient
                   ? `Requiere al menos ${minTracksRequired} pistas`
                   : player.stats.energy < 30
                   ? 'Energía insuficiente (mín. 30%)'

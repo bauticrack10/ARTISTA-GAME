@@ -10,7 +10,8 @@ interface NewsViewProps {
 export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
   const [filter, setFilter] = useState<string>('all');
 
-  const filteredNews = world.news.filter(n => {
+  const newsList = world?.news || [];
+  const filteredNews = newsList.filter(n => {
     if (filter === 'all') return true;
     return n.category === filter;
   });

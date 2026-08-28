@@ -121,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex flex-col">
               <span className="font-bold tracking-[-0.3px] text-[#F8FAFC] text-xs leading-none flex items-center gap-1.5">
                 EL ARTISTA
-                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">
                   PRO
                 </span>
               </span>

@@ -382,7 +382,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                 Oyentes Mensuales
               </span>
               {isListenersSurging && (
-                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 animate-pulse">
+                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 animate-pulse">
                   ▲ En Auge
                 </span>
               )}
@@ -410,7 +410,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                 Streams Globales
               </span>
               {isStreamsSurging && (
-                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40 animate-pulse">
+                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40 animate-pulse">
                   ▲ Viral
                 </span>
               )}

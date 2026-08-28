@@ -177,7 +177,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
             {filteredCeremonies.map((ceremony) => {
               const isExpanded = expandedYear === ceremony.year;
               const playerWinsInCeremony = ceremony.categories.filter(c => c.winnerArtistId === player.id).length;
-              const playerNomsInCeremony = ceremony.categories.filter(c => c.nomineeArtistIds.includes(player.id)).length;
+              const playerNomsInCeremony = ceremony.categories.filter(c => c.nomineeArtistIds?.includes(player.id) || c.nominees?.some(n => n.artistId === player.id) || false).length;
 
               return (
                 <div
@@ -241,7 +241,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                         {ceremony.categories.map((cat, catIdx) => {
                           const isPlayerWinner = cat.winnerArtistId === player.id;
-                          const isPlayerNominated = cat.nomineeArtistIds.includes(player.id);
+                          const isPlayerNominated = cat.nomineeArtistIds?.includes(player.id) || cat.nominees?.some(n => n.artistId === player.id) || false;
                           const CatIcon = getCategoryIcon(cat.name);
 
                           return (
@@ -325,12 +325,12 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                                             )}
                                           </div>
                                           {isNomPlayer && (
-                                            <span className="text-[9px] bg-purple-500/25 text-purple-300 border border-purple-500/40 px-1.5 py-0.2 rounded-[3px] font-bold shrink-0">
+                                            <span className="text-[9px] bg-purple-500/25 text-purple-300 border border-purple-500/40 px-1.5 py-0.5 rounded-[3px] font-bold shrink-0">
                                               Tú
                                             </span>
                                           )}
                                           {isNomWinner && (
-                                            <span className="text-[9px] bg-amber-500/25 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded-[3px] font-bold shrink-0">
+                                            <span className="text-[9px] bg-amber-500/25 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded-[3px] font-bold shrink-0">
                                               🏆 Ganador
                                             </span>
                                           )}

@@ -471,6 +471,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
         // Add history note to relationship
         if (relationship) {
+          if (!relationship.history) relationship.history = [];
           relationship.history.push(`Propuesta de colaboración (${format}) declinada en ${world.currentYear}.`);
         }
 
@@ -507,7 +508,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
             songCount: selectedFormatConfig.tracksCount,
             trackTitles: selectedFormatConfig.tracksCount === 1
               ? [`${title.trim()} (${getCreditPreview()})`]
-              : [`${title.trim()} - Track 1`, `${title.trim()} - Track 2`, `${title.trim()} - Track 3`, `${title.trim()} - Track 4`],
+              : Array.from({ length: selectedFormatConfig.tracksCount }, (_, i) => `${title.trim()} - Pista ${i + 1}`),
             genreId,
             genreName,
             subGenreId: subGenreId || undefined,

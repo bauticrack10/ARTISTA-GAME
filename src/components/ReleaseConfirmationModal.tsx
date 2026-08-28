@@ -131,7 +131,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
           </div>
 
           <button
-            onClick={handleClose}
+            onClick={onClose}
             className="p-1.5 rounded-[6px] hover:bg-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
             title="Cerrar confirmación"
           >

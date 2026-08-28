@@ -41,7 +41,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
               Rankings Oficiales
             </span>
             <span className="text-xs text-[#94A3B8]">
-              Año {world.currentYear} • Mes {world.currentMonth}
+              Año {currentYear} • Mes {currentMonth}
             </span>
           </div>
           <h1 className="text-2xl font-semibold text-[#F8FAFC] tracking-[-0.9px] flex items-center gap-2">
@@ -100,7 +100,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
 
               if (entry.lastRank === null) {
                 movement = (
-                  <span className="text-[10px] font-bold text-purple-300 uppercase bg-purple-950/60 border border-purple-500/40 px-1.5 py-0.2 rounded-[4px]">
+                  <span className="text-[10px] font-bold text-purple-300 uppercase bg-purple-950/60 border border-purple-500/40 px-1.5 py-0.5 rounded-[4px]">
                     NEW
                   </span>
                 );
@@ -166,7 +166,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
                           </span>
                         )}
                         {isNo1 && (
-                          <span className="text-[9px] bg-amber-950/60 text-amber-300 border border-amber-500/40 font-bold px-1.5 py-0.2 rounded-[4px]">
+                          <span className="text-[9px] bg-amber-950/60 text-amber-300 border border-amber-500/40 font-bold px-1.5 py-0.5 rounded-[4px]">
                             #1 HIT
                           </span>
                         )}

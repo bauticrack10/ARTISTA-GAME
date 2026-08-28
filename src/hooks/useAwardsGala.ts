@@ -72,7 +72,7 @@ export function useAwardsGala({
   const playerTotalNominations = useMemo(() => {
     return categories.filter(c =>
       c.playerNominated ||
-      c.nomineeArtistIds.includes(player.id) ||
+      c.nomineeArtistIds?.includes(player.id) ||
       c.nominees?.some(n => n.artistId === player.id)
     ).length;
   }, [categories, player.id]);

@@ -166,7 +166,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
               </div>
               <div className="flex items-center justify-between text-xs text-[#94A3B8] pl-9">
                 <span className="font-medium text-[#CBD5E1]">{savedGame.player.name} ({savedGame.player.country})</span>
-                <span className="font-mono font-bold text-[#10B981]">${savedGame.player.stats.funds.toLocaleString()}</span>
+                <span className="font-mono font-bold text-[#10B981]">${(savedGame.player.stats?.funds ?? 0).toLocaleString('es-AR')}</span>
               </div>
             </button>
           ) : (

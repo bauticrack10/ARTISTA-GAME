@@ -246,7 +246,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
                     {/* Saldo Resultante */}
                     <div className="col-span-2 sm:col-span-1 text-right font-mono text-[11px] text-[#94A3B8]">
-                      ${tx.resultingBalance.toLocaleString()}
+                      {tx.resultingBalance !== undefined ? `$${tx.resultingBalance.toLocaleString('es-AR')}` : '-'}
                     </div>
                   </div>
                 );
