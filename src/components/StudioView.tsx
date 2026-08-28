@@ -1023,20 +1023,35 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
                 )}
-                <div className="flex items-center justify-between text-[#94A3B8] pt-1 border-t border-[#2A2E3D]">
-                  <span className="font-semibold text-[#F8FAFC]">Costo Total del Sencillo:</span>
-                  <span className={`font-bold font-mono text-sm ${isFundsInsufficient ? 'text-rose-400' : 'text-[#C084FC]'}`}>
-                    ${totalSingleCost.toLocaleString()}
+                {/* Costo Total Resaltado */}
+                <div className={`flex items-center justify-between p-2.5 rounded-lg border transition-all ${
+                  isFundsInsufficient
+                    ? 'bg-rose-950/40 border-rose-500/50 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)]'
+                    : 'bg-[#16181F] border-[#2A2E3D] text-[#F8FAFC]'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`font-semibold ${isFundsInsufficient ? 'text-rose-300 font-bold' : 'text-[#F8FAFC]'}`}>
+                      Costo Total del Sencillo:
+                    </span>
+                    {isFundsInsufficient && (
+                      <span className="text-[10px] uppercase font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 px-2 py-0.5 rounded-full">
+                        Excede Fondos
+                      </span>
+                    )}
+                  </div>
+                  <span className={`font-bold font-mono text-sm ${isFundsInsufficient ? 'text-rose-400 font-extrabold text-base' : 'text-[#C084FC]'}`}>
+                    ${totalSingleCost.toLocaleString('es-AR')}
                   </span>
                 </div>
+
                 <div className="flex items-center justify-between text-[#94A3B8]">
                   <span>Consumo de Energía:</span>
                   <span className="font-semibold text-rose-400">-15% Energía</span>
                 </div>
                 <div className="flex items-center justify-between text-[#94A3B8]">
                   <span>Fondos Disponibles:</span>
-                  <span className={`font-bold font-mono ${!isFundsInsufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    ${player.stats.funds.toLocaleString()}
+                  <span className={`font-bold font-mono ${!isFundsInsufficient ? 'text-emerald-400' : 'text-rose-400 font-bold'}`}>
+                    ${player.stats.funds.toLocaleString('es-AR')}
                   </span>
                 </div>
 
@@ -1044,8 +1059,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <div className="pt-2 border-t border-rose-500/30 flex items-start gap-2 text-rose-300 text-[11px] leading-snug">
                     <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="block text-rose-400">Fondos Insuficientes: Te faltan ${(totalSingleCost - player.stats.funds).toLocaleString()}</strong>
-                      Ajusta los sliders de producción a $0 (Home Studio) o prescinde del videoclip/productor externo.
+                      <strong className="block text-rose-400">Fondos Insuficientes: Te faltan ${(totalSingleCost - player.stats.funds).toLocaleString('es-AR')}</strong>
+                      Ajusta los sliders de producción/marketing a $0 (Home Studio) o prescinde del videoclip/productor externo.
                     </div>
                   </div>
                 )}
@@ -1274,20 +1289,30 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
 
             <button
+              id="btn-submit-single"
               type="submit"
               disabled={isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15}
+              title={
+                isFundsInsufficient
+                  ? `Fondos insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalSingleCost.toLocaleString('es-AR')})`
+                  : isSinglesLimitReached
+                  ? `Cupo anual de singles alcanzado (${singlesThisYear}/${MAX_SINGLES})`
+                  : player.stats.energy < 15
+                  ? `Energía insuficiente (${player.stats.energy}% / 15% requerida)`
+                  : 'Grabar y publicar sencillo'
+              }
               className={`px-5 py-2.5 rounded-[6px] text-sm transition-all flex items-center gap-2 ${
                 isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15
-                  ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
+                  ? 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-90 cursor-pointer'
               }`}
             >
-              <Disc3 className={`w-4 h-4 text-white ${isPublishing ? 'animate-spin' : ''}`} />
+              <Disc3 className={`w-4 h-4 ${isFundsInsufficient ? 'text-[#64748B]' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
               <span>
                 {isPublishing
                   ? 'Publicando y Masterizando...'
                   : isFundsInsufficient
-                  ? `Fondos Insuficientes ($${totalSingleCost.toLocaleString()})`
+                  ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalSingleCost.toLocaleString('es-AR')})`
                   : hasMusicVideo
                   ? 'Grabar Single & Estrenar Videoclip'
                   : 'Grabar & Publicar Single'}
@@ -1678,20 +1703,30 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
 
             <button
+              id="btn-submit-album"
               type="submit"
               disabled={isPublishing || isAlbumDisabled}
+              title={
+                isAlbumFundsInsufficient
+                  ? `Fondos insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalAlbumCost.toLocaleString('es-AR')})`
+                  : !isAlbumLengthValid
+                  ? `Requiere al menos ${minTracksRequired} pistas`
+                  : player.stats.energy < 30
+                  ? 'Energía insuficiente (mín. 30%)'
+                  : 'Publicar proyecto completo'
+              }
               className={`px-6 py-2.5 rounded-[6px] text-sm transition-all flex items-center gap-2 ${
                 isPublishing || isAlbumDisabled
-                  ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
+                  ? 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-90 cursor-pointer'
               }`}
             >
-              <Layers className={`w-4 h-4 text-white ${isPublishing ? 'animate-spin' : ''}`} />
+              <Layers className={`w-4 h-4 ${isAlbumDisabled ? 'text-[#64748B]' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
               <span>
                 {isPublishing
                   ? 'Publicando y Masterizando...'
                   : isAlbumFundsInsufficient
-                  ? `Fondos Insuficientes ($${totalAlbumCost.toLocaleString()})`
+                  ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalAlbumCost.toLocaleString('es-AR')})`
                   : 'Publicar Proyecto Completo'}
               </span>
             </button>
