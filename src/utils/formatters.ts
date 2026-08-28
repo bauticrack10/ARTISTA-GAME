@@ -67,45 +67,50 @@ export function formatMoney(amount: number | string | undefined | null): string 
 }
 
 /**
- * Formatea un número en notación compacta (1.2k, 3.4M, 1.1B)
+/**
+ * Formatea un número en notación compacta (1.2k, 3.4M, 1.1B) con manejo de negativos y ceros
  */
 export function formatCompactNumber(num: number): string {
   if (isNaN(num) || num === 0) return '0';
-  if (num >= 1_000_000_000) {
-    return `${(num / 1_000_000_000).toFixed(2).replace(/\.00$/, '')}B`;
+  const sign = num < 0 ? '-' : '';
+  const abs = Math.abs(num);
+  if (abs >= 1_000_000_000) {
+    return `${sign}${(abs / 1_000_000_000).toFixed(2).replace(/\.00$/, '')}B`;
   }
-  if (num >= 1_000_000) {
-    return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  if (abs >= 1_000_000) {
+    return `${sign}${(abs / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
   }
-  if (num >= 1_000) {
-    return `${(num / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
+  if (abs >= 1_000) {
+    return `${sign}${(abs / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
   }
-  return num.toLocaleString('es-AR');
+  return `${sign}${abs.toLocaleString('es-AR')}`;
 }
 
 /**
  * Formatea métrica de Fans con etiqueta explícita para evitar valores huérfanos
- * Ejemplo: formatFans(150) -> "150 Fans", formatFans(4150) -> "4.15k Fans"
+ * Ejemplo: formatFans(150) -> "150 Fans", formatFans(4150) -> "4.15k Fans", formatFans(1) -> "1 Fan"
  */
 export function formatFans(count: number): string {
   const formatted = formatCompactNumber(count);
-  return `${formatted} ${count === 1 ? 'Fan' : 'Fans'}`;
+  return `${formatted} ${Math.abs(count) === 1 ? 'Fan' : 'Fans'}`;
 }
 
 /**
  * Formatea métrica de Oyentes Mensuales con etiqueta explícita
+ * Ejemplo: formatListeners(25000) -> "25k Oyentes", formatListeners(1) -> "1 Oyente"
  */
 export function formatListeners(count: number): string {
   const formatted = formatCompactNumber(count);
-  return `${formatted} Oyentes`;
+  return `${formatted} ${Math.abs(count) === 1 ? 'Oyente' : 'Oyentes'}`;
 }
 
 /**
  * Formatea métrica de Streams con etiqueta explícita
+ * Ejemplo: formatStreams(80000) -> "80k Streams", formatStreams(1) -> "1 Stream"
  */
 export function formatStreams(count: number): string {
   const formatted = formatCompactNumber(count);
-  return `${formatted} Streams`;
+  return `${formatted} ${Math.abs(count) === 1 ? 'Stream' : 'Streams'}`;
 }
 
 /**

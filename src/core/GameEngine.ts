@@ -134,6 +134,9 @@ export class GameEngine {
       // Default to picking an initial player or creating one
       this.playerId = 'artist_player_1';
     }
+
+    // Sincronizar y asegurar coherencia matemática de la audiencia inicial del jugador
+    this.syncPlayerAudienceMetrics(0, false);
   }
 
   private createDefaultWorld(): WorldState {
@@ -223,6 +226,126 @@ export class GameEngine {
 
   public getPlayer(): Artist {
     return this.world.artists[this.playerId] || Object.values(this.world.artists)[0];
+  }
+
+  public getPlayerSongs(): Song[] {
+    const player = this.getPlayer();
+    return Object.values(this.world.songs).filter(s => s.artistId === player.id);
+  }
+
+  /**
+   * Sincroniza atómicamente las métricas de audiencia (monthlyListeners y totalStreams)
+   * del artista basándose en su catálogo activo, base de fans, hype, popularidad y cualquier
+   * impulso de streams virales inyectado tras eventos, acciones sociales o giras.
+   */
+  public syncAudienceMetrics(
+    player: Artist = this.getPlayer(),
+    songs?: Song[],
+    viralBoost: number = 0
+  ): { monthlyListeners: number; totalStreams: number } {
+    if (!player || !player.stats) {
+      return { monthlyListeners: 0, totalStreams: 0 };
+    }
+
+    const playerSongs = songs || Object.values(this.world.songs).filter(s => s.artistId === player.id);
+    const hasCatalog = playerSongs.length > 0;
+
+    // 1. Inyección de streams virales en el catálogo o total si viralBoost > 0
+    if (viralBoost > 0) {
+      player.stats.totalStreams += viralBoost;
+
+      if (hasCatalog) {
+        // Ordenar canciones por relevancia / actividad reciente
+        const sortedSongs = [...playerSongs].sort((a, b) => 
+          (b.streamsLastMonth || 0) - (a.streamsLastMonth || 0) || 
+          (b.streamsTotal || 0) - (a.streamsTotal || 0) ||
+          (b.releaseYear * 12 + b.releaseMonth) - (a.releaseYear * 12 + a.releaseMonth)
+        );
+        const leadSong = sortedSongs[0];
+
+        // La canción principal absorbe el 65% del impacto viral
+        const leadStreams = Math.floor(viralBoost * 0.65);
+        leadSong.streamsLastMonth = (leadSong.streamsLastMonth || 0) + leadStreams;
+        leadSong.streamsTotal = (leadSong.streamsTotal || 0) + leadStreams;
+        if (viralBoost >= 10000) leadSong.wentViral = true;
+        if (leadSong.musicVideo) {
+          leadSong.musicVideo.views += Math.floor(leadStreams * 0.45);
+        }
+
+        // El 35% restante se reparte en el catálogo
+        const remainingStreams = viralBoost - leadStreams;
+        const catalogPerTrack = sortedSongs.length > 1 ? Math.floor(remainingStreams / (sortedSongs.length - 1)) : 0;
+        for (let i = 1; i < sortedSongs.length; i++) {
+          sortedSongs[i].streamsLastMonth = (sortedSongs[i].streamsLastMonth || 0) + catalogPerTrack;
+          sortedSongs[i].streamsTotal = (sortedSongs[i].streamsTotal || 0) + catalogPerTrack;
+          if (sortedSongs[i].musicVideo) {
+            sortedSongs[i].musicVideo.views += Math.floor(catalogPerTrack * 0.35);
+          }
+        }
+      }
+    }
+
+    // 2. Calcular los streams mensuales del catálogo actual
+    let currentMonthlyStreams = 0;
+    if (hasCatalog) {
+      currentMonthlyStreams = playerSongs.reduce((acc, s) => acc + (s.streamsLastMonth || 0), 0);
+      
+      // Si las canciones acaban de salir y aún tienen 0 en streamsLastMonth, estimar base del mes
+      if (currentMonthlyStreams === 0) {
+        const estMonthly = Math.floor(
+          player.stats.fansCount * ((player.stats.fanbaseLoyalty || 70) / 100) * 2.8 +
+          (player.stats.popularity * 150) * (1 + ((player.stats.hype || 50) / 100))
+        );
+        currentMonthlyStreams = Math.max(50, estMonthly);
+      }
+    }
+
+    // 3. Recalcular oyentes mensuales de forma reactiva y atómica con StreamingEngine
+    player.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
+      currentMonthlyStreams,
+      player.stats.popularity,
+      player.stats.fansCount,
+      player.stats.fanbaseLoyalty,
+      player.stats.hype,
+      hasCatalog
+    );
+
+    // 4. Garantizar coherencia matemática en streams totales
+    if (!hasCatalog) {
+      // En etapa underground o pre-lanzamiento, demos/bootlegs/rehearsals generan stream baseline
+      const demoStreamsBaseline = Math.floor(
+        player.stats.monthlyListeners * (1.8 + ((player.stats.hype || 50) / 100) * 0.8)
+      );
+      if (player.stats.totalStreams < demoStreamsBaseline) {
+        player.stats.totalStreams = demoStreamsBaseline;
+      }
+    } else {
+      const catalogTotalStreams = playerSongs.reduce((sum, s) => sum + (s.streamsTotal || 0), 0);
+      if (player.stats.totalStreams < catalogTotalStreams) {
+        player.stats.totalStreams = catalogTotalStreams;
+      }
+    }
+
+    return {
+      monthlyListeners: player.stats.monthlyListeners,
+      totalStreams: player.stats.totalStreams
+    };
+  }
+
+  /**
+   * Método de compatibilidad para sincronización de audiencia del jugador.
+   */
+  public syncPlayerAudienceMetrics(fansDelta: number = 0, isViralSurge: boolean = false) {
+    const player = this.getPlayer();
+    let viralBoost = 0;
+    if (fansDelta > 0 || isViralSurge) {
+      viralBoost = StreamingEngine.calculateViralStreamSurge(
+        Math.max(fansDelta, isViralSurge ? 5000 : 0),
+        player.stats.hype,
+        player.stats.popularity
+      );
+    }
+    return this.syncAudienceMetrics(player, this.getPlayerSongs(), viralBoost);
   }
 
   public getPlayerAge(): number {
@@ -645,7 +768,7 @@ export class GameEngine {
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'release',
-      relatedArtistIds: [player.id, ...params.featuredArtistIds],
+      relatedArtistIds: [player.id, ...(params.featuredArtistIds || [])],
       sentiment: 'positive',
       importance: params.musicVideo ? 4 : 3
     });
@@ -655,6 +778,7 @@ export class GameEngine {
     const socialPosts = SocialFeedEngine.generateReleasePosts(this.world, player, newSong);
     this.world.socialFeed.unshift(...socialPosts);
 
+    this.syncPlayerAudienceMetrics(0, false);
     this.notify();
     return newSong;
   }
@@ -865,6 +989,7 @@ export class GameEngine {
     // Actualizar cumplimiento de contrato discográfico
     IndustryEngine.onAlbumReleased(player, this.world);
 
+    this.syncPlayerAudienceMetrics(0, false);
     this.notify();
     return newAlbum;
   }
@@ -1161,6 +1286,7 @@ export class GameEngine {
       const socialPosts = SocialFeedEngine.generateReleasePosts(this.world, player, createdSong);
       this.world.socialFeed.unshift(...socialPosts);
 
+      this.syncPlayerAudienceMetrics(fansGained, createdSong.wentViral);
       this.notify();
       return { success: true, song: createdSong, confirmationData };
     } else {
@@ -1288,6 +1414,7 @@ export class GameEngine {
 
       IndustryEngine.onAlbumReleased(player, this.world);
 
+      this.syncPlayerAudienceMetrics(fansGained, false);
       this.notify();
       return { success: true, album: createdAlbum, confirmationData };
     }
@@ -1368,6 +1495,7 @@ export class GameEngine {
       importance: 4
     });
 
+    this.syncPlayerAudienceMetrics(tour.fanbaseGained, false);
     this.notify();
     return tour;
   }
@@ -1498,6 +1626,7 @@ export class GameEngine {
           `Aceptaron colaborar juntos en ${this.world.currentYear}.`
         );
         player.stats.hype = Math.min(100, player.stats.hype + 18);
+        this.syncAudienceMetrics(player);
         const headline = `Alianza confirmada: ${player.name} y ${target.name} anuncian colaboración`;
         const body = `Los fanáticos celebran la unión de dos fuerzas musicales complementarias.`;
         const newsItem: NewsItem = {
@@ -1544,6 +1673,7 @@ export class GameEngine {
         throw new Error(check.reason);
       }
       const result = RelationshipEngine.processShoutout(player, target, this.world.currentYear, this.world.currentMonth, this.world);
+      this.syncAudienceMetrics(player);
       this.notify();
       return result;
     } else if (actionType === 'diss') {
@@ -1552,6 +1682,7 @@ export class GameEngine {
         throw new Error(check.reason);
       }
       const result = RelationshipEngine.processDiss(player, target, this.world.currentYear, this.world.currentMonth, this.world);
+      this.syncAudienceMetrics(player);
       this.notify();
       return result;
     }
@@ -1602,6 +1733,7 @@ export class GameEngine {
       });
       player.stats.hype = Math.min(100, player.stats.hype + 10);
     }
+    this.syncAudienceMetrics(player);
     this.notify();
   }
 
@@ -1620,6 +1752,7 @@ export class GameEngine {
     if (player.personality?.discipline !== undefined) {
       player.personality.discipline = Math.max(0, Math.min(100, player.personality.discipline + result.disciplineChange));
     }
+    this.syncAudienceMetrics(player);
     this.notify();
     return result;
   }
@@ -1717,6 +1850,7 @@ export class GameEngine {
     if (outcome.fansChange) player.stats.fansCount = Math.max(0, player.stats.fansCount + (outcome.fansChange > 0 ? outcome.fansChange * prodigyMultiplier : outcome.fansChange));
     if (outcome.reputationChange) player.stats.reputation = Math.max(0, Math.min(100, player.stats.reputation + (outcome.reputationChange > 0 ? outcome.reputationChange * prodigyMultiplier : outcome.reputationChange)));
     if (outcome.energyChange) player.stats.energy = Math.max(0, Math.min(100, player.stats.energy + outcome.energyChange));
+    if (outcome.streamsChange) player.stats.totalStreams = Math.max(0, player.stats.totalStreams + (outcome.streamsChange > 0 ? outcome.streamsChange * prodigyMultiplier : outcome.streamsChange));
 
     if (outcome.statChanges) {
       for (const [k, v] of Object.entries(outcome.statChanges)) {
@@ -1792,6 +1926,29 @@ export class GameEngine {
       this.world.socialFeed.unshift(...eventPosts);
     }
 
+    // Sincronizar reactivamente métricas de audiencia si el evento alteró fans, popularidad, hype o si fue un fenómeno viral
+    const isViral = Boolean(
+      (this.currentEvent && this.currentEvent.id.includes('viral')) ||
+      (outcome.narrativeText && outcome.narrativeText.toLowerCase().includes('viral')) ||
+      (this.currentEvent && this.currentEvent.category === 'media' && (outcome.hypeChange || 0) >= 15) ||
+      (outcome.fansChange && outcome.fansChange >= 5000)
+    );
+
+    const fansDelta = outcome.fansChange ? (outcome.fansChange > 0 ? outcome.fansChange * prodigyMultiplier : outcome.fansChange) : 0;
+    let viralBoost = 0;
+    if (outcome.streamsChange) {
+      viralBoost += outcome.streamsChange > 0 ? outcome.streamsChange * prodigyMultiplier : outcome.streamsChange;
+    }
+    if (fansDelta > 0 || isViral) {
+      viralBoost += StreamingEngine.calculateViralStreamSurge(
+        Math.max(fansDelta, isViral ? 5000 : 0),
+        player.stats.hype,
+        player.stats.popularity
+      );
+    }
+
+    this.syncAudienceMetrics(player, this.getPlayerSongs(), viralBoost);
+
     // Pop next event in queue if available
     if (this.eventQueue.length > 0) {
       this.currentEvent = this.eventQueue.shift()!;
@@ -1856,7 +2013,8 @@ export class GameEngine {
         playerTotalMonthlyStreams,
         player.stats.popularity,
         player.stats.fansCount,
-        player.stats.fanbaseLoyalty
+        player.stats.fanbaseLoyalty,
+        player.stats.hype
       );
 
       // Monthly economy settlement

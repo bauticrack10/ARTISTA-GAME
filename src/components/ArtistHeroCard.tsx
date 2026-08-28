@@ -18,13 +18,15 @@ import {
   Flame,
   TrendingUp,
   User,
-  Headphones
+  Headphones,
+  Users
 } from 'lucide-react';
 import {
   formatMoney,
   formatFans,
   formatListeners,
   formatStreams,
+  formatCompactNumber,
   cleanQuotes
 } from '../utils/formatters';
 
@@ -70,7 +72,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
   const computedSongsCount = playerSongsCount !== undefined
     ? playerSongsCount
-    : (Object.values(world.songs || {}) as Song[]).filter((s) => s.artistId === player.id).length;
+    : (Object.values(world.songs || {}) as Song[]).filter((s) => s.artistId === player.id || s.isPlayerSong).length;
 
   const computedAlbumsCount = playerAlbumsCount !== undefined
     ? playerAlbumsCount
@@ -83,6 +85,32 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
   const currentLabel = player.labelId && world.labels ? world.labels[player.labelId] : null;
   const currentManager = player.managerId && world.managers ? world.managers[player.managerId] : null;
+
+  // Reactive change detection for live visual feedback on viral surges
+  const prevListenersRef = useRef<number>(player.stats.monthlyListeners);
+  const prevStreamsRef = useRef<number>(player.stats.totalStreams);
+  const [isListenersSurging, setIsListenersSurging] = useState<boolean>(false);
+  const [isStreamsSurging, setIsStreamsSurging] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (player.stats.monthlyListeners > prevListenersRef.current) {
+      setIsListenersSurging(true);
+      const timer = setTimeout(() => setIsListenersSurging(false), 2600);
+      prevListenersRef.current = player.stats.monthlyListeners;
+      return () => clearTimeout(timer);
+    }
+    prevListenersRef.current = player.stats.monthlyListeners;
+  }, [player.stats.monthlyListeners]);
+
+  useEffect(() => {
+    if (player.stats.totalStreams > prevStreamsRef.current) {
+      setIsStreamsSurging(true);
+      const timer = setTimeout(() => setIsStreamsSurging(false), 2600);
+      prevStreamsRef.current = player.stats.totalStreams;
+      return () => clearTimeout(timer);
+    }
+    prevStreamsRef.current = player.stats.totalStreams;
+  }, [player.stats.totalStreams]);
 
   // Dynamic growth percentage calculation for streams/listeners (with 0.0% zero-state)
   const listenerGrowth = React.useMemo(() => {
@@ -292,6 +320,14 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                 <span>Editar Retrato</span>
               </button>
 
+              <span
+                className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs shadow-xs"
+                title={`Comunidad de fans activos: ${player.stats.fansCount.toLocaleString()} fans`}
+              >
+                <Users className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                <span>{formatFans(player.stats.fansCount)}</span>
+              </span>
+
               <span className="inline-flex items-center gap-1.5 bg-[#16181F] px-2.5 py-1 rounded-[8px] border border-[#2A2E3D] text-[#F8FAFC] font-medium text-xs">
                 <Disc3 className="w-3.5 h-3.5 text-[#8B5CF6]" />
                 <span>{computedSongsCount} Singles</span>
@@ -315,13 +351,27 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
         {/* Right Side: 4 Colorful Quick Metric Tiles */}
         <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto shrink-0 min-w-[280px] xl:min-w-[340px]">
           {/* Tile 1: Oyentes Mensuales */}
-          <div className="bg-[#16181F] border border-emerald-500/30 rounded-[12px] p-3 text-left shadow-xs hover:border-emerald-500/60 transition-colors">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
-              <Headphones className="w-3 h-3 text-emerald-400" />
-              Oyentes Mensuales
-            </span>
-            <span className="text-lg sm:text-xl font-bold text-emerald-400 font-mono block mt-0.5">
-              {formatListeners(player.stats.monthlyListeners)}
+          <div
+            className={`bg-[#16181F] border rounded-[12px] p-3 text-left shadow-xs transition-all duration-300 ${
+              isListenersSurging
+                ? 'border-emerald-400 bg-emerald-950/20 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.02]'
+                : 'border-emerald-500/30 hover:border-emerald-500/60'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+                <Headphones className="w-3 h-3 text-emerald-400" />
+                Oyentes Mensuales
+              </span>
+              {isListenersSurging && (
+                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 animate-pulse">
+                  ▲ En Auge
+                </span>
+              )}
+            </div>
+            <span className="text-xl sm:text-2xl font-bold text-emerald-400 font-mono block mt-0.5 tracking-tight transition-transform">
+              {formatCompactNumber(player.stats.monthlyListeners)}
+              <span className="text-xs font-normal text-emerald-500/80 font-sans ml-1">/mes</span>
             </span>
             <span className={`text-[10px] font-medium block ${listenerGrowth.isPositive ? 'text-emerald-500/80' : 'text-[#94A3B8]'}`}>
               {listenerGrowth.label}
@@ -329,13 +379,27 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
           </div>
 
           {/* Tile 2: Streams Totales */}
-          <div className="bg-[#16181F] border border-[#8B5CF6]/30 rounded-[12px] p-3 text-left shadow-xs hover:border-[#8B5CF6]/60 transition-colors">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#C084FC] flex items-center gap-1">
-              <Disc3 className="w-3 h-3 text-[#8B5CF6]" />
-              Streams Globales
-            </span>
-            <span className="text-lg sm:text-xl font-bold text-[#C084FC] font-mono block mt-0.5">
-              {formatStreams(player.stats.totalStreams)}
+          <div
+            className={`bg-[#16181F] border rounded-[12px] p-3 text-left shadow-xs transition-all duration-300 ${
+              isStreamsSurging
+                ? 'border-[#8B5CF6] bg-[#8B5CF6]/20 shadow-[0_0_18px_rgba(139,92,246,0.35)] scale-[1.02]'
+                : 'border-[#8B5CF6]/30 hover:border-[#8B5CF6]/60'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#C084FC] flex items-center gap-1">
+                <Disc3 className="w-3 h-3 text-[#8B5CF6]" />
+                Streams Globales
+              </span>
+              {isStreamsSurging && (
+                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40 animate-pulse">
+                  ▲ Viral
+                </span>
+              )}
+            </div>
+            <span className="text-xl sm:text-2xl font-bold text-[#C084FC] font-mono block mt-0.5 tracking-tight transition-transform">
+              {formatCompactNumber(player.stats.totalStreams)}
+              <span className="text-xs font-normal text-[#C084FC]/80 font-sans ml-1">tot.</span>
             </span>
             <span className="text-[10px] text-[#C084FC]/80 font-medium block">
               Catálogo activo
@@ -348,7 +412,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <Flame className="w-3 h-3 text-orange-400" />
               Hype Escénico
             </span>
-            <span className="text-lg sm:text-xl font-bold text-orange-400 font-mono block mt-0.5">
+            <span className="text-xl sm:text-2xl font-bold text-orange-400 font-mono block mt-0.5 tracking-tight">
               {player.stats.hype} / 100
             </span>
             <span className="text-[10px] text-orange-500/80 font-medium block">
@@ -362,7 +426,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <Crown className="w-3 h-3 text-amber-400" />
               Popularidad
             </span>
-            <span className="text-lg sm:text-xl font-bold text-amber-400 font-mono block mt-0.5">
+            <span className="text-xl sm:text-2xl font-bold text-amber-400 font-mono block mt-0.5 tracking-tight">
               {player.stats.popularity} / 100
             </span>
             <span className="text-[10px] text-amber-500/80 font-medium block">

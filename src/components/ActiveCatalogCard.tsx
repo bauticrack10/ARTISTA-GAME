@@ -13,6 +13,7 @@ import {
   Video
 } from 'lucide-react';
 import { getGenreTheme } from '../utils/themeColors';
+import { formatCompactNumber } from '../utils/formatters';
 
 export interface ActiveCatalogCardProps {
   songs?: Song[];
@@ -37,19 +38,33 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
   className = '',
   onRecordFirstSingle
 }) => {
-  // Resolve active songs list
-  const activeSongsList = songs
-    ? [...songs].sort(
-        (a, b) => b.streamsLastMonth - a.streamsLastMonth || b.streamsTotal - a.streamsTotal
-      )
-    : topSongs
-    ? [...topSongs].sort(
-        (a, b) => b.streamsLastMonth - a.streamsLastMonth || b.streamsTotal - a.streamsTotal
-      )
-    : [];
+  // Resolve active songs list reactively
+  const activeSongsList = React.useMemo(() => {
+    if (songs && songs.length > 0) {
+      return [...songs].sort(
+        (a, b) => (b.streamsLastMonth || 0) - (a.streamsLastMonth || 0) || (b.streamsTotal || 0) - (a.streamsTotal || 0)
+      );
+    }
+    if (topSongs && topSongs.length > 0) {
+      return [...topSongs].sort(
+        (a, b) => (b.streamsLastMonth || 0) - (a.streamsLastMonth || 0) || (b.streamsTotal || 0) - (a.streamsTotal || 0)
+      );
+    }
+    if (world?.songs) {
+      const allWorldSongs = Object.values(world.songs) as Song[];
+      const pId = world.playerArtistId || 'player';
+      const playerFiltered = allWorldSongs.filter(s => s.artistId === pId || s.isPlayerSong);
+      return playerFiltered.sort(
+        (a, b) => (b.streamsLastMonth || 0) - (a.streamsLastMonth || 0) || (b.streamsTotal || 0) - (a.streamsTotal || 0)
+      );
+    }
+    return [];
+  }, [songs, topSongs, world?.songs, world?.playerArtistId]);
 
   const displaySongs = activeSongsList.slice(0, maxDisplayCount);
-  const totalCount = playerSongsCount !== undefined ? playerSongsCount : (songs ? songs.length : activeSongsList.length);
+  const totalCount = playerSongsCount !== undefined
+    ? playerSongsCount
+    : (songs ? songs.length : activeSongsList.length);
 
   // Resolve genre dictionary
   const genreDict: Record<string, Genre> = genres || world?.genres || {};
@@ -60,19 +75,6 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
     } else if (onNavigate) {
       onNavigate('studio');
     }
-  };
-
-  const formatTotalStreams = (streams: number): string => {
-    if (streams >= 1_000_000_000) {
-      return `${(streams / 1_000_000_000).toFixed(2)}B`;
-    }
-    if (streams >= 1_000_000) {
-      return `${(streams / 1_000_000).toFixed(2)}M`;
-    }
-    if (streams >= 1_000) {
-      return `${(streams / 1_000).toFixed(1)}k`;
-    }
-    return streams.toLocaleString();
   };
 
   return (
@@ -264,7 +266,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                         Acumulado Total
                       </span>
                       <span className="text-xs font-bold text-[#C084FC] font-mono">
-                        {formatTotalStreams(song.streamsTotal)}{' '}
+                        {formatCompactNumber(song.streamsTotal)}{' '}
                         <span className="font-normal text-[10px] text-[#94A3B8]">tot.</span>
                       </span>
                     </div>

@@ -241,6 +241,10 @@ export const EventModal: React.FC<EventModalProps> = ({
                           const chipClass =
                             chip.type === 'money'
                               ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                              : chip.type === 'listeners'
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                              : chip.type === 'streams'
+                              ? 'bg-cyan-500/15 text-[#06B6D4] border-[#06B6D4]/30'
                               : chip.type === 'energy'
                               ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
                               : chip.type === 'hype'
@@ -250,7 +254,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                               : chip.type === 'negative'
                               ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
                               : chip.type === 'fans'
-                              ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
+                              ? 'bg-[#8B5CF6]/15 text-[#C084FC] border-[#8B5CF6]/30'
                               : chip.type === 'reputation'
                               ? 'bg-[#8B5CF6]/15 text-[#C084FC] border-[#8B5CF6]/30'
                               : 'bg-white/10 text-[#F8FAFC] border-white/15';

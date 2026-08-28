@@ -687,6 +687,8 @@ export interface EventOutcome {
   fansChange?: number;
   reputationChange?: number;
   energyChange?: number;
+  streamsChange?: number;
+  wentViralSongId?: string;
   relationshipChanges?: Array<{
     targetArtistId: string;
     affinityDelta: number;

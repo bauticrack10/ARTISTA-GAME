@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { playSound } from '../utils/audioSystem';
+import { formatCompactNumber } from '../utils/formatters';
 
 interface RelationshipsViewProps {
   player: Artist;
@@ -709,7 +710,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       {/* Stat Metrics Bar */}
                       <div className="flex items-center justify-between text-xs text-[#94A3B8] font-mono bg-[#0B0C10]/70 px-3 py-1.5 rounded-[8px] border border-[#2A2E3D]/60">
                         <span>Pop: <strong className="text-[#F8FAFC] font-semibold">{artist.stats.popularity}</strong></span>
-                        <span>Oyentes: <strong className="text-[#F8FAFC] font-semibold">{(artist.stats.monthlyListeners / 1000000).toFixed(1)}M</strong></span>
+                        <span>Oyentes: <strong className="text-[#F8FAFC] font-semibold">{formatCompactNumber(artist.stats.monthlyListeners)}</strong></span>
                         <span>Etapa: <strong className="text-[#94A3B8]">{artist.careerStage}</strong></span>
                       </div>
                     </div>

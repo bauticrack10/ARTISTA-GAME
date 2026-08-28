@@ -17,6 +17,8 @@ import {
   Flame,
   Users,
   Star,
+  Disc3,
+  Headphones,
   LucideIcon
 } from 'lucide-react';
 
@@ -25,7 +27,7 @@ export const MONTH_NAMES_ES = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
-export type ImpactChipType = 'positive' | 'negative' | 'neutral' | 'energy' | 'money' | 'hype' | 'fans' | 'reputation';
+export type ImpactChipType = 'positive' | 'negative' | 'neutral' | 'energy' | 'money' | 'hype' | 'fans' | 'reputation' | 'streams' | 'listeners';
 
 export interface ParsedImpactChip {
   key: string;
@@ -133,11 +135,11 @@ function isStatToken(clause: string): boolean {
   const trimmed = clause.trim();
   if (!trimmed) return false;
   // Has explicit sign like "+4 Credibilidad", "-$600 Fondos", "-25 Energía", "+14 Hype", "+80 Fans", "+100% Derechos"
-  if (/^[+-]\s*(\$?[0-9,.]+|[0-9]+%)/.test(trimmed)) return true;
+  if (/^[+-]\s*(\$?[0-9,.]+|[0-9]+%|[A-Za-zÁ-ÿ])/i.test(trimmed)) return true;
   // Has currency like "-$600" or "$150 Fondos"
   if (/\$[0-9,.]+/.test(trimmed) && /fondos|pagar|costo|adelanto/i.test(trimmed)) return true;
   // Common stat keywords with numbers or indicators
-  if (/^[+-]?\s*(?:Hype|Energía|Popularidad|Fans|Reputación|Credibilidad|Oyentes|Calidad|Habilidad|Relación)/i.test(trimmed)) return true;
+  if (/^[+-]?\s*(?:Hype|Energía|Popularidad|Fans|Reputación|Credibilidad|Oyentes|Streams|Reproducciones|Calidad|Habilidad|Relación|Meme viral)/i.test(trimmed)) return true;
   if (/^\(\s*[+-]?[0-9]+\s*\)$/.test(trimmed)) return true;
   return false;
 }
@@ -159,23 +161,29 @@ function parseConsequences(desc: string): { chips: ParsedImpactChip[]; cleanedNa
       let icon: LucideIcon = Sparkles;
       const lower = part.toLowerCase();
 
-      if (part.includes('+') || lower.includes('aumenta') || lower.includes('éxito') || lower.includes('gana')) {
+      if (part.includes('+') || lower.includes('aumenta') || lower.includes('éxito') || lower.includes('gana') || lower.includes('auge') || lower.includes('inmediato')) {
         type = 'positive';
       }
-      if (part.includes('-') || lower.includes('reduce') || lower.includes('pierde') || lower.includes('caída')) {
+      if (part.includes('-') || lower.includes('reduce') || lower.includes('pierde') || lower.includes('caída') || lower.includes('riesgo')) {
         type = 'negative';
       }
 
-      if (part.includes('$') || lower.includes('fondos') || lower.includes('costas')) {
+      if (part.includes('$') || lower.includes('fondos') || lower.includes('costas') || lower.includes('adelanto')) {
         type = 'money';
         icon = DollarSign;
       } else if (lower.includes('energía') || lower.includes('fatiga')) {
         type = 'energy';
         icon = Zap;
+      } else if (lower.includes('stream') || lower.includes('reproduccion') || lower.includes('reproducción')) {
+        type = 'streams';
+        icon = Disc3;
+      } else if (lower.includes('oyente')) {
+        type = 'listeners';
+        icon = Headphones;
       } else if (lower.includes('hype') || lower.includes('viral')) {
         type = 'hype';
         icon = Flame;
-      } else if (lower.includes('fan') || lower.includes('oyente')) {
+      } else if (lower.includes('fan')) {
         type = 'fans';
         icon = Users;
       } else if (lower.includes('reputación') || lower.includes('credibilidad') || lower.includes('legado')) {

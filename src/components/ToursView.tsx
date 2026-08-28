@@ -178,7 +178,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             title={`Oyentes Mensuales: ${player.stats.monthlyListeners.toLocaleString()} (Requiere ≥${MIN_TOUR_LISTENERS.toLocaleString()})`}
           >
             <Headphones className="w-3.5 h-3.5 shrink-0" />
-            <span>{formatListeners(player.stats.monthlyListeners)} Oyentes</span>
+            <span>{formatListeners(player.stats.monthlyListeners)}</span>
             {tourGates.hasAudience ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (

@@ -58,16 +58,16 @@ export const NewArtistModal: React.FC<NewArtistModalProps> = ({ world, onClose, 
       avatarColor,
       personality,
       stats: {
-        popularity: 20,
-        reputation: 50,
-        artisticCredibility: 60,
+        popularity: 24,
+        reputation: 32,
+        artisticCredibility: 35,
         energy: 100,
-        monthlyListeners: 30000,
-        totalStreams: 90000,
-        funds: 5000,
-        fansCount: 15000,
-        fanbaseLoyalty: 75,
-        hype: 60
+        monthlyListeners: 2100,
+        totalStreams: 9200,
+        funds: 2500,
+        fansCount: 2500,
+        fanbaseLoyalty: 60,
+        hype: 40
       }
     });
   };

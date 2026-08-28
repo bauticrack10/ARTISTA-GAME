@@ -58,7 +58,7 @@ import {
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
 import { playSound } from '../utils/audioSystem';
-import { formatMoney, cleanCountTag, cleanQuotes } from '../utils/formatters';
+import { formatMoney, cleanCountTag, cleanQuotes, formatCompactNumber } from '../utils/formatters';
 
 export interface VideoConceptOption {
   id: MusicVideoConcept;
@@ -872,7 +872,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     const affinityText = rel?.affinity !== undefined ? (rel.affinity > 0 ? `+${rel.affinity}` : `${rel.affinity}`) : '0';
                     return (
                       <option key={artist.id} value={artist.id} className="bg-[#0B0C10] text-[#F8FAFC]">
-                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {(artist.stats.monthlyListeners / 1000000).toFixed(1)}M • Afinidad: {affinityText})
+                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {formatCompactNumber(artist.stats.monthlyListeners)} • Afinidad: {affinityText})
                       </option>
                     );
                   })}
@@ -1382,7 +1382,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     const affinityText = rel?.affinity !== undefined ? (rel.affinity > 0 ? `+${rel.affinity}` : `${rel.affinity}`) : '0';
                     return (
                       <option key={artist.id} value={artist.id} className="bg-[#0B0C10] text-[#F8FAFC]">
-                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {(artist.stats.monthlyListeners / 1000000).toFixed(1)}M • Afinidad: {affinityText})
+                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {formatCompactNumber(artist.stats.monthlyListeners)} • Afinidad: {affinityText})
                       </option>
                     );
                   })}

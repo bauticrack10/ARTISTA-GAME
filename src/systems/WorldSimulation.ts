@@ -304,7 +304,9 @@ export class WorldSimulation {
         artistTotalMonthlyStreams,
         artist.stats.popularity,
         artist.stats.fansCount,
-        artist.stats.fanbaseLoyalty
+        artist.stats.fanbaseLoyalty,
+        artist.stats.hype,
+        artistSongs.length > 0
       );
 
       // Slight popularity drift

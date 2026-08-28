@@ -162,34 +162,89 @@ export class StreamingEngine {
   /**
    * Calculates realistic unique monthly listeners (28-day active audience).
    * In music streaming, monthly listeners represent unique accounts that streamed
-   * at least one song in the last 28 days (typically 2.5 to 5.0 streams per unique listener).
+   * at least one song in the last 28 days (typically 2.5 to 4.0 streams per unique listener).
+   * Ensures harmonious proportional scaling with totalMonthlySongStreams, artistPopularity,
+   * fansCount, fanbaseLoyalty, hype, and catalog presence.
    */
   static calculateMonthlyListeners(
     totalMonthlySongStreams: number,
-    artistPopularity: number,
-    fansCount: number,
-    fanbaseLoyalty: number = 70
+    artistPopularity: number = 20,
+    fansCount: number = 1000,
+    fanbaseLoyalty: number = 70,
+    hype: number = 50,
+    hasActiveCatalog?: boolean
   ): number {
-    if (totalMonthlySongStreams <= 0) {
-      const coreResidual = Math.floor(fansCount * (fanbaseLoyalty / 100) * 0.15);
-      return Math.max(10, coreResidual);
+    const hasCatalog = hasActiveCatalog !== undefined 
+      ? hasActiveCatalog 
+      : totalMonthlySongStreams > 0;
+
+    const safeLoyalty = Math.max(10, Math.min(100, fanbaseLoyalty || 70)) / 100;
+    const safeHype = Math.max(0, Math.min(100, hype || 50)) / 100;
+    const safePop = Math.max(1, Math.min(100, artistPopularity || 10)) / 100;
+
+    // Caso 1: Con catálogo activo reproduciéndose mensualmente (~2.5 a 4.0 streams/oyente)
+    if (hasCatalog && totalMonthlySongStreams > 0) {
+      // 1.1 Razón coherente de streams por oyente único en 28 días (~2.7 a 3.6 streams/oyente)
+      const streamsPerListener = 2.7 + safeLoyalty * 0.9;
+      const streamDerivedListeners = Math.floor(totalMonthlySongStreams / streamsPerListener);
+
+      // 1.2 Retención de base de fans activa (~60% a 80% de fans activos en el mes)
+      const fanRetentionRate = 0.60 + safeLoyalty * 0.20;
+      const coreActiveFans = Math.floor(fansCount * fanRetentionRate);
+
+      // 1.3 Alcance orgánico derivado de popularidad y hype
+      const organicReach = Math.floor(
+        (Math.pow(safePop, 2.2) * 600000 + (artistPopularity * 150)) * (1.0 + safeHype * 0.4)
+      );
+
+      // 1.4 Ponderación armónica (65% streams derivados, 25% retención fans, 10% descubrimiento orgánico)
+      const combined = Math.floor(
+        streamDerivedListeners * 0.65 +
+        coreActiveFans * 0.25 +
+        organicReach * 0.10
+      );
+
+      // Oyentes únicos no pueden superar el total de reproducciones ni estar por debajo de la base de fans activa
+      const maxPossibleListeners = Math.max(1, totalMonthlySongStreams);
+      const fanFloor = Math.max(15, Math.min(totalMonthlySongStreams, Math.floor(fansCount * 0.45)));
+
+      const finalListeners = Math.min(maxPossibleListeners, Math.max(fanFloor, combined));
+      return Math.max(15, finalListeners);
     }
 
-    // Average streams per listener in a 30-day period (~2.8 to 4.2)
-    const streamsPerListener = 3.2;
-    const streamDerivedListeners = Math.floor(totalMonthlySongStreams / streamsPerListener);
+    // Caso 2: Etapa underground / pre-lanzamiento sin catálogo formal o con 0 streams de singles
+    // Los fans acumulados (batallas de freestyle, TikTok, plazas, eventos) generan oyentes mensuales
+    // coherentes (~60% a 110% de fans según Hype) y escucha de maquetas/demos
+    const hypeConversionMultiplier = 0.60 + safeHype * 0.50; // 0.60 (hype 0) a 1.10 (hype 100)
+    const loyaltyModifier = 0.85 + safeLoyalty * 0.25; // 0.875 a 1.10
+    const popBonus = safePop * 0.30; // 0.0 a 0.30
 
-    // Active core fans who regularly listen
-    const coreActiveFans = Math.floor(fansCount * (fanbaseLoyalty / 100) * 0.60);
+    const undergroundListeners = Math.floor(
+      fansCount * hypeConversionMultiplier * loyaltyModifier * (1.0 + popBonus)
+    );
 
-    // Organic baseline listeners from general catalog discovery and playlists
-    const discoveryBaseline = Math.floor(Math.pow(artistPopularity / 100, 2.2) * 800000);
+    const minUndergroundFloor = fansCount > 0 ? Math.max(15, Math.floor(fansCount * 0.50)) : 15;
+    return Math.max(minUndergroundFloor, undergroundListeners);
+  }
 
-    // Combine while ensuring unique listeners cannot exceed total streams
-    const combinedListeners = Math.floor(streamDerivedListeners * 0.75 + coreActiveFans * 0.25 + discoveryBaseline * 0.1);
-    const realisticListeners = Math.min(totalMonthlySongStreams, combinedListeners);
-
-    return Math.max(15, realisticListeners);
+  /**
+   * Calculates immediate viral stream surge triggered by viral events, social media explosions, or breakthrough moments.
+   * Proportional to new fans gained, current hype, and mainstream reach.
+   */
+  static calculateViralStreamSurge(
+    fansGained: number,
+    hype: number = 50,
+    popularity: number = 20
+  ): number {
+    if (fansGained <= 0) return 0;
+    const safeHype = Math.max(0, Math.min(100, hype || 50));
+    const safePop = Math.max(0, Math.min(100, popularity || 10));
+    
+    const streamsPerFan = 3.5 + Math.min(3.5, safeHype / 25);
+    const fanStreamSurge = Math.floor(fansGained * streamsPerFan);
+    const mainstreamSurge = Math.floor(safeHype * 1200 + safePop * 250);
+    
+    return Math.max(1500, fanStreamSurge + mainstreamSurge);
   }
 
   /**

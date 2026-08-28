@@ -140,25 +140,27 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_diy_distro',
         text: 'Subirla a todas las plataformas y compartirla en grupos y foros',
-        consequencesDescription: '+Primeros oyentes reales (+350), +Hype inicial (+10)',
+        consequencesDescription: '+Primeros oyentes reales (+350), +Hype inicial (+10), +1,500 Streams',
         apply: () => ({
           narrativeText: 'Tu canción empezó a sonar en parlantes de amigos y playlists curadas por la comunidad.',
           fansChange: 250,
           popularityChange: 3,
-          hypeChange: 10
+          hypeChange: 10,
+          streamsChange: 1500
         })
       },
       {
         id: 'c_music_video_lowbudget',
         text: 'Filmar un video casero con celular y estética VHS en las calles',
         costFunds: 80,
-        consequencesDescription: '-$80 Fondos, +Identidad estética, +Hype (+18), +Fans (+450)',
+        consequencesDescription: '-$80 Fondos, +Identidad estética, +Hype (+18), +Fans (+450), +3,800 Streams',
         apply: () => ({
           narrativeText: 'El video capturó la vibra callejera y auténtica de tu barrio. Varios canales de música independiente lo repostearon.',
           fundsChange: -80,
           fansChange: 450,
           hypeChange: 18,
           popularityChange: 4,
+          streamsChange: 3800,
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) }
         })
       }
@@ -227,12 +229,13 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_ride_wave',
         text: 'Aprovechar la ola: subir contenido diario y publicar versión acelerada / live',
-        consequencesDescription: '+Mucho Hype, +Fans, +Streams inmediatos, -Riesgo de saturación',
+        consequencesDescription: '+25 Hype, +12,000 Fans, +65,000 Streams inmediatos, +Oyentes Mensuales en Auge, -Riesgo de saturación',
         apply: () => ({
           narrativeText: 'El algoritmo explotó. Miles de nuevos oyentes entraron a tu perfil de streaming buscando el tema completo.',
           popularityChange: 8,
           hypeChange: 25,
           fansChange: 12000,
+          streamsChange: 65000,
           newsGenerated: {
             headline: `${ctx.player.name} se viraliza con un fenómeno sonoro en redes`,
             body: `El estribillo de ${ctx.player.name} conquista los feeds y dispara sus oyentes mensuales.`,
@@ -244,12 +247,13 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_keep_mystique',
         text: 'Mantener el misterio y no sobreexponerse',
-        consequencesDescription: '+Credibilidad artística, +Fidelidad de fanbase núcleo, Moderado Hype',
+        consequencesDescription: '+4 Credibilidad artística, +6 Fidelidad de fanbase núcleo, +4,000 Fans, +15,000 Streams orgánicos sostenidos',
         apply: () => ({
           narrativeText: 'El público más melómano respetó tu postura de no convertirte en un meme fugaz. La conversación se centró en la calidad musical.',
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4), fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 6) },
           hypeChange: 10,
-          fansChange: 4000
+          fansChange: 4000,
+          streamsChange: 15000
         })
       }
     ]
@@ -1074,7 +1078,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_emergency_release_leak',
         text: 'Subir de urgencia la canción oficial a plataformas para capitalizar las reproducciones',
-        consequencesDescription: '+$3,500 Fondos, +18 Hype, +4,000 Fans, pero sin pulir la mezcla final',
+        consequencesDescription: '+$3,500 Fondos, +18 Hype, +4,000 Fans, +35,000 Streams inmediatos, +Oyentes Mensuales en Auge, pero sin pulir la mezcla final',
         apply: () => ({
           narrativeText:
             'Subiste el tema en 24 horas. El algoritmo recompensó la inmediatez y sumaste miles de oyentes que ya conocían el estribillo por los leaks.',
@@ -1082,6 +1086,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           hypeChange: 18,
           fansChange: 4000,
           popularityChange: 3,
+          streamsChange: 35000,
           newsGenerated: {
             headline: `¡Lanzamiento sorpresa! ${ctx.player.name} publica corte oficial tras filtración`,
             body: `El tema acumula millones de reproducciones impulsado por el fervor de las redes.`,
@@ -1212,7 +1217,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_rage_quit_live_tv',
         text: 'Levantarte, sacarte el micrófono y abandonar el estudio en vivo',
-        consequencesDescription: '+28 Hype de rebeldía callejera, +Meme viral, -6 Reputación en medios masivos',
+        consequencesDescription: '+28 Hype de rebeldía callejera, +Meme viral en redes (+Oyentes y Streams), -6 Reputación en medios masivos',
         apply: () => ({
           narrativeText:
             'El clip de tu salida furiosa se convirtió en el video más visto de la semana. Los jóvenes aplaudieron tu dignidad y autenticidad sin filtro.',
@@ -1249,7 +1254,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_freestyle_hijack_interview',
         text: 'Pedir el micrófono y responder improvisando barras inéditas a capella',
-        consequencesDescription: '+20 Hype musical, +10 Habilidad lírica, La música habla por sí sola',
+        consequencesDescription: '+20 Hype musical, +10 Habilidad lírica, +Oyentes Mensuales, +Streams de catálogo',
         apply: () => ({
           narrativeText:
             'Dejaste callado al piso entero tirando un verso improvisado que se volvió viral de inmediato por la calidad de tus rimas.',
@@ -1306,7 +1311,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_beef_studio_diss_track',
         text: 'Encerrarse en el estudio y soltar un Diss Track oficial demoliendo sus argumentos',
-        consequencesDescription: '+42 Hype monumental, -15 Energía, +4 Credibilidad lírica, Inicia guerra musical',
+        consequencesDescription: '+42 Hype monumental, -15 Energía, +6 Credibilidad lírica, +Disparo en Oyentes Mensuales y Streams, Inicia guerra musical',
         apply: () => ({
           narrativeText:
             'Grabaste una pieza demoledora con rimas quirúrgicas. La escena completa se detuvo a escuchar la tiradera y coronó tu superioridad en el micrófono.',

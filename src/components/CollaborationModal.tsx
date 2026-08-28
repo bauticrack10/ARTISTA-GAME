@@ -10,7 +10,7 @@ import { SUBGENRE_DETAILS } from '../data/genres';
 import { IndustryEngine } from '../systems/IndustryEngine';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
 import { playSound } from '../utils/audioSystem';
-import { formatMoney } from '../utils/formatters';
+import { formatMoney, formatCompactNumber } from '../utils/formatters';
 import {
   X,
   Sparkles,
@@ -596,7 +596,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 >
                   {candidateArtists.map(artist => (
                     <option key={artist.id} value={artist.id}>
-                      {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {(artist.stats.monthlyListeners / 1000000).toFixed(1)}M)
+                      {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {formatCompactNumber(artist.stats.monthlyListeners)})
                     </option>
                   ))}
                 </select>
@@ -624,7 +624,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                     </p>
                     <div className="flex items-center gap-3 text-[11px] font-mono pt-0.5">
                       <span>Pop: <strong className="text-emerald-400">{targetArtist.stats.popularity}</strong></span>
-                      <span>Oyentes: <strong className="text-[#C084FC]">{(targetArtist.stats.monthlyListeners / 1000000).toFixed(1)}M</strong></span>
+                      <span>Oyentes: <strong className="text-[#C084FC]">{formatCompactNumber(targetArtist.stats.monthlyListeners)}</strong></span>
                     </div>
                   </div>
                 </div>

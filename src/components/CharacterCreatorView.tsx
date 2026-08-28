@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Artist, WorldState, Genre, CareerStage } from '../types';
 import { AVATAR_PRESETS, AvatarPreset } from '../data/avatarPresets';
+import { StreamingEngine } from '../systems/StreamingEngine';
 import {
   Sparkles,
   User,
@@ -366,79 +367,98 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   };
 
   const getStartingStats = () => {
+    let baseStats: {
+      popularity: number;
+      reputation: number;
+      artisticCredibility: number;
+      energy: number;
+      funds: number;
+      fansCount: number;
+      fanbaseLoyalty: number;
+      hype: number;
+      careerStage: CareerStage;
+    };
+
     if (isProdigy) {
-      return {
-        popularity: 28,
+      baseStats = {
+        popularity: 30,
         reputation: 60,
         artisticCredibility: 95,
         energy: 100,
-        monthlyListeners: 850,
-        totalStreams: 1200,
         funds: 8000,
-        fansCount: 2500,
+        fansCount: 3000,
         fanbaseLoyalty: 85,
-        hype: 65,
+        hype: 75,
         careerStage: 'Underground' as CareerStage
       };
-    }
-
-    if (startingLevel === 'underground') {
-      return {
+    } else if (startingLevel === 'underground') {
+      baseStats = {
         popularity: 8,
         reputation: 15,
         artisticCredibility: 20,
         energy: 100,
-        monthlyListeners: 35,
-        totalStreams: 0,
         funds: 500,
         fansCount: 150,
-        fanbaseLoyalty: 20,
-        hype: 10,
-        careerStage: 'Underground' as CareerStage
-      };
-    } else if (startingLevel === 'emerging') {
-      return {
-        popularity: 22,
-        reputation: 32,
-        artisticCredibility: 35,
-        energy: 100,
-        monthlyListeners: 2400,
-        totalStreams: 8500,
-        funds: 2500,
-        fansCount: 2500,
-        fanbaseLoyalty: 30,
-        hype: 25,
-        careerStage: 'Emerging' as CareerStage
-      };
-    } else if (startingLevel === 'local') {
-      return {
-        popularity: 14,
-        reputation: 24,
-        artisticCredibility: 28,
-        energy: 100,
-        monthlyListeners: 650,
-        totalStreams: 2200,
-        funds: 1200,
-        fansCount: 900,
-        fanbaseLoyalty: 25,
+        fanbaseLoyalty: 45,
         hype: 15,
         careerStage: 'Underground' as CareerStage
       };
+    } else if (startingLevel === 'emerging') {
+      baseStats = {
+        popularity: 24,
+        reputation: 32,
+        artisticCredibility: 35,
+        energy: 100,
+        funds: 2500,
+        fansCount: 2500,
+        fanbaseLoyalty: 60,
+        hype: 40,
+        careerStage: 'Emerging' as CareerStage
+      };
+    } else if (startingLevel === 'local') {
+      baseStats = {
+        popularity: 16,
+        reputation: 24,
+        artisticCredibility: 28,
+        energy: 100,
+        funds: 1200,
+        fansCount: 900,
+        fanbaseLoyalty: 55,
+        hype: 30,
+        careerStage: 'Underground' as CareerStage
+      };
     } else {
-      return {
-        popularity: 18,
+      baseStats = {
+        popularity: 26,
         reputation: 30,
         artisticCredibility: 42,
         energy: 100,
-        monthlyListeners: 3800,
-        totalStreams: 14000,
         funds: 3500,
         fansCount: 4500,
-        fanbaseLoyalty: 40,
-        hype: 20,
+        fanbaseLoyalty: 70,
+        hype: 35,
         careerStage: 'Emerging' as CareerStage
       };
     }
+
+    const monthlyListeners = StreamingEngine.calculateMonthlyListeners(
+      0,
+      baseStats.popularity,
+      baseStats.fansCount,
+      baseStats.fanbaseLoyalty,
+      baseStats.hype,
+      false
+    );
+    const totalStreams = Math.max(
+      Math.floor(baseStats.fansCount * 2.8),
+      Math.floor(monthlyListeners * (1.8 + (baseStats.hype / 100) * 0.8))
+    );
+
+    return {
+      ...baseStats,
+      monthlyListeners,
+      totalStreams
+    };
   };
 
   const isCustomCityValid = customCityText.trim().length >= 3;
@@ -1008,26 +1028,26 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   {
                     id: 'underground',
                     label: 'Desde Cero (Underground)',
-                    desc: 'Home studio casero, $500 de ahorro y un puñado de oyentes leales.',
-                    badge: '$500 • 35 Oyentes'
+                    desc: 'Home studio casero, $500 de ahorro y maquetas underground.',
+                    badge: '$500 • 100 Oyentes • 150 Fans'
                   },
                   {
                     id: 'local',
                     label: 'Escena Local / Batallas',
-                    desc: 'Fogueado en competencias de freestyle barriales con $1.200 y 650 oyentes.',
-                    badge: '$1.200 • 650 Oyentes'
+                    desc: 'Fogueado en competencias de freestyle barriales con $1.200 y base local.',
+                    badge: '$1.200 • 720 Oyentes • 900 Fans'
                   },
                   {
                     id: 'emerging',
                     label: 'Promesa en Ascenso',
-                    desc: 'Un par de singles virales en TikTok, $2.500 y 2.400 oyentes mensuales.',
-                    badge: '$2.500 • 2.4K Oyentes'
+                    desc: 'Un par de singles virales en TikTok, $2.500 y creciente alcance.',
+                    badge: '$2.500 • 2.1K Oyentes • 2.5K Fans'
                   },
                   {
                     id: 'independent',
                     label: 'Autogestión Profesional',
-                    desc: 'Equipamiento semiprofesional, $3.500 y base sólida de 3.800 oyentes.',
-                    badge: '$3.500 • 3.8K Oyentes'
+                    desc: 'Equipamiento semiprofesional, $3.500 y base sólida de seguidores.',
+                    badge: '$3.500 • 3.9K Oyentes • 4.5K Fans'
                   }
                 ].map((item) => {
                   const isSelected = startingLevel === item.id;
