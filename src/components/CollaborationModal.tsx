@@ -917,41 +917,65 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               {/* Right Column: Budgets Sliders & Longevity Curve */}
               <div className="space-y-4">
                 {/* Budgets Sliders */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#16181F] p-3.5 rounded-xl border border-[#2A2E3D] space-y-1">
-                    <span className="block text-[11px] font-semibold text-[#F59E0B]">
-                      Presupuesto de Producción
-                    </span>
-                    <div className="text-xs font-bold font-mono text-[#F59E0B]">
-                      {budgetProduction === 0 ? '$0 (Básico)' : `$${budgetProduction.toLocaleString()}`}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full min-w-0">
+                  <div className="bg-[#16181F] p-3.5 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                    <div className="flex items-center justify-between">
+                      <span className="block text-[11px] font-semibold text-[#F59E0B]">
+                        Presupuesto de Producción
+                      </span>
+                      <span className="text-[10px] text-[#94A3B8] font-mono">
+                        Máx: $30.000
+                      </span>
                     </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="30000"
-                      step="500"
-                      value={budgetProduction}
-                      onChange={e => setBudgetProduction(Number(e.target.value))}
-                      className="w-full accent-[#F59E0B]"
-                    />
+                    <div className="text-xs font-bold font-mono text-[#F59E0B]">
+                      {budgetProduction === 0 ? '$0 (Básico)' : `$${budgetProduction.toLocaleString('es-AR')}`}
+                    </div>
+                    <div className="space-y-1.5 pt-1">
+                      <input
+                        type="range"
+                        min="0"
+                        max="30000"
+                        step="500"
+                        value={budgetProduction}
+                        onChange={e => setBudgetProduction(Number(e.target.value))}
+                        className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-[#F59E0B] focus:outline-none"
+                      />
+                      <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                        <span>$0</span>
+                        <span>$15.000</span>
+                        <span>$30.000</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="bg-[#16181F] p-3.5 rounded-xl border border-[#2A2E3D] space-y-1">
-                    <span className="block text-[11px] font-semibold text-emerald-400">
-                      Presupuesto de Marketing
-                    </span>
-                    <div className="text-xs font-bold font-mono text-emerald-400">
-                      {budgetMarketing === 0 ? '$0 (Orgánico)' : `$${budgetMarketing.toLocaleString()}`}
+                  <div className="bg-[#16181F] p-3.5 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                    <div className="flex items-center justify-between">
+                      <span className="block text-[11px] font-semibold text-emerald-400">
+                        Presupuesto de Marketing
+                      </span>
+                      <span className="text-[10px] text-[#94A3B8] font-mono">
+                        Máx: $30.000
+                      </span>
                     </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="30000"
-                      step="500"
-                      value={budgetMarketing}
-                      onChange={e => setBudgetMarketing(Number(e.target.value))}
-                      className="w-full accent-emerald-500"
-                    />
+                    <div className="text-xs font-bold font-mono text-emerald-400">
+                      {budgetMarketing === 0 ? '$0 (Orgánico)' : `$${budgetMarketing.toLocaleString('es-AR')}`}
+                    </div>
+                    <div className="space-y-1.5 pt-1">
+                      <input
+                        type="range"
+                        min="0"
+                        max="30000"
+                        step="500"
+                        value={budgetMarketing}
+                        onChange={e => setBudgetMarketing(Number(e.target.value))}
+                        className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-emerald-500 focus:outline-none"
+                      />
+                      <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                        <span>$0</span>
+                        <span>$15.000</span>
+                        <span>$30.000</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

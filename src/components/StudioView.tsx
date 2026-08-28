@@ -931,41 +931,65 @@ export const StudioView: React.FC<StudioViewProps> = ({
               </div>
 
               {/* Budgets Sliders */}
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-1">
-                  <span className="block text-[11px] font-semibold text-[#F59E0B] mb-1">
-                    Producción & Mezcla
-                  </span>
-                  <div className="text-xs font-bold font-mono text-[#F59E0B] mb-2">
-                    {singleProdBudget === 0 ? '$0 (Home Studio)' : `$${singleProdBudget.toLocaleString()}`}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 w-full min-w-0">
+                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="block text-[11px] font-semibold text-[#F59E0B]">
+                      Producción & Mezcla
+                    </span>
+                    <span className="text-[10px] text-[#94A3B8] font-mono">
+                      Máx: $25.000
+                    </span>
                   </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="25000"
-                    step="250"
-                    value={singleProdBudget}
-                    onChange={e => setSingleProdBudget(Number(e.target.value))}
-                    className="w-full accent-[#F59E0B]"
-                  />
+                  <div className="text-xs font-bold font-mono text-[#F59E0B]">
+                    {singleProdBudget === 0 ? '$0 (Home Studio)' : `$${singleProdBudget.toLocaleString('es-AR')}`}
+                  </div>
+                  <div className="space-y-1.5 pt-1">
+                    <input
+                      type="range"
+                      min="0"
+                      max="25000"
+                      step="250"
+                      value={singleProdBudget}
+                      onChange={e => setSingleProdBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-[#F59E0B] focus:outline-none"
+                    />
+                    <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                      <span>$0</span>
+                      <span>$12.500</span>
+                      <span>$25.000</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-1">
-                  <span className="block text-[11px] font-semibold text-emerald-400 mb-1">
-                    Marketing & Campaña
-                  </span>
-                  <div className="text-xs font-bold font-mono text-emerald-400 mb-2">
-                    {singleMktBudget === 0 ? '$0 (Difusión Orgánica)' : `$${singleMktBudget.toLocaleString()}`}
+                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="block text-[11px] font-semibold text-emerald-400">
+                      Marketing & Campaña
+                    </span>
+                    <span className="text-[10px] text-[#94A3B8] font-mono">
+                      Máx: $25.000
+                    </span>
                   </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="25000"
-                    step="250"
-                    value={singleMktBudget}
-                    onChange={e => setSingleMktBudget(Number(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
+                  <div className="text-xs font-bold font-mono text-emerald-400">
+                    {singleMktBudget === 0 ? '$0 (Difusión Orgánica)' : `$${singleMktBudget.toLocaleString('es-AR')}`}
+                  </div>
+                  <div className="space-y-1.5 pt-1">
+                    <input
+                      type="range"
+                      min="0"
+                      max="25000"
+                      step="250"
+                      value={singleMktBudget}
+                      onChange={e => setSingleMktBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-emerald-500 focus:outline-none"
+                    />
+                    <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                      <span>$0</span>
+                      <span>$12.500</span>
+                      <span>$25.000</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1521,41 +1545,65 @@ export const StudioView: React.FC<StudioViewProps> = ({
               </div>
 
               {/* Budgets */}
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-1">
-                  <span className="block text-[11px] font-semibold text-[#F59E0B] mb-1">
-                    Producción & Mastering
-                  </span>
-                  <div className="text-sm font-bold font-mono text-[#F59E0B] mb-2">
-                    ${albumProdBudget.toLocaleString()}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 w-full min-w-0">
+                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="block text-[11px] font-semibold text-[#F59E0B]">
+                      Producción & Mastering
+                    </span>
+                    <span className="text-[10px] text-[#94A3B8] font-mono">
+                      Máx: $60.000
+                    </span>
                   </div>
-                  <input
-                    type="range"
-                    min="3000"
-                    max="60000"
-                    step="1000"
-                    value={albumProdBudget}
-                    onChange={e => setAlbumProdBudget(Number(e.target.value))}
-                    className="w-full accent-[#F59E0B]"
-                  />
+                  <div className="text-sm font-bold font-mono text-[#F59E0B]">
+                    ${albumProdBudget.toLocaleString('es-AR')}
+                  </div>
+                  <div className="space-y-1.5 pt-1">
+                    <input
+                      type="range"
+                      min="3000"
+                      max="60000"
+                      step="1000"
+                      value={albumProdBudget}
+                      onChange={e => setAlbumProdBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-[#F59E0B] focus:outline-none"
+                    />
+                    <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                      <span>$3.000</span>
+                      <span>$30.000</span>
+                      <span>$60.000</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-1">
-                  <span className="block text-[11px] font-semibold text-emerald-400 mb-1">
-                    Campaña Global de Lanzamiento
-                  </span>
-                  <div className="text-sm font-bold font-mono text-emerald-400 mb-2">
-                    ${albumMktBudget.toLocaleString()}
+                <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="block text-[11px] font-semibold text-emerald-400">
+                      Campaña Global de Lanzamiento
+                    </span>
+                    <span className="text-[10px] text-[#94A3B8] font-mono">
+                      Máx: $60.000
+                    </span>
                   </div>
-                  <input
-                    type="range"
-                    min="2000"
-                    max="60000"
-                    step="1000"
-                    value={albumMktBudget}
-                    onChange={e => setAlbumMktBudget(Number(e.target.value))}
-                    className="w-full accent-emerald-500"
-                  />
+                  <div className="text-sm font-bold font-mono text-emerald-400">
+                    ${albumMktBudget.toLocaleString('es-AR')}
+                  </div>
+                  <div className="space-y-1.5 pt-1">
+                    <input
+                      type="range"
+                      min="2000"
+                      max="60000"
+                      step="1000"
+                      value={albumMktBudget}
+                      onChange={e => setAlbumMktBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-emerald-500 focus:outline-none"
+                    />
+                    <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                      <span>$2.000</span>
+                      <span>$30.000</span>
+                      <span>$60.000</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
