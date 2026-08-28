@@ -66,7 +66,7 @@ export class IndustryEngine {
 
     const options: DistributionOrLabelOption[] = allLabels.map(label => {
       const validation = this.canSignDeal(artist, label);
-      const contractOffer = this.generateDynamicLabelOffer(artist, label, world.currentYear);
+      const contractOffer = this.generateDynamicLabelOffer(artist, label, world.currentYear, world);
       const isCurrent = artist.labelId === label.id;
 
       return {
@@ -153,7 +153,7 @@ export class IndustryEngine {
       };
     }
 
-    const contract = this.generateDynamicLabelOffer(artist, label, world.currentYear);
+    const contract = this.generateDynamicLabelOffer(artist, label, world.currentYear, world);
 
     // 1. Deducir cuota anual de distribución si aplica
     if (contract.annualFee && contract.annualFee > 0) {
@@ -225,11 +225,11 @@ export class IndustryEngine {
       importance = 2;
     } else if (label.type === 'local_indie') {
       headline = `Alianza en la Escena: ${artist.name} firma con el sello local ${label.name}`;
-      body = `El artista emergente sumó fuerzas con ${label.name} tras acordar un anticipo de ${formatMoney(contract.signingBonus)} y ${contract.creativeControl}% de libertad creativa.`;
+      body = `El artista sumó fuerzas con ${label.name} tras acordar un anticipo de ${formatMoney(contract.signingBonus)} y ${contract.creativeControl}% de libertad creativa.`;
       importance = 3;
     } else if (label.type === 'indie' || label.type === 'boutique') {
       headline = `Fichaje Independiente: ${artist.name} sella acuerdo con ${label.name}`;
-      body = `${label.name} anunció la incorporación de ${artist.name} a su prestigioso catálogo con un contrato de ${contract.albumsRequired} álbum(es) y ${contract.royaltyPercentage}% de regalías discográficas.`;
+      body = `${label.name} anunció la incorporación de ${artist.name} a su prestigioso catálogo con un contrato de ${contract.albumsRequired} álbum(es), ${contract.royaltyPercentage}% de regalías discográficas y un anticipo de ${formatMoney(contract.signingBonus)}.`;
       importance = 4;
     } else if (label.type === 'major') {
       headline = `¡Bomba en la Industria! ${artist.name} firma un contrato estelar con ${label.name}`;
@@ -309,15 +309,114 @@ export class IndustryEngine {
   }
 
   /**
-   * Genera una propuesta de contrato dinámico y personalizado según métricas reales del artista y filosofía del sello o distribuidora.
+   * Calcula la valoración integral del artista, proyección de ingresos anuales (Run-Rate de streaming y merch)
+   * y valor capitalizado del catálogo fonográfico para fundamentar ofertas discográficas dinámicas.
+   */
+  static calculateArtistValuation(artist: Artist, world?: WorldState): {
+    projectedAnnualStreams: number;
+    projectedStreamingGross: number;
+    projectedMerchGross: number;
+    projectedGrossAnnual: number;
+    catalogSongCount: number;
+    catalogTotalStreams: number;
+    catalogHitCount: number;
+    catalogAnnualYield: number;
+    catalogValuation: number;
+  } {
+    const listeners = Math.max(0, artist.stats?.monthlyListeners || 0);
+    const pop = Math.max(0, artist.stats?.popularity || 0);
+    const fansCount = artist.stats?.fansCount || 0;
+    const loyalty = artist.stats?.fanbaseLoyalty || 50;
+    const isProdigy = Boolean(artist.isProdigy);
+
+    let catalogSongCount = 0;
+    let catalogTotalStreams = 0;
+    let catalogHitCount = 0;
+    let actualMonthlyStreams = 0;
+
+    if (world?.songs) {
+      const artistSongs = Object.values(world.songs).filter(s => s.artistId === artist.id);
+      catalogSongCount = artistSongs.length;
+      for (const song of artistSongs) {
+        catalogTotalStreams += song.streamsTotal || 0;
+        actualMonthlyStreams += song.streamsLastMonth || 0;
+        if ((song.streamsTotal || 0) >= 1000000) {
+          catalogHitCount += 1;
+        }
+      }
+    }
+
+    // Estimación del run-rate de streams mensuales (un oyente genera ~7.5 reproducciones mensuales en promedio)
+    const estimatedMonthlyStreams = Math.floor(listeners * 7.5);
+    const monthlyStreamsRunRate = Math.max(actualMonthlyStreams, estimatedMonthlyStreams);
+    const projectedAnnualStreams = monthlyStreamsRunRate * 12;
+
+    // $3.50 por 1,000 streams ($0.0035/stream bruto)
+    const projectedStreamingGross = Math.floor((projectedAnnualStreams / 1000) * 3.5);
+
+    // Merch anual proyectado
+    const merchMonthly = Math.floor(
+      (fansCount * 0.03) *
+      (loyalty / 100) *
+      (Math.max(5, pop) / 100) *
+      (isProdigy ? 1.35 : 1.0)
+    );
+    const projectedMerchGross = merchMonthly * 12;
+
+    // Rendimiento residual de catálogo (5% anual de streams recurrentes del catálogo fonográfico)
+    const catalogAnnualYield = Math.floor((catalogTotalStreams * 0.05) * 0.0035);
+    // Múltiplo de valoración de catálogo en la industria discográfica (4x yield anual + $50k por cada tema disco de platino/hit de +1M)
+    const catalogValuation = Math.floor((catalogAnnualYield * 4) + (catalogHitCount * 50000));
+
+    const projectedGrossAnnual = projectedStreamingGross + projectedMerchGross + catalogAnnualYield;
+
+    return {
+      projectedAnnualStreams,
+      projectedStreamingGross,
+      projectedMerchGross,
+      projectedGrossAnnual,
+      catalogSongCount,
+      catalogTotalStreams,
+      catalogHitCount,
+      catalogAnnualYield,
+      catalogValuation
+    };
+  }
+
+  /**
+   * Genera una propuesta de contrato dinámico, competitivo y personalizado escalado a:
+   * 1. Facturación anual proyectada del artista (streaming + merch + yield de catálogo).
+   * 2. Tracción real de oyentes mensuales, popularidad, hype y credibilidad artística.
+   * 3. Valor de su catálogo fonográfico previo.
+   * 4. Multiplicadores por negociación de Manager y rasgo Prodigio.
+   * 5. Filosofía, presupuesto y exigencia contractual del sello discográfico.
    */
   static generateDynamicLabelOffer(
     artist: Artist,
     label: RecordLabel,
-    currentYear: number
+    currentYear: number,
+    world?: WorldState,
+    isBiddingWar: boolean = false
   ): LabelContract {
-    const listeners = Math.max(0, artist.stats.monthlyListeners);
-    const pop = artist.stats.popularity;
+    const listeners = Math.max(0, artist.stats?.monthlyListeners || 0);
+    const pop = Math.max(0, artist.stats?.popularity || 0);
+    const rep = Math.max(0, artist.stats?.reputation || 0);
+    const credibility = Math.max(0, artist.stats?.artisticCredibility || 0);
+    const hype = Math.max(0, artist.stats?.hype || 0);
+    const valuation = this.calculateArtistValuation(artist, world);
+
+    // Bono de negociación si el artista cuenta con un Manager contratado
+    let managerNegotiationMultiplier = 1.0;
+    if (artist.managerId && world?.managers && world.managers[artist.managerId]) {
+      const mgr = world.managers[artist.managerId];
+      managerNegotiationMultiplier = 1.0 + (mgr.negotiationSkill / 100) * 0.25; // hasta +25% adicional
+    }
+
+    // Bono por condición de Prodigio
+    const prodigyMultiplier = artist.isProdigy ? 1.20 : 1.0;
+
+    // Bono por Guerra de Ofertas (competitividad de mercado)
+    const biddingWarMultiplier = isBiddingWar ? (1.25 + Math.random() * 0.15) : 1.0;
 
     if (label.type === 'distributor') {
       const commission = label.commissionPct !== undefined ? label.commissionPct : 0;
@@ -339,82 +438,110 @@ export class IndustryEngine {
       };
     }
 
-    if (label.type === 'local_indie') {
-      const advance = label.advancePayment !== undefined ? label.advancePayment : Math.floor(2000 + (listeners * 0.15) + (pop * 50));
-      const commission = label.commissionPct !== undefined ? label.commissionPct : 32;
-      const royaltyPercentage = Math.max(50, 100 - commission);
-      const creativeControl = label.creativeFreedomAllowed;
-      const marketingBudget = Math.floor(5000 + (label.marketingPower * 100));
-
+    if (label.type === 'artist_owned') {
       return {
         labelId: label.id,
-        signingBonus: advance,
-        royaltyPercentage,
+        signingBonus: 0,
+        royaltyPercentage: 95,
         albumsRequired: 1,
         albumsDelivered: 0,
-        creativeControl,
-        marketingPower: label.marketingPower,
-        marketingBudgetPerRelease: marketingBudget,
-        breakoutClause: Math.floor(advance * 1.5),
-        durationYears: 2,
+        creativeControl: 100,
+        marketingPower: label.marketingPower || Math.floor(pop * 0.85),
+        marketingBudgetPerRelease: 25000,
+        breakoutClause: 0,
+        durationYears: 10,
         signedYear: currentYear,
         isDistributor: false,
         annualFee: 0
       };
     }
 
-    let advance = 0;
+    let rawAdvance = 0;
     let royaltyPct = 20;
     let creativeControl = label.creativeFreedomAllowed;
-    let requiredAlbums = 3;
-    let marketingBudgetPerRelease = 10000;
+    let requiredAlbums = 2;
+    let marketingBudgetPerRelease = 15000;
     let breakoutClause = 50000;
+    let durationYears = 2;
 
-    if (label.type === 'major') {
-      // Majors: Grandes adelantos, altos presupuestos, menores regalías para el artista, menor control
-      const baseAdvance = label.advancePayment || 100000;
-      advance = Math.floor(baseAdvance + (listeners * 0.45) + (pop * 2000) + (label.budget * 0.02));
-      royaltyPct = label.commissionPct !== undefined
-        ? (100 - label.commissionPct)
-        : (20 + Math.min(6, Math.floor(artist.personality.ambition / 25)));
-      creativeControl = Math.min(50, label.creativeFreedomAllowed);
-      requiredAlbums = 3 + (listeners > 500000 ? 1 : 0);
-      marketingBudgetPerRelease = Math.floor(35000 + (label.marketingPower * 600));
-      breakoutClause = advance * 3;
-    } else if (label.type === 'indie') {
-      // Indie: Regalías justas (55-70%), libertad creativa alta, adelantos moderados
-      const baseAdvance = label.advancePayment || 35000;
-      advance = Math.floor(baseAdvance + (listeners * 0.25) + (pop * 1200));
-      royaltyPct = label.commissionPct !== undefined
-        ? (100 - label.commissionPct)
-        : (58 + Math.min(10, Math.floor(artist.personality.independence / 15)));
-      creativeControl = Math.min(88, label.creativeFreedomAllowed + 5);
-      requiredAlbums = 2;
-      marketingBudgetPerRelease = Math.floor(15000 + (label.marketingPower * 350));
-      breakoutClause = advance * 2;
+    if (label.type === 'local_indie') {
+      // Sellos Locales de Barrio / Escena: Piso base de $15,000 - $25,000, escalable dinámicamente
+      const baseFloor = Math.max(15000, label.advancePayment || 15000);
+      const revenueShare = valuation.projectedGrossAnnual * 0.35;
+      const audienceShare = (listeners * 0.22) + (pop * 400) + (credibility * 250);
+      const catalogShare = Math.min(35000, valuation.catalogValuation * 0.15);
+
+      rawAdvance = Math.floor((baseFloor + revenueShare + audienceShare + catalogShare) * managerNegotiationMultiplier * prodigyMultiplier * biddingWarMultiplier);
+      const maxCap = Math.max(baseFloor * 2, (label.budget || 350000) * 0.40);
+      rawAdvance = Math.min(maxCap, Math.max(baseFloor, rawAdvance));
+
+      const commission = label.commissionPct !== undefined ? label.commissionPct : 30;
+      royaltyPct = Math.max(65, 100 - commission);
+      creativeControl = Math.max(80, label.creativeFreedomAllowed);
+      requiredAlbums = 1;
+      durationYears = 2;
+      marketingBudgetPerRelease = Math.floor(8000 + (label.marketingPower * 150));
+      breakoutClause = Math.floor(rawAdvance * 1.5);
     } else if (label.type === 'boutique') {
-      // Boutique: Máxima libertad creativa (90-98%), 75-80% de regalías, adelantos boutique
-      const baseAdvance = label.advancePayment || 10000;
-      advance = Math.floor(baseAdvance + (listeners * 0.1) + (artist.stats.artisticCredibility * 300));
-      royaltyPct = label.commissionPct !== undefined
-        ? (100 - label.commissionPct)
-        : (75 + Math.min(8, Math.floor(artist.stats.artisticCredibility / 20)));
-      creativeControl = 95;
+      // Boutiques de autor & colectivos subterráneos: Piso de $30,000 - $75,000, escalando a $100k-$300k+
+      const baseFloor = Math.max(30000, label.advancePayment || 30000);
+      const revenueShare = valuation.projectedGrossAnnual * 0.55;
+      const audienceShare = (listeners * 0.28) + (credibility * 900) + (pop * 500);
+      const catalogShare = valuation.catalogValuation * 0.25;
+
+      rawAdvance = Math.floor((baseFloor + revenueShare + audienceShare + catalogShare) * managerNegotiationMultiplier * prodigyMultiplier * biddingWarMultiplier);
+      const maxCap = Math.max(baseFloor * 2, (label.budget || 1000000) * 0.35);
+      rawAdvance = Math.min(maxCap, Math.max(baseFloor, rawAdvance));
+
+      const commission = label.commissionPct !== undefined ? label.commissionPct : 22;
+      royaltyPct = Math.max(75, 100 - commission);
+      creativeControl = Math.max(90, label.creativeFreedomAllowed);
       requiredAlbums = 1;
-      marketingBudgetPerRelease = Math.floor(5000 + (label.marketingPower * 180));
-      breakoutClause = advance * 1.5;
-    } else if (label.type === 'artist_owned') {
-      advance = 0;
-      royaltyPct = 95;
-      creativeControl = 100;
-      requiredAlbums = 1;
-      marketingBudgetPerRelease = 20000;
-      breakoutClause = 0;
+      durationYears = 2;
+      marketingBudgetPerRelease = Math.floor(15000 + (label.marketingPower * 300));
+      breakoutClause = Math.floor(rawAdvance * 1.6);
+    } else if (label.type === 'indie') {
+      // Indies Consagrados (Dale Play / Rimas): Piso de $80,000 - $250,000, escalando a $500k - $2.5M
+      const baseFloor = Math.max(80000, label.advancePayment || 80000);
+      const revenueShare = valuation.projectedGrossAnnual * 0.85; // Hasta 1 año de facturación bruta en adelanto
+      const audienceShare = (listeners * 0.50) + (pop * 2200) + (hype * 1200) + (credibility * 600);
+      const catalogShare = valuation.catalogValuation * 0.40;
+
+      rawAdvance = Math.floor((baseFloor + revenueShare + audienceShare + catalogShare) * managerNegotiationMultiplier * prodigyMultiplier * biddingWarMultiplier);
+      const maxCap = Math.max(baseFloor * 2, (label.budget || 5000000) * 0.35);
+      rawAdvance = Math.min(maxCap, Math.max(baseFloor, rawAdvance));
+
+      const commission = label.commissionPct !== undefined ? label.commissionPct : 32;
+      royaltyPct = Math.max(60, 100 - commission);
+      creativeControl = Math.max(75, label.creativeFreedomAllowed);
+      requiredAlbums = 2;
+      durationYears = 3;
+      marketingBudgetPerRelease = Math.floor(35000 + (label.marketingPower * 600));
+      breakoutClause = Math.floor(rawAdvance * 2.0);
+    } else if (label.type === 'major') {
+      // Majors Multinacionales (Sony, Universal, Warner): Piso de $250,000 - $750,000, escalando a $1.5M - $6M+
+      const baseFloor = Math.max(250000, label.advancePayment || 250000);
+      // Múltiplo de adquisición agresiva: 1.6x de facturación anual proyectada + prima de catálogo
+      const revenueShare = valuation.projectedGrossAnnual * 1.60;
+      const audienceShare = (listeners * 0.85) + (pop * 4500) + (hype * 2500) + (rep * 1500);
+      const catalogShare = valuation.catalogValuation * 0.60;
+
+      rawAdvance = Math.floor((baseFloor + revenueShare + audienceShare + catalogShare) * managerNegotiationMultiplier * prodigyMultiplier * biddingWarMultiplier);
+      const maxCap = Math.max(baseFloor * 2, (label.budget || 30000000) * 0.30);
+      rawAdvance = Math.min(maxCap, Math.max(baseFloor, rawAdvance));
+
+      const commission = label.commissionPct !== undefined ? label.commissionPct : 78;
+      royaltyPct = Math.max(18, 100 - commission);
+      creativeControl = Math.min(55, label.creativeFreedomAllowed);
+      requiredAlbums = listeners >= 1000000 ? 2 : 3;
+      durationYears = requiredAlbums + 1;
+      marketingBudgetPerRelease = Math.floor(80000 + (label.marketingPower * 1400));
+      breakoutClause = Math.floor(rawAdvance * 2.8);
     }
 
     return {
       labelId: label.id,
-      signingBonus: advance,
+      signingBonus: rawAdvance,
       royaltyPercentage: Math.min(98, Math.max(10, royaltyPct)),
       albumsRequired: requiredAlbums,
       albumsDelivered: 0,
@@ -422,7 +549,7 @@ export class IndustryEngine {
       marketingPower: label.marketingPower,
       marketingBudgetPerRelease,
       breakoutClause,
-      durationYears: requiredAlbums + 1,
+      durationYears,
       signedYear: currentYear,
       isDistributor: false,
       annualFee: 0
@@ -456,7 +583,7 @@ export class IndustryEngine {
 
     return selected.map(label => ({
       label,
-      contract: this.generateDynamicLabelOffer(artist, label, world.currentYear)
+      contract: this.generateDynamicLabelOffer(artist, label, world.currentYear, world, true)
     }));
   }
 

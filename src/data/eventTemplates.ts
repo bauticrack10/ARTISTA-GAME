@@ -1,6 +1,7 @@
 import { EventDefinition, EventContext, EventOutcome, CareerStage } from '../types';
 import { formatMoney } from '../utils/formatters';
 import { TimeSystem } from '../systems/TimeSystem';
+import { IndustryEngine } from '../systems/IndustryEngine';
 
 export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
   // --- UNDERGROUND / YEAR 1 FIRST STEPS EVENTS ---
@@ -271,39 +272,61 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
     condition: (ctx) => ctx.player.stats.monthlyListeners >= 100000 && !ctx.player.labelId,
     getDescription: (ctx) => {
       const listeners = ctx.player.stats.monthlyListeners.toLocaleString();
-      return `Tras superar la barrera consagratoria de los ${listeners} oyentes mensuales, se desató una auténtica guerra de ofertas en los despachos de la industria. Directivos de Majors multinacionales y sellos independientes líderes te citan con contratos sobre la mesa para disputarse tu fichaje.`;
+      return `Tras superar la barrera consagratoria de los ${listeners} oyentes mensuales, se desató una auténtica guerra de ofertas en los despachos de la industria. Directivos de Majors multinacionales y sellos independientes líderes te citan con contratos millonarios sobre la mesa para disputarse tu fichaje.`;
     },
     choices: (ctx) => {
-      const advanceMajor = Math.floor(120000 + (ctx.player.stats.monthlyListeners * 0.4) + (ctx.player.stats.popularity * 1500));
-      const advanceIndie = Math.floor(45000 + (ctx.player.stats.monthlyListeners * 0.25) + (ctx.player.stats.popularity * 1000));
+      const sonyLabel = ctx.world.labels['label_sony_columbia'] || ctx.world.labels['label_universal_interscope'];
+      const dalePlayLabel = ctx.world.labels['label_dale_play'] || ctx.world.labels['label_rimas_music'];
+
+      const majorContract = sonyLabel
+        ? IndustryEngine.generateDynamicLabelOffer(ctx.player, sonyLabel, ctx.currentYear, ctx.world, true)
+        : {
+            labelId: 'label_sony_columbia',
+            signingBonus: 500000,
+            royaltyPercentage: 22,
+            albumsRequired: 3,
+            albumsDelivered: 0,
+            creativeControl: 45,
+            marketingPower: 96,
+            marketingBudgetPerRelease: 120000,
+            breakoutClause: 1500000,
+            durationYears: 4,
+            signedYear: ctx.currentYear,
+            isDistributor: false
+          };
+
+      const indieContract = dalePlayLabel
+        ? IndustryEngine.generateDynamicLabelOffer(ctx.player, dalePlayLabel, ctx.currentYear, ctx.world, true)
+        : {
+            labelId: 'label_dale_play',
+            signingBonus: 200000,
+            royaltyPercentage: 65,
+            albumsRequired: 2,
+            albumsDelivered: 0,
+            creativeControl: 82,
+            marketingPower: 88,
+            marketingBudgetPerRelease: 60000,
+            breakoutClause: 500000,
+            durationYears: 3,
+            signedYear: ctx.currentYear,
+            isDistributor: false
+          };
 
       return [
         {
           id: 'c_sign_major_war',
-          text: `Firmar con la Major (Sony/Universal): ${formatMoney(advanceMajor)} de adelanto, 22% regalías, 3 álbumes`,
-          consequencesDescription: `+${formatMoney(advanceMajor)} Adelanto inmediato, 22% Regalías, 96% Marketing Masivo, 45% Control Creativo`,
+          text: `Firmar con la Major (${sonyLabel?.name || 'Sony Music'}): ${formatMoney(majorContract.signingBonus)} de adelanto, ${majorContract.royaltyPercentage}% regalías, ${majorContract.albumsRequired} álbum(es)`,
+          consequencesDescription: `+${formatMoney(majorContract.signingBonus)} Adelanto inmediato, ${majorContract.royaltyPercentage}% Regalías, ${majorContract.marketingPower}% Marketing Masivo, ${majorContract.creativeControl}% Control Creativo`,
           apply: () => ({
-            narrativeText: `Firmaste el contrato con la Major Multinacional. El adelanto multimillonario ingresa a tus cuentas y la maquinaria promocional global se activa de inmediato.`,
-            fundsChange: advanceMajor,
+            narrativeText: `Firmaste el contrato con la Major Multinacional. El adelanto millonario de ${formatMoney(majorContract.signingBonus)} ingresa a tus cuentas y la maquinaria promocional global se activa de inmediato.`,
+            fundsChange: majorContract.signingBonus,
             popularityChange: 12,
             reputationChange: -2,
             hypeChange: 25,
-            newContract: {
-              labelId: 'label_sony_columbia',
-              signingBonus: advanceMajor,
-              royaltyPercentage: 22,
-              albumsRequired: 3,
-              albumsDelivered: 0,
-              creativeControl: 45,
-              marketingPower: 96,
-              marketingBudgetPerRelease: 45000,
-              breakoutClause: advanceMajor * 3,
-              durationYears: 4,
-              signedYear: ctx.currentYear
-            },
+            newContract: majorContract,
             newsGenerated: {
-              headline: `¡Fichaje Millonario! ${ctx.player.name} firma contrato estelar con una Major`,
-              body: `El acuerdo sacude el mercado discográfico con un adelanto récord y una campaña de distribución global.`,
+              headline: `¡Fichaje Millonario! ${ctx.player.name} firma contrato estelar con ${sonyLabel?.name || 'Sony Music'}`,
+              body: `El acuerdo sacude el mercado discográfico con un adelanto de ${formatMoney(majorContract.signingBonus)} y una campaña de distribución global.`,
               sentiment: 'positive',
               category: 'industry'
             }
@@ -311,30 +334,18 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         },
         {
           id: 'c_sign_indie_war',
-          text: `Firmar con Sello Independiente Líder (Dale Play / Rimas): ${formatMoney(advanceIndie)} de adelanto, 60% regalías, 2 álbumes`,
-          consequencesDescription: `+${formatMoney(advanceIndie)} Adelanto, 60% Regalías Artista, 88% Marketing, 82% Control Creativo`,
+          text: `Firmar con Sello Independiente Líder (${dalePlayLabel?.name || 'Dale Play'}): ${formatMoney(indieContract.signingBonus)} de adelanto, ${indieContract.royaltyPercentage}% regalías, ${indieContract.albumsRequired} álbum(es)`,
+          consequencesDescription: `+${formatMoney(indieContract.signingBonus)} Adelanto, ${indieContract.royaltyPercentage}% Regalías Artista, ${indieContract.marketingPower}% Marketing, ${indieContract.creativeControl}% Control Creativo`,
           apply: () => ({
-            narrativeText: `Optaste por el camino independiente de élite. Conservás el 60% de tus regalías y libertad total en la producción con respaldo estratégico de primer nivel.`,
-            fundsChange: advanceIndie,
+            narrativeText: `Optaste por el camino independiente de élite. Conservás el ${indieContract.royaltyPercentage}% de tus regalías con un adelanto de ${formatMoney(indieContract.signingBonus)} y respaldo estratégico de primer nivel.`,
+            fundsChange: indieContract.signingBonus,
             popularityChange: 8,
             statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6) },
             hypeChange: 20,
-            newContract: {
-              labelId: 'label_dale_play',
-              signingBonus: advanceIndie,
-              royaltyPercentage: 60,
-              albumsRequired: 2,
-              albumsDelivered: 0,
-              creativeControl: 82,
-              marketingPower: 88,
-              marketingBudgetPerRelease: 25000,
-              breakoutClause: advanceIndie * 2,
-              durationYears: 3,
-              signedYear: ctx.currentYear
-            },
+            newContract: indieContract,
             newsGenerated: {
-              headline: `${ctx.player.name} sella una alianza estratégica con Dale Play Records`,
-              body: `La escena celebra un acuerdo que prioriza la visión artística, regalías justas y alcance internacional.`,
+              headline: `${ctx.player.name} sella una alianza estratégica con ${dalePlayLabel?.name || 'Dale Play Records'}`,
+              body: `La escena celebra un acuerdo que prioriza la visión artística, un adelanto de ${formatMoney(indieContract.signingBonus)} y alcance internacional.`,
               sentiment: 'positive',
               category: 'industry'
             }
@@ -345,7 +356,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           text: 'Rechazar todas las ofertas: Permanecer 100% Agente Libre e Independiente',
           consequencesDescription: '+100% Regalías y Másters propios, +Credibilidad Artística (+8), +Fidelidad de Fans (+8)',
           apply: () => ({
-            narrativeText: `Rechazaste todos los cheques sobre la mesa. La noticia de tu rechazo a las Majors corrió por foros y medios, consagrándote como un referente absoluto de integridad.`,
+            narrativeText: `Rechazaste todos los cheques millonarios sobre la mesa. La noticia de tu rechazo a las Majors corrió por foros y medios, consagrándote como un referente absoluto de integridad.`,
             statChanges: {
               artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8),
               fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 8)
@@ -372,47 +383,58 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
     cooldownMonths: 20,
     weight: 12,
     condition: (ctx) => ctx.player.stats.monthlyListeners >= 20000 && ctx.player.stats.monthlyListeners < 100000 && !ctx.player.labelId && ctx.player.stats.artisticCredibility >= 50,
-    getDescription: (ctx) => `El colectivo independiente Underground Syndicate te propone un acuerdo boutique de distribución: un adelanto inicial modesto, el 78% de tus regalías y el 95% de libertad creativa para tu próximo álbum.`,
-    choices: (ctx) => [
-      {
-        id: 'c_accept_boutique',
-        text: 'Aceptar Alianza Boutique: $12,000 de adelanto, 78% regalías, 1 álbum',
-        consequencesDescription: '+$12,000 Fondos, 78% Regalías, 95% Control Creativo, 1 Álbum exigido',
-        apply: () => ({
-          narrativeText: 'Firmaste con el colectivo underground. Tenés presupuesto fresco para tus grabaciones sin resignar ni un ápice de tu identidad artística.',
-          fundsChange: 12000,
-          statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) },
-          newContract: {
+    getDescription: (ctx) => `El colectivo independiente Underground Syndicate te propone un acuerdo boutique de autor: un adelanto competitivo, alta tasa de regalías y libertad creativa absoluta para tu próximo álbum.`,
+    choices: (ctx) => {
+      const syndicateLabel = ctx.world.labels['label_underground_syndicate'];
+      const boutiqueContract = syndicateLabel
+        ? IndustryEngine.generateDynamicLabelOffer(ctx.player, syndicateLabel, ctx.currentYear, ctx.world)
+        : {
             labelId: 'label_underground_syndicate',
-            signingBonus: 12000,
-            royaltyPercentage: 78,
+            signingBonus: 35000,
+            royaltyPercentage: 80,
             albumsRequired: 1,
             albumsDelivered: 0,
-            creativeControl: 95,
-            marketingPower: 50,
-            marketingBudgetPerRelease: 8000,
-            breakoutClause: 20000,
+            creativeControl: 98,
+            marketingPower: 55,
+            marketingBudgetPerRelease: 18000,
+            breakoutClause: 50000,
             durationYears: 2,
-            signedYear: ctx.currentYear
-          },
-          newsGenerated: {
-            headline: `${ctx.player.name} se une al colectivo Underground Syndicate`,
-            body: `Una alianza boutique que apuesta por el sonido de autor y la cultura de base.`,
-            sentiment: 'positive',
-            category: 'industry'
-          }
-        })
-      },
-      {
-        id: 'c_decline_boutique',
-        text: 'Declinar con cordialidad y seguir autogestionando tus canciones',
-        consequencesDescription: '+Control total, Sin compromisos de entrega',
-        apply: () => ({
-          narrativeText: 'Agradeciste la propuesta y continuaste con tu calendario de lanzamientos por cuenta propia.',
-          statChanges: { energy: Math.min(100, ctx.player.stats.energy + 2) }
-        })
-      }
-    ]
+            signedYear: ctx.currentYear,
+            isDistributor: false
+          };
+
+      return [
+        {
+          id: 'c_accept_boutique',
+          text: `Aceptar Alianza Boutique: ${formatMoney(boutiqueContract.signingBonus)} de adelanto, ${boutiqueContract.royaltyPercentage}% regalías, 1 álbum`,
+          consequencesDescription: `+${formatMoney(boutiqueContract.signingBonus)} Fondos, ${boutiqueContract.royaltyPercentage}% Regalías, ${boutiqueContract.creativeControl}% Control Creativo, 1 Álbum exigido`,
+          apply: () => ({
+            narrativeText: `Firmaste con el colectivo underground. Tenés ${formatMoney(boutiqueContract.signingBonus)} de presupuesto fresco para tus grabaciones sin resignar ni un ápice de tu identidad artística.`,
+            fundsChange: boutiqueContract.signingBonus,
+            statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) },
+            newContract: boutiqueContract,
+            newsGenerated: {
+              headline: `${ctx.player.name} se une al colectivo Underground Syndicate`,
+              body: `Una alianza boutique que apuesta por el sonido de autor con un adelanto de ${formatMoney(boutiqueContract.signingBonus)}.`,
+              sentiment: 'positive',
+              category: 'industry'
+            }
+          })
+        },
+        {
+          id: 'c_reject_boutique',
+          text: 'Continuar 100% autogestionado en el underground',
+          consequencesDescription: '+Fidelidad de Fans (+5), +Credibilidad (+3)',
+          apply: () => ({
+            narrativeText: 'Decidiste seguir costeando tus propios proyectos para no rendir cuentas a ningún colectivo.',
+            statChanges: {
+              fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 5),
+              artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 3)
+            }
+          })
+        }
+      ];
+    }
   },
 
   // --- RELATIONSHIP & COLLABORATIONS ---

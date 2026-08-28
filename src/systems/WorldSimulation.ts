@@ -324,13 +324,27 @@ export class WorldSimulation {
         artistSongs.length > 0
       );
 
-      // Slight popularity drift
-      if (artistTotalMonthlyStreams > 15000000) {
-        artist.stats.popularity = Math.min(100, artist.stats.popularity + 1);
-        artist.stats.fansCount += Math.floor(artistTotalMonthlyStreams * 0.01);
-      } else if (artistTotalMonthlyStreams < 500000 && artist.stats.popularity > 25) {
-        artist.stats.popularity = Math.max(10, artist.stats.popularity - 1);
+      // 4. Convergencia armónica de popularidad y conversión mensual de fans
+      const targetPop = StreamingEngine.calculateTargetPopularity(
+        artist.stats.monthlyListeners,
+        artist.stats.totalStreams
+      );
+      if (artist.stats.popularity < targetPop) {
+        const step = Math.min(4, Math.max(1, Math.floor((targetPop - artist.stats.popularity) * 0.35)));
+        artist.stats.popularity = Math.min(targetPop, artist.stats.popularity + step);
+      } else if (artist.stats.popularity > targetPop && artistTotalMonthlyStreams < 200000) {
+        artist.stats.popularity = Math.max(targetPop, artist.stats.popularity - 1);
       }
+
+      // Conversión orgánica mensual de oyentes a fans
+      const newFans = StreamingEngine.calculateMonthlyFanConversion(
+        artist.stats.monthlyListeners,
+        artist.stats.fansCount,
+        artist.stats.hype,
+        artist.stats.fanbaseLoyalty,
+        artistSongs.some(s => s.releaseYear === world.currentYear && s.releaseMonth === world.currentMonth)
+      );
+      artist.stats.fansCount += newFans;
     }
 
     return {

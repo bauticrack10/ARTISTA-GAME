@@ -39,13 +39,14 @@ export class TourEngine {
 
   static getAvailableTiersForArtist(artist: Artist): TourTier[] {
     const pop = artist.stats.popularity;
+    const listeners = artist.stats.monthlyListeners;
     const tiers: TourTier[] = ['club'];
 
-    if (pop >= 25) tiers.push('theater');
-    if (pop >= 50) tiers.push('arena');
-    if (pop >= 70) tiers.push('festival_circuit');
-    if (pop >= 80) tiers.push('stadium');
-    if (pop >= 85) tiers.push('world_tour');
+    if (pop >= 35 && listeners >= 20000) tiers.push('theater');
+    if (pop >= 55 && listeners >= 120000) tiers.push('arena');
+    if (pop >= 65 && listeners >= 250000) tiers.push('festival_circuit');
+    if (pop >= 75 && listeners >= 600000) tiers.push('stadium');
+    if (pop >= 85 && listeners >= 1500000) tiers.push('world_tour');
 
     return tiers;
   }
@@ -64,34 +65,41 @@ export class TourEngine {
       throw new Error(validation.reason || 'Necesitas catálogo y fans para vender entradas (mín. 2 temas o 1 EP, ≥1.000 oyentes y ≥85% energía).');
     }
     const stops: TourStop[] = [];
-    let ticketPrice = 25;
+    let ticketPrice = 18;
     let stopCount = 4;
-    let targetCapacityBase = 1000;
+    let targetCapacityBase = 350;
+    let profitMargin = 0.40;
 
     if (tier === 'club') {
-      ticketPrice = 20;
+      ticketPrice = 18;
       stopCount = 4;
-      targetCapacityBase = 800;
+      targetCapacityBase = 350;
+      profitMargin = 0.40; // 40% neto (costos fijos de sala y traslado)
     } else if (tier === 'theater') {
-      ticketPrice = 45;
-      stopCount = 6;
-      targetCapacityBase = 3500;
-    } else if (tier === 'arena') {
-      ticketPrice = 85;
-      stopCount = 8;
-      targetCapacityBase = 15000;
-    } else if (tier === 'festival_circuit') {
-      ticketPrice = 110;
+      ticketPrice = 35;
       stopCount = 5;
-      targetCapacityBase = 30000;
-    } else if (tier === 'stadium') {
-      ticketPrice = 120;
+      targetCapacityBase = 1400;
+      profitMargin = 0.48;
+    } else if (tier === 'arena') {
+      ticketPrice = 70;
       stopCount = 6;
-      targetCapacityBase = 50000;
+      targetCapacityBase = 7500;
+      profitMargin = 0.52;
+    } else if (tier === 'festival_circuit') {
+      ticketPrice = 90;
+      stopCount = 5;
+      targetCapacityBase = 18000;
+      profitMargin = 0.54;
+    } else if (tier === 'stadium') {
+      ticketPrice = 110;
+      stopCount = 6;
+      targetCapacityBase = 35000;
+      profitMargin = 0.55;
     } else if (tier === 'world_tour') {
-      ticketPrice = 140;
-      stopCount = 12;
-      targetCapacityBase = 40000;
+      ticketPrice = 130;
+      stopCount = 10;
+      targetCapacityBase = 30000;
+      profitMargin = 0.58;
     }
 
     // Pick cities based on tier
@@ -103,13 +111,21 @@ export class TourEngine {
     let totalTicketsSold = 0;
     let grossRevenue = 0;
 
+    // Demanda real de audiencia: las ventas están ancladas a fans y oyentes mensuales reales
+    const activeAudienceDemand = Math.floor(
+      (artist.stats.fansCount || 500) * 0.20 + (artist.stats.monthlyListeners || 500) * 0.05
+    );
+    const maxTicketsPerStop = Math.max(25, Math.floor(activeAudienceDemand / Math.max(1, stopCount * 0.65)));
+
     for (const city of selectedCities) {
       const cap = Math.min(city.venueCapacity, targetCapacityBase);
-      // Sold percentage based on popularity and charisma
-      const selloutRatio = Math.min(1.0, (artist.stats.popularity / 90) * (0.8 + Math.random() * 0.3));
-      const ticketsSold = Math.floor(cap * selloutRatio);
+      // Sold percentage based on popularity, charisma and local fan penetration
+      const popRatio = Math.max(0.05, artist.stats.popularity / 100);
+      const selloutRatio = Math.min(1.0, (popRatio * 1.1) * (0.8 + Math.random() * 0.3));
+      const demandSold = Math.min(cap, maxTicketsPerStop);
+      const ticketsSold = Math.max(10, Math.min(cap, Math.floor(demandSold * selloutRatio)));
       const rev = ticketsSold * ticketPrice;
-      const successRating = Math.floor(selloutRatio * 100);
+      const successRating = Math.floor(Math.min(100, (ticketsSold / cap) * 100));
 
       stops.push({
         city: city.name,
@@ -126,11 +142,11 @@ export class TourEngine {
       grossRevenue += rev;
     }
 
-    // Artist net profit: gross minus production, venue rent, crew (approx 55% net)
-    const netArtistProfit = Math.floor(grossRevenue * 0.55);
+    // Artist net profit: gross minus production, venue rent, crew
+    const netArtistProfit = Math.floor(grossRevenue * profitMargin);
     const energyFatigue = Math.min(50, Math.floor(stopCount * 4.5));
-    const hypeGenerated = Math.floor((totalTicketsSold / 5000) * 8);
-    const fanbaseGained = Math.floor(totalTicketsSold * 0.35);
+    const hypeGenerated = Math.floor(Math.min(30, (totalTicketsSold / 4000) * 8 + 4));
+    const fanbaseGained = Math.floor(totalTicketsSold * 0.25);
 
     const tour: Tour = {
       id: `tour_${artist.id}_${currentYear}_${currentMonth}`,

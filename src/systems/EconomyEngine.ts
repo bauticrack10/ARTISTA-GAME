@@ -2,8 +2,36 @@ import { Artist, RecordLabel, Manager } from '../types';
 import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
 
 export class EconomyEngine {
-  // Average streaming payout per 1,000 streams in USD (~$3.50 gross, or $0.0035 per stream)
-  static STREAM_PAYOUT_PER_THOUSAND = 3.5;
+  // Baseline average streaming payout per 1,000 streams in USD (~$2.20 to $3.80 dynamic CPM)
+  static STREAM_PAYOUT_PER_THOUSAND = 3.2;
+
+  /**
+   * Calculates dynamic CPM (streaming payout per 1,000 streams in USD).
+   * Reflects real-world music market demographics:
+   * - Underground (pop <= 20): $2.20 / 1k (predominantly local/ad-supported listeners)
+   * - Emerging (pop 21 - 40): $2.50 / 1k
+   * - Breakout (pop 41 - 65): $3.00 / 1k (regional playlisting & growing premium share)
+   * - Mainstream (pop 66 - 85): $3.40 / 1k (international rotation, US/EU audience penetration)
+   * - Superstar (pop > 85): $3.80 / 1k (global high-tier premium stream demographics)
+   */
+  static getStreamingCPM(artist: Artist): number {
+    const pop = artist.stats?.popularity ?? 10;
+    if (pop <= 20) {
+      return 2.20;
+    } else if (pop <= 40) {
+      const ratio = (pop - 20) / 20;
+      return 2.20 + ratio * 0.30; // 2.20 to 2.50
+    } else if (pop <= 65) {
+      const ratio = (pop - 40) / 25;
+      return 2.50 + ratio * 0.50; // 2.50 to 3.00
+    } else if (pop <= 85) {
+      const ratio = (pop - 65) / 20;
+      return 3.00 + ratio * 0.40; // 3.00 to 3.40
+    } else {
+      const ratio = Math.min(1.0, (pop - 85) / 15);
+      return 3.40 + ratio * 0.40; // 3.40 to 3.80
+    }
+  }
 
   static calculateMonthlyFinances(
     artist: Artist,
@@ -20,7 +48,8 @@ export class EconomyEngine {
     managerCommission: number;
     netMonthlyProfit: number;
   } {
-    const grossStreaming = (totalMonthlyStreams / 1000) * this.STREAM_PAYOUT_PER_THOUSAND;
+    const cpm = this.getStreamingCPM(artist);
+    const grossStreaming = (totalMonthlyStreams / 1000) * cpm;
 
     // Label & distributor royalty split
     let artistRoyaltyPct = 100;
@@ -45,34 +74,35 @@ export class EconomyEngine {
 
     const artistStreamingNet = grossStreaming * (artistRoyaltyPct / 100);
 
-    // Merchandise revenue scales with engaged fanbase and popularity
+    // Merchandise revenue scales with engaged fanbase, loyalty, and career standing
     const prodigyMerchBoost = artist.isProdigy ? 1.35 : 1.0;
     const fansCount = artist.stats?.fansCount ?? 0;
-    const fanbaseLoyalty = artist.stats?.fanbaseLoyalty ?? 50;
+    const fanbaseLoyalty = (artist.stats?.fanbaseLoyalty ?? 50) / 100;
     const popularity = artist.stats?.popularity ?? 10;
-    const merchRevenue = Math.floor(
-      (fansCount * 0.03) *
-      (fanbaseLoyalty / 100) *
-      (Math.max(5, popularity) / 100) *
-      prodigyMerchBoost
-    );
+    const popRatio = popularity / 100;
 
-    // Baseline living & crew expenses scaled to career stage (underground costs are gentle and realistic, $35/mes)
-    let baseLivingExpenses = 35;
-    if (artist.careerStage === 'Underground' || popularity <= 10) {
-      baseLivingExpenses = 35;
-    } else if (popularity > 85) {
-      baseLivingExpenses = 28000;
-    } else if (popularity > 70) {
-      baseLivingExpenses = 12000;
-    } else if (popularity > 50) {
-      baseLivingExpenses = 3800;
-    } else if (popularity > 30) {
-      baseLivingExpenses = 1200;
-    } else if (popularity > 15) {
-      baseLivingExpenses = 400;
+    // Engaged fans who actively buy physical goods / apparel:
+    const activeSupporters = Math.floor(fansCount * fanbaseLoyalty);
+    const buyerRate = 0.003 + popRatio * 0.015; // 0.3% to 1.8% of engaged supporters buy per month
+    const avgMerchTicket = 12 + popRatio * 18; // $12 (stickers/patches) to $30 (hoodies/vinyls)
+    const merchRevenue = Math.floor(activeSupporters * buyerRate * avgMerchTicket * prodigyMerchBoost);
+
+    // Baseline living & crew expenses calibrated realistically by career tier:
+    let baseLivingExpenses = 45;
+    if (artist.careerStage === 'Underground' || popularity <= 20) {
+      baseLivingExpenses = 45;
+    } else if (artist.careerStage === 'Emerging' || popularity <= 40) {
+      const ratio = (popularity - 20) / 20;
+      baseLivingExpenses = Math.floor(100 + ratio * 250); // $100 - $350
+    } else if (artist.careerStage === 'Breakout' || popularity <= 65) {
+      const ratio = (popularity - 40) / 25;
+      baseLivingExpenses = Math.floor(400 + ratio * 1400); // $400 - $1,800
+    } else if (artist.careerStage === 'Mainstream' || popularity <= 85) {
+      const ratio = (popularity - 65) / 20;
+      baseLivingExpenses = Math.floor(2200 + ratio * 6300); // $2,200 - $8,500
     } else {
-      baseLivingExpenses = 100;
+      const ratio = Math.min(1.0, (popularity - 85) / 15);
+      baseLivingExpenses = Math.floor(9000 + ratio * 23000); // $9,000 - $32,000
     }
 
     // Lifestyle items monthly maintenance/upkeep

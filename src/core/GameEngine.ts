@@ -310,6 +310,18 @@ export class GameEngine {
       hasCatalog
     );
 
+    // 3.1 Actualizar popularidad objetivo para evitar desconexión entre oyentes y popularidad
+    const hitsCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
+    const targetPop = StreamingEngine.calculateTargetPopularity(
+      player.stats.monthlyListeners,
+      player.stats.totalStreams,
+      hitsCount
+    );
+    if (player.stats.popularity < targetPop) {
+      const step = Math.min(6, Math.max(1, Math.floor((targetPop - player.stats.popularity) * 0.45)));
+      player.stats.popularity = Math.min(targetPop, player.stats.popularity + step);
+    }
+
     // 4. Garantizar coherencia matemática en streams totales
     if (!hasCatalog) {
       // En etapa underground o pre-lanzamiento, demos/bootlegs/rehearsals generan stream baseline
@@ -2017,6 +2029,31 @@ export class GameEngine {
         player.stats.hype
       );
 
+      // 3.1 Convergencia armónica de popularidad y conversión mensual de fans para el jugador
+      const hitsCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
+      const targetPop = StreamingEngine.calculateTargetPopularity(
+        player.stats.monthlyListeners,
+        player.stats.totalStreams,
+        hitsCount
+      );
+      if (player.stats.popularity < targetPop) {
+        const step = Math.min(5, Math.max(1, Math.floor((targetPop - player.stats.popularity) * 0.40)));
+        player.stats.popularity = Math.min(targetPop, player.stats.popularity + step);
+      } else if (player.stats.popularity > targetPop && playerTotalMonthlyStreams < 200000) {
+        player.stats.popularity = Math.max(targetPop, player.stats.popularity - 1);
+      }
+
+      // 3.2 Conversión orgánica de oyentes a fans leales
+      const hasRecentRelease = playerSongs.some(s => s.releaseYear === this.world.currentYear && Math.abs(this.world.currentMonth - s.releaseMonth) <= 1);
+      const newFans = StreamingEngine.calculateMonthlyFanConversion(
+        player.stats.monthlyListeners,
+        player.stats.fansCount,
+        player.stats.hype,
+        player.stats.fanbaseLoyalty,
+        hasRecentRelease
+      );
+      player.stats.fansCount += newFans;
+
       // Monthly economy settlement
       const label = player.labelId ? this.world.labels[player.labelId] : undefined;
       const manager = player.managerId ? this.world.managers[player.managerId] : undefined;
@@ -2138,7 +2175,6 @@ export class GameEngine {
 
       // 7. Update player career stage & legacy
       const yearsActive = TimeSystem.calculateCareerLengthYears(player.careerStartYear, this.world.currentYear);
-      const hitsCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
       const no1sCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) === 1 || (s.peakPosition?.Argentina ?? 99) === 1).length;
       player.careerStage = LegacyEngine.evaluateCareerStage(player, yearsActive, hitsCount);
       player.legacyScore = LegacyEngine.calculateLegacyScore(player, hitsCount, no1sCount, this.world.currentYear);

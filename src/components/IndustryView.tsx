@@ -117,12 +117,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 5000,
     annualFee: 0,
     royaltyPct: 70,
-    advance: 2000,
+    advance: 15000,
     creativeControl: 85,
     marketingPower: 58,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Sello independiente barrial que impulsa talentos emergentes desde 5k oyentes con apoyo de producción local y $2.000 de anticipo.',
+    description: 'Sello barrial que impulsa talentos emergentes desde 5k oyentes con adelantos dinámicos ($15k - $45k+) y producción en la escena.',
     gradient: 'from-amber-600 to-stone-900',
     iconType: 'flame'
   },
@@ -134,12 +134,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 8000,
     annualFee: 0,
     royaltyPct: 80,
-    advance: 8000,
+    advance: 30000,
     creativeControl: 98,
-    marketingPower: 48,
+    marketingPower: 55,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Colectivo subterráneo de culto enfocado en trap, rap y drill con máxima libertad artística (98%) y anticipo de $8.000.',
+    description: 'Colectivo subterráneo de culto con 80% de regalías, 98% de control creativo y adelantos boutique ($30k - $120k+).',
     gradient: 'from-stone-700 to-zinc-950',
     iconType: 'flame'
   },
@@ -151,12 +151,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 12000,
     annualFee: 0,
     royaltyPct: 65,
-    advance: 5000,
+    advance: 25000,
     creativeControl: 80,
     marketingPower: 68,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Sello indie consolidado en la escena local con anticipo de $5.000, conexión con festivales locales y prensa especializada.',
+    description: 'Sello indie consolidado en la escena local con adelantos competitivos ($25k - $80k+), conexión con festivales y prensa.',
     gradient: 'from-purple-600 to-rose-900',
     iconType: 'sparkles'
   },
@@ -170,12 +170,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 30000,
     annualFee: 0,
     royaltyPct: 75,
-    advance: 30000,
+    advance: 75000,
     creativeControl: 95,
-    marketingPower: 75,
+    marketingPower: 78,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Sello boutique de culto internacional enfocado en innovación sonora y proyectos de alta trascendencia crítica.',
+    description: 'Sello boutique de culto internacional enfocado en innovación sonora con adelantos dinámicos ($75k - $350k+).',
     gradient: 'from-teal-600 to-cyan-950',
     iconType: 'award'
   },
@@ -187,12 +187,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 50000,
     annualFee: 0,
     royaltyPct: 65,
-    advance: 45000,
+    advance: 100000,
     creativeControl: 82,
     marketingPower: 88,
     durationYears: 3,
     albumsRequired: 2,
-    description: 'Sello independiente líder del movimiento urbano argentino. Gran balance entre presupuesto, regalías justas y libertad conceptual.',
+    description: 'Sello independiente líder del movimiento urbano sudamericano con adelantos de seis cifras ($100k - $800k+) y 65% de regalías.',
     gradient: 'from-violet-600 to-purple-950',
     iconType: 'building'
   },
@@ -204,12 +204,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 100000,
     annualFee: 0,
     royaltyPct: 70,
-    advance: 120000,
+    advance: 250000,
     creativeControl: 78,
     marketingPower: 95,
     durationYears: 3,
     albumsRequired: 2,
-    description: 'Independencia masiva a escala global. Visión de vanguardia en streaming mundial, estadios y retención del control del artista.',
+    description: 'Independencia a escala de Major global con mega adelantos ($250k - $2.5M+) y retención estratégica del control del artista.',
     gradient: 'from-pink-600 to-rose-950',
     iconType: 'crown'
   },
@@ -223,12 +223,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 80000,
     annualFee: 0,
     royaltyPct: 25,
-    advance: 180000,
+    advance: 350000,
     creativeControl: 55,
-    marketingPower: 89,
+    marketingPower: 90,
     durationYears: 4,
     albumsRequired: 3,
-    description: 'Enfoque en dominar los charts hispanohablantes con giras masivas, festivales internacionales y gran marketing.',
+    description: 'Dominio de los charts hispanohablantes con giras masivas, festivales internacionales y mega adelantos millonarios ($350k - $2.5M+).',
     gradient: 'from-amber-600 to-red-950',
     iconType: 'building'
   },
@@ -240,12 +240,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 100000,
     annualFee: 0,
     royaltyPct: 22,
-    advance: 250000,
-    creativeControl: 40,
+    advance: 500000,
+    creativeControl: 45,
     marketingPower: 96,
     durationYears: 4,
     albumsRequired: 3,
-    description: 'Coloso discográfico con alcance radial mundial y máxima maquinaria de difusión a cambio de menores regalías directas.',
+    description: 'Coloso discográfico con alcance radial mundial y adelantos estelares millonarios ($500k - $4.5M+).',
     gradient: 'from-blue-700 to-indigo-950',
     iconType: 'building'
   },
@@ -257,12 +257,12 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     minListeners: 120000,
     annualFee: 0,
     royaltyPct: 20,
-    advance: 300000,
+    advance: 750000,
     creativeControl: 45,
     marketingPower: 98,
     durationYears: 4,
     albumsRequired: 3,
-    description: 'Líder de la industria musical mundial. Presupuestos millonarios de marketing y colocación en playlists de primer orden.',
+    description: 'La mayor multinacional discográfica mundial con super anticipos de siete cifras ($750k - $6.0M+) y colocación prioritaria global.',
     gradient: 'from-purple-700 to-black',
     iconType: 'crown'
   }
@@ -329,30 +329,14 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
     }
 
     const targetLabel = world.labels[option.id];
-    const contract = targetLabel
-      ? IndustryEngine.generateDynamicLabelOffer(player, targetLabel, world.currentYear)
-      : {
-          labelId: option.id,
-          signingBonus: option.advance,
-          royaltyPercentage: option.royaltyPct,
-          albumsRequired: option.albumsRequired,
-          albumsDelivered: 0,
-          creativeControl: option.creativeControl,
-          marketingPower: option.marketingPower,
-          marketingBudgetPerRelease: Math.max(5000, Math.floor(option.advance * 0.2)),
-          breakoutClause: option.advance > 0 ? option.advance * 2 : 5000,
-          durationYears: option.durationYears,
-          signedYear: world.currentYear,
-          isDistributor: option.category === 'distributor',
-          annualFee: option.annualFee
-        };
+    const contract = IndustryEngine.generateDynamicLabelOffer(player, targetLabel, world.currentYear, world);
 
     onSignContract(contract);
     playSound('money');
     setNotification(
       option.category === 'distributor'
         ? `¡Distribución configurada! Tu música ahora se distribuye globalmente con ${option.name}.`
-        : `¡Contrato discográfico firmado con éxito con ${option.name}! Anticipo cobrado: ${formatMoney(option.advance)}.`
+        : `¡Contrato discográfico firmado con éxito con ${option.name}! Anticipo cobrado: ${formatMoney(contract.signingBonus)}.`
     );
     setTimeout(() => setNotification(null), 4000);
   };
@@ -710,6 +694,58 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {/* TAB 2: DISTRIBUCIÓN & SELLOS (LA ESCALERA COMPLETA) */}
       {activeTab === 'distribution_labels' && (
         <div className="space-y-6">
+          {/* Market Valuation Summary Card */}
+          {(() => {
+            const valuation = IndustryEngine.calculateArtistValuation(player, world);
+            return (
+              <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-6 space-y-4 shadow-md backdrop-blur-md">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2E3D] pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <TrendingUp className="w-5 h-5 text-[#10B981]" />
+                    <div>
+                      <h2 className="text-base font-semibold text-[#F8FAFC]">
+                        Valoración Comercial & Poder de Fichaje
+                      </h2>
+                      <p className="text-xs text-[#94A3B8]">
+                        Métricas en tiempo real que fundamentan los adelantos y presupuestos promocionales escalados de cada sello.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-[9999px] bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] self-start sm:self-auto">
+                    Facturación Anual Proyectada: {formatMoney(valuation.projectedGrossAnnual)}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D]">
+                    <span className="text-[10px] text-[#94A3B8] block">Run-Rate Streaming:</span>
+                    <span className="font-semibold text-[#F8FAFC] text-sm">{formatMoney(valuation.projectedStreamingGross)}/año</span>
+                    <span className="text-[10px] text-[#94A3B8] block">~{formatCompactNumber(valuation.projectedAnnualStreams)} streams/año</span>
+                  </div>
+                  <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D]">
+                    <span className="text-[10px] text-[#94A3B8] block">Merchandise Anual:</span>
+                    <span className="font-semibold text-[#F8FAFC] text-sm">{formatMoney(valuation.projectedMerchGross)}/año</span>
+                    <span className="text-[10px] text-[#94A3B8] block">{formatCompactNumber(player.stats.fansCount || 0)} fans fidelizados</span>
+                  </div>
+                  <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D]">
+                    <span className="text-[10px] text-[#94A3B8] block">Valor de Catálogo:</span>
+                    <span className="font-semibold text-[#F8FAFC] text-sm">{formatMoney(valuation.catalogValuation)}</span>
+                    <span className="text-[10px] text-[#94A3B8] block">{valuation.catalogSongCount} temas ({valuation.catalogHitCount} hits)</span>
+                  </div>
+                  <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D]">
+                    <span className="text-[10px] text-[#94A3B8] block">Multiplicador de Firma:</span>
+                    <span className="font-semibold text-[#8B5CF6] text-sm">
+                      {currentManager ? `Manager: +${Math.round((currentManager.negotiationSkill / 100) * 25)}%` : 'Base (Sin Manager)'}
+                    </span>
+                    <span className="text-[10px] text-[#94A3B8] block">
+                      {player.isProdigy ? '✨ Prodigio (+20%)' : 'Estándar de Industria'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Filters Bar */}
           <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-6 space-y-4 shadow-md">
             <div>
@@ -751,94 +787,114 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredDistOptions.map((opt) => {
-              const isCurrent = player.labelId === opt.id;
-              const hasListeners = player.stats.monthlyListeners >= opt.minListeners;
-              const canAffordAnnual = !opt.annualFee || player.stats.funds >= opt.annualFee;
-              const isUnlocked = hasListeners && canAffordAnnual;
+                const isUnlocked = player.stats.monthlyListeners >= opt.minListeners;
+                const isCurrent = player.labelId === opt.id;
+                const hasListeners = player.stats.monthlyListeners >= opt.minListeners;
 
-              return (
-                <div
-                  key={opt.id}
-                  className={`bg-[#16181F] rounded-[12px] p-5 border transition-all space-y-4 flex flex-col justify-between shadow-md ${
-                    isCurrent
-                      ? 'border-[#10B981] ring-1 ring-[#10B981]'
-                      : isUnlocked
-                      ? 'border-[#2A2E3D] hover:border-[#8B5CF6]/60'
-                      : 'border-[#2A2E3D] opacity-80'
-                  }`}
-                >
-                  <div className="space-y-3.5">
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-2.5">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-10 h-10 rounded-[8px] bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center shrink-0 shadow-sm`}
-                        >
-                          {renderOptionIcon(opt.iconType)}
+                // Calcular oferta dinámica personalizada según las métricas y facturación del artista
+                const targetLabel = world.labels[opt.id] || {
+                  id: opt.id,
+                  name: opt.name,
+                  type: opt.category === 'distributor' ? 'distributor' : (opt.category === 'local' ? 'local_indie' : opt.category === 'indie' ? 'indie' : 'major'),
+                  country: opt.category === 'distributor' ? 'Global' : 'Argentina',
+                  prestige: opt.marketingPower,
+                  budget: opt.advance > 0 ? opt.advance * 4 : 50000,
+                  marketingPower: opt.marketingPower,
+                  creativeFreedomAllowed: opt.creativeControl,
+                  rosterArtistIds: [],
+                  favoredGenreIds: [player.mainGenreId],
+                  annualFee: opt.annualFee,
+                  commissionPct: 100 - opt.royaltyPct,
+                  advancePayment: opt.advance,
+                  minMonthlyListeners: opt.minListeners,
+                  scoutingCriteria: opt.description
+                };
+                const dynamicOffer = IndustryEngine.generateDynamicLabelOffer(player, targetLabel, world.currentYear, world);
+                const displayAdvance = dynamicOffer.signingBonus;
+
+                return (
+                  <div
+                    key={opt.id}
+                    className={`bg-[#16181F] rounded-[12px] p-5 border transition-all space-y-4 flex flex-col justify-between shadow-md ${
+                      isCurrent
+                        ? 'border-[#10B981] ring-1 ring-[#10B981]'
+                        : isUnlocked
+                        ? 'border-[#2A2E3D] hover:border-[#8B5CF6]/60'
+                        : 'border-[#2A2E3D] opacity-80'
+                    }`}
+                  >
+                    <div className="space-y-3.5">
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-2.5">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 rounded-[8px] bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center shrink-0 shadow-sm`}
+                          >
+                            {renderOptionIcon(opt.iconType)}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-sm text-[#F8FAFC] leading-snug">
+                              {opt.name}
+                            </h3>
+                            <span className="text-[10px] uppercase font-semibold text-[#94A3B8] block">
+                              {opt.typeLabel}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Requirement badge */}
+                        {hasListeners ? (
+                          <span className="flex items-center gap-1 text-[11px] font-semibold text-[#10B981] bg-[#10B981]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#10B981]/30 shrink-0">
+                            <Check className="w-3 h-3 text-[#10B981]" />
+                            {opt.minListeners === 0 ? 'Abierto' : `${formatCompactNumber(opt.minListeners)}`}
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[11px] font-semibold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-[9999px] border border-amber-400/20 shrink-0">
+                            <Lock className="w-3 h-3 text-amber-400" />
+                            {formatCompactNumber(opt.minListeners)}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-xs text-[#94A3B8] leading-relaxed min-h-[36px]">
+                        {opt.description}
+                      </p>
+
+                      {/* Key Terms Grid */}
+                      <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D] grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <span className="text-[10px] text-[#94A3B8] block">Regalías Artista:</span>
+                          <span className="font-semibold text-[#F8FAFC]">{dynamicOffer.royaltyPercentage}%</span>
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-[#F8FAFC] leading-snug">
-                            {opt.name}
-                          </h3>
-                          <span className="text-[10px] uppercase font-semibold text-[#94A3B8] block">
-                            {opt.typeLabel}
+                          <span className="text-[10px] text-[#94A3B8] block">Anticipo Dinámico:</span>
+                          <span className={`font-semibold font-mono ${displayAdvance > 0 ? 'text-[#10B981]' : 'text-[#F8FAFC]'}`}>
+                            {displayAdvance > 0 ? formatMoney(displayAdvance) : '$0'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-[#94A3B8] block">Presupuesto Mkt:</span>
+                          <span className="font-semibold text-[#F8FAFC]">
+                            {dynamicOffer.marketingBudgetPerRelease && dynamicOffer.marketingBudgetPerRelease > 0 ? `${formatMoney(dynamicOffer.marketingBudgetPerRelease)}/lanz.` : (opt.annualFee > 0 ? `$${opt.annualFee}/año` : 'Sin cuota')}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-[#94A3B8] block">Control Creativo:</span>
+                          <span className="font-semibold text-[#F8FAFC]">{dynamicOffer.creativeControl}%</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-[#94A3B8] block">Marketing Power:</span>
+                          <span className="font-semibold text-[#F8FAFC]">{opt.marketingPower}%</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-[#94A3B8] block">Compromiso:</span>
+                          <span className="font-semibold text-[#F8FAFC]">
+                            {dynamicOffer.albumsRequired > 0 ? `${dynamicOffer.albumsRequired} Álbum(es)` : 'Sin entregas'}
                           </span>
                         </div>
                       </div>
-
-                      {/* Requirement badge */}
-                      {hasListeners ? (
-                        <span className="flex items-center gap-1 text-[11px] font-semibold text-[#10B981] bg-[#10B981]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#10B981]/30 shrink-0">
-                          <Check className="w-3 h-3 text-[#10B981]" />
-                          {opt.minListeners === 0 ? 'Abierto' : `${formatCompactNumber(opt.minListeners)}`}
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-[11px] font-semibold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-[9999px] border border-amber-400/20 shrink-0">
-                          <Lock className="w-3 h-3 text-amber-400" />
-                          {formatCompactNumber(opt.minListeners)}
-                        </span>
-                      )}
                     </div>
-
-                    {/* Description */}
-                    <p className="text-xs text-[#94A3B8] leading-relaxed min-h-[36px]">
-                      {opt.description}
-                    </p>
-
-                    {/* Key Terms Grid */}
-                    <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D] grid grid-cols-2 gap-2 text-xs">
-                      <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Regalías Artista:</span>
-                        <span className="font-semibold text-[#F8FAFC]">{opt.royaltyPct}%</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Anticipo:</span>
-                        <span className="font-semibold text-[#F8FAFC]">
-                          {opt.advance > 0 ? formatMoney(opt.advance) : '$0'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Cuota Anual:</span>
-                        <span className="font-semibold text-[#F8FAFC]">
-                          {opt.annualFee > 0 ? `$${opt.annualFee}/año` : 'Gratis'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Control Creativo:</span>
-                        <span className="font-semibold text-[#F8FAFC]">{opt.creativeControl}%</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Marketing Power:</span>
-                        <span className="font-semibold text-[#F8FAFC]">{opt.marketingPower}%</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Exigencia:</span>
-                        <span className="font-semibold text-[#F8FAFC]">
-                          {opt.albumsRequired > 0 ? `${opt.albumsRequired} Álbumes` : 'Sin entregas'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Actions */}
                   <div>

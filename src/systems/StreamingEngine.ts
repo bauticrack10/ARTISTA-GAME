@@ -57,9 +57,30 @@ export class StreamingEngine {
     const fanStreamBase = activeFans * fanPlaysPerMonth;
 
     // 4. Algorithmic / Discovery / Playlist reach based on realistic scale
-    // Smooth non-linear curve: underground artists get hundreds/thousands, superstars get millions
-    const maxAlgorithmicPool = Math.pow(popFactor, 2.5) * 45000000 + (artist.stats.popularity * 250);
-    const songAppealScore = (qualityFactor * 0.35 + commercialFactor * 0.45 + originalityFactor * 0.20) * (0.6 + hypeFactor * 0.6);
+    // Calibrated segmented progression curve across career stages:
+    // Underground (pop <= 20): 50 to 5,000 base pool
+    // Emerging (pop 21 - 40): 5,000 to 75,000 base pool
+    // Breakout (pop 41 - 65): 75,000 to 1,800,000 base pool
+    // Mainstream (pop 66 - 85): 1.8M to 16M base pool
+    // Superstar (pop > 85): 16M to 55M base pool
+    let maxAlgorithmicPool = 0;
+    if (artist.stats.popularity <= 20) {
+      maxAlgorithmicPool = Math.pow(popFactor / 0.20, 2.8) * 4500 + (artist.stats.popularity * 15);
+    } else if (artist.stats.popularity <= 40) {
+      const ratio = (artist.stats.popularity - 20) / 20;
+      maxAlgorithmicPool = 4800 + Math.pow(ratio, 2.2) * 70000;
+    } else if (artist.stats.popularity <= 65) {
+      const ratio = (artist.stats.popularity - 40) / 25;
+      maxAlgorithmicPool = 75000 + Math.pow(ratio, 2.0) * 1725000;
+    } else if (artist.stats.popularity <= 85) {
+      const ratio = (artist.stats.popularity - 65) / 20;
+      maxAlgorithmicPool = 1800000 + Math.pow(ratio, 1.7) * 14200000;
+    } else {
+      const ratio = (artist.stats.popularity - 85) / 15;
+      maxAlgorithmicPool = 16000000 + Math.pow(ratio, 1.4) * 39000000;
+    }
+
+    const songAppealScore = (qualityFactor * 0.35 + commercialFactor * 0.45 + originalityFactor * 0.20) * (0.55 + hypeFactor * 0.45);
     const algorithmicStreams = maxAlgorithmicPool * songAppealScore * trendBoost * genreBoost;
 
     // 4.1 Impulso de alcance algorítmico y cross-fanbase derivado del artista colaborador
@@ -68,14 +89,32 @@ export class StreamingEngine {
       for (const featId of song.featuredArtistIds) {
         const featArtist = allArtists ? allArtists[featId] : undefined;
         const featPop = featArtist ? featArtist.stats.popularity : 30;
+        let featAlgoPool = 0;
         const featPopFactor = Math.max(0.01, featPop / 100);
-        const featAlgoPool = Math.pow(featPopFactor, 2.3) * 28000000 + (featPop * 250);
+        if (featPop <= 20) {
+          featAlgoPool = Math.pow(featPopFactor / 0.20, 2.8) * 4500 + (featPop * 15);
+        } else if (featPop <= 40) {
+          const ratio = (featPop - 20) / 20;
+          featAlgoPool = 4800 + Math.pow(ratio, 2.2) * 70000;
+        } else if (featPop <= 65) {
+          const ratio = (featPop - 40) / 25;
+          featAlgoPool = 75000 + Math.pow(ratio, 2.0) * 1725000;
+        } else if (featPop <= 85) {
+          const ratio = (featPop - 65) / 20;
+          featAlgoPool = 1800000 + Math.pow(ratio, 1.7) * 14200000;
+        } else {
+          const ratio = (featPop - 85) / 15;
+          featAlgoPool = 16000000 + Math.pow(ratio, 1.4) * 39000000;
+        }
+
         const featFans = featArtist ? featArtist.stats.fansCount : 5000;
         const featLoyalty = featArtist ? Math.max(0.2, featArtist.stats.fanbaseLoyalty / 100) : 0.6;
-        const featFanMultiplier = ageMonths === 0 ? 3.0 : ageMonths === 1 ? 1.8 : ageMonths <= 3 ? 0.8 : 0.2;
-        const featFanStreams = (featFans * featLoyalty * 0.15) * featFanMultiplier;
+        const featFanMultiplier = ageMonths === 0 ? 2.0 : ageMonths === 1 ? 1.2 : ageMonths <= 3 ? 0.5 : 0.1;
+        const hostWeight = Math.pow(Math.max(0.05, artist.stats.popularity / 100), 1.5);
+        const relativeSynergy = 0.04 + hostWeight * 0.85;
+        const featFanStreams = (featFans * featLoyalty * 0.02 * relativeSynergy) * featFanMultiplier;
 
-        collabBoost += (featAlgoPool * songAppealScore * trendBoost * genreBoost * 0.60) + featFanStreams;
+        collabBoost += (featAlgoPool * songAppealScore * trendBoost * genreBoost * 0.35 * relativeSynergy) + featFanStreams;
       }
     }
 
@@ -148,7 +187,19 @@ export class StreamingEngine {
       ageMultiplier *= 2.5;
     }
 
-    const calculatedStreams = Math.floor(baseTotalStreams * ageMultiplier * musicVideoVelocityMultiplier);
+    let calculatedStreams = Math.floor(baseTotalStreams * ageMultiplier * musicVideoVelocityMultiplier);
+
+    // 7. Momentum de inercia y rotación radial/playlist:
+    // Si la canción ya venía generando cientos de miles o millones de reproducciones,
+    // retiene un piso de inercia (~78% a 90% mes a mes) para evitar colapsos irreales
+    if (song.streamsLastMonth && song.streamsLastMonth > 50000 && ageMonths > 0) {
+      const retentionRate = Math.min(0.92, 0.76 + (qualityFactor * 0.14));
+      const momentumFloor = Math.floor(song.streamsLastMonth * retentionRate);
+      if (calculatedStreams < momentumFloor) {
+        calculatedStreams = momentumFloor;
+      }
+    }
+
     // Minimum stream floor scaled realistically
     const minFloor = artist.stats.popularity > 20 ? 50 : Math.max(5, Math.floor(activeFans * 0.05));
 
@@ -240,11 +291,11 @@ export class StreamingEngine {
     const safeHype = Math.max(0, Math.min(100, hype || 50));
     const safePop = Math.max(0, Math.min(100, popularity || 10));
     
-    const streamsPerFan = 3.5 + Math.min(3.5, safeHype / 25);
+    const streamsPerFan = 2.5 + Math.min(2.5, safeHype / 30);
     const fanStreamSurge = Math.floor(fansGained * streamsPerFan);
-    const mainstreamSurge = Math.floor(safeHype * 1200 + safePop * 250);
+    const mainstreamSurge = Math.floor(safeHype * 80 + safePop * 40 + (Math.pow(safePop / 100, 2) * 5000));
     
-    return Math.max(1500, fanStreamSurge + mainstreamSurge);
+    return Math.max(150, fanStreamSurge + mainstreamSurge);
   }
 
   /**
@@ -312,11 +363,22 @@ export class StreamingEngine {
 
     // Core fan sales
     const loyaltyRatio = Math.max(0.1, (artist.stats?.fanbaseLoyalty || 70) / 100);
-    const coreFanSales = Math.floor((artist.stats?.fansCount || 1000) * loyaltyRatio * 0.18);
+    const coreFanSales = Math.floor((artist.stats?.fansCount || 1000) * loyaltyRatio * 0.15);
 
     // Mainstream popularity scaling
     const popRatio = Math.max(0.01, (artist.stats?.popularity || 10) / 100);
-    const algorithmicPopularitySales = Math.pow(popRatio, 2.3) * 220000 + ((artist.stats?.popularity || 10) * 80);
+    let algorithmicPopularitySales = 0;
+    if (popRatio <= 0.20) {
+      algorithmicPopularitySales = Math.floor((artist.stats?.popularity || 10) * 6);
+    } else if (popRatio <= 0.40) {
+      algorithmicPopularitySales = Math.floor(120 + Math.pow((popRatio - 0.2) / 0.2, 1.8) * 1500);
+    } else if (popRatio <= 0.65) {
+      algorithmicPopularitySales = Math.floor(1600 + Math.pow((popRatio - 0.4) / 0.25, 1.6) * 14000);
+    } else if (popRatio <= 0.85) {
+      algorithmicPopularitySales = Math.floor(15600 + Math.pow((popRatio - 0.65) / 0.20, 1.4) * 60000);
+    } else {
+      algorithmicPopularitySales = Math.floor(75600 + Math.pow((popRatio - 0.85) / 0.15, 1.2) * 130000);
+    }
 
     // Marketing impact
     const marketingMultiplier = 1.0 + Math.min(1.8, marketingBudget / 20000);
@@ -325,7 +387,7 @@ export class StreamingEngine {
     const hypeFactor = 0.6 + ((artist.stats?.hype || 30) / 100) * 0.8;
 
     // Previous singles momentum carry-over
-    const singlesMomentumSales = Math.floor(Math.min(45000, (includedSinglesTotalStreams || 0) * 0.0015));
+    const singlesMomentumSales = Math.floor(Math.min(30000, (includedSinglesTotalStreams || 0) * 0.0010));
 
     const calculatedFirstWeekSales = Math.floor(
       (coreFanSales + algorithmicPopularitySales + singlesMomentumSales) *
@@ -335,7 +397,7 @@ export class StreamingEngine {
     );
 
     // Baseline minimum sales
-    const minSales = Math.max(50, Math.floor((artist.stats?.popularity || 10) * 15 + (artist.stats?.fansCount || 1000) * 0.05));
+    const minSales = Math.max(25, Math.floor((artist.stats?.popularity || 10) * 8 + (artist.stats?.fansCount || 1000) * 0.03));
     const firstWeekSales = Math.max(minSales, calculatedFirstWeekSales);
 
     // 3. Commercial score (0 - 100)
@@ -349,5 +411,91 @@ export class StreamingEngine {
       criticalReviewText,
       commercialScore
     };
+  }
+
+  /**
+   * Calcula la Popularidad Objetivo (0 - 100) en base a los oyentes mensuales reales,
+   * catálogo acumulado y canciones posicionadas en los charts.
+   * Evita el estancamiento donde un artista con millones de oyentes mantiene popularidad baja.
+   */
+  static calculateTargetPopularity(
+    monthlyListeners: number,
+    totalStreams: number = 0,
+    hitsCount: number = 0
+  ): number {
+    const listeners = Math.max(0, monthlyListeners);
+    let target = 8;
+
+    if (listeners >= 15000000) {
+      // Megastar Global (>15M)
+      target = 94 + Math.min(6, Math.floor((listeners - 15000000) / 5000000));
+    } else if (listeners >= 8000000) {
+      // Superstar Internacional (8M - 15M)
+      target = 85 + Math.floor(((listeners - 8000000) / 7000000) * 9);
+    } else if (listeners >= 3500000) {
+      // Mainstream Consagrado (3.5M - 8M)
+      target = 72 + Math.floor(((listeners - 3500000) / 4500000) * 13);
+    } else if (listeners >= 1200000) {
+      // Hitmaker Continental / Nacional (1.2M - 3.5M)
+      target = 58 + Math.floor(((listeners - 1200000) / 2300000) * 14);
+    } else if (listeners >= 400000) {
+      // Breakout / Consolidado (400k - 1.2M)
+      target = 42 + Math.floor(((listeners - 400000) / 800000) * 16);
+    } else if (listeners >= 120000) {
+      // Emergente Fuerte / Escena Nacional (120k - 400k)
+      target = 28 + Math.floor(((listeners - 120000) / 280000) * 14);
+    } else if (listeners >= 30000) {
+      // Escena Local / Promesa (30k - 120k)
+      target = 18 + Math.floor(((listeners - 30000) / 90000) * 10);
+    } else if (listeners >= 8000) {
+      // Underground Activo (8k - 30k)
+      target = 12 + Math.floor(((listeners - 8000) / 22000) * 6);
+    } else {
+      // Garaje / Principiante (<8k)
+      target = Math.max(5, Math.floor(5 + (listeners / 8000) * 7));
+    }
+
+    // Bono complementario por hits acumulados en el Top 10
+    const hitsBonus = Math.min(6, hitsCount * 2);
+
+    return Math.min(100, Math.max(5, target + hitsBonus));
+  }
+
+  /**
+   * Calcula la conversión mensual orgánica de oyentes a fans leales (comunidad).
+   * Un artista con millones de oyentes y buena música debe acumular una base de fans proporcional.
+   */
+  static calculateMonthlyFanConversion(
+    monthlyListeners: number,
+    currentFans: number,
+    hype: number = 50,
+    loyalty: number = 70,
+    hasRecentRelease: boolean = false
+  ): number {
+    if (monthlyListeners <= 0) return 0;
+
+    const safeHype = Math.max(0, Math.min(100, hype || 50)) / 100;
+    const safeLoyalty = Math.max(10, Math.min(100, loyalty || 70)) / 100;
+
+    // Tasa de conversión mensual: típicamente del 1.2% al 4.0% de los oyentes únicos
+    let baseConversionRate = 0.015 + (safeLoyalty * 0.012) + (safeHype * 0.015);
+    if (hasRecentRelease) {
+      baseConversionRate *= 1.35; // +35% de conversión si hubo lanzamiento reciente
+    }
+
+    // Si la base de fans actual es muy pequeña en comparación con los oyentes (ej. 14k fans vs 6M oyentes),
+    // se aplica un multiplicador de catch-up orgánico para equilibrar la comunidad rápidamente
+    const fansToListenersRatio = currentFans / Math.max(1, monthlyListeners);
+    let catchUpMultiplier = 1.0;
+    if (fansToListenersRatio < 0.05) {
+      catchUpMultiplier = 2.5; // Gran afluencia de nuevos fans descubriendo al artista
+    } else if (fansToListenersRatio < 0.15) {
+      catchUpMultiplier = 1.6;
+    } else if (fansToListenersRatio > 0.40) {
+      catchUpMultiplier = 0.7; // Desaceleración natural en bases de fans saturadas
+    }
+
+    const newFansMonthly = Math.floor(monthlyListeners * baseConversionRate * catchUpMultiplier);
+    return Math.max(5, newFansMonthly);
   }
 }
