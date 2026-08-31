@@ -143,22 +143,22 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     if (runwayMonths >= 12) {
       solvencyLevel = 'thriving';
       solvencyBadge = 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40';
-      solvencyLabel = 'Solvencia Óptima (>12 meses)';
+      solvencyLabel = 'Solvencia Óptima • Más de 12 meses';
       solvencyMessage = 'Tus fondos actuales cubren cómodamente más de un año de costos operativos fijos.';
     } else if (runwayMonths >= 6) {
       solvencyLevel = 'stable';
       solvencyBadge = 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40';
-      solvencyLabel = 'Solvencia Estable (6-12 meses)';
+      solvencyLabel = 'Solvencia Estable • 6-12 meses';
       solvencyMessage = 'Cuentas con suficiente colchón para sostener el próximo semestre completo sin urgencias.';
     } else if (runwayMonths >= 3) {
       solvencyLevel = 'warning';
       solvencyBadge = 'bg-amber-950/60 text-amber-300 border-amber-500/40';
-      solvencyLabel = 'Atención Requerida (3-6 meses)';
+      solvencyLabel = 'Atención Requerida • 3-6 meses';
       solvencyMessage = 'Tus fondos cubren menos de un semestre de costos fijos. Considera lanzar música o salir de gira.';
     } else {
       solvencyLevel = 'critical';
       solvencyBadge = 'bg-rose-950/60 text-rose-300 border-rose-500/40';
-      solvencyLabel = 'Riesgo de Insolvencia (<3 meses)';
+      solvencyLabel = 'Riesgo de Insolvencia • Menos de 3 meses';
       solvencyMessage = '¡Alerta de caja! Los costos operativos amenazan con agotar tus fondos en menos de un trimestre.';
     }
 
@@ -360,11 +360,9 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[#C084FC]">
               <Calendar className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
+                   <div className="flex items-center gap-2">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
-                  Costos Operativos Semestrales Proyectados (6 Meses)
+                  Costos Operativos Semestrales Proyectados
                 </h2>
                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${operationalCosts.solvencyBadge}`}>
                   {operationalCosts.solvencyLabel}
@@ -405,7 +403,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           {/* Total Semi-Annual Cost */}
           <div className="p-3.5 bg-[#16181F] border border-[#8B5CF6]/30 rounded-lg space-y-1">
             <div className="flex items-center justify-between text-[#94A3B8]">
-              <span className="text-[11px] font-semibold">Costo Total (6 Meses)</span>
+              <span className="text-[11px] font-semibold">Costo Semestral Total</span>
               <span className="text-[10px] font-mono text-[#C084FC]">Burn Rate</span>
             </div>
             <div className="text-lg font-bold text-rose-400 font-mono">
@@ -423,7 +421,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {formatMoney(operationalCosts.semiAnnualLiving)}
             </div>
             <span className="text-[10px] text-[#94A3B8] font-mono block">
-              {`${formatMoney(operationalCosts.monthlyBaseLiving)}/mes (Vivienda & Crew)`}
+              {`${formatMoney(operationalCosts.monthlyBaseLiving)}/mes • Vivienda & Crew`}
             </span>
           </div>
 
@@ -434,7 +432,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {formatMoney(operationalCosts.semiAnnualUpkeep)}
             </div>
             <span className="text-[10px] text-[#94A3B8] font-mono block">
-              {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes (${ownedUpgrades.length} activos)`}
+              {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes • ${ownedUpgrades.length} activos`}
             </span>
           </div>
 
@@ -505,7 +503,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-2.5">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
             <TrendingUp className="w-4 h-4 text-[#8B5CF6]" />
-            Resumen de Buffs Pasivos Activos ({ownedUpgrades.length} Adquiridos)
+            Resumen de Buffs Pasivos Activos • {ownedUpgrades.length} Adquiridos
           </h2>
           <span className="text-xs text-[#94A3B8] font-mono">
             Mantenimiento Total: <strong className="text-rose-400 font-bold">${activeBuffs.monthlyUpkeep.toLocaleString()}/mes</strong>

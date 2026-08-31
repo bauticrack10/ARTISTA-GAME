@@ -28,6 +28,14 @@ export function sanitizeString(text: string): string {
     .replace(/\(\s*\+\s*([0-9]+[A-Za-z]+)\s*\)/g, '(+$1)')
     // Normaliza meses con números: "(MES 1 )" -> "(Mes 1)", "( MES 12)" -> "(Mes 12)"
     .replace(/\(\s*MES\s*([0-9]+)\s*\)/gi, '(Mes $1)')
+    // Elimina paréntesis anidados o duplicados: "((texto))" -> "(texto)"
+    .replace(/\(\s*\(([^()]+)\)\s*\)/g, '($1)')
+    // Elimina paréntesis vacíos: "()" -> ""
+    .replace(/\(\s*\)/g, '')
+    // Elimina paréntesis con mes redundante junto a un mes en texto: "Enero 2026 (Mes 1)" -> "Enero 2026"
+    .replace(/\b(Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre)(?:\s+[0-9]{4})?\s*\(\s*(?:Mes|M)\s*[0-9]+\s*\)/gi, (match) => {
+      return match.replace(/\s*\(\s*(?:Mes|M)\s*[0-9]+\s*\)/gi, '');
+    })
     // Limpia comillas con asteriscos o artefactos mal escapados: '"Bruno Romero" *"*' -> '"Bruno Romero"'
     .replace(/\s+\*"\*\s*$/g, '')
     .replace(/\s*\*\s*"\s*\*\s*/g, '')
@@ -101,12 +109,14 @@ export function cleanCountTag(count: number, total: number, suffix?: string): st
 }
 
 /**
- * Elimina espacios innecesarios dentro de paréntesis y normaliza ratios internos
+ * Elimina espacios innecesarios dentro de paréntesis, normaliza ratios internos y remueve paréntesis anidados o vacíos
  */
 export function cleanParentheses(text: string): string {
   if (!text) return '';
   return text
     .replace(/\(\s*([0-9]+)\s*\/\s*([0-9]+)\s*\)/g, '($1/$2)')
+    .replace(/\(\s*\(([^()]+)\)\s*\)/g, '($1)')
+    .replace(/\(\s*\)/g, '')
     .replace(/\(\s+/g, '(')
     .replace(/\s+\)/g, ')')
     .replace(/\s{2,}/g, ' ')
@@ -574,11 +584,10 @@ export function formatReleaseDate(
   switch (format) {
     case 'long':
     case 'monthYear':
-      return `${fullM} ${year}`;
     case 'full':
-      return `${fullM} ${year} (Mes ${safeMonth})`;
+      return `${fullM} ${year}`;
     case 'badge':
-      return `Mes ${safeMonth} • ${shortM} ${year}`;
+      return `${fullM} ${year}`;
     case 'short':
     default:
       return `${shortM} ${year}`;

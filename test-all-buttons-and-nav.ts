@@ -46,7 +46,7 @@ function assert(condition: boolean, message: string) {
   }
 }
 
-function createPlayerArtist(overrides: Partial<Artist> = {}): Partial<Artist> {
+function createPlayerArtist(overrides: any = {}): any {
   return {
     id: overrides.id || 'artist_player_qa',
     name: overrides.name || 'Artista Protagonista QA',
@@ -227,7 +227,7 @@ export function runAllButtonsAndNavTests(): boolean {
       modalNavigated = true;
     };
     mockOnNavigateToCatalog();
-    assert(modalNavigated === true, '1.2 Callback onNavigateToCatalog de ReleaseConfirmationModal ejecutado');
+    assert(Boolean(modalNavigated), '1.2 Callback onNavigateToCatalog de ReleaseConfirmationModal ejecutado');
     assert(router.currentTab === 'studio' && router.studioSubTab === 'catalog', '1.2 ReleaseConfirmationModal transiciona limpiamente a StudioView -> Catalog');
 
     // 1.3 Navegación a 'catalog' desde ActiveCatalogCard ("Ver Catálogo Completo (N)")
@@ -237,7 +237,7 @@ export function runAllButtonsAndNavTests(): boolean {
       activeCardNavigated = true;
     };
     mockOnActiveCatalogCardNavigate('catalog');
-    assert(activeCardNavigated === true, '1.3 ActiveCatalogCard "Ver Catálogo Completo" ejecuta onNavigate("catalog")');
+    assert(Boolean(activeCardNavigated), '1.3 ActiveCatalogCard "Ver Catálogo Completo" ejecuta onNavigate("catalog")');
     assert(router.currentTab === 'studio' && router.studioSubTab === 'catalog', '1.3 ActiveCatalogCard abre la subpestaña "catalog"');
 
     // 1.4 Indexación de Canciones y Álbumes en StudioView -> Catalog

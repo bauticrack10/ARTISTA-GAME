@@ -42,7 +42,7 @@ export interface VectorAvatarPreset {
 export const AVATAR_PALETTES: AvatarPaletteOption[] = [
   {
     id: 'synth_violet',
-    label: 'Violeta Synth (Primario)',
+    label: 'Violeta Synth',
     val: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
     description: 'Atmósfera principal de estudio y neón nocturno'
   },
@@ -110,7 +110,7 @@ export const AVATAR_SYMBOLS: AvatarSymbolOption[] = [
 export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   {
     id: 'trap_king',
-    name: 'Trap King (Corona & Neón)',
+    name: 'Trap King',
     category: 'urban',
     color: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]',
     icon: 'crown',
@@ -118,7 +118,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   },
   {
     id: 'flow_street',
-    name: 'Hype Master (Fuego Callejero)',
+    name: 'Hype Master',
     category: 'urban',
     color: 'from-[#F97316] via-[#E11D48] to-[#9333EA]',
     icon: 'flame',
@@ -126,7 +126,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   },
   {
     id: 'studio_master',
-    name: 'Master Producer (Auriculares Studio)',
+    name: 'Master Producer',
     category: 'electronic',
     color: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
     icon: 'headphones',
@@ -134,7 +134,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   },
   {
     id: 'pop_icon',
-    name: 'Pop Icon (Destellos de Estudio)',
+    name: 'Pop Icon',
     category: 'pop',
     color: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
     icon: 'sparkles',
@@ -142,7 +142,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   },
   {
     id: 'synth_electro',
-    name: 'Club & Cyber Nights (Rayo Eléctrico)',
+    name: 'Club & Cyber Nights',
     category: 'electronic',
     color: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]',
     icon: 'zap',
@@ -150,7 +150,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   },
   {
     id: 'rock_legend',
-    name: 'Alt Rocker (Vinilo & Distorsión)',
+    name: 'Alt Rocker',
     category: 'rock',
     color: 'from-[#64748B] via-[#475569] to-[#1E293B]',
     icon: 'disc',
@@ -158,7 +158,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   },
   {
     id: 'lyrical_pro',
-    name: 'Poeta del Micrófono (Voz & Lírica)',
+    name: 'Poeta del Micrófono',
     category: 'artistic',
     color: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
     icon: 'mic',
@@ -166,7 +166,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
   },
   {
     id: 'gold_legacy',
-    name: 'Leyenda Platino (Oro Master)',
+    name: 'Leyenda Platino',
     category: 'legend',
     color: 'from-[#F59E0B] via-[#D97706] to-[#B45309]',
     icon: 'star',

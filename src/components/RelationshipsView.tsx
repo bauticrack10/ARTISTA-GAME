@@ -785,7 +785,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           title={`Disponible en Año ${shoutoutCheck.availableYear} • Mes ${shoutoutCheck.availableMonth}`}
                         >
                           <Clock className="w-3.5 h-3.5 text-[#94A3B8]/70" />
-                          <span>Cooldown ({shoutoutCheck.cooldownRemainingMonths}m)</span>
+                          <span>Cooldown: {shoutoutCheck.cooldownRemainingMonths}m</span>
                         </button>
                       )}
 
@@ -806,7 +806,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           title={`Disponible en Año ${dissCheck.availableYear} • Mes ${dissCheck.availableMonth}`}
                         >
                           <Lock className="w-3.5 h-3.5 text-[#94A3B8]/70" />
-                          <span>Cooldown ({dissCheck.cooldownRemainingMonths}m)</span>
+                          <span>Cooldown: {dissCheck.cooldownRemainingMonths}m</span>
                         </button>
                       )}
                     </div>

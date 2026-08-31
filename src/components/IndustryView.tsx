@@ -446,7 +446,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
             Representación, Sellos & Mercado de Fichajes
           </h1>
           <p className="text-sm text-[#94A3B8] mt-1 max-w-2xl">
-            Gestioná tus acuerdos discográficos, distribuí tu música en plataformas globales, monitoreá el radar de cazatalentos (A&R) y contratá managers por tiers de requisitos.
+            Gestioná tus acuerdos discográficos, distribuí tu música en plataformas globales, monitoreá el radar de cazatalentos A&R y contratá managers por tiers de requisitos.
           </p>
         </div>
 
@@ -550,7 +550,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                         {currentLabel.name}
                       </h3>
                       <span className="text-[11px] uppercase font-semibold px-2.5 py-0.5 rounded-[4px] bg-white/[0.06] border border-[#2A2E3D] text-[#F8FAFC]">
-                        {isCurrentArtistOwned ? 'Sello Propio (Autogestionado)' : isCurrentDistributor ? 'Distribuidora Digital' : currentLabel.type === 'major' ? 'Major Label' : currentLabel.type === 'indie' ? 'Sello Indie' : 'Sello Local / Boutique'}
+                        {isCurrentArtistOwned ? 'Sello Propio' : isCurrentDistributor ? 'Distribuidora Digital' : currentLabel.type === 'major' ? 'Major Label' : currentLabel.type === 'indie' ? 'Sello Indie' : 'Sello Local / Boutique'}
                       </span>
                     </div>
                     <p className="text-xs text-[#94A3B8] mt-1.5">
@@ -570,7 +570,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-semibold text-[#F8FAFC]">Compromiso de Álbumes de Estudio:</span>
                       <span className="font-semibold text-[#F8FAFC]">
-                        {activeContract.albumsDelivered} de {activeContract.albumsRequired} Entregados ({Math.min(100, Math.floor((activeContract.albumsDelivered / activeContract.albumsRequired) * 100))}%)
+                        {activeContract.albumsDelivered} de {activeContract.albumsRequired} Entregados • {Math.min(100, Math.floor((activeContract.albumsDelivered / activeContract.albumsRequired) * 100))}%
                       </span>
                     </div>
                     <div className="w-full bg-[#16181F] h-2 rounded-[9999px] overflow-hidden">
@@ -590,7 +590,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                   <div className="bg-[#0B0C10] border border-[#2A2E3D] p-3.5 rounded-[8px] space-y-1">
                     <span className="text-xs text-[#94A3B8] block">Regalías Artista</span>
                     <span className="text-lg font-semibold text-[#F8FAFC]">{activeContract.royaltyPercentage}%</span>
-                    <span className="text-[10px] text-[#94A3B8] block">({100 - activeContract.royaltyPercentage}% para la entidad)</span>
+                    <span className="text-[10px] text-[#94A3B8] block">{100 - activeContract.royaltyPercentage}% para la entidad</span>
                   </div>
 
                   <div className="bg-[#0B0C10] border border-[#2A2E3D] p-3.5 rounded-[8px] space-y-1">
@@ -616,7 +616,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
               <div className="space-y-4">
                 <div className="bg-[#0B0C10] border border-[#2A2E3D] p-5 rounded-[8px] space-y-2">
                   <h3 className="text-base font-semibold text-[#F8FAFC]">
-                    Artista 100% Independiente (Agente Libre)
+                    Artista 100% Independiente
                   </h3>
                   <p className="text-xs text-[#94A3B8] leading-relaxed">
                     Conservás el <strong className="text-[#F8FAFC]">100% de tus regalías de streaming</strong> y la propiedad absoluta de todos tus másters. Los costos de producción y marketing dependen exclusivamente de tus propios fondos.
@@ -731,15 +731,15 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                   <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D]">
                     <span className="text-[10px] text-[#94A3B8] block">Valor de Catálogo:</span>
                     <span className="font-semibold text-[#F8FAFC] text-sm">{formatMoney(valuation.catalogValuation)}</span>
-                    <span className="text-[10px] text-[#94A3B8] block">{valuation.catalogSongCount} temas ({valuation.catalogHitCount} hits)</span>
+                    <span className="text-[10px] text-[#94A3B8] block">{valuation.catalogSongCount} temas • {valuation.catalogHitCount} hits</span>
                   </div>
                   <div className="bg-[#0B0C10] p-3 rounded-[8px] border border-[#2A2E3D]">
                     <span className="text-[10px] text-[#94A3B8] block">Multiplicador de Firma:</span>
                     <span className="font-semibold text-[#8B5CF6] text-sm">
-                      {currentManager ? `Manager: +${Math.round((currentManager.negotiationSkill / 100) * 25)}%` : 'Base (Sin Manager)'}
+                      {currentManager ? `Manager: +${Math.round((currentManager.negotiationSkill / 100) * 25)}%` : 'Base • Sin Manager'}
                     </span>
                     <span className="text-[10px] text-[#94A3B8] block">
-                      {player.isProdigy ? '✨ Prodigio (+20%)' : 'Estándar de Industria'}
+                      {player.isProdigy ? '✨ Prodigio • +20%' : 'Estándar de Industria'}
                     </span>
                   </div>
                 </div>
@@ -762,10 +762,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
             <div className="flex flex-wrap gap-2 pt-1">
               {[
                 { id: 'all', label: 'Todas' },
-                { id: 'distributor', label: 'Distribuidoras (0k+)' },
-                { id: 'local', label: 'Sellos Locales (5k+)' },
-                { id: 'indie', label: 'Indies (25k+)' },
-                { id: 'major', label: 'Majors (100k+)' }
+                { id: 'distributor', label: 'Distribuidoras' },
+                { id: 'local', label: 'Sellos Locales' },
+                { id: 'indie', label: 'Indies' },
+                { id: 'major', label: 'Majors' }
               ].map((f) => (
                 <button
                   key={f.id}
@@ -891,7 +891,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                         <div>
                           <span className="text-[10px] text-[#94A3B8] block">Compromiso:</span>
                           <span className="font-semibold text-[#F8FAFC]">
-                            {dynamicOffer.albumsRequired > 0 ? `${dynamicOffer.albumsRequired} Álbum(es)` : 'Sin entregas'}
+                            {dynamicOffer.albumsRequired > 0 ? `${dynamicOffer.albumsRequired} Álbumes` : 'Sin entregas'}
                           </span>
                         </div>
                       </div>
@@ -916,7 +916,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                         className="w-full bg-[#0B0C10] text-[#64748B] font-medium text-xs py-2.5 rounded-[6px] border border-[#2A2E3D] cursor-not-allowed flex items-center justify-center gap-1.5"
                       >
                         <Lock className="w-3.5 h-3.5" />
-                        Bloqueado (Faltan {(opt.minListeners - player.stats.monthlyListeners).toLocaleString()} oyentes)
+                        Bloqueado • Faltan {(opt.minListeners - player.stats.monthlyListeners).toLocaleString()} oyentes
                       </button>
                     )}
                   </div>
@@ -937,7 +937,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                 <Radio className="w-5 h-5 text-[#8B5CF6]" />
                 <div>
                   <h2 className="text-lg font-semibold text-[#F8FAFC]">
-                    Radar de Cazatalentos & Scouting (A&R)
+                    Radar de Cazatalentos & Scouting A&R
                   </h2>
                   <p className="text-xs text-[#94A3B8]">
                     Monitoreo en tiempo real del interés de directivos discográficos nacionales e internacionales.
@@ -960,10 +960,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
             <div className="bg-[#0B0C10] p-5 rounded-[8px] border border-[#2A2E3D] space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
                 <span className="font-semibold text-[#F8FAFC]">
-                  Umbral de Fichaje Profesional (Mínimo 100.000 Oyentes Mensuales):
+                  Umbral de Fichaje Profesional • Mínimo 100.000 Oyentes Mensuales:
                 </span>
                 <span className="font-semibold text-[#F8FAFC]">
-                  {scoutRadar.monthlyListeners.toLocaleString()} / {scoutRadar.thresholdListeners.toLocaleString()} ({scoutRadar.progressPercentage}%)
+                  {scoutRadar.monthlyListeners.toLocaleString()} / {scoutRadar.thresholdListeners.toLocaleString()} • {scoutRadar.progressPercentage}%
                 </span>
               </div>
 
@@ -986,7 +986,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
               </p>
               <ul className="list-disc list-inside space-y-1 text-[11px]">
                 <li><strong className="text-[#F8FAFC]">Monitoreo Automático:</strong> Los directivos de A&R evalúan tu crecimiento orgánico y repercusión en charts.</li>
-                <li><strong className="text-[#F8FAFC]">Eventos Emergentes (Pop-ups):</strong> Al alcanzar el umbral de oyentes, se dispararán eventos narrativos competitivos con ofertas millonarias contrastadas.</li>
+                <li><strong className="text-[#F8FAFC]">Eventos Emergentes:</strong> Al alcanzar el umbral de oyentes, se dispararán eventos narrativos competitivos con ofertas millonarias contrastadas.</li>
                 <li><strong className="text-[#F8FAFC]">Autonomía:</strong> Siempre podés rechazar ofertas para mantener tu sello independiente o distribución abierta.</li>
               </ul>
             </div>
@@ -995,7 +995,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           {/* Active Scouting Labels List */}
           <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-6 space-y-4 shadow-md">
             <h3 className="text-base font-semibold text-[#F8FAFC] border-b border-[#2A2E3D] pb-3">
-              Sellos Discográficos en Seguimiento ({scoutRadar.scoutingLabels.length})
+              Sellos Discográficos en Seguimiento • {scoutRadar.scoutingLabels.length}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1185,7 +1185,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                         onClick={() => handleHireManager(m)}
                         className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold text-xs py-2.5 rounded-[6px] shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
                       >
-                        Contratar Representante ({formatMoney(m.requirements.hiringFee)})
+                        Contratar Representante • {formatMoney(m.requirements.hiringFee)}
                       </button>
                     ) : (
                       <button
@@ -1223,21 +1223,21 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                   <span className="text-[#94A3B8] block">Inversión Legal Inicial:</span>
                   <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.funds >= 25000 ? 'text-[#10B981]' : 'text-amber-400'}`}>
                     {player.stats.funds >= 25000 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    $25,000 (Tienes {formatMoney(player.stats.funds)})
+                    $25,000 • Saldo: {formatMoney(player.stats.funds)}
                   </span>
                 </div>
                 <div className="p-3 bg-[#16181F] rounded-[6px] border border-[#2A2E3D]">
                   <span className="text-[#94A3B8] block">Popularidad Mínima:</span>
                   <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.popularity >= 40 ? 'text-[#10B981]' : 'text-amber-400'}`}>
                     {player.stats.popularity >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    40/100 (Tienes {player.stats.popularity}/100)
+                    40/100 • Actual: {player.stats.popularity}/100
                   </span>
                 </div>
                 <div className="p-3 bg-[#16181F] rounded-[6px] border border-[#2A2E3D]">
                   <span className="text-[#94A3B8] block">Reputación en la Escena:</span>
                   <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.reputation >= 40 ? 'text-[#10B981]' : 'text-amber-400'}`}>
                     {player.stats.reputation >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    40/100 (Tienes {player.stats.reputation}/100)
+                    40/100 • Actual: {player.stats.reputation}/100
                   </span>
                 </div>
               </div>
@@ -1265,7 +1265,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                     : 'bg-[#16181F] text-[#64748B] border border-[#2A2E3D] cursor-not-allowed'
                 }`}
               >
-                Constituir Sello Discográfico ($25,000)
+                Constituir Sello Discográfico • $25,000
               </button>
             </div>
           </div>

@@ -138,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Selector de Tiempo Condensado */}
           <div
             className="flex items-center gap-2 bg-[#16181F] px-3 py-1.5 rounded-[8px] border border-[#2A2E3D] text-xs shadow-xs whitespace-nowrap"
-            title={`Fecha actual en la industria: ${monthName} ${currentYear} (${semesterShort})`}
+            title={`Fecha actual en la industria: ${monthName} ${currentYear} • ${semesterShort}`}
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 ring-2 ring-emerald-400/30" />
             <span className="font-bold text-[#F8FAFC]">
@@ -231,8 +231,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Energía Vital con micro-barra */}
           <div
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] border text-xs shadow-xs ${energyStyle.bg}`}
-            title={`Energía Vital del Artista: ${playerEnergy}% ${
-              playerEnergy < 85 ? '(Giras Bloqueadas: Requiere ≥85%)' : '(Giras Habilitadas)'
+            title={`Energía Vital del Artista: ${playerEnergy}% • ${
+              playerEnergy < 85 ? 'Giras Bloqueadas: Requiere ≥85%' : 'Giras Habilitadas'
             }`}
           >
             <Zap className={`w-3.5 h-3.5 shrink-0 ${energyStyle.icon}`} />

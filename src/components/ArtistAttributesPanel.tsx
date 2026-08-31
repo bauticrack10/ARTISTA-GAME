@@ -319,17 +319,17 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                         {isEnergyOptimal ? (
                           <>
                             <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                            <span>Apto Giras (≥85%)</span>
+                            <span>Apto Giras</span>
                           </>
                         ) : isEnergyMildFatigue ? (
                           <>
                             <AlertTriangle className="w-3 h-3 text-amber-400" />
-                            <span>Fatiga Leve (&lt;85%)</span>
+                            <span>Fatiga Leve</span>
                           </>
                         ) : (
                           <>
                             <AlertTriangle className="w-3 h-3 text-rose-400" />
-                            <span>⚠ Fatiga Alta (&lt;40%)</span>
+                            <span>Fatiga Alta</span>
                           </>
                         )}
                       </span>

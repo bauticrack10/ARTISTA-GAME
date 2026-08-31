@@ -31,7 +31,7 @@ function assert(condition: boolean, message: string) {
   }
 }
 
-function createPlayerArtist(overrides: Partial<Artist> = {}): Partial<Artist> {
+function createPlayerArtist(overrides: any = {}): any {
   return {
     id: overrides.id || 'artist_player_collab',
     name: overrides.name || 'El Jugador',

@@ -56,9 +56,13 @@ function createBaseWorld(): WorldState {
       Spain: { region: 'Spain', year: 2026, month: 12, entries: [] },
       Mexico: { region: 'Mexico', year: 2026, month: 12, entries: [] }
     },
-    historicalRecords: [],
+    records: [],
     awardsHistory: [],
     news: [],
+    socialFeed: [],
+    ecosystemContacts: {},
+    globalHistoryTimeline: [],
+    activeNarrativeChains: {},
     recentEventIdsHistory: [],
     activeBeefs: {},
     financialLedger: []

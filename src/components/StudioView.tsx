@@ -355,12 +355,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   // New Tracks for the album
   const [newTrackTitles, setNewTrackTitles] = useState<string[]>([
-    'Intro (Declaración)',
+    'Intro',
     'Fuego en las Calles',
     'Noches de Gloria',
     'Diamantes y Cicatrices',
     'Bajo las Luces del Neón',
-    'Outro (El Legado)'
+    'Outro'
   ]);
 
   const [notification, setNotification] = useState<string | null>(null);
@@ -424,12 +424,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
         setIncludedSingleIds([]);
         setAlbumProducer('');
         setNewTrackTitles([
-          'Intro (Declaración)',
+          'Intro',
           'Fuego en las Calles',
           'Noches de Gloria',
           'Diamantes y Cicatrices',
           'Bajo las Luces del Neón',
-          'Outro (El Legado)'
+          'Outro'
         ]);
       }
     }
@@ -772,8 +772,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
               <Calendar className={`w-4 h-4 ${isSinglesLimitReached ? 'text-rose-400' : 'text-[#8B5CF6]'}`} />
               <span>Cupo Anual de Singles:</span>
               <strong className="font-mono">{singlesThisYear} / {MAX_SINGLES}</strong>
-              <span className="text-[10px] text-[#94A3B8] font-normal hidden sm:inline">(Reinicia en Semestre 1 de cada año)</span>
-              {isSinglesLimitReached && <span className="text-[10px] text-rose-400 font-bold uppercase">(Tope alcanzado)</span>}
+              <span className="text-[10px] text-[#94A3B8] font-normal hidden sm:inline">• Reinicia cada año</span>
+              {isSinglesLimitReached && <span className="text-[10px] text-rose-400 font-bold uppercase">Tope alcanzado</span>}
             </div>
           </div>
 
@@ -781,7 +781,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
             <div className="bg-amber-950/50 border border-amber-500/40 text-amber-200 p-4 rounded-xl text-xs space-y-1">
               <div className="flex items-center gap-1.5 font-semibold text-sm text-amber-400">
                 <AlertCircle className="w-4 h-4 text-amber-400" />
-                Límite anual de singles alcanzado ({MAX_SINGLES}/{MAX_SINGLES})
+                Límite anual de singles alcanzado • {MAX_SINGLES}/{MAX_SINGLES}
               </div>
               <p className="text-amber-200/90 leading-relaxed">
                 Para mantener el realismo de la industria y no saturar a tus oyentes, el cupo de sencillos se reinicia cada nuevo año. Puedes avanzar de año con el botón superior, o grabar un <strong>Álbum / EP Completo</strong> en la pestaña contigua.
@@ -817,7 +817,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               {/* Sub-style Selector */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] mb-2">
-                  Dirección Sónica de la Era ({styleDerivation.primaryGenreName?.trim() || ''})
+                  Dirección Sónica de la Era • {styleDerivation.primaryGenreName?.trim() || ''}
                 </label>
                 <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
                   {styleDerivation.availableStyles.map(style => {
@@ -866,7 +866,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5 text-[#8B5CF6]" />
-                    Artista Invitado (Feat)
+                    Artista Invitado
                   </label>
                   {onOpenCollabModal && (
                     <button
@@ -885,7 +885,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   onChange={e => setSingleFeaturedArtist(e.target.value)}
                   className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
                 >
-                  <option value="">Sin artista invitado (Solista)</option>
+                  <option value="">Solista (Sin invitado)</option>
                   {sceneArtists.map(artist => {
                     const rel = player.relationships[artist.id];
                     const affinityText = rel?.affinity !== undefined ? (rel.affinity > 0 ? `+${rel.affinity}` : `${rel.affinity}`) : '0';
@@ -918,12 +918,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   onChange={e => setSingleProducer(e.target.value)}
                   className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
                 >
-                  <option value="">Autoproducción en Home Studio ($0)</option>
+                  <option value="">Autoproducción en Home Studio • $0</option>
                   {(Object.values(world.producers) as Producer[]).map(p => {
                     const lockInfo = getProducerLockStatus(p, player);
                     return (
                       <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#0B0C10] text-[#F8FAFC]">
-                        {lockInfo.isUnlocked ? '' : '🔒 '}{p.name} (+{p.qualityBoost}% Calidad) — ${p.costPerTrack.toLocaleString()} {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                        {lockInfo.isUnlocked ? '' : '🔒 '}{p.name} • +{p.qualityBoost}% Calidad — ${p.costPerTrack.toLocaleString()} {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
                       </option>
                     );
                   })}
@@ -961,7 +961,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
                   <div className="text-xs font-bold font-mono text-[#F59E0B]">
-                    {singleProdBudget === 0 ? '$0 (Home Studio)' : `$${singleProdBudget.toLocaleString('es-AR')}`}
+                    {singleProdBudget === 0 ? '$0 • Home Studio' : `$${singleProdBudget.toLocaleString('es-AR')}`}
                   </div>
                   <div className="space-y-1.5 pt-1">
                     <input
@@ -991,7 +991,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
                   <div className="text-xs font-bold font-mono text-emerald-400">
-                    {singleMktBudget === 0 ? '$0 (Difusión Orgánica)' : `$${singleMktBudget.toLocaleString('es-AR')}`}
+                    {singleMktBudget === 0 ? '$0 • Difusión Orgánica' : `$${singleMktBudget.toLocaleString('es-AR')}`}
                   </div>
                   <div className="space-y-1.5 pt-1">
                     <input
@@ -1022,13 +1022,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <span>Producción & Marketing:</span>
                   <span className="font-mono text-[#F8FAFC]">
                     {singleProdBudget === 0 && singleMktBudget === 0
-                      ? '$0 (Home Studio / Difusión Orgánica)'
+                      ? '$0 • Home Studio / Orgánico'
                       : `$${(singleProdBudget + singleMktBudget).toLocaleString()}`}
                   </span>
                 </div>
                 {singleProducer && (
                   <div className="flex items-center justify-between text-[#94A3B8]">
-                    <span>Productor ({world.producers[singleProducer]?.name}):</span>
+                    <span>Productor • {world.producers[singleProducer]?.name}:</span>
                     <span className="font-mono text-[#F8FAFC]">
                       +${singleProdFee.toLocaleString()}
                     </span>
@@ -1036,7 +1036,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 )}
                 {hasMusicVideo && (
                   <div className="flex items-center justify-between text-[#38BDF8]">
-                    <span>Videoclip ({selectedDirectorTier}):</span>
+                    <span>Videoclip • {selectedDirectorTier}:</span>
                     <span className="font-bold font-mono">
                       +${videoCost.toLocaleString()}
                     </span>
@@ -1390,11 +1390,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     onChange={e => setAlbumType(e.target.value as Album['type'])}
                     className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
                   >
-                    <option value="album">Álbum de Estudio (LP - min 6 temas)</option>
-                    <option value="ep">EP (Extended Play - min 4 temas)</option>
-                    <option value="mixtape">Mixtape Callejera (min 6 temas)</option>
-                    <option value="deluxe">Edición Deluxe (min 10 temas)</option>
-                    <option value="collab_album">Álbum Colaborativo (min 6 temas)</option>
+                    <option value="album">Álbum de Estudio LP • Mín. 6 temas</option>
+                    <option value="ep">EP Extended Play • Mín. 4 temas</option>
+                    <option value="mixtape">Mixtape Callejera • Mín. 6 temas</option>
+                    <option value="deluxe">Edición Deluxe • Mín. 10 temas</option>
+                    <option value="collab_album">Álbum Colaborativo • Mín. 6 temas</option>
                   </select>
                 </div>
 
@@ -1407,12 +1407,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     onChange={e => setAlbumProducer(e.target.value)}
                     className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
                   >
-                    <option value="">Autoproducido ($0)</option>
+                    <option value="">Autoproducido • $0</option>
                     {(Object.values(world.producers) as Producer[]).map(p => {
                       const lockInfo = getProducerLockStatus(p, player);
                       return (
                         <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#0B0C10] text-[#F8FAFC]">
-                          {lockInfo.isUnlocked ? '' : '🔒 '}{p.name} (+{p.qualityBoost}% Calidad) — ${p.costPerTrack.toLocaleString()}/track {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                          {lockInfo.isUnlocked ? '' : '🔒 '}{p.name} • +{p.qualityBoost}% Calidad — ${p.costPerTrack.toLocaleString()}/tema {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
                         </option>
                       );
                     })}
@@ -1425,7 +1425,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5 text-[#8B5CF6]" />
-                    Artista Invitado Principal (Feat)
+                    Artista Invitado Principal
                   </label>
                   {onOpenCollabModal && (
                     <button
@@ -1460,7 +1460,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               {/* Sub-style Selection for Album */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] mb-2">
-                  Sonoridad Conceptual de la Era ({styleDerivation.primaryGenreName})
+                  Sonoridad Conceptual de la Era • {styleDerivation.primaryGenreName}
                 </label>
                 <select
                   value={selectedAlbumSubgenreId}
@@ -1481,7 +1481,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               <div className="bg-[#0B0C10] p-4 rounded-xl border border-[#2A2E3D] space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC]">
-                    Incluir Singles Previos ({cleanCountTag(includedSingleIds.length, availablePreviousSingles.length, 'seleccionados')})
+                    Incluir Singles Previos • {cleanCountTag(includedSingleIds.length, availablePreviousSingles.length, 'seleccionados')}
                   </label>
                   <span className="text-[11px] text-[#94A3B8]">
                     Aportan streams y ventas iniciales
@@ -1517,7 +1517,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             <div className="min-w-0">
                               <span className="font-semibold truncate block">{single.title}</span>
                               <span className={`text-[10px] ${isChecked ? 'text-white/80' : 'text-[#94A3B8]'}`}>
-                                {singleReleaseDate} (Mes {single.releaseMonth || 1}) • {prodName}
+                                {singleReleaseDate} • {prodName}
                               </span>
                             </div>
                           </div>
@@ -1537,7 +1537,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC]">
-                    Tracklist Inédito ({totalAlbumTracksCount}/{minTracksRequired} canciones mínimas)
+                    Tracklist Inédito • {totalAlbumTracksCount}/{minTracksRequired} canciones mínimas
                   </label>
                   <button
                     type="button"
@@ -1678,7 +1678,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </div>
                 {albumProducer && (
                   <div className="flex items-center justify-between text-[#94A3B8]">
-                    <span>Productor ({world.producers[albumProducer]?.name}):</span>
+                    <span>Productor • {world.producers[albumProducer]?.name}:</span>
                     <span className="font-mono text-[#F8FAFC]">
                       +${albumProdFee.toLocaleString()}
                     </span>
@@ -1864,7 +1864,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             <div className="flex items-center gap-2 flex-wrap text-xs text-[#94A3B8]">
                               <span className="inline-flex items-center gap-1 text-[#CBD5E1]" title={albumReleaseDateFull}>
                                 <Calendar className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
-                                <span>Lanzamiento: <strong className="text-[#F8FAFC] font-semibold">{albumReleaseDateStr}</strong> <span className="text-[#94A3B8] font-normal">(Mes {album.releaseMonth || 1})</span></span>
+                                <span>Lanzamiento: <strong className="text-[#F8FAFC] font-semibold">{albumReleaseDateStr}</strong></span>
                               </span>
                               <span>•</span>
                               <span className="inline-flex items-center gap-1 text-cyan-300">
@@ -1914,7 +1914,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             >
                               <span className="flex items-center gap-1.5 font-medium">
                                 <Music2 className="w-3.5 h-3.5 text-[#8B5CF6]" />
-                                Tracklist oficial ({album.songIds.length} pistas)
+                                Tracklist oficial • {album.songIds.length} pistas
                               </span>
                               {isExpanded ? (
                                 <span className="flex items-center gap-1 text-[11px] text-[#94A3B8]">
@@ -1955,7 +1955,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                                       </div>
                                       <div className="flex items-center gap-3 text-[11px] text-[#94A3B8] font-mono shrink-0">
                                         <span className="text-[#CBD5E1]">
-                                          {trkDateStr} (Mes {trkReleaseMonth})
+                                          {trkDateStr}
                                         </span>
                                         <span className="text-cyan-300">
                                           {trkProducer}
@@ -2056,7 +2056,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           <div className="flex items-center gap-2 flex-wrap text-xs text-[#94A3B8]">
                             <span className="inline-flex items-center gap-1 text-[#CBD5E1]" title={releaseDateFull}>
                               <Calendar className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
-                              <span>Lanzamiento: <strong className="text-[#F8FAFC] font-semibold">{releaseDateStr}</strong> <span className="text-[#94A3B8] font-normal">(Mes {song.releaseMonth || 1})</span></span>
+                              <span>Lanzamiento: <strong className="text-[#F8FAFC] font-semibold">{releaseDateStr}</strong></span>
                             </span>
                             <span>•</span>
                             <span className="inline-flex items-center gap-1 text-cyan-300">

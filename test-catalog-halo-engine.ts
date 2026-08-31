@@ -6,7 +6,7 @@ import { Song, Artist } from './src/types';
 console.log('=== TEST SUITE: Catalog Halo Effect & Discovery Engine ===\n');
 
 // 1. Setup mock artist at different career stages
-const undergroundArtist: Artist = {
+const undergroundArtist: any = {
   id: 'artist_under',
   name: 'Underground MC',
   realName: 'MC Test',
@@ -32,7 +32,7 @@ const undergroundArtist: Artist = {
   historicalNotes: [], generationIndex: 1
 };
 
-const superstarArtist: Artist = {
+const superstarArtist: any = {
   id: 'artist_star',
   name: 'Superstar Global',
   realName: 'Star Test',
@@ -59,7 +59,7 @@ const superstarArtist: Artist = {
 };
 
 // 2. Setup songs: Flagship Hit, Featured Single, Deep Cut
-const hitSong: Song = {
+const hitSong: any = {
   id: 'song_hit',
   title: 'Hit Mundial',
   artistId: superstarArtist.id,
@@ -81,7 +81,7 @@ const hitSong: Song = {
   wentViral: true
 };
 
-const singleSong: Song = {
+const singleSong: any = {
   id: 'song_single',
   title: 'Segundo Single',
   artistId: superstarArtist.id,
@@ -103,7 +103,7 @@ const singleSong: Song = {
   wentViral: false
 };
 
-const deepCutSong: Song = {
+const deepCutSong: any = {
   id: 'song_deepcut',
   title: 'Track 9 (Deep Cut)',
   artistId: superstarArtist.id,

@@ -65,7 +65,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
         };
       case 'ep':
         return {
-          label: 'EP (Extended Play)',
+          label: 'EP • Extended Play',
           className: 'bg-cyan-950/70 border-cyan-500/50 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]',
           icon: Layers
         };
@@ -77,7 +77,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
         };
       case 'album':
         return {
-          label: 'Álbum de Estudio (LP)',
+          label: 'Álbum de Estudio • LP',
           className: 'bg-gradient-to-r from-violet-900/80 to-pink-900/80 border-pink-500/50 text-pink-200 shadow-[0_0_15px_rgba(236,72,153,0.35)]',
           icon: Layers
         };
@@ -204,7 +204,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
                 </span>
                 <span className="px-2.5 py-1 rounded-[6px] text-xs font-semibold bg-[#16181F] border border-[#2A2E3D] text-[#CBD5E1] flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-[#8B5CF6]" />
-                  <span>Lanzamiento: <strong className="text-[#F8FAFC]">{formatReleaseDate(data.releaseMonth, data.releaseYear, 'long')}</strong> <span className="text-[#94A3B8] font-normal">(Mes {data.releaseMonth || 1})</span></span>
+                  <span>Lanzamiento: <strong className="text-[#F8FAFC]">{formatReleaseDate(data.releaseMonth, data.releaseYear, 'long')}</strong></span>
                 </span>
               </div>
 
@@ -237,7 +237,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
                 {/* Hired Producer / Production Credit */}
                 <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 flex items-center gap-1">
                   <Sliders className="w-3 h-3 text-cyan-400" />
-                  <span>{data.producerName ? `Prod: ${data.producerName}` : 'Producción: Propia (Home Studio)'}</span>
+                  <span>{data.producerName ? `Prod: ${data.producerName}` : 'Producción: Propia • Home Studio'}</span>
                 </span>
 
                 {/* Featured Artists */}

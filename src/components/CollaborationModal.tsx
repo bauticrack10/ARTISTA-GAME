@@ -104,19 +104,19 @@ const COLLAB_FORMATS: FormatOption[] = [
     energyCost: 25,
     minBudgetSuggested: 6000,
     icon: Layers,
-    tag: 'EP (4 Tracks)',
+    tag: 'EP • 4 Tracks',
     gradient: 'from-amber-500/30 to-rose-500/30',
     badgeClass: 'bg-amber-950/60 border-amber-500/40 text-amber-300'
   },
   {
     id: 'collab_album',
     name: 'Álbum Colaborativo',
-    subtitle: 'Disco histórico conjunto ("Oasis" / "Watch the Throne")',
+    subtitle: 'Disco histórico conjunto de larga duración',
     tracksCount: 6,
     energyCost: 35,
     minBudgetSuggested: 14000,
     icon: Sparkles,
-    tag: 'LP Conjunto (6 Tracks)',
+    tag: 'LP Conjunto • 6 Tracks',
     gradient: 'from-[#EC4899]/30 via-[#8B5CF6]/30 to-[#10B981]/30',
     badgeClass: 'bg-gradient-to-r from-violet-900/80 to-pink-900/80 border-pink-500/50 text-pink-200'
   },
@@ -865,7 +865,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                       }}
                       className="w-full bg-[#16181F] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
                     >
-                      {Object.values(world.genres).map(g => (
+                      {Object.values(world.genres).map((g: any) => (
                         <option key={g.id} value={g.id}>
                           {g.name}
                         </option>

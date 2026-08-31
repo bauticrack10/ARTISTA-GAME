@@ -275,7 +275,7 @@ export function useEventModal({
 
     return {
       label: `Año ${year} • ${monthName}`,
-      badge: `Año ${year} • Mes ${month}/12 (${monthName})`,
+      badge: `Año ${year} • ${monthName} • Mes ${month}/12`,
       isYearEnd: false,
       monthName
     };
@@ -410,11 +410,11 @@ export function useEventModal({
       const unmetReasons: string[] = [];
 
       if (!isAffordable && costFunds > 0) {
-        unmetReasons.push(`Fondos insuficientes: Requiere ${formatMoney(costFunds)} (tienes ${formatMoney(playerFunds)})`);
+        unmetReasons.push(`Fondos insuficientes: Requiere ${formatMoney(costFunds)} • Disponibles: ${formatMoney(playerFunds)}`);
       }
 
       if (!hasEnoughEnergy && costEnergy > 0) {
-        unmetReasons.push(`Energía insuficiente: Requiere ${costEnergy}% (tienes ${playerEnergy}%)`);
+        unmetReasons.push(`Energía insuficiente: Requiere ${costEnergy}% • Disponibles: ${playerEnergy}%`);
       }
 
       if (choice.requiresStat) {
@@ -422,7 +422,7 @@ export function useEventModal({
         const statVal = (player?.stats as any)?.[statKey] ?? (player?.personality as any)?.[statKey] ?? 0;
         if (statVal < choice.requiresStat.min) {
           hasRequiredStat = false;
-          unmetReasons.push(`Requiere ${String(statKey)} ≥ ${choice.requiresStat.min} (tienes ${statVal})`);
+          unmetReasons.push(`Requiere ${String(statKey)} ≥ ${choice.requiresStat.min} • Nivel actual: ${statVal}`);
         }
       }
 

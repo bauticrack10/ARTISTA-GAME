@@ -82,7 +82,10 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2E3D] pb-3">
           <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
             <Crown className="w-4 h-4 text-amber-400" />
-            Vitrina de Trofeos de {player.name} ({player.awardsWon.length})
+            <span>Vitrina de Trofeos de {player.name}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono font-normal">
+              {player.awardsWon.length}
+            </span>
           </h2>
           <span className="text-xs text-[#94A3B8]">
             Reconocimientos oficiales acumulados en la carrera
@@ -137,7 +140,10 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
           <div>
             <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
-              Historial de Galas Anuales ({ceremonies.length})
+              <span>Historial de Galas Anuales</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] font-mono font-normal">
+                {ceremonies.length}
+              </span>
             </h2>
             <p className="text-xs text-[#94A3B8] mt-0.5">
               Registro histórico completo de nominaciones y ganadores en cada edición
@@ -296,7 +302,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                               {cat.nominees && cat.nominees.length > 0 && (
                                 <div className="pt-2 border-t border-[#2A2E3D] space-y-1.5">
                                   <span className="text-[10px] uppercase text-[#94A3B8] font-bold tracking-wider block">
-                                    Nominados ({cat.nominees.length})
+                                    Nominados • {cat.nominees.length}
                                   </span>
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                                     {cat.nominees.map((nom, nIdx) => {

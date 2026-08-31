@@ -120,7 +120,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         month: era.startMonth,
         type: 'era',
         title: `Transición a Era: "${era.name}"`,
-        description: `${era.highlightSummary} (Etapa ${era.stage} • Sonido: ${world.genres[era.genreFocus]?.name || era.genreFocus})`,
+        description: `${era.highlightSummary} • Etapa ${era.stage} • Sonido: ${world.genres[era.genreFocus]?.name || era.genreFocus}`,
         badge: `Era ${era.stage}`,
         badgeClass: 'bg-teal-900/40 text-teal-300 border-teal-500/40',
         icon: TrendingUp,
@@ -142,7 +142,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       month: album.releaseMonth,
       type: 'album',
       title: `Lanzamiento de Álbum: "${album.title}"`,
-      description: `Álbum producido en ${albumMonth} ${album.releaseYear} (${prodName}) con ${album.songIds.length} canciones (${album.type.toUpperCase()}). Calificación crítica: ${album.criticalScore}/100.`,
+      description: `Álbum producido en ${albumMonth} ${album.releaseYear} • ${prodName} con ${album.songIds.length} canciones • ${album.type.toUpperCase()}. Calificación crítica: ${album.criticalScore}/100.`,
       metrics: `${((album.totalStreams || 0) / 1000000).toFixed(1)}M streams • ${(album.firstWeekSales || 0).toLocaleString('es-AR')} ventas debut`,
       badge: album.id === bestAlbum?.id ? 'Mejor Disco ⭐' : 'Disco Oficial',
       badgeClass: album.id === bestAlbum?.id ? 'bg-amber-950/60 text-amber-300 border-amber-500/40 font-bold' : 'bg-indigo-900/40 text-indigo-300 border-indigo-500/40',
@@ -166,8 +166,8 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       year: single.releaseYear,
       month: single.releaseMonth,
       type: 'single',
-      title: `Single: "${single.title}"${hasVideo ? ' 🎬 (Videoclip Oficial)' : ''}`,
-      description: `Sencillo producido en ${singleMonth} ${single.releaseYear} (${prodName}). Calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" (Dir. ${mv.directorTier}, ${((mv.views || 0) / 1000).toFixed(0)}k vistas).` : ''}`,
+      title: `Single: "${single.title}"${hasVideo ? ' 🎬 • Videoclip Oficial' : ''}`,
+      description: `Sencillo producido en ${singleMonth} ${single.releaseYear} • ${prodName}. Calidad ${single.quality}/100. ${single.isClassic ? 'Consagrado como clásico.' : ''}${hasVideo && mv ? ` Incluye rodaje de videoclip oficial con concepto "${mv.concept}" • Dir. ${mv.directorTier} • ${((mv.views || 0) / 1000).toFixed(0)}k vistas.` : ''}`,
       metrics: `${((single.streamsTotal || 0) / 1000000).toFixed(1)}M streams${hasVideo && mv ? ` • ${((mv.views || 0) / 1000000).toFixed(1)}M vistas en video` : ''} • Pico #${single.peakPosition?.Global || '-'} Mundial`,
       badge: hasVideo ? '🎬 Videoclip Oficial' : isHit ? 'Hit Top 10 🔥' : 'Single',
       badgeClass: hasVideo ? 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40 font-bold' : isHit ? 'bg-purple-900/50 text-purple-300 border-purple-500/40 font-bold' : 'bg-purple-950/50 text-purple-300 border-purple-500/40',
@@ -183,7 +183,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       year: tour.year,
       month: tour.month,
       type: 'tour',
-      title: `Gira: "${cleanQuotes(tour.name)}" (${tour.tier.toUpperCase()})`,
+      title: `Gira: "${cleanQuotes(tour.name)}" • ${tour.tier.toUpperCase()}`,
       description: `Tour de ${tour.stops.length} fechas por ${tour.stops.map(s => s.city).slice(0, 3).join(', ')}...`,
       metrics: `${formatMoney(tour.grossRevenue || 0)} recaudación • ${(tour.totalTicketsSold || 0).toLocaleString('es-AR')} tickets vendidos`,
       badge: tour.id === bestTour?.id ? 'Mejor Gira ⭐' : 'Tour',
@@ -221,7 +221,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       month: 1,
       type: 'contract',
       title: `Firma de Contrato con ${label?.name || 'Sello Discográfico'}`,
-      description: `Acuerdo discográfico por ${player.activeContract.albumsRequired} álbumes (${player.activeContract.royaltyPercentage}% de regalías, adelanto de ${formatMoney(player.activeContract.signingBonus)}).`,
+      description: `Acuerdo discográfico por ${player.activeContract.albumsRequired} álbumes • ${player.activeContract.royaltyPercentage}% de regalías • Adelanto de ${formatMoney(player.activeContract.signingBonus)}.`,
       badge: 'Contrato',
       badgeClass: 'bg-emerald-900/40 text-emerald-300 border-emerald-500/40',
       icon: Building2,
@@ -369,7 +369,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             <div className="flex items-center gap-2">
               <Disc3 className="w-5 h-5 text-indigo-400" />
               <h2 className="text-base font-semibold text-[#F8FAFC]">
-                Mejor Disco Histórico (Obra Cumbre)
+                Mejor Disco Histórico • Obra Cumbre
               </h2>
             </div>
             <span className="text-[10px] uppercase font-bold bg-amber-950/60 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-[4px] shadow-2xs">
@@ -393,7 +393,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono text-[#94A3B8]">
-                      Lanzado en {formatReleaseDate(bestAlbum.releaseMonth, bestAlbum.releaseYear, 'long')} (Mes {bestAlbum.releaseMonth || 1})
+                      Lanzado en {formatReleaseDate(bestAlbum.releaseMonth, bestAlbum.releaseYear, 'long')}
                     </span>
                     <span className="text-xs font-bold px-2 py-0.5 rounded-[4px] bg-emerald-950/60 text-emerald-400 border border-emerald-500/40">
                       Crítica: {bestAlbum.criticalScore}/100
@@ -462,7 +462,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-amber-400" />
               <h2 className="text-base font-semibold text-[#F8FAFC]">
-                Mejor Gira Histórica (Mayor Recaudación)
+                Mejor Gira Histórica • Mayor Recaudación
               </h2>
             </div>
             <span className="text-[10px] uppercase font-bold bg-orange-950/60 text-orange-300 border border-orange-500/40 px-2.5 py-0.5 rounded-[4px] shadow-2xs">
@@ -475,7 +475,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono text-[#94A3B8]">
-                    Año {bestTour.year} (Mes {bestTour.month})
+                    Año {bestTour.year} • Mes {bestTour.month}
                   </span>
                   <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-[4px] bg-amber-950/60 text-amber-300 border border-amber-500/40">
                     Nivel: {bestTour.tier}
@@ -585,7 +585,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                     </div>
 
                     <span className="text-xs font-mono text-[#94A3B8]">
-                      {era.startYear} ({TimeSystem.getMonthName(era.startMonth)}) — {era.endYear ? `${era.endYear} (${TimeSystem.getMonthName(era.endMonth || 12)})` : 'Presente'}
+                      {TimeSystem.getMonthName(era.startMonth)} {era.startYear} — {era.endYear ? `${TimeSystem.getMonthName(era.endMonth || 12)} ${era.endYear}` : 'Presente'}
                     </span>
                   </div>
 
@@ -602,7 +602,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                     </div>
                     <span>•</span>
                     <span>
-                      Lanzamientos en esta Era: <strong className="text-[#8B5CF6] font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles{eraSingles.filter(s => s.musicVideo).length > 0 ? ` (${eraSingles.filter(s => s.musicVideo).length} videoclips 🎬)` : ''}</strong>
+                      Lanzamientos en esta Era: <strong className="text-[#8B5CF6] font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles{eraSingles.filter(s => s.musicVideo).length > 0 ? ` • ${eraSingles.filter(s => s.musicVideo).length} videoclips 🎬` : ''}</strong>
                     </span>
                   </div>
 
@@ -617,7 +617,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                           key={alb.id}
                           className="bg-indigo-950/60 text-indigo-300 text-xs px-2.5 py-1 rounded-[6px] border border-indigo-500/40 whitespace-nowrap font-semibold"
                         >
-                          📀 {alb.title} ({alb.criticalScore} pts)
+                          📀 {alb.title} • {alb.criticalScore} pts
                         </span>
                       ))}
                     </div>

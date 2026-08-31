@@ -78,7 +78,7 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
                   className="text-xs font-mono text-[#94A3B8]"
                   title={TimeSystem.getCalendarLabel(item.month, item.year)}
                 >
-                  Año {item.year} • {TimeSystem.getMonthName(item.month)} (M{item.month})
+                  Año {item.year} • {TimeSystem.getMonthName(item.month)}
                 </span>
               </div>
 

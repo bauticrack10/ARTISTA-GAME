@@ -562,7 +562,7 @@ export const INITIAL_ARTISTS: Record<string, Artist> = {
         highlightSummary: 'Sui Generis, Serú Girán, Clics Modernos y la inmortalidad musical argentina.'
       }
     ],
-    awardsWon: ['Grammy a la Excelencia Musical', 'Gardel de Oro (3 veces)', 'Personalidad Ilustre de la Cultura'],
+    awardsWon: ['Grammy a la Excelencia Musical', 'Gardel de Oro • 3 Veces', 'Personalidad Ilustre de la Cultura'],
     legacyScore: 100,
     isRetired: false,
     historicalNotes: ['Figura fundacional y tótem sagrado de la música popular en castellano.'],

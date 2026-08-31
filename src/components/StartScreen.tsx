@@ -165,7 +165,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs text-[#94A3B8] pl-9">
-                <span className="font-medium text-[#CBD5E1]">{savedGame.player.name} ({savedGame.player.country})</span>
+                <span className="font-medium text-[#CBD5E1]">{savedGame.player.name} • {savedGame.player.country}</span>
                 <span className="font-mono font-bold text-[#10B981]">${(savedGame.player.stats?.funds ?? 0).toLocaleString('es-AR')}</span>
               </div>
             </button>
@@ -175,7 +175,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
               className="w-full py-3.5 px-4 rounded-[10px] bg-[#16181F]/50 border border-[#2A2E3D]/50 text-[#64748B] opacity-60 text-xs flex items-center justify-center gap-2 cursor-not-allowed"
             >
               <Play className="w-3.5 h-3.5 opacity-40" />
-              <span>Continuar (Sin partida guardada)</span>
+              <span>Continuar • Sin partida guardada</span>
             </button>
           )}
 

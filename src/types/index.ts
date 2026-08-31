@@ -287,6 +287,7 @@ export interface Song {
   receptionRating: number;   // 1 to 5 stars or 0-100
   isClassic: boolean;
   wentViral: boolean;
+  isPlayerSong?: boolean;
   musicVideo?: MusicVideoData;
 }
 

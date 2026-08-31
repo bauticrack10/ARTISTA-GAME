@@ -562,7 +562,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   title="Generar nombre contextualizado para el país seleccionado"
                 >
                   <Shuffle className="w-3.5 h-3.5 text-[#06B6D4] group-hover:rotate-180 transition-transform duration-300" />
-                  <span>Aleatorio ({country})</span>
+                  <span>Aleatorio</span>
                 </button>
               </div>
 
@@ -605,7 +605,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       {ageCat.label}
                     </span>
                     <span className="text-[#F8FAFC] font-mono text-sm font-bold bg-[#0B0C10] px-2.5 py-0.5 rounded-[6px] border border-[#2A2E3D]">
-                      {age} Años <span className="text-[#94A3B8] text-xs font-sans">(Nacido en {2026 - age})</span>
+                      {age} Años <span className="text-[#94A3B8] text-xs font-sans font-normal">• Nacido en {2026 - age}</span>
                     </span>
                   </div>
                 </div>
@@ -630,7 +630,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       className="absolute left-0 text-left cursor-pointer hover:text-emerald-400"
                     >
                       <span className="font-bold text-[#F8FAFC]">16 Años</span>{' '}
-                      <span className="text-[#10B981] font-sans font-medium">(Joven Promesa)</span>
+                      <span className="text-[#10B981] font-sans font-medium">• Joven Promesa</span>
                     </span>
                     
                     <span
@@ -645,7 +645,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       className="absolute right-0 text-right cursor-pointer hover:text-amber-400"
                     >
                       <span className="font-bold text-[#F8FAFC]">35 Años</span>{' '}
-                      <span className="text-[#F59E0B] font-sans font-medium">(Veterano)</span>
+                      <span className="text-[#F59E0B] font-sans font-medium">• Veterano</span>
                     </span>
                   </div>
                 </div>
@@ -968,7 +968,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 {[
                   {
                     id: 'underground',
-                    label: 'Desde Cero (Underground)',
+                    label: 'Desde Cero',
                     desc: 'Home studio casero, $500 de ahorro y maquetas underground.',
                     badge: '$500 • 100 Oyentes • 150 Fans'
                   },
@@ -1067,7 +1067,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    Presets de Identidad Vectorial (Estilo Rápido)
+                    Presets de Identidad Vectorial
                   </label>
                   <span className="text-[11px] text-[#94A3B8]">Gradientes & Íconos Curados</span>
                 </div>
@@ -1165,7 +1165,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <div className="space-y-2.5 pt-2 border-t border-[#2A2E3D]">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    Paleta de Color de Fondo (Studio After Dark)
+                    Paleta de Color de Fondo
                   </label>
                   <span className="text-[11px] text-[#94A3B8]">Gradientes Obsidian & Neón</span>
                 </div>
@@ -1239,7 +1239,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                             : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8]'
                         }`}
                       >
-                        Probabilidad: 1 en 100.000 (0.001%)
+                        Probabilidad: 1 en 100.000
                       </span>
                     </div>
                     <p className={`text-xs mt-1 leading-relaxed ${isProdigy ? 'text-amber-200/90' : 'text-[#94A3B8]'}`}>
@@ -1311,7 +1311,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 {isProdigy && (
                   <div className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1.5 mx-auto shadow-xs">
                     <Crown className="w-3.5 h-3.5 text-amber-300" />
-                    <span>Prodigio Musical (x3 Stats)</span>
+                    <span>Prodigio Musical • Stats x3</span>
                   </div>
                 )}
 
@@ -1328,7 +1328,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Starting Stats Breakdown */}
               <div className="border-t border-[#2A2E3D] pt-4 space-y-2.5 text-xs">
                 <h3 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
-                  Condiciones Iniciales (Año 1)
+                  Condiciones Iniciales
                 </h3>
 
                 <div className="flex justify-between items-center bg-[#0B0C10] px-3.5 py-2.5 rounded-[8px] border border-[#2A2E3D]">

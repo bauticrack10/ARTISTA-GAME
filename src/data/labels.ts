@@ -18,7 +18,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
     commissionPct: 15, // 85% regalías artista / 15% comisión
     advancePayment: 0,
     features: [
-      'Cuota anual gratuita ($0/año)',
+      'Cuota anual gratuita: $0/año',
       '85% de regalías de streaming para el artista',
       '15% de comisión sobre ingresos por reproducción',
       '100% de propiedad y control de másters',
@@ -94,7 +94,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
     advancePayment: 15000, // Piso base de $15.000 escalable con streaming
     commissionPct: 30, // 70% regalías artista / 30% sello
     features: [
-      'Anticipo inicial dinámico ($15k - $45k+ según audiencia)',
+      'Anticipo inicial dinámico: $15k - $45k+ según audiencia',
       '70% de regalías discográficas para el artista',
       '85% de libertad creativa y conceptual',
       'Grabación y mezcla en estudios barriales de la escena',
@@ -119,7 +119,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
     advancePayment: 25000, // Piso base de $25.000 escalable
     commissionPct: 35, // 65% regalías artista / 35% sello
     features: [
-      'Anticipo dinámico escalado ($25k - $80k+)',
+      'Anticipo dinámico escalado: $25k - $80k+',
       '65% de regalías discográficas para el artista',
       '80% de libertad creativa',
       'Conexión con festivales locales y prensa especializada',
@@ -148,7 +148,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
       'Colectivo subterráneo de culto con respaldo financiero',
       '98% de control creativo y visión estética intacta',
       '80% de regalías discográficas directas',
-      'Anticipo boutique dinámico ($30k - $120k+)',
+      'Anticipo boutique dinámico: $30k - $120k+',
       'Máxima credibilidad en la cultura urbana callejera'
     ],
     scoutingCriteria: 'Colectivo subterráneo que recluta artistas con alta credibilidad barrial ofreciendo adelantos de autor y 80% de regalías.'
@@ -173,7 +173,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
       'Sello boutique de culto internacional de máxima jerarquía',
       '95% de libertad artística absoluta',
       '75% de regalías discográficas para el artista',
-      'Anticipo internacional dinámico ($75k - $350k+)',
+      'Anticipo internacional dinámico: $75k - $350k+',
       'Enfoque en obras maestras y alta trascendencia crítica'
     ],
     scoutingCriteria: 'Sello de culto internacional enfocado en obras de arte innovadoras y álbumes de alta trascendencia crítica con adelantos de primer nivel.'
@@ -198,7 +198,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
       'Sello independiente líder del movimiento urbano sudamericano',
       '65% de regalías discográficas directas para el artista',
       '82% de libertad creativa conceptual',
-      'Adelanto dinámico competitivo ($100k - $800k+)',
+      'Adelanto dinámico competitivo: $100k - $800k+',
       'Conexión directa con los mayores productores de la escena global'
     ],
     scoutingCriteria: 'Sello independiente líder del movimiento urbano argentino. Gran equilibrio entre adelantos de seis cifras, regalías justas y libertad conceptual.'
@@ -223,7 +223,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
       'Independencia masiva a escala de Major global',
       '70% de regalías directas para el artista',
       'Estrategia de vanguardia en streaming y giras mundiales de estadios',
-      'Mega anticipo escalado ($250k - $2.5M+)',
+      'Mega anticipo escalado: $250k - $2.5M+',
       'Retención estratégica del control por parte del artista'
     ],
     scoutingCriteria: 'Independencia a escala de Major. Máxima visión estratégica en streaming y mega adelantos millonarios reteniendo el control del artista.'
@@ -248,7 +248,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
     features: [
       'Dominio absoluto de los charts hispanohablantes',
       'Giras masivas por estadios y presencia en festivales de primera línea',
-      'Mega anticipo de siete cifras ($350k - $2.5M+)',
+      'Mega anticipo de siete cifras: $350k - $2.5M+',
       'Alianzas con marcas globales líderes y patrocinios comerciales'
     ],
     scoutingCriteria: 'Enfoque en dominar los charts hispanohablantes con giras masivas, festivales internacionales y adelantos millonarios.'
@@ -270,9 +270,9 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
     advancePayment: 500000, // Piso base de $500.000 escalable a $2M-$5M+
     commissionPct: 78, // 22% artista
     features: [
-      'Presupuestos masivos de marketing ($150k - $350k por lanzamiento)',
+      'Presupuestos masivos de marketing: $150k - $350k por lanzamiento',
       'Rotación radial y playlists editoriales mundiales garantizadas',
-      'Adelanto estelar millonario ($500k - $4.5M+)',
+      'Adelanto estelar millonario: $500k - $4.5M+',
       'Infraestructura global de distribución y sincronizaciones de Sony Music'
     ],
     scoutingCriteria: 'Busca artistas con más de 100k oyentes con alto potencial de rotación radial y hits comerciales globales con adelantos multimillonarios.'
@@ -296,7 +296,7 @@ export const INITIAL_LABELS: Record<string, RecordLabel> = {
     features: [
       'La mayor multinacional discográfica del planeta',
       'Colocación prioritaria número 1 en playlists editoriales globales',
-      'Super anticipo récord mundial ($750k - $6.0M+)',
+      'Super anticipo récord mundial: $750k - $6.0M+',
       'Campañas globales de prensa, sincronizaciones en cine y televisión mundial'
     ],
     scoutingCriteria: 'Grandes presupuestos de marketing mundial y adelantos récord de la industria para artistas estelares a cambio de exclusividad discográfica.'

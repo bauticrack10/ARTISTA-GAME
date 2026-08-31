@@ -3,7 +3,7 @@ import { Producer, Manager } from '../types';
 export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_nico_homestudio: {
     id: 'prod_nico_homestudio',
-    name: "Nico 'Home Studio' (Beatmaker de Barrio)",
+    name: "Nico 'Home Studio'",
     tagline: 'Grabando en la pieza',
     signatureStyle: '808s caseros, compresión cruda, loops directos y ritmo barrial accesible',
     genreSpecialties: ['trap_latino', 'hip_hop_rap', 'reggaeton', 'drill'],
@@ -18,7 +18,7 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   },
   prod_lauty_sample: {
     id: 'prod_lauty_sample',
-    name: "Lauty 'Sample Digger' (Productor Amateur)",
+    name: "Lauty 'Sample Digger'",
     tagline: 'Crate digging & FL Studio',
     signatureStyle: 'Samples de vinilo antiguos, melodías nostálgicas y texturas lo-fi con onda',
     genreSpecialties: ['hip_hop_rap', 'trap_latino', 'r_and_b_soul', 'rock_alternativo'],
@@ -33,7 +33,7 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   },
   prod_club_hustle: {
     id: 'prod_club_hustle',
-    name: 'Club Hustle (Productor Underground)',
+    name: 'Club Hustle',
     tagline: 'In the basement',
     signatureStyle: 'Beats rápidos de bajo presupuesto pero mucha actitud callejera',
     genreSpecialties: ['trap_latino', 'drill', 'hip_hop_rap'],
@@ -213,7 +213,7 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
   // Tier 3: Nacional / Consagrado
   mgr_federico_lauria: {
     id: 'mgr_federico_lauria',
-    name: 'Federico Lauria (Dale Play Management)',
+    name: 'Federico Lauria',
     tier: 'national',
     reputation: 94,
     negotiationSkill: 92,
@@ -253,7 +253,7 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
   // Tier 4: Élite / Global Visionary
   mgr_noah_assad: {
     id: 'mgr_noah_assad',
-    name: 'Noah Assad (Rimas Visionary)',
+    name: 'Noah Assad',
     tier: 'elite_global',
     reputation: 98,
     negotiationSkill: 98,

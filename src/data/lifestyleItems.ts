@@ -17,7 +17,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
   },
   {
     id: 'starter_acoustic_panel',
-    name: 'Paneles Fonoabsorbentes de Habitación (Set 12u)',
+    name: 'Paneles Fonoabsorbentes de Habitación',
     category: 'home_studio',
     price: 110,
     monthlyUpkeep: 0,
@@ -115,7 +115,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
   },
   {
     id: 'starter_studio_monitors',
-    name: 'Monitores de Estudio Campo Cercano (Par 4")',
+    name: 'Monitores de Estudio de Campo Cercano',
     category: 'home_studio',
     price: 350,
     monthlyUpkeep: 15,
@@ -281,7 +281,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
   },
   {
     id: 'vehicle_supercar',
-    name: 'Superdeportivo de Alta Gama (Exotic Car)',
+    name: 'Superdeportivo de Alta Gama',
     category: 'vehicles',
     price: 280000,
     monthlyUpkeep: 3200,
@@ -327,7 +327,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
   },
   {
     id: 'coach_vocal_elite',
-    name: 'Coach Vocal de Élite (Técnica & Resistencia)',
+    name: 'Coach Vocal de Élite',
     category: 'coaching',
     price: 7500,
     monthlyUpkeep: 150,

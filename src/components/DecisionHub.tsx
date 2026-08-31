@@ -348,7 +348,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               }`}>
                 {hasFundsForRest
                   ? '+50 Energía • Sin Salto de Turno'
-                  : `Fondos Insuficientes ($${currentFunds.toLocaleString('es-AR')} / $${REST_COST.toLocaleString('es-AR')})`}
+                  : 'Fondos Insuficientes'}
               </span>
             </div>
 
@@ -358,7 +358,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 Descanso & Bienestar
               </h3>
               <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
-                Retiro de relax para recuperar vitalidad inmediata (+50) sin consumir turnos del calendario.
+                Retiro de relax para recuperar vitalidad inmediata sin consumir turnos del calendario.
               </p>
             </div>
 
@@ -369,7 +369,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   <BatteryCharging className="w-3 h-3 text-emerald-400" />
                   Recarga Inmediata:
                 </span>
-                <span className="font-bold text-emerald-400">+50 Vitalidad (Tope 100)</span>
+                <span className="font-bold text-emerald-400">+50 Vitalidad</span>
               </div>
               <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
                 <span className="text-[#94A3B8] flex items-center gap-1">

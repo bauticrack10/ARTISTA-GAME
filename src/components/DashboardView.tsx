@@ -236,7 +236,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       rounded="rounded-[4px]"
                     />
                     <span className="text-[10px] font-bold text-[#F8FAFC] truncate">
-                      {preset.name.split('(')[0].trim()}
+                      {preset.name}
                     </span>
                   </button>
                 ))}
@@ -280,7 +280,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             {/* Gradient Palette Selection */}
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
-                Paleta Cromática (Studio After Dark)
+                Paleta Cromática
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
@@ -302,7 +302,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         {isSelected && <Check className="w-3 h-3 text-white" />}
                       </div>
                       <span className="text-[10px] font-semibold text-[#F8FAFC] truncate">
-                        {p.label.split('(')[0].trim()}
+                        {p.label}
                       </span>
                     </button>
                   );

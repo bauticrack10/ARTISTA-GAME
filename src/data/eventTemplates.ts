@@ -19,7 +19,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_record_obsessive',
         text: 'Pasar 48 horas seguidas grabando y puliendo cada toma',
-        consequencesDescription: '+Credibilidad artística (+4), +Reputación (+3), -15 Energía',
+        consequencesDescription: '+4 Credibilidad artística, +3 Reputación, -15 Energía',
         apply: () => ({
           narrativeText: 'Quedaste exhausto pero las voces suenan con una crudeza y emoción auténticas.',
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) },
@@ -31,7 +31,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_record_spontaneous',
         text: 'Grabar en una sola toma y subir un adelanto a redes',
-        consequencesDescription: '+Hype (+12), +Primeros Fans (+80), -5 Energía',
+        consequencesDescription: '+12 Hype, +80 Primeros Fans, -5 Energía',
         apply: () => ({
           narrativeText: 'El adelanto causó curiosidad en redes. Algunos amigos y desconocidos comenzaron a compartirlo en historias.',
           hypeChange: 12,
@@ -66,7 +66,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_collab_beatmaker',
         text: 'Elegir su mejor instrumental y ofrecerle crédito al 50%',
-        consequencesDescription: '+Conexión con productor, +Hype (+10), +Relación positiva',
+        consequencesDescription: '+Conexión con productor, +10 Hype, +Relación positiva',
         apply: () => ({
           narrativeText: 'La química entre tu voz y su base fue perfecta. Nació una alianza sonora prometedora.',
           hypeChange: 10,
@@ -103,7 +103,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_give_it_all',
         text: 'Dejar el alma en el escenario y saltar con el público',
-        consequencesDescription: '+Carisma en vivo, +Fans fieles (+150), +$80 de gorra, -12 Energía',
+        consequencesDescription: '+Carisma en vivo, +150 Fans fieles, +$80 de gorra, -12 Energía',
         apply: () => ({
           narrativeText: 'La energía fue contagiosa. Las pocas personas presentes terminaron saltando y pidiéndote fotos al bajar.',
           fansChange: 150,
@@ -142,7 +142,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_diy_distro',
         text: 'Subirla a todas las plataformas y compartirla en grupos y foros',
-        consequencesDescription: '+Primeros oyentes reales (+350), +Hype inicial (+10), +1,500 Streams',
+        consequencesDescription: '+350 Primeros oyentes reales, +10 Hype inicial, +1,500 Streams',
         apply: () => ({
           narrativeText: 'Tu canción empezó a sonar en parlantes de amigos y playlists curadas por la comunidad.',
           fansChange: 250,
@@ -155,7 +155,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         id: 'c_music_video_lowbudget',
         text: 'Filmar un video casero con celular y estética VHS en las calles',
         costFunds: 80,
-        consequencesDescription: '-$80 Fondos, +Identidad estética, +Hype (+18), +Fans (+450), +3,800 Streams',
+        consequencesDescription: '-$80 Fondos, +Identidad estética, +18 Hype, +450 Fans, +3,800 Streams',
         apply: () => ({
           narrativeText: 'El video capturó la vibra callejera y auténtica de tu barrio. Varios canales de música independiente lo repostearon.',
           fundsChange: -80,
@@ -354,7 +354,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         {
           id: 'c_reject_all_independent',
           text: 'Rechazar todas las ofertas: Permanecer 100% Agente Libre e Independiente',
-          consequencesDescription: '+100% Regalías y Másters propios, +Credibilidad Artística (+8), +Fidelidad de Fans (+8)',
+          consequencesDescription: '+100% Regalías y Másters propios, +8 Credibilidad Artística, +8 Fidelidad de Fans',
           apply: () => ({
             narrativeText: `Rechazaste todos los cheques millonarios sobre la mesa. La noticia de tu rechazo a las Majors corrió por foros y medios, consagrándote como un referente absoluto de integridad.`,
             statChanges: {
@@ -424,7 +424,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         {
           id: 'c_reject_boutique',
           text: 'Continuar 100% autogestionado en el underground',
-          consequencesDescription: '+Fidelidad de Fans (+5), +Credibilidad (+3)',
+          consequencesDescription: '+5 Fidelidad de Fans, +3 Credibilidad',
           apply: () => ({
             narrativeText: 'Decidiste seguir costeando tus propios proyectos para no rendir cuentas a ningún colectivo.',
             statChanges: {
@@ -1247,7 +1247,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_rage_quit_live_tv',
         text: 'Levantarte, sacarte el micrófono y abandonar el estudio en vivo',
-        consequencesDescription: '+28 Hype de rebeldía callejera, +Meme viral en redes (+Oyentes y Streams), -6 Reputación en medios masivos',
+        consequencesDescription: '+28 Hype de rebeldía callejera, +Meme viral en redes (más oyentes y streams), -6 Reputación en medios masivos',
         apply: () => ({
           narrativeText:
             'El clip de tu salida furiosa se convirtió en el video más visto de la semana. Los jóvenes aplaudieron tu dignidad y autenticidad sin filtro.',
@@ -1313,7 +1313,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
     choices: (ctx) => [
       {
         id: 'c_beef_respond_stories',
-        text: 'Responder con capturas y fuego en historias de Instagram (+Hype, riesgo de beef)',
+        text: 'Responder con capturas y fuego en historias de Instagram • +Hype y riesgo de beef',
         consequencesDescription: '+22 Hype, -4 Disciplina, Escala el conflicto a guerra mediática',
         apply: () => ({
           narrativeText:
@@ -1368,7 +1368,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       },
       {
         id: 'c_beef_ignore_superiority',
-        text: 'Ignorarlo por completo y enfocarte en tu disciplina y lanzamientos (+Disciplina, stat quo)',
+        text: 'Ignorarlo por completo y enfocarte en tu disciplina y lanzamientos • +Disciplina',
         consequencesDescription: '+6 Disciplina, +6 Credibilidad artística, Sin desgaste ni show mediático',
         apply: () => ({
           narrativeText:

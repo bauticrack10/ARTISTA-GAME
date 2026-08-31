@@ -110,7 +110,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
       fatigue: '-40% Energía'
     },
     world_tour: {
-      title: 'World Stadium Tour (Gira Mundial)',
+      title: 'World Stadium Tour',
       minPop: 85,
       desc: 'Dominio transcontinental por América Latina, Estados Unidos y Europa con producción planetaria.',
       estRevenue: '$5,000,000 - $20,000,000',
@@ -164,7 +164,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             {tourGates.hasCatalog ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
-              <span className="text-[10px] uppercase font-bold text-rose-400">(Mín 2S)</span>
+              <span className="text-[10px] uppercase font-bold text-rose-400">Mín. 2S</span>
             )}
           </div>
 
@@ -182,7 +182,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             {tourGates.hasAudience ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
-              <span className="text-[10px] uppercase font-bold text-rose-400">(Mín 1K)</span>
+              <span className="text-[10px] uppercase font-bold text-rose-400">Mín. 1K</span>
             )}
           </div>
 
@@ -200,7 +200,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             {tourGates.hasEnergy ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
-              <span className="text-[10px] uppercase font-bold text-rose-400">(Mín {MIN_TOUR_ENERGY}%)</span>
+              <span className="text-[10px] uppercase font-bold text-rose-400">Mín. {MIN_TOUR_ENERGY}%</span>
             )}
           </div>
         </div>
@@ -213,7 +213,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
           <div className="space-y-2 flex-1">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-rose-200 text-sm">
-                Compuertas de Gira Bloqueadas ({tourGates.requirements.filter((r) => r.met).length}/3 Requisitos)
+                Compuertas de Gira Bloqueadas • {tourGates.requirements.filter((r) => r.met).length}/3 Requisitos
               </h3>
               <span className="text-[11px] font-mono text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-500/30">
                 Giras Inhabilitadas
@@ -304,7 +304,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
                 const isUnlocked = availableTiers.includes(t);
                 return (
                   <option key={t} value={t} disabled={!isUnlocked} className="bg-[#0B0C10] text-[#F8FAFC]">
-                    {tierDetails[t].title} {isUnlocked ? '' : `(Requiere Pop ${tierDetails[t].minPop}+)`}
+                    {tierDetails[t].title} {isUnlocked ? '' : `• Requiere Popularidad ${tierDetails[t].minPop}+`}
                   </option>
                 );
               })}
@@ -365,7 +365,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
       <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-6 space-y-4 shadow-sm">
         <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2 border-b border-[#2A2E3D] pb-3">
           <MapPin className="w-4 h-4 text-[#06B6D4]" />
-          Historial de Giras Realizadas ({playerTours.length})
+          Historial de Giras Realizadas • {playerTours.length}
         </h2>
 
         {playerTours.length === 0 ? (

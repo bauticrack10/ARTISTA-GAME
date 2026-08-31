@@ -222,7 +222,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
                     {/* Fecha */}
                     <div className="col-span-3 sm:col-span-2 font-mono text-[11px] text-[#94A3B8] flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
-                      <span>{tx.year} (M{tx.month})</span>
+                      <span>{formatReleaseDate(tx.month, tx.year, 'short')}</span>
                     </div>
 
                     {/* Concepto */}
