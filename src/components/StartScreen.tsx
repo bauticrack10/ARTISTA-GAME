@@ -162,7 +162,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
                   </span>
                 </div>
                 <span className="text-[11px] font-mono font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 px-2.5 py-0.5 rounded-full">
-                  {TimeSystem.getMonthName(savedGame.month)} {savedGame.year} • Año {savedGame.careerYear}
+                  {TimeSystem.getMonthName(savedGame.month || 1)} {savedGame.year || 2026} • Año {savedGame.careerYear || 1}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs text-[#94A3B8] pl-9">

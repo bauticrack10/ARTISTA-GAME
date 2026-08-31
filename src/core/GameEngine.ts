@@ -132,8 +132,71 @@ export class GameEngine {
       };
       this.world.artists[this.playerId] = playerArtist;
     } else {
-      // Default to picking an initial player or creating one
+      // Default to creating an initial default player
       this.playerId = 'artist_player_1';
+      const playerArtist: Artist = {
+        id: this.playerId,
+        name: 'Mi Artista',
+        realName: 'Nombre Real',
+        isPlayer: true,
+        avatarColor: 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]',
+        avatarIcon: 'mic',
+        country: 'Argentina',
+        city: 'Buenos Aires',
+        birthYear: 2008,
+        careerStartYear: 2026,
+        mainGenreId: 'trap_latino',
+        subGenreIds: ['sub_trap_underground'],
+        personality: {
+          creativity: 26,
+          ambition: 24,
+          discipline: 24,
+          charisma: 24,
+          skill: 26,
+          commercialAppeal: 22,
+          originality: 25,
+          riskTolerance: 24,
+          sociability: 22,
+          independence: 24
+        },
+        stats: {
+          popularity: 20,
+          reputation: 50,
+          artisticCredibility: 60,
+          energy: 100,
+          monthlyListeners: 0,
+          totalStreams: 0,
+          funds: 4500,
+          fansCount: 12000,
+          fanbaseLoyalty: 75,
+          hype: 55
+        },
+        careerStage: 'Underground',
+        labelId: null,
+        managerId: null,
+        activeContract: null,
+        relationships: {},
+        eras: [
+          {
+            id: `era_${this.playerId}_debut`,
+            name: 'Los Primeros Pasos & Grabaciones Caseras',
+            startYear: 2026,
+            startMonth: 1,
+            genreFocus: 'trap_latino',
+            stage: 'Underground',
+            highlightSummary: 'Inicios del camino artístico y primeras grabaciones en el estudio.'
+          }
+        ],
+        awardsWon: [],
+        legacyScore: 12,
+        isRetired: false,
+        historicalNotes: ['Comenzó su carrera artística en 2026.'],
+        generationIndex: 1,
+        influences: [],
+        lifestyleUpgrades: [],
+        financialLedger: []
+      };
+      this.world.artists[this.playerId] = playerArtist;
     }
 
     // Sincronizar y asegurar coherencia matemática de la audiencia inicial del jugador
