@@ -1842,12 +1842,14 @@ export class GameEngine {
   public resolveCurrentEventChoice(choiceIndex: number): EventOutcome | null {
     if (!this.currentEvent) return null;
     const player = this.getPlayer();
-    const choices = this.currentEvent.choices({
+    const context: EventContext = {
       player,
       world: this.world,
       currentYear: this.world.currentYear,
-      currentMonth: this.world.currentMonth
-    });
+      currentMonth: this.world.currentMonth,
+      eventYear: this.currentEvent.eventYear
+    };
+    const choices = this.currentEvent.choices(context);
 
     const chosen = choices[choiceIndex];
     if (!chosen) return null;
@@ -1860,12 +1862,7 @@ export class GameEngine {
       return null;
     }
 
-    const outcome = chosen.apply({
-      player,
-      world: this.world,
-      currentYear: this.world.currentYear,
-      currentMonth: this.world.currentMonth
-    });
+    const outcome = chosen.apply(context);
 
     // Apply outcome deltas with Prodigy Multiplier if active
     const prodigyMultiplier = player.isProdigy ? (player.prodigyMultiplier || 3) : 1;
@@ -1887,6 +1884,8 @@ export class GameEngine {
         });
       }
     }
+
+    // 2. Primary Stats & Personality Deltas
     if (outcome.hypeChange) player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + (outcome.hypeChange > 0 ? outcome.hypeChange * prodigyMultiplier : outcome.hypeChange)));
     if (outcome.popularityChange) player.stats.popularity = Math.max(0, Math.min(100, player.stats.popularity + (outcome.popularityChange > 0 ? outcome.popularityChange * prodigyMultiplier : outcome.popularityChange)));
     if (outcome.fansChange) player.stats.fansCount = Math.max(0, player.stats.fansCount + (outcome.fansChange > 0 ? outcome.fansChange * prodigyMultiplier : outcome.fansChange));
@@ -1907,6 +1906,7 @@ export class GameEngine {
         }
       }
     }
+
     if (outcome.personalityChanges) {
       for (const [k, v] of Object.entries(outcome.personalityChanges)) {
         if (typeof v === 'number' && (player.personality as any)[k] !== undefined) {
@@ -1931,12 +1931,16 @@ export class GameEngine {
         }
       }
     }
+
+    // 3. Contracts & Managers
     if (outcome.newContract) {
       this.signContract(outcome.newContract);
     }
     if (outcome.newManagerId) {
       this.hireManager(outcome.newManagerId);
     }
+
+    // 4. Relationships & Ecosystem NPCs
     if (outcome.relationshipChanges) {
       for (const rc of outcome.relationshipChanges) {
         const target = this.world.artists[rc.targetArtistId];
@@ -1956,9 +1960,118 @@ export class GameEngine {
         });
       }
     }
+
+    // 5. Timeline Entry
+    if (outcome.timelineEntry) {
+      if (!this.world.globalHistoryTimeline) this.world.globalHistoryTimeline = [];
+      const timelineText = typeof outcome.timelineEntry === 'string' ? outcome.timelineEntry : outcome.timelineEntry.text;
+      const timelineCat = typeof outcome.timelineEntry === 'object' && outcome.timelineEntry.category ? outcome.timelineEntry.category : (this.currentEvent.category || 'event');
+      this.world.globalHistoryTimeline.unshift({
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        text: timelineText,
+        category: timelineCat
+      });
+    }
+
+    // 6. Tour Impact
+    if (outcome.tourImpact) {
+      if (outcome.tourImpact.cancelActiveTour || outcome.tourImpact.cancelCurrentTour) {
+        this.world.tours = this.world.tours.filter(t => t.artistId !== player.id);
+      }
+      if (outcome.tourImpact.revenueMultiplier) {
+        const playerTours = this.world.tours.filter(t => t.artistId === player.id);
+        for (const t of playerTours) {
+          t.grossRevenue = Math.floor(t.grossRevenue * outcome.tourImpact.revenueMultiplier);
+          t.netArtistProfit = Math.floor(t.netArtistProfit * outcome.tourImpact.revenueMultiplier);
+        }
+      }
+      if (outcome.tourImpact.hypeBonus) {
+        player.stats.hype = Math.min(100, player.stats.hype + outcome.tourImpact.hypeBonus);
+      }
+      if (outcome.tourImpact.bonusEnergyCost) {
+        player.stats.energy = Math.max(0, player.stats.energy - outcome.tourImpact.bonusEnergyCost);
+      }
+    }
+
+    // 7. Chart Impact
+    if (outcome.chartImpact) {
+      const boostPct = outcome.chartImpact.streamingBoostPct || (outcome.chartImpact.boostRecentSong ? 0.3 : 0);
+      const penaltyPct = outcome.chartImpact.penaltyPct || (outcome.chartImpact.penaltyAllSongsMultiplier !== undefined ? (1 - outcome.chartImpact.penaltyAllSongsMultiplier) : 0);
+
+      const playerSongs = Object.values(this.world.songs).filter(s => s.artistId === player.id);
+      if (boostPct > 0) {
+        const targetSong = outcome.chartImpact.targetSongId
+          ? this.world.songs[outcome.chartImpact.targetSongId]
+          : playerSongs[playerSongs.length - 1];
+        if (targetSong) {
+          const streamBoost = Math.floor((targetSong.streamsLastMonth || 50000) * boostPct);
+          targetSong.streamsTotal += streamBoost;
+          targetSong.streamsLastMonth += streamBoost;
+        }
+        player.stats.hype = Math.min(100, player.stats.hype + Math.floor(boostPct * 50));
+      }
+      if (penaltyPct > 0) {
+        for (const s of playerSongs) {
+          s.streamsLastMonth = Math.floor(s.streamsLastMonth * (1 - penaltyPct));
+        }
+      }
+    }
+
+    // 8. Career Impact
+    if (outcome.careerImpact) {
+      if (outcome.careerImpact.breakContract || outcome.careerImpact.leaveLabel) {
+        player.labelId = null;
+        player.activeContract = null;
+      }
+      if (outcome.careerImpact.fireManager) {
+        player.managerId = null;
+      }
+      if (outcome.careerImpact.stageOverride) {
+        player.careerStage = outcome.careerImpact.stageOverride;
+      }
+    }
+
+    // 9. Narrative Chains Management
+    const chainNextId = outcome.chainNextEventId || outcome.triggerChainEventId;
+    const chainDelay = outcome.chainDelayMonths || outcome.triggerDelayMonths;
+    if (chainNextId && chainDelay) {
+      if (!this.world.activeNarrativeChains) this.world.activeNarrativeChains = {};
+      const chainKey = this.currentEvent.narrativeChainId || chainNextId;
+      const existingStep = this.world.activeNarrativeChains[chainKey]?.currentStep || 1;
+      const triggerDate = TimeSystem.advanceMonths(this.world.currentYear, this.world.currentMonth, chainDelay);
+      this.world.activeNarrativeChains[chainKey] = {
+        currentStep: existingStep + 1,
+        nextTriggerYearMonth: {
+          year: triggerDate.year,
+          month: triggerDate.month
+        },
+        nextEventId: chainNextId,
+        chainId: chainKey,
+        payload: outcome.chainPayload
+      };
+    }
+
+    // If this event was the final step of a narrative chain or had no further link, clear it
+    if (this.world.activeNarrativeChains) {
+      for (const [chainId, chainData] of Object.entries(this.world.activeNarrativeChains)) {
+        if (
+          chainData.nextEventId === this.currentEvent.id ||
+          chainId === this.currentEvent.narrativeChainId ||
+          chainId === this.currentEvent.id
+        ) {
+          if (this.currentEvent.isChainFinalStep || (!outcome.chainNextEventId && !outcome.triggerChainEventId)) {
+            delete this.world.activeNarrativeChains[chainId];
+          }
+        }
+      }
+    }
+
+    // 10. News Generation with Event's Importance Level
     if (outcome.newsGenerated) {
+      const importance = this.currentEvent.importanceLevel !== undefined ? this.currentEvent.importanceLevel : 3;
       this.world.news.unshift({
-        id: `news_evt_${Date.now()}`,
+        id: `news_evt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         headline: outcome.newsGenerated.headline,
         body: outcome.newsGenerated.body,
         year: this.world.currentYear,
@@ -1966,11 +2079,11 @@ export class GameEngine {
         category: outcome.newsGenerated.category,
         relatedArtistIds: [player.id],
         sentiment: outcome.newsGenerated.sentiment,
-        importance: 3
+        importance
       });
     }
 
-    // Generar reacciones en redes sociales para el evento
+    // 11. Social Feed Reactions
     if (!this.world.socialFeed) this.world.socialFeed = [];
     if (outcome.socialPostsGenerated && outcome.socialPostsGenerated.length > 0) {
       this.world.socialFeed.unshift(...outcome.socialPostsGenerated);
@@ -2230,7 +2343,7 @@ export class GameEngine {
       player.legacyScore = LegacyEngine.calculateLegacyScore(player, hitsCount, no1sCount, this.world.currentYear);
       LegacyEngine.checkAndCreateEra(player, this.world.currentYear, this.world.currentMonth);
 
-      // 8. Ambient social feed generation & Event selection for player during this month
+      // 8. Ambient social feed generation
       if (!this.world.socialFeed) this.world.socialFeed = [];
       if (Math.random() < 0.65) {
         const ambientPosts = SocialFeedEngine.generateMonthlyAmbientPosts(this.world, player);
@@ -2240,18 +2353,47 @@ export class GameEngine {
         }
       }
 
-      if (Math.random() < 0.50 && collectedEvents.length < (monthsCount === 12 ? 3 : 2)) {
+      // 9. NARRATIVE CHAINS EVALUATION & ORGANIC EVENT PROBABILITY
+      const eventContext: EventContext = {
+        player,
+        world: this.world,
+        currentYear: this.world.currentYear,
+        currentMonth: this.world.currentMonth
+      };
+
+      // A) Check for active narrative chain due this month
+      let chainTriggeredThisMonth = false;
+      if (this.world.activeNarrativeChains) {
+        for (const [chainId, chainData] of Object.entries(this.world.activeNarrativeChains)) {
+          if (
+            chainData.nextTriggerYearMonth &&
+            chainData.nextTriggerYearMonth.year === this.world.currentYear &&
+            chainData.nextTriggerYearMonth.month === this.world.currentMonth
+          ) {
+            const chainEvt = EventEngine.findNarrativeChainEvent(eventContext, chainId, chainData);
+            if (chainEvt) {
+              collectedEvents.unshift(chainEvt);
+              this.world.recentEventIdsHistory.push({
+                eventId: chainEvt.id,
+                year: this.world.currentYear,
+                month: this.world.currentMonth
+              });
+              chainTriggeredThisMonth = true;
+              break; // Max 1 chain event triggered per month
+            }
+          }
+        }
+      }
+
+      // B) Organic event probability (~15% per month, capped at 1 per 6M semester, 2 per 12M)
+      if (!chainTriggeredThisMonth && organicEventsCount < maxOrganicEvents && Math.random() < 0.15) {
         const nextEvt = EventEngine.selectNextEvent(
-          {
-            player,
-            world: this.world,
-            currentYear: this.world.currentYear,
-            currentMonth: this.world.currentMonth
-          },
+          eventContext,
           this.world.recentEventIdsHistory
         );
         if (nextEvt) {
           collectedEvents.push(nextEvt);
+          organicEventsCount++;
           this.world.recentEventIdsHistory.push({
             eventId: nextEvt.id,
             year: this.world.currentYear,
@@ -2338,7 +2480,7 @@ export class GameEngine {
       });
     }
 
-    // Push events to the queue
+    // Push collected events to the queue
     this.eventQueue.push(...collectedEvents);
 
     // If no active event dialog is currently showing, pop the first one

@@ -49,6 +49,9 @@ export interface ValidatedEventChoice {
   hasEnoughEnergy: boolean;
   isEligible: boolean;
   unmetReasons: string[];
+  hasRisk: boolean;
+  riskWarning?: string;
+  riskSeverity?: 'warning' | 'danger';
 }
 
 export interface CategoryMeta {
@@ -71,6 +74,25 @@ export interface ContextualTemporality {
   monthName: string;
 }
 
+export interface ImportanceLevelMeta {
+  level: number;
+  label: string;
+  badgeText: string;
+  categoryTier: 'minor' | 'major' | 'critical';
+  badgeClass: string;
+  glowClass: string;
+  dotColor: string;
+  isPulse: boolean;
+}
+
+export interface AffectedSystemChip {
+  id: string;
+  name: string;
+  icon: LucideIcon;
+  badgeClass: string;
+  iconColor: string;
+}
+
 export interface UseEventModalProps {
   event: EventDefinition;
   world: WorldState;
@@ -84,11 +106,149 @@ export interface UseEventModalResult {
   choices: ValidatedEventChoice[];
   categoryMeta: CategoryMeta;
   rarityMeta: RarityMeta;
+  importanceLevel: number;
+  importanceMeta: ImportanceLevelMeta;
+  affectedSystems: AffectedSystemChip[];
   isCrisis: boolean;
   isBloqueoCreativo: boolean;
   temporality: ContextualTemporality;
   handleSelectChoice: (choiceIndex: number) => void;
 }
+
+export const SYSTEM_DEFINITIONS: Record<string, { icon: LucideIcon; badgeClass: string; iconColor: string; name: string }> = {
+  'Fondos': {
+    icon: DollarSign,
+    badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    iconColor: 'text-emerald-400',
+    name: 'Fondos'
+  },
+  'funds': {
+    icon: DollarSign,
+    badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    iconColor: 'text-emerald-400',
+    name: 'Fondos'
+  },
+  'Energía': {
+    icon: Zap,
+    badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    iconColor: 'text-amber-400',
+    name: 'Energía'
+  },
+  'energy': {
+    icon: Zap,
+    badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    iconColor: 'text-amber-400',
+    name: 'Energía'
+  },
+  'Hype': {
+    icon: Flame,
+    badgeClass: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
+    iconColor: 'text-orange-400',
+    name: 'Hype'
+  },
+  'hype': {
+    icon: Flame,
+    badgeClass: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
+    iconColor: 'text-orange-400',
+    name: 'Hype'
+  },
+  'Fans': {
+    icon: Users,
+    badgeClass: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+    iconColor: 'text-cyan-400',
+    name: 'Fans'
+  },
+  'fans': {
+    icon: Users,
+    badgeClass: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+    iconColor: 'text-cyan-400',
+    name: 'Fans'
+  },
+  'Reputación': {
+    icon: Sparkles,
+    badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+    iconColor: 'text-purple-400',
+    name: 'Reputación'
+  },
+  'reputation': {
+    icon: Sparkles,
+    badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+    iconColor: 'text-purple-400',
+    name: 'Reputación'
+  },
+  'Credibilidad': {
+    icon: Award,
+    badgeClass: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
+    iconColor: 'text-indigo-400',
+    name: 'Credibilidad'
+  },
+  'credibility': {
+    icon: Award,
+    badgeClass: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
+    iconColor: 'text-indigo-400',
+    name: 'Credibilidad'
+  },
+  'Contratos': {
+    icon: Building2,
+    badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+    iconColor: 'text-blue-400',
+    name: 'Contratos'
+  },
+  'contracts': {
+    icon: Building2,
+    badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+    iconColor: 'text-blue-400',
+    name: 'Contratos'
+  },
+  'relationships': {
+    icon: Handshake,
+    badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+    iconColor: 'text-blue-400',
+    name: 'Vínculos'
+  },
+  'Vínculos': {
+    icon: Handshake,
+    badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+    iconColor: 'text-blue-400',
+    name: 'Vínculos'
+  },
+  'Giras': {
+    icon: Volume2,
+    badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+    iconColor: 'text-rose-400',
+    name: 'Giras'
+  },
+  'tours': {
+    icon: Volume2,
+    badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+    iconColor: 'text-rose-400',
+    name: 'Giras'
+  },
+  'Charts': {
+    icon: BarChart3,
+    badgeClass: 'bg-teal-500/15 text-teal-300 border-teal-500/30',
+    iconColor: 'text-teal-400',
+    name: 'Charts'
+  },
+  'charts': {
+    icon: BarChart3,
+    badgeClass: 'bg-teal-500/15 text-teal-300 border-teal-500/30',
+    iconColor: 'text-teal-400',
+    name: 'Charts'
+  },
+  'Carrera': {
+    icon: TrendingUp,
+    badgeClass: 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30',
+    iconColor: 'text-fuchsia-400',
+    name: 'Carrera'
+  },
+  'career': {
+    icon: TrendingUp,
+    badgeClass: 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30',
+    iconColor: 'text-fuchsia-400',
+    name: 'Carrera'
+  }
+};
 
 /**
  * Extracts numeric funds cost from choice properties or narrative text if not explicitly set
@@ -210,6 +370,299 @@ function parseConsequences(desc: string): { chips: ParsedImpactChip[]; cleanedNa
 }
 
 /**
+ * Detects risk warnings for an event choice (legal demand, loss of masters, breach of contract, tour cancellation, health damage, etc.)
+ */
+function detectRiskWarning(choice: EventChoice, playerFunds: number): { hasRisk: boolean; riskWarning?: string; riskSeverity?: 'warning' | 'danger' } {
+  if (choice.riskWarning) {
+    return {
+      hasRisk: true,
+      riskWarning: choice.riskWarning,
+      riskSeverity: /cr[íi]tico|demanda|m[áa]ster|salud|quiebra/i.test(choice.riskWarning) ? 'danger' : 'warning'
+    };
+  }
+
+  const text = `${choice.text} ${choice.consequencesDescription || ''}`.toLowerCase();
+
+  // 1. Demanda / Litigio legal
+  if (/demanda|abogado|juicio|litigio|tribunal|penalizaci[óo]n legal|indemnizaci[óo]n|carta documento|intimaci[óo]n/i.test(text)) {
+    return {
+      hasRisk: true,
+      riskWarning: 'Riesgo Legal: Posible demanda o litigio judicial',
+      riskSeverity: 'danger'
+    };
+  }
+
+  // 2. Pérdida de másters / Propiedad intelectual
+  if (/p[ée]rdida de m[áa]sters?|perder m[áa]sters?|ceder m[áa]sters?|derechos de autor|propiedad intelectual|perder derechos/i.test(text)) {
+    return {
+      hasRisk: true,
+      riskWarning: 'Riesgo Crítico: Pérdida definitiva de másters y derechos',
+      riskSeverity: 'danger'
+    };
+  }
+
+  // 3. Ruptura de contrato / Penalidad contractual
+  if (/ruptura de contrato|rescisi[óo]n|cancelar contrato|penalidad contractual|incumplimiento contractual|perder contrato|multa discogr[áa]fica/i.test(text)) {
+    return {
+      hasRisk: true,
+      riskWarning: 'Riesgo Contractual: Ruptura o penalidad de contrato',
+      riskSeverity: 'danger'
+    };
+  }
+
+  // 4. Daño a la salud / Burnout / Colapso
+  if (/da[ñn]o a la salud|hospitalizaci[óo]n|burnout|fatiga extrema|colapso|adicci[óo]n|desgaste mental|crisis nerviosa|sobredosis|lesi[óo]n vocal/i.test(text)) {
+    return {
+      hasRisk: true,
+      riskWarning: 'Riesgo de Salud: Fatiga extrema o colapso físico',
+      riskSeverity: 'danger'
+    };
+  }
+
+  // 5. Cancelación de gira / Shows
+  if (/cancelaci[óo]n de gira|suspensi[óo]n de show|cancelar concierto|cancelar gira|suspender fechas|clausura de show/i.test(text)) {
+    return {
+      hasRisk: true,
+      riskWarning: 'Riesgo de Gira: Cancelación o suspensión de fechas',
+      riskSeverity: 'warning'
+    };
+  }
+
+  // 6. Boicot / Funa / Escándalo masivo
+  if (/cancelaci[óo]n masiva|funa|destrucci[óo]n de imagen|esc[áa]ndalo p[úu]blico|boicot|veto en radios/i.test(text)) {
+    return {
+      hasRisk: true,
+      riskWarning: 'Riesgo de Imagen: Boicot o controversia pública',
+      riskSeverity: 'warning'
+    };
+  }
+
+  // 7. Severo impacto financiero (costo mayor al 50% de fondos o quiebra)
+  if (choice.costFunds && choice.costFunds > Math.max(1000, playerFunds * 0.5)) {
+    return {
+      hasRisk: true,
+      riskWarning: 'Alto Riesgo Financiero: Drenaje severo de fondos',
+      riskSeverity: 'warning'
+    };
+  }
+
+  return { hasRisk: false };
+}
+
+/**
+ * Calculates numeric importance level (1 to 5)
+ */
+function calculateImportanceLevel(
+  event: EventDefinition,
+  isCrisis: boolean,
+  isBloqueoCreativo: boolean,
+  description: string
+): number {
+  if (typeof event.importanceLevel === 'number' && event.importanceLevel >= 1 && event.importanceLevel <= 5) {
+    return Math.round(event.importanceLevel);
+  }
+
+  if (isCrisis || isBloqueoCreativo) {
+    return 5;
+  }
+
+  if (event.category === 'crisis' || event.category === 'scandal' || event.rarity === 'crisis') {
+    return 5;
+  }
+
+  if (event.rarity === 'legendary') {
+    return 5;
+  }
+
+  const text = `${event.title} ${description}`.toLowerCase();
+  if (/quiebra|demanda millonaria|hospitalizaci[óo]n|esc[áa]ndalo nacional|juicio|allanamiento|urgencia cr[íi]tica/i.test(text)) {
+    return 5;
+  }
+
+  if (event.category === 'awards' || /grammy|premio|estadio|disco de diamante|platino global/i.test(text)) {
+    return 4;
+  }
+
+  if (event.rarity === 'rare' || event.category === 'industry' || event.category === 'shows') {
+    return 3;
+  }
+
+  if (event.rarity === 'uncommon') {
+    return 2;
+  }
+
+  return 1;
+}
+
+/**
+ * Generates visual metadata for importance level (1 to 5)
+ */
+function getImportanceMeta(
+  level: number,
+  isCrisis: boolean,
+  isBloqueoCreativo: boolean,
+  rarity: string
+): ImportanceLevelMeta {
+  switch (level) {
+    case 5: {
+      const isCriticalCrisis = isCrisis || isBloqueoCreativo || rarity === 'crisis';
+      const label = isCriticalCrisis ? 'Crisis Crítica' : 'Hito Histórico';
+      const badgeText = isCriticalCrisis ? 'NIVEL 5 • CRISIS CRÍTICA' : 'NIVEL 5 • HITO HISTÓRICO';
+      return {
+        level: 5,
+        label,
+        badgeText,
+        categoryTier: 'critical',
+        badgeClass: 'bg-rose-600/25 text-rose-200 border-rose-500/60 shadow-[0_0_18px_rgba(225,29,72,0.45)]',
+        glowClass: 'from-rose-600/35 via-rose-900/10 to-transparent',
+        dotColor: 'bg-rose-500',
+        isPulse: true
+      };
+    }
+    case 4:
+      return {
+        level: 4,
+        label: 'Suceso Mayor',
+        badgeText: 'NIVEL 4 • SUCESO MAYOR',
+        categoryTier: 'major',
+        badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/45 shadow-[0_0_14px_rgba(245,158,11,0.25)]',
+        glowClass: 'from-amber-500/25 via-transparent to-transparent',
+        dotColor: 'bg-amber-400',
+        isPulse: false
+      };
+    case 3:
+      return {
+        level: 3,
+        label: 'Impacto de Industria',
+        badgeText: 'NIVEL 3 • IMPACTO DE INDUSTRIA',
+        categoryTier: 'major',
+        badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.2)]',
+        glowClass: 'from-purple-500/20 via-transparent to-transparent',
+        dotColor: 'bg-purple-400',
+        isPulse: false
+      };
+    case 2:
+      return {
+        level: 2,
+        label: 'Incidente Local',
+        badgeText: 'NIVEL 2 • INCIDENTE LOCAL',
+        categoryTier: 'minor',
+        badgeClass: 'bg-sky-500/15 text-sky-300 border-sky-500/35',
+        glowClass: 'from-sky-500/15 via-transparent to-transparent',
+        dotColor: 'bg-sky-400',
+        isPulse: false
+      };
+    case 1:
+    default:
+      return {
+        level: 1,
+        label: 'Incidente Menor',
+        badgeText: 'NIVEL 1 • INCIDENTE MENOR',
+        categoryTier: 'minor',
+        badgeClass: 'bg-slate-500/15 text-slate-300 border-slate-500/30',
+        glowClass: 'from-slate-500/10 via-transparent to-transparent',
+        dotColor: 'bg-slate-400',
+        isPulse: false
+      };
+  }
+}
+
+/**
+ * Detects affected game systems (Fondos, Energía, Hype, Fans, Reputación, Credibilidad, Contratos, Giras, Charts, Carrera)
+ */
+function detectAffectedSystems(
+  event: EventDefinition,
+  description: string,
+  rawChoices: EventChoice[]
+): string[] {
+  if (Array.isArray(event.affectedSystems) && event.affectedSystems.length > 0) {
+    return event.affectedSystems.filter(sys => SYSTEM_DEFINITIONS[sys]);
+  }
+
+  const detected = new Set<string>();
+  const combinedText = `${event.title} ${event.category} ${description} ${rawChoices.map(c => `${c.text} ${c.consequencesDescription || ''}`).join(' ')}`.toLowerCase();
+
+  // Direct choice costs
+  for (const choice of rawChoices) {
+    if (typeof choice.costFunds === 'number' && choice.costFunds > 0) detected.add('Fondos');
+    if (typeof choice.costEnergy === 'number' && choice.costEnergy > 0) detected.add('Energía');
+  }
+
+  // Keywords detection
+  if (/fondos|dinero|d[óo]lares|\$|adelanto|pago|costo|invertir|presupuesto|compra|venta|multa|regal[íi]as|cobro/i.test(combinedText)) {
+    detected.add('Fondos');
+  }
+  if (/energ[íi]a|cansancio|fatiga|descanso|estr[ée]s|agotamiento|salud|burnout|colapso/i.test(combinedText)) {
+    detected.add('Energía');
+  }
+  if (/hype|viral|tendencia|redes|pol[ée]mica|impacto|rumor|funa|noticia/i.test(combinedText)) {
+    detected.add('Hype');
+  }
+  if (/fan|oyente|seguidor|p[úu]blico|comunidad|fan[áa]tico|fidelidad/i.test(combinedText)) {
+    detected.add('Fans');
+  }
+  if (/reputaci[óo]n|imagen|respeto|escena|prestigio|nombre|esc[áa]ndalo|prensa/i.test(combinedText)) {
+    detected.add('Reputación');
+  }
+  if (/credibilidad|art[íi]stica|calidad|letrista|autenticidad|composici[óo]n|grabaci[óo]n|estudio/i.test(combinedText)) {
+    detected.add('Credibilidad');
+  }
+  if (/contrato|discogr[áa]fica|sello|m[áa]ster|cl[áa]usula|fichaje|distribuci[óo]n|editorial|abogado|manager/i.test(combinedText) || event.category === 'industry') {
+    detected.add('Contratos');
+  }
+  if (/gira|show|concierto|escenario|festival|recital|estadio|club|tickets|entradas|en vivo/i.test(combinedText) || event.category === 'shows') {
+    detected.add('Giras');
+  }
+  if (/chart|top|ranking|n[°º]\s*1|puesto|billboard|spotify|hit|streaming/i.test(combinedText)) {
+    detected.add('Charts');
+  }
+  if (/carrera|etapa|legado|hito|consagraci[óo]n|proyecci[óo]n|futuro|era/i.test(combinedText) || event.category === 'career') {
+    detected.add('Carrera');
+  }
+
+  // Fallback defaults based on category
+  if (detected.size === 0) {
+    switch (event.category) {
+      case 'career':
+        detected.add('Carrera');
+        detected.add('Reputación');
+        break;
+      case 'music':
+        detected.add('Credibilidad');
+        detected.add('Hype');
+        break;
+      case 'industry':
+        detected.add('Contratos');
+        detected.add('Fondos');
+        break;
+      case 'shows':
+        detected.add('Giras');
+        detected.add('Energía');
+        break;
+      case 'relationships':
+      case 'media':
+        detected.add('Hype');
+        detected.add('Reputación');
+        break;
+      case 'awards':
+        detected.add('Reputación');
+        detected.add('Charts');
+        break;
+      case 'crisis':
+      case 'scandal':
+      case 'rivalry':
+        detected.add('Reputación');
+        detected.add('Hype');
+        break;
+      default:
+        detected.add('Carrera');
+    }
+  }
+
+  return Array.from(detected);
+}
+
+/**
  * Custom Hook for EventModal state, validation, badges, temporality and audio feedback
  */
 export function useEventModal({
@@ -250,6 +703,40 @@ export function useEventModal({
     const combined = `${event.title} ${(event as any).category || ''}`.toLowerCase();
     return /crisis|alerta|urgencia|demanda|intimaci[óo]n|quiebra|esc[áa]ndalo/.test(combined) || (event as any).isCrisis === true;
   }, [isBloqueoCreativo, event]);
+
+  // Calculate Importance Level (1-5) and Metadata
+  const importanceLevel = useMemo(() => {
+    return calculateImportanceLevel(event, isCrisis, isBloqueoCreativo, description);
+  }, [event, isCrisis, isBloqueoCreativo, description]);
+
+  const importanceMeta = useMemo(() => {
+    return getImportanceMeta(importanceLevel, isCrisis, isBloqueoCreativo, event.rarity);
+  }, [importanceLevel, isCrisis, isBloqueoCreativo, event.rarity]);
+
+  // Calculate Affected Systems Chips
+  const affectedSystems: AffectedSystemChip[] = useMemo(() => {
+    const rawSystems = detectAffectedSystems(event, description, rawChoices);
+    const seenNames = new Set<string>();
+    const result: AffectedSystemChip[] = [];
+
+    for (const sysName of rawSystems) {
+      const def = SYSTEM_DEFINITIONS[sysName];
+      if (!def) continue;
+      const displayName = def.name || sysName;
+      if (seenNames.has(displayName)) continue;
+      seenNames.add(displayName);
+
+      result.push({
+        id: `sys-${displayName.toLowerCase()}`,
+        name: displayName,
+        icon: def.icon,
+        badgeClass: def.badgeClass,
+        iconColor: def.iconColor
+      });
+    }
+
+    return result;
+  }, [event, description, rawChoices]);
 
   // Contextual Temporality Calculation
   const temporality: ContextualTemporality = useMemo(() => {
@@ -428,6 +915,7 @@ export function useEventModal({
 
       const isEligible = isAffordable && hasEnoughEnergy && hasRequiredStat;
       const { chips, cleanedNarrative } = parseConsequences(choice.consequencesDescription || '');
+      const { hasRisk, riskWarning, riskSeverity } = detectRiskWarning(choice, player.stats.funds);
 
       return {
         raw: choice,
@@ -441,7 +929,10 @@ export function useEventModal({
         isAffordable,
         hasEnoughEnergy,
         isEligible,
-        unmetReasons
+        unmetReasons,
+        hasRisk,
+        riskWarning,
+        riskSeverity
       };
     });
   }, [rawChoices, player?.stats?.funds, player?.stats?.energy, player?.stats, player?.personality]);
@@ -468,6 +959,9 @@ export function useEventModal({
     choices,
     categoryMeta,
     rarityMeta,
+    importanceLevel,
+    importanceMeta,
+    affectedSystems,
     isCrisis,
     isBloqueoCreativo,
     temporality,

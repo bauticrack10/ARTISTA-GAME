@@ -682,6 +682,7 @@ export interface EventChoice {
   costFunds?: number;
   costEnergy?: number;
   apply: (context: EventContext) => EventOutcome;
+  riskWarning?: string;
 }
 
 export interface EventOutcome {
@@ -721,6 +722,38 @@ export interface EventOutcome {
   triggerDelayMonths?: number;
   newContract?: LabelContract;
   newManagerId?: string;
+  timelineEntry?: { text: string; category?: string } | string;
+  tourImpact?: {
+    cancelActiveTour?: boolean;
+    cancelCurrentTour?: boolean;
+    revenueMultiplier?: number;
+    hypeBonus?: number;
+    regionalBuff?: { region: MusicRegion; bonus: number };
+    regionalBonus?: { region: MusicRegion; multiplier: number };
+    bonusEnergyCost?: number;
+    description?: string;
+  };
+  chartImpact?: {
+    boostRecentSong?: boolean;
+    penaltyAllSongsMultiplier?: number;
+    streamingBoostPct?: number;
+    boostDurationMonths?: number;
+    penaltyPct?: number;
+    targetSongId?: string;
+    description?: string;
+  };
+  careerImpact?: {
+    addDisputeFlag?: string;
+    forceGenreTransition?: string;
+    breakContract?: boolean;
+    leaveLabel?: boolean;
+    fireManager?: boolean;
+    stageOverride?: CareerStage;
+    description?: string;
+  };
+  chainNextEventId?: string;
+  chainDelayMonths?: number;
+  chainPayload?: Record<string, any>;
 }
 
 export interface EventDefinition {
@@ -728,8 +761,11 @@ export interface EventDefinition {
   title: string;
   category: 'career' | 'music' | 'industry' | 'relationships' | 'media' | 'shows' | 'awards' | 'community' | 'personal' | 'crisis' | 'scandal' | 'rivalry';
   rarity: 'common' | 'uncommon' | 'rare' | 'legendary' | 'crisis';
+  importanceLevel?: 1 | 2 | 3 | 4 | 5 | number;
+  affectedSystems?: Array<'funds' | 'energy' | 'hype' | 'fans' | 'reputation' | 'credibility' | 'contracts' | 'relationships' | 'tours' | 'charts' | 'career'>;
   eventYear?: number;
   narrativeChainId?: string;
+  isChainFinalStep?: boolean;
   minCareerStage?: CareerStage;
   maxCareerStage?: CareerStage;
   condition: (context: EventContext) => boolean;
@@ -782,7 +818,14 @@ export interface WorldState {
     category: string;
   }>;
   recentEventIdsHistory: Array<{ eventId: string; year: number; month: number }>;
-  activeNarrativeChains: Record<string, { currentStep: number; nextTriggerYearMonth: { year: number; month: number } }>;
+  activeNarrativeChains: Record<string, {
+    currentStep: number;
+    nextTriggerYearMonth: { year: number; month: number };
+    nextEventId?: string;
+    chainId?: string;
+    payload?: Record<string, any>;
+    chainPayload?: Record<string, any>;
+  }>;
   financialLedger?: FinancialTransaction[];
 }
 
