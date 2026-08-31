@@ -70,7 +70,7 @@ function createBaseWorld(): WorldState {
   };
 }
 
-function createPlayerArtist(overrides: Partial<Artist> = {}): Partial<Artist> {
+function createPlayerArtist(overrides: any = {}): any {
   return {
     id: overrides.id || 'artist_player_qa',
     name: overrides.name || 'Artista QA Pro',

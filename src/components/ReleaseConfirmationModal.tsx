@@ -17,6 +17,7 @@ import confetti from 'canvas-confetti';
 import { ReleaseConfirmationData } from '../types';
 import { formatMoney, formatReleaseDate } from '../utils/formatters';
 import { TimeSystem } from '../systems/TimeSystem';
+import { playSound } from '../utils/audioSystem';
 
 export interface ReleaseConfirmationModalProps {
   data: ReleaseConfirmationData;

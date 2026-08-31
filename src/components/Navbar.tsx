@@ -3,6 +3,7 @@ import { Artist, WorldState } from '../types';
 import { TimeSystem } from '../systems/TimeSystem';
 import { audioSystem, playSound } from '../utils/audioSystem';
 import { AudioEqualizer } from './AudioEqualizer';
+import { ArtistAvatar } from './ArtistAvatar';
 import {
   Zap,
   DollarSign,
@@ -290,21 +291,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-2 pl-1 pr-2 sm:pr-2.5 py-1 rounded-[8px] bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 text-xs transition-colors cursor-pointer shrink-0 shadow-xs"
             title={`Perfil de ${playerName} • Ir al Inicio`}
           >
-            {player?.avatarUrl ? (
-              <img
-                src={player.avatarUrl}
-                alt={playerName}
-                className="w-5 h-5 rounded-[4px] object-cover border border-[#2A2E3D] shrink-0"
-              />
-            ) : (
-              <div
-                className={`w-5 h-5 rounded-[4px] bg-gradient-to-tr ${
-                  player?.avatarColor || 'from-[#8B5CF6] to-[#EC4899]'
-                } text-white font-bold text-[10px] flex items-center justify-center shrink-0`}
-              >
-                {playerName.charAt(0)}
-              </div>
-            )}
+            <ArtistAvatar
+              name={playerName}
+              avatarColor={player?.avatarColor}
+              avatarIcon={player?.avatarIcon}
+              size="xs"
+              rounded="rounded-[4px]"
+            />
             <span className="font-semibold text-[#F8FAFC] max-w-[80px] sm:max-w-[110px] truncate">
               {playerName}
             </span>

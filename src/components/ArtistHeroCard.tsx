@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Artist, WorldState, Song, Album, CareerStage } from '../types';
-import { AVATAR_PRESETS } from '../data/avatarPresets';
+import {
+  AVATAR_PALETTES,
+  AVATAR_SYMBOLS,
+  VECTOR_PRESETS,
+  AvatarPaletteOption,
+  AvatarSymbolOption,
+  VectorAvatarPreset
+} from '../data/avatarPresets';
+import { ArtistAvatar } from './ArtistAvatar';
 import { TimeSystem } from '../systems/TimeSystem';
 import {
   Camera,
@@ -8,7 +16,6 @@ import {
   ArrowUpRight,
   Disc3,
   Edit3,
-  Image as ImageIcon,
   Check,
   X,
   Crown,
@@ -19,7 +26,11 @@ import {
   TrendingUp,
   User,
   Headphones,
-  Users
+  Users,
+  DollarSign,
+  Zap,
+  Wallet,
+  Palette
 } from 'lucide-react';
 import {
   formatMoney,
@@ -37,20 +48,10 @@ export interface ArtistHeroCardProps {
   playerSongsCount?: number;
   playerAlbumsCount?: number;
   onNavigate: (tab: string) => void;
-  onUpdateAvatar?: (avatarUrl?: string, avatarColor?: string) => void;
+  onUpdateAvatar?: (avatarUrl?: string, avatarColor?: string, avatarIcon?: string) => void;
   onOpenAvatarModal?: () => void;
   className?: string;
 }
-
-const COLOR_OPTIONS = [
-  { id: 'synth_purple', label: 'Violeta Synth', class: 'from-[#8B5CF6] via-[#9333EA] to-[#6366F1]' },
-  { id: 'cyber_magenta', label: 'Neón Magenta', class: 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]' },
-  { id: 'electric_cyan', label: 'Cian Eléctrico', class: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]' },
-  { id: 'emerald_studio', label: 'Esmeralda Studio', class: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]' },
-  { id: 'gold_master', label: 'Oro Master', class: 'from-[#F59E0B] via-[#D97706] to-[#B45309]' },
-  { id: 'sunset_urban', label: 'Atardecer Urbano', class: 'from-[#F97316] via-[#E11D48] to-[#9333EA]' },
-  { id: 'dark_obsidian', label: 'Obsidiana & Carbón', class: 'from-neutral-800 to-zinc-950' }
-];
 
 export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   player,
@@ -63,9 +64,13 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   className = ''
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
-  const [customAvatarUrl, setCustomAvatarUrl] = useState(player?.avatarUrl || '');
-  const [selectedColor, setSelectedColor] = useState(player?.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string>(
+    player?.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]'
+  );
+  const [selectedIcon, setSelectedIcon] = useState<string>(player?.avatarIcon || 'mic');
+  const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>(
+    player?.avatarIcon ? 'symbol' : 'symbol'
+  );
 
   const currentEra = player?.eras && player.eras.length > 0
     ? player.eras[player.eras.length - 1]
@@ -129,13 +134,12 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
     prevStreamsRef.current = currentStreams;
   }, [player?.stats?.totalStreams]);
 
-  // Dynamic growth percentage calculation for streams/listeners (with 0.0% zero-state)
+  // Dynamic growth percentage calculation for streams/listeners
   const listenerGrowth = React.useMemo(() => {
     const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(
       (s) => s.artistId === playerId
     );
     const totalStreams = player?.stats?.totalStreams || 0;
-    // Estado cero: sin canciones grabadas o streams en cero absoluto
     if (playerSongs.length === 0 || totalStreams === 0) {
       return {
         formatted: '0.0%',
@@ -178,31 +182,24 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
     if (onOpenAvatarModal) {
       onOpenAvatarModal();
     } else {
-      setCustomAvatarUrl(player.avatarUrl || '');
-      setSelectedColor(player.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]');
+      setSelectedColor(player?.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
+      setSelectedIcon(player?.avatarIcon || 'mic');
+      setAvatarType(player?.avatarIcon ? 'symbol' : 'initials');
       setIsAvatarModalOpen(true);
-    }
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64 = event.target?.result as string;
-        if (base64) {
-          setCustomAvatarUrl(base64);
-        }
-      };
-      reader.readAsDataURL(file);
     }
   };
 
   const handleSaveAvatar = () => {
     if (onUpdateAvatar) {
-      onUpdateAvatar(customAvatarUrl || undefined, selectedColor);
+      onUpdateAvatar(undefined, selectedColor, avatarType === 'symbol' ? selectedIcon : undefined);
     }
     setIsAvatarModalOpen(false);
+  };
+
+  const handleApplyPreset = (preset: VectorAvatarPreset) => {
+    setSelectedColor(preset.color);
+    setSelectedIcon(preset.icon);
+    setAvatarType('symbol');
   };
 
   const getCareerStageBadge = (stage: CareerStage) => {
@@ -245,33 +242,26 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         {/* Left Side: Avatar / Portrait + Info Hierarchy */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 md:gap-6 w-full lg:w-auto">
-          {/* Professional Portrait Container */}
+          {/* Professional Vector Avatar Container */}
           <div className="relative shrink-0 group">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[14px] overflow-hidden border-2 border-[#2A2E3D] group-hover:border-[#8B5CF6]/60 transition-colors shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-[#0B0C10]">
-              {player?.avatarUrl ? (
-                <img
-                  src={player.avatarUrl}
-                  alt={player?.name || 'Artista'}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div
-                  className={`w-full h-full bg-gradient-to-tr ${
-                    player?.avatarColor || 'from-[#8B5CF6] via-[#C026D3] to-[#EC4899]'
-                  } text-white font-extrabold text-3xl sm:text-4xl flex items-center justify-center`}
-                >
-                  {(player?.name || 'A').charAt(0)}
-                </div>
-              )}
+            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[14px] overflow-hidden border-2 border-[#2A2E3D] group-hover:border-[#8B5CF6]/60 transition-colors shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-[#0B0C10] flex items-center justify-center">
+              <ArtistAvatar
+                name={player?.name}
+                avatarColor={player?.avatarColor}
+                avatarIcon={player?.avatarIcon}
+                size="custom"
+                className="w-full h-full"
+                rounded="rounded-[12px]"
+              />
             </div>
 
             {/* Quick Edit Overlay Button */}
             <button
               onClick={handleOpenModal}
               className="absolute bottom-1 right-1 p-2 rounded-full bg-[#0B0C10]/90 hover:bg-[#8B5CF6] text-[#F8FAFC] border border-[#2A2E3D] shadow-md transition-all cursor-pointer group-hover:scale-110"
-              title="Cambiar Retrato / Avatar"
+              title="Personalizar Avatar Vectorial"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Palette className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -307,7 +297,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               )}
             </div>
 
-            {/* High-Contrast Subtitle: Real Name, City, Country, Age & Main Genre */}
+            {/* Subtitle: Real Name, City, Country, Age & Main Genre */}
             <div className="flex items-center gap-2 text-xs sm:text-sm text-[#94A3B8] font-normal flex-wrap">
               {player?.realName ? (
                 <>
@@ -332,10 +322,10 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             <div className="flex items-center gap-2 sm:gap-3 text-xs text-[#94A3B8] flex-wrap pt-0.5">
               <button
                 onClick={handleOpenModal}
-                className="flex items-center gap-1.5 text-[#F8FAFC] bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 px-3 py-1 rounded-[8px] text-xs font-semibold cursor-pointer transition-colors shadow-xs"
+                className="flex items-center gap-1.5 text-[#F8FAFC] bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 px-3 py-1 rounded-[8px] text-xs font-semibold cursor-pointer transition-colors shadow-xs"
               >
                 <Edit3 className="w-3.5 h-3.5 text-[#8B5CF6]" />
-                <span>Editar Retrato</span>
+                <span>Editar Identidad</span>
               </button>
 
               <span
@@ -366,7 +356,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
           </div>
         </div>
 
-        {/* Right Side: 4 Colorful Quick Metric Tiles */}
+        {/* Right Side: Quick Metric Tiles */}
         <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto shrink-0 min-w-[280px] xl:min-w-[340px]">
           {/* Tile 1: Oyentes Mensuales */}
           <div
@@ -438,7 +428,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             </span>
           </div>
 
-          {/* Tile 4: Fama / Popularidad */}
+          {/* Tile 4: Popularidad & Fidelidad */}
           <div className="bg-[#16181F] border border-amber-500/30 rounded-[12px] p-3 text-left shadow-xs hover:border-amber-500/60 transition-colors">
             <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
               <Crown className="w-3 h-3 text-amber-400" />
@@ -486,9 +476,9 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
         </div>
       )}
 
-      {/* Interactive Avatar & Profile Picture Modal */}
+      {/* Fallback Interactive Avatar Modal */}
       {isAvatarModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div
             className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] max-w-lg w-full p-6 space-y-5 text-[#F8FAFC] shadow-2xl max-h-[90vh] overflow-y-auto"
             style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
@@ -496,9 +486,9 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
               <div className="flex items-center gap-2">
-                <Camera className="w-5 h-5 text-[#8B5CF6]" />
+                <Palette className="w-5 h-5 text-[#7C3AED]" />
                 <h3 className="text-lg font-bold tracking-[-0.4px] text-[#F8FAFC]">
-                  Retrato / Foto del Artista
+                  Identidad Visual & Avatar del Artista
                 </h3>
               </div>
               <button
@@ -512,19 +502,14 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
             {/* Current Preview */}
             <div className="flex items-center gap-4 bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D]">
-              {customAvatarUrl ? (
-                <img
-                  src={customAvatarUrl}
-                  alt="Preview"
-                  className="w-16 h-16 rounded-[12px] object-cover border-2 border-[#2A2E3D] shadow-sm shrink-0"
-                />
-              ) : (
-                <div
-                  className={`w-16 h-16 rounded-[12px] bg-gradient-to-tr ${selectedColor} flex items-center justify-center text-white text-2xl font-bold border-2 border-[#2A2E3D] shadow-sm shrink-0`}
-                >
-                  {player.name ? player.name.charAt(0).toUpperCase() : 'A'}
-                </div>
-              )}
+              <ArtistAvatar
+                name={player?.name}
+                avatarColor={selectedColor}
+                avatarIcon={avatarType === 'symbol' ? selectedIcon : undefined}
+                size="lg"
+                rounded="rounded-[12px]"
+                className="shrink-0 shadow-md"
+              />
               <div className="space-y-0.5">
                 <h4 className="text-sm font-bold text-[#F8FAFC]">{player.name}</h4>
                 <p className="text-xs text-[#94A3B8]">
@@ -533,113 +518,142 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               </div>
             </div>
 
-            {/* File Upload Button */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
-                Subir Imagen desde tu Computadora
-              </label>
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept="image/*"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
+            {/* Mode Switcher */}
+            <div className="flex items-center gap-2 p-1 bg-[#0B0C10] rounded-[8px] border border-[#2A2E3D]">
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 bg-[#0B0C10] border border-[#2A2E3D] hover:bg-[#1C1F2B] text-[#F8FAFC] text-xs font-semibold py-2.5 px-4 rounded-[8px] cursor-pointer transition-all shadow-xs"
+                type="button"
+                onClick={() => setAvatarType('symbol')}
+                className={`flex-1 py-1.5 rounded-[6px] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  avatarType === 'symbol'
+                    ? 'bg-[#7C3AED] text-white shadow-xs'
+                    : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                }`}
               >
-                <ImageIcon className="w-4 h-4 text-[#8B5CF6]" />
-                <span>Seleccionar Archivo de Foto (JPG, PNG, WebP)</span>
+                <Crown className="w-3.5 h-3.5" />
+                <span>Símbolo / Ícono</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAvatarType('initials')}
+                className={`flex-1 py-1.5 rounded-[6px] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  avatarType === 'initials'
+                    ? 'bg-[#7C3AED] text-white shadow-xs'
+                    : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>Iniciales Limpias</span>
               </button>
             </div>
 
-            {/* Direct URL Input */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
-                O pegar enlace URL de imagen
-              </label>
-              <input
-                type="text"
-                value={customAvatarUrl}
-                onChange={(e) => setCustomAvatarUrl(e.target.value)}
-                placeholder="https://ejemplo.com/mifoto.jpg"
-                className="w-full bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] px-3.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] text-[#F8FAFC] placeholder:text-[#64748B]"
-              />
-            </div>
-
-            {/* Avatar Presets Selection */}
+            {/* Quick Presets */}
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
-                O elegir un Avatar Estilizado del Catálogo
+                Presets de Estilo Rápido
               </label>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1">
-                {AVATAR_PRESETS.map((preset) => (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {VECTOR_PRESETS.slice(0, 4).map((preset) => (
                   <button
                     key={preset.id}
-                    onClick={() => setCustomAvatarUrl(preset.url)}
-                    className={`p-1.5 rounded-[8px] border transition-all text-center group cursor-pointer ${
-                      customAvatarUrl === preset.url
-                        ? 'border-[#8B5CF6] bg-[#8B5CF6]/20 shadow-xs'
-                        : 'border-[#2A2E3D] bg-[#0B0C10] hover:border-[#8B5CF6]/50'
-                    }`}
+                    type="button"
+                    onClick={() => handleApplyPreset(preset)}
+                    className="p-2 rounded-[8px] border border-[#2A2E3D] bg-[#0B0C10] hover:border-[#7C3AED]/50 hover:bg-[#1C1F2B] transition-all flex items-center gap-2 cursor-pointer text-left"
                   >
-                    <img
-                      src={preset.url}
-                      alt={preset.name}
-                      className="w-full h-14 rounded-[6px] object-cover group-hover:opacity-90"
+                    <ArtistAvatar
+                      name={preset.name}
+                      avatarColor={preset.color}
+                      avatarIcon={preset.icon}
+                      size="xs"
+                      rounded="rounded-[4px]"
                     />
-                    <span className="text-[9px] font-semibold text-[#F8FAFC] block mt-1 truncate">
-                      {preset.name}
+                    <span className="text-[10px] font-bold text-[#F8FAFC] truncate">
+                      {preset.name.split('(')[0].trim()}
                     </span>
                   </button>
                 ))}
               </div>
             </div>
 
+            {/* Vector Icons Selector */}
+            {avatarType === 'symbol' && (
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
+                  Seleccionar Símbolo Escénico
+                </label>
+                <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                  {AVATAR_SYMBOLS.map((sym: AvatarSymbolOption) => {
+                    const isSelected = selectedIcon === sym.id;
+                    const IconComp = sym.icon;
+                    return (
+                      <button
+                        type="button"
+                        key={sym.id}
+                        onClick={() => setSelectedIcon(sym.id)}
+                        className={`p-2 rounded-[10px] border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
+                          isSelected
+                            ? 'bg-[#7C3AED]/25 border-[#7C3AED] shadow-xs ring-1 ring-[#7C3AED]'
+                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40'
+                        }`}
+                      >
+                        <div className={`p-1.5 rounded-full bg-gradient-to-tr ${selectedColor} text-white shadow-xs`}>
+                          <IconComp className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-[9px] font-semibold text-[#F8FAFC] truncate w-full">
+                          {sym.label.split('/')[0].trim()}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Gradient Options */}
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
-                Gradiente de Fondo (si no usas foto)
+                Paleta Cromática (Studio After Dark)
               </label>
-              <div className="flex items-center gap-2 flex-wrap">
-                {COLOR_OPTIONS.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => {
-                      setSelectedColor(c.class);
-                      setCustomAvatarUrl('');
-                    }}
-                    title={c.label}
-                    className={`w-7 h-7 rounded-full bg-gradient-to-tr ${c.class} border-2 transition-transform cursor-pointer ${
-                      !customAvatarUrl && selectedColor === c.class
-                        ? 'scale-110 border-[#8B5CF6] shadow-sm ring-1 ring-white'
-                        : 'border-[#2A2E3D] hover:scale-105'
-                    }`}
-                  />
-                ))}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
+                  const isSelected = selectedColor === p.val;
+                  return (
+                    <button
+                      type="button"
+                      key={p.id}
+                      onClick={() => setSelectedColor(p.val)}
+                      className={`p-2 rounded-[8px] border text-left flex items-center gap-2 transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-xs ring-1 ring-[#7C3AED]'
+                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40'
+                      }`}
+                    >
+                      <div
+                        className={`w-5 h-5 rounded-[4px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 flex items-center justify-center`}
+                      >
+                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                      </div>
+                      <span className="text-[10px] font-semibold text-[#F8FAFC] truncate">
+                        {p.label.split('(')[0].trim()}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Modal Actions */}
             <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#2A2E3D]">
-              {customAvatarUrl && (
-                <button
-                  onClick={() => setCustomAvatarUrl('')}
-                  className="px-3 py-2 text-xs text-rose-400 hover:underline cursor-pointer mr-auto font-medium"
-                >
-                  Quitar Foto
-                </button>
-              )}
               <button
+                type="button"
                 onClick={() => setIsAvatarModalOpen(false)}
                 className="px-4 py-2 rounded-[8px] text-xs font-semibold bg-[#0B0C10] text-[#94A3B8] border border-[#2A2E3D] hover:text-[#F8FAFC] hover:bg-[#1C1F2B] cursor-pointer transition-colors"
               >
                 Cancelar
               </button>
               <button
+                type="button"
                 onClick={handleSaveAvatar}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white px-5 py-2 rounded-[8px] text-xs font-bold hover:opacity-90 cursor-pointer shadow-[0_0_15px_rgba(139,92,246,0.4)] active:scale-98 transition-all"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white px-5 py-2 rounded-[8px] text-xs font-bold hover:opacity-90 cursor-pointer shadow-[0_0_15px_rgba(124,58,237,0.4)] active:scale-[0.98] transition-all"
               >
                 <Check className="w-4 h-4 text-white" />
                 <span>Guardar Cambios</span>

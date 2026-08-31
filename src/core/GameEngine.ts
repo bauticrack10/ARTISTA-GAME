@@ -91,8 +91,8 @@ export class GameEngine {
           reputation: 50,
           artisticCredibility: 60,
           energy: 100,
-          monthlyListeners: 25000,
-          totalStreams: 80000,
+          monthlyListeners: 0,
+          totalStreams: 0,
           funds: 4500,
           fansCount: 12000,
           fanbaseLoyalty: 75,
@@ -323,13 +323,8 @@ export class GameEngine {
 
     // 4. Garantizar coherencia matemática en streams totales
     if (!hasCatalog) {
-      // En etapa underground o pre-lanzamiento, demos/bootlegs/rehearsals generan stream baseline
-      const demoStreamsBaseline = Math.floor(
-        player.stats.monthlyListeners * (1.8 + ((player.stats.hype || 50) / 100) * 0.8)
-      );
-      if (player.stats.totalStreams < demoStreamsBaseline) {
-        player.stats.totalStreams = demoStreamsBaseline;
-      }
+      player.stats.monthlyListeners = 0;
+      player.stats.totalStreams = 0;
     } else {
       const catalogTotalStreams = playerSongs.reduce((sum, s) => sum + (s.streamsTotal || 0), 0);
       if (player.stats.totalStreams < catalogTotalStreams) {
@@ -2020,14 +2015,20 @@ export class GameEngine {
         playerTotalMonthlyStreams += streamRes.streams;
       }
 
-      player.stats.totalStreams += playerTotalMonthlyStreams;
-      player.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
-        playerTotalMonthlyStreams,
-        player.stats.popularity,
-        player.stats.fansCount,
-        player.stats.fanbaseLoyalty,
-        player.stats.hype
-      );
+      if (playerSongs.length === 0) {
+        player.stats.totalStreams = 0;
+        player.stats.monthlyListeners = 0;
+      } else {
+        player.stats.totalStreams += playerTotalMonthlyStreams;
+        player.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
+          playerTotalMonthlyStreams,
+          player.stats.popularity,
+          player.stats.fansCount,
+          player.stats.fanbaseLoyalty,
+          player.stats.hype,
+          true
+        );
+      }
 
       // 3.1 Convergencia armónica de popularidad y conversión mensual de fans para el jugador
       const hitsCount = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;

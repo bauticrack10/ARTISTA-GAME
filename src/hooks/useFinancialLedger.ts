@@ -64,12 +64,20 @@ export const CATEGORY_LABELS: Record<TransactionCategory, string> = {
   merch: 'Merchandising',
   production: 'Producción & Grabación',
   marketing: 'Marketing & Promoción',
+  release: 'Lanzamiento Musical',
   store: 'Tienda & Equipamiento',
+  lifestyle: 'Estilo de Vida & Lujos',
   living_cost: 'Costo de Vida Base',
+  living_expenses: 'Gastos de Vida',
   maintenance: 'Mantenimiento de Equipos',
   tour: 'Giras & Recitales',
   event: 'Eventos & Oportunidades',
   contract: 'Contratos & Sellos',
+  contract_bonus: 'Anticipo de Contrato',
+  manager: 'Representante & Managers',
+  manager_fee: 'Comisión de Representante',
+  vacation: 'Vacaciones & Descanso',
+  npc: 'Contactos & Ecosistema',
   other: 'Otros Movimientos'
 };
 

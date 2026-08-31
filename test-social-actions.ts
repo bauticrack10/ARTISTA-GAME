@@ -41,7 +41,7 @@ function assert(condition: boolean, message: string) {
   }
 }
 
-function createPlayerArtist(overrides: Partial<Artist> = {}): Partial<Artist> {
+function createPlayerArtist(overrides: any = {}): any {
   return {
     id: overrides.id || 'artist_player_qa',
     name: overrides.name || 'MC Protagonista QA',
@@ -96,7 +96,7 @@ function createPlayerArtist(overrides: Partial<Artist> = {}): Partial<Artist> {
   };
 }
 
-function createTargetArtist(overrides: Partial<Artist> = {}): Artist {
+function createTargetArtist(overrides: any = {}): any {
   return {
     id: overrides.id || `artist_target_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
     name: overrides.name || 'Colega de la Escena',

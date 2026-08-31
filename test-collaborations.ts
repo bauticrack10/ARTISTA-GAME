@@ -43,7 +43,7 @@ function assert(condition: boolean, message: string) {
   }
 }
 
-function createPlayerArtist(overrides: Partial<Artist> = {}): Partial<Artist> {
+function createPlayerArtist(overrides: any = {}): any {
   return {
     id: overrides.id || 'artist_player_qa',
     name: overrides.name || 'Artista Protagonista QA',
@@ -98,7 +98,7 @@ function createPlayerArtist(overrides: Partial<Artist> = {}): Partial<Artist> {
   };
 }
 
-function createTestCollaborator(overrides: Partial<Artist> = {}): Artist {
+function createTestCollaborator(overrides: any = {}): any {
   return {
     id: overrides.id || 'artist_collab_partner',
     name: overrides.name || 'Duki Clone Collab',

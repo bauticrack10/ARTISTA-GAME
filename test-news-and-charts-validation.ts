@@ -53,7 +53,7 @@ function runValidationTests() {
     assert(!descM7.includes('Ha finalizado el año 2026'), 'Descripción en Mes 7 no afirma que finalizó el año');
 
     const choicesM7 = droughtTemplate.choices({ currentMonth: 7, currentYear: 2026, player: { name: 'Papo MC', stats: {}, personality: {} }, world: { songs: {} } } as any);
-    const outcomeMasteredM7 = choicesM7[1].apply();
+    const outcomeMasteredM7 = choicesM7[1].apply({ player: { name: 'Papo MC', stats: {}, personality: {} }, world: { songs: {} } } as any);
     assert(outcomeMasteredM7.newsGenerated !== undefined, 'Noticia generada en choice');
     if (outcomeMasteredM7.newsGenerated) {
       assert(!outcomeMasteredM7.newsGenerated.body.includes('Justo antes de finalizar el año'), 'Noticia en Mes 7 NO dice "Justo antes de finalizar el año"');
@@ -77,7 +77,7 @@ function runValidationTests() {
   });
 
   const billieTitle = generateUniqueSongTitle({
-    existingTitles: { ...existingSongsMap, song_2: { id: 'song_2', title: dukiTitle } },
+    existingTitles: { ...existingSongsMap, song_2: { id: 'song_2', title: dukiTitle } as any },
     artistName: 'Billie Eilish',
     genreId: 'pop_moderno',
     seedIndex: 2

@@ -1,94 +1,175 @@
-export interface AvatarPreset {
+import {
+  Mic,
+  Crown,
+  Flame,
+  Disc3,
+  Sparkles,
+  Zap,
+  Music2,
+  Radio,
+  Headphones,
+  Star,
+  Trophy,
+  User,
+  Activity,
+  Waves,
+  LucideIcon
+} from 'lucide-react';
+
+export interface AvatarPaletteOption {
   id: string;
-  name: string;
-  category: 'urban' | 'pop' | 'electronic' | 'rock' | 'artistic' | 'minimal';
-  url: string;
+  label: string;
+  val: string;
   description: string;
 }
 
-export const AVATAR_PRESETS: AvatarPreset[] = [
+export interface AvatarSymbolOption {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  iconName: string;
+}
+
+export interface VectorAvatarPreset {
+  id: string;
+  name: string;
+  category: 'urban' | 'pop' | 'electronic' | 'rock' | 'artistic' | 'legend';
+  color: string;
+  icon: string;
+  description: string;
+}
+
+export const AVATAR_PALETTES: AvatarPaletteOption[] = [
   {
-    id: 'urban_trap_1',
-    name: 'Trap King (Chains & Streetwear)',
+    id: 'synth_violet',
+    label: 'Violeta Synth (Primario)',
+    val: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
+    description: 'Atmósfera principal de estudio y neón nocturno'
+  },
+  {
+    id: 'cyber_magenta',
+    label: 'Magenta Neón & Cyber',
+    val: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]',
+    description: 'Energía vibrante y estética visual de vanguardia'
+  },
+  {
+    id: 'electric_cyan',
+    label: 'Cian & Azul Eléctrico',
+    val: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]',
+    description: 'Sonido futurista, síntesis digital y charts mundiales'
+  },
+  {
+    id: 'emerald_studio',
+    label: 'Esmeralda & Jade Studio',
+    val: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
+    description: 'Monitores de estudio, balance y precisión técnica'
+  },
+  {
+    id: 'gold_master',
+    label: 'Oro & Ámbar Master',
+    val: 'from-[#F59E0B] via-[#D97706] to-[#B45309]',
+    description: 'Prestigio, galas, hits platino y certificaciones'
+  },
+  {
+    id: 'sunset_urban',
+    label: 'Atardecer Urbano',
+    val: 'from-[#F97316] via-[#E11D48] to-[#9333EA]',
+    description: 'Fuego callejero, flow caribeño y calidez rítmica'
+  },
+  {
+    id: 'midnight_obsidian',
+    label: 'Obsidiana & Índigo Profundo',
+    val: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
+    description: 'Elegancia nocturna, sesiones de medianoche y misterio'
+  },
+  {
+    id: 'graphite_slate',
+    label: 'Grafito & Platino Dark',
+    val: 'from-[#64748B] via-[#475569] to-[#1E293B]',
+    description: 'Estilo sobrio, minimalista e industrial'
+  }
+];
+
+export const AVATAR_SYMBOLS: AvatarSymbolOption[] = [
+  { id: 'mic', label: 'Micrófono Pro', icon: Mic, iconName: 'Mic' },
+  { id: 'crown', label: 'Corona Real', icon: Crown, iconName: 'Crown' },
+  { id: 'flame', label: 'Fuego / Hype', icon: Flame, iconName: 'Flame' },
+  { id: 'disc', label: 'Vinilo / Master', icon: Disc3, iconName: 'Disc3' },
+  { id: 'sparkles', label: 'Destello / Estrella', icon: Sparkles, iconName: 'Sparkles' },
+  { id: 'zap', label: 'Rayo Eléctrico', icon: Zap, iconName: 'Zap' },
+  { id: 'music', label: 'Nota Musical', icon: Music2, iconName: 'Music2' },
+  { id: 'radio', label: 'Onda / Radio', icon: Radio, iconName: 'Radio' },
+  { id: 'headphones', label: 'Auriculares Estudio', icon: Headphones, iconName: 'Headphones' },
+  { id: 'star', label: 'Estrella de Éxito', icon: Star, iconName: 'Star' },
+  { id: 'trophy', label: 'Trofeo / Galardón', icon: Trophy, iconName: 'Trophy' },
+  { id: 'waves', label: 'Frecuencia Sonora', icon: Waves, iconName: 'Waves' },
+  { id: 'activity', label: 'Pulso Rítmico', icon: Activity, iconName: 'Activity' },
+  { id: 'user', label: 'Silueta Artista', icon: User, iconName: 'User' }
+];
+
+export const VECTOR_PRESETS: VectorAvatarPreset[] = [
+  {
+    id: 'trap_king',
+    name: 'Trap King (Corona & Neón)',
     category: 'urban',
-    description: 'Estilo urbano moderno con cadenas y gafas oscuras.',
-    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80'
+    color: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]',
+    icon: 'crown',
+    description: 'Realeza del género urbano, actitud imponente y barras directas.'
   },
   {
-    id: 'urban_trap_2',
-    name: 'Neo Queen (Diva Urbana)',
+    id: 'flow_street',
+    name: 'Hype Master (Fuego Callejero)',
     category: 'urban',
-    description: 'Estética futurista con trenzas y actitud urbana.',
-    url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'
+    color: 'from-[#F97316] via-[#E11D48] to-[#9333EA]',
+    icon: 'flame',
+    description: 'Viralidad instantánea, carisma escénico y sonido explosivo.'
   },
   {
-    id: 'pop_star_1',
-    name: 'Pop Icon (Studio Lights)',
-    category: 'pop',
-    description: 'Voz carismática con iluminación de estudio cinematográfico.',
-    url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'pop_star_2',
-    name: 'Melodic Singer (Warm Gold)',
-    category: 'pop',
-    description: 'Sonido suave, baladas y pop contemporáneo.',
-    url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'rock_star_1',
-    name: 'Alt Rocker (Leather & Grunge)',
-    category: 'rock',
-    description: 'Guitarra, actitud rebelde y sonido alternativo potente.',
-    url: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'rock_star_2',
-    name: 'Indie Artist (Analog Aesthetic)',
-    category: 'rock',
-    description: 'Texturas analógicas, indie rock y lírica introspectiva.',
-    url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'producer_1',
-    name: 'Master Producer (Studio Headphones)',
+    id: 'studio_master',
+    name: 'Master Producer (Auriculares Studio)',
     category: 'electronic',
-    description: 'Auriculares de monitoreo y dominio de sintetizadores.',
-    url: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80'
+    color: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
+    icon: 'headphones',
+    description: 'Dominio de sintetizadores, mezcla precisa y alquimia de beats.'
   },
   {
-    id: 'electronic_dj',
-    name: 'Club & Beatmaker (Neon Nights)',
-    category: 'electronic',
-    description: 'Sonido vanguardista de club y sesiones de electrónica.',
-    url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'avant_garde',
-    name: 'Vanguardia Conceptual (Dark Editorial)',
-    category: 'artistic',
-    description: 'Estética visual experimental y de alta costura.',
-    url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'latin_reggaeton',
-    name: 'Hitmaker Latino (Tropical Sun)',
-    category: 'urban',
-    description: 'Flow caribeño y carisma para encabezar listas globales.',
-    url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'rnb_diva',
-    name: 'R&B Soul (Velvet Voice)',
+    id: 'pop_icon',
+    name: 'Pop Icon (Destellos de Estudio)',
     category: 'pop',
-    description: 'Elegancia, rango vocal prodigioso y armonías complejas.',
-    url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&auto=format&fit=crop&q=80'
+    color: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
+    icon: 'sparkles',
+    description: 'Estribillos globales, carisma mediático y presencia en charts.'
   },
   {
-    id: 'acoustic_folk',
-    name: 'Songwriter (Acoustic Nature)',
+    id: 'synth_electro',
+    name: 'Club & Cyber Nights (Rayo Eléctrico)',
+    category: 'electronic',
+    color: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]',
+    icon: 'zap',
+    description: 'Sonido vanguardista de festival y rotación en playlists de club.'
+  },
+  {
+    id: 'rock_legend',
+    name: 'Alt Rocker (Vinilo & Distorsión)',
+    category: 'rock',
+    color: 'from-[#64748B] via-[#475569] to-[#1E293B]',
+    icon: 'disc',
+    description: 'Guitarras potentes, energía cruda y autenticidad sin filtros.'
+  },
+  {
+    id: 'lyrical_pro',
+    name: 'Poeta del Micrófono (Voz & Lírica)',
     category: 'artistic',
-    description: 'Guitarra acústica, honestidad pura y poesía narrativa.',
-    url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80'
+    color: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
+    icon: 'mic',
+    description: 'Complejidad poética, métrica afilada y credibilidad artística.'
+  },
+  {
+    id: 'gold_legacy',
+    name: 'Leyenda Platino (Oro Master)',
+    category: 'legend',
+    color: 'from-[#F59E0B] via-[#D97706] to-[#B45309]',
+    icon: 'star',
+    description: 'Multi-galardonado, clásicos generacionales y estatus histórico.'
   }
 ];

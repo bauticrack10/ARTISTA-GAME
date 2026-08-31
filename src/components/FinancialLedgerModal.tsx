@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FinancialTransaction, TransactionCategory } from '../types';
+import { formatMoney } from '../utils/formatters';
 import {
   Receipt,
   X,

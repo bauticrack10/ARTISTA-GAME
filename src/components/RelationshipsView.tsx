@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Artist, WorldState, EcosystemNPC, BeefState, InteractionResult, ArtistRelationship } from '../types';
+import { Artist, WorldState, EcosystemNPC, BeefState, InteractionResult, ArtistRelationship, SocialActionResult } from '../types';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
 import {
   Network,

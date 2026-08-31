@@ -371,53 +371,41 @@ export class StreamingEngine {
       ? hasActiveCatalog 
       : totalMonthlySongStreams > 0;
 
+    // Caso 0: Sin catálogo activo o con 0 reproducciones (pre-debut / catálogo vacío)
+    if (!hasCatalog || totalMonthlySongStreams <= 0) {
+      return 0;
+    }
+
     const safeLoyalty = Math.max(10, Math.min(100, fanbaseLoyalty || 70)) / 100;
     const safeHype = Math.max(0, Math.min(100, hype || 50)) / 100;
     const safePop = Math.max(1, Math.min(100, artistPopularity || 10)) / 100;
 
-    // Caso 1: Con catálogo activo reproduciéndose mensualmente (~2.5 a 4.0 streams/oyente)
-    if (hasCatalog && totalMonthlySongStreams > 0) {
-      // 1.1 Razón coherente de streams por oyente único en 28 días (~2.7 a 3.6 streams/oyente)
-      const streamsPerListener = 2.7 + safeLoyalty * 0.9;
-      const streamDerivedListeners = Math.floor(totalMonthlySongStreams / streamsPerListener);
+    // 1.1 Razón coherente de streams por oyente único en 28 días (~2.7 a 3.6 streams/oyente)
+    const streamsPerListener = 2.7 + safeLoyalty * 0.9;
+    const streamDerivedListeners = Math.floor(totalMonthlySongStreams / streamsPerListener);
 
-      // 1.2 Retención de base de fans activa (~60% a 80% de fans activos en el mes)
-      const fanRetentionRate = 0.60 + safeLoyalty * 0.20;
-      const coreActiveFans = Math.floor(fansCount * fanRetentionRate);
+    // 1.2 Retención de base de fans activa (~60% a 80% de fans activos en el mes)
+    const fanRetentionRate = 0.60 + safeLoyalty * 0.20;
+    const coreActiveFans = Math.floor(fansCount * fanRetentionRate);
 
-      // 1.3 Alcance orgánico derivado de popularidad y hype
-      const organicReach = Math.floor(
-        (Math.pow(safePop, 2.2) * 600000 + (artistPopularity * 150)) * (1.0 + safeHype * 0.4)
-      );
-
-      // 1.4 Ponderación armónica (65% streams derivados, 25% retención fans, 10% descubrimiento orgánico)
-      const combined = Math.floor(
-        streamDerivedListeners * 0.65 +
-        coreActiveFans * 0.25 +
-        organicReach * 0.10
-      );
-
-      // Oyentes únicos no pueden superar el total de reproducciones ni estar por debajo de la base de fans activa
-      const maxPossibleListeners = Math.max(1, totalMonthlySongStreams);
-      const fanFloor = Math.max(15, Math.min(totalMonthlySongStreams, Math.floor(fansCount * 0.45)));
-
-      const finalListeners = Math.min(maxPossibleListeners, Math.max(fanFloor, combined));
-      return Math.max(15, finalListeners);
-    }
-
-    // Caso 2: Etapa underground / pre-lanzamiento sin catálogo formal o con 0 streams de singles
-    // Los fans acumulados (batallas de freestyle, TikTok, plazas, eventos) generan oyentes mensuales
-    // coherentes (~60% a 110% de fans según Hype) y escucha de maquetas/demos
-    const hypeConversionMultiplier = 0.60 + safeHype * 0.50; // 0.60 (hype 0) a 1.10 (hype 100)
-    const loyaltyModifier = 0.85 + safeLoyalty * 0.25; // 0.875 a 1.10
-    const popBonus = safePop * 0.30; // 0.0 a 0.30
-
-    const undergroundListeners = Math.floor(
-      fansCount * hypeConversionMultiplier * loyaltyModifier * (1.0 + popBonus)
+    // 1.3 Alcance orgánico derivado de popularidad y hype
+    const organicReach = Math.floor(
+      (Math.pow(safePop, 2.2) * 600000 + (artistPopularity * 150)) * (1.0 + safeHype * 0.4)
     );
 
-    const minUndergroundFloor = fansCount > 0 ? Math.max(15, Math.floor(fansCount * 0.50)) : 15;
-    return Math.max(minUndergroundFloor, undergroundListeners);
+    // 1.4 Ponderación armónica (65% streams derivados, 25% retención fans, 10% descubrimiento orgánico)
+    const combined = Math.floor(
+      streamDerivedListeners * 0.65 +
+      coreActiveFans * 0.25 +
+      organicReach * 0.10
+    );
+
+    // Oyentes únicos no pueden superar el total de reproducciones ni estar por debajo de la base de fans activa
+    const maxPossibleListeners = Math.max(1, totalMonthlySongStreams);
+    const fanFloor = Math.max(1, Math.min(totalMonthlySongStreams, Math.floor(fansCount * 0.45)));
+
+    const finalListeners = Math.min(maxPossibleListeners, Math.max(fanFloor, combined));
+    return Math.max(1, finalListeners);
   }
 
   /**

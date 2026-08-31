@@ -1,6 +1,14 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Artist, WorldState, Genre, CareerStage } from '../types';
-import { AVATAR_PRESETS, AvatarPreset } from '../data/avatarPresets';
+import {
+  AVATAR_PALETTES,
+  AVATAR_SYMBOLS,
+  VECTOR_PRESETS,
+  AvatarPaletteOption,
+  AvatarSymbolOption,
+  VectorAvatarPreset
+} from '../data/avatarPresets';
+import { ArtistAvatar } from './ArtistAvatar';
 import { StreamingEngine } from '../systems/StreamingEngine';
 import {
   Sparkles,
@@ -27,11 +35,12 @@ import {
   Palette,
   Mic,
   Radio,
-  Upload,
-  Image as ImageIcon,
-  AlertCircle,
-  X,
-  Trash2
+  Headphones,
+  Trophy,
+  Waves,
+  Activity,
+  Layers,
+  AlertCircle
 } from 'lucide-react';
 import {
   generateArtistName,
@@ -63,29 +72,6 @@ const COUNTRY_CITIES: Record<string, string[]> = {
   Uruguay: ['Montevideo', 'Punta del Este', 'Salto', 'Maldonado'],
   'República Dominicana': ['Santo Domingo', 'Santiago de los Caballeros', 'La Romana', 'Punta Cana']
 };
-
-const PALETTE_OPTIONS = [
-  { id: 'synth_violet', label: 'Violeta Primario Synth', val: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]' },
-  { id: 'cyber_magenta', label: 'Violeta & Magenta Neón', val: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]' },
-  { id: 'electric_cyan', label: 'Cian & Azul Eléctrico', val: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]' },
-  { id: 'emerald_studio', label: 'Esmeralda & Jade Studio', val: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]' },
-  { id: 'gold_master', label: 'Oro & Ámbar Master', val: 'from-[#F59E0B] via-[#D97706] to-[#B45309]' },
-  { id: 'sunset_urban', label: 'Atardecer Urbano', val: 'from-[#F97316] via-[#E11D48] to-[#9333EA]' },
-  { id: 'midnight_obsidian', label: 'Obsidiana & Índigo', val: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]' },
-  { id: 'graphite_slate', label: 'Grafito & Platino', val: 'from-[#64748B] via-[#475569] to-[#1E293B]' }
-];
-
-const SYMBOL_OPTIONS = [
-  { id: 'mic', label: 'Micrófono Pro', icon: Mic },
-  { id: 'crown', label: 'Corona Real', icon: Crown },
-  { id: 'flame', label: 'Fuego / Hype', icon: Flame },
-  { id: 'disc', label: 'Vinilo / Master', icon: Disc3 },
-  { id: 'sparkles', label: 'Destello / Estrella', icon: Sparkles },
-  { id: 'zap', label: 'Rayo Eléctrico', icon: Zap },
-  { id: 'music', label: 'Nota Musical', icon: Music2 },
-  { id: 'radio', label: 'Onda / Radio', icon: Radio },
-  { id: 'user', label: 'Silueta Artista', icon: User }
-];
 
 interface TraitChipProps {
   label: string;
@@ -149,18 +135,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   // 4. Initial Level / Starting Point
   const [startingLevel, setStartingLevel] = useState<'underground' | 'emerging' | 'local' | 'independent'>('underground');
 
-  // 5. Visual Identity / Avatar State
-  const [avatarType, setAvatarType] = useState<'preset' | 'symbol' | 'upload' | 'initials'>('preset');
-  const [selectedPresetId, setSelectedPresetId] = useState<string | null>('urban_trap_1');
-  const [avatarUrl, setAvatarUrl] = useState<string>(
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80'
-  );
+  // 5. Visual Identity / Vector Avatar State
+  const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>('symbol');
   const [avatarIcon, setAvatarIcon] = useState<string>('mic');
-  const [avatarColor, setAvatarColor] = useState('from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
-  const [avatarCategoryFilter, setAvatarCategoryFilter] = useState<string>('all');
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [avatarColor, setAvatarColor] = useState<string>('from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
+  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
 
   // 6. Prodigy Rare Trait (0.001% chance / 1 in 100,000)
   const [isProdigy, setIsProdigy] = useState<boolean>(() => Math.random() < 0.00001);
@@ -223,52 +202,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     }
   };
 
-  const processUploadedFile = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setUploadError('Formato no soportado. Por favor selecciona una imagen PNG, JPG, WEBP o SVG.');
-      return;
-    }
-    if (file.size > 3 * 1024 * 1024) {
-      setUploadError('El archivo es demasiado grande. Selecciona una imagen de hasta 3MB.');
-      return;
-    }
-    setUploadError(null);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      if (base64) {
-        setAvatarUrl(base64);
-        setAvatarType('upload');
-        setSelectedPresetId(null);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      processUploadedFile(file);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      processUploadedFile(file);
-    }
+  const handleApplyPreset = (preset: VectorAvatarPreset) => {
+    setSelectedPresetId(preset.id);
+    setAvatarColor(preset.color);
+    setAvatarIcon(preset.icon);
+    setAvatarType('symbol');
   };
 
   const handleRollProdigyLuck = () => {
@@ -488,10 +426,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
       historicalNotes.push('Considerado un prodigio generacional irrepetible (1 en 100.000) con multiplicador x3 permanente.');
     }
 
-    const resolvedAvatarUrl = (avatarType === 'preset' || avatarType === 'upload') && avatarUrl
-      ? avatarUrl
-      : undefined;
-
     const newArtist: Partial<Artist> = {
       id: uniqueId,
       name: effectiveStageName,
@@ -503,9 +437,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
       careerStartYear: currentYear,
       mainGenreId,
       subGenreIds: secondaryGenres,
-      avatarUrl: resolvedAvatarUrl,
+      avatarUrl: undefined,
       avatarColor: avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
-      avatarIcon: avatarIcon || undefined,
+      avatarIcon: avatarType === 'symbol' ? (avatarIcon || 'mic') : undefined,
       personality: finalPersonality,
       stats: {
         popularity: startStats.popularity,
@@ -553,14 +487,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const selectedMainGenre = world.genres[mainGenreId];
   const computedStats = getStartingStats();
 
-  const filteredPresets = useMemo(() => {
-    if (avatarCategoryFilter === 'all') return AVATAR_PRESETS;
-    return AVATAR_PRESETS.filter(p => p.category === avatarCategoryFilter);
-  }, [avatarCategoryFilter]);
-
-  const selectedSymbolObj = SYMBOL_OPTIONS.find(s => s.id === avatarIcon) || SYMBOL_OPTIONS[0];
-  const SelectedSymbolIcon = selectedSymbolObj.icon;
-
   // Age category text helper
   const getAgeCategory = (a: number) => {
     if (a <= 20) return { label: 'Joven Promesa', color: 'text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30' };
@@ -574,7 +500,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
   return (
     <div
-      className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] p-4 sm:p-6 lg:p-8 font-sans"
+      className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#8B5CF6]/30 selection:text-white"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       <div className="max-w-6xl mx-auto space-y-6">
@@ -596,7 +522,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </span>
               </h1>
               <p className="text-xs text-[#94A3B8] mt-0.5">
-                Diseñá tu identidad musical, seleccioná tu concepto artístico e iniciá tu viaje en la industria.
+                Diseñá tu identidad visual, seleccioná tu concepto artístico e iniciá tu viaje en la industria musical.
               </p>
             </div>
           </div>
@@ -670,7 +596,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
               </div>
 
-              {/* Age Slider with Accurately Positioned Visual Ticks (0%, 47.37%, 100%) */}
+              {/* Age Slider */}
               <div className="space-y-2 pt-1">
                 <div className="flex justify-between items-center text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
                   <span>Edad Inicial</span>
@@ -698,18 +624,15 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     className="w-full h-2 rounded-lg border border-[#2A2E3D] accent-[#7C3AED] cursor-pointer"
                   />
                   
-                  {/* Positioned Marker Ticks with Exact Mathematical Alignment */}
                   <div className="relative w-full text-[10px] text-[#94A3B8] font-mono select-none mt-1.5 h-4">
-                    {/* 16 Años: 0% */}
                     <span
                       onClick={() => setAge(16)}
-                      className="absolute left-0 -translate-x-0 text-left cursor-pointer hover:text-emerald-400"
+                      className="absolute left-0 text-left cursor-pointer hover:text-emerald-400"
                     >
                       <span className="font-bold text-[#F8FAFC]">16 Años</span>{' '}
                       <span className="text-[#10B981] font-sans font-medium">(Joven Promesa)</span>
                     </span>
                     
-                    {/* 25 Años: 47.37% -> (25 - 16) / (35 - 16) * 100% = 47.368% */}
                     <span
                       onClick={() => setAge(25)}
                       className="absolute left-[47.37%] -translate-x-1/2 text-center cursor-pointer hover:text-[#C084FC]"
@@ -717,10 +640,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       <span className="font-bold text-[#F8FAFC]">25 Años</span>
                     </span>
                     
-                    {/* 35 Años: 100% */}
                     <span
                       onClick={() => setAge(35)}
-                      className="absolute right-0 translate-x-0 text-right cursor-pointer hover:text-amber-400"
+                      className="absolute right-0 text-right cursor-pointer hover:text-amber-400"
                     >
                       <span className="font-bold text-[#F8FAFC]">35 Años</span>{' '}
                       <span className="text-[#F59E0B] font-sans font-medium">(Veterano)</span>
@@ -729,7 +651,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
               </div>
 
-              {/* Country & Hometown Selector with Friction-free Custom City */}
+              {/* Country & Hometown Selector */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
                   <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
@@ -988,7 +910,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         </p>
                       </div>
 
-                      {/* Trait Chips as Stylized Components */}
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {item.chips.map((chip, idx) => (
                           <TraitChip key={idx} label={chip} variant={item.variant} />
@@ -999,7 +920,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 })}
               </div>
 
-              {/* Custom Sliders (Only if Custom archetype) */}
+              {/* Custom Sliders */}
               {archetype === 'custom' && (
                 <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] space-y-3 pt-4">
                   <span className="text-xs font-bold text-[#C084FC] block uppercase tracking-wider">
@@ -1060,7 +981,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   {
                     id: 'emerging',
                     label: 'Promesa en Ascenso',
-                    desc: 'Un par de singles virales en TikTok, $2.500 y creciente alcance.',
+                    desc: 'Un par de singles virales en redes, $2.500 y creciente alcance.',
                     badge: '$2.500 • 2.1K Oyentes • 2.5K Fans'
                   },
                   {
@@ -1103,7 +1024,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 5: Identidad Visual / Avatar Completo */}
+            {/* PASO 5: Identidad Visual & Avatar Vectorial del Artista */}
             {/* ========================================================================= */}
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
               <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3 flex-wrap gap-2">
@@ -1112,161 +1033,110 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <span>5. Identidad Visual & Avatar del Artista</span>
                 </div>
                 
-                {/* Mode Selector Tabs */}
+                {/* Clean Mode Selector Tabs: Vector Symbol vs Initials */}
                 <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D]">
                   <button
                     type="button"
-                    onClick={() => setAvatarType('preset')}
-                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      avatarType === 'preset'
-                        ? 'bg-[#7C3AED] text-white shadow-xs'
-                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
-                    }`}
-                  >
-                    <ImageIcon className="w-3.5 h-3.5" />
-                    <span>Galería</span>
-                  </button>
-
-                  <button
-                    type="button"
                     onClick={() => setAvatarType('symbol')}
-                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'symbol'
                         ? 'bg-[#7C3AED] text-white shadow-xs'
                         : 'text-[#94A3B8] hover:text-[#F8FAFC]'
                     }`}
                   >
                     <Crown className="w-3.5 h-3.5" />
-                    <span>Ícono / Símbolo</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setAvatarType('upload')}
-                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      avatarType === 'upload'
-                        ? 'bg-[#7C3AED] text-white shadow-xs'
-                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
-                    }`}
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Subir Foto</span>
+                    <span>Símbolo / Ícono Escénico</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setAvatarType('initials')}
-                    className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'initials'
                         ? 'bg-[#7C3AED] text-white shadow-xs'
                         : 'text-[#94A3B8] hover:text-[#F8FAFC]'
                     }`}
                   >
                     <User className="w-3.5 h-3.5" />
-                    <span>Iniciales</span>
+                    <span>Iniciales Tipográficas</span>
                   </button>
                 </div>
               </div>
 
-              {/* Mode 1: Presets Gallery */}
-              {avatarType === 'preset' && (
-                <div className="space-y-4">
-                  {/* Category filters */}
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[11px] text-[#94A3B8] font-semibold mr-1">Filtrar:</span>
-                    {[
-                      { id: 'all', label: 'Todos' },
-                      { id: 'urban', label: 'Urbano / Trap' },
-                      { id: 'pop', label: 'Pop & Divas' },
-                      { id: 'rock', label: 'Rock & Indie' },
-                      { id: 'electronic', label: 'Electrónica & DJ' },
-                      { id: 'artistic', label: 'Conceptual' }
-                    ].map(cat => (
+              {/* Curated Vector Presets Quick Bar */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Presets de Identidad Vectorial (Estilo Rápido)
+                  </label>
+                  <span className="text-[11px] text-[#94A3B8]">Gradientes & Íconos Curados</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {VECTOR_PRESETS.map((preset) => {
+                    const isSelected = selectedPresetId === preset.id && avatarColor === preset.color && avatarIcon === preset.icon;
+                    return (
                       <button
                         type="button"
-                        key={cat.id}
-                        onClick={() => setAvatarCategoryFilter(cat.id)}
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                          avatarCategoryFilter === cat.id
-                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] text-[#C084FC]'
-                            : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC]'
+                        key={preset.id}
+                        onClick={() => handleApplyPreset(preset)}
+                        className={`p-2.5 rounded-[12px] border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
+                          isSelected
+                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_12px_rgba(124,58,237,0.3)] ring-1 ring-[#7C3AED]'
+                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
                         }`}
                       >
-                        {cat.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Presets Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                    {filteredPresets.map((preset) => {
-                      const isSelected = selectedPresetId === preset.id && avatarUrl === preset.url;
-                      return (
-                        <button
-                          type="button"
-                          key={preset.id}
-                          onClick={() => {
-                            setSelectedPresetId(preset.id);
-                            setAvatarUrl(preset.url);
-                          }}
-                          className={`group relative rounded-[12px] overflow-hidden border transition-all cursor-pointer flex flex-col items-center bg-[#0B0C10] ${
-                            isSelected
-                              ? 'border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.4)] ring-2 ring-[#7C3AED]'
-                              : 'border-[#2A2E3D] hover:border-[#7C3AED]/50'
-                          }`}
-                        >
-                          <div className="w-full aspect-square relative overflow-hidden bg-neutral-900">
-                            <img
-                              src={preset.url}
-                              alt={preset.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                            {isSelected && (
-                              <div className="absolute inset-0 bg-[#7C3AED]/25 flex items-center justify-center">
-                                <span className="p-1 rounded-full bg-[#7C3AED] text-white shadow-md">
-                                  <Check className="w-3.5 h-3.5" />
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                          <span className="p-1.5 text-[10px] font-medium text-[#CBD5E1] line-clamp-1 text-center w-full">
-                            {preset.name}
+                        <ArtistAvatar
+                          name={preset.name}
+                          avatarColor={preset.color}
+                          avatarIcon={preset.icon}
+                          size="sm"
+                          rounded="rounded-[8px]"
+                        />
+                        <div className="min-w-0">
+                          <span className="text-[11px] font-bold text-[#F8FAFC] block truncate">
+                            {preset.name.split('(')[0].trim()}
                           </span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                          <span className="text-[9px] text-[#94A3B8] block truncate uppercase">
+                            {preset.category}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
 
-              {/* Mode 2: Icons & Symbols */}
+              {/* Vector Symbols Selector (When in Symbol mode) */}
               {avatarType === 'symbol' && (
-                <div className="space-y-4">
-                  <p className="text-xs text-[#94A3B8]">
-                    Selecciona un símbolo escénico para representar tu marca artística sobre la paleta de color activa:
-                  </p>
-                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-                    {SYMBOL_OPTIONS.map((sym) => {
+                <div className="space-y-2.5 pt-2 border-t border-[#2A2E3D]">
+                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Símbolo Escénico / Ícono de Marca
+                  </label>
+                  <div className="grid grid-cols-3 sm:grid-cols-7 gap-2.5">
+                    {AVATAR_SYMBOLS.map((sym: AvatarSymbolOption) => {
                       const isSelected = avatarIcon === sym.id;
                       const IconComp = sym.icon;
                       return (
                         <button
                           type="button"
                           key={sym.id}
-                          onClick={() => setAvatarIcon(sym.id)}
-                          className={`p-3.5 rounded-[12px] border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
+                          onClick={() => {
+                            setAvatarIcon(sym.id);
+                            setSelectedPresetId(null);
+                          }}
+                          className={`p-2.5 rounded-[12px] border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
                             isSelected
-                              ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.3)] ring-1 ring-[#7C3AED]'
+                              ? 'bg-[#7C3AED]/25 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.35)] ring-1 ring-[#7C3AED]'
                               : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/50 hover:bg-[#1C1F2B]'
                           }`}
                         >
                           <div
-                            className={`p-3 rounded-full bg-gradient-to-tr ${avatarColor} text-white shadow-xs`}
+                            className={`p-2 rounded-full bg-gradient-to-tr ${avatarColor} text-white shadow-xs`}
                           >
-                            <IconComp className="w-5 h-5" />
+                            <IconComp className="w-4 h-4" />
                           </div>
-                          <span className="text-[11px] font-semibold text-[#F8FAFC]">
-                            {sym.label}
+                          <span className="text-[10px] font-semibold text-[#F8FAFC] truncate w-full text-center">
+                            {sym.label.split('/')[0].trim()}
                           </span>
                         </button>
                       );
@@ -1275,140 +1145,60 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
               )}
 
-              {/* Mode 3: Custom File Upload */}
-              {avatarType === 'upload' && (
-                <div className="space-y-4">
-                  <div
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-[14px] p-6 text-center transition-colors cursor-pointer ${
-                      isDragging
-                        ? 'border-[#7C3AED] bg-[#7C3AED]/10'
-                        : 'border-[#2A2E3D] hover:border-[#7C3AED]/60 bg-[#0B0C10]'
-                    }`}
-                  >
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileUpload}
-                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
-                      className="hidden"
-                    />
-
-                    {avatarUrl && avatarType === 'upload' ? (
-                      <div className="space-y-3">
-                        <div className="w-24 h-24 mx-auto rounded-[14px] overflow-hidden border-2 border-[#7C3AED] shadow-lg bg-neutral-900">
-                          <img src={avatarUrl} alt="Avatar personalizado" className="w-full h-full object-cover" />
-                        </div>
-                        <p className="text-xs text-emerald-400 font-semibold flex items-center justify-center gap-1">
-                          <Check className="w-3.5 h-3.5" />
-                          <span>¡Imagen cargada correctamente!</span>
-                        </p>
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              fileInputRef.current?.click();
-                            }}
-                            className="px-3 py-1.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-xs text-[#F8FAFC] hover:border-[#7C3AED] transition-colors cursor-pointer"
-                          >
-                            Cambiar imagen
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const defaultPreset = AVATAR_PRESETS.find(p => p.id === 'urban_trap_1') || AVATAR_PRESETS[0];
-                              setAvatarUrl(defaultPreset?.url || '');
-                              setAvatarType('preset');
-                              setSelectedPresetId(defaultPreset?.id || 'urban_trap_1');
-                            }}
-                            className="px-3 py-1.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-xs text-rose-400 hover:border-rose-500 transition-colors cursor-pointer"
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <div className="p-3 bg-[#16181F] text-[#7C3AED] rounded-full w-12 h-12 mx-auto flex items-center justify-center border border-[#2A2E3D]">
-                          <Upload className="w-6 h-6" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-[#F8FAFC]">
-                            Haz clic o arrastra para subir tu foto de artista, logo SVG o render
-                          </p>
-                          <p className="text-[11px] text-[#94A3B8]">
-                            Formatos soportados: SVG, PNG, JPG, WEBP (hasta 3MB)
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            fileInputRef.current?.click();
-                          }}
-                          className="mt-2 px-4 py-2 rounded-[8px] bg-[#7C3AED] text-white text-xs font-bold shadow-[0_0_15px_rgba(124,58,237,0.4)] hover:bg-[#6D28D9] transition-all cursor-pointer"
-                        >
-                          Seleccionar Archivo Local
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {uploadError && (
-                    <div className="p-3 rounded-[8px] bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 shrink-0" />
-                      <span>{uploadError}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Mode 4: Initials only notice */}
+              {/* Initials Mode Notice */}
               {avatarType === 'initials' && (
-                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] text-center space-y-2">
-                  <div
-                    className={`w-16 h-16 mx-auto rounded-[12px] bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white text-xl font-black shadow-md`}
-                  >
-                    {name ? name.substring(0, 2).toUpperCase() : 'AR'}
-                  </div>
+                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] text-center space-y-2 pt-2 border-t border-[#2A2E3D]">
+                  <ArtistAvatar
+                    name={name}
+                    avatarColor={avatarColor}
+                    size="lg"
+                    rounded="rounded-[14px]"
+                    className="mx-auto shadow-lg"
+                  />
                   <p className="text-xs text-[#94A3B8]">
-                    Tu avatar se generará dinámicamente con las iniciales de tu nombre artístico sobre la paleta cromática seleccionada.
+                    Tu avatar se generará dinámicamente con las iniciales limpias de tu nombre artístico sobre la paleta cromática activa.
                   </p>
                 </div>
               )}
 
-              {/* Palette Selector (Available in all modes as accent background) */}
-              <div className="space-y-2 pt-2 border-t border-[#2A2E3D]">
-                <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Paleta de Color de Acento (Atmósfera Visual Primaria)
-                </label>
+              {/* Studio After Dark Gradient Palette Selector */}
+              <div className="space-y-2.5 pt-2 border-t border-[#2A2E3D]">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Paleta de Color de Fondo (Studio After Dark)
+                  </label>
+                  <span className="text-[11px] text-[#94A3B8]">Gradientes Obsidian & Neón</span>
+                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {PALETTE_OPTIONS.map((p) => {
+                  {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
                     const isSelected = avatarColor === p.val;
                     return (
                       <button
                         type="button"
                         key={p.id}
-                        onClick={() => setAvatarColor(p.val)}
-                        className={`p-2 rounded-[10px] border flex items-center gap-2.5 transition-all cursor-pointer ${
+                        onClick={() => {
+                          setAvatarColor(p.val);
+                          setSelectedPresetId(null);
+                        }}
+                        className={`p-2.5 rounded-[10px] border flex items-center gap-2.5 transition-all cursor-pointer ${
                           isSelected
                             ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-xs ring-1 ring-[#7C3AED]'
                             : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
                         }`}
                       >
                         <div
-                          className={`w-5 h-5 rounded-full bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 shadow-xs flex items-center justify-center`}
+                          className={`w-6 h-6 rounded-[6px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 shadow-xs flex items-center justify-center`}
                         >
-                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
                         </div>
-                        <span className="text-[11px] font-semibold text-[#F8FAFC] truncate">
-                          {p.label}
-                        </span>
+                        <div className="min-w-0 text-left">
+                          <span className="text-[11px] font-semibold text-[#F8FAFC] block truncate">
+                            {p.label.split('(')[0].trim()}
+                          </span>
+                          <span className="text-[9px] text-[#94A3B8] block truncate">
+                            {p.description}
+                          </span>
+                        </div>
                       </button>
                     );
                   })}
@@ -1417,7 +1207,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* ========================================================================= */}
-            {/* RASGO ULTRA-RARO: Promesa / Prodigio (Culminación al Final) */}
+            {/* RASGO ULTRA-RARO: Promesa / Prodigio */}
             {/* ========================================================================= */}
             <div
               className={`p-5 rounded-[16px] border transition-all ${
@@ -1460,7 +1250,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   </div>
                 </div>
 
-                {/* Player-only interaction - No debug tools exposed */}
                 <div className="flex items-center gap-2 shrink-0">
                   {!isProdigy ? (
                     <button
@@ -1495,26 +1284,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Avatar Live Display */}
               <div className="text-center space-y-3">
                 <div className="relative inline-block mx-auto">
-                  <div className="w-24 h-24 mx-auto rounded-[16px] overflow-hidden border-2 border-[#2A2E3D] shadow-xl bg-[#0B0C10] flex items-center justify-center">
-                    {(avatarType === 'preset' || avatarType === 'upload') && avatarUrl ? (
-                      <img
-                        src={avatarUrl}
-                        alt={name || 'Avatar'}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : avatarType === 'symbol' ? (
-                      <div
-                        className={`w-full h-full bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white shadow-inner`}
-                      >
-                        <SelectedSymbolIcon className="w-10 h-10 drop-shadow-md" />
-                      </div>
-                    ) : (
-                      <div
-                        className={`w-full h-full bg-gradient-to-tr ${avatarColor} flex items-center justify-center text-white text-2xl font-black shadow-inner`}
-                      >
-                        {name ? name.substring(0, 2).toUpperCase() : 'AR'}
-                      </div>
-                    )}
+                  <div className="p-1 rounded-[18px] bg-[#0B0C10] border-2 border-[#2A2E3D] shadow-xl">
+                    <ArtistAvatar
+                      name={name}
+                      avatarColor={avatarColor}
+                      avatarIcon={avatarType === 'symbol' ? avatarIcon : undefined}
+                      size="xl"
+                      rounded="rounded-[14px]"
+                    />
                   </div>
                 </div>
 
@@ -1548,7 +1325,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
               </div>
 
-              {/* Starting Stats Breakdown with Explicit Range Scales */}
+              {/* Starting Stats Breakdown */}
               <div className="border-t border-[#2A2E3D] pt-4 space-y-2.5 text-xs">
                 <h3 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
                   Condiciones Iniciales (Año 1)
@@ -1598,11 +1375,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Action Button - Primary Inset CTA */}
               <button
                 type="submit"
-                id="btn-confirm-create-artist"
-                className="w-full py-3.5 px-6 rounded-[8px] bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:opacity-95 active:scale-[0.98] cursor-pointer shadow-[0_0_20px_rgba(124,58,237,0.4)] border border-white/20"
+                id="btn-launch-career-bottom"
+                className="w-full py-4 px-6 rounded-[10px] bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#EC4899] hover:from-[#6D28D9] hover:to-[#DB2777] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(124,58,237,0.4)] active:scale-[0.98] transition-all cursor-pointer border border-white/20"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>Comenzar Carrera Musical</span>
+                <Sparkles className="w-4 h-4 text-white" />
+                <span>Comenzar Carrera de Artista</span>
               </button>
             </div>
           </div>

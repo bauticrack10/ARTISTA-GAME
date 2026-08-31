@@ -18,6 +18,7 @@ import {
   Copy,
   ChevronRight
 } from 'lucide-react';
+import { ArtistAvatar } from './ArtistAvatar';
 import confetti from 'canvas-confetti';
 import { formatCityCountry, cleanQuotes } from '../utils/formatters';
 
@@ -395,21 +396,14 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
 
                 {/* Artist Avatar Presentation */}
                 <div className="relative group">
-                  {player.avatarUrl ? (
-                    <img
-                      src={player.avatarUrl}
-                      alt={player.name}
-                      className="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover border-4 border-white shadow-2xl"
-                    />
-                  ) : (
-                    <div
-                      className={`w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr ${
-                        player.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]'
-                      } flex items-center justify-center text-white text-4xl sm:text-5xl font-black border-4 border-white shadow-2xl`}
-                    >
-                      {player.name.charAt(0)}
-                    </div>
-                  )}
+                  <ArtistAvatar
+                    name={player.name}
+                    avatarColor={player.avatarColor}
+                    avatarIcon={player.avatarIcon}
+                    size="xl"
+                    rounded="rounded-full"
+                    className="border-4 border-white shadow-2xl"
+                  />
 
                   {/* Gold Star Stamp */}
                   <div className="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-amber-400 text-stone-950 flex items-center justify-center font-bold shadow-md border-2 border-white">

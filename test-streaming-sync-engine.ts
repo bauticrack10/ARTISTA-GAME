@@ -41,24 +41,25 @@ function runStreamingAndSyncTests() {
   assert(streamRatioSuperstar >= 2.8 && streamRatioSuperstar <= 4.5, `Superstar ratio esperado: ${streamRatioSuperstar.toFixed(2)}`);
 
   // --------------------------------------------------------------------------
-  // TEST 2: calculateMonthlyListeners en etapa Underground / Pre-Lanzamiento
+  // TEST 2: calculateMonthlyListeners sin catálogo lanzado (0 exacto)
   // --------------------------------------------------------------------------
-  console.log('\n--- TEST 2: calculateMonthlyListeners (Underground / Pre-lanzamiento) ---');
+  console.log('\n--- TEST 2: calculateMonthlyListeners (Sin catálogo / 0 streams = 0 oyentes) ---');
   
-  // 2.1 Underground 150 fans, Hype 15, Loyalty 45, Pop 8 (Freestyle barrial)
   const underListeners = StreamingEngine.calculateMonthlyListeners(0, 8, 150, 45, 15, false);
-  console.log(`  Underground (150 fans, 15 hype): ${underListeners} oyentes`);
-  assert(underListeners >= 90 && underListeners <= 125, 'Underground convierte ~65% de fans');
+  console.log(`  Underground sin catálogo: ${underListeners} oyentes`);
+  assert(underListeners === 0, 'Underground sin canciones lanzadas da 0 oyentes exactos');
 
-  // 2.2 Fenómeno Viral TikTok antes de publicar singles: 15,000 fans, Hype 80, Loyalty 75, Pop 25
   const tiktokViralListeners = StreamingEngine.calculateMonthlyListeners(0, 25, 15000, 75, 80, false);
-  console.log(`  TikTok Viral Pre-Single (15k fans, 80 hype): ${tiktokViralListeners.toLocaleString()} oyentes`);
-  assert(tiktokViralListeners >= 14000 && tiktokViralListeners <= 18000, 'Viral underground convierte >95% de fans');
+  console.log(`  TikTok Viral Pre-Single sin catálogo: ${tiktokViralListeners} oyentes`);
+  assert(tiktokViralListeners === 0, 'Viral sin canciones lanzadas da 0 oyentes exactos');
+
+  const zeroStreamsWithCatalog = StreamingEngine.calculateMonthlyListeners(0, 20, 1000, 70, 50, true);
+  assert(zeroStreamsWithCatalog === 0, '0 streams con catálogo activo da 0 oyentes');
 
   // --------------------------------------------------------------------------
-  // TEST 3: syncAudienceMetrics en GameEngine (Underground / Inicial)
+  // TEST 3: syncAudienceMetrics en GameEngine (Nuevo Jugador Sin Catálogo)
   // --------------------------------------------------------------------------
-  console.log('\n--- TEST 3: syncAudienceMetrics en GameEngine (Underground) ---');
+  console.log('\n--- TEST 3: syncAudienceMetrics en GameEngine (Nuevo Jugador) ---');
   
   const engineUnder = new GameEngine({
     name: 'Papo Underground',
@@ -76,13 +77,33 @@ function runStreamingAndSyncTests() {
 
   const playerUnder = engineUnder.getPlayer();
   console.log(`  Player inicial: ${playerUnder.stats.fansCount} fans, ${playerUnder.stats.monthlyListeners} oyentes, ${playerUnder.stats.totalStreams} streams`);
-  assert(playerUnder.stats.monthlyListeners >= 90, 'Oyentes iniciales sincronizados');
-  assert(playerUnder.stats.totalStreams >= 150, 'Total streams iniciales calibrados (demos/bootlegs)');
+  assert(playerUnder.stats.monthlyListeners === 0, 'Oyentes iniciales son exactamente 0 al empezar sin temas');
+  assert(playerUnder.stats.totalStreams === 0, 'Total streams iniciales son exactamente 0 al empezar sin temas');
 
   // --------------------------------------------------------------------------
-  // TEST 4: syncAudienceMetrics con Catálogo Activo e Inyección Viral
+  // TEST 4: advanceCycle sin catálogo (Sin NaN ni errores matemáticos)
   // --------------------------------------------------------------------------
-  console.log('\n--- TEST 4: syncAudienceMetrics con Catálogo e Inyección Viral ---');
+  console.log('\n--- TEST 4: advanceCycle para jugador nuevo sin canciones ---');
+
+  // Avanzar 2 semestres (1 año completo) sin haber lanzado canciones
+  engineUnder.advanceCycle(6);
+  engineUnder.advanceCycle(6);
+
+  const playerAfter1Year = engineUnder.getPlayer();
+  console.log(`  Tras 1 año sin temas: Pop ${playerAfter1Year.stats.popularity}, Fans ${playerAfter1Year.stats.fansCount}, Oyentes ${playerAfter1Year.stats.monthlyListeners}, Streams ${playerAfter1Year.stats.totalStreams}, Fondos $${playerAfter1Year.stats.funds}`);
+
+  assert(playerAfter1Year.stats.monthlyListeners === 0, 'Oyentes se mantienen en 0 exacto sin catálogo');
+  assert(playerAfter1Year.stats.totalStreams === 0, 'Streams se mantienen en 0 exacto sin catálogo');
+  assert(!isNaN(playerAfter1Year.stats.popularity), 'Popularidad no es NaN');
+  assert(!isNaN(playerAfter1Year.stats.funds), 'Fondos no son NaN');
+  assert(!isNaN(playerAfter1Year.stats.fansCount), 'FansCount no es NaN');
+  assert(!isNaN(playerAfter1Year.stats.energy), 'Energy no es NaN');
+  assert(!isNaN(playerAfter1Year.stats.hype), 'Hype no es NaN');
+
+  // --------------------------------------------------------------------------
+  // TEST 5: syncAudienceMetrics tras lanzar primer Single
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST 5: Lanzamiento de Debut y Activación de Métricas ---');
 
   const engineArtist = new GameEngine({
     name: 'Duki Test',
@@ -98,6 +119,8 @@ function runStreamingAndSyncTests() {
     } as any
   });
 
+  assert(engineArtist.getPlayer().stats.monthlyListeners === 0, 'Oyentes iniciales en 0 antes de lanzar');
+
   // Lanzar un single para tener catálogo
   const single = engineArtist.releaseSong({
     title: 'Goteo Test',
@@ -109,8 +132,8 @@ function runStreamingAndSyncTests() {
     longevityCurve: 'steady'
   });
 
-  console.log(`  Single lanzado: "${single.title}". Oyentes post-lanzamiento: ${engineArtist.getPlayer().stats.monthlyListeners}`);
-  assert(engineArtist.getPlayer().stats.monthlyListeners > 1000, 'Oyentes reactivos tras lanzamiento');
+  console.log(`  Single lanzado: "${single.title}". Oyentes post-lanzamiento: ${engineArtist.getPlayer().stats.monthlyListeners.toLocaleString()}`);
+  assert(engineArtist.getPlayer().stats.monthlyListeners > 1000, 'Oyentes reactivos tras lanzamiento (>1000)');
 
   // Inyectar impulso viral de 50,000 streams
   const initialStreams = single.streamsTotal;
@@ -122,9 +145,9 @@ function runStreamingAndSyncTests() {
   assert(syncRes.monthlyListeners >= 13500, 'Oyentes mensuales aumentaron reactivamente');
 
   // --------------------------------------------------------------------------
-  // TEST 5: Resolución de Evento Viral (evt_viral_clip_tiktok)
+  // TEST 6: Resolución de Evento Viral (evt_viral_clip_tiktok)
   // --------------------------------------------------------------------------
-  console.log('\n--- TEST 5: Evento Viral evt_viral_clip_tiktok ---');
+  console.log('\n--- TEST 6: Evento Viral evt_viral_clip_tiktok ---');
 
   const viralEvt = CORE_EVENT_TEMPLATES.find(e => e.id === 'evt_viral_clip_tiktok');
   assert(!!viralEvt, 'Template evt_viral_clip_tiktok existe en CORE_EVENT_TEMPLATES');
@@ -147,31 +170,6 @@ function runStreamingAndSyncTests() {
     assert(postPlayer.stats.fansCount === initialFans + 12000, 'Fans incrementados exactamente');
     assert(postPlayer.stats.totalStreams > initialTotalStreams + 30000, 'Streams virales inyectados al catálogo');
     assert(postPlayer.stats.monthlyListeners > initialListeners, 'Oyentes mensuales recalculados de inmediato');
-  }
-
-  // --------------------------------------------------------------------------
-  // TEST 6: Calibración de Presets (Sin 12k fans con 0 streams o 10 oyentes)
-  // --------------------------------------------------------------------------
-  console.log('\n--- TEST 6: Validación Matemática de Presets ---');
-
-  const presetsToTest = [
-    { name: 'underground', fans: 150, pop: 8, loyalty: 45, hype: 15 },
-    { name: 'local', fans: 900, pop: 16, loyalty: 55, hype: 30 },
-    { name: 'emerging', fans: 2500, pop: 24, loyalty: 60, hype: 40 },
-    { name: 'independent', fans: 4500, pop: 26, loyalty: 70, hype: 35 },
-    { name: 'prodigy', fans: 3000, pop: 30, loyalty: 85, hype: 75 },
-    { name: 'default_fallback', fans: 12000, pop: 20, loyalty: 75, hype: 55 }
-  ];
-
-  for (const p of presetsToTest) {
-    const listeners = StreamingEngine.calculateMonthlyListeners(0, p.pop, p.fans, p.loyalty, p.hype, false);
-    const streams = Math.max(Math.floor(p.fans * 2.8), Math.floor(listeners * (1.8 + (p.hype / 100) * 0.8)));
-    
-    console.log(`  Preset [${p.name}]: ${p.fans} fans -> ${listeners} oyentes (${((listeners / p.fans) * 100).toFixed(0)}%), ${streams} demo streams`);
-    
-    assert(listeners >= p.fans * 0.55 && listeners <= p.fans * 1.25, `Preset ${p.name}: oyentes coherentes con fans`);
-    assert(streams >= listeners * 1.5, `Preset ${p.name}: streams coherentes con oyentes`);
-    assert(listeners > 20, `Preset ${p.name}: nunca tiene un absurdo de 10 oyentes`);
   }
 
   console.log('\n================================================================');

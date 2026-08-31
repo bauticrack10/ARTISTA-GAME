@@ -76,8 +76,8 @@ export class WorldSimulation {
           reputation: isProdigy ? 70 : 40 + Math.floor(Math.random() * 20),
           artisticCredibility: isProdigy ? 90 : 50 + Math.floor(Math.random() * 20),
           energy: 95,
-          monthlyListeners: isProdigy ? 60000 : 15000 + Math.floor(Math.random() * 40000),
-          totalStreams: isProdigy ? 150000 : 50000,
+          monthlyListeners: 0,
+          totalStreams: 0,
           funds: isProdigy ? 25000 : 5000 + Math.floor(Math.random() * 10000),
           fansCount: isProdigy ? 25000 : 8000 + Math.floor(Math.random() * 12000),
           fanbaseLoyalty: isProdigy ? 85 : 60 + Math.floor(Math.random() * 20),
@@ -315,15 +315,20 @@ export class WorldSimulation {
         artistTotalMonthlyStreams += streamResult.streams;
       }
 
-      artist.stats.totalStreams += artistTotalMonthlyStreams;
-      artist.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
-        artistTotalMonthlyStreams,
-        artist.stats.popularity,
-        artist.stats.fansCount,
-        artist.stats.fanbaseLoyalty,
-        artist.stats.hype,
-        artistSongs.length > 0
-      );
+      if (artistSongs.length === 0) {
+        artist.stats.totalStreams = 0;
+        artist.stats.monthlyListeners = 0;
+      } else {
+        artist.stats.totalStreams += artistTotalMonthlyStreams;
+        artist.stats.monthlyListeners = StreamingEngine.calculateMonthlyListeners(
+          artistTotalMonthlyStreams,
+          artist.stats.popularity,
+          artist.stats.fansCount,
+          artist.stats.fanbaseLoyalty,
+          artist.stats.hype,
+          true
+        );
+      }
 
       // 4. Convergencia armónica de popularidad y conversión mensual de fans
       const targetPop = StreamingEngine.calculateTargetPopularity(

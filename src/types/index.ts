@@ -109,6 +109,7 @@ export interface InteractionResult {
     energy?: number;
     discipline?: number;
     credibility?: number;
+    reputation?: number;
   };
   newRelationType?: ArtistRelationship['relationType'];
   targetArtistName: string;

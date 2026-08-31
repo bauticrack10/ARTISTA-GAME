@@ -272,7 +272,8 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
   player,
   world,
   onSignContract,
-  onHireManager
+  onHireManager,
+  onFireManager
 }) => {
   const [activeTab, setActiveTab] = useState<IndustryTab>('current');
   const [distFilter, setDistFilter] = useState<DistributionFilter>('all');

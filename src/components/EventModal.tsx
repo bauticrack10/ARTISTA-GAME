@@ -14,6 +14,7 @@ import {
   Lock
 } from 'lucide-react';
 import { useEventModal } from '../hooks/useEventModal';
+import { ArtistAvatar } from './ArtistAvatar';
 
 export interface EventModalProps {
   event: EventDefinition;
@@ -144,21 +145,14 @@ export const EventModal: React.FC<EventModalProps> = ({
           {/* Event Title & Artist Banner */}
           <div className="flex items-start gap-4 pt-1">
             <div className="relative shrink-0">
-              {player.avatarUrl ? (
-                <img
-                  src={player.avatarUrl}
-                  alt={player.name}
-                  className="w-14 h-14 rounded-[12px] object-cover border-2 border-[#2A2E3D] shadow-md"
-                />
-              ) : (
-                <div
-                  className={`w-14 h-14 rounded-[12px] bg-gradient-to-tr ${
-                    player.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]'
-                  } flex items-center justify-center text-white text-xl font-bold border-2 border-[#2A2E3D] shadow-md`}
-                >
-                  {player.name.charAt(0)}
-                </div>
-              )}
+              <ArtistAvatar
+                name={player.name}
+                avatarColor={player.avatarColor}
+                avatarIcon={player.avatarIcon}
+                size="lg"
+                rounded="rounded-[12px]"
+                className="w-14 h-14 border-2 border-[#2A2E3D] shadow-md"
+              />
               <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-[#16181F] border border-[#2A2E3D] text-amber-300">
                 <CategoryIcon className="w-3 h-3" />
               </div>

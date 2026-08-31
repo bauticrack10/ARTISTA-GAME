@@ -118,12 +118,12 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
       id: 'energy',
       label: 'Energía Vital',
       value: stats.energy ?? 100,
-      gradient: 'from-emerald-400 to-teal-500',
-      bgTrack: isTourReady ? 'bg-emerald-100/70' : 'bg-rose-100/70',
-      textAccent: isTourReady ? 'text-emerald-900' : 'text-rose-900',
+      gradient: (stats.energy ?? 100) >= 85 ? 'from-emerald-400 to-teal-500' : (stats.energy ?? 100) >= 40 ? 'from-amber-400 to-orange-500' : 'from-rose-500 to-red-600',
+      bgTrack: (stats.energy ?? 100) >= 85 ? 'bg-emerald-100/70' : (stats.energy ?? 100) >= 40 ? 'bg-amber-100/70' : 'bg-rose-100/70',
+      textAccent: (stats.energy ?? 100) >= 85 ? 'text-emerald-900' : (stats.energy ?? 100) >= 40 ? 'text-amber-900' : 'text-rose-900',
       icon: Zap,
-      iconColor: isTourReady ? 'text-emerald-600' : 'text-rose-600',
-      description: 'Condición física y mental para grabaciones y giras.'
+      iconColor: (stats.energy ?? 100) >= 85 ? 'text-emerald-400' : (stats.energy ?? 100) >= 40 ? 'text-amber-400' : 'text-rose-400',
+      description: 'Condición física y mental para grabaciones en estudio y giras en vivo.'
     }
   ];
 
@@ -264,62 +264,77 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {keyMetrics.map((metric) => {
             const Icon = metric.icon;
-            const isEnergy = metric.id === 'energy';
+              const isEnergy = metric.id === 'energy';
+              const energyVal = Number(stats.energy ?? 100);
+              const isEnergyOptimal = energyVal >= 85;
+              const isEnergyMildFatigue = energyVal >= 40 && energyVal < 85;
+              const isEnergyHighFatigue = energyVal < 40;
 
-            return (
-              <div
-                key={metric.id}
-                className={`bg-[#0B0C10] rounded-[12px] p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs border hover:scale-[1.02] hover:shadow-md ${
-                  isEnergy && !isTourReady
-                    ? 'border-rose-500/40 bg-rose-500/10'
-                    : 'border-[#2A2E3D] hover:border-[#8B5CF6]/50'
-                }`}
-              >
-                {/* Header de la tarjeta */}
-                <div className="flex items-center justify-between text-xs">
-                  <span className={`font-bold text-[#F8FAFC]`}>
-                    {metric.label}
-                  </span>
-                  <div className="p-1 rounded-[6px] bg-[#16181F] border border-[#2A2E3D]">
-                    <Icon className={`w-3.5 h-3.5 ${metric.iconColor}`} />
-                  </div>
-                </div>
-
-                {/* Valor numérico & Badges de Estado */}
-                <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-2xl font-bold text-[#F8FAFC] tracking-tight font-mono tabular-nums">
-                    {metric.value}
-                    <span className="text-xs text-[#94A3B8] font-normal font-sans"> / 100</span>
-                  </p>
-
-                  {/* 3. Claridad en Requisitos y Badges para Energía Vital */}
-                  {isEnergy && (
-                    <span
-                      title={
-                        isTourReady
-                          ? 'Cumple con el requisito mínimo (≥85%) para iniciar una gira.'
-                          : 'Requiere ≥85% para armar giras. Tomá vacaciones o descansá para recuperar energía.'
-                      }
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 border transition-colors ${
-                        isTourReady
-                          ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                          : 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-                      }`}
-                    >
-                      {isTourReady ? (
-                        <>
-                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                          <span>Apto Giras (≥85%)</span>
-                        </>
-                      ) : (
-                        <>
-                          <AlertTriangle className="w-3 h-3 text-rose-400" />
-                          <span>Fatiga (&lt;85%)</span>
-                        </>
-                      )}
+              return (
+                <div
+                  key={metric.id}
+                  className={`bg-[#0B0C10] rounded-[12px] p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs border hover:scale-[1.02] hover:shadow-md ${
+                    isEnergy && isEnergyHighFatigue
+                      ? 'border-rose-500/40 bg-rose-500/10'
+                      : isEnergy && isEnergyMildFatigue
+                      ? 'border-amber-500/30 bg-amber-500/5'
+                      : 'border-[#2A2E3D] hover:border-[#8B5CF6]/50'
+                  }`}
+                >
+                  {/* Header de la tarjeta */}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className={`font-bold text-[#F8FAFC]`}>
+                      {metric.label}
                     </span>
-                  )}
-                </div>
+                    <div className="p-1 rounded-[6px] bg-[#16181F] border border-[#2A2E3D]">
+                      <Icon className={`w-3.5 h-3.5 ${metric.iconColor}`} />
+                    </div>
+                  </div>
+
+                  {/* Valor numérico & Badges de Estado */}
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="text-2xl font-bold text-[#F8FAFC] tracking-tight font-mono tabular-nums">
+                      {metric.value}
+                      <span className="text-xs text-[#94A3B8] font-normal font-sans"> / 100</span>
+                    </p>
+
+                    {/* Claridad en Requisitos y Badges para Energía Vital */}
+                    {isEnergy && (
+                      <span
+                        title={
+                          isEnergyOptimal
+                            ? 'Energía óptima (≥85%). Apto para iniciar giras de conciertos y sesiones intensivas en estudio.'
+                            : isEnergyMildFatigue
+                            ? 'Fatiga leve (<85%). Puedes grabar temas pero requieres ≥85% para armar giras. Descansá para recuperar.'
+                            : 'Fatiga alta (<40%). Riesgo de bajo rendimiento y fatiga en conciertos. Tomá un retiro de descanso.'
+                        }
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 border transition-colors ${
+                          isEnergyOptimal
+                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                            : isEnergyMildFatigue
+                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                            : 'bg-rose-500/20 text-rose-400 border-rose-500/30'
+                        }`}
+                      >
+                        {isEnergyOptimal ? (
+                          <>
+                            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                            <span>Apto Giras (≥85%)</span>
+                          </>
+                        ) : isEnergyMildFatigue ? (
+                          <>
+                            <AlertTriangle className="w-3 h-3 text-amber-400" />
+                            <span>Fatiga Leve (&lt;85%)</span>
+                          </>
+                        ) : (
+                          <>
+                            <AlertTriangle className="w-3 h-3 text-rose-400" />
+                            <span>⚠ Fatiga Alta (&lt;40%)</span>
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </div>
 
                 {/* 2. Barra de progreso temática con degradado específico */}
                 <div className="w-full bg-[#16181F] border border-[#2A2E3D] h-3.5 rounded-full overflow-hidden p-0.5">

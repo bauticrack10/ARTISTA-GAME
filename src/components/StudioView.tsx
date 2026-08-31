@@ -67,6 +67,7 @@ import {
   cleanQuotes,
   formatCompactNumber,
   formatReleaseDate,
+  formatProducerCredit,
   formatProducerLabel
 } from '../utils/formatters';
 
