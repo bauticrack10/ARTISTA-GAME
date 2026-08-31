@@ -17,6 +17,7 @@ import { DecisionHub } from './dashboard/DecisionHub';
 import { ActiveCatalogCard } from './dashboard/ActiveCatalogCard';
 
 // Re-export modular components for flexible consumption
+import { DecisionActionType, DecisionExecutionResult } from '../systems/DecisionEngine';
 export { ArtistHeroCard } from './dashboard/ArtistHeroCard';
 export { NewsSidebar } from './dashboard/NewsSidebar';
 export { ArtistAttributesPanel } from './dashboard/ArtistAttributesPanel';
@@ -28,6 +29,7 @@ export interface DashboardViewProps {
   world: WorldState;
   onNavigate: (tab: string) => void;
   onRest: () => void;
+  onExecuteDecision?: (action: DecisionActionType) => DecisionExecutionResult | void;
   onUpdateAvatar?: (avatarUrl?: string, avatarColor?: string, avatarIcon?: string) => void;
   onUpdateProfile?: (updates: Partial<Artist>) => void;
   onOpenMilestone?: (data?: any) => void;
@@ -38,6 +40,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   world,
   onNavigate,
   onRest,
+  onExecuteDecision,
   onUpdateAvatar,
   onUpdateProfile,
   onOpenMilestone
@@ -118,6 +121,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             isTourReady={isTourReady}
             onNavigate={onNavigate}
             onRest={onRest}
+            onExecuteDecision={onExecuteDecision}
           />
 
           {/* 4. Active Catalog Card */}

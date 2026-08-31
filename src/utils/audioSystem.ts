@@ -4,6 +4,7 @@
  * sin dependencias externas ni archivos pesados de audio.
  */
 
+export type SoundType = 'click' | 'release' | 'money' | 'award' | 'tour' | 'level_up' | 'chart_no1' | 'success';
 type SoundListener = (enabled: boolean) => void;
 
 class AudioSystem {
@@ -84,7 +85,7 @@ class AudioSystem {
   /**
    * Reproduce un efecto sonoro sintetizado
    */
-  public play(type: 'click' | 'release' | 'money' | 'award' | 'tour' | 'level_up' | 'chart_no1'): void {
+  public play(type: SoundType): void {
     if (this.isMuted) return;
 
     try {
@@ -215,8 +216,9 @@ class AudioSystem {
           break;
         }
 
+        case 'success':
         case 'level_up': {
-          // Arpegio ascendente de avance de era o hito
+          // Arpegio ascendente de avance de era, hito o éxito
           const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
           notes.forEach((freq, idx) => {
             const osc = ctx.createOscillator();
@@ -267,6 +269,6 @@ class AudioSystem {
 
 export const audioSystem = new AudioSystem();
 
-export const playSound = (type: 'click' | 'release' | 'money' | 'award' | 'tour' | 'level_up' | 'chart_no1') => {
+export const playSound = (type: SoundType) => {
   audioSystem.play(type);
 };

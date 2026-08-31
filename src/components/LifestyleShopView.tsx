@@ -31,7 +31,9 @@ import {
   ArrowDownRight,
   Wallet,
   ShieldAlert,
-  ChevronRight
+  ChevronRight,
+  Music2,
+  Target
 } from 'lucide-react';
 import { LIFESTYLE_THEMES } from '../utils/themeColors';
 import { formatMoney } from '../utils/formatters';
@@ -86,8 +88,12 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       monthlyUpkeep: 0,
       hypeDecayReduction: 0,
       skillBonus: 0,
+      creativityBonus: 0,
       charismaBonus: 0,
-      reputationBonus: 0
+      disciplineBonus: 0,
+      reputationBonus: 0,
+      commercialAppealBonus: 0,
+      originalityBonus: 0
     };
 
     for (const id of ownedUpgrades) {
@@ -99,8 +105,12 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         if (item.effects.tourFatigueReduction) result.tourFatigueReduction += item.effects.tourFatigueReduction;
         if (item.effects.hypeDecayReduction) result.hypeDecayReduction += item.effects.hypeDecayReduction;
         if (item.effects.skillBonus) result.skillBonus += item.effects.skillBonus;
+        if (item.effects.creativityBonus) result.creativityBonus += item.effects.creativityBonus;
         if (item.effects.charismaBonus) result.charismaBonus += item.effects.charismaBonus;
+        if (item.effects.disciplineBonus) result.disciplineBonus += item.effects.disciplineBonus;
         if (item.effects.reputationBonus) result.reputationBonus += item.effects.reputationBonus;
+        if (item.effects.commercialAppealBonus) result.commercialAppealBonus += item.effects.commercialAppealBonus;
+        if (item.effects.originalityBonus) result.originalityBonus += item.effects.originalityBonus;
       }
     }
     return result;
@@ -498,6 +508,37 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         )}
       </div>
 
+      {/* Banner de Progresión y Entrenamiento de Habilidades */}
+      <div className="bg-gradient-to-r from-[#0B0C10] via-[#16181F] to-[#0B0C10] border border-[#8B5CF6]/40 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[0_0_20px_rgba(139,92,246,0.12)]">
+        <div className="flex items-center gap-3.5">
+          <div className="p-3 bg-[#8B5CF6]/15 rounded-xl text-[#C084FC] border border-[#8B5CF6]/30 shrink-0">
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-base font-bold text-[#F8FAFC] tracking-tight">
+                Entrenamiento & Potenciadores de Habilidad Permanente
+              </h3>
+              {player?.isProdigy && (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-400/50 flex items-center gap-1 shadow-xs">
+                  <Crown className="w-3 h-3 text-amber-400" />
+                  Bono Prodigio 3x Activo
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed max-w-3xl">
+              Las masterclasses, libros de teoría, coach vocal, equipamiento y herramientas de home studio potencian tus habilidades de forma <strong>permanente e irreversible</strong> para toda tu carrera musical.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap shrink-0">
+          <span className="text-[11px] font-mono px-3 py-1.5 rounded-lg bg-[#0B0C10] border border-[#8B5CF6]/30 text-[#C084FC] font-semibold">
+            +Skill • +Creatividad • +Carisma • +Disciplina
+          </span>
+        </div>
+      </div>
+
       {/* Active Buffs Summary Bar with Rich Palette */}
       <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-xl p-5 space-y-3 shadow-md">
         <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-2.5">
@@ -580,6 +621,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           const isOwned = ownedUpgrades.includes(item.id);
           const canAfford = player.stats.funds >= item.price;
           const colorClasses = getCategoryColorClasses(item.category);
+          const multiplier = player?.isProdigy ? 3 : 1;
 
           const categoryBorderLeft: Record<string, string> = {
             home_studio: 'border-l-4 border-l-amber-400',
@@ -589,6 +631,86 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
             vehicles: 'border-l-4 border-l-rose-500',
             coaching: 'border-l-4 border-l-[#8B5CF6]'
           };
+
+          // Compute specific effect badges for this item
+          const effectBadges: Array<{ label: string; icon: React.ReactNode; badgeClass: string }> = [];
+          if (item.effects.skillBonus) {
+            effectBadges.push({
+              label: `+${item.effects.skillBonus * multiplier} Skill Permanente`,
+              icon: <Music2 className="w-3 h-3 text-cyan-400 shrink-0" />,
+              badgeClass: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
+            });
+          }
+          if (item.effects.creativityBonus) {
+            effectBadges.push({
+              label: `+${item.effects.creativityBonus * multiplier} Creatividad Permanente`,
+              icon: <Sparkles className="w-3 h-3 text-purple-400 shrink-0" />,
+              badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30'
+            });
+          }
+          if (item.effects.charismaBonus) {
+            effectBadges.push({
+              label: `+${item.effects.charismaBonus * multiplier} Carisma Permanente`,
+              icon: <Crown className="w-3 h-3 text-amber-400 shrink-0" />,
+              badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+            });
+          }
+          if (item.effects.disciplineBonus) {
+            effectBadges.push({
+              label: `+${item.effects.disciplineBonus * multiplier} Disciplina Permanente`,
+              icon: <ShieldCheck className="w-3 h-3 text-indigo-400 shrink-0" />,
+              badgeClass: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
+            });
+          }
+          if (item.effects.commercialAppealBonus) {
+            effectBadges.push({
+              label: `+${item.effects.commercialAppealBonus * multiplier} Atractivo Comercial`,
+              icon: <DollarSign className="w-3 h-3 text-emerald-400 shrink-0" />,
+              badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+            });
+          }
+          if (item.effects.originalityBonus) {
+            effectBadges.push({
+              label: `+${item.effects.originalityBonus * multiplier} Originalidad Permanente`,
+              icon: <Target className="w-3 h-3 text-rose-400 shrink-0" />,
+              badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+            });
+          }
+          if (item.effects.reputationBonus) {
+            effectBadges.push({
+              label: `+${item.effects.reputationBonus * multiplier} Reputación Crítica`,
+              icon: <Award className="w-3 h-3 text-amber-400 shrink-0" />,
+              badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+            });
+          }
+          if (item.effects.qualityBonus) {
+            effectBadges.push({
+              label: `+${item.effects.qualityBonus} Calidad Grabaciones`,
+              icon: <Disc3 className="w-3 h-3 text-[#06B6D4] shrink-0" />,
+              badgeClass: 'bg-cyan-500/15 text-[#06B6D4] border-cyan-500/30'
+            });
+          }
+          if (item.effects.passiveEnergyPerMonth) {
+            effectBadges.push({
+              label: `+${item.effects.passiveEnergyPerMonth} Energía/mes`,
+              icon: <Zap className="w-3 h-3 text-emerald-400 shrink-0" />,
+              badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+            });
+          }
+          if (item.effects.tourFatigueReduction) {
+            effectBadges.push({
+              label: `-${Math.round(item.effects.tourFatigueReduction * 100)}% Fatiga Giras`,
+              icon: <Truck className="w-3 h-3 text-rose-400 shrink-0" />,
+              badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+            });
+          }
+          if (item.effects.hypeDecayReduction) {
+            effectBadges.push({
+              label: `+${Math.round(item.effects.hypeDecayReduction * 100)}% Retención Hype`,
+              icon: <Flame className="w-3 h-3 text-amber-400 shrink-0" />,
+              badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+            });
+          }
 
           return (
             <div
@@ -637,6 +759,26 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
                   <span>{item.buffDescription}</span>
                 </div>
+
+                {/* Explicit Skill & Stat Badges */}
+                {effectBadges.length > 0 && (
+                  <div className="pt-2 border-t border-[#1C1F2A] space-y-1.5">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#64748B] block">
+                      Potenciadores Aplicados:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {effectBadges.map((badge, idx) => (
+                        <span
+                          key={idx}
+                          className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold border flex items-center gap-1 ${badge.badgeClass}`}
+                        >
+                          {badge.icon}
+                          <span>{badge.label}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Card Footer: Cost & Action Button */}

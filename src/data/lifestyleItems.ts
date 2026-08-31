@@ -16,6 +16,20 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     }
   },
   {
+    id: 'starter_book_songwriting',
+    name: 'Libro: Guía de Métrica, Rimas & Flow Urbano',
+    category: 'home_studio',
+    price: 95,
+    monthlyUpkeep: 0,
+    description: 'Manual de rimas consonantes y asonantes, compases en 4/4 y estructuras líricas de impacto.',
+    iconName: 'GraduationCap',
+    buffDescription: '+2 Creatividad, +1 Originalidad lírica de por vida.',
+    effects: {
+      creativityBonus: 2,
+      originalityBonus: 1
+    }
+  },
+  {
     id: 'starter_acoustic_panel',
     name: 'Paneles Fonoabsorbentes de Habitación',
     category: 'home_studio',
@@ -37,7 +51,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 5,
     description: 'Micrófono condensador con conexión directa USB para maquetas vocales claras sin equipo complejo.',
     iconName: 'Mic',
-    buffDescription: '+2 Calidad en grabaciones, +1 Habilidad técnica.',
+    buffDescription: '+2 Calidad en grabaciones, +1 Habilidad técnica de por vida.',
     effects: {
       qualityBonus: 2,
       skillBonus: 1
@@ -55,6 +69,20 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     effects: {
       qualityBonus: 2,
       disciplineBonus: 1
+    }
+  },
+  {
+    id: 'starter_book_indie_marketing',
+    name: 'Libro: Estrategias de Lanzamiento Independiente & Redes',
+    category: 'home_studio',
+    price: 170,
+    monthlyUpkeep: 0,
+    description: 'Manual de distribución digital, algoritmos de streaming y marketing de guerrilla para artistas emergentes.',
+    iconName: 'GraduationCap',
+    buffDescription: '+3 Atractivo Comercial, +2 Disciplina de por vida.',
+    effects: {
+      commercialAppealBonus: 3,
+      disciplineBonus: 2
     }
   },
   {
@@ -82,6 +110,20 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     buffDescription: '+3 Calidad de grabación, +2 Habilidad técnica de sonido.',
     effects: {
       qualityBonus: 3,
+      skillBonus: 2
+    }
+  },
+  {
+    id: 'starter_book_harmony',
+    name: 'Manual Práctico de Armonía de Teclados & Beatmaking',
+    category: 'home_studio',
+    price: 240,
+    monthlyUpkeep: 0,
+    description: 'Guía de progresiones de acordes, escalas modales y arreglos de sintetizadores para productores urbanos.',
+    iconName: 'GraduationCap',
+    buffDescription: '+3 Creatividad, +2 Habilidad técnica permanente.',
+    effects: {
+      creativityBonus: 3,
       skillBonus: 2
     }
   },
@@ -129,7 +171,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     }
   },
 
-  // 1. ESTUDIO & EQUIPAMIENTO (+Calidad de grabación, +Skill)
+  // 1. ESTUDIO & EQUIPAMIENTO (+Calidad de grabación, +Skill, +Creatividad)
   {
     id: 'studio_mic_shure_sm7b',
     name: 'Micrófono Shure SM7B + Preamp Cloudlifter',
@@ -138,10 +180,25 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 30,
     description: 'El estándar de la industria para voces cálidas, nítidas y libres de ruido ambiente.',
     iconName: 'Mic',
-    buffDescription: '+4 Calidad en todos tus temas y singles lanzados.',
+    buffDescription: '+4 Calidad en lanzamientos, +2 Habilidad técnica permanente.',
     effects: {
       qualityBonus: 4,
       skillBonus: 2
+    }
+  },
+  {
+    id: 'studio_analog_synth',
+    name: 'Sintetizador Analógico Polifónico & Rack FX',
+    category: 'studio',
+    price: 2400,
+    monthlyUpkeep: 50,
+    description: 'Circuitería analógica pura con osciladores cálidos, filtros resonantes y modulación para timbres únicos.',
+    iconName: 'Sliders',
+    buffDescription: '+6 Creatividad, +4 Originalidad sonora, +3 Calidad de producción.',
+    effects: {
+      creativityBonus: 6,
+      originalityBonus: 4,
+      qualityBonus: 3
     }
   },
   {
@@ -152,7 +209,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 120,
     description: 'Micrófono valvular legendario con convertidores de gama alta para una presencia vocal de clase mundial.',
     iconName: 'Radio',
-    buffDescription: '+9 Calidad en lanzamientos, +5 Habilidad técnica.',
+    buffDescription: '+9 Calidad en lanzamientos, +5 Habilidad técnica permanente.',
     effects: {
       qualityBonus: 9,
       skillBonus: 5
@@ -181,7 +238,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 1600,
     description: 'Instalación profesional flotante con sala en vivo, cabina de voz aislada y microfonía vintage.',
     iconName: 'Disc3',
-    buffDescription: '+25 Calidad máxima en grabaciones, +12 Habilidad, +8 Reputación de industria.',
+    buffDescription: '+25 Calidad máxima en grabaciones, +12 Habilidad, +8 Creatividad, +8 Reputación.',
     effects: {
       qualityBonus: 25,
       skillBonus: 12,
@@ -310,7 +367,35 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     }
   },
 
-  // 4. COACHING, SALUD & DESARROLLO PERSONAL (+Skill, +Creatividad, +Disciplina, +Carisma)
+  // 4. COACHING, MASTERCLASSES & DESARROLLO PERSONAL (+Skill, +Creatividad, +Disciplina, +Carisma)
+  {
+    id: 'coach_workshop_freestyle',
+    name: 'Taller Intensivo de Flow, Métrica & Freestyle',
+    category: 'coaching',
+    price: 850,
+    monthlyUpkeep: 0,
+    description: 'Entrenamiento de rimas al vuelo, variación de acentos métricos y remates líricos en batallas y barras.',
+    iconName: 'GraduationCap',
+    buffDescription: '+5 Habilidad técnica, +3 Originalidad lírica de por vida.',
+    effects: {
+      skillBonus: 5,
+      originalityBonus: 3
+    }
+  },
+  {
+    id: 'coach_stage_presence',
+    name: 'Masterclass de Presencia Escénica & Dominio de Escenario',
+    category: 'coaching',
+    price: 1800,
+    monthlyUpkeep: 0,
+    description: 'Técnicas de conexión con el público, manejo de tarima, visuales e impacto magnético en festivales.',
+    iconName: 'Award',
+    buffDescription: '+7 Carisma escénico, +4 Atractivo Comercial permanente.',
+    effects: {
+      charismaBonus: 7,
+      commercialAppealBonus: 4
+    }
+  },
   {
     id: 'coach_theory_songwriting',
     name: 'Masterclass de Composición & Teoría Musical Avanzada',
@@ -319,10 +404,25 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 0,
     description: 'Entrenamiento intensivo en armonía moderna, estructuras pop y trucos melódicos de hitmakers.',
     iconName: 'GraduationCap',
-    buffDescription: '+8 Creatividad, +6 Habilidad técnica de por vida.',
+    buffDescription: '+8 Creatividad compositiva, +6 Habilidad técnica de por vida.',
     effects: {
       creativityBonus: 8,
       skillBonus: 6
+    }
+  },
+  {
+    id: 'coach_masterclass_mixing',
+    name: 'Masterclass de Mezcla & Mastering con Productor Multi-Platino',
+    category: 'coaching',
+    price: 4900,
+    monthlyUpkeep: 0,
+    description: 'Secretos de ecualización dinámica, compresión paralela, imagen estéreo y volumen comercial competitivo.',
+    iconName: 'Sliders',
+    buffDescription: '+8 Habilidad técnica, +5 Calidad en grabaciones, +3 Reputación.',
+    effects: {
+      skillBonus: 8,
+      qualityBonus: 5,
+      reputationBonus: 3
     }
   },
   {
@@ -333,7 +433,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 150,
     description: 'Perfeccionamiento de rango vocal, colocación, respiración y control en vivo sin fatigar cuerdas vocales.',
     iconName: 'Award',
-    buffDescription: '+12 Habilidad técnica, +6 Carisma en vivo.',
+    buffDescription: '+12 Habilidad técnica, +6 Carisma en vivo de por vida.',
     effects: {
       skillBonus: 12,
       charismaBonus: 6
@@ -347,7 +447,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 250,
     description: 'Estrategia de entrevistas, presencia escénica, vestuario exclusivo y manejo magnético ante las cámaras.',
     iconName: 'Users',
-    buffDescription: '+12 Carisma, +10 Atractivo Comercial, +5 Reputación.',
+    buffDescription: '+12 Carisma mediático, +10 Atractivo Comercial, +5 Reputación.',
     effects: {
       charismaBonus: 12,
       commercialAppealBonus: 10,
@@ -362,7 +462,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     monthlyUpkeep: 1400,
     description: 'Nutrición personalizada, fisioterapia preventiva y rutinas de alta energía para resistir años de giras.',
     iconName: 'Heart',
-    buffDescription: '+10 Energía pasiva/mes, +12 Disciplina, +4 Habilidad.',
+    buffDescription: '+10 Energía pasiva/mes, +12 Disciplina, +4 Habilidad de por vida.',
     effects: {
       passiveEnergyPerMonth: 10,
       disciplineBonus: 12,

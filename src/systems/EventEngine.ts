@@ -131,10 +131,14 @@ export class EventEngine {
           {
             id: 'c_proc_record_raw',
             text: 'Tirar barras crudas y subir la maqueta a plataformas',
-            consequencesDescription: '+Credibilidad callejera (+4), +14 Hype, -8 Energía',
+            consequencesDescription: '+Credibilidad callejera (+4), +14 Hype, +2 Originalidad, +1 Skill, -8 Energía',
             apply: () => ({
               narrativeText: 'La maqueta capturó la esencia callejera de tus inicios y fue celebrada por tu comunidad núcleo.',
               statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 4) },
+              personalityChanges: {
+                originality: Math.min(100, context.player.personality.originality + 2),
+                skill: Math.min(100, context.player.personality.skill + 1)
+              },
               hypeChange: 14,
               energyChange: -8,
               fansChange: 1800
@@ -143,9 +147,13 @@ export class EventEngine {
           {
             id: 'c_proc_polish_craft',
             text: 'Guardar la idea para perfeccionarla en tu próximo álbum de estudio',
-            consequencesDescription: '+Habilidad técnica, +Calidad de futuras canciones',
+            consequencesDescription: '+2 Skill, +2 Disciplina, +3 Credibilidad artística',
             apply: () => ({
               narrativeText: 'Archivaste la idea para pulirla con mejores arreglos en tu próximo proyecto discográfico.',
+              personalityChanges: {
+                skill: Math.min(100, context.player.personality.skill + 2),
+                discipline: Math.min(100, context.player.personality.discipline + 2)
+              },
               statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 3) }
             })
           }
@@ -165,18 +173,22 @@ export class EventEngine {
           {
             id: 'c_proc_engage_social_flame',
             text: 'Publicar una declaración contundente sobre tu visión sonora independiente',
-            consequencesDescription: '+15 Hype, +Reputación (+4), +Fidelidad de fans (+5)',
+            consequencesDescription: '+15 Hype, +Reputación (+4), +2 Carisma, +2 Ambición, +Fidelidad de fans (+5)',
             apply: () => ({
               narrativeText: 'Tus palabras marcaron una clara diferencia de visión y fueron ampliamente respaldadas por tus seguidores.',
               hypeChange: 15,
               reputationChange: 4,
+              personalityChanges: {
+                charisma: Math.min(100, context.player.personality.charisma + 2),
+                ambition: Math.min(100, context.player.personality.ambition + 2)
+              },
               statChanges: { fanbaseLoyalty: Math.min(100, context.player.stats.fanbaseLoyalty + 5) }
             })
           },
           {
             id: 'c_proc_ignore_social_flame',
             text: 'No emitir comentarios y dejar que las canciones hablen por sí solas',
-            consequencesDescription: '+Mística personal, +Disciplina (+3)',
+            consequencesDescription: '+Mística personal, +3 Disciplina, +2 Energía',
             apply: () => ({
               narrativeText: 'El debate se diluyó dejando tu imagen intacta y tu aura de misterio reforzada.',
               personalityChanges: { discipline: Math.min(100, context.player.personality.discipline + 3) },
@@ -199,20 +211,28 @@ export class EventEngine {
           {
             id: 'c_engage_community',
             text: 'Interactuar con la comunidad y lanzar un adelanto de estudio',
-            consequencesDescription: '+Hype, +Fans, -5 Energía',
+            consequencesDescription: '+14 Hype, +3,500 Fans, +2 Sociabilidad, +1 Carisma, -5 Energía',
             apply: () => ({
               narrativeText: 'El adelanto encendió las conversaciones en foros y playlists de la comunidad.',
               hypeChange: 14,
               fansChange: 3500,
+              personalityChanges: {
+                sociability: Math.min(100, context.player.personality.sociability + 2),
+                charisma: Math.min(100, context.player.personality.charisma + 1)
+              },
               energyChange: -5
             })
           },
           {
             id: 'c_focus_recording',
             text: 'Agradecer brevemente y seguir encerrado en el estudio produciendo',
-            consequencesDescription: '+Credibilidad artística, +Energía preservada',
+            consequencesDescription: '+Credibilidad artística (+3), +2 Disciplina, +1 Creatividad, +5 Energía',
             apply: () => ({
               narrativeText: 'Mantuviste el foco estricto en la calidad de tus próximas obras.',
+              personalityChanges: {
+                discipline: Math.min(100, context.player.personality.discipline + 2),
+                creativity: Math.min(100, context.player.personality.creativity + 1)
+              },
               statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 3) },
               energyChange: 5
             })
@@ -242,12 +262,16 @@ export class EventEngine {
         const choices: EventChoice[] = biddingOffers.map(({ label, contract }) => ({
           id: `c_sign_${label.id}`,
           text: `Firmar con ${label.name}: ${formatMoney(contract.signingBonus)} adelanto, ${contract.royaltyPercentage}% regalías, ${contract.albumsRequired} álbum(es)`,
-          consequencesDescription: `+${formatMoney(contract.signingBonus)} Anticipo, ${contract.royaltyPercentage}% Regalías, ${contract.marketingPower}% Marketing`,
+          consequencesDescription: `+${formatMoney(contract.signingBonus)} Anticipo, ${contract.royaltyPercentage}% Regalías, +3 Ambición, +2 Atractivo Comercial`,
           apply: () => ({
             narrativeText: `Has sellado tu acuerdo oficial con ${label.name}. La discográfica activa de inmediato tu presupuesto promocional.`,
             fundsChange: contract.signingBonus,
             popularityChange: label.type === 'major' ? 10 : 6,
             hypeChange: 20,
+            personalityChanges: {
+              ambition: Math.min(100, context.player.personality.ambition + 3),
+              commercialAppeal: Math.min(100, context.player.personality.commercialAppeal + 2)
+            },
             newContract: contract,
             newsGenerated: {
               headline: `¡Fichaje Confirmado! ${context.player.name} firma con ${label.name}`,
@@ -261,12 +285,16 @@ export class EventEngine {
         choices.push({
           id: 'c_stay_indie_proc',
           text: 'Rechazar las propuestas y mantener la independencia total (100% regalías)',
-          consequencesDescription: '+Credibilidad artística (+6), +Fidelidad de fans (+6)',
+          consequencesDescription: '+6 Credibilidad artística, +6 Fidelidad de fans, +5 Independencia, +2 Originalidad',
           apply: () => ({
             narrativeText: 'Decidiste no comprometer tu autonomía y continuar como artista 100% independiente.',
             statChanges: {
               artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 6),
               fanbaseLoyalty: Math.min(100, context.player.stats.fanbaseLoyalty + 6)
+            },
+            personalityChanges: {
+              independence: Math.min(100, context.player.personality.independence + 5),
+              originality: Math.min(100, context.player.personality.originality + 2)
             },
             reputationChange: 5,
             hypeChange: 10,

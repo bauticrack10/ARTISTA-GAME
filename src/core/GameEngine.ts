@@ -46,6 +46,7 @@ import { LegacyEngine } from '../systems/LegacyEngine';
 import { TimeSystem } from '../systems/TimeSystem';
 import { IndustryEngine } from '../systems/IndustryEngine';
 import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
+import { DecisionEngine, DecisionActionType, DecisionExecutionResult, SemesterActivityData } from '../systems/DecisionEngine';
 
 export class GameEngine {
   private world: WorldState;
@@ -74,16 +75,16 @@ export class GameEngine {
         mainGenreId: customPlayer.mainGenreId || 'trap_latino',
         subGenreIds: customPlayer.subGenreIds || [],
         personality: {
-          creativity: 85,
-          ambition: 85,
-          discipline: 80,
-          charisma: 85,
-          skill: 85,
-          commercialAppeal: 80,
-          originality: 85,
-          riskTolerance: 80,
-          sociability: 80,
-          independence: 75,
+          creativity: 26,
+          ambition: 24,
+          discipline: 24,
+          charisma: 24,
+          skill: 26,
+          commercialAppeal: 22,
+          originality: 25,
+          riskTolerance: 24,
+          sociability: 22,
+          independence: 24,
           ...(customPlayer.personality || {})
         },
         stats: {
@@ -468,6 +469,7 @@ export class GameEngine {
       disciplineBonus: 0,
       reputationBonus: 0,
       commercialAppealBonus: 0,
+      originalityBonus: 0,
       monthlyUpkeep: 0
     };
 
@@ -490,6 +492,7 @@ export class GameEngine {
         if (item.effects.disciplineBonus) buffs.disciplineBonus += item.effects.disciplineBonus;
         if (item.effects.reputationBonus) buffs.reputationBonus += item.effects.reputationBonus;
         if (item.effects.commercialAppealBonus) buffs.commercialAppealBonus += item.effects.commercialAppealBonus;
+        if (item.effects.originalityBonus) buffs.originalityBonus += item.effects.originalityBonus;
       }
     }
     return buffs;
@@ -529,31 +532,72 @@ export class GameEngine {
     });
 
     // Apply immediate permanent skill/trait bonuses (multiplied x3 if prodigy)
-    const multiplier = player.isProdigy ? 3 : 1;
+    const multiplier = player.isProdigy ? (player.prodigyMultiplier || 3) : 1;
+    const gainedStatsList: string[] = [];
+
     if (item.effects.skillBonus) {
-      player.personality.skill = Math.min(100, player.personality.skill + item.effects.skillBonus * multiplier);
+      const added = item.effects.skillBonus * multiplier;
+      player.personality.skill = Math.min(100, player.personality.skill + added);
+      gainedStatsList.push(`+${added} Habilidad`);
     }
     if (item.effects.creativityBonus) {
-      player.personality.creativity = Math.min(100, player.personality.creativity + item.effects.creativityBonus * multiplier);
+      const added = item.effects.creativityBonus * multiplier;
+      player.personality.creativity = Math.min(100, player.personality.creativity + added);
+      gainedStatsList.push(`+${added} Creatividad`);
     }
     if (item.effects.charismaBonus) {
-      player.personality.charisma = Math.min(100, player.personality.charisma + item.effects.charismaBonus * multiplier);
+      const added = item.effects.charismaBonus * multiplier;
+      player.personality.charisma = Math.min(100, player.personality.charisma + added);
+      gainedStatsList.push(`+${added} Carisma`);
     }
     if (item.effects.disciplineBonus) {
-      player.personality.discipline = Math.min(100, player.personality.discipline + item.effects.disciplineBonus * multiplier);
+      const added = item.effects.disciplineBonus * multiplier;
+      player.personality.discipline = Math.min(100, player.personality.discipline + added);
+      gainedStatsList.push(`+${added} Disciplina`);
     }
     if (item.effects.reputationBonus) {
-      player.stats.reputation = Math.min(100, player.stats.reputation + item.effects.reputationBonus * multiplier);
+      const added = item.effects.reputationBonus * multiplier;
+      player.stats.reputation = Math.min(100, player.stats.reputation + added);
+      gainedStatsList.push(`+${added} Reputación`);
     }
     if (item.effects.commercialAppealBonus) {
-      player.personality.commercialAppeal = Math.min(100, player.personality.commercialAppeal + item.effects.commercialAppealBonus * multiplier);
+      const added = item.effects.commercialAppealBonus * multiplier;
+      player.personality.commercialAppeal = Math.min(100, player.personality.commercialAppeal + added);
+      gainedStatsList.push(`+${added} Atractivo Comercial`);
     }
+    if (item.effects.originalityBonus) {
+      const added = item.effects.originalityBonus * multiplier;
+      player.personality.originality = Math.min(100, player.personality.originality + added);
+      gainedStatsList.push(`+${added} Originalidad`);
+    }
+    if (item.effects.ambitionBonus) {
+      const added = item.effects.ambitionBonus * multiplier;
+      player.personality.ambition = Math.min(100, player.personality.ambition + added);
+      gainedStatsList.push(`+${added} Ambición`);
+    }
+    if (item.effects.riskToleranceBonus) {
+      const added = item.effects.riskToleranceBonus * multiplier;
+      player.personality.riskTolerance = Math.min(100, player.personality.riskTolerance + added);
+      gainedStatsList.push(`+${added} Tolerancia al Riesgo`);
+    }
+    if (item.effects.sociabilityBonus) {
+      const added = item.effects.sociabilityBonus * multiplier;
+      player.personality.sociability = Math.min(100, player.personality.sociability + added);
+      gainedStatsList.push(`+${added} Sociabilidad`);
+    }
+    if (item.effects.independenceBonus) {
+      const added = item.effects.independenceBonus * multiplier;
+      player.personality.independence = Math.min(100, player.personality.independence + added);
+      gainedStatsList.push(`+${added} Autonomía`);
+    }
+
+    const bonusSummary = gainedStatsList.length > 0 ? ` (${gainedStatsList.join(', ')})` : '';
 
     // Generate News
     this.world.news.unshift({
       id: `news_lifestyle_${Date.now()}`,
       headline: `Estilo de Vida: ${player.name} adquiere "${item.name}"`,
-      body: `${player.name} invirtió ${formatMoney(item.price)} en ${item.name.toLowerCase()}, potenciando su estatus y recursos artísticos.`,
+      body: `${player.name} invirtió ${formatMoney(item.price)} en ${item.name.toLowerCase()}, sumando mejoras permanentes${bonusSummary}.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'culture',
@@ -563,7 +607,10 @@ export class GameEngine {
     });
 
     this.notify();
-    return { success: true, message: `¡Has adquirido "${item.name}" exitosamente!` };
+    return {
+      success: true,
+      message: `¡Has adquirido "${item.name}" exitosamente!${bonusSummary}`
+    };
   }
 
   public static readonly MAX_SINGLES_PER_YEAR = 5;
@@ -1763,44 +1810,33 @@ export class GameEngine {
     return result;
   }
 
-  public restAndRecharge() {
-    this.takeVacation();
+  public restAndRecharge(): DecisionExecutionResult {
+    return this.executeDecisionAction('reflective_rest');
   }
 
-  public takeVacation(cost: number = 400) {
+  public takeVacation(cost: number = 400): DecisionExecutionResult {
+    return this.executeDecisionAction('reflective_rest');
+  }
+
+  public executeDecisionAction(actionType: DecisionActionType): DecisionExecutionResult {
     const player = this.getPlayer();
-    if (!player) return;
-
-    // 1. Descontar costo módico de fondos si tiene saldo disponible
-    const actualCost = Math.min(Math.max(0, player.stats.funds), cost);
-    if (actualCost > 0) {
-      player.stats.funds -= actualCost;
-      this.recordFinancialTransaction({
-        type: 'expense',
-        category: 'lifestyle',
-        amount: actualCost,
-        description: 'Retiro de bienestar y vacaciones'
-      });
+    const result = DecisionEngine.executeDecision(actionType, player, this.world);
+    if (result.success) {
+      if (result.fundsSpent > 0) {
+        this.recordFinancialTransaction({
+          type: 'expense',
+          category: actionType === 'reflective_rest' ? 'lifestyle' : 'production',
+          amount: result.fundsSpent,
+          description: `Decisión de desarrollo: ${result.title}`
+        });
+      }
+      if (result.newsItem) {
+        this.world.news.unshift(result.newsItem);
+      }
+      this.syncAudienceMetrics(player);
+      this.notify();
     }
-
-    // 2. Recuperar energía vital (+50 hasta un tope de 100)
-    player.stats.energy = Math.min(100, player.stats.energy + 50);
-
-    // 3. Registrar noticia positiva de bienestar
-    this.world.news.unshift({
-      id: `news_vacation_${Date.now()}`,
-      headline: `Bienestar & Salud: ${player.name} prioriza su descanso`,
-      body: `${player.name} dedicó tiempo y recursos${actualCost > 0 ? ` (${formatMoney(actualCost)})` : ''} a un retiro de bienestar físico y mental, recargando vitalidad (+50%) para afrontar sus próximos proyectos artísticos con máxima energía.`,
-      year: this.world.currentYear,
-      month: this.world.currentMonth,
-      category: 'culture',
-      relatedArtistIds: [player.id],
-      sentiment: 'positive',
-      importance: 3
-    });
-
-    // 4. Sincronizar y notificar listeners del estado del juego
-    this.notify();
+    return result;
   }
 
   public resolveCurrentEventChoice(choiceIndex: number): EventOutcome | null {
@@ -1832,7 +1868,7 @@ export class GameEngine {
     });
 
     // Apply outcome deltas with Prodigy Multiplier if active
-    const prodigyMultiplier = player.isProdigy ? 3 : 1;
+    const prodigyMultiplier = player.isProdigy ? (player.prodigyMultiplier || 3) : 1;
     if (outcome.fundsChange) {
       player.stats.funds = Math.max(0, player.stats.funds + outcome.fundsChange);
       if (outcome.fundsChange > 0) {
@@ -1875,12 +1911,23 @@ export class GameEngine {
       for (const [k, v] of Object.entries(outcome.personalityChanges)) {
         if (typeof v === 'number' && (player.personality as any)[k] !== undefined) {
           const currentVal = (player.personality as any)[k] as number;
-          const delta = v - currentVal;
-          if (delta > 0 && player.isProdigy) {
-            (player.personality as any)[k] = Math.min(100, currentVal + delta * 3);
+          let targetVal: number;
+          if (v < 0) {
+            targetVal = Math.max(0, currentVal + v);
+          } else if (v <= 25 && currentVal > 30) {
+            // Delta value passed (e.g. +3)
+            const effDelta = player.isProdigy ? v * (player.prodigyMultiplier || 3) : v;
+            targetVal = Math.min(100, Math.max(0, currentVal + effDelta));
           } else {
-            (player.personality as any)[k] = v;
+            // Absolute target value passed
+            const delta = v - currentVal;
+            if (delta > 0 && player.isProdigy) {
+              targetVal = Math.min(100, currentVal + delta * (player.prodigyMultiplier || 3));
+            } else {
+              targetVal = Math.min(100, Math.max(0, v));
+            }
           }
+          (player.personality as any)[k] = targetVal;
         }
       }
     }
@@ -1972,6 +2019,8 @@ export class GameEngine {
 
   public advanceCycle(monthsCount: 6 | 12 = 6, isVacation: boolean = false) {
     const collectedEvents: EventDefinition[] = [];
+    const cycleStartYear = this.world.currentYear;
+    const cycleStartMonth = this.world.currentMonth;
 
     for (let step = 0; step < monthsCount; step++) {
       const isNewYear = this.world.currentMonth === 12;
@@ -2215,6 +2264,51 @@ export class GameEngine {
       const nextTime = TimeSystem.advanceTime(this.world.currentYear, this.world.currentMonth);
       this.world.currentYear = nextTime.year;
       this.world.currentMonth = nextTime.month;
+    }
+
+    // 9. Dynamic Organic Development System (Desarrollo Orgánico por Práctica y Experiencia)
+    const player = this.getPlayer();
+    const cycleStartAbsoluteMonth = cycleStartYear * 12 + cycleStartMonth;
+    const cycleEndAbsoluteMonth = this.world.currentYear * 12 + this.world.currentMonth;
+
+    const allPlayerSongs = Object.values(this.world.songs).filter(s => s.artistId === player.id);
+    const semesterSongs = allPlayerSongs.filter(s => {
+      const songAbsMonth = s.releaseYear * 12 + s.releaseMonth;
+      return songAbsMonth >= cycleStartAbsoluteMonth && songAbsMonth < cycleEndAbsoluteMonth;
+    });
+
+    const allPlayerTours = this.world.tours.filter(t => t.artistId === player.id);
+    const semesterTours = allPlayerTours.filter(t => {
+      const tourAbsMonth = t.year * 12 + t.month;
+      return tourAbsMonth >= cycleStartAbsoluteMonth && tourAbsMonth < cycleEndAbsoluteMonth;
+    });
+
+    const semesterCollabs = semesterSongs.filter(s => s.featuredArtistIds && s.featuredArtistIds.length > 0);
+
+    const semesterSuccessfulReleases = semesterSongs.filter(s => {
+      const hitGlobal = s.peakPosition?.Global ? s.peakPosition.Global <= 20 : false;
+      const hitArg = s.peakPosition?.Argentina ? s.peakPosition.Argentina <= 20 : false;
+      return hitGlobal || hitArg || s.wentViral || (s.streamsTotal || 0) >= 15000 || (s.receptionRating || 0) >= 3;
+    });
+
+    const activityData: SemesterActivityData = {
+      songsRecorded: semesterSongs.length,
+      toursConducted: semesterTours.length,
+      successfulReleases: semesterSuccessfulReleases.length,
+      collabsConducted: semesterCollabs.length
+    };
+
+    const organicProgress = DecisionEngine.evaluateOrganicProgression(player, activityData, this.world);
+    if (organicProgress.newsGenerated) {
+      this.world.news.unshift(organicProgress.newsGenerated);
+    }
+    if (organicProgress.summaryNotes.length > 0) {
+      this.world.globalHistoryTimeline.unshift({
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        text: `Desarrollo artístico de ${player.name}: ${organicProgress.summaryNotes.join(', ')}.`,
+        category: 'career'
+      });
     }
 
     // Obligatory queue requirement: Disparar obligatoriamente una cola de eventos para el jugador

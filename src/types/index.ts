@@ -235,6 +235,11 @@ export interface LifestyleItem {
     disciplineBonus?: number;
     reputationBonus?: number;
     commercialAppealBonus?: number;
+    originalityBonus?: number;
+    ambitionBonus?: number;
+    riskToleranceBonus?: number;
+    sociabilityBonus?: number;
+    independenceBonus?: number;
   };
 }
 

@@ -42,9 +42,13 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_study_production',
         text: 'Tomarte el tiempo para aprender a ecualizar y comprimir tus voces',
-        consequencesDescription: '+Habilidad técnica permanente, +Calidad de futuras canciones',
+        consequencesDescription: '+3 Habilidad técnica, +1 Disciplina, +3 Credibilidad artística, -8 Energía',
         apply: () => ({
           narrativeText: 'Comprendiste conceptos clave de mezcla que mejorarán la calidad de cada tema futuro.',
+          personalityChanges: {
+            skill: Math.min(100, ctx.player.personality.skill + 3),
+            discipline: Math.min(100, ctx.player.personality.discipline + 1)
+          },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 3) },
           energyChange: -8
         })
@@ -66,11 +70,12 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_collab_beatmaker',
         text: 'Elegir su mejor instrumental y ofrecerle crédito al 50%',
-        consequencesDescription: '+Conexión con productor, +10 Hype, +Relación positiva',
+        consequencesDescription: '+Conexión con productor, +10 Hype, +2 Sociabilidad, +Relación positiva',
         apply: () => ({
           narrativeText: 'La química entre tu voz y su base fue perfecta. Nació una alianza sonora prometedora.',
           hypeChange: 10,
           fansChange: 120,
+          personalityChanges: { sociability: Math.min(100, ctx.player.personality.sociability + 2) },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 3) }
         })
       },
@@ -78,11 +83,15 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         id: 'c_buy_exclusive',
         text: 'Pagarle $150 por los derechos exclusivos de la pista',
         costFunds: 150,
-        consequencesDescription: '-$150 Fondos, +100% Derechos y másters, +Reputación profesional',
+        consequencesDescription: '-$150 Fondos, +100% Derechos y másters, +2 Ambición, +2 Independencia',
         apply: () => ({
           narrativeText: 'El productor quedó sorprendido por tu seriedad comercial. La instrumental ahora es 100% tuya.',
           fundsChange: -150,
           reputationChange: 4,
+          personalityChanges: {
+            ambition: Math.min(100, ctx.player.personality.ambition + 2),
+            independence: Math.min(100, ctx.player.personality.independence + 2)
+          },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 2) }
         })
       }
@@ -103,7 +112,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_give_it_all',
         text: 'Dejar el alma en el escenario y saltar con el público',
-        consequencesDescription: '+Carisma en vivo, +150 Fans fieles, +$80 de gorra, -12 Energía',
+        consequencesDescription: '+2 Carisma en vivo, +150 Fans fieles, +$80 de gorra, -12 Energía',
         apply: () => ({
           narrativeText: 'La energía fue contagiosa. Las pocas personas presentes terminaron saltando y pidiéndote fotos al bajar.',
           fansChange: 150,
@@ -111,17 +120,19 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           reputationChange: 3,
           fundsChange: 80,
           energyChange: -12,
-          hypeChange: 8
+          hypeChange: 8,
+          personalityChanges: { charisma: Math.min(100, ctx.player.personality.charisma + 2) }
         })
       },
       {
         id: 'c_sell_merch_local',
         text: 'Llevar stickers y remeras caseras hechas a mano',
-        consequencesDescription: '+$140 Fondos, +Fidelidad de los primeros seguidores',
+        consequencesDescription: '+$140 Fondos, +Fidelidad de los primeros seguidores, +1 Atractivo Comercial',
         apply: () => ({
           narrativeText: 'Vendiste todos los stickers y remeras. La gente se fue llevando tu logo en sus fundas de celular.',
           fundsChange: 140,
           fansChange: 80,
+          personalityChanges: { commercialAppeal: Math.min(100, ctx.player.personality.commercialAppeal + 1) },
           statChanges: { fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 5) }
         })
       }
@@ -142,20 +153,21 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_diy_distro',
         text: 'Subirla a todas las plataformas y compartirla en grupos y foros',
-        consequencesDescription: '+350 Primeros oyentes reales, +10 Hype inicial, +1,500 Streams',
+        consequencesDescription: '+350 Primeros oyentes reales, +10 Hype inicial, +1,500 Streams, +1 Ambición',
         apply: () => ({
           narrativeText: 'Tu canción empezó a sonar en parlantes de amigos y playlists curadas por la comunidad.',
           fansChange: 250,
           popularityChange: 3,
           hypeChange: 10,
-          streamsChange: 1500
+          streamsChange: 1500,
+          personalityChanges: { ambition: Math.min(100, ctx.player.personality.ambition + 1) }
         })
       },
       {
         id: 'c_music_video_lowbudget',
         text: 'Filmar un video casero con celular y estética VHS en las calles',
         costFunds: 80,
-        consequencesDescription: '-$80 Fondos, +Identidad estética, +18 Hype, +450 Fans, +3,800 Streams',
+        consequencesDescription: '-$80 Fondos, +Identidad estética, +18 Hype, +450 Fans, +2 Creatividad, +3,800 Streams',
         apply: () => ({
           narrativeText: 'El video capturó la vibra callejera y auténtica de tu barrio. Varios canales de música independiente lo repostearon.',
           fundsChange: -80,
@@ -163,6 +175,10 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           hypeChange: 18,
           popularityChange: 4,
           streamsChange: 3800,
+          personalityChanges: {
+            creativity: Math.min(100, ctx.player.personality.creativity + 2),
+            originality: Math.min(100, ctx.player.personality.originality + 1)
+          },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) }
         })
       }
@@ -183,11 +199,15 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_freestyle_brutal',
         text: 'Tirar barras complejas y demostrar técnica pura',
-        consequencesDescription: '+Reputación lírica, +Credibilidad artística, -10 Energía',
+        consequencesDescription: '+Reputación lírica, +Credibilidad artística, +2 Skill, +1 Originalidad, -10 Energía',
         apply: () => ({
           narrativeText: 'Tus rimas dejaron callada a la plaza. Los videos grabados con celulares comenzaron a compartirse en redes barriales.',
           reputationChange: 6,
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 5) },
+          personalityChanges: {
+            skill: Math.min(100, ctx.player.personality.skill + 2),
+            originality: Math.min(100, ctx.player.personality.originality + 1)
+          },
           fansChange: 800,
           energyChange: -10,
           hypeChange: 8
@@ -196,22 +216,27 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
       {
         id: 'c_catchy_hook',
         text: 'Cantar un estribillo melódico y conectar con el público',
-        consequencesDescription: '+Popularidad, +Oyentes potenciales, +Carisma',
+        consequencesDescription: '+Popularidad, +Oyentes potenciales, +2 Carisma, +1 Atractivo Comercial',
         apply: () => ({
           narrativeText: 'Toda la plaza terminó coreando el estribillo. Un productor local te pidió tu contacto al terminar la ronda.',
           popularityChange: 4,
           fansChange: 1500,
           hypeChange: 12,
-          energyChange: -8
+          energyChange: -8,
+          personalityChanges: {
+            charisma: Math.min(100, ctx.player.personality.charisma + 2),
+            commercialAppeal: Math.min(100, ctx.player.personality.commercialAppeal + 1)
+          }
         })
       },
       {
         id: 'c_network_producers',
         text: 'Quedarte escuchando y hacer contactos con beatmakers',
-        consequencesDescription: '+Conexiones de producción, +Oportunidades de estudio',
+        consequencesDescription: '+Conexiones de producción, +2 Sociabilidad, +Oportunidades de estudio',
         apply: () => ({
           narrativeText: 'Conociste a beatmakers underground que tienen grabadoras y pistas listas para experimentar.',
           statChanges: { energy: Math.min(100, ctx.player.stats.energy + 5) },
+          personalityChanges: { sociability: Math.min(100, ctx.player.personality.sociability + 2) },
           fundsChange: 100
         })
       }

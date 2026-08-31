@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Artist, WorldState, Genre, CareerStage } from '../types';
+import { Artist, WorldState, Genre, CareerStage, PersonalityTraits } from '../types';
 import {
   AVATAR_PALETTES,
   AVATAR_SYMBOLS,
@@ -40,7 +40,13 @@ import {
   Waves,
   Activity,
   Layers,
-  AlertCircle
+  AlertCircle,
+  Plus,
+  Minus,
+  Info,
+  Target,
+  Wrench,
+  Award
 } from 'lucide-react';
 import {
   generateArtistName,
@@ -99,6 +105,265 @@ const TraitChip: React.FC<TraitChipProps> = ({ label, variant = 'purple' }) => {
   );
 };
 
+// =========================================================================
+// REGLAS Y CONFIGURACIÓN DE ARQUETIPOS (RANGO UNDERGROUND REALISTA: 18 - 35)
+// =========================================================================
+
+export const ARCHETYPE_PRESETS: Record<string, {
+  id: 'visionary' | 'entrepreneur' | 'showman' | 'disciplined' | 'experimental';
+  name: string;
+  subtitle: string;
+  desc: string;
+  chips: string[];
+  variant: 'purple' | 'emerald' | 'amber' | 'cyan' | 'slate';
+  traits: PersonalityTraits;
+}> = {
+  visionary: {
+    id: 'visionary',
+    name: 'El Visionario',
+    subtitle: 'Vanguardia Creativa & Concepto Crudo',
+    desc: 'Prioriza originalidad radical y experimentación sonora. Gran impacto en crítica underground y nichos de culto.',
+    chips: ['+Originalidad (35)', '+Creatividad (34)', '-Comercial (18)'],
+    variant: 'purple',
+    traits: {
+      creativity: 34,
+      originality: 35,
+      riskTolerance: 32,
+      skill: 26,
+      independence: 30,
+      ambition: 24,
+      charisma: 24,
+      discipline: 22,
+      sociability: 20,
+      commercialAppeal: 18
+    }
+  },
+  entrepreneur: {
+    id: 'entrepreneur',
+    name: 'El Estratega',
+    subtitle: 'Visión Comercial & Autogestión',
+    desc: 'Negociador nato, visión comercial y networking barrial. Maximiza ingresos, monetización y contratos desde el inicio.',
+    chips: ['+Ambición (35)', '+Comercial (34)', '+Sociabilidad (32)'],
+    variant: 'emerald',
+    traits: {
+      ambition: 35,
+      commercialAppeal: 34,
+      sociability: 32,
+      independence: 30,
+      discipline: 28,
+      charisma: 26,
+      riskTolerance: 24,
+      skill: 22,
+      creativity: 20,
+      originality: 18
+    }
+  },
+  showman: {
+    id: 'showman',
+    name: 'El Showman',
+    subtitle: 'Magnetismo Escénico & Viralidad',
+    desc: 'Carisma innato en tarimas barriales, soltura ante cámaras y conexión espontánea y magnética con el público.',
+    chips: ['+Carisma (35)', '+Sociabilidad (33)', '+Comercial (32)'],
+    variant: 'amber',
+    traits: {
+      charisma: 35,
+      sociability: 33,
+      commercialAppeal: 32,
+      ambition: 30,
+      riskTolerance: 28,
+      skill: 24,
+      creativity: 22,
+      originality: 22,
+      discipline: 20,
+      independence: 18
+    }
+  },
+  disciplined: {
+    id: 'disciplined',
+    name: 'El Perfeccionista',
+    subtitle: 'Rigor Técnico & Disciplina de Estudio',
+    desc: 'Horas de práctica en home studio, pulido métrico vocal y rigor constante para una ejecución pulida.',
+    chips: ['+Disciplina (35)', '+Habilidad (34)', '+Independencia (30)'],
+    variant: 'cyan',
+    traits: {
+      discipline: 35,
+      skill: 34,
+      independence: 30,
+      ambition: 28,
+      creativity: 25,
+      originality: 24,
+      commercialAppeal: 22,
+      charisma: 20,
+      sociability: 19,
+      riskTolerance: 18
+    }
+  },
+  experimental: {
+    id: 'experimental',
+    name: 'Vanguardia Pura',
+    subtitle: 'Ruptura Sonora & Autonomía',
+    desc: 'Rompe barreras acústicas sin atarse a fórmulas ni algoritmos comerciales. Búsqueda de una identidad irrepetible.',
+    chips: ['+Originalidad (35)', '+Creatividad (34)', '+Riesgo (33)'],
+    variant: 'purple',
+    traits: {
+      originality: 35,
+      creativity: 34,
+      independence: 34,
+      riskTolerance: 33,
+      skill: 26,
+      discipline: 22,
+      ambition: 20,
+      charisma: 19,
+      sociability: 18,
+      commercialAppeal: 16
+    }
+  }
+};
+
+// =========================================================================
+// SISTEMA POINT-BUY PARA MODO PERSONALIZADO (BASE 18, MÁX 38, BOLSA 45 PTS)
+// =========================================================================
+
+export const CUSTOM_BASE_STAT = 18;
+export const CUSTOM_MAX_STAT = 38;
+export const CUSTOM_POINTS_POOL = 45;
+
+export const INITIAL_CUSTOM_TRAITS: PersonalityTraits = {
+  creativity: 24,
+  ambition: 22,
+  discipline: 23,
+  charisma: 23,
+  skill: 24,
+  commercialAppeal: 21,
+  originality: 23,
+  riskTolerance: 22,
+  sociability: 21,
+  independence: 22
+};
+
+export interface TraitMeta {
+  key: keyof PersonalityTraits;
+  label: string;
+  shortLabel: string;
+  icon: React.ComponentType<{ className?: string }>;
+  iconColor: string;
+  gradient: string;
+  bgTrack: string;
+  desc: string;
+}
+
+export const TRAIT_METADATA_LIST: TraitMeta[] = [
+  {
+    key: 'creativity',
+    label: 'Creatividad & Vanguardia',
+    shortLabel: 'Creatividad',
+    icon: Sparkles,
+    iconColor: 'text-purple-400',
+    gradient: 'from-purple-500 to-indigo-600',
+    bgTrack: 'bg-purple-950/40',
+    desc: 'Capacidad compositiva, experimentación sonora y profundidad conceptual.'
+  },
+  {
+    key: 'skill',
+    label: 'Habilidad / Técnica Musical',
+    shortLabel: 'Skill / Técnica',
+    icon: Music2,
+    iconColor: 'text-cyan-400',
+    gradient: 'from-cyan-500 to-blue-600',
+    bgTrack: 'bg-cyan-950/40',
+    desc: 'Técnica vocal, métrica rítmica, ejecución de instrumentos y pulido en estudio.'
+  },
+  {
+    key: 'charisma',
+    label: 'Carisma & Presencia',
+    shortLabel: 'Carisma',
+    icon: Crown,
+    iconColor: 'text-amber-400',
+    gradient: 'from-amber-400 to-orange-500',
+    bgTrack: 'bg-amber-950/40',
+    desc: 'Magnetismo en tarima, soltura en redes y fidelización orgánica de fans.'
+  },
+  {
+    key: 'commercialAppeal',
+    label: 'Atractivo Comercial',
+    shortLabel: 'Comercial',
+    icon: DollarSign,
+    iconColor: 'text-emerald-400',
+    gradient: 'from-emerald-400 to-teal-500',
+    bgTrack: 'bg-emerald-950/40',
+    desc: 'Facilidad para crear ganchos pegadizos y sonar en playlists masivas.'
+  },
+  {
+    key: 'originality',
+    label: 'Originalidad Sonora',
+    shortLabel: 'Originalidad',
+    icon: Target,
+    iconColor: 'text-pink-400',
+    gradient: 'from-pink-500 to-rose-500',
+    bgTrack: 'bg-pink-950/40',
+    desc: 'Sello sonoro inconfundible, distinción estilística y respeto de la crítica underground.'
+  },
+  {
+    key: 'discipline',
+    label: 'Disciplina de Estudio',
+    shortLabel: 'Disciplina',
+    icon: ShieldCheck,
+    iconColor: 'text-blue-400',
+    gradient: 'from-blue-500 to-indigo-600',
+    bgTrack: 'bg-blue-950/40',
+    desc: 'Rigor en horas de grabación, cumplimiento de plazos y resistencia a la fatiga.'
+  },
+  {
+    key: 'ambition',
+    label: 'Ambición & Empuje',
+    shortLabel: 'Ambición',
+    icon: Flame,
+    iconColor: 'text-orange-400',
+    gradient: 'from-orange-500 to-red-500',
+    bgTrack: 'bg-orange-950/40',
+    desc: 'Impulso por trascender, superación de límites y búsqueda de escenarios mayores.'
+  },
+  {
+    key: 'riskTolerance',
+    label: 'Tolerancia al Riesgo',
+    shortLabel: 'Riesgo',
+    icon: Zap,
+    iconColor: 'text-yellow-400',
+    gradient: 'from-yellow-400 to-amber-500',
+    bgTrack: 'bg-yellow-950/40',
+    desc: 'Audacia para probar nuevas fórmulas sonoras y fusionar géneros.'
+  },
+  {
+    key: 'sociability',
+    label: 'Sociabilidad & Conexiones',
+    shortLabel: 'Sociabilidad',
+    icon: Users,
+    iconColor: 'text-teal-400',
+    gradient: 'from-teal-400 to-emerald-500',
+    bgTrack: 'bg-teal-950/40',
+    desc: 'Química en el estudio con productores y facilidad para pactar feats.'
+  },
+  {
+    key: 'independence',
+    label: 'Autogestión / Independencia',
+    shortLabel: 'Autogestión',
+    icon: Headphones,
+    iconColor: 'text-indigo-400',
+    gradient: 'from-indigo-400 to-violet-500',
+    bgTrack: 'bg-indigo-950/40',
+    desc: 'Capacidad de autoproducción y autonomía en decisiones artísticas.'
+  }
+];
+
+export const getTraitDevelopmentTier = (val: number) => {
+  if (val <= 20) return { label: 'Novato Base', color: 'text-slate-400 bg-slate-500/10 border-slate-500/30' };
+  if (val <= 28) return { label: 'En Desarrollo', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30' };
+  if (val <= 38) return { label: 'Destacado Inicial', color: 'text-purple-300 bg-purple-500/20 border-purple-500/40' };
+  if (val <= 60) return { label: 'Profesional', color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/40' };
+  if (val <= 85) return { label: 'Élite de Escena', color: 'text-amber-400 bg-amber-500/20 border-amber-500/40' };
+  return { label: 'Maestría Legendaria', color: 'text-rose-400 bg-rose-500/20 border-rose-500/40' };
+};
+
 export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   world,
   onBackToMenu,
@@ -119,18 +384,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
   // 3. Personality Archetype & Concept
   const [archetype, setArchetype] = useState<'visionary' | 'entrepreneur' | 'showman' | 'disciplined' | 'experimental' | 'custom'>('visionary');
-  const [customTraits, setCustomTraits] = useState({
-    creativity: 85,
-    ambition: 85,
-    discipline: 80,
-    charisma: 85,
-    skill: 85,
-    commercialAppeal: 75,
-    originality: 90,
-    riskTolerance: 80,
-    sociability: 75,
-    independence: 80
-  });
+  const [customTraits, setCustomTraits] = useState<PersonalityTraits>(INITIAL_CUSTOM_TRAITS);
 
   // 4. Initial Level / Starting Point
   const [startingLevel, setStartingLevel] = useState<'underground' | 'emerging' | 'local' | 'independent'>('underground');
@@ -221,89 +475,140 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     }
   };
 
-  const getComputedPersonality = () => {
+  // =========================================================================
+  // CÁLCULO DINÁMICO DE HABILIDADES Y PUNTOS EN MODO PERSONALIZADO
+  // =========================================================================
+
+  const getComputedPersonality = (): PersonalityTraits => {
     if (isProdigy) {
       return {
-        creativity: 98,
-        ambition: 99,
-        discipline: 96,
-        charisma: 99,
-        skill: 99,
-        commercialAppeal: 97,
-        originality: 98,
-        riskTolerance: 94,
-        sociability: 94,
-        independence: 95
+        creativity: 68,
+        ambition: 65,
+        discipline: 62,
+        charisma: 68,
+        skill: 70,
+        commercialAppeal: 64,
+        originality: 70,
+        riskTolerance: 60,
+        sociability: 60,
+        independence: 65
       };
     }
 
-    if (archetype === 'visionary') {
-      return {
-        creativity: 95,
-        ambition: 80,
-        discipline: 75,
-        charisma: 80,
-        skill: 85,
-        commercialAppeal: 65,
-        originality: 95,
-        riskTolerance: 90,
-        sociability: 70,
-        independence: 85
-      };
-    } else if (archetype === 'entrepreneur') {
-      return {
-        creativity: 75,
-        ambition: 95,
-        discipline: 85,
-        charisma: 85,
-        skill: 80,
-        commercialAppeal: 92,
-        originality: 75,
-        riskTolerance: 80,
-        sociability: 90,
-        independence: 85
-      };
-    } else if (archetype === 'showman') {
-      return {
-        creativity: 80,
-        ambition: 90,
-        discipline: 75,
-        charisma: 98,
-        skill: 82,
-        commercialAppeal: 92,
-        originality: 80,
-        riskTolerance: 85,
-        sociability: 95,
-        independence: 70
-      };
-    } else if (archetype === 'disciplined') {
-      return {
-        creativity: 85,
-        ambition: 90,
-        discipline: 98,
-        charisma: 75,
-        skill: 95,
-        commercialAppeal: 80,
-        originality: 85,
-        riskTolerance: 65,
-        sociability: 70,
-        independence: 90
-      };
-    } else if (archetype === 'experimental') {
-      return {
-        creativity: 98,
-        ambition: 75,
-        discipline: 80,
-        charisma: 70,
-        skill: 90,
-        commercialAppeal: 50,
-        originality: 98,
-        riskTolerance: 95,
-        sociability: 60,
-        independence: 95
-      };
+    if (archetype === 'custom') {
+      return customTraits;
     }
-    return customTraits;
+
+    const preset = ARCHETYPE_PRESETS[archetype];
+    return preset ? preset.traits : INITIAL_CUSTOM_TRAITS;
+  };
+
+  const computedPersonality = useMemo(() => getComputedPersonality(), [archetype, customTraits, isProdigy]);
+
+  const averageSkillRating = useMemo(() => {
+    const vals = Object.values(computedPersonality) as number[];
+    const sum = vals.reduce((a: number, b: number) => a + b, 0);
+    return (sum / vals.length).toFixed(1);
+  }, [computedPersonality]);
+
+  const topTwoTraits = useMemo(() => {
+    const entries = Object.entries(computedPersonality) as [keyof PersonalityTraits, number][];
+    entries.sort((a, b) => b[1] - a[1]);
+    return entries.slice(0, 2).map(([key, val]) => {
+      const meta = TRAIT_METADATA_LIST.find(t => t.key === key);
+      return {
+        key,
+        name: meta?.shortLabel || key,
+        val
+      };
+    });
+  }, [computedPersonality]);
+
+  // Point Buy Helpers
+  const spentCustomPoints = useMemo(() => {
+    const vals = Object.values(customTraits) as number[];
+    return vals.reduce(
+      (sum: number, val: number) => sum + Math.max(0, val - CUSTOM_BASE_STAT),
+      0
+    );
+  }, [customTraits]);
+
+  const remainingCustomPoints = CUSTOM_POINTS_POOL - spentCustomPoints;
+
+  const handleCustomTraitChange = (key: keyof PersonalityTraits, targetVal: number) => {
+    const currentVal = customTraits[key];
+    const spentExcludingCurrent = spentCustomPoints - Math.max(0, currentVal - CUSTOM_BASE_STAT);
+    const maxAllowedForThis = Math.min(
+      CUSTOM_MAX_STAT,
+      CUSTOM_BASE_STAT + (CUSTOM_POINTS_POOL - spentExcludingCurrent)
+    );
+    const clampedVal = Math.max(CUSTOM_BASE_STAT, Math.min(maxAllowedForThis, targetVal));
+
+    setCustomTraits(prev => ({
+      ...prev,
+      [key]: clampedVal
+    }));
+  };
+
+  const handleStepTrait = (key: keyof PersonalityTraits, delta: number) => {
+    const currentVal = customTraits[key];
+    handleCustomTraitChange(key, currentVal + delta);
+  };
+
+  const handleApplyCustomPreset = (presetType: 'balanced' | 'reset' | 'producer' | 'showman') => {
+    if (presetType === 'balanced') {
+      setCustomTraits({
+        creativity: 23,
+        skill: 23,
+        charisma: 23,
+        discipline: 23,
+        originality: 23,
+        ambition: 22,
+        commercialAppeal: 22,
+        riskTolerance: 22,
+        sociability: 22,
+        independence: 22
+      });
+    } else if (presetType === 'reset') {
+      setCustomTraits({
+        creativity: 18,
+        ambition: 18,
+        discipline: 18,
+        charisma: 18,
+        skill: 18,
+        commercialAppeal: 18,
+        originality: 18,
+        riskTolerance: 18,
+        sociability: 18,
+        independence: 18
+      });
+    } else if (presetType === 'producer') {
+      setCustomTraits({
+        skill: 32,
+        creativity: 28,
+        discipline: 26,
+        originality: 24,
+        independence: 25,
+        ambition: 18,
+        charisma: 18,
+        commercialAppeal: 18,
+        riskTolerance: 18,
+        sociability: 18
+      });
+    } else if (presetType === 'showman') {
+      setCustomTraits({
+        charisma: 32,
+        commercialAppeal: 28,
+        sociability: 27,
+        ambition: 24,
+        skill: 24,
+        creativity: 18,
+        discipline: 18,
+        originality: 18,
+        riskTolerance: 18,
+        independence: 18
+      });
+    }
   };
 
   const getStartingStats = () => {
@@ -830,14 +1135,17 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 3: Arquetipo & Filosofía Creativa */}
+            {/* PASO 3: Arquetipo & Filosofía Creativa (Rango Underground: 18 - 35) */}
             {/* ========================================================================= */}
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="border-b border-[#2A2E3D] pb-3">
+              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
                   <Brain className="w-4 h-4 text-[#7C3AED]" />
-                  <span>3. Arquetipo Artístico & Filosofía</span>
+                  <span>3. Arquetipo Artístico & Habilidades Iniciales</span>
                 </div>
+                <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
+                  Nivel Amateur • 18 - 35 / 100
+                </span>
               </div>
 
               {/* Archetypes Grid with Stylized TraitChip components */}
@@ -846,43 +1154,43 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   {
                     id: 'visionary',
                     label: 'El Visionario',
-                    desc: 'Prioriza originalidad radical y experimentación. Gran impacto en la crítica.',
-                    chips: ['+Originalidad', '+Creatividad', '-Comercial'],
+                    desc: 'Prioriza originalidad radical y experimentación sonora. Gran impacto en crítica underground.',
+                    chips: ['+Originalidad (35)', '+Creatividad (34)', '-Comercial (18)'],
                     variant: 'purple' as const
                   },
                   {
                     id: 'entrepreneur',
                     label: 'El Estratega',
-                    desc: 'Negociador nato, enfoque comercial y control de marca. Maximiza ingresos.',
-                    chips: ['+Comercial', '+Ambición', '+Sociabilidad'],
+                    desc: 'Negociador nato, enfoque comercial y networking barrial. Maximiza ingresos desde el inicio.',
+                    chips: ['+Ambición (35)', '+Comercial (34)', '+Sociabilidad (32)'],
                     variant: 'emerald' as const
                   },
                   {
                     id: 'showman',
                     label: 'El Showman',
-                    desc: 'Carisma magnético, viralidad en redes y presencia escénica arrolladora.',
-                    chips: ['+Carisma', '+Hype', '+Fans'],
+                    desc: 'Carisma magnético en tarimas barriales, soltura en redes y presencia escénica.',
+                    chips: ['+Carisma (35)', '+Sociabilidad (33)', '+Comercial (32)'],
                     variant: 'amber' as const
                   },
                   {
                     id: 'disciplined',
                     label: 'El Perfeccionista',
-                    desc: 'Técnica vocal excelsa, horas infinitas en estudio y consistencia de calidad.',
-                    chips: ['+Habilidad', '+Disciplina', '+Constancia'],
+                    desc: 'Horas infinitas de práctica en home studio, pulido métrico vocal y consistencia metódica.',
+                    chips: ['+Disciplina (35)', '+Habilidad (34)', '+Independencia (30)'],
                     variant: 'cyan' as const
                   },
                   {
                     id: 'experimental',
                     label: 'Vanguardia Pura',
                     desc: 'Rompe barreras sonoras sin atarse a tendencias ni algoritmos comerciales.',
-                    chips: ['+Credibilidad', '+Riesgo', '+Innovación'],
+                    chips: ['+Originalidad (35)', '+Creatividad (34)', '+Riesgo (33)'],
                     variant: 'purple' as const
                   },
                   {
                     id: 'custom',
                     label: 'Personalizado',
-                    desc: 'Ajuste manual y minucioso de cada rasgo psicológico y artístico.',
-                    chips: ['Ajuste Libre', 'Custom Stats'],
+                    desc: 'Distribución manual con sistema Point-Buy (Base 18, máx 38, 45 pts libres).',
+                    chips: ['Point-Buy (45 pts)', 'Ajuste Libre'],
                     variant: 'slate' as const
                   }
                 ].map((item) => {
@@ -920,34 +1228,264 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 })}
               </div>
 
-              {/* Custom Sliders */}
-              {archetype === 'custom' && (
-                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] space-y-3 pt-4">
-                  <span className="text-xs font-bold text-[#C084FC] block uppercase tracking-wider">
-                    Ajuste Fino de Rasgos Personalizados
+              {/* Informative Realistic Skill Curve Banner */}
+              <div className="bg-[#0B0C10] p-3.5 rounded-[12px] border border-[#2A2E3D] flex items-start gap-3 text-xs text-[#94A3B8]">
+                <div className="p-2 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-[#C084FC] shrink-0 mt-0.5">
+                  <TrendingUp className="w-4 h-4 text-[#8B5CF6]" />
+                </div>
+                <div className="space-y-1">
+                  <span className="font-bold text-[#F8FAFC] block">
+                    Curva de Progresión Realista (Nivel Amateur: 18 - 35 / 100)
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    {Object.entries(customTraits).map(([key, val]) => (
-                      <div key={key} className="space-y-1">
-                        <div className="flex justify-between text-xs text-[#94A3B8] capitalize">
-                          <span>{key}</span>
-                          <span className="font-mono font-bold text-[#F8FAFC]">{val}/100</span>
+                  <p className="leading-relaxed">
+                    Tu artista inicia en la escena underground. Las habilidades se desarrollarán y madurarán con el tiempo según los temas que grabes, el equipamiento de estudio que adquieras en la tienda de estilo de vida, el coaching vocal y las decisiones de carrera.
+                  </p>
+                </div>
+              </div>
+
+              {/* Archetype Skill Breakdown or Custom Point Buy System */}
+              {archetype !== 'custom' ? (
+                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] space-y-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2E3D] pb-3">
+                    <div>
+                      <span className="text-xs font-bold text-[#C084FC] block uppercase tracking-wider">
+                        Desglose de Habilidades Iniciales: {ARCHETYPE_PRESETS[archetype]?.name}
+                      </span>
+                      <p className="text-[11px] text-[#94A3B8]">
+                        {ARCHETYPE_PRESETS[archetype]?.subtitle}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono text-[#94A3B8]">
+                        Promedio Inicial:
+                      </span>
+                      <span className="text-xs font-mono font-bold text-[#F8FAFC] bg-[#16181F] px-2.5 py-0.5 rounded-[6px] border border-[#2A2E3D]">
+                        {averageSkillRating} / 100
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {TRAIT_METADATA_LIST.map((meta) => {
+                      const val = computedPersonality[meta.key];
+                      const tier = getTraitDevelopmentTier(val);
+                      const IconComp = meta.icon;
+
+                      return (
+                        <div
+                          key={meta.key}
+                          className="bg-[#16181F] p-3 rounded-[10px] border border-[#2A2E3D] space-y-2 hover:border-[#7C3AED]/40 transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D]">
+                                <IconComp className={`w-3.5 h-3.5 ${meta.iconColor}`} />
+                              </div>
+                              <span className="text-xs font-bold text-[#F8FAFC]">
+                                {meta.label}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.color}`}>
+                                {tier.label}
+                              </span>
+                              <span className="font-mono font-bold text-xs text-[#F8FAFC]">
+                                {val}/100
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="w-full bg-[#0B0C10] h-2 rounded-full overflow-hidden border border-[#2A2E3D]">
+                            <div
+                              className={`h-full bg-gradient-to-r ${meta.gradient} rounded-full transition-all duration-300`}
+                              style={{ width: `${Math.min(100, Math.max(0, val))}%` }}
+                            />
+                          </div>
+
+                          <p className="text-[10px] text-[#94A3B8] leading-tight">
+                            {meta.desc}
+                          </p>
                         </div>
-                        <input
-                          type="range"
-                          min={50}
-                          max={99}
-                          value={val}
-                          onChange={e =>
-                            setCustomTraits({
-                              ...customTraits,
-                              [key]: Number(e.target.value)
-                            })
-                          }
-                          className="w-full h-1.5 bg-[#16181F] rounded-lg accent-[#7C3AED] cursor-pointer"
-                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* Point Buy Mode Controller */
+                <div className="bg-[#0B0C10] p-4 sm:p-5 rounded-[14px] border border-[#7C3AED]/40 space-y-4 shadow-xl">
+                  {/* Point Buy Header & Status */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2E3D] pb-3.5">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Sliders className="w-4 h-4 text-[#C084FC]" />
+                        <span className="text-xs font-bold text-[#C084FC] uppercase tracking-wider">
+                          Modo Personalizado • Sistema Point-Buy
+                        </span>
                       </div>
-                    ))}
+                      <p className="text-[11px] text-[#94A3B8] mt-0.5">
+                        Base: {CUSTOM_BASE_STAT} pts por stat • Máximo inicial: {CUSTOM_MAX_STAT} pts • Bolsa de {CUSTOM_POINTS_POOL} pts libres.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <div
+                        className={`px-3 py-1.5 rounded-[8px] border text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs ${
+                          remainingCustomPoints === 0
+                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                            : remainingCustomPoints > 0
+                            ? 'bg-[#7C3AED]/20 text-[#C084FC] border-[#7C3AED]/50'
+                            : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                        }`}
+                      >
+                        <Award className="w-3.5 h-3.5" />
+                        <span>
+                          Puntos Disponibles: {remainingCustomPoints} / {CUSTOM_POINTS_POOL}
+                        </span>
+                      </div>
+
+                      <span className="text-xs font-mono font-bold text-[#F8FAFC] bg-[#16181F] px-2.5 py-1.5 rounded-[8px] border border-[#2A2E3D]">
+                        Promedio: {averageSkillRating}/100
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Point Budget Visual Progress Bar */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[10px] font-mono text-[#94A3B8]">
+                      <span>Puntos Asignados: {spentCustomPoints} pts</span>
+                      <span>Restantes: {remainingCustomPoints} pts</span>
+                    </div>
+                    <div className="w-full bg-[#16181F] h-2 rounded-full overflow-hidden border border-[#2A2E3D]">
+                      <div
+                        className="h-full bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#EC4899] transition-all duration-300"
+                        style={{ width: `${Math.min(100, (spentCustomPoints / CUSTOM_POINTS_POOL) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Point Buy Quick Presets Bar */}
+                  <div className="flex items-center gap-2 flex-wrap pt-1">
+                    <span className="text-[11px] font-semibold text-[#94A3B8]">
+                      Plantillas Rápidas:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyCustomPreset('balanced')}
+                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-[#7C3AED]/50 text-[#F8FAFC] transition-colors cursor-pointer"
+                    >
+                      Equilibrado (22-23 pts)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyCustomPreset('producer')}
+                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-cyan-500/50 text-[#F8FAFC] transition-colors cursor-pointer"
+                    >
+                      Foco Producción & Técnica
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyCustomPreset('showman')}
+                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-amber-500/50 text-[#F8FAFC] transition-colors cursor-pointer"
+                    >
+                      Foco Carisma & Escenario
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyCustomPreset('reset')}
+                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-rose-950/30 border border-[#2A2E3D] hover:border-rose-500/50 text-rose-300 transition-colors cursor-pointer flex items-center gap-1"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>Base (18 pts)</span>
+                    </button>
+                  </div>
+
+                  {/* 10 Interactive Custom Trait Controls */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                    {TRAIT_METADATA_LIST.map((meta) => {
+                      const val = customTraits[meta.key];
+                      const tier = getTraitDevelopmentTier(val);
+                      const IconComp = meta.icon;
+                      const canIncrement = remainingCustomPoints > 0 && val < CUSTOM_MAX_STAT;
+                      const canDecrement = val > CUSTOM_BASE_STAT;
+
+                      return (
+                        <div
+                          key={meta.key}
+                          className="bg-[#16181F] p-3.5 rounded-[12px] border border-[#2A2E3D] space-y-2.5 hover:border-[#7C3AED]/40 transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D]">
+                                <IconComp className={`w-3.5 h-3.5 ${meta.iconColor}`} />
+                              </div>
+                              <span className="text-xs font-bold text-[#F8FAFC]">
+                                {meta.label}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.color}`}>
+                                {tier.label}
+                              </span>
+                              <span className="font-mono font-bold text-xs text-[#F8FAFC] bg-[#0B0C10] px-2 py-0.5 rounded-[4px] border border-[#2A2E3D]">
+                                {val}/100
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Stepper + Slider Row */}
+                          <div className="flex items-center gap-2.5">
+                            <button
+                              type="button"
+                              onClick={() => handleStepTrait(meta.key, -1)}
+                              disabled={!canDecrement}
+                              className={`p-1.5 rounded-[6px] border transition-colors cursor-pointer ${
+                                canDecrement
+                                  ? 'bg-[#0B0C10] border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-rose-500/60'
+                                  : 'bg-[#0B0C10]/40 border-[#2A2E3D]/40 text-[#64748B] cursor-not-allowed opacity-50'
+                              }`}
+                              title="Disminuir -1 punto"
+                            >
+                              <Minus className="w-3.5 h-3.5" />
+                            </button>
+
+                            <input
+                              type="range"
+                              min={CUSTOM_BASE_STAT}
+                              max={CUSTOM_MAX_STAT}
+                              step={1}
+                              value={val}
+                              onChange={e => handleCustomTraitChange(meta.key, Number(e.target.value))}
+                              className="w-full h-2 rounded-lg bg-[#0B0C10] border border-[#2A2E3D] accent-[#7C3AED] cursor-pointer"
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() => handleStepTrait(meta.key, 1)}
+                              disabled={!canIncrement}
+                              className={`p-1.5 rounded-[6px] border transition-colors cursor-pointer ${
+                                canIncrement
+                                  ? 'bg-[#0B0C10] border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-[#7C3AED]'
+                                  : 'bg-[#0B0C10]/40 border-[#2A2E3D]/40 text-[#64748B] cursor-not-allowed opacity-50'
+                              }`}
+                              title={
+                                remainingCustomPoints <= 0
+                                  ? 'No te quedan puntos en la bolsa disponible'
+                                  : val >= CUSTOM_MAX_STAT
+                                  ? 'Máximo nivel permitido para novato (38 pts)'
+                                  : 'Aumentar +1 punto'
+                              }
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <p className="text-[10px] text-[#94A3B8] leading-tight">
+                            {meta.desc}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -1311,7 +1849,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 {isProdigy && (
                   <div className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1.5 mx-auto shadow-xs">
                     <Crown className="w-3.5 h-3.5 text-amber-300" />
-                    <span>Prodigio Musical • Stats x3</span>
+                    <span>Prodigio Musical • Crecimiento x3</span>
                   </div>
                 )}
 
@@ -1322,6 +1860,45 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <span className="px-2 py-0.5 bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8] rounded-full text-[11px] font-mono">
                     {startingLevel.toUpperCase()}
                   </span>
+                </div>
+              </div>
+
+              {/* Skills Profile Section in Preview Card */}
+              <div className="border-t border-[#2A2E3D] pt-4 space-y-2.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider">
+                    Habilidades Iniciales
+                  </h3>
+                  <span className="text-[10px] font-mono text-[#C084FC] font-bold">
+                    {averageSkillRating}/100 Promedio
+                  </span>
+                </div>
+
+                <div className="bg-[#0B0C10] p-3 rounded-[10px] border border-[#2A2E3D] space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-[#94A3B8]">Especialidad Destacada:</span>
+                    <div className="flex items-center gap-1.5">
+                      {topTwoTraits.map((t, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded-[4px] bg-[#16181F] text-[#C084FC] border border-[#7C3AED]/30 font-mono font-bold text-[10px]"
+                        >
+                          {t.name}: {t.val}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="w-full bg-[#16181F] h-2 rounded-full overflow-hidden border border-[#2A2E3D]">
+                    <div
+                      className="h-full bg-gradient-to-r from-cyan-500 via-[#8B5CF6] to-[#EC4899] rounded-full"
+                      style={{ width: `${Math.min(100, Math.max(0, Number(averageSkillRating)))}%` }}
+                    />
+                  </div>
+
+                  <p className="text-[10px] text-[#64748B] leading-tight">
+                    💡 Margen de desarrollo: +~75 pts mediante grabaciones, tienda de estudio y eventos.
+                  </p>
                 </div>
               </div>
 

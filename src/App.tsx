@@ -375,6 +375,7 @@ export default function App() {
             world={world}
             onNavigate={handleNavigate}
             onRest={handleRest}
+            onExecuteDecision={(action) => getEngine().executeDecisionAction(action)}
             onUpdateAvatar={(url, color, icon) => getEngine().updatePlayerAvatar(url, color, icon)}
             onUpdateProfile={(updates) => getEngine().updatePlayerProfile(updates)}
             onOpenMilestone={handleOpenMilestone}
