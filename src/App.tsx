@@ -65,7 +65,7 @@ export default function App() {
     }
   };
 
-  const prevErasCountRef = useRef<number>(player.eras?.length || 1);
+  const prevErasCountRef = useRef<number>(player?.eras?.length || 1);
   const milestonesAchievedRef = useRef<Set<string>>(new Set());
 
   // Subscribe to engine state changes (Auto-save on every state change)

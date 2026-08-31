@@ -31,13 +31,14 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       if (raw) {
         const parsed: GameSaveState = JSON.parse(raw);
         if (parsed && parsed.world && parsed.playerId) {
-          const p = parsed.world.artists[parsed.playerId];
+          const p = parsed.world.artists?.[parsed.playerId];
           if (p) {
-            const cYear = (parsed.world.currentYear - (p.careerStartYear || parsed.world.currentYear)) + 1;
+            const startY = p.careerStartYear || parsed.world.currentYear || 2026;
+            const cYear = Math.max(1, (parsed.world.currentYear || 2026) - startY + 1);
             setSavedGame({
               player: p,
-              year: parsed.world.currentYear,
-              month: parsed.world.currentMonth,
+              year: parsed.world.currentYear || 2026,
+              month: parsed.world.currentMonth || 1,
               careerYear: cYear
             });
           }
@@ -165,8 +166,12 @@ export const StartScreen: React.FC<StartScreenProps> = ({
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs text-[#94A3B8] pl-9">
-                <span className="font-medium text-[#CBD5E1]">{savedGame.player.name} • {savedGame.player.country}</span>
-                <span className="font-mono font-bold text-[#10B981]">${(savedGame.player.stats?.funds ?? 0).toLocaleString('es-AR')}</span>
+                <span className="font-medium text-[#CBD5E1]">
+                  {savedGame.player.name || 'Artista'} • {savedGame.player.country || 'Argentina'}
+                </span>
+                <span className="font-mono font-bold text-[#10B981]">
+                  ${(savedGame.player.stats?.funds ?? 0).toLocaleString('es-AR')}
+                </span>
               </div>
             </button>
           ) : (

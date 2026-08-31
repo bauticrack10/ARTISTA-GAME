@@ -9,26 +9,6 @@
     <meta property="og:description" content="Simulador profundo, procedural y dinámico de carrera musical donde el mundo evoluciona a lo largo de décadas." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <script>
-      (function() {
-        try {
-          var originalFetch = window.fetch;
-          var currentFetch = originalFetch;
-          Object.defineProperty(window, 'fetch', {
-            get: function() {
-              return currentFetch;
-            },
-            set: function(fn) {
-              currentFetch = fn;
-            },
-            configurable: true,
-            enumerable: true
-          });
-        } catch (err) {
-          console.warn('Fetch property setter fallback failed:', err);
-        }
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>
