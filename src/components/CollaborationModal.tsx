@@ -11,6 +11,8 @@ import { IndustryEngine } from '../systems/IndustryEngine';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
 import { playSound } from '../utils/audioSystem';
 import { formatMoney, formatCompactNumber } from '../utils/formatters';
+import { CollabResponseModal } from './CollabResponseModal';
+import { FeatArtistSelector } from './FeatArtistSelector';
 import {
   X,
   Sparkles,
@@ -276,6 +278,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
     reason: string;
     advice: string;
   } | null>(null);
+  const [responseModalState, setResponseModalState] = useState<{
+    isOpen: boolean;
+    type: 'accepted' | 'rejected';
+    reason?: string;
+    advice?: string;
+    pendingConfirmationData?: ReleaseConfirmationData;
+  } | null>(null);
 
   // Sync genre when collaborator changes if needed
   useEffect(() => {
@@ -476,10 +485,14 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         }
 
         setRejectionFeedback({ reason, advice });
+        setResponseModalState({
+          isOpen: true,
+          type: 'rejected',
+          reason,
+          advice
+        });
       } else {
-        // Collaboration Accepted!
-        playSound('release');
-
+        // Collaboration Accepted! Triumphal response
         const params = {
           collaboratorId: targetArtist.id,
           format,
@@ -493,16 +506,15 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
           longevityCurve
         };
 
+        let confirmationData: ReleaseConfirmationData;
         if (onExecuteCollab) {
-          const confirmationData = onExecuteCollab(params);
-          onClose();
-          onCollabSuccess(confirmationData);
+          confirmationData = onExecuteCollab(params);
         } else {
           // Fallback construction of ReleaseConfirmationData
           const genreName = world.genres[genreId]?.name || genreId;
           const subName = subGenreId ? SUBGENRE_DETAILS[subGenreId]?.name : undefined;
 
-          const releaseData: ReleaseConfirmationData = {
+          confirmationData = {
             type: format === 'single_feat' || format === 'album_track' ? 'single' : format === 'ep_collab' ? 'ep' : format === 'mixtape_collab' ? 'mixtape' : 'collab_album',
             title: title.trim(),
             songCount: selectedFormatConfig.tracksCount,
@@ -525,10 +537,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               videoCost: 0
             }
           };
-
-          onClose();
-          onCollabSuccess(releaseData);
         }
+
+        setResponseModalState({
+          isOpen: true,
+          type: 'accepted',
+          pendingConfirmationData: confirmationData
+        });
       }
     }, 1400);
   };
@@ -584,23 +599,20 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 </span>
               </div>
 
-              {/* Collaborator Dropdown Selector */}
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] text-[#94A3B8]">Seleccionar Colega:</span>
-                <select
-                  value={selectedCollaboratorId}
-                  onChange={e => {
-                    setSelectedCollaboratorId(e.target.value);
-                    setRejectionFeedback(null);
+              {/* Collaborator Dropdown Selector with Badges */}
+              <div className="w-full sm:w-80">
+                <FeatArtistSelector
+                  selectedArtistId={selectedCollaboratorId}
+                  onChange={id => {
+                    if (id) {
+                      setSelectedCollaboratorId(id);
+                      setRejectionFeedback(null);
+                    }
                   }}
-                  className="bg-[#16181F] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3 py-1.5 text-xs text-[#F8FAFC] font-semibold focus:outline-none cursor-pointer"
-                >
-                  {candidateArtists.map(artist => (
-                    <option key={artist.id} value={artist.id}>
-                      {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {formatCompactNumber(artist.stats.monthlyListeners)})
-                    </option>
-                  ))}
-                </select>
+                  sceneArtists={candidateArtists}
+                  player={player}
+                  world={world}
+                />
               </div>
             </div>
 
@@ -1133,6 +1145,39 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Dynamic Collaboration Response Modal (Triumphant Acceptance vs Respectful Decline) */}
+      {responseModalState?.isOpen && targetArtist && (
+        <CollabResponseModal
+          isOpen={responseModalState.isOpen}
+          type={responseModalState.type}
+          artist={targetArtist}
+          player={player}
+          formatTitle={selectedFormatConfig.name}
+          songTitle={title.trim()}
+          creditPreview={getCreditPreview()}
+          totalCost={totalCost}
+          soundSynergy={soundSynergy}
+          rejectionReason={responseModalState.reason}
+          rejectionAdvice={responseModalState.advice}
+          onProceed={() => {
+            if (responseModalState.type === 'accepted' && responseModalState.pendingConfirmationData) {
+              const data = responseModalState.pendingConfirmationData;
+              setResponseModalState(null);
+              onClose();
+              onCollabSuccess(data);
+            } else {
+              setResponseModalState(null);
+            }
+          }}
+          onAdjustProposal={() => {
+            setResponseModalState(null);
+          }}
+          onClose={() => {
+            setResponseModalState(null);
+          }}
+        />
+      )}
     </div>
   );
 };

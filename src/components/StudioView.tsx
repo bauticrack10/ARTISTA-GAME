@@ -13,6 +13,7 @@ import {
   ReleaseConfirmationData
 } from '../types';
 import { ReleaseConfirmationModal } from './ReleaseConfirmationModal';
+import { FeatArtistSelector } from './FeatArtistSelector';
 import { getArtistDerivedStyles, SUBGENRE_DETAILS } from '../data/genres';
 import { GameEngine } from '../core/GameEngine';
 import { IndustryEngine } from '../systems/IndustryEngine';
@@ -880,32 +881,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </button>
                   )}
                 </div>
-                <select
-                  value={singleFeaturedArtist}
-                  onChange={e => setSingleFeaturedArtist(e.target.value)}
-                  className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
-                >
-                  <option value="">Solista (Sin invitado)</option>
-                  {sceneArtists.map(artist => {
-                    const rel = player.relationships[artist.id];
-                    const affinityText = rel?.affinity !== undefined ? (rel.affinity > 0 ? `+${rel.affinity}` : `${rel.affinity}`) : '0';
-                    return (
-                      <option key={artist.id} value={artist.id} className="bg-[#0B0C10] text-[#F8FAFC]">
-                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {formatCompactNumber(artist.stats.monthlyListeners)} • Afinidad: {affinityText})
-                      </option>
-                    );
-                  })}
-                </select>
-                {singleFeaturedArtist && world.artists[singleFeaturedArtist] && (
-                  <div className="mt-2 p-2.5 rounded-lg bg-[#0B0C10] border border-[#8B5CF6]/30 flex items-center justify-between text-[11px]">
-                    <span className="text-[#94A3B8]">
-                      Afinidad con <strong className="text-[#F8FAFC]">{world.artists[singleFeaturedArtist].name}</strong>:
-                    </span>
-                    <span className="text-emerald-400 font-bold font-mono">
-                      {(player.relationships[singleFeaturedArtist]?.affinity || 0) > 0 ? `+${player.relationships[singleFeaturedArtist]?.affinity}` : player.relationships[singleFeaturedArtist]?.affinity || 0} Afinidad • {player.relationships[singleFeaturedArtist]?.respect || 50}% Respeto
-                    </span>
-                  </div>
-                )}
+                <FeatArtistSelector
+                  selectedArtistId={singleFeaturedArtist}
+                  onChange={setSingleFeaturedArtist}
+                  sceneArtists={sceneArtists}
+                  player={player}
+                  world={world}
+                  onOpenAdvancedCollab={onOpenCollabModal}
+                />
               </div>
 
               {/* Producer */}
@@ -1439,22 +1422,14 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </button>
                   )}
                 </div>
-                <select
-                  value={albumFeaturedArtist}
-                  onChange={e => setAlbumFeaturedArtist(e.target.value)}
-                  className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2.5 text-xs text-[#F8FAFC] focus:outline-none transition-colors cursor-pointer"
-                >
-                  <option value="">Proyecto Solista (Sin Feat Principal)</option>
-                  {sceneArtists.map(artist => {
-                    const rel = player.relationships[artist.id];
-                    const affinityText = rel?.affinity !== undefined ? (rel.affinity > 0 ? `+${rel.affinity}` : `${rel.affinity}`) : '0';
-                    return (
-                      <option key={artist.id} value={artist.id} className="bg-[#0B0C10] text-[#F8FAFC]">
-                        ft. {artist.name} ({world.genres[artist.mainGenreId]?.name || artist.mainGenreId} • {formatCompactNumber(artist.stats.monthlyListeners)} • Afinidad: {affinityText})
-                      </option>
-                    );
-                  })}
-                </select>
+                <FeatArtistSelector
+                  selectedArtistId={albumFeaturedArtist}
+                  onChange={setAlbumFeaturedArtist}
+                  sceneArtists={sceneArtists}
+                  player={player}
+                  world={world}
+                  onOpenAdvancedCollab={onOpenCollabModal}
+                />
               </div>
 
               {/* Sub-style Selection for Album */}

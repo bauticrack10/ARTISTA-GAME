@@ -11,9 +11,25 @@ import {
   CollabFeasibilityResult,
   SocialActionResult,
   ActionCooldownResult,
-  InteractionResult
+  InteractionResult,
+  CareerStage,
+  CollabPact
 } from '../types';
 import { SocialFeedEngine } from './SocialFeedEngine';
+
+export const CAREER_STAGE_TIERS: Record<CareerStage, number> = {
+  Underground: 0,
+  Emerging: 1,
+  Breakout: 2,
+  Established: 3,
+  Mainstream: 4,
+  Superstar: 5,
+  Legend: 6,
+  Veteran: 4,
+  Comeback: 3,
+  Declining: 2,
+  Retired: 0
+};
 
 export class RelationshipEngine {
   public static readonly SHOUTOUT_COOLDOWN_MONTHS = 3;
@@ -890,12 +906,30 @@ export class RelationshipEngine {
     const affinityScore = (affinityNormalized - 50) * 0.50; // -25 a +25
     const respectScore = ((rel.respect || 50) - 50) * 0.35;  // -17.5 a +17.5
 
-    // 3. Diferencia de popularidad
+    // 3. Diferencia de popularidad y brecha de etapa de carrera (Career Stage Gap)
     const popDiff = target.stats.popularity - requester.stats.popularity;
+    const requesterTier = CAREER_STAGE_TIERS[requester.careerStage] ?? 0;
+    const targetTier = CAREER_STAGE_TIERS[target.careerStage] ?? 0;
+    const stageGap = targetTier - requesterTier;
+
+    // Regla de Oro: Si la brecha de carrera es abismal (>= 3 niveles, ej: Underground/Emerging pidiéndole a Superstar/Legend como Bad Bunny, Duki o Rosalía)
+    // Sin amistad previa consolidada (afinidad >= 50 o feats previos), el management descarta de plano la propuesta.
+    if (stageGap >= 3 && (rel.affinity < 50 && (rel.pastCollabsCount || 0) === 0 && rel.relationType !== 'friend' && rel.relationType !== 'collaborator')) {
+      const reason = `El equipo de management de ${target.name} declinó la solicitud: consideran que la brecha de exposición con un artista en etapa ${requester.careerStage} es demasiado amplia sin validación previa en los charts o una relación personal consolidada.`;
+      return {
+        willAccept: false,
+        reason,
+        chemistryScore: 5,
+        crossFanbasePotential: 100,
+        acceptanceProbability: 2,
+        successBoost: 0
+      };
+    }
+
     let popScore = 0;
     if (popDiff > 0) {
-      // El colaborador es más popular: exige más mérito/respeto/presupuesto
-      popScore = -Math.min(45, popDiff * 1.0);
+      // El colaborador es más popular: exige más mérito/respeto/presupuesto proporcional
+      popScore = -Math.min(65, popDiff * 1.1 + (stageGap > 0 ? stageGap * 8 : 0));
     } else {
       // El solicitante es más popular: el target se entusiasma
       popScore = Math.min(25, Math.abs(popDiff) * 0.6);
@@ -938,7 +972,8 @@ export class RelationshipEngine {
       else if (budgetProduction >= 5000) budgetScore = 18;
       else if (budgetProduction >= 2500) budgetScore = 12;
       else if (budgetProduction >= 1000) budgetScore = 6;
-      else budgetScore = 0;
+      else if (popDiff > 0) budgetScore = -18;
+      else budgetScore = -5;
     } else {
       if (budgetProduction >= 30000) budgetScore = 30;
       else if (budgetProduction >= 15000) budgetScore = 20;
@@ -995,8 +1030,8 @@ export class RelationshipEngine {
         reason = `${target.name} aceptó la colaboración motivado por la propuesta sonora y la química artística.`;
       }
     } else {
-      if (popDiff > 25 && budgetScore < 15) {
-        reason = `${target.name} consideró que la brecha de exposición actual es muy amplia y el presupuesto ofrecido no justifica el junte en este momento.`;
+      if ((popDiff >= 20 || budgetScore < 0) && budgetScore < 15) {
+        reason = `${target.name} consideró que la brecha de exposición actual es muy amplia y el presupuesto ofrecido ($${budgetProduction.toLocaleString()}) no justifica el junte en este momento.`;
       } else if (genreScore < 0) {
         reason = `${target.name} evaluó que sus estilos y visiones sonoras no son compatibles para este proyecto.`;
       } else if (rel.affinity < 0 || (rel.respect || 50) < 40) {
@@ -1013,6 +1048,35 @@ export class RelationshipEngine {
       crossFanbasePotential,
       acceptanceProbability,
       successBoost: chemistryScore
+    };
+  }
+
+  /**
+   * Determina si un artista está habilitado para ser seleccionado directamente
+   * como colaborador en el estudio (StudioView / Álbum).
+   */
+  static isArtistEligibleForCollab(
+    player: Artist,
+    target: Artist,
+    activePacts?: CollabPact[]
+  ): { isEligible: boolean; reason?: string } {
+    if (player.id === target.id) return { isEligible: false, reason: 'No puedes colaborar contigo mismo.' };
+    const rel = player.relationships?.[target.id];
+    if (rel?.relationType === 'feud' || rel?.activeRivalry) {
+      return { isEligible: false, reason: 'Feudo activo en la escena musical.' };
+    }
+    if (rel?.relationType === 'collaborator' || ((rel?.pastCollabsCount ?? 0) > 0 && (rel?.affinity ?? 0) >= 10)) {
+      return { isEligible: true };
+    }
+    if ((rel?.affinity ?? 0) >= 25) {
+      return { isEligible: true };
+    }
+    if (activePacts && activePacts.some(p => p.targetArtistId === target.id && p.status === 'active')) {
+      return { isEligible: true };
+    }
+    return {
+      isEligible: false,
+      reason: `Requiere acordar colaboración previamente con ${target.name} (afinidad actual: ${rel?.affinity ?? 0}/25).`
     };
   }
 

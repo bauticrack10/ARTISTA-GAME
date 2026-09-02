@@ -129,6 +129,40 @@ export interface CollabFeasibilityResult {
   successBoost?: number;
 }
 
+export interface IncomingCollabOffer {
+  id: string;
+  senderArtistId?: string;
+  senderProducerId?: string;
+  senderName: string;
+  senderRole: 'singer' | 'producer';
+  projectType: CollabProjectType;
+  creditOrder: CreditOrderType;
+  proposedTitle: string;
+  genreId: string;
+  subGenreIds?: string[];
+  budgetOffered: number;
+  royaltySplitPct: number;
+  pitchMessage: string;
+  createdAtYear: number;
+  createdAtMonth: number;
+  expiresYear: number;
+  expiresMonth: number;
+  status: 'pending' | 'accepted' | 'declined' | 'expired';
+}
+
+export interface CollabPact {
+  id: string;
+  targetArtistId?: string;
+  targetProducerId?: string;
+  format: CollabProjectType;
+  creditFormat: CreditOrderType;
+  agreedBudget: number;
+  producerDiscountPct?: number;
+  signedYear: number;
+  expiresYear: number;
+  status: 'active' | 'fulfilled' | 'expired';
+}
+
 export interface CareerEra {
   id: string;
   name: string;
@@ -842,6 +876,8 @@ export interface WorldState {
     chainPayload?: Record<string, any>;
   }>;
   financialLedger?: FinancialTransaction[];
+  pendingCollabOffers?: IncomingCollabOffer[];
+  activeCollabPacts?: CollabPact[];
 }
 
 export interface GameSaveState {

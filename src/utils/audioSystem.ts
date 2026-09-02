@@ -4,7 +4,7 @@
  * sin dependencias externas ni archivos pesados de audio.
  */
 
-export type SoundType = 'click' | 'release' | 'money' | 'award' | 'tour' | 'level_up' | 'chart_no1' | 'success';
+export type SoundType = 'click' | 'release' | 'money' | 'award' | 'tour' | 'level_up' | 'chart_no1' | 'success' | 'collab_accept' | 'collab_reject';
 type SoundListener = (enabled: boolean) => void;
 
 class AudioSystem {
@@ -258,6 +258,62 @@ class AudioSystem {
             osc.start(now + i * 0.09);
             osc.stop(now + 1.45);
           });
+          break;
+        }
+
+        case 'collab_accept': {
+          // Acorde synth cálido de acuerdo cerrado (F4 -> A4 -> C5 -> E5)
+          const notes = [349.23, 440.00, 523.25, 659.25];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const filter = ctx.createBiquadFilter();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(600, now);
+            filter.frequency.exponentialRampToValueAtTime(2800, now + 0.2);
+            filter.frequency.exponentialRampToValueAtTime(800, now + 0.8);
+
+            gain.gain.setValueAtTime(0.001, now + idx * 0.04);
+            gain.gain.linearRampToValueAtTime(0.12 / notes.length, now + idx * 0.04 + 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(now + idx * 0.04);
+            osc.stop(now + 0.9);
+          });
+          break;
+        }
+
+        case 'collab_reject': {
+          // Sub-sweep descendente suave de propuesta declinada
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(280, now);
+          osc.frequency.exponentialRampToValueAtTime(110, now + 0.32);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(800, now);
+          filter.frequency.exponentialRampToValueAtTime(200, now + 0.32);
+
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.36);
           break;
         }
       }

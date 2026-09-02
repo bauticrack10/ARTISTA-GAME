@@ -17,7 +17,8 @@
     "test:buttons": "tsx test-all-buttons-and-nav.ts",
     "test:curves": "tsx test-streaming-catalog-and-curves.ts",
     "test:sync": "tsx test-streaming-sync-engine.ts",
-    "test:emergent": "tsx test-emergent-events.ts"
+    "test:emergent": "tsx test-emergent-events.ts",
+    "test:collab-qa": "tsx test-collab-and-offers-qa.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

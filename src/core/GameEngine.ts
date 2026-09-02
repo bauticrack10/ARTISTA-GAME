@@ -25,7 +25,9 @@ import {
   CollabFeasibilityResult,
   SocialActionResult,
   InteractionResult,
-  NewsItem
+  NewsItem,
+  CollabPact,
+  IncomingCollabOffer
 } from '../types';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
@@ -268,7 +270,9 @@ export class GameEngine {
       ],
       recentEventIdsHistory: [],
       activeNarrativeChains: {},
-      financialLedger: []
+      financialLedger: [],
+      pendingCollabOffers: [],
+      activeCollabPacts: []
     };
   }
 
@@ -738,6 +742,20 @@ export class GameEngine {
       }
     }
 
+    // Validar autorización de artistas invitados
+    if (params.featuredArtistIds && params.featuredArtistIds.length > 0) {
+      for (const featId of params.featuredArtistIds) {
+        if (!featId || featId === player.id) continue;
+        const targetArtist = this.world.artists[featId];
+        if (targetArtist) {
+          const check = RelationshipEngine.isArtistEligibleForCollab(player, targetArtist, this.world.activeCollabPacts);
+          if (!check.isEligible) {
+            throw new Error(`No puedes incluir a ${targetArtist.name} en este lanzamiento: ${check.reason}`);
+          }
+        }
+      }
+    }
+
     const producerFee = prod ? prod.costPerTrack : 0;
     const videoCost = params.musicVideo ? params.musicVideo.budget : 0;
     const totalCost = params.budgetProduction + params.budgetMarketing + producerFee + videoCost;
@@ -873,6 +891,20 @@ export class GameEngine {
     };
 
     this.world.songs[songId] = newSong;
+
+    if (params.featuredArtistIds && params.featuredArtistIds.length > 0) {
+      if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
+      for (const featId of params.featuredArtistIds) {
+        const pact = this.world.activeCollabPacts.find(p => p.targetArtistId === featId && p.status === 'active');
+        if (pact) {
+          pact.status = 'fulfilled';
+        }
+        const rel = player.relationships[featId];
+        if (rel) {
+          rel.pastCollabsCount = (rel.pastCollabsCount || 0) + 1;
+        }
+      }
+    }
 
     this.world.news.unshift({
       id: `news_rel_${songId}`,
@@ -1758,6 +1790,19 @@ export class GameEngine {
           importance: 3
         };
         this.world.news.unshift(newsItem);
+
+        if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
+        this.world.activeCollabPacts.push({
+          id: `pact_${player.id}_${target.id}_${Date.now()}`,
+          targetArtistId: target.id,
+          format: 'single_feat',
+          creditFormat: 'player_feat_target',
+          agreedBudget: 0,
+          signedYear: this.world.currentYear,
+          expiresYear: this.world.currentYear + 1,
+          status: 'active'
+        });
+
         this.notify();
         return {
           success: true,
@@ -1805,6 +1850,305 @@ export class GameEngine {
     }
 
     throw new Error(`Tipo de acción no reconocida: ${actionType}`);
+  }
+
+  public submitCollabProposal(params: {
+    targetArtistId: string;
+    projectType: CollabProjectType;
+    budgetProduction?: number;
+    creditOrder?: CreditOrderType;
+  }): {
+    success: boolean;
+    reason: string;
+    pact?: CollabPact;
+    feasibility: CollabFeasibilityResult;
+  } {
+    const player = this.getPlayer();
+    const target = this.world.artists[params.targetArtistId];
+    if (!target) {
+      return {
+        success: false,
+        reason: 'El artista objetivo no existe en la escena musical.',
+        feasibility: {
+          willAccept: false,
+          reason: 'Artista no encontrado.',
+          chemistryScore: 0,
+          crossFanbasePotential: 0,
+          acceptanceProbability: 0
+        }
+      };
+    }
+
+    const feas = RelationshipEngine.calculateCollabFeasibility(
+      player,
+      target,
+      params.projectType,
+      params.budgetProduction || 0,
+      params.creditOrder || 'player_feat_target'
+    );
+
+    if (feas.willAccept) {
+      RelationshipEngine.modifyRelationship(
+        player,
+        target,
+        20,
+        15,
+        'collaborator',
+        `Pactaron colaborar juntos en ${this.world.currentYear} (${params.projectType}).`
+      );
+      player.stats.hype = Math.min(100, player.stats.hype + 15);
+      this.syncAudienceMetrics(player);
+
+      if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
+      const pact: CollabPact = {
+        id: `pact_${player.id}_${target.id}_${Date.now()}`,
+        targetArtistId: target.id,
+        format: params.projectType,
+        creditFormat: params.creditOrder || 'player_feat_target',
+        agreedBudget: params.budgetProduction || 0,
+        signedYear: this.world.currentYear,
+        expiresYear: this.world.currentYear + 1,
+        status: 'active'
+      };
+      this.world.activeCollabPacts.push(pact);
+
+      this.world.news.unshift({
+        id: `news_pact_${Date.now()}`,
+        headline: `Alianza musical: ${player.name} y ${target.name} acuerdan colaboración`,
+        body: `Ambos artistas confirmaron que entrarán al estudio para trabajar en un proyecto conjunto (${params.projectType}).`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: 'culture',
+        relatedArtistIds: [player.id, target.id],
+        sentiment: 'positive',
+        importance: 3
+      });
+
+      this.notify();
+      return { success: true, reason: feas.reason, pact, feasibility: feas };
+    } else {
+      RelationshipEngine.modifyRelationship(
+        player,
+        target,
+        -4,
+        0,
+        undefined,
+        `Propuesta de colaboración (${params.projectType}) declinada en ${this.world.currentYear}: "${feas.reason}"`
+      );
+      this.notify();
+      return { success: false, reason: feas.reason, feasibility: feas };
+    }
+  }
+
+  public generateRandomCollabOffer(): IncomingCollabOffer | null {
+    const player = this.getPlayer();
+    const isProducer = Math.random() < 0.40;
+
+    if (isProducer) {
+      const allProds = Object.values(this.world.producers || {});
+      if (allProds.length === 0) return null;
+      const prod = allProds[Math.floor(Math.random() * allProds.length)];
+      const isDiscount = Math.random() < 0.6;
+      const discountPct = isDiscount ? 50 : 100;
+      const fee = isDiscount ? Math.floor(prod.costPerTrack * 0.5) : 0;
+
+      const offerTitles = [
+        'Beat Tape Session',
+        'Noche de Búnker',
+        'Instrumental Élite',
+        'Fórmula Sonora',
+        'Ritmo Pesado'
+      ];
+      const title = offerTitles[Math.floor(Math.random() * offerTitles.length)];
+
+      return {
+        id: `offer_prod_${prod.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`,
+        senderProducerId: prod.id,
+        senderName: prod.name,
+        senderRole: 'producer',
+        projectType: 'single_feat',
+        creditOrder: 'player_feat_target',
+        proposedTitle: title,
+        genreId: player.mainGenreId,
+        budgetOffered: fee,
+        royaltySplitPct: 50,
+        pitchMessage: isDiscount
+          ? `${prod.name} escuchó tu sonido y te ofrece producir tu próximo tema con 50% de descuento en honorarios ($${fee.toLocaleString()}) para crear un palo radial.`
+          : `${prod.name} quedó fascinado con tus barras y te propone una sesión de producción 100% gratuita para tu próximo single.`,
+        createdAtYear: this.world.currentYear,
+        createdAtMonth: this.world.currentMonth,
+        expiresYear: this.world.currentYear + (this.world.currentMonth >= 7 ? 1 : 0),
+        expiresMonth: this.world.currentMonth <= 6 ? this.world.currentMonth + 6 : (this.world.currentMonth + 6) % 12,
+        status: 'pending'
+      };
+    } else {
+      // Cantante / Colega
+      const candidateArtists = Object.values(this.world.artists || {}).filter(a => {
+        if (a.id === player.id || a.isRetired) return false;
+        const rel = player.relationships?.[a.id];
+        if (rel?.relationType === 'feud' || rel?.activeRivalry) return false;
+        const popDiff = a.stats.popularity - player.stats.popularity;
+        return Math.abs(popDiff) <= 25 || (popDiff > 0 && player.stats.hype >= 60 && popDiff <= 40);
+      });
+
+      if (candidateArtists.length === 0) return null;
+      const sender = candidateArtists[Math.floor(Math.random() * candidateArtists.length)];
+
+      const songTitles = [
+        'Conexión Urbana',
+        'Fuego en la Cabina',
+        'Barras & Melodías',
+        'Alianza Callejera',
+        'Sin Filtro',
+        'Códigos de Oro',
+        'Noche Inolvidable'
+      ];
+      const proposedTitle = songTitles[Math.floor(Math.random() * songTitles.length)];
+      const budgetOffered = Math.floor(2000 + Math.random() * 5000 + sender.stats.popularity * 40);
+
+      const pitches = [
+        `"Che ${player.name}, tengo una maqueta que explota y tu flow le calza perfecto. ¿Nos juntamos a grabar este tema?"`,
+        `"Hermano, vengo siguiendo lo que estás sacando. Te tengo un espacio reservado para sumarte a mi próximo track."`,
+        `"La escena está pidiendo este junte. Te mando la maqueta de '${proposedTitle}', armamos las barras y salimos a romper."`
+      ];
+      const pitch = pitches[Math.floor(Math.random() * pitches.length)];
+
+      return {
+        id: `offer_art_${sender.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`,
+        senderArtistId: sender.id,
+        senderName: sender.name,
+        senderRole: 'singer',
+        projectType: 'single_feat',
+        creditOrder: 'player_and_target',
+        proposedTitle,
+        genreId: sender.mainGenreId || player.mainGenreId,
+        budgetOffered,
+        royaltySplitPct: 50,
+        pitchMessage: pitch,
+        createdAtYear: this.world.currentYear,
+        createdAtMonth: this.world.currentMonth,
+        expiresYear: this.world.currentYear + (this.world.currentMonth >= 7 ? 1 : 0),
+        expiresMonth: this.world.currentMonth <= 6 ? this.world.currentMonth + 6 : (this.world.currentMonth + 6) % 12,
+        status: 'pending'
+      };
+    }
+  }
+
+  public acceptCollabOffer(offerId: string): {
+    success: boolean;
+    message: string;
+    offer?: IncomingCollabOffer;
+  } {
+    if (!this.world.pendingCollabOffers) this.world.pendingCollabOffers = [];
+    const offer = this.world.pendingCollabOffers.find(o => o.id === offerId && o.status === 'pending');
+    if (!offer) {
+      return { success: false, message: 'La oferta de colaboración ya no está disponible o ha expirado.' };
+    }
+
+    const player = this.getPlayer();
+    offer.status = 'accepted';
+    this.world.pendingCollabOffers = this.world.pendingCollabOffers.filter(o => o.id !== offerId);
+
+    if (offer.senderRole === 'producer') {
+      if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
+      this.world.activeCollabPacts.push({
+        id: `pact_${offer.id}`,
+        targetProducerId: offer.senderProducerId,
+        format: 'single_feat',
+        creditFormat: 'player_feat_target',
+        agreedBudget: offer.budgetOffered,
+        producerDiscountPct: offer.budgetOffered === 0 ? 100 : 50,
+        signedYear: this.world.currentYear,
+        expiresYear: this.world.currentYear + 1,
+        status: 'active'
+      });
+
+      player.stats.hype = Math.min(100, player.stats.hype + 12);
+      this.world.news.unshift({
+        id: `news_offer_acc_${Date.now()}`,
+        headline: `Sesión de Estudio: ${player.name} entra a producir con ${offer.senderName}`,
+        body: `El productor ${offer.senderName} confirmó un acuerdo exclusivo de producción para el próximo single de ${player.name}.`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: 'industry',
+        relatedArtistIds: [player.id],
+        sentiment: 'positive',
+        importance: 3
+      });
+
+      this.notify();
+      return {
+        success: true,
+        message: `¡Pacto de producción aceptado con ${offer.senderName}! Tienes un beat reservado con descuento especial para tu próximo tema.`,
+        offer
+      };
+    } else {
+      const partner = offer.senderArtistId ? this.world.artists[offer.senderArtistId] : undefined;
+      if (partner) {
+        RelationshipEngine.modifyRelationship(
+          player,
+          partner,
+          25,
+          15,
+          'collaborator',
+          `Aceptaron la propuesta de colaboración para "${offer.proposedTitle}" en ${this.world.currentYear}.`
+        );
+      }
+
+      if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
+      this.world.activeCollabPacts.push({
+        id: `pact_${offer.id}`,
+        targetArtistId: offer.senderArtistId,
+        format: offer.projectType,
+        creditFormat: offer.creditOrder,
+        agreedBudget: offer.budgetOffered,
+        signedYear: this.world.currentYear,
+        expiresYear: this.world.currentYear + 1,
+        status: 'active'
+      });
+
+      player.stats.hype = Math.min(100, player.stats.hype + 20);
+      player.stats.fansCount += Math.floor(300 + (partner ? partner.stats.popularity * 30 : 200));
+      this.syncAudienceMetrics(player);
+
+      this.world.news.unshift({
+        id: `news_offer_acc_${Date.now()}`,
+        headline: `Junte Oficial: ${player.name} y ${offer.senderName} anuncian "${offer.proposedTitle}"`,
+        body: `Ambos exponentes confirmaron la colaboración tras sellar un acuerdo creativo en el estudio.`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: 'culture',
+        relatedArtistIds: partner ? [player.id, partner.id] : [player.id],
+        sentiment: 'positive',
+        importance: 3
+      });
+
+      this.notify();
+      return {
+        success: true,
+        message: `¡Colaboración confirmada con ${offer.senderName}! ${offer.senderName} ahora es tu Colaborador Acordado y el feat está desbloqueado.`,
+        offer
+      };
+    }
+  }
+
+  public declineCollabOffer(offerId: string): {
+    success: boolean;
+    message: string;
+  } {
+    if (!this.world.pendingCollabOffers) this.world.pendingCollabOffers = [];
+    const offer = this.world.pendingCollabOffers.find(o => o.id === offerId);
+    if (!offer) {
+      return { success: false, message: 'La oferta no fue encontrada.' };
+    }
+
+    offer.status = 'declined';
+    this.world.pendingCollabOffers = this.world.pendingCollabOffers.filter(o => o.id !== offerId);
+    this.notify();
+    return {
+      success: true,
+      message: `Has declinado cortésmente la propuesta de ${offer.senderName}.`
+    };
   }
 
   public interactWithEcosystemNPC(
@@ -2549,6 +2893,34 @@ export class GameEngine {
       }
     }
 
+    // 10. Limpieza de ofertas de colaboración expiradas
+    if (!this.world.pendingCollabOffers) this.world.pendingCollabOffers = [];
+    this.world.pendingCollabOffers = this.world.pendingCollabOffers.filter(offer => {
+      const isExpired = offer.expiresYear < this.world.currentYear ||
+        (offer.expiresYear === this.world.currentYear && offer.expiresMonth < this.world.currentMonth);
+      return !isExpired && offer.status === 'pending';
+    });
+
+    // 11. Generación procedural de ofertas de colaboración entrantes (Cantantes y Productores)
+    // ~35% de probabilidad por ciclo de recibir una oferta si hay menos de 2 pendientes
+    if (this.world.pendingCollabOffers.length < 2 && Math.random() < 0.35 + (player.stats.hype > 60 ? 0.15 : 0)) {
+      const offer = this.generateRandomCollabOffer();
+      if (offer) {
+        this.world.pendingCollabOffers.push(offer);
+        this.world.news.unshift({
+          id: `news_offer_${Date.now()}`,
+          headline: `Propuesta de Colaboración: ${offer.senderName} busca grabar con ${player.name}`,
+          body: offer.pitchMessage,
+          year: this.world.currentYear,
+          month: this.world.currentMonth,
+          category: 'industry',
+          relatedArtistIds: offer.senderArtistId ? [player.id, offer.senderArtistId] : [player.id],
+          sentiment: 'positive',
+          importance: 2
+        });
+      }
+    }
+
     // Push collected events to the queue
     this.eventQueue.push(...collectedEvents);
 
@@ -2581,6 +2953,8 @@ export class GameEngine {
         if (!this.world.ecosystemContacts) this.world.ecosystemContacts = RelationshipEngine.getInitialEcosystemContacts();
         if (!this.world.activeBeefs) this.world.activeBeefs = {};
         if (!this.world.financialLedger) this.world.financialLedger = [];
+        if (!this.world.pendingCollabOffers) this.world.pendingCollabOffers = [];
+        if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
         const player = this.world.artists[parsed.playerId];
         if (player && !player.financialLedger) {
           player.financialLedger = [];

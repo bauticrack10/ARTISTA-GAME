@@ -20,6 +20,8 @@ import { CollaborationModal } from './components/CollaborationModal';
 import { ReleaseConfirmationModal } from './components/ReleaseConfirmationModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { playSound } from './utils/audioSystem';
+import { CollabOfferNotification, SpontaneousCollabOffer } from './components/CollabOfferNotification';
+import { IncomingCollabOffer } from './types';
 
 
 type AppMode = 'start_screen' | 'character_creator' | 'game';
@@ -529,7 +531,44 @@ export default function App() {
           onClose={() => setActiveMilestone(null)}
         />
       )}
+
+      {/* Incoming Collaboration Offer Toast (Cantantes & Productores espontáneos) */}
+      {world.pendingCollabOffers && world.pendingCollabOffers.length > 0 && (
+        <CollabOfferNotification
+          isFloatingToast={true}
+          offer={toSpontaneousOffer(world.pendingCollabOffers[0], world)}
+          onAccept={(spontaneous) => {
+            getEngine().acceptCollabOffer(spontaneous.id);
+          }}
+          onDecline={(offerId) => {
+            getEngine().declineCollabOffer(offerId);
+          }}
+        />
+      )}
     </div>
     </ErrorBoundary>
   );
+}
+
+function toSpontaneousOffer(incoming: IncomingCollabOffer, world: WorldState): SpontaneousCollabOffer {
+  const isProd = incoming.senderRole === 'producer';
+  const artist = incoming.senderArtistId ? world.artists[incoming.senderArtistId] : undefined;
+  const prod = incoming.senderProducerId ? world.producers[incoming.senderProducerId] : undefined;
+  const genre = world.genres[incoming.genreId]?.name || incoming.genreId;
+
+  return {
+    id: incoming.id,
+    senderType: incoming.senderRole,
+    senderArtist: artist,
+    senderProducer: prod,
+    trackTitle: incoming.proposedTitle,
+    genreName: genre,
+    pitchQuote: incoming.pitchMessage,
+    royaltySplitPlayer: incoming.royaltySplitPct,
+    upfrontFeeOrAdvance: incoming.budgetOffered,
+    energyCost: 10,
+    expiresInMonths: Math.max(1, (incoming.expiresYear - world.currentYear) * 12 + (incoming.expiresMonth - world.currentMonth)),
+    projectedExposure: isProd ? '+15% Calidad Sonora' : `+${artist?.stats.popularity ? artist.stats.popularity * 40 : 500} Fans`,
+    qualityBoostPercent: isProd ? 15 : undefined
+  };
 }
