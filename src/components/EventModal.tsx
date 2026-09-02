@@ -11,14 +11,7 @@ import {
   Swords,
   Calendar,
   Clock,
-  Lock,
-  Users,
-  Building2,
-  Sparkles,
-  BarChart3,
-  Award,
-  TrendingUp,
-  Volume2
+  Lock
 } from 'lucide-react';
 import { useEventModal } from '../hooks/useEventModal';
 import { ArtistAvatar } from './ArtistAvatar';
@@ -55,14 +48,14 @@ export const EventModal: React.FC<EventModalProps> = ({
     onSelectChoice
   });
 
-  const CategoryIcon = categoryMeta.icon;
+  const CategoryIcon = categoryMeta?.icon || Swords;
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="event-dialog-title"
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-5 py-6 sm:py-10 overflow-y-auto animate-fade-in"
     >
       <div
         className={`bg-[#16181F] border ${
@@ -143,17 +136,17 @@ export const EventModal: React.FC<EventModalProps> = ({
             <div className="flex items-center gap-3 bg-[#0B0C10] px-3 py-1 rounded-full border border-[#2A2E3D] text-xs font-mono text-[#F8FAFC]">
               <span className="flex items-center gap-1 text-emerald-400">
                 <DollarSign className="w-3.5 h-3.5" />
-                ${player.stats.funds.toLocaleString()}
+                ${player?.stats?.funds != null ? player.stats.funds.toLocaleString() : '0'}
               </span>
               <span className="text-[#2A2E3D]">|</span>
               <span className="flex items-center gap-1 text-amber-400">
                 <Zap className="w-3.5 h-3.5" />
-                {player.stats.energy}%
+                {player?.stats?.energy ?? 100}%
               </span>
               <span className="text-[#2A2E3D]">|</span>
               <span className="flex items-center gap-1 text-orange-400">
                 <Flame className="w-3.5 h-3.5" />
-                {player.stats.hype}
+                {player?.stats?.hype ?? 0}
               </span>
             </div>
           </div>
@@ -162,9 +155,9 @@ export const EventModal: React.FC<EventModalProps> = ({
           <div className="flex items-start gap-4 pt-1">
             <div className="relative shrink-0">
               <ArtistAvatar
-                name={player.name}
-                avatarColor={player.avatarColor}
-                avatarIcon={player.avatarIcon}
+                name={player?.name || 'Artista'}
+                avatarColor={player?.avatarColor}
+                avatarIcon={player?.avatarIcon}
                 size="lg"
                 rounded="rounded-[12px]"
                 className="w-14 h-14 border-2 border-[#2A2E3D] shadow-md"
@@ -176,10 +169,10 @@ export const EventModal: React.FC<EventModalProps> = ({
 
             <div className="space-y-1 flex-1 min-w-0">
               <span className="text-[11px] text-[#94A3B8] uppercase font-mono tracking-wider block">
-                {player.name} • {temporality.badge}
+                {player?.name || 'Artista'} • {temporality.badge}
               </span>
               <h2 id="event-dialog-title" className="text-xl sm:text-2xl font-bold tracking-[-0.8px] text-[#F8FAFC] leading-tight pt-0.5">
-                {event.title}
+                {event?.title || 'Evento'}
               </h2>
             </div>
           </div>

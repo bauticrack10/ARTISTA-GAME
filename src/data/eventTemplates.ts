@@ -8,6 +8,96 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
   // 1. EL PRIMER CONTRATO / DISTRIBUCIÓN (Underground) -> evt_first_contract_offer
   // ============================================================================
   {
+    id: 'evt_first_contract_offer',
+    title: 'La Primera Oferta: Distribución Independiente y Fichaje Inicial',
+    category: 'industry',
+    rarity: 'uncommon',
+    importanceLevel: 3,
+    affectedSystems: ['contracts', 'funds', 'hype', 'credibility', 'career'],
+    maxCareerStage: 'Emerging',
+    cooldownMonths: 24,
+    weight: 18,
+    condition: (ctx) => !ctx.player.labelId && ctx.player.stats.popularity <= 35,
+    getDescription: (ctx) =>
+      `Tus primeros lanzamientos y maquetas en ${ctx.player.city} llamaron la atención de un sello independiente regional. Su fundador te contacta para ofrecerte un contrato inicial de distribución con anticipo de grabación y respaldo promocional.`,
+    choices: (ctx) => {
+      const indieLabel = ctx.world.labels['label_dale_play'] || ctx.world.labels['label_underground_syndicate'];
+      const offerContract = indieLabel
+        ? IndustryEngine.generateDynamicLabelOffer(ctx.player, indieLabel, ctx.currentYear, ctx.world, false)
+        : {
+            labelId: 'label_dale_play',
+            signingBonus: 8000,
+            royaltyPercentage: 70,
+            albumsRequired: 1,
+            albumsDelivered: 0,
+            creativeControl: 85,
+            marketingPower: 60,
+            marketingBudgetPerRelease: 10000,
+            breakoutClause: 50000,
+            durationYears: 2,
+            signedYear: ctx.currentYear,
+            isDistributor: true
+          };
+
+      return [
+        {
+          id: 'c_sign_first_contract',
+          text: `Firmar contrato con ${indieLabel?.name || 'Sello Independiente'}: ${formatMoney(offerContract.signingBonus)} de adelanto y ${offerContract.royaltyPercentage}% de regalías`,
+          consequencesDescription: `+${formatMoney(offerContract.signingBonus)} Fondos, ${offerContract.royaltyPercentage}% Regalías, +15 Hype, +4 Popularidad, Entrada a catálogo discográfico`,
+          apply: () => ({
+            narrativeText: `Firmaste tu primer contrato formal. El adelanto de ${formatMoney(offerContract.signingBonus)} te permite equipar tu estudio y profesionalizar tu proyecto.`,
+            fundsChange: offerContract.signingBonus,
+            popularityChange: 4,
+            hypeChange: 15,
+            newContract: offerContract,
+            newsGenerated: {
+              headline: `${ctx.player.name} firma su primer acuerdo discográfico con ${indieLabel?.name || 'Sello Independiente'}`,
+              body: `El prometedor artista sella una alianza de distribución estratégica que potenciará sus próximos lanzamientos.`,
+              sentiment: 'positive',
+              category: 'industry'
+            },
+            timelineEntry: {
+              text: `Firmó su primer contrato discográfico formal con ${indieLabel?.name || 'sello independiente'} en ${ctx.currentYear}.`,
+              category: 'industry'
+            }
+          })
+        },
+        {
+          id: 'c_stay_fully_independent',
+          text: 'Rechazar la oferta: Mantenerse 100% autogestionado en el underground',
+          consequencesDescription: '+5 Credibilidad artística, +6 Fidelidad de los primeros fans, +3 Reputación, +6 Hype',
+          apply: () => ({
+            narrativeText:
+              'Decidiste defender tu libertad creativa y no atarte a ningún intermediario comercial tan temprano. La movida local aplaude tu convicción autogestionada.',
+            statChanges: {
+              artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 5),
+              fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 6)
+            },
+            reputationChange: 3,
+            hypeChange: 6
+          })
+        },
+        {
+          id: 'c_negotiate_digital_distro_only',
+          text: 'Negociar distribución digital sin exclusividad: $2,500 de adelanto',
+          costFunds: 0,
+          consequencesDescription: '+$2,500 Fondos inmediatos, +10 Hype, +2 Credibilidad artística, +2 Independencia',
+          apply: () => ({
+            narrativeText:
+              'Lograste acordar un convenio de distribución no exclusivo para tus singles. Obtuviste fondos frescos sin ceder el control de tus másters ni de tu carrera futura.',
+            fundsChange: 2500,
+            hypeChange: 10,
+            statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 2) },
+            personalityChanges: {
+              independence: Math.min(100, ctx.player.personality.independence + 2)
+            }
+          })
+        }
+      ];
+    }
+  },
+
+  {
     id: 'evt_home_studio_recording',
     title: 'La Primera Grabación en el Home Studio',
     category: 'career',

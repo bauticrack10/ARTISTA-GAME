@@ -8,6 +8,7 @@ import {
   LabelContract,
   EventDefinition,
   EventOutcome,
+  EventContext,
   GameSaveState,
   MusicRegion,
   AwardCeremony,
@@ -2156,7 +2157,7 @@ export class GameEngine {
     }
 
     // Sincronizar reactivamente métricas de audiencia si el evento alteró fans, popularidad, hype o si fue un fenómeno viral
-    const isViral = Boolean(
+    const isViral = !outcome.chartImpact && Boolean(
       (this.currentEvent && this.currentEvent.id.includes('viral')) ||
       (outcome.narrativeText && outcome.narrativeText.toLowerCase().includes('viral')) ||
       (this.currentEvent && this.currentEvent.category === 'media' && (outcome.hypeChange || 0) >= 15) ||
@@ -2197,6 +2198,8 @@ export class GameEngine {
     const collectedEvents: EventDefinition[] = [];
     const cycleStartYear = this.world.currentYear;
     const cycleStartMonth = this.world.currentMonth;
+    let organicEventsCount = 0;
+    const maxOrganicEvents = monthsCount === 12 ? 2 : 1;
 
     for (let step = 0; step < monthsCount; step++) {
       const isNewYear = this.world.currentMonth === 12;
@@ -2516,31 +2519,34 @@ export class GameEngine {
       });
     }
 
-    // Obligatory queue requirement: Disparar obligatoriamente una cola de eventos para el jugador
-    const minRequiredEvents = monthsCount === 12 ? 2 : 1;
-    while (collectedEvents.length < minRequiredEvents) {
-      const player = this.getPlayer();
-      const fallbackEvt = EventEngine.selectNextEvent(
-        {
-          player,
-          world: this.world,
-          currentYear: this.world.currentYear,
-          currentMonth: this.world.currentMonth
-        },
-        this.world.recentEventIdsHistory
-      ) || EventEngine.synthesizeProceduralEvent({
-        player,
+
+
+    // Verificar y priorizar cadenas narrativas cuya resolución vence en la fecha alcanzada en el ciclo
+    if (this.world.activeNarrativeChains) {
+      const endContext: EventContext = {
+        player: this.getPlayer(),
         world: this.world,
         currentYear: this.world.currentYear,
         currentMonth: this.world.currentMonth
-      });
-
-      collectedEvents.push(fallbackEvt);
-      this.world.recentEventIdsHistory.push({
-        eventId: fallbackEvt.id,
-        year: this.world.currentYear,
-        month: this.world.currentMonth
-      });
+      };
+      for (const [chainId, chainData] of Object.entries(this.world.activeNarrativeChains)) {
+        if (
+          chainData.nextTriggerYearMonth &&
+          (this.world.currentYear > chainData.nextTriggerYearMonth.year ||
+           (this.world.currentYear === chainData.nextTriggerYearMonth.year && this.world.currentMonth >= chainData.nextTriggerYearMonth.month))
+        ) {
+          const chainEvt = EventEngine.findNarrativeChainEvent(endContext, chainId, chainData);
+          if (chainEvt && !collectedEvents.some(e => e.id === chainEvt.id)) {
+            collectedEvents.unshift(chainEvt);
+            this.world.recentEventIdsHistory.push({
+              eventId: chainEvt.id,
+              year: this.world.currentYear,
+              month: this.world.currentMonth
+            });
+            break;
+          }
+        }
+      }
     }
 
     // Push collected events to the queue

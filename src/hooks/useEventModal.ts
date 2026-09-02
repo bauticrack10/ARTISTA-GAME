@@ -19,6 +19,8 @@ import {
   Star,
   Disc3,
   Headphones,
+  Building2,
+  BarChart3,
   LucideIcon
 } from 'lucide-react';
 
@@ -674,9 +676,9 @@ export function useEventModal({
   const context: EventContext = useMemo(() => ({
     player,
     world,
-    currentYear: world.currentYear,
-    currentMonth: world.currentMonth,
-    label: player.labelId ? world.labels[player.labelId] : undefined
+    currentYear: world?.currentYear ?? 1,
+    currentMonth: world?.currentMonth ?? 1,
+    label: player?.labelId && world?.labels ? world.labels[player.labelId] : undefined
   }), [player, world]);
 
   const rawChoices: EventChoice[] = useMemo(() => {
@@ -740,8 +742,8 @@ export function useEventModal({
 
   // Contextual Temporality Calculation
   const temporality: ContextualTemporality = useMemo(() => {
-    const month = world.currentMonth;
-    const year = world.currentYear;
+    const month = world?.currentMonth ?? 1;
+    const year = world?.currentYear ?? 1;
     const monthName = MONTH_NAMES_ES[month - 1] || `Mes ${month}`;
 
     const isAnnualOrDrought =
@@ -915,7 +917,7 @@ export function useEventModal({
 
       const isEligible = isAffordable && hasEnoughEnergy && hasRequiredStat;
       const { chips, cleanedNarrative } = parseConsequences(choice.consequencesDescription || '');
-      const { hasRisk, riskWarning, riskSeverity } = detectRiskWarning(choice, player.stats.funds);
+      const { hasRisk, riskWarning, riskSeverity } = detectRiskWarning(choice, playerFunds);
 
       return {
         raw: choice,

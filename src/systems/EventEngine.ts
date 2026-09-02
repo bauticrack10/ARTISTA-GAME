@@ -113,8 +113,11 @@ export class EventEngine {
         continue;
       }
 
+      // Eventos con peso 0 corresponden a resoluciones de cadenas narrativas y nunca deben dispararse aleatoriamente
+      if (evt.weight === 0) continue;
+
       // Weighted Scoring by weight, rarity and importanceLevel
-      let score = evt.weight || 10;
+      let score = evt.weight !== undefined ? evt.weight : 10;
       switch (evt.rarity) {
         case 'common':
           score *= 1.0;

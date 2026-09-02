@@ -756,13 +756,28 @@ export interface EventOutcome {
   chainPayload?: Record<string, any>;
 }
 
+export type EventCategory =
+  | 'career'
+  | 'music'
+  | 'industry'
+  | 'relationships'
+  | 'media'
+  | 'shows'
+  | 'awards'
+  | 'community'
+  | 'personal'
+  | 'crisis'
+  | 'scandal'
+  | 'rivalry'
+  | 'popularity';
+
 export interface EventDefinition {
   id: string;
   title: string;
-  category: 'career' | 'music' | 'industry' | 'relationships' | 'media' | 'shows' | 'awards' | 'community' | 'personal' | 'crisis' | 'scandal' | 'rivalry';
+  category: EventCategory;
   rarity: 'common' | 'uncommon' | 'rare' | 'legendary' | 'crisis';
   importanceLevel?: 1 | 2 | 3 | 4 | 5 | number;
-  affectedSystems?: Array<'funds' | 'energy' | 'hype' | 'fans' | 'reputation' | 'credibility' | 'contracts' | 'relationships' | 'tours' | 'charts' | 'career'>;
+  affectedSystems?: Array<'funds' | 'energy' | 'hype' | 'fans' | 'popularity' | 'reputation' | 'credibility' | 'contracts' | 'relationships' | 'tours' | 'charts' | 'career'>;
   eventYear?: number;
   narrativeChainId?: string;
   isChainFinalStep?: boolean;

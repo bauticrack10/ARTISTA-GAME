@@ -63,11 +63,14 @@ export const StartScreen: React.FC<StartScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] flex flex-col justify-between relative overflow-hidden selection:bg-[#8B5CF6]/30 selection:text-white">
+    <div
+      className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] flex flex-col justify-between relative overflow-hidden isolate selection:bg-[#8B5CF6]/30 selection:text-white"
+      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+    >
       {/* Ambient Stage Glow Orbs */}
-      <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-[#8B5CF6]/20 via-[#EC4899]/10 to-transparent blur-[120px] pointer-events-none -z-10" />
-      <div className="absolute top-[30%] right-[-100px] w-[500px] h-[400px] bg-[#EC4899]/10 blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-[10%] left-[-100px] w-[500px] h-[400px] bg-[#06B6D4]/10 blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-[#8B5CF6]/20 via-[#EC4899]/10 to-transparent blur-[120px] pointer-events-none z-0" />
+      <div className="absolute top-[30%] right-[-100px] w-[500px] h-[400px] bg-[#EC4899]/10 blur-[140px] pointer-events-none z-0" />
+      <div className="absolute bottom-[10%] left-[-100px] w-[500px] h-[400px] bg-[#06B6D4]/10 blur-[140px] pointer-events-none z-0" />
 
       {/* Top Bar / Brand */}
       <header className="max-w-6xl w-full mx-auto px-6 py-6 flex items-center justify-between z-10">
@@ -139,7 +142,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
           <button
             id="btn-start-new-career"
             onClick={onNewCareer}
-            className="w-full py-4 px-6 rounded-[10px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:from-[#7C3AED] hover:to-[#DB2777] text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(139,92,246,0.4)] cursor-pointer"
+            className="w-full py-4 px-6 rounded-[8px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:from-[#7C3AED] hover:to-[#DB2777] text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(139,92,246,0.4)] cursor-pointer"
           >
             <UserPlus className="w-4 h-4 text-white" />
             <span>Iniciar Nueva Carrera</span>
@@ -177,7 +180,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
           ) : (
             <button
               disabled
-              className="w-full py-3.5 px-4 rounded-[10px] bg-[#16181F]/50 border border-[#2A2E3D]/50 text-[#64748B] opacity-60 text-xs flex items-center justify-center gap-2 cursor-not-allowed"
+              className="w-full py-3.5 px-4 rounded-[8px] bg-[#16181F]/50 border border-[#2A2E3D]/50 text-[#64748B] opacity-60 text-xs flex items-center justify-center gap-2 cursor-not-allowed"
             >
               <Play className="w-3.5 h-3.5 opacity-40" />
               <span>Continuar • Sin partida guardada</span>
