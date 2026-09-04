@@ -1,7 +1,323 @@
 import { REGIONAL_NAME_POOLS, generateArtistName, generateRandomArtistName } from '../utils/formatters';
-import { Song, Album } from '../types';
+import { Song, Album, MusicRegion } from '../types';
 
 export { REGIONAL_NAME_POOLS, generateArtistName, generateRandomArtistName };
+
+export interface CountrySimulationData {
+  country: string;
+  cities: string[];
+  countryCode: string;
+  language: string;
+  influenceRegions: MusicRegion[];
+  typicalGenres: string[];
+}
+
+export const GLOBAL_COUNTRY_DATABASE: CountrySimulationData[] = [
+  {
+    country: 'Argentina',
+    cities: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mendoza', 'La Plata', 'Mar del Plata'],
+    countryCode: 'AR',
+    language: 'es',
+    influenceRegions: ['Argentina', 'LatinAmerica', 'Global'],
+    typicalGenres: ['trap_latino', 'rock_alternativo', 'cumbia_tropical', 'pop_moderno', 'hip_hop_rap']
+  },
+  {
+    country: 'México',
+    cities: ['Ciudad de México', 'Guadalajara', 'Monterrey', 'Tijuana', 'Culiacán', 'Puebla'],
+    countryCode: 'MX',
+    language: 'es',
+    influenceRegions: ['Mexico', 'LatinAmerica', 'USA'],
+    typicalGenres: ['corridos_urbanos', 'pop_moderno', 'trap_latino', 'cumbia_tropical', 'hip_hop_rap']
+  },
+  {
+    country: 'España',
+    cities: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia', 'Granada', 'Las Palmas', 'Bilbao'],
+    countryCode: 'ES',
+    language: 'es',
+    influenceRegions: ['Spain', 'Europe', 'LatinAmerica'],
+    typicalGenres: ['trap_latino', 'pop_moderno', 'drill', 'rock_alternativo', 'musica_electronica', 'reggaeton']
+  },
+  {
+    country: 'Puerto Rico',
+    cities: ['San Juan', 'Carolina', 'Bayamón', 'Ponce', 'Caguas', 'Mayagüez'],
+    countryCode: 'PR',
+    language: 'es',
+    influenceRegions: ['USA', 'LatinAmerica', 'Global'],
+    typicalGenres: ['reggaeton', 'trap_latino', 'cumbia_tropical', 'pop_moderno']
+  },
+  {
+    country: 'Colombia',
+    cities: ['Medellín', 'Bogotá', 'Cali', 'Barranquilla', 'Cartagena'],
+    countryCode: 'CO',
+    language: 'es',
+    influenceRegions: ['LatinAmerica', 'Global'],
+    typicalGenres: ['reggaeton', 'trap_latino', 'cumbia_tropical', 'pop_moderno']
+  },
+  {
+    country: 'Chile',
+    cities: ['Santiago', 'Valparaíso', 'Concepción', 'Viña del Mar', 'Antofagasta'],
+    countryCode: 'CL',
+    language: 'es',
+    influenceRegions: ['LatinAmerica'],
+    typicalGenres: ['trap_latino', 'reggaeton', 'pop_moderno', 'rock_alternativo']
+  },
+  {
+    country: 'Uruguay',
+    cities: ['Montevideo', 'Punta del Este', 'Salto', 'Maldonado'],
+    countryCode: 'UY',
+    language: 'es',
+    influenceRegions: ['LatinAmerica', 'Argentina'],
+    typicalGenres: ['trap_latino', 'rock_alternativo', 'cumbia_tropical', 'hip_hop_rap']
+  },
+  {
+    country: 'Brasil',
+    cities: ['São Paulo', 'Río de Janeiro', 'Salvador', 'Belo Horizonte', 'Curitiba', 'Recife'],
+    countryCode: 'BR',
+    language: 'pt',
+    influenceRegions: ['Brazil', 'LatinAmerica', 'Global'],
+    typicalGenres: ['funk_brasilero', 'jazz_bossa', 'trap_latino', 'musica_electronica']
+  },
+  {
+    country: 'USA',
+    cities: ['New York', 'Los Angeles', 'Atlanta', 'Miami', 'Chicago', 'Houston', 'Nashville'],
+    countryCode: 'US',
+    language: 'en',
+    influenceRegions: ['USA', 'Global'],
+    typicalGenres: ['hip_hop_rap', 'pop_moderno', 'country_folk', 'r_and_b_soul', 'rock_alternativo', 'metal_punk', 'drill', 'musica_electronica']
+  },
+  {
+    country: 'Canadá',
+    cities: ['Toronto', 'Vancouver', 'Montreal', 'Calgary'],
+    countryCode: 'CA',
+    language: 'en',
+    influenceRegions: ['USA', 'Global'],
+    typicalGenres: ['pop_moderno', 'hip_hop_rap', 'r_and_b_soul', 'rock_alternativo', 'country_folk']
+  },
+  {
+    country: 'UK',
+    cities: ['Londres', 'Manchester', 'Birmingham', 'Glasgow', 'Bristol', 'Leeds'],
+    countryCode: 'GB',
+    language: 'en',
+    influenceRegions: ['UK', 'Europe', 'Global'],
+    typicalGenres: ['drill', 'rock_alternativo', 'pop_moderno', 'r_and_b_soul', 'musica_electronica', 'hip_hop_rap']
+  },
+  {
+    country: 'Francia',
+    cities: ['París', 'Marsella', 'Lyon', 'Toulouse', 'Niza'],
+    countryCode: 'FR',
+    language: 'fr',
+    influenceRegions: ['Europe', 'Global'],
+    typicalGenres: ['musica_electronica', 'hip_hop_rap', 'pop_moderno', 'drill', 'jazz_bossa']
+  },
+  {
+    country: 'Alemania',
+    cities: ['Berlín', 'Múnich', 'Hamburgo', 'Colonia', 'Frankfurt'],
+    countryCode: 'DE',
+    language: 'de',
+    influenceRegions: ['Europe', 'Global'],
+    typicalGenres: ['musica_electronica', 'metal_punk', 'hip_hop_rap', 'rock_alternativo', 'pop_moderno']
+  },
+  {
+    country: 'Italia',
+    cities: ['Milán', 'Roma', 'Nápoles', 'Turín', 'Florencia'],
+    countryCode: 'IT',
+    language: 'it',
+    influenceRegions: ['Europe'],
+    typicalGenres: ['pop_moderno', 'trap_latino', 'musica_electronica', 'rock_alternativo']
+  },
+  {
+    country: 'Suecia',
+    cities: ['Estocolmo', 'Gotemburgo', 'Malmö', 'Uppsala'],
+    countryCode: 'SE',
+    language: 'sv',
+    influenceRegions: ['Europe', 'Global'],
+    typicalGenres: ['pop_moderno', 'musica_electronica', 'metal_punk', 'rock_alternativo']
+  },
+  {
+    country: 'Noruega',
+    cities: ['Oslo', 'Bergen', 'Trondheim', 'Stavanger'],
+    countryCode: 'NO',
+    language: 'no',
+    influenceRegions: ['Europe'],
+    typicalGenres: ['musica_electronica', 'metal_punk', 'pop_moderno', 'rock_alternativo']
+  },
+  {
+    country: 'Irlanda',
+    cities: ['Dublín', 'Cork', 'Galway', 'Limerick'],
+    countryCode: 'IE',
+    language: 'en',
+    influenceRegions: ['Europe', 'UK'],
+    typicalGenres: ['rock_alternativo', 'country_folk', 'pop_moderno']
+  },
+  {
+    country: 'Países Bajos',
+    cities: ['Ámsterdam', 'Rotterdam', 'Utrecht', 'La Haya'],
+    countryCode: 'NL',
+    language: 'nl',
+    influenceRegions: ['Europe', 'Global'],
+    typicalGenres: ['musica_electronica', 'pop_moderno', 'hip_hop_rap']
+  },
+  {
+    country: 'Bélgica',
+    cities: ['Bruselas', 'Amberes', 'Gante', 'Lieja'],
+    countryCode: 'BE',
+    language: 'nl',
+    influenceRegions: ['Europe'],
+    typicalGenres: ['musica_electronica', 'hip_hop_rap', 'pop_moderno']
+  },
+  {
+    country: 'Corea del Sur',
+    cities: ['Seúl', 'Busan', 'Incheon', 'Daegu', 'Gwangju'],
+    countryCode: 'KR',
+    language: 'ko',
+    influenceRegions: ['Asia', 'Global'],
+    typicalGenres: ['kpop_jpop', 'pop_moderno', 'musica_electronica', 'hip_hop_rap']
+  },
+  {
+    country: 'Japón',
+    cities: ['Tokio', 'Osaka', 'Kioto', 'Yokohama', 'Nagoya', 'Fukuoka'],
+    countryCode: 'JP',
+    language: 'ja',
+    influenceRegions: ['Asia', 'Global'],
+    typicalGenres: ['kpop_jpop', 'rock_alternativo', 'musica_electronica', 'pop_moderno']
+  },
+  {
+    country: 'Australia',
+    cities: ['Sídney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaida'],
+    countryCode: 'AU',
+    language: 'en',
+    influenceRegions: ['Asia', 'Global'],
+    typicalGenres: ['rock_alternativo', 'pop_moderno', 'musica_electronica', 'hip_hop_rap']
+  },
+  {
+    country: 'Nueva Zelanda',
+    cities: ['Auckland', 'Wellington', 'Christchurch', 'Hamilton'],
+    countryCode: 'NZ',
+    language: 'en',
+    influenceRegions: ['Asia', 'Global'],
+    typicalGenres: ['pop_moderno', 'rock_alternativo', 'country_folk']
+  },
+  {
+    country: 'Nigeria',
+    cities: ['Lagos', 'Abuya', 'Port Harcourt', 'Ibadan', 'Benin City'],
+    countryCode: 'NG',
+    language: 'en',
+    influenceRegions: ['Africa', 'Global'],
+    typicalGenres: ['afrobeat_dancehall', 'hip_hop_rap', 'musica_electronica']
+  },
+  {
+    country: 'Sudáfrica',
+    cities: ['Johannesburgo', 'Ciudad del Cabo', 'Durban', 'Pretoria', 'Soweto'],
+    countryCode: 'ZA',
+    language: 'en',
+    influenceRegions: ['Africa', 'Global'],
+    typicalGenres: ['afrobeat_dancehall', 'musica_electronica', 'hip_hop_rap']
+  },
+  {
+    country: 'India',
+    cities: ['Mumbai', 'Nueva Delhi', 'Bengaluru', 'Chennai', 'Kolkata'],
+    countryCode: 'IN',
+    language: 'hi',
+    influenceRegions: ['Asia', 'Global'],
+    typicalGenres: ['pop_moderno', 'musica_electronica', 'hip_hop_rap']
+  },
+  {
+    country: 'República Dominicana',
+    cities: ['Santo Domingo', 'Santiago de los Caballeros', 'La Romana', 'San Pedro de Macorís'],
+    countryCode: 'DO',
+    language: 'es',
+    influenceRegions: ['LatinAmerica', 'USA'],
+    typicalGenres: ['reggaeton', 'trap_latino', 'cumbia_tropical']
+  },
+  {
+    country: 'Perú',
+    cities: ['Lima', 'Arequipa', 'Trujillo', 'Cusco', 'Chiclayo'],
+    countryCode: 'PE',
+    language: 'es',
+    influenceRegions: ['LatinAmerica'],
+    typicalGenres: ['cumbia_tropical', 'trap_latino', 'rock_alternativo', 'reggaeton']
+  },
+  {
+    country: 'Cuba',
+    cities: ['La Habana', 'Santiago de Cuba', 'Camagüey', 'Holguín'],
+    countryCode: 'CU',
+    language: 'es',
+    influenceRegions: ['LatinAmerica'],
+    typicalGenres: ['cumbia_tropical', 'reggaeton', 'jazz_bossa']
+  },
+  {
+    country: 'Venezuela',
+    cities: ['Caracas', 'Maracaibo', 'Valencia', 'Barquisimeto', 'Maracay'],
+    countryCode: 'VE',
+    language: 'es',
+    influenceRegions: ['LatinAmerica'],
+    typicalGenres: ['trap_latino', 'reggaeton', 'cumbia_tropical']
+  },
+  {
+    country: 'Ecuador',
+    cities: ['Quito', 'Guayaquil', 'Cuenca', 'Manta'],
+    countryCode: 'EC',
+    language: 'es',
+    influenceRegions: ['LatinAmerica'],
+    typicalGenres: ['cumbia_tropical', 'trap_latino', 'pop_moderno']
+  },
+  {
+    country: 'Portugal',
+    cities: ['Lisboa', 'Oporto', 'Coímbra', 'Braga', 'Funchal'],
+    countryCode: 'PT',
+    language: 'pt',
+    influenceRegions: ['Europe', 'Brazil'],
+    typicalGenres: ['jazz_bossa', 'pop_moderno', 'hip_hop_rap', 'musica_electronica']
+  },
+  {
+    country: 'Ghana',
+    cities: ['Acra', 'Kumasi', 'Tamale', 'Sekondi-Takoradi'],
+    countryCode: 'GH',
+    language: 'en',
+    influenceRegions: ['Africa'],
+    typicalGenres: ['afrobeat_dancehall', 'hip_hop_rap']
+  },
+  {
+    country: 'Jamaica',
+    cities: ['Kingston', 'Montego Bay', 'Spanish Town', 'Portmore'],
+    countryCode: 'JM',
+    language: 'en',
+    influenceRegions: ['LatinAmerica', 'USA', 'Africa'],
+    typicalGenres: ['afrobeat_dancehall', 'reggaeton']
+  },
+  {
+    country: 'Egipto',
+    cities: ['El Cairo', 'Alejandría', 'Giza', 'Sharm El Sheikh'],
+    countryCode: 'EG',
+    language: 'ar',
+    influenceRegions: ['Africa'],
+    typicalGenres: ['afrobeat_dancehall', 'hip_hop_rap', 'musica_electronica']
+  },
+  {
+    country: 'Marruecos',
+    cities: ['Casablanca', 'Marrakech', 'Rabat', 'Tánger', 'Fez'],
+    countryCode: 'MA',
+    language: 'ar',
+    influenceRegions: ['Africa', 'Europe'],
+    typicalGenres: ['afrobeat_dancehall', 'hip_hop_rap', 'drill']
+  },
+  {
+    country: 'Filipinas',
+    cities: ['Manila', 'Quezon City', 'Cebú', 'Dávao'],
+    countryCode: 'PH',
+    language: 'tl',
+    influenceRegions: ['Asia', 'USA'],
+    typicalGenres: ['pop_moderno', 'hip_hop_rap', 'r_and_b_soul']
+  },
+  {
+    country: 'Indonesia',
+    cities: ['Yakarta', 'Surabaya', 'Bandung', 'Medan', 'Bali'],
+    countryCode: 'ID',
+    language: 'id',
+    influenceRegions: ['Asia'],
+    typicalGenres: ['pop_moderno', 'musica_electronica', 'rock_alternativo']
+  }
+];
 
 /**
  * Standard title normalization function for collision detection.
@@ -16,29 +332,117 @@ export function normalizeTitle(title: string): string {
     .replace(/[^a-z0-9]/g, '');
 }
 
+/**
+ * Validates whether a generated artist name or real name collides with existing artists
+ */
+export function isArtistNameColliding(
+  candidateStageName: string,
+  candidateRealName: string | undefined,
+  existingArtists: Record<string, { name: string; realName?: string }>
+): boolean {
+  if (!candidateStageName) return true;
+  const normStage = normalizeTitle(candidateStageName);
+  const normReal = candidateRealName ? normalizeTitle(candidateRealName) : '';
+
+  for (const a of Object.values(existingArtists)) {
+    if (!a) continue;
+    if (normalizeTitle(a.name) === normStage) return true;
+    if (a.realName && normReal && normalizeTitle(a.realName) === normReal) return true;
+    if (a.realName && normalizeTitle(a.realName) === normStage) return true;
+    if (normalizeTitle(a.name) === normReal) return true;
+  }
+  return false;
+}
+
+export const PROCEDURAL_STAGE_PREFIXES = [
+  'Young', 'Lil', 'Big', 'Saint', 'Nova', 'Aura', 'El', 'La', 'MC', 'Don',
+  'Ghost', 'Neo', 'Dark', 'Cyber', 'Lord', 'King', 'Baby', 'Ultra', 'Sir', 'Kid'
+];
+
+export const PROCEDURAL_STAGE_ROOTS = [
+  'Wave', 'Flow', 'Drift', 'Pulse', 'Zenith', 'Echo', 'Viper', 'Shade', 'Flash', 'Daze',
+  'Spark', 'Glow', 'Storm', 'Blade', 'Smoke', 'Klan', 'Rebel', 'Phantom', 'Venom', 'Aura',
+  'Shadow', 'Crux', 'Apex', 'Solaris', 'Lobo', 'Sirena', 'Specter', 'Vibe', 'Rider', 'Mamba'
+];
+
+export const PROCEDURAL_STAGE_SUFFIXES = [
+  'Sound', 'Beat', 'Flame', 'Ghost', 'Star', 'Vibe', 'Kid', 'King', 'Boy', 'Girl',
+  'X', '99', 'Zero', 'Pro', 'Flow', 'World', 'Prime', 'Soul', 'Zone', 'Wave'
+];
+
 export const ARTIST_FIRST_NAMES = [
   'Mateo', 'Valentín', 'Lucía', 'Joaquín', 'Camila', 'Santiago', 'Sofía', 'Felipe', 'Martina', 'Agustín',
   'Julieta', 'Franco', 'Ignacio', 'Rocío', 'Tomás', 'Delfina', 'Facundo', 'Milagros', 'Enzo', 'Zoe',
   'Thiago', 'Mia', 'Gael', 'Luna', 'Emiliano', 'Abril', 'Bruno', 'Jazmín', 'Lautaro', 'Catalina',
-  'Marcus', 'Elena', 'Diego', 'Chloe', 'Jayden', 'Amara', 'Lucas', 'Maya', 'Gabriel', 'Zara'
+  'Marcus', 'Elena', 'Diego', 'Chloe', 'Jayden', 'Amara', 'Lucas', 'Maya', 'Gabriel', 'Zara',
+  'Min-jun', 'Ji-woo', 'Ren', 'Haruto', 'Liam', 'Noah', 'Amir', 'Tariq', 'Kofi', 'Kwame',
+  'Ayotunde', 'Sipho', 'Aarav', 'Vihaan', 'Carlos', 'Thiago', 'Matheus', 'Lucas', 'Enzo'
 ];
 
 export const ARTIST_LAST_NAMES = [
   'Palacios', 'Herrera', 'Navarro', 'Benítez', 'Ríos', 'Castillo', 'Vargas', 'Mendoza', 'Medina', 'Rojas',
   'Silva', 'Morales', 'Paredes', 'Guerrero', 'Sosa', 'Romero', 'Vega', 'Cabrera', 'Acosta', 'Suárez',
-  'Mercer', 'Vance', 'Sterling', 'King', 'Cross', 'Rivers', 'Santos', 'Blanco', 'Torres', 'Luna'
+  'Mercer', 'Vance', 'Sterling', 'King', 'Cross', 'Rivers', 'Santos', 'Blanco', 'Torres', 'Luna',
+  'Kim', 'Park', 'Sato', 'Tanaka', 'Adeyemi', 'Okafor', 'Ndlovu', 'Patel', 'Sharma', 'Costa',
+  'Oliveira', 'Müller', 'Dubois', 'Leroy', 'Rossi', 'Bianchi', 'Johansson', 'Hansen', 'Van Dijk'
 ];
 
-export const ARTIST_STAGE_PREFIXES = [
-  'El', 'La', 'Don', 'MC', 'Lil', 'Baby', 'Young', 'Big', 'King', 'Saint',
-  'Dark', 'Nova', 'Ultra', 'Lord', 'G', 'Cyber', 'Aura', 'Ghost', 'Neo'
-];
+export const ARTIST_STAGE_PREFIXES = PROCEDURAL_STAGE_PREFIXES;
+export const ARTIST_STAGE_NAMES = PROCEDURAL_STAGE_ROOTS;
 
-export const ARTIST_STAGE_NAMES = [
-  'Duko', 'Wos', 'Flow', 'Fuego', 'Storm', 'Shadow', 'Blade', 'Flaco', 'Rider',
-  'Echo', 'Drift', 'Phantom', 'Glow', 'Venom', 'Pulse', 'Spark', 'Zenith', 'Nova',
-  'Bandido', 'Príncipe', 'Dorado', 'Klan', 'Rebel', 'Cruz', 'Mamba', 'Lobo', 'Sirena', 'Specter'
-];
+/**
+ * Generates a strictly unique procedural artist identity that never collides with
+ * real-world initial artists or existing world artists.
+ */
+export function generateUniqueProceduralArtistName(params: {
+  country?: string;
+  seed: number;
+  existingArtists: Record<string, { name: string; realName?: string }>;
+}): { stageName: string; realName: string } {
+  const { seed, existingArtists } = params;
+  const pool = params.country && REGIONAL_NAME_POOLS[params.country]
+    ? REGIONAL_NAME_POOLS[params.country]
+    : null;
+
+  for (let attempt = 0; attempt < 80; attempt++) {
+    const s = Math.abs(seed * 37 + attempt * 101 + attempt * attempt * 13);
+    let stageName = '';
+
+    const style = s % 5;
+    const prefix = PROCEDURAL_STAGE_PREFIXES[(s + attempt * 7) % PROCEDURAL_STAGE_PREFIXES.length];
+    const root = PROCEDURAL_STAGE_ROOTS[(s * 3 + attempt * 11) % PROCEDURAL_STAGE_ROOTS.length];
+    const suffix = PROCEDURAL_STAGE_SUFFIXES[(s * 7 + attempt * 17) % PROCEDURAL_STAGE_SUFFIXES.length];
+
+    if (style === 0) {
+      stageName = `${prefix} ${root}`;
+    } else if (style === 1) {
+      stageName = `${root} ${suffix}`;
+    } else if (style === 2) {
+      stageName = `${root}`;
+    } else if (style === 3) {
+      stageName = `${prefix} ${suffix}`;
+    } else {
+      stageName = `${root} ${((s % 90) + 10)}`;
+    }
+
+    const firstNames = pool ? pool.firstNames : ARTIST_FIRST_NAMES;
+    const lastNames = pool ? pool.lastNames : ARTIST_LAST_NAMES;
+    const fName = firstNames[(s + attempt * 3) % firstNames.length];
+    const lName = lastNames[(s * 5 + attempt * 7) % lastNames.length];
+    const realName = `${fName} ${lName}`;
+
+    if (!isArtistNameColliding(stageName, realName, existingArtists)) {
+      return { stageName, realName };
+    }
+  }
+
+  // Fallback unique hash suffix guarantee
+  const hash = Math.abs(seed % 9000) + 1000;
+  return {
+    stageName: `Nova ${PROCEDURAL_STAGE_ROOTS[Math.abs(seed) % PROCEDURAL_STAGE_ROOTS.length]} ${hash}`,
+    realName: `${ARTIST_FIRST_NAMES[Math.abs(seed) % ARTIST_FIRST_NAMES.length]} ${ARTIST_LAST_NAMES[Math.abs(seed * 3) % ARTIST_LAST_NAMES.length]}`
+  };
+}
 
 export const SONG_TITLE_NOUNS = [
   'Noche', 'Fuego', 'Calle', 'Estrellas', 'Dinero', 'Corazón', 'Cielo', 'Sombra', 'Laberinto', 'Diamantes',

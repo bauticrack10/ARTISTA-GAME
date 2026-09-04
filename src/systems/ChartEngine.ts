@@ -10,7 +10,7 @@ export interface ChartValidationResult {
 }
 
 export class ChartEngine {
-  static REGIONS: MusicRegion[] = ['Global', 'Argentina', 'LatinAmerica', 'USA', 'Europe', 'Spain', 'Mexico'];
+  static REGIONS: MusicRegion[] = ['Global', 'Argentina', 'LatinAmerica', 'USA', 'Europe', 'Spain', 'Mexico', 'UK', 'Brazil', 'Asia', 'Africa'];
 
   /**
    * Calculates regional charts with strict deterministic tie-breaking and rank uniqueness.
@@ -55,7 +55,10 @@ export class ChartEngine {
             artistCountry.includes('Puerto Rico') ||
             artistCountry.includes('México') ||
             artistCountry.includes('Colombia') ||
-            artistCountry.includes('Chile')
+            artistCountry.includes('Chile') ||
+            artistCountry.includes('Uruguay') ||
+            artistCountry.includes('República Dominicana') ||
+            artistCountry.includes('Brasil')
           )) {
             regionalMultiplier = 1.8;
           } else if (region === 'Spain' && artistCountry.includes('España')) {
@@ -64,6 +67,27 @@ export class ChartEngine {
             regionalMultiplier = 2.0;
           } else if (region === 'Mexico' && artistCountry.includes('México')) {
             regionalMultiplier = 2.5;
+          } else if (region === 'UK' && (artistCountry.includes('Reino Unido') || artistCountry.includes('UK') || artistCountry.includes('Irlanda'))) {
+            regionalMultiplier = 2.2;
+          } else if (region === 'Brazil' && (artistCountry.includes('Brasil') || artistCountry.includes('Brazil'))) {
+            regionalMultiplier = 2.6;
+          } else if (region === 'Asia' && (
+            artistCountry.includes('Corea del Sur') ||
+            artistCountry.includes('Japón') ||
+            artistCountry.includes('India') ||
+            artistCountry.includes('Filipinas') ||
+            artistCountry.includes('Indonesia') ||
+            artistCountry.includes('China')
+          )) {
+            regionalMultiplier = 2.3;
+          } else if (region === 'Africa' && (
+            artistCountry.includes('Nigeria') ||
+            artistCountry.includes('Ghana') ||
+            artistCountry.includes('Sudáfrica') ||
+            artistCountry.includes('Marruecos') ||
+            artistCountry.includes('Egipto')
+          )) {
+            regionalMultiplier = 2.4;
           }
         }
 

@@ -227,7 +227,11 @@ export class GameEngine {
         USA: { region: 'USA', year: 2026, month: 1, entries: [] },
         Europe: { region: 'Europe', year: 2026, month: 1, entries: [] },
         Spain: { region: 'Spain', year: 2026, month: 1, entries: [] },
-        Mexico: { region: 'Mexico', year: 2026, month: 1, entries: [] }
+        Mexico: { region: 'Mexico', year: 2026, month: 1, entries: [] },
+        UK: { region: 'UK', year: 2026, month: 1, entries: [] },
+        Brazil: { region: 'Brazil', year: 2026, month: 1, entries: [] },
+        Asia: { region: 'Asia', year: 2026, month: 1, entries: [] },
+        Africa: { region: 'Africa', year: 2026, month: 1, entries: [] }
       },
       awardsHistory: [],
       news: [
@@ -1347,17 +1351,22 @@ export class GameEngine {
     target.stats.fansCount += Math.floor(fansGained * 0.5);
     target.stats.popularity = Math.min(100, target.stats.popularity + Math.floor(popGained * 0.5));
 
-    // 5.5 Aumentar afinidad (+15), respeto (+15), pastCollabsCount (+1), hype y notas históricas en ambos artistas
+    // 5.5 Aumentar afinidad, respeto, pastCollabsCount (+1), hype y notas históricas en ambos artistas
+    const proximity = RelationshipEngine.evaluateGeographicAndLanguageProximity(player, target);
+    const affinityGain = proximity.isSameCountry ? 20 : proximity.sharesLanguageOrRegion ? 18 : 15;
+    const respectGain = proximity.isSameCountry ? 18 : 15;
+
     const relA = RelationshipEngine.getOrCreateRelationship(player, target.id);
     const relB = RelationshipEngine.getOrCreateRelationship(target, player.id);
     relA.pastCollabsCount = (relA.pastCollabsCount || 0) + 1;
     relB.pastCollabsCount = (relB.pastCollabsCount || 0) + 1;
 
     const newRelType = (relA.relationType === 'friend' || relA.relationType === 'mentor') ? relA.relationType : 'collaborator';
-    const historyNote = `Colaboración exitosa en "${params.title}" (${creditDisplay}) en ${this.world.currentYear}. Química: ${chemistryBonus}/25.`;
-    RelationshipEngine.modifyRelationship(player, target, 15, 15, newRelType, historyNote);
+    const geoTag = proximity.isSameCountry ? ` [Escena Local: ${player.country}]` : proximity.sharesLanguageOrRegion ? ' [Sinergia Regional]' : ' [Cruce Internacional]';
+    const historyNote = `Colaboración exitosa en "${params.title}" (${creditDisplay}) en ${this.world.currentYear}. Química: ${chemistryBonus}/25.${geoTag}`;
+    RelationshipEngine.modifyRelationship(player, target, affinityGain, respectGain, newRelType, historyNote);
 
-    const hypeGain = Math.min(45, Math.floor(18 + target.stats.popularity * 0.20 + chemistryBonus * 0.6));
+    const hypeGain = Math.min(45, Math.floor(18 + target.stats.popularity * 0.20 + chemistryBonus * 0.6 + (proximity.isSameCountry ? 4 : 0)));
     player.stats.hype = Math.min(100, player.stats.hype + hypeGain);
 
     const genreName = this.world.genres[params.genreId]?.name || params.genreId;
@@ -1765,19 +1774,31 @@ export class GameEngine {
 
     if (actionType === 'collab_request') {
       const result = RelationshipEngine.calculateCollabFeasibility(player, target);
+      const proximity = RelationshipEngine.evaluateGeographicAndLanguageProximity(player, target);
+
       if (result.willAccept) {
+        const affinityDelta = proximity.isSameCountry ? 25 : proximity.sharesLanguageOrRegion ? 20 : 15;
+        const respectDelta = proximity.isSameCountry ? 18 : 15;
+        const hypeDelta = Math.min(30, 15 + Math.floor(result.chemistryScore * 0.5));
+
         RelationshipEngine.modifyRelationship(
           player,
           target,
-          20,
-          15,
+          affinityDelta,
+          respectDelta,
           'collaborator',
-          `Aceptaron colaborar juntos en ${this.world.currentYear}.`
+          `Aceptaron colaborar juntos en ${this.world.currentYear}. ${result.reason}`
         );
-        player.stats.hype = Math.min(100, player.stats.hype + 18);
+        player.stats.hype = Math.min(100, player.stats.hype + hypeDelta);
         this.syncAudienceMetrics(player);
-        const headline = `Alianza confirmada: ${player.name} y ${target.name} anuncian colaboración`;
-        const body = `Los fanáticos celebran la unión de dos fuerzas musicales complementarias.`;
+
+        const headline = proximity.isSameCountry
+          ? `Alianza local confirmada: ${player.name} y ${target.name} anuncian junte en ${player.country}`
+          : `Alianza confirmada: ${player.name} y ${target.name} anuncian colaboración`;
+        const body = proximity.isSameCountry
+          ? `La escena de ${player.country} celebra la unión de dos talentos compatibles con una química calculada en ${result.chemistryScore}/25.`
+          : `Los fanáticos celebran la unión de dos fuerzas musicales complementarias con química calculada en ${result.chemistryScore}/25.`;
+
         const newsItem: NewsItem = {
           id: `news_collab_${Date.now()}`,
           headline,
@@ -1809,15 +1830,15 @@ export class GameEngine {
           actionType: 'collab_request',
           targetArtistId: target.id,
           targetArtistName: target.name,
-          outcomeDescription: `${target.name} aceptó la solicitud de colaboración con entusiasmo.`,
-          hypeChange: 18,
-          affinityDelta: 20,
-          respectDelta: 15,
+          outcomeDescription: `${target.name} aceptó la solicitud de colaboración. (${result.reason})`,
+          hypeChange: hypeDelta,
+          affinityDelta,
+          respectDelta,
           newRelationType: 'collaborator',
           newsItem
         };
       } else {
-        RelationshipEngine.modifyRelationship(player, target, -5, 0, undefined, `Propuesta de colaboración rechazada en ${this.world.currentYear}.`);
+        RelationshipEngine.modifyRelationship(player, target, -4, 0, undefined, `Propuesta de colaboración rechazada en ${this.world.currentYear}: ${result.reason}`);
         this.notify();
         return {
           success: false,
@@ -1825,7 +1846,7 @@ export class GameEngine {
           targetArtistId: target.id,
           targetArtistName: target.name,
           outcomeDescription: result.reason,
-          affinityDelta: -5,
+          affinityDelta: -4,
           error: result.reason
         };
       }

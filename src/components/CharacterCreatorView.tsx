@@ -66,17 +66,82 @@ interface CharacterCreatorViewProps {
   onCreatePlayer: (customArtist: Partial<Artist>) => void;
 }
 
-const COUNTRY_CITIES: Record<string, string[]> = {
+export const COUNTRY_CITIES: Record<string, string[]> = {
   Argentina: ['Buenos Aires', 'Córdoba', 'Rosario', 'Mar del Plata', 'Mendoza', 'La Plata', 'Neuquén', 'Salta'],
-  España: ['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Málaga', 'Bilbao', 'Granada', 'Zaragoza'],
-  México: ['Ciudad de México', 'Guadalajara', 'Monterrey', 'Tijuana', 'Puebla', 'Cancún', 'Querétaro'],
+  México: ['Ciudad de México', 'Guadalajara', 'Monterrey', 'Tijuana', 'Puebla', 'Cancún', 'Querétaro', 'Culiacán'],
+  España: ['Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Málaga', 'Bilbao', 'Granada', 'Zaragoza', 'Las Palmas'],
   'Puerto Rico': ['San Juan', 'Bayamón', 'Ponce', 'Carolina', 'Caguas', 'Mayagüez', 'Arecibo'],
   Colombia: ['Medellín', 'Bogotá', 'Cali', 'Barranquilla', 'Cartagena', 'Bucaramanga'],
   Chile: ['Santiago', 'Valparaíso', 'Concepción', 'Viña del Mar', 'Antofagasta', 'La Serena'],
-  'Estados Unidos': ['Miami', 'Los Angeles', 'New York', 'Atlanta', 'Chicago', 'Houston'],
-  'Reino Unido': ['Londres', 'Manchester', 'Birmingham', 'Liverpool', 'Bristol'],
   Uruguay: ['Montevideo', 'Punta del Este', 'Salto', 'Maldonado'],
-  'República Dominicana': ['Santo Domingo', 'Santiago de los Caballeros', 'La Romana', 'Punta Cana']
+  Brasil: ['São Paulo', 'Rio de Janeiro', 'Salvador', 'Belo Horizonte', 'Curitiba', 'Recife', 'Fortaleza'],
+  'Estados Unidos': ['Miami', 'Los Angeles', 'New York', 'Atlanta', 'Chicago', 'Houston', 'Nashville', 'Austin'],
+  'Canadá': ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Ottawa'],
+  'Reino Unido': ['Londres', 'Manchester', 'Birmingham', 'Liverpool', 'Glasgow', 'Bristol'],
+  Francia: ['París', 'Marsella', 'Lyon', 'Toulouse', 'Niza'],
+  Alemania: ['Berlín', 'Múnich', 'Hamburgo', 'Colonia', 'Frankfurt'],
+  Italia: ['Roma', 'Milán', 'Nápoles', 'Florencia', 'Turín'],
+  Portugal: ['Lisboa', 'Oporto', 'Braga'],
+  'Países Bajos': ['Ámsterdam', 'Róterdam', 'Utrecht'],
+  'Bélgica': ['Bruselas', 'Amberes', 'Gante'],
+  Suecia: ['Estocolmo', 'Gotemburgo', 'Malmö'],
+  Noruega: ['Oslo', 'Bergen', 'Trondheim'],
+  Irlanda: ['Dublín', 'Cork', 'Galway'],
+  Australia: ['Sídney', 'Melbourne', 'Brisbane', 'Perth'],
+  'Nueva Zelanda': ['Auckland', 'Wellington', 'Christchurch'],
+  Nigeria: ['Lagos', 'Abuya', 'Port Harcourt', 'Ibadan'],
+  'Sudáfrica': ['Johannesburgo', 'Ciudad del Cabo', 'Durban'],
+  Ghana: ['Acra', 'Kumasi'],
+  Marruecos: ['Casablanca', 'Rabat', 'Marrakech'],
+  Egipto: ['El Cairo', 'Alejandría'],
+  India: ['Bombay', 'Delhi', 'Bangalore', 'Punyab'],
+  'Corea del Sur': ['Seúl', 'Busán', 'Incheon', 'Daegu'],
+  'Japón': ['Tokio', 'Osaka', 'Kioto', 'Nagoya', 'Fukuoka'],
+  Filipinas: ['Manila', 'Cebú', 'Dávao'],
+  Indonesia: ['Yakarta', 'Bali', 'Bandung'],
+  'Turquía': ['Estambul', 'Ankara', 'Esmirna'],
+  Polonia: ['Varsovia', 'Cracovia', 'Breslavia'],
+  'República Dominicana': ['Santo Domingo', 'Santiago de los Caballeros', 'La Romana', 'Punta Cana'],
+  Jamaica: ['Kingston', 'Montego Bay']
+};
+
+export const COUNTRY_GENRE_DEFAULTS: Record<string, { main: string; secondaries: string[]; flag: string; code: string }> = {
+  Argentina: { flag: '🇦🇷', code: 'AR', main: 'trap_latino', secondaries: ['rock_alternativo', 'cumbia_tropical', 'hip_hop_rap'] },
+  México: { flag: '🇲🇽', code: 'MX', main: 'corridos_urbanos', secondaries: ['reggaeton', 'pop_moderno', 'cumbia_tropical'] },
+  España: { flag: '🇪🇸', code: 'ES', main: 'trap_latino', secondaries: ['pop_moderno', 'drill', 'hip_hop_rap'] },
+  'Puerto Rico': { flag: '🇵🇷', code: 'PR', main: 'reggaeton', secondaries: ['trap_latino', 'pop_moderno', 'hip_hop_rap'] },
+  Colombia: { flag: '🇨🇴', code: 'CO', main: 'reggaeton', secondaries: ['pop_moderno', 'cumbia_tropical', 'trap_latino'] },
+  Chile: { flag: '🇨🇱', code: 'CL', main: 'trap_latino', secondaries: ['reggaeton', 'pop_moderno', 'hip_hop_rap'] },
+  Uruguay: { flag: '🇺🇾', code: 'UY', main: 'trap_latino', secondaries: ['cumbia_tropical', 'rock_alternativo', 'hip_hop_rap'] },
+  Brasil: { flag: '🇧🇷', code: 'BR', main: 'funk_brasilero', secondaries: ['trap_latino', 'jazz_bossa', 'pop_moderno'] },
+  'Estados Unidos': { flag: '🇺🇸', code: 'US', main: 'hip_hop_rap', secondaries: ['pop_moderno', 'r_and_b_soul', 'country_folk'] },
+  'Canadá': { flag: '🇨🇦', code: 'CA', main: 'pop_moderno', secondaries: ['r_and_b_soul', 'hip_hop_rap', 'rock_alternativo'] },
+  'Reino Unido': { flag: '🇬🇧', code: 'GB', main: 'drill', secondaries: ['pop_moderno', 'rock_alternativo', 'musica_electronica'] },
+  Francia: { flag: '🇫🇷', code: 'FR', main: 'hip_hop_rap', secondaries: ['musica_electronica', 'pop_moderno', 'drill'] },
+  Alemania: { flag: '🇩🇪', code: 'DE', main: 'musica_electronica', secondaries: ['metal_punk', 'hip_hop_rap', 'pop_moderno'] },
+  Italia: { flag: '🇮🇹', code: 'IT', main: 'pop_moderno', secondaries: ['trap_latino', 'drill', 'hip_hop_rap'] },
+  Portugal: { flag: '🇵🇹', code: 'PT', main: 'pop_moderno', secondaries: ['hip_hop_rap', 'musica_electronica', 'afrobeat_dancehall'] },
+  'Países Bajos': { flag: '🇳🇱', code: 'NL', main: 'musica_electronica', secondaries: ['pop_moderno', 'hip_hop_rap', 'drill'] },
+  'Bélgica': { flag: '🇧🇪', code: 'BE', main: 'musica_electronica', secondaries: ['pop_moderno', 'hip_hop_rap'] },
+  Suecia: { flag: '🇸🇪', code: 'SE', main: 'pop_moderno', secondaries: ['musica_electronica', 'metal_punk'] },
+  Noruega: { flag: '🇳🇴', code: 'NO', main: 'musica_electronica', secondaries: ['metal_punk', 'pop_moderno'] },
+  Irlanda: { flag: '🇮🇪', code: 'IE', main: 'rock_alternativo', secondaries: ['country_folk', 'pop_moderno'] },
+  Australia: { flag: '🇦🇺', code: 'AU', main: 'rock_alternativo', secondaries: ['pop_moderno', 'musica_electronica', 'hip_hop_rap'] },
+  'Nueva Zelanda': { flag: '🇳🇿', code: 'NZ', main: 'pop_moderno', secondaries: ['rock_alternativo', 'r_and_b_soul'] },
+  Nigeria: { flag: '🇳🇬', code: 'NG', main: 'afrobeat_dancehall', secondaries: ['hip_hop_rap', 'pop_moderno'] },
+  'Sudáfrica': { flag: '🇿🇦', code: 'ZA', main: 'afrobeat_dancehall', secondaries: ['musica_electronica', 'hip_hop_rap'] },
+  Ghana: { flag: '🇬🇭', code: 'GH', main: 'afrobeat_dancehall', secondaries: ['hip_hop_rap', 'pop_moderno'] },
+  Marruecos: { flag: '🇲🇦', code: 'MA', main: 'hip_hop_rap', secondaries: ['drill', 'pop_moderno'] },
+  Egipto: { flag: '🇪🇬', code: 'EG', main: 'hip_hop_rap', secondaries: ['pop_moderno', 'musica_electronica'] },
+  India: { flag: '🇮🇳', code: 'IN', main: 'pop_moderno', secondaries: ['hip_hop_rap', 'musica_electronica'] },
+  'Corea del Sur': { flag: '🇰🇷', code: 'KR', main: 'kpop_jpop', secondaries: ['pop_moderno', 'r_and_b_soul', 'hip_hop_rap'] },
+  'Japón': { flag: '🇯🇵', code: 'JP', main: 'kpop_jpop', secondaries: ['rock_alternativo', 'pop_moderno', 'musica_electronica'] },
+  Filipinas: { flag: '🇵🇭', code: 'PH', main: 'pop_moderno', secondaries: ['r_and_b_soul', 'hip_hop_rap'] },
+  Indonesia: { flag: '🇮🇩', code: 'ID', main: 'pop_moderno', secondaries: ['rock_alternativo', 'musica_electronica'] },
+  'Turquía': { flag: '🇹🇷', code: 'TR', main: 'pop_moderno', secondaries: ['hip_hop_rap', 'musica_electronica'] },
+  Polonia: { flag: '🇵🇱', code: 'PL', main: 'hip_hop_rap', secondaries: ['drill', 'musica_electronica'] },
+  'República Dominicana': { flag: '🇩🇴', code: 'DO', main: 'reggaeton', secondaries: ['trap_latino', 'cumbia_tropical', 'pop_moderno'] },
+  Jamaica: { flag: '🇯🇲', code: 'JM', main: 'afrobeat_dancehall', secondaries: ['hip_hop_rap', 'r_and_b_soul'] }
 };
 
 interface TraitChipProps {
@@ -438,6 +503,20 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     setCity(cities[0]);
     setIsCustomCity(false);
     setCustomCityText('');
+
+    // Adjust recommended / default genres for the selected country
+    const genreRec = COUNTRY_GENRE_DEFAULTS[newCountry];
+    if (genreRec) {
+      if (genreRec.main && world.genres[genreRec.main]) {
+        setMainGenreId(genreRec.main);
+      }
+      if (genreRec.secondaries && genreRec.secondaries.length > 0) {
+        const validSubs = genreRec.secondaries
+          .filter(id => id !== genreRec.main && world.genres[id])
+          .slice(0, 3);
+        setSecondaryGenres(validSubs);
+      }
+    }
 
     // Generate new regional name matching selected country
     const generated = generateArtistName(newCountry, cities[0]);
@@ -965,13 +1044,17 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <select
                     value={country}
                     onChange={e => handleCountryChange(e.target.value)}
-                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
+                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer font-medium"
                   >
-                    {Object.keys(COUNTRY_CITIES).map(c => (
-                      <option key={c} value={c} className="bg-[#0B0C10] text-[#F8FAFC]">
-                        {c}
-                      </option>
-                    ))}
+                    {Object.keys(COUNTRY_CITIES).map(c => {
+                      const meta = COUNTRY_GENRE_DEFAULTS[c];
+                      const flag = meta?.flag || '🌍';
+                      return (
+                        <option key={c} value={c} className="bg-[#0B0C10] text-[#F8FAFC]">
+                          {flag} {c}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
 
@@ -1055,11 +1138,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* PASO 2: Estilo Musical & Géneros */}
             {/* ========================================================================= */}
             <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="border-b border-[#2A2E3D] pb-3">
+              <div className="border-b border-[#2A2E3D] pb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
                   <Disc3 className="w-4 h-4 text-[#7C3AED]" />
                   <span>2. Estilo Musical & Géneros</span>
                 </div>
+                {COUNTRY_GENRE_DEFAULTS[country] && (
+                  <span className="text-[10px] text-[#C084FC] bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 px-2.5 py-0.5 rounded-full font-bold">
+                    Escena {COUNTRY_GENRE_DEFAULTS[country].flag} {country}
+                  </span>
+                )}
               </div>
 
               {/* Main Genre Selection Grid */}
@@ -1070,6 +1158,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {Object.values(world.genres).map((g: Genre) => {
                     const isSelected = mainGenreId === g.id;
+                    const isRecommended = COUNTRY_GENRE_DEFAULTS[country]?.main === g.id;
+                    const isCountrySecondary = COUNTRY_GENRE_DEFAULTS[country]?.secondaries.includes(g.id);
+
                     return (
                       <button
                         type="button"
@@ -1078,21 +1169,36 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           setMainGenreId(g.id);
                           setSecondaryGenres(secondaryGenres.filter(sg => sg !== g.id));
                         }}
-                        className={`p-3 rounded-[10px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        className={`p-3 rounded-[10px] border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
                           isSelected
                             ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-[#7C3AED]'
+                            : isRecommended
+                            ? 'bg-[#0B0C10] border-[#8B5CF6]/50 hover:border-[#7C3AED] hover:bg-[#1C1F2B]'
                             : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#F8FAFC]">
-                            {g.name}
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-bold text-[#F8FAFC]">
+                              {g.name}
+                            </span>
+                            {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC] shrink-0" />}
+                          </div>
+                          <span className="text-[10px] text-[#94A3B8] line-clamp-1">
+                            {g.aestheticTone || g.originCountry || ''}
                           </span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />}
                         </div>
-                        <span className="text-[10px] text-[#94A3B8] line-clamp-1">
-                          {g.aestheticTone || g.originCountry || ''}
-                        </span>
+
+                        {isRecommended && (
+                          <span className="text-[9px] font-bold text-[#C084FC] bg-[#8B5CF6]/20 px-1.5 py-0.5 rounded-[4px] border border-[#8B5CF6]/40 w-fit mt-1.5">
+                            ✨ Sugerido para {country}
+                          </span>
+                        )}
+                        {!isRecommended && isCountrySecondary && (
+                          <span className="text-[9px] font-semibold text-cyan-300 bg-cyan-950/40 px-1.5 py-0.5 rounded-[4px] border border-cyan-500/30 w-fit mt-1.5">
+                            Popular en {country}
+                          </span>
+                        )}
                       </button>
                     );
                   })}
@@ -1114,19 +1220,26 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     .filter((g: Genre) => g.id !== mainGenreId)
                     .map((g: Genre) => {
                       const isSelected = secondaryGenres.includes(g.id);
+                      const isRecommendedSub = COUNTRY_GENRE_DEFAULTS[country]?.secondaries.includes(g.id);
+
                       return (
                         <button
                           type="button"
                           key={g.id}
                           onClick={() => toggleSecondaryGenre(g.id)}
-                          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
                             isSelected
                               ? 'bg-[#7C3AED]/25 border-[#7C3AED] text-white shadow-xs'
+                              : isRecommendedSub
+                              ? 'bg-[#0B0C10] border-[#8B5CF6]/40 text-[#C084FC] hover:text-[#F8FAFC] hover:border-[#7C3AED]'
                               : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#7C3AED]/40'
                           }`}
                         >
-                          {isSelected ? '✓ ' : '+ '}
-                          {g.name}
+                          <span>{isSelected ? '✓ ' : '+ '}</span>
+                          <span>{g.name}</span>
+                          {isRecommendedSub && !isSelected && (
+                            <span className="text-[9px] text-[#C084FC] font-mono">★</span>
+                          )}
                         </button>
                       );
                     })}

@@ -1,5 +1,14 @@
 import { WorldState, Artist, Song, Album, CareerStage } from '../types';
-import { generateRandomArtistName, generateSongTitle, generateAlbumTitle, generateUniqueSongTitle, generateUniqueAlbumTitle } from '../data/proceduralNames';
+import {
+  generateRandomArtistName,
+  generateSongTitle,
+  generateAlbumTitle,
+  generateUniqueSongTitle,
+  generateUniqueAlbumTitle,
+  GLOBAL_COUNTRY_DATABASE,
+  generateUniqueProceduralArtistName
+} from '../data/proceduralNames';
+import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { StreamingEngine } from './StreamingEngine';
 import { LegacyEngine } from './LegacyEngine';
 import { TimeSystem } from './TimeSystem';
@@ -23,9 +32,26 @@ export class WorldSimulation {
     const activeArtists = Object.values(world.artists).filter(a => !a.isRetired);
     if (activeArtists.length < 50 && (world.currentMonth === 1 || world.currentMonth === 7)) {
       const seedIdx = (world.currentYear * 12 + world.currentMonth + activeArtists.length) * 17;
-      const { stageName, realName } = generateRandomArtistName(seedIdx);
-      const genreKeys = Object.keys(world.genres);
-      const mainGenreId = genreKeys[seedIdx % genreKeys.length];
+      
+      // Seleccionar país global de la base de 35+ países
+      const countryData = GLOBAL_COUNTRY_DATABASE[seedIdx % GLOBAL_COUNTRY_DATABASE.length];
+      const city = countryData.cities[(seedIdx * 7) % countryData.cities.length];
+      
+      // Asignar género acorde al país natal del artista procedural
+      const mainGenreId = countryData.typicalGenres[(seedIdx * 3) % countryData.typicalGenres.length] || Object.keys(world.genres)[0];
+      const genreObj = world.genres[mainGenreId];
+      const subGenreIds = genreObj && genreObj.subGenres && genreObj.subGenres.length > 0
+        ? [genreObj.subGenres[seedIdx % genreObj.subGenres.length]]
+        : [];
+
+      // Prevenir colisiones de nombres con los artistas reales de INITIAL_ARTISTS y world.artists
+      const existingArtistsMap = { ...INITIAL_ARTISTS, ...world.artists };
+      const { stageName, realName } = generateUniqueProceduralArtistName({
+        country: countryData.country,
+        seed: seedIdx,
+        existingArtists: existingArtistsMap
+      });
+
       const newArtistId = `artist_gen_${world.currentYear}_${world.currentMonth}_${Math.floor(Math.random() * 10000)}`;
 
       // Pick an inspiration legend from existing artists
@@ -35,17 +61,34 @@ export class WorldSimulation {
       // 1 in 100,000 (0.001%) chance of spawning as a rare Prodigy
       const isProdigy = Math.random() < 0.00001;
 
+      const AVATAR_COLORS = [
+        'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
+        'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]',
+        'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]',
+        'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
+        'from-[#F59E0B] via-[#D97706] to-[#B45309]',
+        'from-[#F97316] via-[#E11D48] to-[#9333EA]',
+        'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
+        'from-[#64748B] via-[#475569] to-[#1E293B]'
+      ];
+      const AVATAR_ICONS = ['mic', 'crown', 'flame', 'disc', 'sparkles', 'zap', 'music', 'headphones', 'star', 'trophy'];
+
       const newArtist: Artist = {
         id: newArtistId,
         name: stageName,
         realName,
         isPlayer: false,
-        country: ['Argentina', 'México', 'España', 'Puerto Rico', 'USA', 'Colombia', 'Chile'][seedIdx % 7],
-        city: 'Metrópolis Musical',
+        avatarColor: AVATAR_COLORS[seedIdx % AVATAR_COLORS.length],
+        avatarIcon: AVATAR_ICONS[(seedIdx * 3) % AVATAR_ICONS.length],
+        country: countryData.country,
+        city,
+        countryCode: countryData.countryCode,
+        language: countryData.language,
+        influenceRegions: countryData.influenceRegions,
         birthYear: world.currentYear - 18 - (seedIdx % 6),
         careerStartYear: world.currentYear,
         mainGenreId,
-        subGenreIds: [],
+        subGenreIds,
         personality: isProdigy
           ? {
               creativity: 95 + Math.floor(Math.random() * 6),
@@ -106,7 +149,7 @@ export class WorldSimulation {
         historicalNotes: [
           isProdigy
             ? `Reconocido desde su debut como un prodigio generacional irrepetible (1 en 100.000).`
-            : `Inició su carrera musical en ${world.currentYear}.`
+            : `Inició su carrera musical en ${world.currentYear} en ${city}, ${countryData.country}.`
         ],
         generationIndex: Math.floor((world.currentYear - 2026) / 10) + 1,
         influences: inspiration ? [inspiration] : [],

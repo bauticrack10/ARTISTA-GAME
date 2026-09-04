@@ -31,7 +31,11 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   trophy: Trophy,
   waves: Waves,
   activity: Activity,
-  user: User
+  user: User,
+  gem: Sparkles,
+  sun: Star,
+  moon: Sparkles,
+  shield: Trophy
 };
 
 export interface ArtistAvatarProps {

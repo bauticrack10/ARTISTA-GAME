@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Artist, WorldState, EcosystemNPC, BeefState, InteractionResult, ArtistRelationship, SocialActionResult } from '../types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Artist, WorldState, EcosystemNPC, BeefState, InteractionResult, ArtistRelationship, SocialActionResult, CareerStage } from '../types';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
 import {
   Network,
@@ -25,11 +25,178 @@ import {
   CheckCircle2,
   Search,
   SlidersHorizontal,
-  Info
+  Info,
+  Globe,
+  Disc3,
+  RotateCcw,
+  Filter
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { playSound } from '../utils/audioSystem';
 import { formatCompactNumber, cleanQuotes, sanitizeString } from '../utils/formatters';
+
+export const COUNTRY_FLAG_MAP: Record<string, string> = {
+  Argentina: '🇦🇷',
+  México: '🇲🇽',
+  Mexico: '🇲🇽',
+  España: '🇪🇸',
+  Spain: '🇪🇸',
+  'Puerto Rico': '🇵🇷',
+  Colombia: '🇨🇴',
+  Chile: '🇨🇱',
+  Uruguay: '🇺🇾',
+  Brasil: '🇧🇷',
+  Brazil: '🇧🇷',
+  'Estados Unidos': '🇺🇸',
+  USA: '🇺🇸',
+  'EE. UU.': '🇺🇸',
+  Canadá: '🇨🇦',
+  Canada: '🇨🇦',
+  'Reino Unido': '🇬🇧',
+  UK: '🇬🇧',
+  Francia: '🇫🇷',
+  France: '🇫🇷',
+  Alemania: '🇩🇪',
+  Germany: '🇩🇪',
+  Italia: '🇮🇹',
+  Italy: '🇮🇹',
+  Portugal: '🇵🇹',
+  'Países Bajos': '🇳🇱',
+  Netherlands: '🇳🇱',
+  Bélgica: '🇧🇪',
+  Belgium: '🇧🇪',
+  Suecia: '🇸🇪',
+  Sweden: '🇸🇪',
+  Noruega: '🇳🇴',
+  Norway: '🇳🇴',
+  Irlanda: '🇮🇪',
+  Ireland: '🇮🇪',
+  Australia: '🇦🇺',
+  'Nueva Zelanda': '🇳🇿',
+  'New Zealand': '🇳🇿',
+  Nigeria: '🇳🇬',
+  Sudáfrica: '🇿🇦',
+  'South Africa': '🇿🇦',
+  Ghana: '🇬🇭',
+  Marruecos: '🇲🇦',
+  Morocco: '🇲🇦',
+  Egipto: '🇪🇬',
+  Egypt: '🇪🇬',
+  India: '🇮🇳',
+  'Corea del Sur': '🇰🇷',
+  'South Korea': '🇰🇷',
+  Corea: '🇰🇷',
+  Japón: '🇯🇵',
+  Japan: '🇯🇵',
+  Filipinas: '🇵🇭',
+  Philippines: '🇵🇭',
+  Indonesia: '🇮🇩',
+  Turquía: '🇹🇷',
+  Turkey: '🇹🇷',
+  Polonia: '🇵🇱',
+  Poland: '🇵🇱',
+  'República Dominicana': '🇩🇴',
+  'Dominican Republic': '🇩🇴',
+  Jamaica: '🇯🇲'
+};
+
+export function getCountryFlag(countryName?: string, countryCode?: string): string {
+  if (countryName && COUNTRY_FLAG_MAP[countryName]) return COUNTRY_FLAG_MAP[countryName];
+  if (countryCode) {
+    const code = countryCode.toUpperCase();
+    const codeMap: Record<string, string> = {
+      AR: '🇦🇷', MX: '🇲🇽', ES: '🇪🇸', PR: '🇵🇷', CO: '🇨🇴', CL: '🇨🇱', UY: '🇺🇾', BR: '🇧🇷',
+      US: '🇺🇸', CA: '🇨🇦', GB: '🇬🇧', UK: '🇬🇧', FR: '🇫🇷', DE: '🇩🇪', IT: '🇮🇹', PT: '🇵🇹',
+      NL: '🇳🇱', BE: '🇧🇪', SE: '🇸🇪', NO: '🇳🇴', IE: '🇮🇪', AU: '🇦🇺', NZ: '🇳🇿', NG: '🇳🇬',
+      ZA: '🇿🇦', GH: '🇬🇭', MA: '🇲🇦', EG: '🇪🇬', IN: '🇮🇳', KR: '🇰🇷', JP: '🇯🇵', PH: '🇵🇭',
+      ID: '🇮🇩', TR: '🇹🇷', PL: '🇵🇱', DO: '🇩🇴', JM: '🇯🇲'
+    };
+    if (codeMap[code]) return codeMap[code];
+  }
+  if (countryName) {
+    for (const [key, flag] of Object.entries(COUNTRY_FLAG_MAP)) {
+      if (countryName.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(countryName.toLowerCase())) {
+        return flag;
+      }
+    }
+  }
+  return '🌍';
+}
+
+export const REGION_FILTER_OPTIONS = [
+  { id: 'all', label: 'Todas las Regiones / Escenas' },
+  { id: 'my_scene', label: 'Mi Escena Local / Nacional' },
+  { id: 'Argentina', label: 'Argentina', flag: '🇦🇷' },
+  { id: 'México', label: 'México', flag: '🇲🇽' },
+  { id: 'Estados Unidos', label: 'USA / EE. UU.', flag: '🇺🇸' },
+  { id: 'España', label: 'España', flag: '🇪🇸' },
+  { id: 'Colombia', label: 'Colombia', flag: '🇨🇴' },
+  { id: 'Puerto Rico', label: 'Puerto Rico', flag: '🇵🇷' },
+  { id: 'Brasil', label: 'Brasil', flag: '🇧🇷' },
+  { id: 'Reino Unido', label: 'Reino Unido', flag: '🇬🇧' },
+  { id: 'Corea del Sur', label: 'Corea del Sur', flag: '🇰🇷' },
+  { id: 'Japón', label: 'Japón', flag: '🇯🇵' },
+  { id: 'Nigeria', label: 'Nigeria', flag: '🇳🇬' },
+  { id: 'Chile', label: 'Chile', flag: '🇨🇱' },
+  { id: 'Uruguay', label: 'Uruguay', flag: '🇺🇾' },
+  { id: 'República Dominicana', label: 'República Dominicana', flag: '🇩🇴' },
+  { id: 'Canadá', label: 'Canadá', flag: '🇨🇦' },
+  { id: 'Francia', label: 'Francia', flag: '🇫🇷' },
+  { id: 'Alemania', label: 'Alemania', flag: '🇩🇪' },
+  { id: 'Italia', label: 'Italia', flag: '🇮🇹' },
+  { id: 'Portugal', label: 'Portugal', flag: '🇵🇹' },
+  { id: 'Países Bajos', label: 'Países Bajos', flag: '🇳🇱' },
+  { id: 'Bélgica', label: 'Bélgica', flag: '🇧🇪' },
+  { id: 'Suecia', label: 'Suecia', flag: '🇸🇪' },
+  { id: 'Noruega', label: 'Noruega', flag: '🇳🇴' },
+  { id: 'Irlanda', label: 'Irlanda', flag: '🇮🇪' },
+  { id: 'Australia', label: 'Australia', flag: '🇦🇺' },
+  { id: 'Nueva Zelanda', label: 'Nueva Zelanda', flag: '🇳🇿' },
+  { id: 'Sudáfrica', label: 'Sudáfrica', flag: '🇿🇦' },
+  { id: 'Ghana', label: 'Ghana', flag: '🇬🇭' },
+  { id: 'Marruecos', label: 'Marruecos', flag: '🇲🇦' },
+  { id: 'Egipto', label: 'Egipto', flag: '🇪🇬' },
+  { id: 'India', label: 'India', flag: '🇮🇳' },
+  { id: 'Filipinas', label: 'Filipinas', flag: '🇵🇭' },
+  { id: 'Indonesia', label: 'Indonesia', flag: '🇮🇩' },
+  { id: 'Turquía', label: 'Turquía', flag: '🇹🇷' },
+  { id: 'Polonia', label: 'Polonia', flag: '🇵🇱' },
+  { id: 'Jamaica', label: 'Jamaica', flag: '🇯🇲' }
+];
+
+export const GENRE_FILTER_OPTIONS = [
+  { id: 'all', label: 'Todos los Géneros' },
+  { id: 'trap_latino', label: 'Trap Latino' },
+  { id: 'reggaeton', label: 'Reggaetón' },
+  { id: 'hip_hop_rap', label: 'Hip Hop / Rap' },
+  { id: 'pop_moderno', label: 'Pop Moderno' },
+  { id: 'rock_alternativo', label: 'Rock Alternativo' },
+  { id: 'r_and_b_soul', label: 'R&B / Soul' },
+  { id: 'musica_electronica', label: 'Electrónica' },
+  { id: 'drill', label: 'Drill' },
+  { id: 'afrobeat_dancehall', label: 'Afrobeats' },
+  { id: 'corridos_urbanos', label: 'Corridos' },
+  { id: 'kpop_jpop', label: 'K-Pop & J-Pop' },
+  { id: 'cumbia_tropical', label: 'Cumbia Tropical' },
+  { id: 'metal_punk', label: 'Metal & Punk' },
+  { id: 'funk_brasilero', label: 'Funk Brasileño' },
+  { id: 'country_folk', label: 'Country & Folk' },
+  { id: 'jazz_bossa', label: 'Jazz & Bossa Nova' }
+];
+
+export const STAGE_FILTER_OPTIONS = [
+  { id: 'all', label: 'Todos los Niveles' },
+  { id: 'underground_emerging', label: 'Underground / Emergente' },
+  { id: 'established_mainstream', label: 'Consagrado / Mainstream' },
+  { id: 'superstar_legend', label: 'Superestrella / Leyenda' }
+];
+
+export const STATUS_FILTER_OPTIONS = [
+  { id: 'active', label: 'Activos' },
+  { id: 'collab_available', label: 'Disponibles para Colaborar' },
+  { id: 'retired', label: 'Retirados / Históricos' },
+  { id: 'all', label: 'Todos los Estados' }
+];
 
 interface RelationshipsViewProps {
   player: Artist;
@@ -49,12 +216,15 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   onInteractBeef
 }) => {
   const [filter, setFilter] = useState<'all' | 'friends' | 'collabs' | 'rivals' | 'feuds' | 'ecosystem'>('all');
+  const [regionFilter, setRegionFilter] = useState<string>('all');
+  const [genreFilter, setGenreFilter] = useState<string>('all');
+  const [stageFilter, setStageFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'active' | 'collab_available' | 'retired' | 'all'>('active');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeModalResult, setActiveModalResult] = useState<InteractionResult | null>(null);
 
-  const otherArtists = (Object.values(world?.artists || {}) as Artist[]).filter(
-    a => a.id !== player?.id && !a.isRetired
-  );
+  const allArtists = Object.values(world?.artists || {}) as Artist[];
+  const otherArtists = allArtists.filter(a => a.id !== player?.id);
   const ecosystemContacts = Object.values(world?.ecosystemContacts || {}) as EcosystemNPC[];
   const activeBeefs = Object.values(world?.activeBeefs || {}) as BeefState[];
 
@@ -222,68 +392,275 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     }
   };
 
-  // Filter and search logic
-  const filteredArtists = otherArtists.filter(a => {
-    const rel = player.relationships[a.id];
-    const badge = getRelationshipBadge(rel);
+  // Check if any advanced filter is currently active
+  const hasActiveFilters =
+    regionFilter !== 'all' ||
+    genreFilter !== 'all' ||
+    stageFilter !== 'all' ||
+    statusFilter !== 'active' ||
+    searchQuery.trim().length > 0;
 
-    if (filter === 'friends' && badge.key !== 'friend' && badge.key !== 'respect') return false;
-    if (filter === 'collabs' && badge.key !== 'collaborator') return false;
-    if (filter === 'rivals' && badge.key !== 'rival') return false;
-    if (filter === 'feuds' && badge.key !== 'feud') return false;
+  const handleResetFilters = () => {
+    playSound('click');
+    setRegionFilter('all');
+    setGenreFilter('all');
+    setStageFilter('all');
+    setStatusFilter('active');
+    setSearchQuery('');
+  };
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const genreName = (world.genres[a.mainGenreId]?.name || a.mainGenreId).toLowerCase();
-      return a.name.toLowerCase().includes(q) || genreName.includes(q) || a.country.toLowerCase().includes(q);
-    }
+  // Comprehensive multi-criteria filter logic
+  const filteredArtists = useMemo(() => {
+    return otherArtists.filter(a => {
+      // 1. Status Filter
+      if (statusFilter === 'active') {
+        if (a.isRetired || a.careerStage === 'Retired') return false;
+      } else if (statusFilter === 'retired') {
+        if (!a.isRetired && a.careerStage !== 'Retired' && a.careerStage !== 'Legend') return false;
+      } else if (statusFilter === 'collab_available') {
+        if (a.isRetired || a.careerStage === 'Retired') return false;
+        const rel = player.relationships[a.id];
+        if (rel && (rel.relationType === 'feud' || rel.affinity <= -40)) return false;
+      }
 
-    return true;
-  });
+      // 2. Relation Category Filter (from main tabs)
+      const rel = player.relationships[a.id];
+      const badge = getRelationshipBadge(rel);
+      if (filter === 'friends' && badge.key !== 'friend' && badge.key !== 'respect') return false;
+      if (filter === 'collabs' && badge.key !== 'collaborator') return false;
+      if (filter === 'rivals' && badge.key !== 'rival') return false;
+      if (filter === 'feuds' && badge.key !== 'feud') return false;
+
+      // 3. Region / Scene Filter
+      if (regionFilter === 'my_scene') {
+        const pCountry = (player.country || '').toLowerCase().trim();
+        const aCountry = (a.country || '').toLowerCase().trim();
+        const pCode = (player.countryCode || '').toLowerCase().trim();
+        const aCode = (a.countryCode || '').toLowerCase().trim();
+        const matchesCountry = pCountry && aCountry && (aCountry.includes(pCountry) || pCountry.includes(aCountry));
+        const matchesCode = pCode && aCode && pCode === aCode;
+        if (!matchesCountry && !matchesCode) return false;
+      } else if (regionFilter !== 'all') {
+        const qReg = regionFilter.toLowerCase().trim();
+        const aCountry = (a.country || '').toLowerCase().trim();
+        const aCode = (a.countryCode || '').toLowerCase().trim();
+        let matches = aCountry.includes(qReg) || aCode === qReg;
+        if (!matches) {
+          if (qReg === 'estados unidos' || qReg === 'usa') {
+            matches = aCountry.includes('estados unidos') || aCountry.includes('usa') || aCode === 'us';
+          } else if (qReg === 'reino unido' || qReg === 'uk') {
+            matches = aCountry.includes('reino unido') || aCountry.includes('uk') || aCode === 'gb';
+          } else if (qReg === 'corea del sur' || qReg === 'corea') {
+            matches = aCountry.includes('corea') || aCode === 'kr';
+          }
+        }
+        if (!matches) return false;
+      }
+
+      // 4. Genre Filter
+      if (genreFilter !== 'all') {
+        const matchMain = a.mainGenreId === genreFilter;
+        const matchSub = a.subGenreIds && a.subGenreIds.includes(genreFilter);
+        if (!matchMain && !matchSub) return false;
+      }
+
+      // 5. Stage / Fame Filter
+      if (stageFilter === 'underground_emerging') {
+        const allowed: CareerStage[] = ['Underground', 'Emerging', 'Breakout'];
+        if (!allowed.includes(a.careerStage)) return false;
+      } else if (stageFilter === 'established_mainstream') {
+        const allowed: CareerStage[] = ['Established', 'Mainstream', 'Veteran', 'Comeback'];
+        if (!allowed.includes(a.careerStage)) return false;
+      } else if (stageFilter === 'superstar_legend') {
+        const allowed: CareerStage[] = ['Superstar', 'Legend'];
+        if (!allowed.includes(a.careerStage)) return false;
+      }
+
+      // 6. Search Query (name, realName, country, city, genre)
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const genreName = (world.genres[a.mainGenreId]?.name || a.mainGenreId).toLowerCase();
+        const name = (a.name || '').toLowerCase();
+        const realName = (a.realName || '').toLowerCase();
+        const country = (a.country || '').toLowerCase();
+        const city = (a.city || '').toLowerCase();
+
+        const matches =
+          name.includes(q) ||
+          realName.includes(q) ||
+          country.includes(q) ||
+          city.includes(q) ||
+          genreName.includes(q);
+
+        if (!matches) return false;
+      }
+
+      return true;
+    });
+  }, [otherArtists, player, filter, regionFilter, genreFilter, stageFilter, statusFilter, searchQuery, world.genres]);
 
   return (
     <div
-      className="space-y-8 pb-16 text-[#F8FAFC]"
+      className="space-y-6 pb-16 text-[#F8FAFC]"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
-      {/* Header & Controls Panel */}
-      <div className="bg-[#16181F] p-6 rounded-[16px] border border-[#2A2E3D] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 shadow-lg relative overflow-hidden">
-        {/* Subtle Accent Glow */}
-        <div className="absolute top-0 right-0 w-80 h-32 bg-gradient-to-l from-[#8B5CF6]/10 via-[#EC4899]/05 to-transparent blur-2xl pointer-events-none" />
+      {/* Header & Advanced Filters Panel */}
+      <div className="bg-[#16181F] p-5 sm:p-6 rounded-[16px] border border-[#2A2E3D] space-y-5 shadow-lg relative overflow-hidden">
+        {/* Ambient Top Glow */}
+        <div className="absolute top-0 right-0 w-96 h-40 bg-gradient-to-l from-[#8B5CF6]/15 via-[#EC4899]/08 to-transparent blur-3xl pointer-events-none" />
 
-        <div className="space-y-1 relative z-10">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-[8px] bg-[#0B0C10] border border-[#8B5CF6]/40 text-[#8B5CF6] shadow-[0_0_12px_rgba(139,92,246,0.25)]">
-              <Network className="w-5 h-5" />
+        {/* Top Header Row: Title & Search */}
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 relative z-10">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-[8px] bg-[#0B0C10] border border-[#8B5CF6]/40 text-[#8B5CF6] shadow-[0_0_12px_rgba(139,92,246,0.25)]">
+                <Network className="w-5 h-5" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F8FAFC]">
+                Ecosistema, Vínculos & Escenas Globales
+              </h1>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F8FAFC]">
-              Ecosistema, Vínculos & Rivalidades Urbanas
-            </h1>
+            <p className="text-xs sm:text-sm text-[#94A3B8] max-w-2xl leading-relaxed">
+              Explorá la escena internacional (+35 países), gestioná alianzas, colaboraciones de estudio y disputas líricas.
+            </p>
           </div>
-          <p className="text-xs sm:text-sm text-[#94A3B8] max-w-2xl leading-relaxed">
-            Cultivá alianzas estratégicas, intercambiá elogios públicos, gestioná la tensión con críticos y defendé tu respeto lírico en tiraderas.
-          </p>
-        </div>
 
-        {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto relative z-10">
-          <div className="relative flex-1 sm:w-64">
+          {/* Quick Search Input */}
+          <div className="relative w-full lg:w-72">
             <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Buscar por artista o género..."
+              placeholder="Buscar por nombre, país, ciudad o género..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] pl-9 pr-3 py-1.5 text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] transition-all"
+              className="w-full bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] pl-9 pr-8 py-2 text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#F8FAFC] text-xs p-0.5"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#F8FAFC] text-xs p-1"
+                title="Limpiar búsqueda"
               >
                 ✕
               </button>
             )}
+          </div>
+        </div>
+
+        {/* Advanced Filter Bar: 4 Dropdowns + Reset */}
+        <div className="bg-[#0B0C10]/80 p-3.5 sm:p-4 rounded-[12px] border border-[#2A2E3D] relative z-10 space-y-3">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#F8FAFC] uppercase tracking-wider">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#8B5CF6]" />
+              <span>Filtros Avanzados de Escena & Artistas</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] font-mono text-[#94A3B8]">
+                Mostrando <strong className="text-[#F8FAFC] font-semibold">{filteredArtists.length}</strong> de {otherArtists.length} artistas
+              </span>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="flex items-center gap-1.5 text-[11px] font-semibold text-[#EC4899] hover:text-[#F43F5E] bg-[#EC4899]/10 hover:bg-[#EC4899]/20 border border-[#EC4899]/30 px-2.5 py-1 rounded-[6px] transition-colors cursor-pointer"
+                  title="Restablecer todos los filtros a sus valores predeterminados"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Limpiar Filtros</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            {/* 1. Filtro de Región / Escena */}
+            <div>
+              <label className="block text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <Globe className="w-3 h-3 text-[#06B6D4]" />
+                <span>Región / Escena</span>
+              </label>
+              <select
+                value={regionFilter}
+                onChange={(e) => setRegionFilter(e.target.value)}
+                className={`w-full bg-[#16181F] border rounded-[8px] px-3 py-1.5 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#8B5CF6] cursor-pointer transition-colors ${
+                  regionFilter !== 'all' ? 'border-[#06B6D4] text-[#38BDF8] font-semibold' : 'border-[#2A2E3D]'
+                }`}
+              >
+                {REGION_FILTER_OPTIONS.map((opt) => (
+                  <option key={opt.id} value={opt.id} className="bg-[#16181F] text-[#F8FAFC]">
+                    {opt.id === 'my_scene'
+                      ? `🏠 Mi Escena Local (${getCountryFlag(player.country)} ${player.country || 'Local'})`
+                      : opt.flag
+                      ? `${opt.flag} ${opt.label}`
+                      : opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 2. Filtro de Género */}
+            <div>
+              <label className="block text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <Disc3 className="w-3 h-3 text-[#8B5CF6]" />
+                <span>Género Musical</span>
+              </label>
+              <select
+                value={genreFilter}
+                onChange={(e) => setGenreFilter(e.target.value)}
+                className={`w-full bg-[#16181F] border rounded-[8px] px-3 py-1.5 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#8B5CF6] cursor-pointer transition-colors ${
+                  genreFilter !== 'all' ? 'border-[#8B5CF6] text-[#C084FC] font-semibold' : 'border-[#2A2E3D]'
+                }`}
+              >
+                {GENRE_FILTER_OPTIONS.map((opt) => (
+                  <option key={opt.id} value={opt.id} className="bg-[#16181F] text-[#F8FAFC]">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 3. Filtro de Nivel de Fama / Etapa */}
+            <div>
+              <label className="block text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-amber-400" />
+                <span>Nivel de Fama / Etapa</span>
+              </label>
+              <select
+                value={stageFilter}
+                onChange={(e) => setStageFilter(e.target.value)}
+                className={`w-full bg-[#16181F] border rounded-[8px] px-3 py-1.5 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#8B5CF6] cursor-pointer transition-colors ${
+                  stageFilter !== 'all' ? 'border-amber-500 text-amber-300 font-semibold' : 'border-[#2A2E3D]'
+                }`}
+              >
+                {STAGE_FILTER_OPTIONS.map((opt) => (
+                  <option key={opt.id} value={opt.id} className="bg-[#16181F] text-[#F8FAFC]">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 4. Filtro de Estado */}
+            <div>
+              <label className="block text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <UserCheck className="w-3 h-3 text-emerald-400" />
+                <span>Estado de Actividad</span>
+              </label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className={`w-full bg-[#16181F] border rounded-[8px] px-3 py-1.5 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#8B5CF6] cursor-pointer transition-colors ${
+                  statusFilter !== 'active' ? 'border-emerald-500 text-emerald-300 font-semibold' : 'border-[#2A2E3D]'
+                }`}
+              >
+                {STATUS_FILTER_OPTIONS.map((opt) => (
+                  <option key={opt.id} value={opt.id} className="bg-[#16181F] text-[#F8FAFC]">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -694,7 +1071,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                               {artist.name}
                             </h3>
                             <p className="text-[11px] text-[#94A3B8] truncate">
-                              {artist.country} • {world.genres[artist.mainGenreId]?.name || artist.mainGenreId}
+                              {world.genres[artist.mainGenreId]?.name || artist.mainGenreId}
                             </p>
                           </div>
                         </div>
@@ -709,6 +1086,14 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                             {badgeConfig.label}
                           </span>
                         </div>
+                      </div>
+
+                      {/* Location Badge: Flag Country • City */}
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D] text-[11px] text-[#94A3B8] font-medium w-fit max-w-full">
+                        <span className="text-xs shrink-0">{getCountryFlag(artist.country, artist.countryCode)}</span>
+                        <span className="text-[#F8FAFC] font-semibold truncate">{artist.country || 'Global'}</span>
+                        <span className="text-[#64748B] shrink-0">•</span>
+                        <span className="text-[#94A3B8] truncate">{artist.city || 'Escena Local'}</span>
                       </div>
 
                       {/* Stat Metrics Bar */}

@@ -11,7 +11,7 @@ export type CareerStage =
   | 'Legend'
   | 'Retired';
 
-export type MusicRegion = 'Global' | 'Argentina' | 'USA' | 'LatinAmerica' | 'Europe' | 'Spain' | 'Mexico';
+export type MusicRegion = 'Global' | 'Argentina' | 'USA' | 'LatinAmerica' | 'Europe' | 'Spain' | 'Mexico' | 'UK' | 'Brazil' | 'Asia' | 'Africa';
 
 export interface PersonalityTraits {
   creativity: number;      // 0 - 100 (Influences artistic depth, experimental success)
@@ -210,6 +210,14 @@ export interface Artist {
   financialLedger?: FinancialTransaction[];
   isProdigy?: boolean; // 1 in 100,000 rare prodigy trait
   prodigyMultiplier?: number; // 3x multiplier on stat/exp gains
+  popularityLocal?: number;
+  popularityRegional?: number;
+  popularityGlobal?: number;
+  primaryMarkets?: string[];
+  influenceRegions?: MusicRegion[];
+  language?: string;
+  tourDrawCapacity?: number;
+  countryCode?: string;
 }
 
 export type TransactionCategory =

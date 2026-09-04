@@ -302,77 +302,101 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
   // Sound Synergy Estimation (0 - 100)
   const soundSynergy = useMemo(() => {
     if (!targetArtist) return 50;
+    let score = 50;
+    if (player.mainGenreId === targetArtist.mainGenreId) {
+      score += 25;
+    } else if (player.subGenreIds?.includes(targetArtist.mainGenreId) || targetArtist.subGenreIds?.includes(player.mainGenreId)) {
+      score += 15;
+    } else {
+      score += 5;
+    }
+    return Math.min(100, score);
+  }, [player, targetArtist]);
+
+  // Calculate full Collab Feasibility using RelationshipEngine (including proximity and superstar barrier)
+  const collabFeasibility = useMemo(() => {
+    if (!targetArtist) return null;
+    const projectType = format === 'ep_collab' ? 'collab_ep' : format === 'mixtape_collab' ? 'collab_mixtape' : format;
+    return RelationshipEngine.calculateCollabFeasibility(
+      player,
+      targetArtist,
+      projectType,
+      budgetProduction,
+      creditFormat
+    );
+  }, [player, targetArtist, format, budgetProduction, creditFormat]);
+
+  // Real-time Dynamic Calculated Chemistry Score (0 - 100%)
+  const calculatedChemistry = useMemo(() => {
+    if (!targetArtist) return 50;
+    if (collabFeasibility) {
+      return Math.min(100, Math.max(20, Math.round(collabFeasibility.chemistryScore * 4)));
+    }
 
     let score = 50;
-    // 1. Genre harmony
     if (player.mainGenreId === targetArtist.mainGenreId) {
       score += 20;
     } else if (player.subGenreIds?.includes(targetArtist.mainGenreId) || targetArtist.subGenreIds?.includes(player.mainGenreId)) {
       score += 15;
     } else {
-      score += 8; // Cross-over exploration
+      score += 8;
     }
 
-    // 2. Personality Chemistry
     const creatChem = (player.personality.creativity + targetArtist.personality.creativity) / 200;
     const skillChem = (player.personality.skill + targetArtist.personality.skill) / 200;
     score += Math.floor(creatChem * 15 + skillChem * 10);
 
-    // 3. Past Collab Experience
     if (relationship && relationship.pastCollabsCount > 0) {
       score += Math.min(12, relationship.pastCollabsCount * 4);
     }
 
     return Math.min(100, Math.max(20, score));
-  }, [player, targetArtist, relationship]);
+  }, [player, targetArtist, relationship, collabFeasibility]);
 
   // Real-time Dynamic Acceptance Probability (0 - 100%)
   const acceptanceProbability = useMemo(() => {
     if (!targetArtist || !relationship) return 50;
-
-    if (relationship.relationType === 'feud') {
-      return 0; // Feudo abierto impide aceptación
+    if (collabFeasibility) {
+      return collabFeasibility.acceptanceProbability;
     }
 
-    // Base score from Sociability, Affinity, Respect
+    if (relationship.relationType === 'feud') {
+      return 0;
+    }
+
     let prob = targetArtist.personality.sociability * 0.25 +
       (relationship.affinity + 100) * 0.28 +
       relationship.respect * 0.22;
 
-    // Popularity Gap Penalty / Boost
     const popDiff = targetArtist.stats.popularity - player.stats.popularity;
     if (popDiff > 25) {
       prob -= (popDiff * 1.1);
     } else if (popDiff > 10) {
       prob -= (popDiff * 0.6);
     } else if (popDiff < -10) {
-      prob += 15; // Target loves collaborating with more famous player
+      prob += 15;
     }
 
-    // Budget Factor
     const totalBudget = budgetProduction + budgetMarketing;
     if (totalBudget >= 15000) prob += 16;
     else if (totalBudget >= 8000) prob += 10;
     else if (totalBudget >= 3000) prob += 4;
     else if (totalBudget === 0) prob -= 12;
 
-    // Format Multiplier
     if (format === 'single_feat') prob += 10;
     else if (format === 'album_track') prob += 8;
     else if (format === 'ep_collab') prob -= 4;
     else if (format === 'collab_album') prob -= 10;
     else if (format === 'mixtape_collab') prob += 2;
 
-    // Credits arrangement impact
     if (creditFormat === 'target_feat_player') {
-      prob += 12; // Target gets top billing
+      prob += 12;
     } else if (creditFormat === 'player_and_target' || creditFormat === 'player_x_target') {
-      prob += 5; // Equal billing
+      prob += 5;
     } else if (creditFormat === 'player_feat_target' && popDiff > 15) {
-      prob -= 8; // Superstar target might dislike just being feat
+      prob -= 8;
     }
 
-    // Producer prestige bonus
     if (producerId && world.producers[producerId]) {
       prob += 6;
     }
@@ -387,7 +411,8 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
     format,
     creditFormat,
     producerId,
-    world.producers
+    world.producers,
+    collabFeasibility
   ]);
 
   // Selected format metadata
@@ -460,13 +485,20 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
       if (!isAccepted) {
         // Rejection Feedback Generation
         playSound('click');
-        let reason = `${targetArtist.name} revisó la propuesta pero decidió no firmar en este momento.`;
+        let reason = collabFeasibility?.reason || `${targetArtist.name} revisó la propuesta pero decidió no firmar en este momento.`;
         let advice = 'Mejora tu afinidad con elogios en redes o incrementa el presupuesto de marketing.';
 
         const popDiff = targetArtist.stats.popularity - player.stats.popularity;
         if (relationship && relationship.relationType === 'feud') {
           reason = `${targetArtist.name} mantiene un feudo abierto con vos y rechazó la propuesta tajantemente.`;
           advice = 'Debes calmar la tensión o resolver la tiradera antes de proponer música conjunta.';
+        } else if (collabFeasibility && !collabFeasibility.willAccept) {
+          reason = collabFeasibility.reason;
+          if (reason.includes('superestrella global')) {
+            advice = 'Consigue un manager de élite global o invierte al menos $35,000 en producción.';
+          } else if (reason.includes('distancia geográfica')) {
+            advice = 'Aumenta tu reputación internacional o incrementa sustancialmente el presupuesto de producción.';
+          }
         } else if (popDiff > 25) {
           reason = `${targetArtist.name} considera que la diferencia de repercusión (${targetArtist.stats.popularity} vs ${player.stats.popularity} pop) es demasiado amplia para un proyecto de este calibre.`;
           advice = 'Aumenta tu popularidad con giras y sencillos propios, u ofrécele encabezar el crédito principal.';

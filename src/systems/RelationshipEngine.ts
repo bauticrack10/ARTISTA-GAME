@@ -16,6 +16,7 @@ import {
   CollabPact
 } from '../types';
 import { SocialFeedEngine } from './SocialFeedEngine';
+import { INITIAL_MANAGERS } from '../data/producersAndManagers';
 
 export const CAREER_STAGE_TIERS: Record<CareerStage, number> = {
   Underground: 0,
@@ -35,6 +36,165 @@ export class RelationshipEngine {
   public static readonly SHOUTOUT_COOLDOWN_MONTHS = 3;
   public static readonly DISS_COOLDOWN_MONTHS = 6;
   public static readonly GLOBAL_DISS_COOLDOWN_MONTHS = 4;
+
+  /**
+   * Obtiene el código de idioma principal del artista
+   */
+  public static getArtistLanguage(artist: Artist): string {
+    if (artist.language) return artist.language.toLowerCase();
+    const country = (artist.country || '').trim().toLowerCase();
+    const code = (artist.countryCode || '').trim().toUpperCase();
+
+    if (
+      ['argentina', 'méxico', 'mexico', 'españa', 'spain', 'puerto rico', 'colombia', 'chile', 'uruguay',
+       'república dominicana', 'republica dominicana', 'perú', 'peru', 'cuba', 'venezuela', 'ecuador',
+       'bolivia', 'paraguay', 'guatemala', 'costa rica', 'panamá', 'panama'].includes(country) ||
+      ['AR', 'MX', 'ES', 'PR', 'CO', 'CL', 'UY', 'DO', 'PE', 'CU', 'VE', 'EC', 'BO', 'PY', 'GT', 'CR', 'PA'].includes(code)
+    ) {
+      return 'es';
+    }
+
+    if (
+      ['usa', 'estados unidos', 'uk', 'reino unido', 'canadá', 'canada', 'australia', 'nueva zelanda', 'new zealand', 'irlanda', 'ireland', 'nigeria', 'sudáfrica', 'sudafrica', 'ghana', 'jamaica'].includes(country) ||
+      ['US', 'GB', 'CA', 'AU', 'NZ', 'IE', 'NG', 'ZA', 'GH', 'JM'].includes(code)
+    ) {
+      return 'en';
+    }
+
+    if (['brasil', 'brazil', 'portugal'].includes(country) || ['BR', 'PT'].includes(code)) {
+      return 'pt';
+    }
+
+    if (['corea del sur', 'south korea', 'corea'].includes(country) || code === 'KR') {
+      return 'ko';
+    }
+
+    if (['japón', 'japon', 'japan'].includes(country) || code === 'JP') {
+      return 'ja';
+    }
+
+    if (['francia', 'france'].includes(country) || code === 'FR') {
+      return 'fr';
+    }
+
+    if (['alemania', 'germany'].includes(country) || code === 'DE') {
+      return 'de';
+    }
+
+    if (['italia', 'italy'].includes(country) || code === 'IT') {
+      return 'it';
+    }
+
+    if (['suecia', 'sweden'].includes(country) || code === 'SE') {
+      return 'sv';
+    }
+
+    if (['noruega', 'norway'].includes(country) || code === 'NO') {
+      return 'no';
+    }
+
+    if (['países bajos', 'paises bajos', 'netherlands', 'holanda', 'bélgica', 'belgica', 'belgium'].includes(country) || ['NL', 'BE'].includes(code)) {
+      return 'nl';
+    }
+
+    if (['india'].includes(country) || code === 'IN') {
+      return 'hi';
+    }
+
+    if (['egipto', 'egypt', 'marruecos', 'morocco'].includes(country) || ['EG', 'MA'].includes(code)) {
+      return 'ar';
+    }
+
+    if (['filipinas', 'philippines'].includes(country) || code === 'PH') {
+      return 'tl';
+    }
+
+    if (['indonesia'].includes(country) || code === 'ID') {
+      return 'id';
+    }
+
+    return 'es';
+  }
+
+  /**
+   * Obtiene la esfera cultural o macro-región del artista
+   */
+  public static getArtistCulturalSphere(artist: Artist): string {
+    const lang = this.getArtistLanguage(artist);
+    if (lang === 'es') return 'LatinIberoAmerica';
+    if (lang === 'en') return 'Anglosphere';
+    if (lang === 'pt') return 'Lusosphere';
+    if (lang === 'ko' || lang === 'ja') return 'EastAsia';
+    if (['fr', 'de', 'it', 'sv', 'no', 'nl'].includes(lang)) return 'ContinentalEurope';
+    if (['hi'].includes(lang)) return 'SouthAsia';
+    if (['ar'].includes(lang)) return 'MENA';
+    if (['tl', 'id'].includes(lang)) return 'SoutheastAsia';
+    return 'Global';
+  }
+
+  /**
+   * Evalúa la proximidad geográfica e idiomática entre dos artistas
+   */
+  public static evaluateGeographicAndLanguageProximity(requester: Artist, target: Artist): {
+    isSameCountry: boolean;
+    sharesLanguageOrRegion: boolean;
+    isDistantForeign: boolean;
+    geoScore: number;
+    chemistryBonus: number;
+    description: string;
+  } {
+    const reqCountry = (requester.country || '').trim().toLowerCase();
+    const targetCountry = (target.country || '').trim().toLowerCase();
+    const isSameCountry = Boolean(
+      (reqCountry && targetCountry && reqCountry === targetCountry) ||
+      (requester.countryCode && target.countryCode && requester.countryCode.toUpperCase() === target.countryCode.toUpperCase())
+    );
+
+    if (isSameCountry) {
+      return {
+        isSameCountry: true,
+        sharesLanguageOrRegion: true,
+        isDistantForeign: false,
+        geoScore: 15,
+        chemistryBonus: 2,
+        description: `Misma escena territorial (${requester.country})`
+      };
+    }
+
+    const reqLang = this.getArtistLanguage(requester);
+    const targetLang = this.getArtistLanguage(target);
+    const sameLanguage = reqLang === targetLang;
+
+    const reqSphere = this.getArtistCulturalSphere(requester);
+    const targetSphere = this.getArtistCulturalSphere(target);
+    const sameSphere = reqSphere === targetSphere;
+
+    const reqRegions = requester.influenceRegions || [];
+    const targetRegions = target.influenceRegions || [];
+    const hasSharedRegion = reqRegions.some(r => targetRegions.includes(r) && r !== 'Global');
+
+    const sharesLanguageOrRegion = sameLanguage || sameSphere || hasSharedRegion;
+
+    if (sharesLanguageOrRegion) {
+      return {
+        isSameCountry: false,
+        sharesLanguageOrRegion: true,
+        isDistantForeign: false,
+        geoScore: 10,
+        chemistryBonus: 1,
+        description: `Región cultural o idioma compartido (${sameLanguage ? `idioma ${reqLang.toUpperCase()}` : 'esfera regional afín'})`
+      };
+    }
+
+    return {
+      isSameCountry: false,
+      sharesLanguageOrRegion: false,
+      isDistantForeign: true,
+      geoScore: -10,
+      chemistryBonus: -1,
+      description: 'Países distantes sin idioma en común'
+    };
+  }
 
   /**
    * Inicializa los personajes recurrentes del ecosistema si aún no existen
@@ -900,8 +1060,51 @@ export class RelationshipEngine {
       };
     }
 
-    // 2. Afinidad mutua (-100 a 100) y Respeto profesional (0 a 100)
-    // Afinidad normalizada (0 a 100)
+    // 2. Barrera de estatus para Superestrellas y Leyendas Globales
+    const isTargetSuperstarOrLegend = target.careerStage === 'Superstar' || target.careerStage === 'Legend' || (target.stats.popularity >= 85);
+    const isRequesterUndergroundOrEmerging = (requester.careerStage === 'Underground' || requester.careerStage === 'Emerging') && (requester.stats.popularity < 40);
+
+    const hasEliteManager = requester.managerId === 'mgr_noah_assad' ||
+      requester.managerId === 'mgr_max_thorne' ||
+      Boolean(requester.managerId && INITIAL_MANAGERS[requester.managerId]?.tier === 'elite_global') ||
+      Boolean(requester.managerId && (INITIAL_MANAGERS[requester.managerId]?.reputation || 0) >= 95);
+    const hasHighPriorAffinity = rel.affinity >= 30;
+    const hasAdequateSuperstarBudget = budgetProduction >= 35000;
+
+    if (isTargetSuperstarOrLegend && isRequesterUndergroundOrEmerging) {
+      if (!hasAdequateSuperstarBudget && !hasEliteManager && !hasHighPriorAffinity) {
+        const estChem = Math.max(5, Math.min(25, Math.round(((requester.personality.skill || 70) * 0.1 + (target.personality.skill || 70) * 0.1) + 3)));
+        return {
+          willAccept: false,
+          reason: `${target.name} es una superestrella global y su equipo de management rechazó la propuesta: requiere mayor tracción internacional o un presupuesto de producción de primer nivel.`,
+          chemistryScore: estChem,
+          crossFanbasePotential: 0,
+          acceptanceProbability: Math.max(2, Math.min(18, Math.round(budgetProduction / 2200))),
+          successBoost: 0
+        };
+      }
+    }
+
+    // 3. Evaluación de Proximidad Geográfica e Idiomática
+    const proximity = this.evaluateGeographicAndLanguageProximity(requester, target);
+    const isAlbumProject = projectType === 'collab_ep' || projectType === 'collab_album' || projectType === 'collab_mixtape';
+
+    // Si son de países/regiones distantes sin idioma en común: requiere mayor reputación (+15 requerida) o mayor presupuesto
+    let foreignBarrierPenalty = 0;
+    let foreignBarrierMet = true;
+
+    if (proximity.isDistantForeign) {
+      const requiredReputation = target.stats.reputation + 15;
+      const hasSufficientForeignReputation = requester.stats.reputation >= requiredReputation || requester.stats.reputation >= 65;
+      const hasSufficientForeignBudget = budgetProduction >= (isAlbumProject ? 25000 : 10000);
+
+      if (!hasSufficientForeignReputation && !hasSufficientForeignBudget && rel.affinity < 25) {
+        foreignBarrierPenalty = -20;
+        foreignBarrierMet = false;
+      }
+    }
+
+    // 4. Afinidad mutua (-100 a 100) y Respeto profesional (0 a 100)
     const affinityNormalized = Math.max(0, Math.min(100, (rel.affinity + 100) / 2));
     const affinityScore = (affinityNormalized - 50) * 0.50; // -25 a +25
     const respectScore = ((rel.respect || 50) - 50) * 0.35;  // -17.5 a +17.5
@@ -931,11 +1134,10 @@ export class RelationshipEngine {
       // El colaborador es más popular: exige más mérito/respeto/presupuesto proporcional
       popScore = -Math.min(65, popDiff * 1.1 + (stageGap > 0 ? stageGap * 8 : 0));
     } else {
-      // El solicitante es más popular: el target se entusiasma
       popScore = Math.min(25, Math.abs(popDiff) * 0.6);
     }
 
-    // 4. Compatibilidad de géneros (mismo género o subgénero afín)
+    // 6. Compatibilidad de géneros (mismo género o subgénero afín)
     let genreScore = 0;
     let isGenreCompatible = false;
     if (requester.mainGenreId === target.mainGenreId) {
@@ -953,7 +1155,7 @@ export class RelationshipEngine {
         isGenreCompatible = true;
       } else {
         // Familias urbanas afines
-        const urbanGenres = ['trap_latino', 'reggaeton', 'rap_urbano', 'r_and_b', 'drill', 'neoperreo', 'pluggnb', 'trap_argentino', 'mambo_urbano'];
+        const urbanGenres = ['trap_latino', 'reggaeton', 'rap_urbano', 'r_and_b', 'drill', 'neoperreo', 'pluggnb', 'trap_argentino', 'mambo_urbano', 'corridos_urbanos', 'funk_brasilero'];
         const bothUrban = urbanGenres.includes(requester.mainGenreId) && urbanGenres.includes(target.mainGenreId);
         if (bothUrban) {
           genreScore = 10;
@@ -964,9 +1166,8 @@ export class RelationshipEngine {
       }
     }
 
-    // 5. Presupuesto de producción ofrecido
+    // 7. Presupuesto de producción ofrecido
     let budgetScore = 0;
-    const isAlbumProject = projectType === 'collab_ep' || projectType === 'collab_album' || projectType === 'collab_mixtape';
     if (!isAlbumProject) {
       if (budgetProduction >= 10000) budgetScore = 25;
       else if (budgetProduction >= 5000) budgetScore = 18;
@@ -982,7 +1183,7 @@ export class RelationshipEngine {
       else budgetScore = -8;
     }
 
-    // 6. Orden de créditos (Credit Order)
+    // 8. Orden de créditos (Credit Order)
     let creditScore = 0;
     if (creditOrder === 'target_feat_player') {
       creditScore = 8; // El colaborador tiene crédito principal
@@ -992,24 +1193,24 @@ export class RelationshipEngine {
       creditScore = 0; // player_feat_target
     }
 
-    // 7. Rasgos de personalidad y colaboraciones previas
+    // 9. Rasgos de personalidad y colaboraciones previas
     const sociabilityScore = (target.personality.sociability || 50) * 0.15;
     const pastCollabsScore = Math.min(20, (rel.pastCollabsCount || 0) * 6);
 
-    // 8. Cálculo de Probabilidad de Aceptación
-    const baseScore = 48 + affinityScore + respectScore + popScore + genreScore + budgetScore + creditScore + sociabilityScore + pastCollabsScore;
+    // 10. Cálculo de Probabilidad de Aceptación con Proximidad Geográfica
+    const baseScore = 48 + affinityScore + respectScore + popScore + genreScore + budgetScore + creditScore + sociabilityScore + pastCollabsScore + proximity.geoScore + foreignBarrierPenalty;
     const acceptanceProbability = Math.max(5, Math.min(99, Math.round(baseScore)));
     const willAccept = acceptanceProbability >= 50;
 
-    // 9. Cálculo de Química Musical (Chemistry Score de 5 a 25)
+    // 11. Cálculo de Química Musical (Chemistry Score de 5 a 25)
     const creativityAvg = ((requester.personality.creativity || 70) + (target.personality.creativity || 70)) / 2;
     const skillAvg = ((requester.personality.skill || 70) + (target.personality.skill || 70)) / 2;
     const origAvg = ((requester.personality.originality || 70) + (target.personality.originality || 70)) / 2;
     const affinityBonus = Math.max(0, rel.affinity / 25);
-    const rawChemistry = (creativityAvg * 0.08) + (skillAvg * 0.08) + (origAvg * 0.05) + (isGenreCompatible ? 3 : 1) + affinityBonus;
+    const rawChemistry = (creativityAvg * 0.08) + (skillAvg * 0.08) + (origAvg * 0.05) + (isGenreCompatible ? 3 : 1) + affinityBonus + proximity.chemistryBonus;
     const chemistryScore = Math.max(5, Math.min(25, Math.round(rawChemistry)));
 
-    // 10. Cálculo de Potencial de Cruce de Fanbase (Cross Fanbase Potential)
+    // 12. Cálculo de Potencial de Cruce de Fanbase (Cross Fanbase Potential)
     const targetPop = target.stats.popularity || 10;
     const targetFans = target.stats.fansCount || 500;
     const crossFanbasePotential = Math.max(
@@ -1017,15 +1218,21 @@ export class RelationshipEngine {
       Math.floor((targetPop * 160 + targetFans * 0.06) * (chemistryScore / 18))
     );
 
-    // 11. Redacción de motivo realista
+    // 13. Redacción de motivo realista enriquecido
     let reason = '';
     if (willAccept) {
-      if (budgetScore >= 18) {
-        reason = `${target.name} aceptó la colaboración entusiasmado por la contundente propuesta de producción y presupuesto ($${budgetProduction.toLocaleString()}).`;
+      if (proximity.isSameCountry && popDiff < 20) {
+        reason = `${target.name} aceptó la colaboración entusiasmado por la compatibilidad territorial y la fuerte conexión con la escena local de ${requester.country}.`;
+      } else if (hasAdequateSuperstarBudget && isTargetSuperstarOrLegend) {
+        reason = `${target.name} y su management aprobaron el proyecto gracias a la destacada inversión de producción ($${budgetProduction.toLocaleString()}).`;
+      } else if (budgetScore >= 18) {
+        reason = `${target.name} aceptó la colaboración motivado por la contundente propuesta de producción y presupuesto ($${budgetProduction.toLocaleString()}).`;
       } else if (rel.affinity > 35 || rel.respect > 70) {
         reason = `${target.name} aceptó inmediatamente debido a la sólida afinidad y respeto profesional que los une.`;
       } else if (popDiff < -15) {
         reason = `${target.name} aceptó encantado la oportunidad de compartir barras y estudio con vos.`;
+      } else if (proximity.sharesLanguageOrRegion) {
+        reason = `${target.name} aceptó la propuesta motivado por la afinidad cultural compartida y la química artística.`;
       } else {
         reason = `${target.name} aceptó la colaboración motivado por la propuesta sonora y la química artística.`;
       }

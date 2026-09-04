@@ -54,7 +54,11 @@ function createBaseWorld(): WorldState {
       USA: { region: 'USA', year: 2026, month: 12, entries: [] },
       Europe: { region: 'Europe', year: 2026, month: 12, entries: [] },
       Spain: { region: 'Spain', year: 2026, month: 12, entries: [] },
-      Mexico: { region: 'Mexico', year: 2026, month: 12, entries: [] }
+      Mexico: { region: 'Mexico', year: 2026, month: 12, entries: [] },
+      UK: { region: 'UK', year: 2026, month: 12, entries: [] },
+      Brazil: { region: 'Brazil', year: 2026, month: 12, entries: [] },
+      Asia: { region: 'Asia', year: 2026, month: 12, entries: [] },
+      Africa: { region: 'Africa', year: 2026, month: 12, entries: [] }
     },
     records: [],
     awardsHistory: [],

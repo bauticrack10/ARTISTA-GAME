@@ -28,7 +28,11 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player }) => {
     { id: 'USA', label: formatMusicRegionLabel('USA') },
     { id: 'Spain', label: formatMusicRegionLabel('Spain') },
     { id: 'Mexico', label: formatMusicRegionLabel('Mexico') },
-    { id: 'Europe', label: formatMusicRegionLabel('Europe') }
+    { id: 'Europe', label: formatMusicRegionLabel('Europe') },
+    { id: 'UK', label: formatMusicRegionLabel('UK') },
+    { id: 'Brazil', label: formatMusicRegionLabel('Brazil') },
+    { id: 'Asia', label: formatMusicRegionLabel('Asia') },
+    { id: 'Africa', label: formatMusicRegionLabel('Africa') }
   ];
 
   return (

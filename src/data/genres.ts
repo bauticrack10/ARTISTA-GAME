@@ -130,6 +130,84 @@ export const INITIAL_GENRES: Record<string, Genre> = {
     createdYear: 2019,
     aestheticTone: 'Lujos campiranos, lírica callejera, sombreros y diamantes',
     subGenres: ['corrido_tumbado_clasico', 'corrido_belico', 'sad_sierreño', 'regional_pop']
+  },
+  kpop_jpop: {
+    id: 'kpop_jpop',
+    name: 'K-Pop & J-Pop',
+    originCountry: 'Corea del Sur / Japón',
+    basePopularity: 88,
+    currentPopularity: 92,
+    growthRate: 3.5,
+    lifecycle: 'mainstream',
+    characteristics: ['Coreografías sincrónicas', 'producción hiperdetallada', 'conceptos visuales conceptuales', 'fusión multilingüe'],
+    createdYear: 1990,
+    aestheticTone: 'Futurista, brillante, coreográfico, estético e hiperdinámico',
+    subGenres: ['kpop_idol', 'kpop_hiphop', 'jrock_anime', 'city_pop_japan']
+  },
+  cumbia_tropical: {
+    id: 'cumbia_tropical',
+    name: 'Cumbia & Música Tropical',
+    originCountry: 'Argentina / Colombia / México',
+    basePopularity: 82,
+    currentPopularity: 85,
+    growthRate: 2.0,
+    lifecycle: 'mainstream',
+    characteristics: ['Ritmo sincopado de güiro', 'teclados y sintetizadores agudos', 'vientos cálidos', 'letras de baile y sentimiento'],
+    createdYear: 1950,
+    aestheticTone: 'Fiesta popular, barrio, baile multitudinario y pasión desbordada',
+    subGenres: ['cumbia_villera', 'cumbia_pop', 'cumbia_sonidera', 'cuarteto_cordobes']
+  },
+  metal_punk: {
+    id: 'metal_punk',
+    name: 'Metal & Punk Rock',
+    originCountry: 'Global / UK / USA / Alemania / Suecia',
+    basePopularity: 74,
+    currentPopularity: 76,
+    growthRate: 1.0,
+    lifecycle: 'classic',
+    characteristics: ['Distorsión extrema de guitarras', 'doble pedal de batería', 'voces desgarradoras', 'energía de moshpit implacable'],
+    createdYear: 1970,
+    aestheticTone: 'Furia visceral, rebelión oscura, pirotecnia y virtuosismo eléctrico',
+    subGenres: ['heavy_metal', 'metal_industrial', 'punk_rock', 'nu_metal']
+  },
+  country_folk: {
+    id: 'country_folk',
+    name: 'Country & Folk / Americana',
+    originCountry: 'USA / UK / Canadá / Irlanda',
+    basePopularity: 80,
+    currentPopularity: 83,
+    growthRate: 2.2,
+    lifecycle: 'surging',
+    characteristics: ['Guitarras acústicas y pedal steel', 'storytelling emocional', 'armonías campiranas', 'raíces tradicionales'],
+    createdYear: 1920,
+    aestheticTone: 'Horizontes abiertos, carreteras de tierra, botas y honestidad acústica',
+    subGenres: ['country_moderno', 'indie_folk', 'bluegrass', 'folk_celta']
+  },
+  jazz_bossa: {
+    id: 'jazz_bossa',
+    name: 'Jazz & Bossa Nova / MPB',
+    originCountry: 'USA / Brasil / Francia',
+    basePopularity: 73,
+    currentPopularity: 75,
+    growthRate: 1.1,
+    lifecycle: 'classic',
+    characteristics: ['Complejidad armónica sofisticada', 'síncopa delicada', 'acordes extendidos', 'interpretación vocal susurrada y expresiva'],
+    createdYear: 1910,
+    aestheticTone: 'Clubs elegantes a media luz, brisa marina de Ipanema, café bohemio y maestría instrumental',
+    subGenres: ['bossa_nova', 'mpb_clasica', 'jazz_contemporaneo']
+  },
+  funk_brasilero: {
+    id: 'funk_brasilero',
+    name: 'Funk Brasileño & Baile Funk',
+    originCountry: 'Brasil',
+    basePopularity: 80,
+    currentPopularity: 88,
+    growthRate: 4.0,
+    lifecycle: 'surging',
+    characteristics: ['Ritmo tamborzão acelerado (130-150 BPM)', 'beats sincopados crudos', 'letras de baile, favela y ostentación', 'energía electrizante'],
+    createdYear: 1989,
+    aestheticTone: 'Paredones de sonido, fiestas en la calle de Río y San Pablo, sudor y euforia de baile',
+    subGenres: ['baile_funk_favela', 'funk_mandela', 'funk_pop_global']
   }
 };
 
@@ -626,6 +704,256 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     qualityBonus: 5,
     commercialBonus: 11,
     originalityBonus: 7
+  },
+
+  // --- K-POP & J-POP ---
+  kpop_idol: {
+    id: 'kpop_idol',
+    name: 'K-Pop Idol & Choreography Pop',
+    parentGenreId: 'kpop_jpop',
+    description: 'Estribillos hiperadictivos, armonías vocales milimétricas y producción reluciente.',
+    aestheticTone: 'Visuales resplandecientes, escenarios LED masivos y perfección estética',
+    qualityBonus: 7,
+    commercialBonus: 12,
+    originalityBonus: 5
+  },
+  kpop_hiphop: {
+    id: 'kpop_hiphop',
+    name: 'K-Pop Hip Hop & Cyber Rap',
+    parentGenreId: 'kpop_jpop',
+    description: 'Flows vertiginosos, bajos 808 futuristas y actitud urbana arrolladora.',
+    aestheticTone: 'Cyberpunk, moda vanguardista y energía de moshpit',
+    requiredTrait: { trait: 'discipline', min: 75, label: 'Disciplina 75+' },
+    qualityBonus: 6,
+    commercialBonus: 9,
+    originalityBonus: 7
+  },
+  jrock_anime: {
+    id: 'jrock_anime',
+    name: 'J-Rock & Anime Themes',
+    parentGenreId: 'kpop_jpop',
+    description: 'Guitarras virtuosas, progresiones armónicas complejas y melodías épicas de opening.',
+    aestheticTone: 'Neo-Tokyo, velocidad analógica, épica y nostalgia anime',
+    requiredTrait: { trait: 'skill', min: 75, label: 'Habilidad 75+' },
+    qualityBonus: 9,
+    commercialBonus: 7,
+    originalityBonus: 8
+  },
+  city_pop_japan: {
+    id: 'city_pop_japan',
+    name: 'City Pop Japonés & Retro Funk',
+    parentGenreId: 'kpop_jpop',
+    description: 'Líneas de bajo slap brillantes, teclados Rhodes ochenteros y sofisticación nocturna.',
+    aestheticTone: 'Atardeceres en Shibuya, luces de neón ochenteras y elegancia nocturna',
+    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    qualityBonus: 8,
+    commercialBonus: 6,
+    originalityBonus: 9
+  },
+
+  // --- CUMBIA & MÚSICA TROPICAL ---
+  cumbia_villera: {
+    id: 'cumbia_villera',
+    name: 'Cumbia Villera Clásica',
+    parentGenreId: 'cumbia_tropical',
+    description: 'Sintetizador keytar inconfundible, güiro veloz y crónicas callejeras de barrio.',
+    aestheticTone: 'Esquinas de barrio, bailantas populares y autenticidad sin filtro',
+    qualityBonus: 6,
+    commercialBonus: 8,
+    originalityBonus: 7
+  },
+  cumbia_pop: {
+    id: 'cumbia_pop',
+    name: 'Cumbia Pop & Fiesta Veraniega',
+    parentGenreId: 'cumbia_tropical',
+    description: 'Guitarras acústicas bailables, estribillos contagiosos y espíritu veraniego festivo.',
+    aestheticTone: 'Playas, festivales al aire libre, frescura y juventud',
+    requiredTrait: { trait: 'commercialAppeal', min: 70, label: 'Atracción Comercial 70+' },
+    qualityBonus: 5,
+    commercialBonus: 11,
+    originalityBonus: 4
+  },
+  cumbia_sonidera: {
+    id: 'cumbia_sonidera',
+    name: 'Cumbia Sonidera & Vocoder Cósmico',
+    parentGenreId: 'cumbia_tropical',
+    description: 'Ecos y saludos en vivo, pitch rebajado, percusión profunda y vientos tropicales.',
+    aestheticTone: 'Pistas sonideras mexicanas, luces giratorias y magnetismo popular',
+    requiredTrait: { trait: 'charisma', min: 70, label: 'Carisma 70+' },
+    qualityBonus: 7,
+    commercialBonus: 7,
+    originalityBonus: 8
+  },
+  cuarteto_cordobes: {
+    id: 'cuarteto_cordobes',
+    name: 'Cuarteto Cordobés & Tunga-Tunga',
+    parentGenreId: 'cumbia_tropical',
+    description: 'Piano tunga-tunga característico, acordeón enérgico, tambora imparable y estadios bailando.',
+    aestheticTone: 'Bailes de Córdoba, euforia sin fin y carisma arrollador',
+    requiredTrait: { trait: 'energy', min: 70, label: 'Energía 70+' },
+    qualityBonus: 6,
+    commercialBonus: 9,
+    originalityBonus: 6
+  },
+
+  // --- METAL & PUNK ROCK ---
+  heavy_metal: {
+    id: 'heavy_metal',
+    name: 'Heavy Metal Clásico & Riffs Épicos',
+    parentGenreId: 'metal_punk',
+    description: 'Solos virtuosos a dos guitarras, dobles bombos demoledores y agudos legendarios.',
+    aestheticTone: 'Estadios oscuros, cuero negro, cruces y virtuosismo valvular',
+    requiredTrait: { trait: 'skill', min: 80, label: 'Habilidad 80+' },
+    qualityBonus: 9,
+    commercialBonus: 5,
+    originalityBonus: 6
+  },
+  metal_industrial: {
+    id: 'metal_industrial',
+    name: 'Metal Industrial & Texturas Mecánicas',
+    parentGenreId: 'metal_punk',
+    description: 'Bases mecánicas 4x4, sintetizadores cortantes, riffs monolíticos y teatralidad distópica.',
+    aestheticTone: 'Fábricas de acero, fuego, futurismo distópico y potencia industrial',
+    requiredTrait: { trait: 'discipline', min: 75, label: 'Disciplina 75+' },
+    qualityBonus: 8,
+    commercialBonus: 6,
+    originalityBonus: 8
+  },
+  punk_rock: {
+    id: 'punk_rock',
+    name: 'Punk Rock & Inconformismo Directo',
+    parentGenreId: 'metal_punk',
+    description: 'Tres acordes rápidos, mensajes contestatarios, distorsión garajera y catarsis pura.',
+    aestheticTone: 'Sótanos clandestinos, chaquetas desgastadas, fanzines y desobediencia',
+    requiredTrait: { trait: 'riskTolerance', min: 75, label: 'Tolerancia al Riesgo 75+' },
+    qualityBonus: 6,
+    commercialBonus: 5,
+    originalityBonus: 7
+  },
+  nu_metal: {
+    id: 'nu_metal',
+    name: 'Nu-Metal & Riffs Pesados con Groove',
+    parentGenreId: 'metal_punk',
+    description: 'Afinaciones bajas de 7 cuerdas, baterías con groove sincopado, scratches y furia.',
+    aestheticTone: 'Moshpits de festivales, estética urbana noventera y furia juvenil',
+    requiredTrait: { trait: 'charisma', min: 70, label: 'Carisma 70+' },
+    qualityBonus: 7,
+    commercialBonus: 8,
+    originalityBonus: 7
+  },
+
+  // --- COUNTRY & FOLK / AMERICANA ---
+  country_moderno: {
+    id: 'country_moderno',
+    name: 'Country Pop Moderno & Himnos de Arena',
+    parentGenreId: 'country_folk',
+    description: 'Producción masiva, guitarras brillantes, estribillos de arena y narrativas cotidianas.',
+    aestheticTone: 'Camionetas, festivales rurales multitudinarios y radio masiva',
+    requiredTrait: { trait: 'commercialAppeal', min: 75, label: 'Atracción Comercial 75+' },
+    qualityBonus: 6,
+    commercialBonus: 12,
+    originalityBonus: 4
+  },
+  indie_folk: {
+    id: 'indie_folk',
+    name: 'Indie Folk Intimista & Poesía Acústica',
+    parentGenreId: 'country_folk',
+    description: 'Guitarras de madera, banjos suaves, armonías susurradas y profundidad poética.',
+    aestheticTone: 'Cabañas de madera, bosques de pinos, lluvia y calidez íntima',
+    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    qualityBonus: 9,
+    commercialBonus: 5,
+    originalityBonus: 8
+  },
+  bluegrass: {
+    id: 'bluegrass',
+    name: 'Bluegrass Virtuoso & Fiddle Veloz',
+    parentGenreId: 'country_folk',
+    description: 'Punteos ultrarrápidos de mandolina, contrabajo sincopado y virtuosismo acústico.',
+    aestheticTone: 'Porches de madera en los Apalaches, fogatas y destreza técnica',
+    requiredTrait: { trait: 'skill', min: 80, label: 'Habilidad 80+' },
+    qualityBonus: 9,
+    commercialBonus: 4,
+    originalityBonus: 7
+  },
+  folk_celta: {
+    id: 'folk_celta',
+    name: 'Folk Celta & Melodías Ancestrales',
+    parentGenreId: 'country_folk',
+    description: 'Violines celtas, flautas tin whistle, bodhrán y atmósferas legendarias.',
+    aestheticTone: 'Colinas de Irlanda, pubs centenarios y misticismo gaélico',
+    requiredTrait: { trait: 'originality', min: 70, label: 'Originalidad 70+' },
+    qualityBonus: 8,
+    commercialBonus: 5,
+    originalityBonus: 8
+  },
+
+  // --- JAZZ & BOSSA NOVA / MPB ---
+  bossa_nova: {
+    id: 'bossa_nova',
+    name: 'Bossa Nova Intimista & Violão',
+    parentGenreId: 'jazz_bossa',
+    description: 'Toque de guitarra sutil con acordes extendidos, voz susurrada y síncopa suave.',
+    aestheticTone: 'Playas de Río de Janeiro, apartamentos frente al mar y sofisticación calma',
+    qualityBonus: 8,
+    commercialBonus: 6,
+    originalityBonus: 8
+  },
+  mpb_clasica: {
+    id: 'mpb_clasica',
+    name: 'Música Popular Brasileña & Fusión Tropical',
+    parentGenreId: 'jazz_bossa',
+    description: 'Riqueza poética y armónica, mezcla de samba, psicodelia, jazz y compromiso cultural.',
+    aestheticTone: 'Carnavales poéticos, teatros históricos de Salvador y legado inmortal',
+    requiredTrait: { trait: 'creativity', min: 80, label: 'Creatividad 80+' },
+    qualityBonus: 10,
+    commercialBonus: 5,
+    originalityBonus: 9
+  },
+  jazz_contemporaneo: {
+    id: 'jazz_contemporaneo',
+    name: 'Jazz Contemporáneo & Armonías Modales',
+    parentGenreId: 'jazz_bossa',
+    description: 'Improvisación libre, acordes densos, teclados rhodes y virtuosismo instrumental.',
+    aestheticTone: 'Clubs de jazz de Nueva York y París, vinilos de colección y vanguardia sonora',
+    requiredTrait: { trait: 'skill', min: 85, label: 'Habilidad 85+' },
+    qualityBonus: 10,
+    commercialBonus: 4,
+    originalityBonus: 9
+  },
+
+  // --- FUNK BRASILEÑO & BAILE FUNK ---
+  baile_funk_favela: {
+    id: 'baile_funk_favela',
+    name: 'Baile Funk 150 BPM & Tamborzão Crudo',
+    parentGenreId: 'funk_brasilero',
+    description: 'Graves demoledores de MPC, tempo acelerado de 150 BPM y barras directas.',
+    aestheticTone: 'Flujos de calle, paredones de sonido en la favela y catarsis colectiva',
+    qualityBonus: 6,
+    commercialBonus: 8,
+    originalityBonus: 8
+  },
+  funk_mandela: {
+    id: 'funk_mandela',
+    name: 'Funk Mandela & Sintetizadores Rítmicos',
+    parentGenreId: 'funk_brasilero',
+    description: 'Sintetizadores con melodías hipnóticas repetitivas, kicks secos y coreografías virales.',
+    aestheticTone: 'Bailes urbanos paulistas, motos, gafas de espejo y coreografías virales',
+    requiredTrait: { trait: 'charisma', min: 75, label: 'Carisma 75+' },
+    qualityBonus: 6,
+    commercialBonus: 10,
+    originalityBonus: 7
+  },
+  funk_pop_global: {
+    id: 'funk_pop_global',
+    name: 'Funk Pop Crossover Global',
+    parentGenreId: 'funk_brasilero',
+    description: 'Fusión de tamborzão brasileño con pop internacional, producción de élite y ganchos globales.',
+    aestheticTone: 'Premios internacionales, videoclips millonarios y pistas de baile mundiales',
+    requiredTrait: { trait: 'commercialAppeal', min: 75, label: 'Atracción Comercial 75+' },
+    qualityBonus: 7,
+    commercialBonus: 12,
+    originalityBonus: 6
   }
 };
 

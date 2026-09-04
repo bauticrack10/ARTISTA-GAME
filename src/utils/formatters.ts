@@ -269,6 +269,38 @@ export const MUSIC_REGION_CONFIG: Record<MusicRegion, RegionDisplayConfig> = {
     flag: '🇪🇺',
     inPhrase: 'en Europa',
     no1Headline: '¡#1 en Europa!'
+  },
+  UK: {
+    id: 'UK',
+    name: 'Reino Unido',
+    label: '🇬🇧 Reino Unido',
+    flag: '🇬🇧',
+    inPhrase: 'en el Reino Unido',
+    no1Headline: '¡#1 en el Reino Unido!'
+  },
+  Brazil: {
+    id: 'Brazil',
+    name: 'Brasil',
+    label: '🇧🇷 Brasil',
+    flag: '🇧🇷',
+    inPhrase: 'en Brasil',
+    no1Headline: '¡#1 en Brasil!'
+  },
+  Asia: {
+    id: 'Asia',
+    name: 'Asia',
+    label: '🌏 Asia',
+    flag: '🌏',
+    inPhrase: 'en Asia',
+    no1Headline: '¡#1 en Asia!'
+  },
+  Africa: {
+    id: 'Africa',
+    name: 'África',
+    label: '🌍 África',
+    flag: '🌍',
+    inPhrase: 'en África',
+    no1Headline: '¡#1 en África!'
   }
 };
 
@@ -469,6 +501,370 @@ export const REGIONAL_NAME_POOLS: Record<string, RegionalNameData> = {
     lastNames: [
       'Smith', 'Jones', 'Taylor', 'Brown', 'Williams', 'Wilson', 'Johnson', 'Davies',
       'Robinson', 'Wright', 'Thompson', 'Evans', 'Walker', 'White'
+    ]
+  },
+  Brasil: {
+    stageNames: [
+      'Matuê', 'Anitta', 'MC Cabelinho', 'Orochi', 'Ludmilla', 'Veigh', 'KayBlack', 'MC Ryan SP',
+      'Filipe Ret', 'L7NNON', 'Teto', 'WIU', 'Gloria Groove', 'Pedro Sampaio', 'MC Poze do Rodo', 'Papatinho'
+    ],
+    firstNames: [
+      'Gabriel', 'Lucas', 'Matheus', 'Guilherme', 'Gustavo', 'Felipe', 'Rafael', 'Enzo', 'Leonardo',
+      'Larissa', 'Julia', 'Beatriz', 'Mariana', 'Camila', 'Bruna', 'Thiago', 'Vinicius'
+    ],
+    lastNames: [
+      'Silva', 'Santos', 'Oliveira', 'Souza', 'Rodrigues', 'Ferreira', 'Alves', 'Pereira', 'Lima',
+      'Gomes', 'Costa', 'Ribeiro', 'Martins', 'Carvalho', 'Almeida', 'Lopes', 'Soares'
+    ]
+  },
+  'Canadá': {
+    stageNames: [
+      'Drake Star', 'The Weeknd Vibe', 'Tory Sound', 'Kaytranada Wave', 'Ali Gatie', 'Nav Flow',
+      'Jessie Reyez', 'PARTYNEXTDOOR', 'Belly', 'Roy Woods', 'Pressa', 'Smiley', 'Night Lovell'
+    ],
+    firstNames: [
+      'Noah', 'Liam', 'Jackson', 'Lucas', 'Oliver', 'Benjamin', 'Ali', 'Ethan', 'William',
+      'Emma', 'Olivia', 'Charlotte', 'Chloe', 'Amelia', 'Maya', 'Sophie'
+    ],
+    lastNames: [
+      'Smith', 'Brown', 'Tremblay', 'Martin', 'Roy', 'Wilson', 'Gagnon', 'Lee', 'Johnson',
+      'Taylor', 'Campbell', 'Anderson', 'Leblanc', 'Côté', 'Bouchard'
+    ]
+  },
+  Francia: {
+    stageNames: [
+      'Ninho', 'Jul', 'Gazo', 'SDM', 'Tiakola', 'PLK', 'Aya Nakamura', 'Booba', 'SCH', 'Damso V',
+      'Hamza Sound', 'Zola', 'Werenoi', 'Koba LaD', 'Freeze Corleone', 'Josman', 'Dinos'
+    ],
+    firstNames: [
+      'Gabriel', 'Léo', 'Raphaël', 'Arthur', 'Louis', 'Lucas', 'Adam', 'Jules', 'Hugo',
+      'Jade', 'Louise', 'Emma', 'Ambre', 'Alice', 'Rose', 'Anna', 'Inès'
+    ],
+    lastNames: [
+      'Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand', 'Leroy',
+      'Moreau', 'Simon', 'Laurent', 'Lefebvre', 'Michel', 'Garcia', 'David', 'Bertrand'
+    ]
+  },
+  Alemania: {
+    stageNames: [
+      'Bonez MC', 'RAF Camora', 'Luciano', 'Apache 207', 'Ufo361', 'Pashanim', 'Capital Bra',
+      'Gzuz', 'Kontra K', 'Sido', 'Bausa', 'Trettmann', 'RIN', 'OG Keemo', 'Shindy'
+    ],
+    firstNames: [
+      'Noah', 'Matteo', 'Leon', 'Paul', 'Finn', 'Elias', 'Jonas', 'Felix', 'Maximilian',
+      'Mia', 'Emma', 'Sophia', 'Hannah', 'Emilia', 'Lina', 'Ella', 'Clara'
+    ],
+    lastNames: [
+      'Müller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meyer', 'Wagner', 'Becker', 'Schulz',
+      'Hoffmann', 'Schäfer', 'Koch', 'Bauer', 'Richter', 'Klein', 'Wolf', 'Schröder'
+    ]
+  },
+  Italia: {
+    stageNames: [
+      'Sfera Ebbasta', 'Shiva', 'Lazza', 'Baby Gang', 'Guè', 'Rondodasosa', 'Blanco', 'Geolier',
+      'Capo Plaza', 'Tedua', 'Ernia', 'Rkomi', 'Ghali', 'Marracash', 'Tony Effe', 'Pakhy'
+    ],
+    firstNames: [
+      'Leonardo', 'Francesco', 'Alessandro', 'Lorenzo', 'Mattia', 'Andrea', 'Gabriele', 'Matteo',
+      'Sofia', 'Aurora', 'Giulia', 'Ginevra', 'Vittoria', 'Beatrice', 'Alice', 'Emma', 'Giorgia'
+    ],
+    lastNames: [
+      'Rossi', 'Ferrari', 'Russo', 'Bianchi', 'Romano', 'Colombo', 'Ricci', 'Marino', 'Greco',
+      'Bruno', 'Gallo', 'Conti', 'De Luca', 'Mancini', 'Costa', 'Giordano', 'Rizzo'
+    ]
+  },
+  Portugal: {
+    stageNames: [
+      'Plutónio', 'Wet Bed Gang', 'ProfJam', 'Dillaz', 'Ivandro', 'Bárbara Bandeira', 'Slow J',
+      'Bispo', 'Pirilampo', 'T-Rex', 'Piruka', 'Nenny', 'Sippinpurpp', 'Lon3r Johny'
+    ],
+    firstNames: [
+      'Francisco', 'Afonso', 'João', 'Tomás', 'Duarte', 'Lourenço', 'Rodrigo', 'Martim', 'Santiago',
+      'Maria', 'Leonor', 'Matilde', 'Beatriz', 'Carolina', 'Mariana', 'Ana', 'Sofia'
+    ],
+    lastNames: [
+      'Silva', 'Santos', 'Ferreira', 'Pereira', 'Oliveira', 'Costa', 'Rodrigues', 'Martins',
+      'Jesus', 'Sousa', 'Fernandes', 'Gonçalves', 'Gomes', 'Lopes', 'Marques', 'Alves'
+    ]
+  },
+  'Países Bajos': {
+    stageNames: [
+      'Frenna', 'Ronnie Flex', 'Boef', 'Lil Kleine', 'Sevn Alias', 'Dopebwoy', 'Josylvio',
+      'Bizzey', 'Chivv', 'Broederliefde', 'Kevin', 'Lijpe', 'Hef', 'Yssi SB'
+    ],
+    firstNames: [
+      'Noah', 'Sem', 'Liam', 'Lucas', 'Daan', 'Finn', 'Milan', 'Levi', 'Luuk',
+      'Emma', 'Julia', 'Mila', 'Tess', 'Sophie', 'Zoe', 'Sara', 'Noor'
+    ],
+    lastNames: [
+      'De Jong', 'Jansen', 'De Vries', 'Van de Berg', 'Van Dijk', 'Bakker', 'Janssen', 'Visser',
+      'Smit', 'Meijer', 'De Boer', 'Mulder', 'De Groot', 'Bos', 'Vos', 'Peters'
+    ]
+  },
+  'Bélgica': {
+    stageNames: [
+      'Damso', 'Hamza', 'Stromae', 'Shay', 'Caballero', 'JeanJass', 'Lous and the Yakuza',
+      'Roméo Elvis', 'Lost Frequencies', 'Coely', 'Glints', 'Woodie Smalls'
+    ],
+    firstNames: [
+      'Arthur', 'Noah', 'Jules', 'Louis', 'Lucas', 'Liam', 'Adam', 'Victor', 'Gabriel',
+      'Olivia', 'Emma', 'Mila', 'Louise', 'Alice', 'Lina', 'Elena', 'Lucie'
+    ],
+    lastNames: [
+      'Peeters', 'Janssens', 'Maes', 'Jacobs', 'Mertens', 'Willems', 'Claes', 'Goossens',
+      'Wouters', 'De Smet', 'Vermeulen', 'Pauwels', 'Hermans', 'Aerts', 'Michiels'
+    ]
+  },
+  Suecia: {
+    stageNames: [
+      'Yung Lean', 'Bladee', 'Einár', 'Zara Larsson', 'Dree Low', 'Ant Wan', 'Yasin',
+      'Hov1', 'Victor Leksell', 'Avicii Vibe', 'Alesso Wave', 'Snoh Aalegra', 'Tove Lo'
+    ],
+    firstNames: [
+      'William', 'Liam', 'Elias', 'Noah', 'Hugo', 'Oliver', 'Lucas', 'Matteo', 'Leo',
+      'Alice', 'Maja', 'Vera', 'Alma', 'Selma', 'Elsa', 'Astrid', 'Wilma'
+    ],
+    lastNames: [
+      'Andersson', 'Johansson', 'Karlsson', 'Nilsson', 'Eriksson', 'Larsson', 'Olsson',
+      'Persson', 'Svensson', 'Gustafsson', 'Pettersson', 'Jonsson', 'Jansson'
+    ]
+  },
+  Noruega: {
+    stageNames: [
+      'Kygo', 'Alan Walker', 'Karpe', 'Astrid S', 'Undergrunn', 'Girl in Red', 'Sigrid',
+      'Aurora Wave', 'Matoma', 'Cezinando', 'Broiler', 'Ballinciaga', 'Kamelen'
+    ],
+    firstNames: [
+      'Jakob', 'Filip', 'Noah', 'Oliver', 'Lucas', 'Emil', 'Isak', 'Kasper', 'Magnus',
+      'Nora', 'Emma', 'Sofie', 'Olivia', 'Ella', 'Maja', 'Ingrid', 'Sara'
+    ],
+    lastNames: [
+      'Hansen', 'Johansen', 'Olsen', 'Larsen', 'Andersen', 'Pedersen', 'Nilsen', 'Kristiansen',
+      'Jensen', 'Karlsen', 'Johnsen', 'Pettersen', 'Eriksen', 'Berg', 'Haugen'
+    ]
+  },
+  Irlanda: {
+    stageNames: [
+      'Fontaines Flow', 'Rejjie Snow', 'Hozier Vibe', 'Dermot Sound', 'CMAT', 'Inhaler',
+      'Kojaque', 'Biig Piig', 'Denise Chaila', 'Kneecap', 'Maverick Sabre', 'Gemma Dunleavy'
+    ],
+    firstNames: [
+      'Jack', 'James', 'Noah', 'Daniel', 'Conor', 'Finn', 'Liam', 'Fionn', 'Alex',
+      'Emily', 'Grace', 'Fiadh', 'Sophie', 'Hannah', 'Amelia', 'Ava', 'Ella'
+    ],
+    lastNames: [
+      'Murphy', 'Kelly', 'O\'Brien', 'Ryan', 'Byrne', 'O\'Connor', 'Walsh', 'O\'Sullivan',
+      'McCarthy', 'Doyle', 'Brennan', 'Burke', 'Lynch', 'Dunne', 'Flynn'
+    ]
+  },
+  Australia: {
+    stageNames: [
+      'The Kid LAROI', 'Tame Impala', 'Flume', 'ONEFOUR', 'Masked Wolf', 'Chillinit',
+      'Hooligan Hefs', 'Genesis Owusu', 'Mallrat', 'Troye Sivan', 'Sampa The Great', 'Baker Boy'
+    ],
+    firstNames: [
+      'Oliver', 'Noah', 'Henry', 'William', 'Leo', 'Charlie', 'Jack', 'Thomas', 'Hudson',
+      'Charlotte', 'Amelia', 'Isla', 'Olivia', 'Mia', 'Ava', 'Grace', 'Harper'
+    ],
+    lastNames: [
+      'Smith', 'Jones', 'Williams', 'Brown', 'Wilson', 'Taylor', 'Johnson', 'White',
+      'Martin', 'Anderson', 'Thompson', 'Nguyen', 'Thomas', 'Walker', 'Harris'
+    ]
+  },
+  'Nueva Zelanda': {
+    stageNames: [
+      'Lorde', 'BENEE', 'Six60', 'Savage', 'Stan Walker', 'Broods', 'David Dallas',
+      'SWIDT', 'MELODOWNZ', 'Mitch James', 'Drax Project', 'CHAII', 'Church & AP'
+    ],
+    firstNames: [
+      'Oliver', 'Noah', 'Leo', 'Jack', 'Luca', 'George', 'Charlie', 'Hudson', 'Hunter',
+      'Charlotte', 'Isla', 'Amelia', 'Olivia', 'Harper', 'Sophie', 'Hazel', 'Willow'
+    ],
+    lastNames: [
+      'Smith', 'Wilson', 'Taylor', 'Brown', 'Williams', 'Jones', 'Anderson', 'Thompson',
+      'Campbell', 'Kelly', 'Singh', 'Clark', 'Walker', 'Wright', 'Watson'
+    ]
+  },
+  Nigeria: {
+    stageNames: [
+      'Burna Boy', 'Wizkid', 'Rema', 'Asake', 'Davido', 'Ayra Starr', 'Omah Lay', 'Tems',
+      'Fireboy DML', 'Kizz Daniel', 'Olamide', 'Ckay', 'Victony', 'Shallipopi', 'Odumodublvck', 'Seyi Vibez'
+    ],
+    firstNames: [
+      'Chukwudi', 'Emmanuel', 'Oluwaseun', 'Adebayo', 'Babajide', 'Chinedu', 'Olumide', 'Ifeanyi',
+      'Amaka', 'Chioma', 'Zainab', 'Ngozi', 'Blessing', 'Fatima', 'Folake', 'Chiamaka'
+    ],
+    lastNames: [
+      'Okafor', 'Balogun', 'Adeyemi', 'Okeke', 'Eze', 'Ojo', 'Bello', 'Nwosu', 'Abiola',
+      'Akinyemi', 'Okonkwo', 'Lawal', 'Ibrahim', 'Ogunleye', 'Danjuma', 'Aliyu'
+    ]
+  },
+  'Sudáfrica': {
+    stageNames: [
+      'Tyla', 'Nasty C', 'Master KG', 'Kabza De Small', 'DJ Maphorisa', 'Focalistic', 'Uncle Waffles',
+      'Cassper Nyovest', 'A-Reece', 'Kwesta', 'Sho Madjozi', 'Young Stunna', 'Blxckie', 'Musa Keys'
+    ],
+    firstNames: [
+      'Thabo', 'Sipho', 'Bandile', 'Kagiso', 'Lethabo', 'Junior', 'Siyabonga', 'Bongani',
+      'Nomvula', 'Thandi', 'Buhle', 'Lerato', 'Zanele', 'Precious', 'Naledi', 'Mbali'
+    ],
+    lastNames: [
+      'Dlamini', 'Ndlovu', 'Khumalo', 'Sithole', 'Mokoena', 'Zuma', 'Mabaso', 'Cele',
+      'Nkosi', 'Khoza', 'Hadebe', 'Mthembu', 'Sibiya', 'Ntuli', 'Modise'
+    ]
+  },
+  Ghana: {
+    stageNames: [
+      'Black Sherif', 'Sarkodie', 'Stonebwoy', 'King Promise', 'Shatta Wale', 'Gyakie',
+      'Camidoh', 'Kidi', 'Kuami Eugene', 'Kwesi Arthur', 'Medikal', 'Amerado', 'Kofi Mole'
+    ],
+    firstNames: [
+      'Kwame', 'Kofi', 'Kwesi', 'Kweku', 'Yaw', 'Kojo', 'Kwabena', 'Emmanuel',
+      'Akosua', 'Adwoa', 'Abena', 'Afia', 'Yaa', 'Ama', 'Akua', 'Esi'
+    ],
+    lastNames: [
+      'Mensah', 'Osei', 'Owusu', 'Boateng', 'Appiah', 'Agyemang', 'Asante', 'Frimpong',
+      'Acheampong', 'Adu', 'Addison', 'Amponsah', 'Antwi', 'Bonsu', 'Donkor'
+    ]
+  },
+  Marruecos: {
+    stageNames: [
+      'ElGrandeToto', 'Morad Vibe', 'Dizzy DROS', 'Stormy', 'Pause Flow', 'Manal',
+      'Small X', 'Shobee', 'Madd', 'Draganov', 'Lferda', 'Inkonnu', '7liwa', 'Snor'
+    ],
+    firstNames: [
+      'Youssef', 'Mehdi', 'Amine', 'Hamza', 'Omar', 'Karim', 'Saad', 'Anas',
+      'Fatima', 'Salma', 'Meriem', 'Khadija', 'Nour', 'Yasmine', 'Imane', 'Hiba'
+    ],
+    lastNames: [
+      'Benjelloun', 'Alaoui', 'Idrissi', 'Berrada', 'Tazi', 'Chraibi', 'Fassi',
+      'El Amrani', 'Bennani', 'Ouazzani', 'El Mansouri', 'Zouiten', 'Tahiri'
+    ]
+  },
+  Egipto: {
+    stageNames: [
+      'Wegz', 'Marwan Pablo', 'Marwan Moussa', 'Afroto', 'Abyusif', 'Cairokee',
+      'Lege-Cy', 'Batistuta', 'Dardiri', 'Ezz', 'Hassan Shakosh', 'Omar Kamal'
+    ],
+    firstNames: [
+      'Ahmed', 'Mohamed', 'Mahmoud', 'Omar', 'Youssef', 'Aly', 'Karim', 'Hassan',
+      'Nour', 'Mariam', 'Farida', 'Salma', 'Hana', 'Laila', 'Jana', 'Zeina'
+    ],
+    lastNames: [
+      'Hassan', 'Ali', 'Ibrahim', 'Mahmoud', 'El Sayed', 'Abdelrahman', 'Mostafa',
+      'Khalil', 'Mansour', 'Salem', 'Farag', 'El Shamy', 'Soliman', 'Radwan'
+    ]
+  },
+  India: {
+    stageNames: [
+      'AP Dhillon', 'DIVINE', 'MC Stan', 'King', 'Sidhu Moose Wala', 'Badshah', 'Shubh',
+      'Raftaar', 'KR$NA', 'Emiway Bantai', 'Seedhe Maut', 'Prabh Deep', 'Karan Aujla'
+    ],
+    firstNames: [
+      'Aarav', 'Rohan', 'Kabir', 'Aditya', 'Vihaan', 'Aryan', 'Dhruv', 'Arjun',
+      'Ananya', 'Diya', 'Aadhya', 'Saanvi', 'Isha', 'Myra', 'Kavya', 'Pooja'
+    ],
+    lastNames: [
+      'Sharma', 'Patel', 'Singh', 'Kumar', 'Verma', 'Gupta', 'Reddy', 'Mehta',
+      'Chopra', 'Malhotra', 'Kapoor', 'Deshmukh', 'Joshi', 'Bose', 'Chatterjee'
+    ]
+  },
+  'Corea del Sur': {
+    stageNames: [
+      'RM', 'Agust D', 'J-Hope', 'Jay Park', 'Zico', 'Changmo', 'BIBI', 'Sik-K',
+      'Beenzino', 'G-Dragon', 'DPR LIVE', 'Mino', 'Epik High', 'CL', 'Jessi', 'Colde'
+    ],
+    firstNames: [
+      'Min-ho', 'Ji-hoon', 'Hyun-woo', 'Seo-jun', 'Do-hyun', 'Jung-kook', 'Tae-hyung', 'Woo-jin',
+      'Ji-woo', 'Seo-yeon', 'Min-seo', 'Ha-eun', 'Ye-eun', 'Su-bin', 'Yoon-ah', 'Chae-young'
+    ],
+    lastNames: [
+      'Kim', 'Lee', 'Park', 'Choi', 'Jung', 'Kang', 'Cho', 'Yoon', 'Jang',
+      'Lim', 'Han', 'Oh', 'Seo', 'Shin', 'Kwon', 'Hwang', 'Song', 'Bae'
+    ]
+  },
+  'Japón': {
+    stageNames: [
+      'Awich', 'KOHH', 'Fujii Kaze', 'JP THE WAVY', 'BAD HOP', 'LEX', 'Yoasobi Flow',
+      'KREVA', 'Salue', 'Tohji', 'Creepy Nuts', 'Vaundy', 'Miyachi', 'Leon Fanourakis'
+    ],
+    firstNames: [
+      'Ren', 'Haruto', 'Sota', 'Yuto', 'Riku', 'Kaito', 'Daiki', 'Hiroshi',
+      'Yui', 'Rio', 'Hina', 'Mei', 'Sakura', 'Koharu', 'Akari', 'Aoi'
+    ],
+    lastNames: [
+      'Sato', 'Suzuki', 'Takahashi', 'Tanaka', 'Watanabe', 'Ito', 'Yamamoto', 'Nakamura',
+      'Kobayashi', 'Kato', 'Yoshida', 'Yamada', 'Sasaki', 'Yamaguchi', 'Saito'
+    ]
+  },
+  Filipinas: {
+    stageNames: [
+      'Al James', 'Flow G', 'SB19 Sound', 'Zack Tabudlo', 'FELIP', 'Shanti Dope',
+      'Skusta Clee', 'Gloc-9', 'Arthur Nery', 'Loonie', 'Morissette', 'Nik Makino'
+    ],
+    firstNames: [
+      'Joshua', 'Angelo', 'Christian', 'Gabriel', 'John Mark', 'Daniel', 'Elijah',
+      'Angel', 'Althea', 'Princess', 'Samantha', 'Nicole', 'Bea', 'Jasmine'
+    ],
+    lastNames: [
+      'Santos', 'Reyes', 'Cruz', 'Bautista', 'Ocampo', 'Garcia', 'Mendoza', 'Torres',
+      'Tomas', 'Andres', 'Castillo', 'Flores', 'Villanueva', 'Ramos', 'Castro'
+    ]
+  },
+  Indonesia: {
+    stageNames: [
+      'Rich Brian', 'Warren Hue', 'Ramengvrl', 'Hindia', 'NIKI', 'Feast Sound',
+      'Pamungkas', 'Weird Genius', 'Dipha Barus', 'Tuan Tigabelas', 'Saykoji', 'Basboi'
+    ],
+    firstNames: [
+      'Rizky', 'Dimas', 'Bintang', 'Aditya', 'Fajar', 'Bagus', 'Rian', 'Bayu',
+      'Putri', 'Siti', 'Ayu', 'Nabila', 'Dewi', 'Indah', 'Lestari', 'Citra'
+    ],
+    lastNames: [
+      'Pratama', 'Wijaya', 'Saputra', 'Kusuma', 'Hidayat', 'Santoso', 'Setiawan', 'Nugroho',
+      'Lestari', 'Firmansyah', 'Suryadi', 'Maulana', 'Gunawan', 'Wibowo'
+    ]
+  },
+  'Turquía': {
+    stageNames: [
+      'Ezhel', 'UZI', 'Murda', 'cakal', 'Motive', 'Sefo', 'Reynmen', 'Lvbel C5',
+      'Ceza', 'Sagopa Kajmer', 'Khontkar', 'Batuflex', 'Heijan', 'Muti', 'Killa Hakan'
+    ],
+    firstNames: [
+      'Emir', 'Yusuf', 'Eren', 'Mustafa', 'Burak', 'Can', 'Kerem', 'Arda',
+      'Zeynep', 'Elif', 'Defne', 'Asra', 'Ece', 'Azra', 'Nehir', 'Merve'
+    ],
+    lastNames: [
+      'Yılmaz', 'Kaya', 'Demir', 'Çelik', 'Şahin', 'Yıldız', 'Yıldırım', 'Öztürk',
+      'Aydın', 'Özdemir', 'Arslan', 'Doğan', 'Kılıç', 'Aslan', 'Çetin'
+    ]
+  },
+  Polonia: {
+    stageNames: [
+      'Quebonafide', 'Taco Hemingway', 'Mata', 'Malik Montana', 'Bedoes', 'Sobel',
+      'PRO8L3M', 'Żabson', 'White 2115', 'Oki', 'Szpaku', 'Kizo', 'Otsochodzi', 'Young Leosia'
+    ],
+    firstNames: [
+      'Jakub', 'Jan', 'Aleksander', 'Antoni', 'Franciszek', 'Filip', 'Mikołaj', 'Wojciech',
+      'Zuzanna', 'Julia', 'Maja', 'Hanna', 'Lena', 'Alicja', 'Maria', 'Oliwia'
+    ],
+    lastNames: [
+      'Nowak', 'Kowalski', 'Wiśniewski', 'Wójcik', 'Kowalczyk', 'Kamiński', 'Lewandowski',
+      'Zieliński', 'Szymański', 'Woźniak', 'Dąbrowski', 'Kozłowski', 'Jankowski'
+    ]
+  },
+  Jamaica: {
+    stageNames: [
+      'Popcaan', 'Shenseea', 'Skillibeng', 'Vybz Kartel', 'Sean Paul', 'Koffee', 'Chronixx',
+      'Damian Marley', 'Teejay', 'Masicka', 'Valiant', 'Buju Banton', 'Beenie Man', 'Protoje'
+    ],
+    firstNames: [
+      'Andre', 'Damian', 'Marcus', 'Kemal', 'Javaughn', 'Oraine', 'Tafari', 'Romaine',
+      'Shanice', 'Tanya', 'Chantelle', 'Jada', 'Keisha', 'Alicia', 'Britney'
+    ],
+    lastNames: [
+      'Campbell', 'Brown', 'Williams', 'Johnson', 'Smith', 'Clarke', 'Davis', 'Miller',
+      'Wright', 'Palmer', 'Simpson', 'Powell', 'Morgan', 'Grant', 'Gordon'
     ]
   }
 };
