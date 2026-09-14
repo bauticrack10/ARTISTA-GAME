@@ -1,32 +1,27 @@
-# Directrices del Proyecto - El Artista
+# Directrices del Proyecto — El Artista
 
-## Reglas de Diseño e Interfaz de Usuario (UI/UX)
+Este archivo sirve como memoria central y contexto persistente para Antigravity y cualquier agente de IA que trabaje en este espacio de trabajo.
 
-- **Consulta Obligatoria de design.md:** Antes de crear, modificar o proponer cualquier elemento visual, componente de interfaz, estilo CSS, maquetación o diseño, consulta el archivo design.md en la raíz del proyecto.
-- **Consistencia de Estilo:** Todo cambio visual debe respetar estrictamente el sistema de diseño definido en design.md:
-  - **Fondo:** Crema cálido (#f7f4ed), nunca blanco puro.
-  - **Texto y Contrastes:** Charcoal (#1c1c1c) y escalas de opacidad, texto secundario #5f5f5d.
-  - **Bordes y Contenedores:** 1px solid #eceae4 en tarjetas e imágenes, sin sombras pesadas.
-  - **Botones:** Botón oscuro con sombra *inset* característica (gba(255,255,255,0.2) 0px 0.5px 0px 0px inset, rgba(0,0,0,0.2) 0px 0px 0px 0.5px inset, rgba(0,0,0,0.05) 0px 1px 2px 0px), radio 6px para botones rectangulares y 9999px únicamente para píldoras/iconos.
-  - **Tipografía y Jerarquía:** Camera Plain Variable (o fallbacks ui-sans-serif, system-ui), pesos 400 y 600, con espaciado negativo en titulares grandes.
+---
 
-## Activación Obligatoria del Equipo de Agentes
+## 📚 Documentación y Conocimiento del Proyecto
+* **Documento Maestro de Arquitectura y Reglas:** [`PROJECT_KNOWLEDGE.md`](PROJECT_KNOWLEDGE.md) — Contiene la descripción técnica exhaustiva de todos los motores (`GameEngine`, `AwardEngine`, `IndustryEngine`, `RelationshipEngine`, `EventEngine`, `ChartEngine`, `StreamingEngine`, `TourEngine`, `WorldSimulation`) y la base de datos global de artistas de 40 países.
+* **Sistema de Diseño Visual:** [`design.md`](design.md) — Lineamientos de paleta Obsidian `#0B0C10`, Slate Glass `#16181F`, bordes `#2A2E3D`, acento violeta `#8B5CF6`, tipografía `'Camera Plain Variable'` y avatares vectoriales.
 
-- **Despliegue Sistemático del Equipo en Cada Prompt:** Ante CUALQUIER solicitud, prompt, corrección o tarea técnica que envíe el usuario, el agente principal DEBE desplegar e invocar inmediatamente al equipo de subagentes especializados utilizando `invoke_subagent` (o definiendo subagentes especializados con `define_subagent` si es necesario):
-  - **Orchestrator / Architect:** Planificación estratégica y desglose de tareas.
-  - **UI/UX Motion Designer:** Auditoría y respeto estricto a `design.md`.
-  - **Frontend & WebAudio Specialist:** Implementación técnica, componentes React/Vite y síntesis/efectos de audio.
-  - **Backend & Data Specialist:** Gestión de estado, persistencia y APIs.
-  - **QA Tester & Auditor:** Verificación de tipos, build y prevención de regresiones.
-- **Flujo de Ejecución Multi-Agente:** Ninguna tarea se ejecutará de forma aislada; siempre se debe distribuir la carga entre los subagentes pertinentes, recopilar sus reportes y sincronizar el resultado final.
+---
 
-## Automatización y Flujo de Trabajo (Git & GitHub)
+## 🤖 Protocolo Obligatorio de Equipo Multi-Agente
+Ante cualquier solicitud, prompt o tarea técnica, el agente principal DEBE desplegar al equipo de subagentes especializados:
+1. **🧠 Systems Architect & Data Lead:** Modelos de datos (`types/index.ts`), catálogos y datasets de artistas.
+2. **🎨 UI/UX & Frontend Specialist:** Vistas React, formularios, modales y cumplimiento estricto de `design.md`.
+3. **💾 Backend & Simulation Engine Specialist:** Lógica de simulación, cálculos económicos, rankings, cooldowns y eventos.
+4. **🧪 QA Tester & Auditor:** Verificación de pruebas automatizadas (`npm run test:diversity; npm run test:events; npm run test:buttons; npm run test:social`) y compilación limpia (`npm run build`).
 
-- **Sincronización Automática y Documentación para Agentes IA:** Siempre que se complete cualquier modificación, refactorización, nueva funcionalidad o corrección en el código:
-  1. Verificar la compilación (`npm run build`).
-  2. Añadir todos los cambios (`git add -A`).
-  3. Realizar un commit descriptivo y estructurado especificando:
-     - Qué se modificó y por qué.
-     - Qué sistemas, módulos, tipos o componentes fueron afectados.
-     - Contexto técnico clave para que cualquier otro agente de IA (Antigravity u otros) o colaborador entienda el estado exacto del proyecto.
-  4. Ejecutar `git push origin main` automáticamente sin esperar petición manual.
+---
+
+## 🔄 Automatización de Git & Sincronización con GitHub
+Siempre que se complete cualquier cambio o funcionalidad en el código:
+1. Validar tests y compilación (`npm run build`).
+2. Realizar `git add -A`.
+3. Crear un commit descriptivo y estructurado.
+4. Ejecutar `git push origin main` automáticamente (`https://github.com/bauticrack10/ARTISTA-GAME.git`).
