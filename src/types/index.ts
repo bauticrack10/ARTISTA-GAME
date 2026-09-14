@@ -198,6 +198,9 @@ export interface Artist {
   relationships: Record<string, ArtistRelationship>; // key: targetArtistId
   eras: CareerEra[];
   awardsWon: string[];
+  hasWonBestNewArtist?: boolean;
+  awardsRecord?: AwardWinRecord[];
+  nominationHistory?: AwardNominationRecord[];
   legacyScore: number;
   isRetired: boolean;
   retirementYear?: number;
@@ -603,6 +606,36 @@ export interface HistoricalRecord {
   description: string;
 }
 
+export interface AwardWinRecord {
+  id: string;
+  ceremonyName: string;
+  categoryId: string;
+  categoryName: string;
+  year: number;
+  itemId?: string;
+  itemTitle?: string;
+  itemType?: 'song' | 'album' | 'artist';
+  reason?: string;
+  winType?: 'unanimous' | 'tight' | 'upset';
+  producerId?: string;
+  producerName?: string;
+}
+
+export interface AwardNominationRecord {
+  ceremonyName: string;
+  categoryId: string;
+  categoryName: string;
+  year: number;
+  itemId?: string;
+  itemTitle?: string;
+}
+
+export interface CriticReviewSnippet {
+  media: string; // e.g. "Rolling Stone", "Pitchfork", "Billboard", "Indie Hoy", "NME"
+  text: string;
+  sentiment: 'rave' | 'positive' | 'curious';
+}
+
 export interface AwardNominee {
   artistId: string;
   artistName: string;
@@ -613,6 +646,11 @@ export interface AwardNominee {
   score: number;
   highlightText?: string;
   isPlayer: boolean;
+  coverGradient?: string;
+  odds?: 'favorite' | 'contender' | 'dark_horse' | 'underdog';
+  expectationPct?: number; // 0-100% win probability or jury expectation
+  nominationReason?: string;
+  criticQuote?: CriticReviewSnippet;
 }
 
 export interface AwardCategory {
@@ -620,6 +658,8 @@ export interface AwardCategory {
   name: string;
   description?: string;
   iconName?: string;
+  field?: 'general' | 'genre' | 'craft' | 'specialty';
+  eligibilityPeriod?: string;
   nominees?: AwardNominee[];
   nomineeArtistIds: string[];
   nomineeItemIds?: string[]; // song or album ids
@@ -630,17 +670,32 @@ export interface AwardCategory {
   winnerProducerId?: string;
   winnerProducerName?: string;
   winnerReason?: string;
+  winType?: 'unanimous' | 'tight' | 'upset';
+  winTypeLabel?: string;
+  deliberationNotes?: string;
   playerWon?: boolean;
   playerNominated?: boolean;
+  playerNominationStatus?: {
+    isNominated: boolean;
+    rankAmongCandidates?: number;
+    reason: string;
+  };
 }
 
 export interface AwardCeremony {
   year: number;
   name: string;
   theme?: string;
+  eligibilityPeriod?: string;
   categories: AwardCategory[];
   playerNominationsCount?: number;
   playerWinsCount?: number;
+  hallOfFameSnapshot?: Array<{
+    artistId: string;
+    artistName: string;
+    totalWins: number;
+    totalNominations: number;
+  }>;
 }
 
 export interface SocialPost {

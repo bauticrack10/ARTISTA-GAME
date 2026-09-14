@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { AwardCeremony, AwardCategory, Artist } from '../types';
+import { AwardCeremony, AwardCategory, Artist, AwardNominee } from '../types';
 import { playSound } from '../utils/audioSystem';
 import {
   Trophy,
@@ -8,9 +8,12 @@ import {
   Disc3,
   Sliders,
   Award,
+  Play,
   LucideIcon
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+
+export type CeremonyPhase = 'presentation' | 'nominees' | 'deliberation' | 'envelope' | 'revealed';
 
 export interface UseAwardsGalaProps {
   ceremony: AwardCeremony;
@@ -21,10 +24,12 @@ export interface UseAwardsGalaResult {
   categories: AwardCategory[];
   currentCategoryIndex: number;
   currentCategory?: AwardCategory;
+  categoryPhase: CeremonyPhase;
   revealedCategories: Record<number, boolean>;
   isCurrentRevealed: boolean;
   allRevealed: boolean;
   showSummary: boolean;
+  selectedNomineeIndex: number | null;
   playerTotalNominations: number;
   playerTotalWins: number;
   temporality: {
@@ -32,8 +37,13 @@ export interface UseAwardsGalaResult {
     yearEndBadge: string;
     galaSubtitle: string;
     headerLabel: string;
+    eligibilityPeriod: string;
   };
   getCategoryIcon: (name: string) => LucideIcon;
+  setCategoryPhase: (phase: CeremonyPhase) => void;
+  setSelectedNomineeIndex: (index: number | null) => void;
+  handleAdvancePhase: () => void;
+  handleOpenEnvelope: (index?: number) => void;
   handleRevealWinner: (index?: number) => void;
   handleRevealAll: () => void;
   handleNextCategory: () => void;
@@ -43,7 +53,7 @@ export interface UseAwardsGalaResult {
 }
 
 /**
- * Custom Hook for AwardsGalaModal navigation, reveals, celebrations and contextual temporality
+ * Custom Hook for AwardsGalaModal navigation, progressive reveals, celebrations and contextual temporality.
  */
 export function useAwardsGala({
   ceremony,
@@ -51,6 +61,8 @@ export function useAwardsGala({
 }: UseAwardsGalaProps): UseAwardsGalaResult {
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState<number>(0);
   const [revealedCategories, setRevealedCategories] = useState<Record<number, boolean>>({});
+  const [categoryPhase, setCategoryPhase] = useState<CeremonyPhase>('presentation');
+  const [selectedNomineeIndex, setSelectedNomineeIndex] = useState<number | null>(null);
   const [showSummary, setShowSummary] = useState<boolean>(false);
 
   const categories = useMemo(() => ceremony.categories || [], [ceremony.categories]);
@@ -63,10 +75,11 @@ export function useAwardsGala({
   // Contextual Temporality metadata
   const temporality = useMemo(() => ({
     year: ceremony.year,
-    yearEndBadge: `Fin del Año ${ceremony.year}`,
-    galaSubtitle: `Premios de la Academia Musical • Cierre de Temporada ${ceremony.year}`,
-    headerLabel: `Gala Anual de la Música • Diciembre ${ceremony.year}`
-  }), [ceremony.year]);
+    yearEndBadge: `Gala Anual ${ceremony.year}`,
+    galaSubtitle: `Premios de la Academia Musical • Edición ${ceremony.year}`,
+    headerLabel: `Premios de la Música • Diciembre ${ceremony.year}`,
+    eligibilityPeriod: ceremony.eligibilityPeriod || `Temporada ${ceremony.year} (1 de Enero - 31 de Diciembre)`
+  }), [ceremony.year, ceremony.eligibilityPeriod]);
 
   // Calculate player performance in this ceremony
   const playerTotalNominations = useMemo(() => {
@@ -82,31 +95,34 @@ export function useAwardsGala({
   }, [categories, player.id]);
 
   const getCategoryIcon = useCallback((name: string): LucideIcon => {
-    if (name.includes('Artista')) return Crown;
-    if (name.includes('Canción')) return Disc3;
     if (name.includes('Álbum')) return Trophy;
+    if (name.includes('Grabación')) return Disc3;
+    if (name.includes('Canción')) return Sparkles;
     if (name.includes('Nuevo') || name.includes('Revelación')) return Sparkles;
-    if (name.includes('Producción')) return Sliders;
+    if (name.includes('Colaboración')) return Crown;
+    if (name.includes('Video') || name.includes('Visual')) return Play;
+    if (name.includes('Producción') || name.includes('Urbana')) return Sliders;
     return Award;
   }, []);
 
   const triggerVictoryConfetti = useCallback(() => {
     try {
       confetti({
-        particleCount: 130,
-        spread: 85,
+        particleCount: 150,
+        spread: 90,
         origin: { y: 0.6 },
         colors: ['#f59e0b', '#ec4899', '#8b5cf6', '#10b981', '#06b6d4', '#f97316', '#ffd700']
       });
     } catch {
-      // Gracefully continue if confetti canvas is unavailable
+      // Confetti fallback
     }
   }, []);
 
-  const handleRevealWinner = useCallback((index?: number) => {
+  const handleOpenEnvelope = useCallback((index?: number) => {
     const targetIdx = index ?? currentCategoryIndex;
-    setRevealedCategories(prev => ({ ...prev, [targetIdx]: true }));
     playSound('award');
+    setRevealedCategories(prev => ({ ...prev, [targetIdx]: true }));
+    setCategoryPhase('revealed');
 
     const cat = categories[targetIdx];
     if (cat && (cat.winnerArtistId === player.id || cat.playerWon)) {
@@ -114,12 +130,34 @@ export function useAwardsGala({
     }
   }, [currentCategoryIndex, categories, player.id, triggerVictoryConfetti]);
 
+  const handleRevealWinner = useCallback((index?: number) => {
+    handleOpenEnvelope(index);
+  }, [handleOpenEnvelope]);
+
+  const handleAdvancePhase = useCallback(() => {
+    playSound('click');
+    if (isCurrentRevealed) {
+      setCategoryPhase('revealed');
+      return;
+    }
+    if (categoryPhase === 'presentation') {
+      setCategoryPhase('nominees');
+    } else if (categoryPhase === 'nominees') {
+      setCategoryPhase('deliberation');
+    } else if (categoryPhase === 'deliberation') {
+      setCategoryPhase('envelope');
+    } else if (categoryPhase === 'envelope') {
+      handleOpenEnvelope();
+    }
+  }, [categoryPhase, isCurrentRevealed, handleOpenEnvelope]);
+
   const handleRevealAll = useCallback(() => {
     const allRev: Record<number, boolean> = {};
     categories.forEach((_, idx) => {
       allRev[idx] = true;
     });
     setRevealedCategories(allRev);
+    setCategoryPhase('revealed');
     playSound('award');
 
     if (playerTotalWins > 0) {
@@ -130,7 +168,10 @@ export function useAwardsGala({
   const handleNextCategory = useCallback(() => {
     playSound('click');
     if (currentCategoryIndex < categories.length - 1) {
-      setCurrentCategoryIndex(prev => prev + 1);
+      const nextIdx = currentCategoryIndex + 1;
+      setCurrentCategoryIndex(nextIdx);
+      setSelectedNomineeIndex(null);
+      setCategoryPhase(revealedCategories[nextIdx] ? 'revealed' : 'presentation');
     } else {
       setShowSummary(true);
       if (playerTotalWins > 0) {
@@ -138,35 +179,47 @@ export function useAwardsGala({
         triggerVictoryConfetti();
       }
     }
-  }, [currentCategoryIndex, categories.length, playerTotalWins, triggerVictoryConfetti]);
+  }, [currentCategoryIndex, categories.length, revealedCategories, playerTotalWins, triggerVictoryConfetti]);
 
   const handlePrevCategory = useCallback(() => {
     playSound('click');
     if (showSummary) {
       setShowSummary(false);
+      setCategoryPhase(revealedCategories[currentCategoryIndex] ? 'revealed' : 'presentation');
     } else if (currentCategoryIndex > 0) {
-      setCurrentCategoryIndex(prev => prev - 1);
+      const prevIdx = currentCategoryIndex - 1;
+      setCurrentCategoryIndex(prevIdx);
+      setSelectedNomineeIndex(null);
+      setCategoryPhase(revealedCategories[prevIdx] ? 'revealed' : 'presentation');
     }
-  }, [showSummary, currentCategoryIndex]);
+  }, [showSummary, currentCategoryIndex, revealedCategories]);
 
   const handleSelectCategory = useCallback((index: number) => {
     playSound('click');
     setShowSummary(false);
     setCurrentCategoryIndex(index);
-  }, []);
+    setSelectedNomineeIndex(null);
+    setCategoryPhase(revealedCategories[index] ? 'revealed' : 'presentation');
+  }, [revealedCategories]);
 
   return {
     categories,
     currentCategoryIndex,
     currentCategory,
+    categoryPhase,
     revealedCategories,
     isCurrentRevealed,
     allRevealed,
     showSummary,
+    selectedNomineeIndex,
     playerTotalNominations,
     playerTotalWins,
     temporality,
     getCategoryIcon,
+    setCategoryPhase,
+    setSelectedNomineeIndex,
+    handleAdvancePhase,
+    handleOpenEnvelope,
     handleRevealWinner,
     handleRevealAll,
     handleNextCategory,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { WorldState, Artist, AwardCeremony } from '../types';
 import {
   Award,
@@ -12,7 +12,10 @@ import {
   Disc3,
   Sliders,
   Calendar,
-  CheckCircle2
+  CheckCircle2,
+  TrendingUp,
+  Flame,
+  Medal
 } from 'lucide-react';
 
 interface AwardsViewProps {
@@ -33,13 +36,38 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
     : ceremonies;
 
   const getCategoryIcon = (name: string) => {
-    if (name.includes('Artista')) return Crown;
-    if (name.includes('Canción')) return Disc3;
     if (name.includes('Álbum')) return Trophy;
+    if (name.includes('Grabación')) return Disc3;
+    if (name.includes('Canción')) return Sparkles;
     if (name.includes('Nuevo') || name.includes('Revelación')) return Sparkles;
-    if (name.includes('Producción')) return Sliders;
+    if (name.includes('Colaboración')) return Crown;
+    if (name.includes('Video') || name.includes('Visual')) return Play;
+    if (name.includes('Producción') || name.includes('Urbana')) return Sliders;
     return Award;
   };
+
+  // Compute Real All-Time Hall of Fame from verified ceremonies and artist awards (Zero fake math!)
+  const hallOfFame = useMemo(() => {
+    const artistMap = new Map<string, { name: string; wins: number; country: string; careerStage: string; isPlayer: boolean }>();
+
+    // Seed from all artists' actual awardsWon
+    for (const art of Object.values(world?.artists || {})) {
+      if (art.awardsWon && art.awardsWon.length > 0) {
+        artistMap.set(art.id, {
+          name: art.name,
+          wins: art.awardsWon.length,
+          country: art.country,
+          careerStage: art.careerStage,
+          isPlayer: art.isPlayer
+        });
+      }
+    }
+
+    return Array.from(artistMap.entries())
+      .map(([id, data]) => ({ id, ...data }))
+      .sort((a, b) => b.wins - a.wins)
+      .slice(0, 5);
+  }, [world?.artists, ceremonies]);
 
   return (
     <div
@@ -53,7 +81,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
             <span className="text-[10px] uppercase font-bold tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-[4px]">
               Academia Musical
             </span>
-            <span className="text-xs text-[#94A3B8]">Premios Anuales & Reconocimientos</span>
+            <span className="text-xs text-[#94A3B8]">Premios Oficiales & Reconocimientos de la Industria</span>
           </div>
           <h1 className="text-2xl font-semibold text-[#F8FAFC] tracking-[-0.9px] mt-1 flex items-center gap-2">
             <Trophy className="w-6 h-6 text-amber-400" />
@@ -61,7 +89,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
           </h1>
           <p className="text-xs text-[#94A3B8] mt-1 max-w-2xl leading-relaxed">
             Cada diciembre la academia de la música evalúa el impacto comercial, trascendencia cultural,
-            calidad crítica y sofisticación de producción de la escena en 5 categorías fundamentales.
+            calidad crítica, composición y sofisticación técnica en las 8 categorías fundamentales inspiradas en los premios más prestigiosos del mundo.
           </p>
         </div>
 
@@ -77,18 +105,76 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         </div>
       </div>
 
+      {/* Hall of Fame: All-Time Leaderboard */}
+      {hallOfFame.length > 0 && (
+        <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-6 space-y-4 shadow-md">
+          <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
+            <div className="flex items-center gap-2">
+              <Crown className="w-4 h-4 text-amber-400" />
+              <h2 className="text-base font-semibold text-[#F8FAFC]">
+                Pabellón de la Fama (Hall of Fame)
+              </h2>
+            </div>
+            <span className="text-xs text-[#94A3B8]">
+              Artistas más galardonados en la historia del ecosistema
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+            {hallOfFame.map((artist, idx) => (
+              <div
+                key={artist.id}
+                className={`p-3.5 rounded-[10px] border flex flex-col justify-between gap-2 text-xs transition-all ${
+                  artist.isPlayer
+                    ? 'bg-purple-500/15 border-purple-500/50 shadow-sm ring-1 ring-purple-400'
+                    : 'bg-[#0B0C10] border-[#2A2E3D]'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-amber-400 font-bold">
+                    #{idx + 1}
+                  </span>
+                  {artist.isPlayer && (
+                    <span className="text-[9px] font-bold bg-purple-500/30 text-purple-200 px-1.5 py-0.5 rounded-[3px]">
+                      Tú
+                    </span>
+                  )}
+                </div>
+
+                <div className="min-w-0">
+                  <h3 className="font-bold text-xs text-[#F8FAFC] truncate" title={artist.name}>
+                    {artist.name}
+                  </h3>
+                  <p className="text-[10px] text-[#94A3B8] truncate">
+                    {artist.country} • {artist.careerStage}
+                  </p>
+                </div>
+
+                <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-[#94A3B8]">Estatuillas:</span>
+                  <span className="text-amber-300 font-bold flex items-center gap-1">
+                    <Trophy className="w-3 h-3 text-amber-400" />
+                    {artist.wins}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Trophy Showcase of the Player */}
       <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-6 space-y-4 shadow-md">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2E3D] pb-3">
           <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
-            <Crown className="w-4 h-4 text-amber-400" />
-            <span>Vitrina de Trofeos de {player.name}</span>
+            <Trophy className="w-4 h-4 text-amber-400" />
+            <span>Vitrina Oficial de Trofeos de {player.name}</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono font-normal">
               {player.awardsWon.length}
             </span>
           </h2>
           <span className="text-xs text-[#94A3B8]">
-            Reconocimientos oficiales acumulados en la carrera
+            Galardones acumulados mediante mérito, crítica e impacto comercial
           </span>
         </div>
 
@@ -99,33 +185,40 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
             </div>
             <h3 className="text-sm font-semibold text-[#F8FAFC]">Vitrina Vacía por Ahora</h3>
             <p className="text-xs text-[#94A3B8] max-w-md mx-auto leading-relaxed">
-              Aún no has ganado estatuillas en las galas anuales. Lanzá discos aclamados por la crítica, hits mundiales y producciones de primer nivel para competir cada diciembre.
+              Aún no has ganado estatuillas en las galas anuales. Lanzá discos aclamados por la crítica, hits mundiales y producciones de primer nivel para competir cada diciembre en igualdad de condiciones con la escena global.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {player.awardsWon.map((awardName, idx) => {
               const CategoryIcon = getCategoryIcon(awardName);
+              const structured = player.awardsRecord?.find(r => awardName.includes(r.categoryName));
+
               return (
                 <div
                   key={idx}
                   className="bg-gradient-to-br from-[#16181F] to-[#1C1F2B] p-4 rounded-[12px] border border-amber-500/30 flex items-start gap-3 hover:border-amber-400/70 transition-all group shadow-xs"
                 >
-                  <div
-                    className="p-2.5 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 rounded-[8px] shrink-0 shadow-sm"
-                  >
+                  <div className="p-2.5 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 rounded-[8px] shrink-0 shadow-sm">
                     <CategoryIcon className="w-4 h-4 text-amber-950 fill-amber-950/20" />
                   </div>
-                  <div className="space-y-0.5">
-                    <h3 className="font-bold text-xs text-[#F8FAFC] leading-tight">
+                  <div className="space-y-0.5 min-w-0 flex-1">
+                    <h3 className="font-bold text-xs text-[#F8FAFC] leading-tight truncate">
                       {awardName}
                     </h3>
-                    <p className="text-[11px] text-[#94A3B8]">
-                      Galardón de la Academia Musical
+                    <p className="text-[11px] text-[#94A3B8] truncate">
+                      {structured?.itemTitle ? `Por "${structured.itemTitle}"` : 'Galardón de la Academia Musical'}
                     </p>
-                    <span className="inline-block text-[10px] font-mono font-bold text-amber-300 bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-[4px] mt-1">
-                      +5 Pts de Legado
-                    </span>
+                    <div className="pt-1 flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-mono font-bold text-amber-300 bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-[4px]">
+                        +6 Pts Legado
+                      </span>
+                      {structured?.winType && (
+                        <span className="text-[9px] font-mono text-purple-300 bg-purple-500/20 px-1.5 py-0.5 rounded-[4px]">
+                          {structured.winType}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -146,7 +239,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
               </span>
             </h2>
             <p className="text-xs text-[#94A3B8] mt-0.5">
-              Registro histórico completo de nominaciones y ganadores en cada edición
+              Registro histórico oficial de nominaciones y ganadores en cada edición
             </p>
           </div>
 
@@ -291,14 +384,19 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                                     </span>
                                   )}
                                 </p>
+                                {cat.winTypeLabel && (
+                                  <span className="text-[9px] font-mono text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded-[3px] border border-amber-500/25 inline-block mt-0.5">
+                                    {cat.winTypeLabel}
+                                  </span>
+                                )}
                                 {cat.winnerReason && (
-                                  <p className="text-[11px] text-[#94A3B8] italic">
+                                  <p className="text-[11px] text-[#94A3B8] italic mt-1">
                                     {cat.winnerReason}
                                   </p>
                                 )}
                               </div>
 
-                              {/* Nominees Grid (4 items: 2x2 layout on sm:) */}
+                              {/* Nominees Grid */}
                               {cat.nominees && cat.nominees.length > 0 && (
                                 <div className="pt-2 border-t border-[#2A2E3D] space-y-1.5">
                                   <span className="text-[10px] uppercase text-[#94A3B8] font-bold tracking-wider block">

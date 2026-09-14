@@ -173,6 +173,9 @@ export class WorldSimulation {
         artist.isRetired = true;
         artist.retirementYear = world.currentYear;
         artist.careerStage = 'Retired';
+        if (!artist.historicalNotes) {
+          artist.historicalNotes = [];
+        }
         artist.historicalNotes.push(`Se retiró de los escenarios en ${world.currentYear} tras una distinguida carrera.`);
         retiredArtists.push(artist);
         continue;

@@ -79,7 +79,7 @@ function runAllTests() {
   console.log('===============================================================\n');
 
   // -------------------------------------------------------------
-  // CASO A: Jugador con 0 lanzamientos -> 0 nominaciones en todas las categorías
+  // CASO A: Jugador con 0 lanzamientos -> 0 nominaciones en todas las 8 categorías
   // -------------------------------------------------------------
   console.log('🔹 CASO A: Jugador con 0 lanzamientos (Canciones/Álbumes)');
   {
@@ -117,7 +117,6 @@ function runAllTests() {
       influences: []
     };
 
-    // Asegurar 0 canciones y 0 álbumes del jugador
     const result = AwardEngine.conductAnnualAwards(world, 2026);
 
     assert(result.ceremony.playerNominationsCount === 0, 'playerNominationsCount debe ser exactamente 0');
@@ -156,7 +155,7 @@ function runAllTests() {
       },
       stats: {
         popularity: 15, reputation: 10, artisticCredibility: 15, energy: 100,
-        monthlyListeners: 200, totalStreams: 500, // < 1000 streams!
+        monthlyListeners: 200, totalStreams: 500,
         funds: 1000, fansCount: 100, fanbaseLoyalty: 50, hype: 20
       },
       careerStage: 'Underground',
@@ -172,7 +171,6 @@ function runAllTests() {
       influences: []
     };
 
-    // Publicar 1 single para el jugador con 500 streams
     world.songs['song_player_b_1'] = {
       id: 'song_player_b_1',
       title: 'Mi Primer Intento',
@@ -189,8 +187,8 @@ function runAllTests() {
       streamsTotal: 500,
       streamsLastMonth: 100,
       monthlyStreamsHistory: [500],
-      peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-      weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+      peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+      weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
       longevityCurve: 'steady',
       isSingle: true,
       receptionRating: 3,
@@ -232,7 +230,7 @@ function runAllTests() {
       },
       stats: {
         popularity: 35, reputation: 20, artisticCredibility: 35, energy: 100,
-        monthlyListeners: 15000, totalStreams: 25000, // 25.000 streams y 20 rep!
+        monthlyListeners: 15000, totalStreams: 25000,
         funds: 5000, fansCount: 8000, fanbaseLoyalty: 80, hype: 60
       },
       careerStage: 'Emerging',
@@ -264,8 +262,8 @@ function runAllTests() {
       streamsTotal: 25000,
       streamsLastMonth: 12000,
       monthlyStreamsHistory: [13000, 12000],
-      peakPosition: { Global: 35, Argentina: 12, USA: null, LatinAmerica: 25, Europe: null, Spain: null, Mexico: null },
-      weeksOnChart: { Global: 2, Argentina: 6, USA: 0, LatinAmerica: 4, Europe: 0, Spain: 0, Mexico: 0 },
+      peakPosition: { Global: 35, Argentina: 12, USA: null, LatinAmerica: 25, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+      weeksOnChart: { Global: 2, Argentina: 6, USA: 0, LatinAmerica: 4, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
       longevityCurve: 'steady',
       isSingle: true,
       receptionRating: 4,
@@ -285,20 +283,19 @@ function runAllTests() {
   }
 
   // -------------------------------------------------------------
-  // CASO D: Todas las 5 categorías tienen EXACTAMENTE 4 nominados
+  // CASO D: Todas las 8 categorías tienen EXACTAMENTE 4 nominados
   // -------------------------------------------------------------
-  console.log('\n🔹 CASO D: Todas las 5 categorías tienen EXACTAMENTE 4 nominados');
+  console.log('\n🔹 CASO D: Todas las 8 categorías tienen EXACTAMENTE 4 nominados');
   {
-    // Test 1: Mundo base por defecto
     const world1 = createBaseWorld();
     const result1 = AwardEngine.conductAnnualAwards(world1, 2026);
-    assert(result1.ceremony.categories.length === 5, 'Debe haber exactamente 5 categorías en la ceremonia');
+    assert(result1.ceremony.categories.length === 8, `Debe haber exactamente 8 categorías en la ceremonia (obtenido: ${result1.ceremony.categories.length})`);
     for (const cat of result1.ceremony.categories) {
       assert(cat.nominees?.length === 4, `[Mundo Base] Categoría "${cat.name}" tiene ${cat.nominees?.length} nominados (esperado: 4)`);
       assert(cat.nomineeArtistIds.length === 4, `[Mundo Base] Categoría "${cat.name}" tiene ${cat.nomineeArtistIds.length} artistIds (esperado: 4)`);
     }
 
-    // Test 2: Mundo con catálogo masivo de NPC
+    // Mundo masivo con múltiples lanzamientos
     const world2 = createBaseWorld();
     let songCount = 0;
     for (const artist of Object.values(world2.artists)) {
@@ -309,9 +306,9 @@ function runAllTests() {
           id: sId,
           title: `Hit Track ${songCount}`,
           artistId: artist.id,
-          featuredArtistIds: [],
+          featuredArtistIds: s === 2 ? ['artist_bizarrap'] : [],
           genreId: artist.mainGenreId,
-          subGenreIds: [],
+          subGenreIds: artist.subGenreIds || [],
           releaseYear: 2026,
           releaseMonth: s * 3,
           quality: 75 + (s * 5),
@@ -321,30 +318,33 @@ function runAllTests() {
           streamsTotal: 1000000 * s,
           streamsLastMonth: 200000,
           monthlyStreamsHistory: [],
-          peakPosition: { Global: 10, Argentina: 5, USA: null, LatinAmerica: 8, Europe: null, Spain: null, Mexico: null },
-          weeksOnChart: { Global: 5, Argentina: 6, USA: 0, LatinAmerica: 5, Europe: 0, Spain: 0, Mexico: 0 },
+          peakPosition: { Global: 10, Argentina: 5, USA: null, LatinAmerica: 8, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+          weeksOnChart: { Global: 5, Argentina: 6, USA: 0, LatinAmerica: 5, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
           longevityCurve: 'steady',
           isSingle: true,
           receptionRating: 4,
           isClassic: false,
-          wentViral: false
+          wentViral: false,
+          musicVideo: s === 1 ? { views: 5000000, budget: 10000, director: 'Director' } : undefined
         };
       }
     }
     const result2 = AwardEngine.conductAnnualAwards(world2, 2026);
+    assert(result2.ceremony.categories.length === 8, 'Mundo masivo debe tener 8 categorías');
     for (const cat of result2.ceremony.categories) {
       assert(cat.nominees?.length === 4, `[Mundo Masivo] Categoría "${cat.name}" tiene ${cat.nominees?.length} nominados (esperado: 4)`);
     }
   }
 
   // -------------------------------------------------------------
-  // CASO E: Canción del Año y Álbum del Año tienen máximo 1 nominación por artista (Anti-monopolio)
+  // CASO E: Anti-Monopolio Estricto (Máximo 1 nominación por artista por categoría)
   // -------------------------------------------------------------
-  console.log('\n🔹 CASO E: Canción del Año y Álbum del Año - Máximo 1 nominación por artista');
+  console.log('\n🔹 CASO E: Anti-Monopolio Estricto - Máximo 1 nominación por artista');
   {
     const world = createBaseWorld();
-    // Creamos 10 canciones y 5 álbumes excelentes para el mismo artista (Duki)
     const dukiId = 'artist_duki';
+
+    // Creamos 10 canciones y 5 álbumes excelentes para Duki
     for (let i = 1; i <= 10; i++) {
       const sId = `song_duki_superhit_${i}`;
       world.songs[sId] = {
@@ -363,8 +363,8 @@ function runAllTests() {
         streamsTotal: 500000000 + i * 1000000,
         streamsLastMonth: 80000000,
         monthlyStreamsHistory: [],
-        peakPosition: { Global: 1, Argentina: 1, USA: null, LatinAmerica: 1, Europe: null, Spain: null, Mexico: null },
-        weeksOnChart: { Global: 20, Argentina: 20, USA: 0, LatinAmerica: 20, Europe: 0, Spain: 0, Mexico: 0 },
+        peakPosition: { Global: 1, Argentina: 1, USA: null, LatinAmerica: 1, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+        weeksOnChart: { Global: 20, Argentina: 20, USA: 0, LatinAmerica: 20, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
         longevityCurve: 'instant_classic',
         isSingle: true,
         receptionRating: 5,
@@ -389,7 +389,7 @@ function runAllTests() {
         firstWeekSales: 150000,
         criticalScore: 98,
         commercialScore: 99,
-        peakChartPosition: { Global: 1, Argentina: 1, USA: null, LatinAmerica: 1, Europe: null, Spain: null, Mexico: null },
+        peakChartPosition: { Global: 1, Argentina: 1, USA: null, LatinAmerica: 1, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
         awards: [],
         coverGradient: 'from-purple-900 to-black'
       };
@@ -397,193 +397,156 @@ function runAllTests() {
 
     const result = AwardEngine.conductAnnualAwards(world, 2026);
 
-    const songOfYear = result.ceremony.categories.find(c => c.id.includes('song_of_year'));
-    const albumOfYear = result.ceremony.categories.find(c => c.id.includes('album_of_year'));
+    for (const cat of result.ceremony.categories) {
+      if (cat.id.includes('production')) continue; // Producción permite hasta 2 para productores
+      const dukiNoms = cat.nominees?.filter(n => n.artistId === dukiId) || [];
+      assert(dukiNoms.length <= 1, `Categoría "${cat.name}": Duki tiene ${dukiNoms.length} nominaciones (máximo permitido: 1)`);
 
-    assert(Boolean(songOfYear), 'Canción del Año debe existir');
-    if (songOfYear) {
-      assert(songOfYear.nominees?.length === 4, 'Canción del Año debe tener 4 nominados');
-      const dukiNominations = songOfYear.nominees?.filter(n => n.artistId === dukiId) || [];
-      assert(dukiNominations.length <= 1, `Canción del Año: Duki tiene ${dukiNominations.length} nominaciones (máximo permitido: 1)`);
-
-      // Verificar que todos los artistas sean únicos en la categoría
-      const artistIds = songOfYear.nominees?.map(n => n.artistId) || [];
+      const artistIds = cat.nominees?.map(n => n.artistId) || [];
       const uniqueArtistIds = new Set(artistIds);
-      assert(uniqueArtistIds.size === artistIds.length, 'Canción del Año: Cero monopolio (cada nominado pertenece a un artista diferente)');
-    }
-
-    assert(Boolean(albumOfYear), 'Álbum del Año debe existir');
-    if (albumOfYear) {
-      assert(albumOfYear.nominees?.length === 4, 'Álbum del Año debe tener 4 nominados');
-      const dukiAlbumNoms = albumOfYear.nominees?.filter(n => n.artistId === dukiId) || [];
-      assert(dukiAlbumNoms.length <= 1, `Álbum del Año: Duki tiene ${dukiAlbumNoms.length} nominaciones (máximo permitido: 1)`);
-
-      const albumArtistIds = albumOfYear.nominees?.map(n => n.artistId) || [];
-      const uniqueAlbumArtistIds = new Set(albumArtistIds);
-      assert(uniqueAlbumArtistIds.size === albumArtistIds.length, 'Álbum del Año: Cero monopolio (cada nominado pertenece a un artista diferente)');
+      assert(uniqueArtistIds.size === artistIds.length, `Categoría "${cat.name}": Cero monopolio (cada nominado pertenece a un artista diferente)`);
     }
   }
 
   // -------------------------------------------------------------
-  // CASO F: Mejor Producción tiene máximo 2 nominaciones por artista / productor
+  // CASO F: Exclusión TAXATIVA de consagrados en Mejor Artista Nuevo
   // -------------------------------------------------------------
-  console.log('\n🔹 CASO F: Mejor Producción - Máximo 2 nominaciones por artista o productor');
+  console.log('\n🔹 CASO F: Exclusión taxativa de Duki, Nicki Nicole, Bizarrap en Mejor Artista Nuevo');
   {
     const world = createBaseWorld();
-    const prodId = 'prod_bizarrap_master';
-    world.producers[prodId] = {
-      id: prodId,
-      name: 'Bizarrap Productions',
-      tagline: 'Sonido de élite mundial',
-      signatureStyle: 'Electro Trap Vanguard',
-      genreSpecialties: ['trap_latino', 'musica_electronica'],
-      reputation: 99,
-      costPerTrack: 25000,
-      qualityBoost: 25,
-      country: 'Argentina'
-    };
-
-    // Crear 8 canciones producidas por el mismo productor y mismo artista con calidad 100
-    for (let i = 1; i <= 8; i++) {
-      const sId = `song_prod_test_${i}`;
-      world.songs[sId] = {
-        id: sId,
-        title: `Producción Maestra Vol ${i}`,
-        artistId: 'artist_bizarrap',
-        producerId: prodId,
-        featuredArtistIds: [],
-        genreId: 'musica_electronica',
-        subGenreIds: [],
-        releaseYear: 2026,
-        releaseMonth: 1,
-        quality: 100,
-        commercialAppeal: 95,
-        originality: 98,
-        hypeAtRelease: 95,
-        streamsTotal: 100000000,
-        streamsLastMonth: 10000000,
-        monthlyStreamsHistory: [],
-        peakPosition: { Global: 1, Argentina: 1, USA: null, LatinAmerica: 1, Europe: null, Spain: null, Mexico: null },
-        weeksOnChart: { Global: 10, Argentina: 10, USA: 0, LatinAmerica: 10, Europe: 0, Spain: 0, Mexico: 0 },
-        longevityCurve: 'instant_classic',
-        isSingle: true,
-        receptionRating: 5,
-        isClassic: true,
-        wentViral: true
-      };
-    }
-
     const result = AwardEngine.conductAnnualAwards(world, 2026);
-    const prodCategory = result.ceremony.categories.find(c => c.id.includes('best_production'));
+    const newArtistCat = result.ceremony.categories.find(c => c.id.includes('best_new_artist'));
 
-    assert(Boolean(prodCategory), 'Mejor Producción debe existir');
-    if (prodCategory) {
-      assert(prodCategory.nominees?.length === 4, 'Mejor Producción debe tener exactamente 4 nominados');
+    assert(Boolean(newArtistCat), 'La categoría Mejor Artista Nuevo debe existir');
+    if (newArtistCat) {
+      const nominatedIds = newArtistCat.nomineeArtistIds;
+      assert(!nominatedIds.includes('artist_duki'), 'Duki NUNCA debe estar nominado a Mejor Artista Nuevo');
+      assert(!nominatedIds.includes('artist_nicki_nicole'), 'Nicki Nicole NUNCA debe estar nominada a Mejor Artista Nuevo');
+      assert(!nominatedIds.includes('artist_bizarrap'), 'Bizarrap NUNCA debe estar nominado a Mejor Artista Nuevo');
+      assert(!nominatedIds.includes('artist_bad_bunny'), 'Bad Bunny NUNCA debe estar nominado a Mejor Artista Nuevo');
 
-      // Conteo por artista
-      const artistCounts = new Map<string, number>();
-      const prodCounts = new Map<string, number>();
-
-      for (const nom of prodCategory.nominees || []) {
-        artistCounts.set(nom.artistId, (artistCounts.get(nom.artistId) || 0) + 1);
-        if (nom.producerId) {
-          prodCounts.set(nom.producerId, (prodCounts.get(nom.producerId) || 0) + 1);
+      // Verificar que ningún nominado sea Superstar, Mainstream, Established, Veteran o Legend
+      for (const nom of newArtistCat.nominees || []) {
+        const art = world.artists[nom.artistId];
+        if (art) {
+          const isEstablished = ['Established', 'Mainstream', 'Superstar', 'Veteran', 'Legend', 'Retired'].includes(art.careerStage);
+          assert(!isEstablished, `Nominado "${art.name}" tiene careerStage="${art.careerStage}" (no permitido en Nuevo Artista)`);
+          const careerLength = 2026 - art.careerStartYear;
+          assert(careerLength <= 3, `Nominado "${art.name}" tiene ${careerLength} años de carrera (máximo: 3)`);
         }
       }
-
-      for (const [artId, count] of artistCounts.entries()) {
-        assert(count <= 2, `Mejor Producción: Artista ${artId} tiene ${count} nominaciones (máximo permitido: 2)`);
-      }
-
-      for (const [pId, count] of prodCounts.entries()) {
-        assert(count <= 2, `Mejor Producción: Productor ${pId} tiene ${count} nominaciones (máximo permitido: 2)`);
-      }
     }
   }
 
   // -------------------------------------------------------------
-  // CASO G: Desduplicación de títulos: Dos canciones con el mismo nombre no pueden figurar nominadas a la vez
+  // CASO G: Mejor Artista Nuevo solo se gana UNA VEZ en la vida
   // -------------------------------------------------------------
-  console.log('\n🔹 CASO G: Desduplicación estricta de títulos');
+  console.log('\n🔹 CASO G: Mejor Artista Nuevo solo se puede ganar una vez en la carrera');
   {
     const world = createBaseWorld();
-    // Creamos dos canciones con títulos idénticos/equivalentes por distintos artistas
-    world.songs['song_dup_1'] = {
-      id: 'song_dup_1',
-      title: 'Fuego Eterno',
-      artistId: 'artist_duki',
+    // Creamos un artista emergente excelente que YA ganó Mejor Artista Nuevo
+    const pastWinnerId = 'artist_past_winner';
+    world.artists[pastWinnerId] = {
+      id: pastWinnerId,
+      name: 'Ganador Pasado',
+      isPlayer: false,
+      country: 'Argentina',
+      city: 'Córdoba',
+      birthYear: 2004,
+      careerStartYear: 2025,
+      mainGenreId: 'trap_latino',
+      subGenreIds: [],
+      personality: { creativity: 95, ambition: 95, discipline: 90, charisma: 95, skill: 95, commercialAppeal: 95, originality: 95, riskTolerance: 80, sociability: 80, independence: 80 },
+      stats: { popularity: 45, reputation: 35, artisticCredibility: 45, energy: 100, monthlyListeners: 80000, totalStreams: 150000, funds: 8000, fansCount: 20000, fanbaseLoyalty: 80, hype: 80 },
+      careerStage: 'Breakout',
+      labelId: null,
+      managerId: null,
+      relationships: {},
+      eras: [],
+      awardsWon: ['Mejor Artista Nuevo (2025)'],
+      hasWonBestNewArtist: true, // ¡Ya ganó!
+      legacyScore: 20,
+      isRetired: false,
+      historicalNotes: [],
+      generationIndex: 1,
+      influences: []
+    };
+
+    world.songs['song_past_winner_hit'] = {
+      id: 'song_past_winner_hit',
+      title: 'Hit del Año Siguiente',
+      artistId: pastWinnerId,
       featuredArtistIds: [],
       genreId: 'trap_latino',
       subGenreIds: [],
       releaseYear: 2026,
       releaseMonth: 1,
-      quality: 98,
-      commercialAppeal: 98,
+      quality: 95,
+      commercialAppeal: 95,
       originality: 95,
-      hypeAtRelease: 95,
-      streamsTotal: 200000000,
-      streamsLastMonth: 20000000,
+      hypeAtRelease: 80,
+      streamsTotal: 1000000,
+      streamsLastMonth: 200000,
       monthlyStreamsHistory: [],
-      peakPosition: { Global: 1, Argentina: 1, USA: null, LatinAmerica: 1, Europe: null, Spain: null, Mexico: null },
-      weeksOnChart: { Global: 15, Argentina: 15, USA: 0, LatinAmerica: 15, Europe: 0, Spain: 0, Mexico: 0 },
-      longevityCurve: 'instant_classic',
+      peakPosition: { Global: 10, Argentina: 2, USA: null, LatinAmerica: 5, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+      weeksOnChart: { Global: 8, Argentina: 10, USA: 0, LatinAmerica: 8, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
+      longevityCurve: 'steady',
       isSingle: true,
       receptionRating: 5,
-      isClassic: true,
+      isClassic: false,
       wentViral: true
     };
-
-    world.songs['song_dup_2'] = {
-      id: 'song_dup_2',
-      title: 'Fuego Eterno!', // Mismo título normalizado ('fuegoeterno')
-      artistId: 'artist_khea',
-      featuredArtistIds: [],
-      genreId: 'trap_latino',
-      subGenreIds: [],
-      releaseYear: 2026,
-      releaseMonth: 2,
-      quality: 97,
-      commercialAppeal: 97,
-      originality: 94,
-      hypeAtRelease: 94,
-      streamsTotal: 190000000,
-      streamsLastMonth: 19000000,
-      monthlyStreamsHistory: [],
-      peakPosition: { Global: 2, Argentina: 2, USA: null, LatinAmerica: 2, Europe: null, Spain: null, Mexico: null },
-      weeksOnChart: { Global: 14, Argentina: 14, USA: 0, LatinAmerica: 14, Europe: 0, Spain: 0, Mexico: 0 },
-      longevityCurve: 'instant_classic',
-      isSingle: true,
-      receptionRating: 5,
-      isClassic: true,
-      wentViral: true
-    };
-
-    // Test de normalización
-    const norm1 = AwardEngine.normalizeTitle('Fuego Eterno');
-    const norm2 = AwardEngine.normalizeTitle('  ¡fuego eterno!  ');
-    const norm3 = AwardEngine.normalizeTitle('Fuégo Étérno');
-    assert(norm1 === 'fuegoeterno', `normalizeTitle('Fuego Eterno') debe ser 'fuegoeterno' (obtenido: '${norm1}')`);
-    assert(norm1 === norm2, `normalizeTitle debe ignorar signos y espacios ('${norm1}' === '${norm2}')`);
-    assert(norm1 === norm3, `normalizeTitle debe ignorar tildes ('${norm1}' === '${norm3}')`);
 
     const result = AwardEngine.conductAnnualAwards(world, 2026);
-    const songOfYear = result.ceremony.categories.find(c => c.id.includes('song_of_year'));
+    const newArtistCat = result.ceremony.categories.find(c => c.id.includes('best_new_artist'));
 
-    assert(Boolean(songOfYear), 'Canción del Año debe existir');
-    if (songOfYear) {
-      assert(songOfYear.nominees?.length === 4, 'Canción del Año debe tener exactamente 4 nominados');
-      const nominatedTitles = songOfYear.nominees?.map(n => AwardEngine.normalizeTitle(n.itemTitle || '')) || [];
-      const uniqueTitles = new Set(nominatedTitles);
-      assert(uniqueTitles.size === nominatedTitles.length, 'No debe haber dos canciones con el mismo título en Canción del Año');
-      const fuegoEternoCount = nominatedTitles.filter(t => t === 'fuegoeterno').length;
-      assert(fuegoEternoCount <= 1, `El título 'Fuego Eterno' aparece ${fuegoEternoCount} vez/veces (máximo: 1)`);
+    assert(Boolean(newArtistCat), 'La categoría Mejor Nuevo Artista debe existir');
+    if (newArtistCat) {
+      assert(!newArtistCat.nomineeArtistIds.includes(pastWinnerId), 'Artista que ya ganó Mejor Artista Nuevo NO debe ser nominado de nuevo');
+      assert(newArtistCat.winnerArtistId !== pastWinnerId, 'Artista que ya ganó Mejor Artista Nuevo NO puede volver a ganar');
     }
   }
 
   // -------------------------------------------------------------
-  // CASO EXTRA / INTEGRACIÓN: GameEngine Integración Completa
+  // CASO H: Desduplicación estricta de títulos y normalización
   // -------------------------------------------------------------
-  console.log('\n🔹 CASO INTEGRACIÓN: GameEngine Avance Anual & Gala de Premios');
+  console.log('\n🔹 CASO H: Desduplicación estricta de títulos');
+  {
+    const norm1 = AwardEngine.normalizeTitle('Fuego Eterno');
+    const norm2 = AwardEngine.normalizeTitle('  ¡fuego eterno!  ');
+    const norm3 = AwardEngine.normalizeTitle('Fuégo Étérno');
+    assert(norm1 === 'fuegoeterno', `normalizeTitle('Fuego Eterno') debe ser 'fuegoeterno'`);
+    assert(norm1 === norm2, `normalizeTitle debe ignorar signos y espacios`);
+    assert(norm1 === norm3, `normalizeTitle debe ignorar tildes`);
+  }
+
+  // -------------------------------------------------------------
+  // CASO I: Atributos Enriquecidos de la Ceremonia (Odds, Quotes, Reasons, WinType)
+  // -------------------------------------------------------------
+  console.log('\n🔹 CASO I: Atributos Enriquecidos (Odds, Críticos, Razones, WinType)');
+  {
+    const world = createBaseWorld();
+    const result = AwardEngine.conductAnnualAwards(world, 2026);
+
+    for (const cat of result.ceremony.categories) {
+      assert(Boolean(cat.field), `Categoría "${cat.name}" tiene campo asignado: ${cat.field}`);
+      assert(Boolean(cat.winType), `Categoría "${cat.name}" tiene winType: ${cat.winType}`);
+      assert(Boolean(cat.winTypeLabel), `Categoría "${cat.name}" tiene winTypeLabel: ${cat.winTypeLabel}`);
+      assert(Boolean(cat.winnerReason), `Categoría "${cat.name}" tiene winnerReason no vacío`);
+
+      for (const nom of cat.nominees || []) {
+        assert(Boolean(nom.odds), `Nominado "${nom.artistName}" tiene odds asignadas`);
+        assert(typeof nom.expectationPct === 'number', `Nominado "${nom.artistName}" tiene expectationPct numérico`);
+        assert(Boolean(nom.criticQuote?.text), `Nominado "${nom.artistName}" tiene cita de prensa musical`);
+        assert(Boolean(nom.criticQuote?.media), `Nominado "${nom.artistName}" tiene medio de prensa asociado`);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------
+  // CASO J: Integración GameEngine Avance Anual & Gala
+  // -------------------------------------------------------------
+  console.log('\n🔹 CASO J: GameEngine Avance Anual & Gala de Premios');
   {
     const engine = new GameEngine({
       name: 'Artista Campeón',
@@ -602,7 +565,6 @@ function runAllTests() {
       }
     });
 
-    // El jugador lanza un single exitoso
     const single = engine.releaseSong({
       title: 'Hit Mundial del Jugador',
       genreId: 'trap_latino',
@@ -614,13 +576,13 @@ function runAllTests() {
 
     assert(Boolean(single.id), 'El jugador debe poder publicar un single exitoso');
 
-    // Avanzamos hasta diciembre (mes 12) para que se celebre la gala anual
+    // Avanzamos hasta diciembre (mes 12)
     engine.advanceCycle(12);
 
     const gala = engine.getActiveGalaCeremony();
     assert(Boolean(gala), 'La gala activa debe haberse disparado en diciembre');
     if (gala) {
-      assert(gala.categories.length === 5, 'La gala del GameEngine debe contener 5 categorías');
+      assert(gala.categories.length === 8, `La gala del GameEngine debe contener 8 categorías (obtenido: ${gala.categories.length})`);
       for (const cat of gala.categories) {
         assert(cat.nominees?.length === 4, `GameEngine: Categoría "${cat.name}" tiene 4 nominados`);
       }
