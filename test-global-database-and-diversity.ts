@@ -329,6 +329,8 @@ export function runGlobalDatabaseAndDiversityTests(): boolean {
       weeksOnChart: { Global: 4, Argentina: 4, LatinAmerica: 4, USA: 0, Europe: 0, Spain: 4, Mexico: 4, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
       longevityCurve: 'instant_classic',
       isSingle: true,
+      isClassic: false,
+      wentViral: false,
       receptionRating: 95
     };
 
@@ -352,6 +354,8 @@ export function runGlobalDatabaseAndDiversityTests(): boolean {
       weeksOnChart: { Global: 4, Argentina: 0, LatinAmerica: 0, USA: 4, Europe: 4, Spain: 0, Mexico: 0, UK: 4, Brazil: 0, Asia: 0, Africa: 4 },
       longevityCurve: 'instant_classic',
       isSingle: true,
+      isClassic: false,
+      wentViral: false,
       receptionRating: 96
     };
 
@@ -375,6 +379,8 @@ export function runGlobalDatabaseAndDiversityTests(): boolean {
       weeksOnChart: { Global: 4, Argentina: 4, LatinAmerica: 4, USA: 4, Europe: 4, Spain: 4, Mexico: 4, UK: 4, Brazil: 0, Asia: 0, Africa: 0 },
       longevityCurve: 'instant_classic',
       isSingle: true,
+      isClassic: false,
+      wentViral: false,
       receptionRating: 98
     };
 
@@ -398,6 +404,8 @@ export function runGlobalDatabaseAndDiversityTests(): boolean {
       weeksOnChart: { Global: 4, Argentina: 0, LatinAmerica: 0, USA: 4, Europe: 4, Spain: 0, Mexico: 0, UK: 4, Brazil: 0, Asia: 4, Africa: 0 },
       longevityCurve: 'instant_classic',
       isSingle: true,
+      isClassic: false,
+      wentViral: false,
       receptionRating: 99
     };
 

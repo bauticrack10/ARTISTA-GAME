@@ -149,7 +149,7 @@ export class ChartEngine {
 
         // Initialize peakPosition dictionary if missing
         if (!item.song.peakPosition) {
-          item.song.peakPosition = { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null };
+          item.song.peakPosition = { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null };
         }
 
         // Update song peak position if current rank is better or unrecorded
@@ -160,7 +160,7 @@ export class ChartEngine {
 
         // Initialize and update weeks on chart
         if (!item.song.weeksOnChart) {
-          item.song.weeksOnChart = { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 };
+          item.song.weeksOnChart = { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 };
         }
         item.song.weeksOnChart[region] = currentWeeks;
 

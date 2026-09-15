@@ -247,8 +247,8 @@ export class WorldSimulation {
               streamsTotal: 0,
               streamsLastMonth: 0,
               monthlyStreamsHistory: [],
-              peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-              weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+              peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+              weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
               longevityCurve: trackPerf.longevityCurve,
               isSingle: i === 0, // First track is lead single
               albumId,
@@ -284,7 +284,7 @@ export class WorldSimulation {
             firstWeekSales: Math.floor(artist.stats.popularity * 1200 + Math.random() * 5000),
             criticalScore: Math.floor(artist.personality.skill * 0.5 + artist.personality.originality * 0.3 + (Math.random() * 20)),
             commercialScore: Math.floor(artist.personality.commercialAppeal * 0.6 + artist.stats.popularity * 0.4),
-            peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+            peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
             awards: [],
             coverGradient: gradients[Object.keys(world.albums).length % gradients.length]
           };
@@ -324,8 +324,8 @@ export class WorldSimulation {
             streamsTotal: 0,
             streamsLastMonth: 0,
             monthlyStreamsHistory: [],
-            peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-            weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+            peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+            weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
             longevityCurve: trackPerf.longevityCurve,
             isSingle: true,
             receptionRating: Math.floor(trackPerf.performanceScore / 20),

@@ -206,9 +206,9 @@ export interface Artist {
   retirementYear?: number;
   lastReleaseYear?: number;
   lastReleaseMonth?: number;
-  historicalNotes: string[];
-  generationIndex: number;
-  influences: string[]; // artist IDs of inspirations
+  historicalNotes?: string[];
+  generationIndex?: number;
+  influences?: string[]; // artist IDs of inspirations
   lifestyleUpgrades?: string[]; // purchased lifestyle item IDs
   financialLedger?: FinancialTransaction[];
   isProdigy?: boolean; // 1 in 100,000 rare prodigy trait
@@ -304,9 +304,10 @@ export type MusicVideoDirectorTier =
   | 'Director de Élite Mundial';
 
 export interface MusicVideoData {
-  concept: string;
+  concept?: string;
   budget: number;
-  directorTier: string;
+  directorTier?: string;
+  director?: string;
   views: number;
   releaseYear?: number;
   releaseMonth?: number;

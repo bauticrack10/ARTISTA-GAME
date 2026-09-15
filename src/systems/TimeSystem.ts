@@ -73,6 +73,12 @@ export class TimeSystem {
     };
   }
 
+  static advanceWorldDate(world: { currentYear: number; currentMonth: number }): void {
+    const next = this.advanceTime(world.currentYear, world.currentMonth);
+    world.currentYear = next.year;
+    world.currentMonth = next.month;
+  }
+
   static advanceMonths(
     currentYear: number,
     currentMonth: number,

@@ -51,6 +51,16 @@ import { IndustryEngine } from '../systems/IndustryEngine';
 import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
 import { DecisionEngine, DecisionActionType, DecisionExecutionResult, SemesterActivityData } from '../systems/DecisionEngine';
 
+const createDefaultPeakPosition = (): Record<MusicRegion, number | null> => ({
+  Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null,
+  Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null
+});
+
+const createDefaultWeeksOnChart = (): Record<MusicRegion, number> => ({
+  Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0,
+  Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0
+});
+
 export class GameEngine {
   private world: WorldState;
   private playerId: string;
@@ -877,8 +887,8 @@ export class GameEngine {
       streamsTotal: 0,
       streamsLastMonth: 0,
       monthlyStreamsHistory: [],
-      peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-      weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+      peakPosition: createDefaultPeakPosition(),
+      weeksOnChart: createDefaultWeeksOnChart(),
       longevityCurve: chosenLongevity,
       isSingle: true,
       receptionRating: Math.floor(perfEval.performanceScore / 20),
@@ -1062,8 +1072,8 @@ export class GameEngine {
         streamsTotal: 0,
         streamsLastMonth: 0,
         monthlyStreamsHistory: [],
-        peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-        weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+        peakPosition: createDefaultPeakPosition(),
+        weeksOnChart: createDefaultWeeksOnChart(),
         longevityCurve: trackPerf.longevityCurve,
         isSingle: false,
         albumId,
@@ -1115,7 +1125,7 @@ export class GameEngine {
       marketingBudget: params.budgetMarketing,
       producerId: params.producerId,
       singlesIncludedCount: includedIds.length,
-      peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+      peakChartPosition: createDefaultPeakPosition(),
       awards: [],
       coverGradient: gradients[Object.keys(this.world.albums).length % gradients.length]
     };
@@ -1391,8 +1401,8 @@ export class GameEngine {
         streamsTotal: 0,
         streamsLastMonth: 0,
         monthlyStreamsHistory: [],
-        peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-        weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+        peakPosition: createDefaultPeakPosition(),
+        weeksOnChart: createDefaultWeeksOnChart(),
         longevityCurve: params.longevityCurve || trackPerf.longevityCurve,
         isSingle: params.type === 'single_feat',
         receptionRating: Math.floor(trackPerf.performanceScore / 20),
@@ -1477,8 +1487,8 @@ export class GameEngine {
           streamsTotal: 0,
           streamsLastMonth: 0,
           monthlyStreamsHistory: [],
-          peakPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
-          weeksOnChart: { Global: 0, Argentina: 0, USA: 0, LatinAmerica: 0, Europe: 0, Spain: 0, Mexico: 0 },
+          peakPosition: createDefaultPeakPosition(),
+          weeksOnChart: createDefaultWeeksOnChart(),
           longevityCurve: trackPerf.longevityCurve,
           isSingle: idx === 0,
           albumId,
@@ -1522,7 +1532,7 @@ export class GameEngine {
         marketingBudget: params.budgetMarketing,
         producerId: params.producerId,
         singlesIncludedCount: 0,
-        peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null },
+        peakChartPosition: createDefaultPeakPosition(),
         awards: [],
         coverGradient: 'from-violet-600 via-fuchsia-600 to-indigo-950'
       };
