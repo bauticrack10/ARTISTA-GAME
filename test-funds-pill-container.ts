@@ -36,7 +36,7 @@ function runFundsPillTests() {
   // --- TEST 3: FinancialLedgerModal.tsx ---
   console.log('\n--- TEST 3: Saldo Disponible en FinancialLedgerModal.tsx ---');
   const ledger = fs.readFileSync('./src/components/FinancialLedgerModal.tsx', 'utf8');
-  assert(ledger.includes('font-bold text-[#F8FAFC] font-mono tracking-tight mt-0.5 block whitespace-nowrap'), 'FinancialLedgerModal usa font-mono font-bold whitespace-nowrap');
+  assert(ledger.includes('font-bold text-fg font-mono tracking-tight mt-0.5 block whitespace-nowrap'), 'FinancialLedgerModal usa font-mono font-bold whitespace-nowrap');
 
   console.log('\n================================================================');
   console.log(`🎉 TODOS LOS CASOS DE PRUEBA PASARON (${passed}/${total})`);

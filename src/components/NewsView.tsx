@@ -18,23 +18,23 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
 
   return (
     <div
-      className="space-y-6 pb-12 text-[#F8FAFC]"
+      className="space-y-6 pb-12 text-fg"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* Header */}
-      <div className="bg-[#16181F] p-6 rounded-[16px] border border-[#2A2E3D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
+      <div className="bg-surface p-6 rounded-2xl border border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
         <div>
-          <h1 className="text-2xl font-semibold text-[#F8FAFC] tracking-[-0.9px] flex items-center gap-2">
-            <Newspaper className="w-5 h-5 text-[#8B5CF6]" />
+          <h1 className="text-2xl font-semibold text-fg tracking-[-0.9px] flex items-center gap-2">
+            <Newspaper className="w-5 h-5 text-primary" />
             Prensa & Noticias Musicales
           </h1>
-          <p className="text-xs text-[#94A3B8] mt-1">
+          <p className="text-xs text-fg-muted mt-1">
             Cobertura periodística en tiempo real de lanzamientos, récords en los charts, polémicas y premiaciones internacionales.
           </p>
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1 overflow-x-auto bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D] text-xs max-w-full">
+        <div className="flex items-center gap-1 overflow-x-auto scroll-fade-x bg-canvas p-1 rounded-lg border border-line text-xs max-w-full">
           {[
             { id: 'all', label: 'Todas' },
             { id: 'release', label: 'Lanzamientos' },
@@ -46,10 +46,10 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`px-3 py-1.5 rounded-[6px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-md font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 filter === f.id
                   ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                  : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                  : 'text-fg-muted hover:text-fg'
               }`}
             >
               {f.label}
@@ -61,32 +61,32 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
       {/* News Feed Cards */}
       <div className="space-y-3">
         {filteredNews.length === 0 ? (
-          <div className="text-center py-12 text-[#94A3B8] text-xs bg-[#16181F] border border-[#2A2E3D] rounded-[12px]">
+          <div className="text-center py-12 text-fg-muted text-xs bg-surface border border-line rounded-xl">
             No hay noticias en esta categoría.
           </div>
         ) : (
           filteredNews.map(item => (
             <div
               key={item.id}
-              className="bg-[#16181F] border border-[#2A2E3D] p-5 rounded-[12px] space-y-2 transition-colors hover:border-[#8B5CF6]/40 shadow-sm"
+              className="bg-surface border border-line p-5 rounded-xl space-y-2 transition-colors hover:border-primary/40 shadow-sm"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC]">
+                <span className="text-2xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm border border-line bg-canvas text-fg">
                   {item.category}
                 </span>
                 <span 
-                  className="text-xs font-mono text-[#94A3B8]"
+                  className="text-xs font-mono text-fg-muted"
                   title={TimeSystem.getCalendarLabel(item.month, item.year)}
                 >
                   Año {item.year} • {TimeSystem.getMonthName(item.month)}
                 </span>
               </div>
 
-              <h3 className="text-sm font-semibold text-[#F8FAFC]">
+              <h3 className="text-sm font-semibold text-fg">
                 {item.headline}
               </h3>
 
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
+              <p className="text-xs text-fg-muted leading-relaxed">
                 {item.body}
               </p>
             </div>

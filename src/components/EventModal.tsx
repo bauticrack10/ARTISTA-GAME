@@ -58,13 +58,13 @@ export const EventModal: React.FC<EventModalProps> = ({
       className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-5 py-6 sm:py-10 overflow-y-auto animate-fade-in"
     >
       <div
-        className={`bg-[#16181F] border ${
+        className={`bg-surface border ${
           importanceLevel === 5 || isCrisis
             ? 'border-rose-500/50 shadow-[0_0_35px_rgba(244,63,94,0.25)]'
             : isBloqueoCreativo
             ? 'border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.2)]'
-            : 'border-[#2A2E3D] shadow-2xl'
-        } max-w-2xl w-full rounded-[18px] p-5 sm:p-8 space-y-6 text-[#F8FAFC] relative overflow-hidden my-auto`}
+            : 'border-line shadow-2xl'
+        } max-w-2xl w-full rounded-panel p-5 sm:p-8 space-y-6 text-fg relative overflow-hidden my-auto`}
         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
       >
         {/* Subtle Ambient Radial Glow */}
@@ -73,32 +73,32 @@ export const EventModal: React.FC<EventModalProps> = ({
             importanceLevel === 5 || isCrisis ? 'from-rose-500/25 via-transparent to-transparent' : categoryMeta.glow
           } rounded-full blur-3xl pointer-events-none opacity-40`}
         />
-        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-[#EC4899]/10 rounded-full blur-3xl pointer-events-none opacity-30" />
+        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-accent/10 rounded-full blur-3xl pointer-events-none opacity-30" />
 
         {/* Top Header: Category, Rarity, Badges & Contextual Temporality */}
-        <div className="space-y-4 relative z-10 border-b border-[#2A2E3D] pb-5">
+        <div className="space-y-4 relative z-10 border-b border-line pb-5">
           <div className="flex flex-wrap items-center justify-between gap-2.5">
             {/* Badges & Categories */}
             <div className="flex items-center gap-2 flex-wrap">
               {/* Contextual Temporality Pill (Fin del Año X) */}
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${
+                className={`text-2xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${
                   temporality.isYearEnd
                     ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                    : 'bg-[#0B0C10] text-[#94A3B8] border-[#2A2E3D]'
+                    : 'bg-canvas text-fg-muted border-line'
                 }`}
               >
                 {temporality.isYearEnd ? (
                   <Clock className="w-3 h-3 text-amber-400" />
                 ) : (
-                  <Calendar className="w-3 h-3 text-[#94A3B8]" />
+                  <Calendar className="w-3 h-3 text-fg-muted" />
                 )}
                 {temporality.badge}
               </span>
 
               {/* Importance Level Badge (1-5) */}
               <span
-                className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${importanceMeta.badgeClass}`}
+                className={`text-2xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${importanceMeta.badgeClass}`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${importanceMeta.dotColor} ${importanceMeta.isPulse ? 'animate-ping' : ''}`} />
                 {importanceMeta.badgeText}
@@ -106,7 +106,7 @@ export const EventModal: React.FC<EventModalProps> = ({
 
               {/* BLOQUEO CREATIVO / CRISIS Badges (if distinct from main importance badge) */}
               {isBloqueoCreativo && (
-                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border border-amber-500/60 bg-amber-500/20 text-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.3)] animate-pulse flex items-center gap-1.5">
+                <span className="text-2xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border border-amber-500/60 bg-amber-500/20 text-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.3)] animate-pulse flex items-center gap-1.5">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
                   BLOQUEO CREATIVO
                 </span>
@@ -116,14 +116,14 @@ export const EventModal: React.FC<EventModalProps> = ({
               {!isBloqueoCreativo && (
                 <>
                   <span
-                    className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border flex items-center gap-1.5 ${categoryMeta.badgeColor}`}
+                    className={`text-2xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border flex items-center gap-1.5 ${categoryMeta.badgeColor}`}
                   >
                     <CategoryIcon className="w-3.5 h-3.5" />
                     {categoryMeta.label}
                   </span>
 
                   <span
-                    className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${rarityMeta.badgeClass}`}
+                    className={`text-2xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${rarityMeta.badgeClass}`}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${rarityMeta.dotColor} animate-pulse`} />
                     {rarityMeta.label}
@@ -133,17 +133,17 @@ export const EventModal: React.FC<EventModalProps> = ({
             </div>
 
             {/* Artist Mini Status Pill */}
-            <div className="flex items-center gap-3 bg-[#0B0C10] px-3 py-1 rounded-full border border-[#2A2E3D] text-xs font-mono text-[#F8FAFC]">
+            <div className="flex items-center gap-3 bg-canvas px-3 py-1 rounded-full border border-line text-xs font-mono text-fg">
               <span className="flex items-center gap-1 text-emerald-400">
                 <DollarSign className="w-3.5 h-3.5" />
                 ${player?.stats?.funds != null ? player.stats.funds.toLocaleString() : '0'}
               </span>
-              <span className="text-[#2A2E3D]">|</span>
+              <span className="text-line">|</span>
               <span className="flex items-center gap-1 text-amber-400">
                 <Zap className="w-3.5 h-3.5" />
                 {player?.stats?.energy ?? 100}%
               </span>
-              <span className="text-[#2A2E3D]">|</span>
+              <span className="text-line">|</span>
               <span className="flex items-center gap-1 text-orange-400">
                 <Flame className="w-3.5 h-3.5" />
                 {player?.stats?.hype ?? 0}
@@ -159,37 +159,37 @@ export const EventModal: React.FC<EventModalProps> = ({
                 avatarColor={player?.avatarColor}
                 avatarIcon={player?.avatarIcon}
                 size="lg"
-                rounded="rounded-[12px]"
-                className="w-14 h-14 border-2 border-[#2A2E3D] shadow-md"
+                rounded="rounded-xl"
+                className="w-14 h-14 border-2 border-line shadow-md"
               />
-              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-[#16181F] border border-[#2A2E3D] text-amber-300">
+              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-surface border border-line text-amber-300">
                 <CategoryIcon className="w-3 h-3" />
               </div>
             </div>
 
             <div className="space-y-1 flex-1 min-w-0">
-              <span className="text-[11px] text-[#94A3B8] uppercase font-mono tracking-wider block">
+              <span className="text-xs text-fg-muted uppercase font-mono tracking-wider block">
                 {player?.name || 'Artista'} • {temporality.badge}
               </span>
-              <h2 id="event-dialog-title" className="text-xl sm:text-2xl font-bold tracking-[-0.8px] text-[#F8FAFC] leading-tight pt-0.5">
+              <h2 id="event-dialog-title" className="text-xl sm:text-2xl font-bold tracking-[-0.8px] text-fg leading-tight pt-0.5">
                 {event?.title || 'Evento'}
               </h2>
             </div>
           </div>
 
           {/* Narrative Story Description */}
-          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-4 text-sm text-[#94A3B8] leading-relaxed relative overflow-hidden">
+          <div className="bg-canvas border border-line rounded-xl p-4 text-sm text-fg-muted leading-relaxed relative overflow-hidden">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#8B5CF6] via-[#EC4899] to-[#06B6D4]" />
-            <p className="pl-2 font-normal text-[#F8FAFC]">
+            <p className="pl-2 font-normal text-fg">
               {description}
             </p>
           </div>
 
           {/* Affected Systems Bar with Lucide Icons */}
           {affectedSystems.length > 0 && (
-            <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-3 px-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-              <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-[#94A3B8] shrink-0">
-                <Zap className="w-3.5 h-3.5 text-[#8B5CF6]" />
+            <div className="bg-canvas border border-line rounded-xl p-3 px-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-fg-muted shrink-0">
+                <Zap className="w-3.5 h-3.5 text-primary" />
                 <span>Sistemas Afectados:</span>
               </div>
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -198,7 +198,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                   return (
                     <span
                       key={sys.id}
-                      className={`text-[10px] font-mono font-semibold px-2.5 py-0.5 rounded-[5px] border flex items-center gap-1.5 ${sys.badgeClass}`}
+                      className={`text-2xs font-mono font-semibold px-2.5 py-0.5 rounded-sm border flex items-center gap-1.5 ${sys.badgeClass}`}
                     >
                       <SysIcon className={`w-3 h-3 ${sys.iconColor} shrink-0`} />
                       <span>{sys.name}</span>
@@ -213,11 +213,11 @@ export const EventModal: React.FC<EventModalProps> = ({
         {/* Choices Section */}
         <div className="space-y-3.5 relative z-10">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1.5">
-              <Swords className="w-3.5 h-3.5 text-[#8B5CF6]" />
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider flex items-center gap-1.5">
+              <Swords className="w-3.5 h-3.5 text-primary" />
               Selecciona tu respuesta o postura:
             </label>
-            <span className="text-[11px] font-mono text-[#64748B]">
+            <span className="text-xs font-mono text-fg-subtle">
               {choices.length} opciones disponibles
             </span>
           </div>
@@ -231,17 +231,17 @@ export const EventModal: React.FC<EventModalProps> = ({
               let indicatorGradient = 'from-[#8B5CF6] to-[#EC4899]';
 
               if (!isEligible) {
-                cardClass = 'bg-[#0B0C10]/60 border-rose-500/20 border-l-4 border-l-rose-500/50 opacity-60 cursor-not-allowed';
+                cardClass = 'bg-canvas/60 border-rose-500/20 border-l-4 border-l-rose-500/50 opacity-60 cursor-not-allowed';
               } else if (hasRisk) {
                 if (riskSeverity === 'danger') {
-                  cardClass = 'bg-[#0B0C10] hover:bg-[#16181F] border-rose-500/40 hover:border-rose-400 active:scale-[0.99] cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(244,63,94,0.2)]';
+                  cardClass = 'bg-canvas hover:bg-surface border-rose-500/40 hover:border-rose-400 active:scale-[0.99] cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(244,63,94,0.2)]';
                   indicatorGradient = 'from-rose-500 to-rose-700';
                 } else {
-                  cardClass = 'bg-[#0B0C10] hover:bg-[#16181F] border-amber-500/40 hover:border-amber-400 active:scale-[0.99] cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]';
+                  cardClass = 'bg-canvas hover:bg-surface border-amber-500/40 hover:border-amber-400 active:scale-[0.99] cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]';
                   indicatorGradient = 'from-amber-400 to-orange-500';
                 }
               } else {
-                cardClass = 'bg-[#0B0C10] hover:bg-[#16181F] border-[#2A2E3D] hover:border-[#8B5CF6]/70 active:scale-[0.99] cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(139,92,246,0.2)]';
+                cardClass = 'bg-canvas hover:bg-surface border-line hover:border-primary/70 active:scale-[0.99] cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(139,92,246,0.2)]';
               }
 
               return (
@@ -249,7 +249,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                   key={choice.id || idx}
                   disabled={!isEligible}
                   onClick={() => handleSelectChoice(idx)}
-                  className={`w-full text-left p-4 rounded-[12px] border transition-all flex items-start justify-between gap-4 group relative overflow-hidden ${cardClass}`}
+                  className={`w-full text-left p-4 rounded-xl border transition-all flex items-start justify-between gap-4 group relative overflow-hidden ${cardClass}`}
                 >
                   {/* Left Indicator Accent on Hover */}
                   {isEligible && (
@@ -264,16 +264,16 @@ export const EventModal: React.FC<EventModalProps> = ({
                           ? 'text-rose-400/80'
                           : hasRisk
                           ? riskSeverity === 'danger' ? 'text-rose-400 group-hover:text-rose-300' : 'text-amber-400 group-hover:text-amber-300'
-                          : 'text-[#64748B] group-hover:text-[#8B5CF6]'
+                          : 'text-fg-subtle group-hover:text-primary'
                       } transition-colors`}>
                         [0{idx + 1}]
                       </span>
                       <h4 className={`text-sm sm:text-base font-semibold leading-snug ${
                         !isEligible
-                          ? 'text-[#94A3B8]'
+                          ? 'text-fg-muted'
                           : hasRisk
-                          ? 'text-[#F8FAFC]'
-                          : 'text-[#F8FAFC] group-hover:text-[#8B5CF6]'
+                          ? 'text-fg'
+                          : 'text-fg group-hover:text-primary'
                       } transition-colors`}>
                         {choice.cleanText}
                       </h4>
@@ -283,7 +283,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                     {hasRisk && riskWarning && isEligible && (
                       <div className="pt-0.5">
                         <span
-                          className={`inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border ${
+                          className={`inline-flex items-center gap-1.5 text-2xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border ${
                             riskSeverity === 'danger'
                               ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_10px_rgba(244,63,94,0.2)]'
                               : 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
@@ -301,7 +301,7 @@ export const EventModal: React.FC<EventModalProps> = ({
 
                     {/* Qualitative Narrative Consequence (Cleaned, without duplicate raw stat numbers) */}
                     {cleanedNarrative && (
-                      <p className="text-xs text-[#94A3B8] leading-relaxed font-normal">
+                      <p className="text-xs text-fg-muted leading-relaxed font-normal">
                         {cleanedNarrative}
                       </p>
                     )}
@@ -317,7 +317,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                               : chip.type === 'listeners'
                               ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
                               : chip.type === 'streams'
-                              ? 'bg-cyan-500/15 text-[#06B6D4] border-[#06B6D4]/30'
+                              ? 'bg-cyan-500/15 text-info border-info/30'
                               : chip.type === 'energy'
                               ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
                               : chip.type === 'hype'
@@ -327,15 +327,15 @@ export const EventModal: React.FC<EventModalProps> = ({
                               : chip.type === 'negative'
                               ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
                               : chip.type === 'fans'
-                              ? 'bg-[#8B5CF6]/15 text-[#C084FC] border-[#8B5CF6]/30'
+                              ? 'bg-primary/15 text-primary-soft border-primary/30'
                               : chip.type === 'reputation'
-                              ? 'bg-[#8B5CF6]/15 text-[#C084FC] border-[#8B5CF6]/30'
-                              : 'bg-white/10 text-[#F8FAFC] border-white/15';
+                              ? 'bg-primary/15 text-primary-soft border-primary/30'
+                              : 'bg-white/10 text-fg border-white/15';
 
                           return (
                             <span
                               key={chip.key}
-                              className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-[4px] border flex items-center gap-1 ${chipClass}`}
+                              className={`text-2xs font-mono font-semibold px-2 py-0.5 rounded-sm border flex items-center gap-1 ${chipClass}`}
                             >
                               <ChipIcon className="w-2.5 h-2.5 shrink-0" />
                               <span>{chip.text}</span>
@@ -349,7 +349,7 @@ export const EventModal: React.FC<EventModalProps> = ({
                     {!isEligible && (
                       <div className="space-y-1 pt-1">
                         {unmetReasons.map((reason, rIdx) => (
-                          <div key={rIdx} className="inline-flex items-center gap-1.5 bg-rose-950/40 border border-rose-500/30 text-rose-300 px-2.5 py-1 rounded-[6px] text-[11px] font-mono">
+                          <div key={rIdx} className="inline-flex items-center gap-1.5 bg-rose-950/40 border border-rose-500/30 text-rose-300 px-2.5 py-1 rounded-md text-xs font-mono">
                             <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                             <span>{reason}</span>
                           </div>
@@ -360,7 +360,7 @@ export const EventModal: React.FC<EventModalProps> = ({
 
                   {/* Right Action Button Icon / Lock */}
                   <div
-                    className={`p-2.5 rounded-[8px] shrink-0 transition-all mt-0.5 ${
+                    className={`p-2.5 rounded-lg shrink-0 transition-all mt-0.5 ${
                       !isEligible
                         ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                         : hasRisk

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { activateOnKey } from '../utils/a11y';
 import { WorldState, Artist, AwardCeremony } from '../types';
 import {
   Award,
@@ -22,9 +23,10 @@ interface AwardsViewProps {
   world: WorldState;
   player: Artist;
   onOpenGala?: (ceremony: AwardCeremony) => void;
+  onNavigate?: (tab: string) => void;
 }
 
-export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGala }) => {
+export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGala, onNavigate }) => {
   const ceremonies = world?.awardsHistory || [];
   const [expandedYear, setExpandedYear] = useState<number | null>(
     ceremonies.length > 0 ? ceremonies[0].year : null
@@ -51,7 +53,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
     const artistMap = new Map<string, { name: string; wins: number; country: string; careerStage: string; isPlayer: boolean }>();
 
     // Seed from all artists' actual awardsWon
-    for (const art of Object.values(world?.artists || {})) {
+    for (const art of Object.values(world?.artists || {}) as Artist[]) {
       if (art.awardsWon && art.awardsWon.length > 0) {
         artistMap.set(art.id, {
           name: art.name,
@@ -71,35 +73,35 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
   return (
     <div
-      className="space-y-6 pb-12 text-[#F8FAFC]"
+      className="space-y-6 pb-12 text-fg"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* Header */}
-      <div className="bg-[#16181F] p-6 rounded-[16px] border border-[#2A2E3D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
+      <div className="bg-surface p-6 rounded-2xl border border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-[4px]">
+            <span className="text-2xs uppercase font-bold tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-sm">
               Academia Musical
             </span>
-            <span className="text-xs text-[#94A3B8]">Premios Oficiales & Reconocimientos de la Industria</span>
+            <span className="text-xs text-fg-muted">Premios Oficiales & Reconocimientos de la Industria</span>
           </div>
-          <h1 className="text-2xl font-semibold text-[#F8FAFC] tracking-[-0.9px] mt-1 flex items-center gap-2">
+          <h1 className="text-2xl font-semibold text-fg tracking-[-0.9px] mt-1 flex items-center gap-2">
             <Trophy className="w-6 h-6 text-amber-400" />
             Galas de Premiación & Vitrina de Trofeos
           </h1>
-          <p className="text-xs text-[#94A3B8] mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-fg-muted mt-1 max-w-2xl leading-relaxed">
             Cada diciembre la academia de la música evalúa el impacto comercial, trascendencia cultural,
             calidad crítica, composición y sofisticación técnica en las 8 categorías fundamentales inspiradas en los premios más prestigiosos del mundo.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="bg-[#0B0C10] px-4 py-2.5 rounded-[10px] border border-amber-500/30 text-center font-mono shadow-xs">
-            <span className="text-[10px] text-amber-400 block uppercase tracking-wider font-bold">Estatuillas Ganadas</span>
+          <div className="bg-canvas px-4 py-2.5 rounded-control border border-amber-500/30 text-center font-mono shadow-xs">
+            <span className="text-2xs text-amber-400 block uppercase tracking-wider font-bold">Estatuillas Ganadas</span>
             <span className="text-2xl font-bold text-amber-300">{player.awardsWon.length}</span>
           </div>
-          <div className="bg-[#0B0C10] px-4 py-2.5 rounded-[10px] border border-purple-500/30 text-center font-mono shadow-xs">
-            <span className="text-[10px] text-purple-400 block uppercase tracking-wider font-bold">Puntaje Legado</span>
+          <div className="bg-canvas px-4 py-2.5 rounded-control border border-purple-500/30 text-center font-mono shadow-xs">
+            <span className="text-2xs text-purple-400 block uppercase tracking-wider font-bold">Puntaje Legado</span>
             <span className="text-2xl font-bold text-purple-300">{player.legacyScore}/100</span>
           </div>
         </div>
@@ -107,15 +109,15 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
       {/* Hall of Fame: All-Time Leaderboard */}
       {hallOfFame.length > 0 && (
-        <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-6 space-y-4 shadow-md">
-          <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
+        <div className="bg-surface border border-line rounded-card p-6 space-y-4 shadow-md">
+          <div className="flex items-center justify-between border-b border-line pb-3">
             <div className="flex items-center gap-2">
               <Crown className="w-4 h-4 text-amber-400" />
-              <h2 className="text-base font-semibold text-[#F8FAFC]">
+              <h2 className="text-base font-semibold text-fg">
                 Pabellón de la Fama (Hall of Fame)
               </h2>
             </div>
-            <span className="text-xs text-[#94A3B8]">
+            <span className="text-xs text-fg-muted">
               Artistas más galardonados en la historia del ecosistema
             </span>
           </div>
@@ -124,10 +126,10 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
             {hallOfFame.map((artist, idx) => (
               <div
                 key={artist.id}
-                className={`p-3.5 rounded-[10px] border flex flex-col justify-between gap-2 text-xs transition-all ${
+                className={`p-3.5 rounded-control border flex flex-col justify-between gap-2 text-xs transition-all ${
                   artist.isPlayer
                     ? 'bg-purple-500/15 border-purple-500/50 shadow-sm ring-1 ring-purple-400'
-                    : 'bg-[#0B0C10] border-[#2A2E3D]'
+                    : 'bg-canvas border-line'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -135,23 +137,23 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                     #{idx + 1}
                   </span>
                   {artist.isPlayer && (
-                    <span className="text-[9px] font-bold bg-purple-500/30 text-purple-200 px-1.5 py-0.5 rounded-[3px]">
+                    <span className="text-2xs font-bold bg-purple-500/30 text-purple-200 px-1.5 py-0.5 rounded-sm">
                       Tú
                     </span>
                   )}
                 </div>
 
                 <div className="min-w-0">
-                  <h3 className="font-bold text-xs text-[#F8FAFC] truncate" title={artist.name}>
+                  <h3 className="font-bold text-xs text-fg truncate" title={artist.name}>
                     {artist.name}
                   </h3>
-                  <p className="text-[10px] text-[#94A3B8] truncate">
+                  <p className="text-2xs text-fg-muted truncate">
                     {artist.country} • {artist.careerStage}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
-                  <span className="text-[#94A3B8]">Estatuillas:</span>
+                <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+                  <span className="text-fg-muted">Estatuillas:</span>
                   <span className="text-amber-300 font-bold flex items-center gap-1">
                     <Trophy className="w-3 h-3 text-amber-400" />
                     {artist.wins}
@@ -164,29 +166,38 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       )}
 
       {/* Trophy Showcase of the Player */}
-      <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-6 space-y-4 shadow-md">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2E3D] pb-3">
-          <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
+      <div className="bg-surface border border-line rounded-card p-6 space-y-4 shadow-md">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line pb-3">
+          <h2 className="text-base font-semibold text-fg flex items-center gap-2">
             <Trophy className="w-4 h-4 text-amber-400" />
             <span>Vitrina Oficial de Trofeos de {player.name}</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono font-normal">
               {player.awardsWon.length}
             </span>
           </h2>
-          <span className="text-xs text-[#94A3B8]">
+          <span className="text-xs text-fg-muted">
             Galardones acumulados mediante mérito, crítica e impacto comercial
           </span>
         </div>
 
         {player.awardsWon.length === 0 ? (
-          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-8 text-center space-y-2">
+          <div className="bg-canvas border border-line rounded-xl p-8 text-center space-y-2">
             <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 mx-auto flex items-center justify-center">
               <Trophy className="w-6 h-6" />
             </div>
-            <h3 className="text-sm font-semibold text-[#F8FAFC]">Vitrina Vacía por Ahora</h3>
-            <p className="text-xs text-[#94A3B8] max-w-md mx-auto leading-relaxed">
-              Aún no has ganado estatuillas en las galas anuales. Lanzá discos aclamados por la crítica, hits mundiales y producciones de primer nivel para competir cada diciembre en igualdad de condiciones con la escena global.
+            <h3 className="text-sm font-semibold text-fg">Vitrina vacía por ahora</h3>
+            <p className="text-xs text-fg-muted max-w-md mx-auto leading-relaxed">
+              Todavía no ganaste estatuillas. Las galas se celebran cada diciembre y premian discos aclamados por la crítica, hits y producciones de primer nivel.
             </p>
+            {onNavigate && (
+              <button
+                onClick={() => onNavigate('studio')}
+                className="tap mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-strong text-white text-xs font-semibold cursor-pointer transition-colors"
+              >
+                <Disc3 className="w-3.5 h-3.5" aria-hidden="true" />
+                Ir al estudio a grabar
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -197,24 +208,24 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
               return (
                 <div
                   key={idx}
-                  className="bg-gradient-to-br from-[#16181F] to-[#1C1F2B] p-4 rounded-[12px] border border-amber-500/30 flex items-start gap-3 hover:border-amber-400/70 transition-all group shadow-xs"
+                  className="bg-gradient-to-br from-[#16181F] to-[#1C1F2B] p-4 rounded-xl border border-amber-500/30 flex items-start gap-3 hover:border-amber-400/70 transition-all group shadow-xs"
                 >
-                  <div className="p-2.5 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 rounded-[8px] shrink-0 shadow-sm">
+                  <div className="p-2.5 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 rounded-lg shrink-0 shadow-sm">
                     <CategoryIcon className="w-4 h-4 text-amber-950 fill-amber-950/20" />
                   </div>
                   <div className="space-y-0.5 min-w-0 flex-1">
-                    <h3 className="font-bold text-xs text-[#F8FAFC] leading-tight truncate">
+                    <h3 className="font-bold text-xs text-fg leading-tight truncate">
                       {awardName}
                     </h3>
-                    <p className="text-[11px] text-[#94A3B8] truncate">
+                    <p className="text-xs text-fg-muted truncate">
                       {structured?.itemTitle ? `Por "${structured.itemTitle}"` : 'Galardón de la Academia Musical'}
                     </p>
                     <div className="pt-1 flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-mono font-bold text-amber-300 bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-[4px]">
+                      <span className="text-2xs font-mono font-bold text-amber-300 bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-sm">
                         +6 Pts Legado
                       </span>
                       {structured?.winType && (
-                        <span className="text-[9px] font-mono text-purple-300 bg-purple-500/20 px-1.5 py-0.5 rounded-[4px]">
+                        <span className="text-2xs font-mono text-purple-300 bg-purple-500/20 px-1.5 py-0.5 rounded-sm">
                           {structured.winType}
                         </span>
                       )}
@@ -228,17 +239,17 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       </div>
 
       {/* History of Past Ceremonies */}
-      <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-6 space-y-6 shadow-md">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2E3D] pb-3">
+      <div className="bg-surface border border-line rounded-card p-6 space-y-6 shadow-md">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
           <div>
-            <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
+            <h2 className="text-base font-semibold text-fg flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
               <span>Historial de Galas Anuales</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] font-mono font-normal">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary-soft font-mono font-normal">
                 {ceremonies.length}
               </span>
             </h2>
-            <p className="text-xs text-[#94A3B8] mt-0.5">
+            <p className="text-xs text-fg-muted mt-0.5">
               Registro histórico oficial de nominaciones y ganadores en cada edición
             </p>
           </div>
@@ -246,10 +257,10 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
           <div className="flex items-center gap-2">
             <button
               onClick={() => setFilterOnlyPlayerWins(!filterOnlyPlayerWins)}
-              className={`px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-colors cursor-pointer border ${
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer border ${
                 filterOnlyPlayerWins
                   ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold border-amber-400 shadow-sm'
-                  : 'bg-[#0B0C10] text-[#94A3B8] border border-[#2A2E3D] hover:text-[#F8FAFC] hover:border-[#8B5CF6]/40'
+                  : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
               }`}
             >
               {filterOnlyPlayerWins ? '✓ Solo Mis Victorias' : 'Filtrar Mis Victorias'}
@@ -258,17 +269,17 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         </div>
 
         {ceremonies.length === 0 ? (
-          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-8 text-center space-y-2">
+          <div className="bg-canvas border border-line rounded-xl p-8 text-center space-y-2">
             <div className="w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 mx-auto flex items-center justify-center">
               <Calendar className="w-6 h-6" />
             </div>
-            <h3 className="text-sm font-semibold text-[#F8FAFC]">Sin Galas Realizadas Aún</h3>
-            <p className="text-xs text-[#94A3B8] max-w-md mx-auto leading-relaxed">
+            <h3 className="text-sm font-semibold text-fg">Sin Galas Realizadas Aún</h3>
+            <p className="text-xs text-fg-muted max-w-md mx-auto leading-relaxed">
               La primera gala de premiaciones se celebrará automáticamente al finalizar el mes 12 del año actual. ¡Avanzá el ciclo temporal para vivir el evento!
             </p>
           </div>
         ) : filteredCeremonies.length === 0 ? (
-          <div className="text-center py-8 text-[#94A3B8] text-xs">
+          <div className="text-center py-8 text-fg-muted text-xs">
             No se encontraron ceremonias que coincidan con el filtro seleccionado.
           </div>
         ) : (
@@ -281,33 +292,36 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
               return (
                 <div
                   key={ceremony.year}
-                  className="bg-[#0B0C10] rounded-[12px] border border-[#2A2E3D] overflow-hidden transition-all shadow-sm"
+                  className="bg-canvas rounded-xl border border-line overflow-hidden transition-all shadow-sm"
                 >
                   {/* Ceremony Header Row */}
                   <div
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={activateOnKey}
                     onClick={() => setExpandedYear(isExpanded ? null : ceremony.year)}
-                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:bg-white/[0.02] transition-colors border-b border-[#2A2E3D]"
+                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:bg-white/[0.02] transition-colors border-b border-line"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-amber-500/20 rounded-[6px] border border-amber-500/30 text-amber-300 shrink-0 font-mono font-bold text-xs">
+                      <div className="p-2.5 bg-amber-500/20 rounded-md border border-amber-500/30 text-amber-300 shrink-0 font-mono font-bold text-xs">
                         {ceremony.year}
                       </div>
 
                       <div>
-                        <h3 className="font-semibold text-sm text-[#F8FAFC] flex items-center gap-2">
+                        <h3 className="font-semibold text-sm text-fg flex items-center gap-2">
                           <Award className="w-4 h-4 text-amber-400" />
                           {ceremony.name}
                         </h3>
-                        <p className="text-xs text-[#94A3B8] mt-0.5">
+                        <p className="text-xs text-fg-muted mt-0.5">
                           {ceremony.categories.length} Categorías Premiadas
                           {playerWinsInCeremony > 0 && (
                             <span className="text-amber-400 font-bold ml-2">
-                              • 🏆 {playerWinsInCeremony} Premio{playerWinsInCeremony > 1 ? 's' : ''} Ganado{playerWinsInCeremony > 1 ? 's' : ''}
+                              • {playerWinsInCeremony} Premio{playerWinsInCeremony > 1 ? 's' : ''} Ganado{playerWinsInCeremony > 1 ? 's' : ''}
                             </span>
                           )}
                           {playerWinsInCeremony === 0 && playerNomsInCeremony > 0 && (
                             <span className="text-purple-400 font-semibold ml-2">
-                              • ⭐ {playerNomsInCeremony} Nominación{playerNomsInCeremony > 1 ? 'es' : ''}
+                              • {playerNomsInCeremony} Nominación{playerNomsInCeremony > 1 ? 'es' : ''}
                             </span>
                           )}
                         </p>
@@ -321,14 +335,14 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                             e.stopPropagation();
                             onOpenGala(ceremony);
                           }}
-                          className="flex items-center gap-1.5 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold px-3.5 py-1.5 rounded-[6px] text-xs hover:opacity-90 active:opacity-75 transition-all cursor-pointer shadow-[0_0_15px_rgba(139,92,246,0.35)]"
+                          className="flex items-center gap-1.5 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold px-3.5 py-1.5 rounded-md text-xs hover:opacity-90 active:opacity-75 transition-all cursor-pointer shadow-[0_0_15px_rgba(139,92,246,0.35)]"
                         >
                           <Play className="w-3 h-3 fill-current" />
                           <span>Revivir Gala Interactiva</span>
                         </button>
                       )}
 
-                      <div className="p-1 rounded-[4px] hover:bg-[#2A2E3D] text-[#94A3B8]">
+                      <div className="p-1 rounded-sm hover:bg-line text-fg-muted">
                         {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </div>
                     </div>
@@ -336,7 +350,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
                   {/* Expanded Categories Breakdown */}
                   {isExpanded && (
-                    <div className="p-5 bg-[#16181F]/70 space-y-4">
+                    <div className="p-5 bg-surface/70 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                         {ceremony.categories.map((cat, catIdx) => {
                           const isPlayerWinner = cat.winnerArtistId === player.id;
@@ -346,51 +360,51 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                           return (
                             <div
                               key={cat.id || catIdx}
-                              className={`p-4 rounded-[10px] border text-xs space-y-2.5 transition-all ${
+                              className={`p-4 rounded-control border text-xs space-y-2.5 transition-all ${
                                 isPlayerWinner
                                   ? 'bg-amber-500/10 border-amber-500/40 shadow-sm ring-1 ring-amber-500/40'
-                                  : 'bg-[#0B0C10] border-[#2A2E3D]'
+                                  : 'bg-canvas border-line'
                               }`}
                             >
-                              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-2">
+                              <div className="flex items-center justify-between border-b border-line pb-2">
                                 <div className="flex items-center gap-1.5">
-                                  <CatIcon className={`w-3.5 h-3.5 ${isPlayerWinner ? 'text-amber-400' : 'text-[#8B5CF6]'}`} />
-                                  <span className="font-bold text-xs text-[#F8FAFC]">
+                                  <CatIcon className={`w-3.5 h-3.5 ${isPlayerWinner ? 'text-amber-400' : 'text-primary'}`} />
+                                  <span className="font-bold text-xs text-fg">
                                     {cat.name}
                                   </span>
                                 </div>
 
                                 {isPlayerWinner ? (
-                                  <span className="font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded-[4px] text-[10px]">
-                                    ¡Tu Victoria! 🏆
+                                  <span className="font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded-sm text-2xs">
+                                    ¡Tu Victoria!
                                   </span>
                                 ) : isPlayerNominated ? (
-                                  <span className="font-bold text-purple-300 bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 rounded-[4px] text-[10px]">
-                                    Nominado ⭐
+                                  <span className="font-bold text-purple-300 bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 rounded-sm text-2xs">
+                                    Nominado
                                   </span>
                                 ) : null}
                               </div>
 
                               {/* Winner Showcase */}
                               <div className="space-y-0.5">
-                                <span className="text-[10px] font-bold uppercase text-[#94A3B8] tracking-wider block">
+                                <span className="text-2xs font-bold uppercase text-fg-muted tracking-wider block">
                                   Ganador Oficial
                                 </span>
-                                <p className="font-bold text-xs text-[#F8FAFC] flex items-center gap-1.5">
-                                  🏆 {cat.winnerArtistName || world.artists[cat.winnerArtistId]?.name || 'Artista'}
+                                <p className="font-bold text-xs text-fg flex items-center gap-1.5">
+                                  <Trophy className="inline w-3.5 h-3.5 mr-1 align-[-2px]" aria-hidden="true" />{cat.winnerArtistName || world.artists[cat.winnerArtistId]?.name || 'Artista'}
                                   {cat.winnerItemTitle && (
-                                    <span className="font-normal text-[#94A3B8]">
+                                    <span className="font-normal text-fg-muted">
                                       — "{cat.winnerItemTitle}"
                                     </span>
                                   )}
                                 </p>
                                 {cat.winTypeLabel && (
-                                  <span className="text-[9px] font-mono text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded-[3px] border border-amber-500/25 inline-block mt-0.5">
+                                  <span className="text-2xs font-mono text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded-sm border border-amber-500/25 inline-block mt-0.5">
                                     {cat.winTypeLabel}
                                   </span>
                                 )}
                                 {cat.winnerReason && (
-                                  <p className="text-[11px] text-[#94A3B8] italic mt-1">
+                                  <p className="text-xs text-fg-muted italic mt-1">
                                     {cat.winnerReason}
                                   </p>
                                 )}
@@ -398,8 +412,8 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
                               {/* Nominees Grid */}
                               {cat.nominees && cat.nominees.length > 0 && (
-                                <div className="pt-2 border-t border-[#2A2E3D] space-y-1.5">
-                                  <span className="text-[10px] uppercase text-[#94A3B8] font-bold tracking-wider block">
+                                <div className="pt-2 border-t border-line space-y-1.5">
+                                  <span className="text-2xs uppercase text-fg-muted font-bold tracking-wider block">
                                     Nominados • {cat.nominees.length}
                                   </span>
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
@@ -409,33 +423,33 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                                       return (
                                         <div
                                           key={nIdx}
-                                          className={`p-2 rounded-[6px] border text-[11px] flex items-center justify-between gap-1.5 transition-all ${
+                                          className={`p-2 rounded-md border text-xs flex items-center justify-between gap-1.5 transition-all ${
                                             isNomWinner
                                               ? 'bg-amber-500/10 border-amber-500/30 font-semibold text-amber-200'
                                               : isNomPlayer
                                               ? 'bg-purple-500/10 border-purple-500/30 font-semibold text-purple-200'
-                                              : 'bg-[#16181F] border-[#2A2E3D]/80 text-[#94A3B8]'
+                                              : 'bg-surface border-line/80 text-fg-muted'
                                           }`}
                                         >
                                           <div className="min-w-0 flex-1 truncate">
-                                            <span className="font-mono text-[10px] mr-1 text-[#8B5CF6]">#{nIdx + 1}</span>
-                                            <span className="text-[#F8FAFC]">
+                                            <span className="font-mono text-2xs mr-1 text-primary">#{nIdx + 1}</span>
+                                            <span className="text-fg">
                                               {nom.itemTitle ? `"${nom.itemTitle}"` : nom.artistName}
                                             </span>
                                             {nom.itemTitle && (
-                                              <span className="text-[#94A3B8] text-[10px] ml-1 truncate">
+                                              <span className="text-fg-muted text-2xs ml-1 truncate">
                                                 — {nom.artistName}
                                               </span>
                                             )}
                                           </div>
                                           {isNomPlayer && (
-                                            <span className="text-[9px] bg-purple-500/25 text-purple-300 border border-purple-500/40 px-1.5 py-0.5 rounded-[3px] font-bold shrink-0">
+                                            <span className="text-2xs bg-purple-500/25 text-purple-300 border border-purple-500/40 px-1.5 py-0.5 rounded-sm font-bold shrink-0">
                                               Tú
                                             </span>
                                           )}
                                           {isNomWinner && (
-                                            <span className="text-[9px] bg-amber-500/25 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded-[3px] font-bold shrink-0">
-                                              🏆 Ganador
+                                            <span className="text-2xs bg-amber-500/25 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded-sm font-bold shrink-0">
+                                              <Trophy className="inline w-3.5 h-3.5 mr-1 align-[-2px]" aria-hidden="true" />Ganador
                                             </span>
                                           )}
                                         </div>

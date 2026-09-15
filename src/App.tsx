@@ -159,7 +159,7 @@ export default function App() {
       setActiveMilestone({
         type: 'gold_record',
         title: `¡Certificación de Oro: "${goldSong.title}"!`,
-        milestoneLabel: 'DISCO DE ORO 📀',
+        milestoneLabel: 'DISCO DE ORO',
         statValue: `${((goldSong.streamsTotal || 0) / 1000).toFixed(0)}K Streams`,
         year: curYear,
         month: curMonth,
@@ -318,7 +318,7 @@ export default function App() {
   if (appMode === 'start_screen') {
     return (
       <ErrorBoundary>
-        <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
+        <div className="min-h-screen bg-canvas text-fg">
           <StartScreen
             onNewCareer={handleStartNewCareer}
             onContinue={handleContinueSavedGame}
@@ -334,7 +334,7 @@ export default function App() {
   if (appMode === 'character_creator') {
     return (
       <ErrorBoundary>
-        <div className="min-h-screen bg-[#0B0C10] text-[#F8FAFC]">
+        <div className="min-h-screen bg-canvas text-fg">
           <CharacterCreatorView
             world={world}
             onBackToMenu={() => setAppMode('start_screen')}
@@ -349,14 +349,14 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div
-        className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] flex flex-col selection:bg-[#8B5CF6]/30 selection:text-white relative overflow-x-hidden"
+        className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-primary/30 selection:text-white relative overflow-x-clip"
         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
       >
       {/* Ambient Stage Backdrop Glows (Contained & Non-blocking) */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[300px] bg-[#8B5CF6]/10 blur-[130px]" />
-        <div className="absolute top-1/3 right-0 w-[500px] h-[400px] bg-[#EC4899]/08 blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[400px] bg-[#06B6D4]/08 blur-[150px]" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[300px] bg-primary/10 blur-[130px]" />
+        <div className="absolute top-1/3 right-0 w-[500px] h-[400px] bg-accent/08 blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[400px] bg-info/08 blur-[150px]" />
       </div>
 
       {/* Top App Bar & Navigation */}
@@ -408,6 +408,7 @@ export default function App() {
           <ChartsView
             world={world}
             player={player}
+            onAdvanceCycle={() => handleAdvanceCycle(6)}
           />
         )}
 
@@ -471,6 +472,7 @@ export default function App() {
             world={world}
             player={player}
             onOpenGala={(ceremony) => setActiveGala(ceremony)}
+            onNavigate={handleNavigate}
           />
         )}
       </main>

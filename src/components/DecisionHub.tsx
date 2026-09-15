@@ -144,16 +144,16 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Header with Hub Mode Switcher & Soft Cap / Prodigy status */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-3.5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface border border-line rounded-card p-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 bg-[#8B5CF6]/15 text-[#8B5CF6] rounded-[8px] border border-[#8B5CF6]/30">
+          <div className="p-2 bg-primary/15 text-primary rounded-lg border border-primary/30">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#F8FAFC]">
+            <h3 className="text-sm font-bold text-fg">
               Centro de Decisiones & Desarrollo
             </h3>
-            <p className="text-[11px] text-[#94A3B8]">
+            <p className="text-xs text-fg-muted">
               {hubTab === 'pillars'
                 ? 'Gestiona lanzamientos, estilo de vida, giras mundiales y bienestar.'
                 : 'Entrena y potencia habilidades artísticas de forma permanente.'}
@@ -162,17 +162,17 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         </div>
 
         {/* Tab Toggle Switcher */}
-        <div className="flex items-center gap-1.5 bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D] shrink-0">
+        <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-lg border border-line shrink-0">
           <button
             type="button"
             onClick={() => {
               playSound('click');
               setHubTab('pillars');
             }}
-            className={`px-3 py-1.5 rounded-[6px] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               hubTab === 'pillars'
-                ? 'bg-[#8B5CF6] text-white shadow-xs'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                ? 'bg-primary text-white shadow-xs'
+                : 'text-fg-muted hover:text-fg'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -185,10 +185,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               playSound('click');
               setHubTab('training');
             }}
-            className={`px-3 py-1.5 rounded-[6px] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               hubTab === 'training'
-                ? 'bg-[#EC4899] text-white shadow-xs'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                ? 'bg-accent text-white shadow-xs'
+                : 'text-fg-muted hover:text-fg'
             }`}
           >
             <GraduationCap className="w-3.5 h-3.5" />
@@ -199,7 +199,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
 
       {/* Feedback Toast / Notification if present */}
       {feedbackMessage && (
-        <div className={`p-3.5 rounded-[10px] border flex items-start justify-between gap-3 text-xs animate-fade-in ${
+        <div className={`p-3.5 rounded-control border flex items-start justify-between gap-3 text-xs animate-fade-in ${
           feedbackMessage.success
             ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
             : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
@@ -211,13 +211,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
             )}
             <div>
-              <p className="font-bold text-[#F8FAFC]">{feedbackMessage.title}</p>
-              <p className="text-[11px] mt-0.5 text-[#94A3B8]">{feedbackMessage.text}</p>
+              <p className="font-bold text-fg">{feedbackMessage.title}</p>
+              <p className="text-xs mt-0.5 text-fg-muted">{feedbackMessage.text}</p>
             </div>
           </div>
           <button
             onClick={() => setFeedbackMessage(null)}
-            className="p-1 text-[#94A3B8] hover:text-white rounded-[4px] hover:bg-white/10 cursor-pointer"
+            className="p-1 text-fg-muted hover:text-white rounded-sm hover:bg-white/10 cursor-pointer"
             title="Cerrar aviso"
           >
             <X className="w-3.5 h-3.5" />
@@ -232,29 +232,29 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
           
           {/* TARJETA 1: LANZAMIENTO / ESTUDIO */}
-          <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/60 border-l-4 border-l-[#8B5CF6] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] flex flex-col justify-between h-full space-y-4">
+          <div className="group relative bg-surface hover:bg-[#1C1F28] border border-line hover:border-primary/60 border-l-4 border-l-primary rounded-card p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] flex flex-col justify-between h-full space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-[#8B5CF6]/15 text-[#8B5CF6] rounded-[8px] border border-[#8B5CF6]/30 shadow-xs flex items-center justify-center">
+                <div className="p-2.5 bg-primary/15 text-primary rounded-lg border border-primary/30 shadow-xs flex items-center justify-center">
                   <Disc3 className="w-5 h-5" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#C084FC] bg-[#8B5CF6]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#8B5CF6]/30 shadow-xs">
+                <span className="text-2xs font-bold uppercase tracking-wider text-primary-soft bg-primary/15 px-2.5 py-0.5 rounded-full border border-primary/30 shadow-xs">
                   Núcleo Musical
                 </span>
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
+                <h3 className="text-base font-bold text-fg tracking-[-0.3px] group-hover:text-white transition-colors">
                   Estudio & Producción
                 </h3>
-                <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
+                <p className="text-xs text-fg-muted mt-1 font-normal leading-relaxed">
                   Componer, producir y masterizar nuevas canciones o estructurar álbumes completos.
                 </p>
               </div>
 
-              <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 flex items-center justify-between text-[11px] text-[#94A3B8] transition-colors">
+              <div className="bg-canvas border border-line rounded-lg p-2.5 flex items-center justify-between text-xs text-fg-muted transition-colors">
                 <span>Lanzamientos este año:</span>
-                <span className="font-mono font-bold text-[#F8FAFC]">
+                <span className="font-mono font-bold text-fg">
                   {singlesThisYear} {singlesThisYear === 1 ? 'Single' : 'Singles'}
                 </span>
               </div>
@@ -265,45 +265,45 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 playSound('click');
                 onNavigate('studio');
               }}
-              className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#8B5CF6] text-[#F8FAFC] hover:text-white border border-[#2A2E3D] hover:border-[#8B5CF6] font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+              className="w-full flex items-center justify-center gap-2 bg-surface hover:bg-primary text-fg hover:text-white border border-line hover:border-primary font-semibold text-xs py-2.5 px-3 rounded-lg transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(139,92,246,0.3)]"
               title="Ir al estudio para grabar nuevas canciones o proyectos"
             >
-              <Mic2 className="w-3.5 h-3.5 text-[#8B5CF6] group-hover:text-white" />
+              <Mic2 className="w-3.5 h-3.5 text-primary group-hover:text-white" />
               <span>Crear Lanzamiento</span>
               <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
             </button>
           </div>
 
           {/* TARJETA 2: ESTILO DE VIDA */}
-          <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#EC4899]/60 border-l-4 border-l-[#EC4899] rounded-[14px] p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(236,72,153,0.2)] flex flex-col justify-between h-full space-y-4">
+          <div className="group relative bg-surface hover:bg-[#1C1F28] border border-line hover:border-accent/60 border-l-4 border-l-accent rounded-card p-5 transition-all duration-300 ease-out transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(236,72,153,0.2)] flex flex-col justify-between h-full space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="p-2.5 bg-[#EC4899]/15 text-[#EC4899] rounded-[8px] border border-[#EC4899]/30 shadow-xs flex items-center justify-center">
+                <div className="p-2.5 bg-accent/15 text-accent rounded-lg border border-accent/30 shadow-xs flex items-center justify-center">
                   <ShoppingBag className="w-5 h-5" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#F472B6] bg-[#EC4899]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#EC4899]/30 shadow-xs">
+                <span className="text-2xs font-bold uppercase tracking-wider text-[#F472B6] bg-accent/15 px-2.5 py-0.5 rounded-full border border-accent/30 shadow-xs">
                   Mejoras & Confort
                 </span>
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
+                <h3 className="text-base font-bold text-fg tracking-[-0.3px] group-hover:text-white transition-colors">
                   Estilo de Vida
                 </h3>
-                <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
+                <p className="text-xs text-fg-muted mt-1 font-normal leading-relaxed">
                   Invertir en hogares, estudios, vehículos e indumentaria para potenciar stats pasivos.
                 </p>
               </div>
 
-              <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1 text-[11px] text-[#94A3B8] transition-colors">
+              <div className="bg-canvas border border-line rounded-lg p-2.5 space-y-1 text-xs text-fg-muted transition-colors">
                 <div className="flex items-center justify-between">
                   <span>Items Adquiridos:</span>
-                  <span className="font-mono font-bold text-[#F8FAFC]">
+                  <span className="font-mono font-bold text-fg">
                     {ownedUpgradesCount} / {totalLifestyleItemsCount}
                   </span>
                 </div>
                 {lifestyleBuffsSummary && (
-                  <div className="text-[10px] text-emerald-400 font-semibold truncate pt-0.5 border-t border-[#2A2E3D]">
+                  <div className="text-2xs text-emerald-400 font-semibold truncate pt-0.5 border-t border-line">
                     {lifestyleBuffsSummary}
                   </div>
                 )}
@@ -315,32 +315,32 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 playSound('click');
                 onNavigate('lifestyle');
               }}
-              className="w-full flex items-center justify-center gap-2 bg-[#16181F] hover:bg-[#EC4899] text-[#F8FAFC] hover:text-white border border-[#2A2E3D] hover:border-[#EC4899] font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(236,72,153,0.3)]"
+              className="w-full flex items-center justify-center gap-2 bg-surface hover:bg-accent text-fg hover:text-white border border-line hover:border-accent font-semibold text-xs py-2.5 px-3 rounded-lg transition-all cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(236,72,153,0.3)]"
               title="Explorar el catálogo de mejoras de estilo de vida"
             >
-              <Sliders className="w-3.5 h-3.5 text-[#EC4899] group-hover:text-white" />
+              <Sliders className="w-3.5 h-3.5 text-accent group-hover:text-white" />
               <span>Ver Catálogo de Estilo</span>
               <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
             </button>
           </div>
 
           {/* TARJETA 3: GIRAS & SHOWS */}
-          <div className={`group relative bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-5 transition-all duration-300 ease-out flex flex-col justify-between h-full space-y-4 ${
+          <div className={`group relative bg-surface border border-line rounded-card p-5 transition-all duration-300 ease-out flex flex-col justify-between h-full space-y-4 ${
             isTourReady
-              ? 'hover:bg-[#1C1F28] hover:border-[#F59E0B]/60 border-l-4 border-l-[#F59E0B] transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+              ? 'hover:bg-[#1C1F28] hover:border-warning/60 border-l-4 border-l-warning transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]'
               : 'border-l-4 border-l-rose-500/80'
           }`}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className={`p-2.5 rounded-[8px] border shadow-xs flex items-center justify-center ${
+                <div className={`p-2.5 rounded-lg border shadow-xs flex items-center justify-center ${
                   isTourReady
-                    ? 'bg-amber-500/15 text-[#F59E0B] border-amber-500/30'
+                    ? 'bg-amber-500/15 text-warning border-amber-500/30'
                     : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
                 }`}>
                   <Ticket className="w-5 h-5" />
                 </div>
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[9999px] border shadow-xs ${
+                  className={`text-2xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border shadow-xs ${
                     isTourReady
                       ? 'text-amber-400 bg-amber-500/15 border-amber-500/30'
                       : 'text-rose-400 bg-rose-500/15 border-rose-500/30'
@@ -354,17 +354,17 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
+                <h3 className="text-base font-bold text-fg tracking-[-0.3px] group-hover:text-white transition-colors">
                   Giras & Conciertos
                 </h3>
-                <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
+                <p className="text-xs text-fg-muted mt-1 font-normal leading-relaxed">
                   Armar tours nacionales e internacionales para maximizar recaudación y expandir audiencia.
                 </p>
               </div>
 
-              <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#94A3B8] flex items-center gap-1">
+              <div className="bg-canvas border border-line rounded-lg p-2.5 space-y-1.5 transition-colors">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-fg-muted flex items-center gap-1">
                     {tourGates.hasCatalog ? (
                       <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                     ) : (
@@ -377,8 +377,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
-                  <span className="text-[#94A3B8] flex items-center gap-1">
+                <div className="flex items-center justify-between text-xs border-t border-line pt-1">
+                  <span className="text-fg-muted flex items-center gap-1">
                     {tourGates.hasAudience ? (
                       <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                     ) : (
@@ -391,8 +391,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
-                  <span className="text-[#94A3B8] flex items-center gap-1">
+                <div className="flex items-center justify-between text-xs border-t border-line pt-1">
+                  <span className="text-fg-muted flex items-center gap-1">
                     {tourGates.hasEnergy ? (
                       <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                     ) : (
@@ -415,14 +415,14 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 }
               }}
               disabled={!isTourReady}
-              className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all ${
+              className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-lg transition-all ${
                 isTourReady
-                  ? 'bg-[#16181F] hover:bg-[#F59E0B] text-[#F8FAFC] border border-[#2A2E3D] hover:border-[#F59E0B] shadow-xs group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] cursor-pointer'
-                  : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
+                  ? 'bg-surface hover:bg-warning text-fg border border-line hover:border-warning shadow-xs group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] cursor-pointer'
+                  : 'bg-surface/40 text-fg-subtle border border-line/40 cursor-not-allowed opacity-50'
               }`}
               title={tourGates.tooltipText}
             >
-              <Ticket className={`w-3.5 h-3.5 ${isTourReady ? 'text-[#F59E0B] group-hover:text-white' : ''}`} />
+              <Ticket className={`w-3.5 h-3.5 ${isTourReady ? 'text-warning group-hover:text-white' : ''}`} />
               <span>{isTourReady ? 'Armar Gira' : 'Gira Bloqueada'}</span>
               <ArrowRight
                 className={`w-3.5 h-3.5 ml-auto transition-all ${
@@ -433,21 +433,21 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           </div>
 
           {/* TARJETA 4: DESCANSO & BIENESTAR */}
-          <div className={`group relative bg-[#16181F] border border-[#2A2E3D] rounded-[14px] p-5 transition-all duration-300 ease-out flex flex-col justify-between h-full space-y-4 ${
+          <div className={`group relative bg-surface border border-line rounded-card p-5 transition-all duration-300 ease-out flex flex-col justify-between h-full space-y-4 ${
             hasFundsForRest
-              ? 'hover:bg-[#1C1F28] hover:border-[#10B981]/60 border-l-4 border-l-[#10B981] transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]'
+              ? 'hover:bg-[#1C1F28] hover:border-success/60 border-l-4 border-l-success transform hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]'
               : 'border-l-4 border-l-rose-500/80'
           }`}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className={`p-2.5 rounded-[8px] border shadow-xs flex items-center justify-center ${
+                <div className={`p-2.5 rounded-lg border shadow-xs flex items-center justify-center ${
                   hasFundsForRest
                     ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                     : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
                 }`}>
                   <Coffee className="w-5 h-5" />
                 </div>
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[9999px] border shadow-xs ${
+                <span className={`text-2xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border shadow-xs ${
                   hasFundsForRest
                     ? 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30'
                     : 'text-rose-400 bg-rose-500/15 border-rose-500/30'
@@ -459,24 +459,24 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px] group-hover:text-white transition-colors">
+                <h3 className="text-base font-bold text-fg tracking-[-0.3px] group-hover:text-white transition-colors">
                   Descanso & Bienestar
                 </h3>
-                <p className="text-xs text-[#94A3B8] mt-1 font-normal leading-relaxed">
+                <p className="text-xs text-fg-muted mt-1 font-normal leading-relaxed">
                   Retiro reflexivo para recuperar vitalidad inmediata y enfoque disciplinario.
                 </p>
               </div>
 
-              <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1.5 transition-colors">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#94A3B8] flex items-center gap-1">
+              <div className="bg-canvas border border-line rounded-lg p-2.5 space-y-1.5 transition-colors">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-fg-muted flex items-center gap-1">
                     <BatteryCharging className="w-3 h-3 text-emerald-400" />
                     Recarga Inmediata:
                   </span>
                   <span className="font-bold text-emerald-400">+50 Vitalidad</span>
                 </div>
-                <div className="flex items-center justify-between text-[11px] border-t border-[#2A2E3D] pt-1">
-                  <span className="text-[#94A3B8] flex items-center gap-1">
+                <div className="flex items-center justify-between text-xs border-t border-line pt-1">
+                  <span className="text-fg-muted flex items-center gap-1">
                     {hasFundsForRest ? (
                       <DollarSign className="w-3 h-3 text-emerald-400" />
                     ) : (
@@ -502,14 +502,14 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 }
               }}
               disabled={!canRest}
-              className={`w-full flex items-center justify-center gap-2 font-bold text-xs py-2.5 px-3 rounded-[8px] transition-all ${
+              className={`w-full flex items-center justify-center gap-2 font-bold text-xs py-2.5 px-3 rounded-lg transition-all ${
                 canRest
-                  ? 'bg-[#16181F] hover:bg-[#10B981] text-[#F8FAFC] hover:text-black border border-[#2A2E3D] hover:border-[#10B981] cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                  : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
+                  ? 'bg-surface hover:bg-success text-fg hover:text-black border border-line hover:border-success cursor-pointer shadow-xs group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                  : 'bg-surface/40 text-fg-subtle border border-line/40 cursor-not-allowed opacity-50'
               }`}
               title={restTooltip}
             >
-              <Zap className={`w-3.5 h-3.5 ${canRest ? 'text-emerald-400 group-hover:text-black fill-current' : 'text-[#64748B]'}`} />
+              <Zap className={`w-3.5 h-3.5 ${canRest ? 'text-emerald-400 group-hover:text-black fill-current' : 'text-fg-subtle'}`} />
               <span>
                 {!hasFundsForRest
                   ? 'Tomar Retiro de Descanso'
@@ -534,13 +534,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       {hubTab === 'training' && (
         <div className="space-y-4">
           {/* Soft Cap & Prodigy Banner */}
-          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[12px] p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+          <div className="bg-canvas border border-line rounded-xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-[#06B6D4] shrink-0" />
-              <span className="text-[#94A3B8]">
+              <Info className="w-4 h-4 text-info shrink-0" />
+              <span className="text-fg-muted">
                 {hasEliteCoaching ? (
                   <span className="text-emerald-400 font-semibold">
-                    ⭐ Coaching Élite Activo: Tus habilidades pueden progresar hasta el 100% absoluto.
+                   Coaching Élite Activo: Tus habilidades pueden progresar hasta el 100% absoluto.
                   </span>
                 ) : (
                   <span>
@@ -550,8 +550,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </span>
             </div>
             {player.isProdigy && (
-              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-[9999px] font-bold text-[10px] uppercase tracking-wider shrink-0">
-                ⚡ Prodigio (x3 Ganancia de Skills)
+              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-bold text-2xs uppercase tracking-wider shrink-0">
+               Prodigio (x3 Ganancia de Skills)
               </span>
             )}
           </div>
@@ -565,34 +565,34 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               const canExecute = hasFunds && hasEnergy;
 
               return (
-                <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/60 border-l-4 border-l-[#8B5CF6] rounded-[14px] p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
+                <div className="group relative bg-surface hover:bg-[#1C1F28] border border-line hover:border-primary/60 border-l-4 border-l-primary rounded-card p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="p-2.5 bg-[#8B5CF6]/15 text-[#8B5CF6] rounded-[8px] border border-[#8B5CF6]/30 shadow-xs flex items-center justify-center">
+                      <div className="p-2.5 bg-primary/15 text-primary rounded-lg border border-primary/30 shadow-xs flex items-center justify-center">
                         <Mic2 className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-[#C084FC] bg-[#8B5CF6]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#8B5CF6]/30">
+                      <span className="text-2xs font-bold text-primary-soft bg-primary/15 px-2.5 py-0.5 rounded-full border border-primary/30">
                         {cfg.badgeLabel}
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px]">
+                      <h3 className="text-base font-bold text-fg tracking-[-0.3px]">
                         {cfg.title}
                       </h3>
-                      <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
+                      <p className="text-xs text-fg-muted mt-1 leading-relaxed">
                         {cfg.description}
                       </p>
                     </div>
 
-                    <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1 text-[11px] text-[#94A3B8]">
+                    <div className="bg-canvas border border-line rounded-lg p-2.5 space-y-1 text-xs text-fg-muted">
                       <div className="flex items-center justify-between">
                         <span>Coste en Fondos:</span>
                         <span className={`font-mono font-bold ${hasFunds ? 'text-emerald-400' : 'text-rose-400'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between border-t border-[#2A2E3D] pt-1">
+                      <div className="flex items-center justify-between border-t border-line pt-1">
                         <span>Gasto de Energía:</span>
                         <span className={`font-mono font-bold ${hasEnergy ? 'text-amber-400' : 'text-rose-400'}`}>
                           -{cfg.costEnergy}% Energía
@@ -604,13 +604,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   <button
                     onClick={() => handleRunDecision('vocal_training')}
                     disabled={!canExecute}
-                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all ${
+                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-lg transition-all ${
                       canExecute
-                        ? 'bg-[#16181F] hover:bg-[#8B5CF6] text-[#F8FAFC] hover:text-white border border-[#2A2E3D] hover:border-[#8B5CF6] cursor-pointer shadow-xs'
-                        : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
+                        ? 'bg-surface hover:bg-primary text-fg hover:text-white border border-line hover:border-primary cursor-pointer shadow-xs'
+                        : 'bg-surface/40 text-fg-subtle border border-line/40 cursor-not-allowed opacity-50'
                     }`}
                   >
-                    <Mic2 className="w-3.5 h-3.5 text-[#8B5CF6] group-hover:text-white" />
+                    <Mic2 className="w-3.5 h-3.5 text-primary group-hover:text-white" />
                     <span>Entrenar Voz</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100" />
                   </button>
@@ -626,34 +626,34 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               const canExecute = hasFunds && hasEnergy;
 
               return (
-                <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#EC4899]/60 border-l-4 border-l-[#EC4899] rounded-[14px] p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
+                <div className="group relative bg-surface hover:bg-[#1C1F28] border border-line hover:border-accent/60 border-l-4 border-l-accent rounded-card p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="p-2.5 bg-[#EC4899]/15 text-[#EC4899] rounded-[8px] border border-[#EC4899]/30 shadow-xs flex items-center justify-center">
+                      <div className="p-2.5 bg-accent/15 text-accent rounded-lg border border-accent/30 shadow-xs flex items-center justify-center">
                         <Disc3 className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-[#F472B6] bg-[#EC4899]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#EC4899]/30">
+                      <span className="text-2xs font-bold text-[#F472B6] bg-accent/15 px-2.5 py-0.5 rounded-full border border-accent/30">
                         {cfg.badgeLabel}
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px]">
+                      <h3 className="text-base font-bold text-fg tracking-[-0.3px]">
                         {cfg.title}
                       </h3>
-                      <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
+                      <p className="text-xs text-fg-muted mt-1 leading-relaxed">
                         {cfg.description}
                       </p>
                     </div>
 
-                    <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1 text-[11px] text-[#94A3B8]">
+                    <div className="bg-canvas border border-line rounded-lg p-2.5 space-y-1 text-xs text-fg-muted">
                       <div className="flex items-center justify-between">
                         <span>Coste en Fondos:</span>
                         <span className={`font-mono font-bold ${hasFunds ? 'text-emerald-400' : 'text-rose-400'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between border-t border-[#2A2E3D] pt-1">
+                      <div className="flex items-center justify-between border-t border-line pt-1">
                         <span>Gasto de Energía:</span>
                         <span className={`font-mono font-bold ${hasEnergy ? 'text-amber-400' : 'text-rose-400'}`}>
                           -{cfg.costEnergy}% Energía
@@ -665,13 +665,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   <button
                     onClick={() => handleRunDecision('studio_practice')}
                     disabled={!canExecute}
-                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all ${
+                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-lg transition-all ${
                       canExecute
-                        ? 'bg-[#16181F] hover:bg-[#EC4899] text-[#F8FAFC] hover:text-white border border-[#2A2E3D] hover:border-[#EC4899] cursor-pointer shadow-xs'
-                        : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
+                        ? 'bg-surface hover:bg-accent text-fg hover:text-white border border-line hover:border-accent cursor-pointer shadow-xs'
+                        : 'bg-surface/40 text-fg-subtle border border-line/40 cursor-not-allowed opacity-50'
                     }`}
                   >
-                    <Music2 className="w-3.5 h-3.5 text-[#EC4899] group-hover:text-white" />
+                    <Music2 className="w-3.5 h-3.5 text-accent group-hover:text-white" />
                     <span>Practicar en Estudio</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100" />
                   </button>
@@ -686,34 +686,34 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               const canExecute = hasFunds && !isEnergyFull;
 
               return (
-                <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#10B981]/60 border-l-4 border-l-[#10B981] rounded-[14px] p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
+                <div className="group relative bg-surface hover:bg-[#1C1F28] border border-line hover:border-success/60 border-l-4 border-l-success rounded-card p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="p-2.5 bg-emerald-500/15 text-emerald-400 rounded-[8px] border border-emerald-500/30 shadow-xs flex items-center justify-center">
+                      <div className="p-2.5 bg-emerald-500/15 text-emerald-400 rounded-lg border border-emerald-500/30 shadow-xs flex items-center justify-center">
                         <Coffee className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-[9999px] border border-emerald-500/30">
+                      <span className="text-2xs font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
                         {cfg.badgeLabel}
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px]">
+                      <h3 className="text-base font-bold text-fg tracking-[-0.3px]">
                         {cfg.title}
                       </h3>
-                      <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
+                      <p className="text-xs text-fg-muted mt-1 leading-relaxed">
                         {cfg.description}
                       </p>
                     </div>
 
-                    <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1 text-[11px] text-[#94A3B8]">
+                    <div className="bg-canvas border border-line rounded-lg p-2.5 space-y-1 text-xs text-fg-muted">
                       <div className="flex items-center justify-between">
                         <span>Coste de Retiro:</span>
                         <span className={`font-mono font-bold ${hasFunds ? 'text-emerald-400' : 'text-rose-400'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between border-t border-[#2A2E3D] pt-1">
+                      <div className="flex items-center justify-between border-t border-line pt-1">
                         <span>Recarga Vital:</span>
                         <span className="font-mono font-bold text-emerald-400">
                           +50% Energía
@@ -725,10 +725,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   <button
                     onClick={() => handleRunDecision('reflective_rest')}
                     disabled={!canExecute}
-                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all ${
+                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-lg transition-all ${
                       canExecute
-                        ? 'bg-[#16181F] hover:bg-[#10B981] text-[#F8FAFC] hover:text-black border border-[#2A2E3D] hover:border-[#10B981] cursor-pointer shadow-xs'
-                        : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
+                        ? 'bg-surface hover:bg-success text-fg hover:text-black border border-line hover:border-success cursor-pointer shadow-xs'
+                        : 'bg-surface/40 text-fg-subtle border border-line/40 cursor-not-allowed opacity-50'
                     }`}
                   >
                     <Zap className="w-3.5 h-3.5 text-emerald-400 group-hover:text-black" />
@@ -747,34 +747,34 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               const canExecute = hasFunds && hasEnergy;
 
               return (
-                <div className="group relative bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#06B6D4]/60 border-l-4 border-l-[#06B6D4] rounded-[14px] p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
+                <div className="group relative bg-surface hover:bg-[#1C1F28] border border-line hover:border-info/60 border-l-4 border-l-info rounded-card p-5 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="p-2.5 bg-[#06B6D4]/15 text-[#06B6D4] rounded-[8px] border border-[#06B6D4]/30 shadow-xs flex items-center justify-center">
+                      <div className="p-2.5 bg-info/15 text-info rounded-lg border border-info/30 shadow-xs flex items-center justify-center">
                         <Users className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-[#22D3EE] bg-[#06B6D4]/15 px-2.5 py-0.5 rounded-[9999px] border border-[#06B6D4]/30">
+                      <span className="text-2xs font-bold text-[#22D3EE] bg-info/15 px-2.5 py-0.5 rounded-full border border-info/30">
                         {cfg.badgeLabel}
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-[#F8FAFC] tracking-[-0.3px]">
+                      <h3 className="text-base font-bold text-fg tracking-[-0.3px]">
                         {cfg.title}
                       </h3>
-                      <p className="text-xs text-[#94A3B8] mt-1 leading-relaxed">
+                      <p className="text-xs text-fg-muted mt-1 leading-relaxed">
                         {cfg.description}
                       </p>
                     </div>
 
-                    <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-[8px] p-2.5 space-y-1 text-[11px] text-[#94A3B8]">
+                    <div className="bg-canvas border border-line rounded-lg p-2.5 space-y-1 text-xs text-fg-muted">
                       <div className="flex items-center justify-between">
                         <span>Coste en Fondos:</span>
                         <span className={`font-mono font-bold ${hasFunds ? 'text-emerald-400' : 'text-rose-400'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between border-t border-[#2A2E3D] pt-1">
+                      <div className="flex items-center justify-between border-t border-line pt-1">
                         <span>Gasto de Energía:</span>
                         <span className={`font-mono font-bold ${hasEnergy ? 'text-cyan-400' : 'text-rose-400'}`}>
                           -{cfg.costEnergy}% Energía
@@ -786,13 +786,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   <button
                     onClick={() => handleRunDecision('industry_networking')}
                     disabled={!canExecute}
-                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-[8px] transition-all ${
+                    className={`w-full flex items-center justify-center gap-2 font-semibold text-xs py-2.5 px-3 rounded-lg transition-all ${
                       canExecute
-                        ? 'bg-[#16181F] hover:bg-[#06B6D4] text-[#F8FAFC] hover:text-black border border-[#2A2E3D] hover:border-[#06B6D4] cursor-pointer shadow-xs'
-                        : 'bg-[#16181F]/40 text-[#64748B] border border-[#2A2E3D]/40 cursor-not-allowed opacity-50'
+                        ? 'bg-surface hover:bg-info text-fg hover:text-black border border-line hover:border-info cursor-pointer shadow-xs'
+                        : 'bg-surface/40 text-fg-subtle border border-line/40 cursor-not-allowed opacity-50'
                     }`}
                   >
-                    <Users className="w-3.5 h-3.5 text-[#06B6D4] group-hover:text-black" />
+                    <Users className="w-3.5 h-3.5 text-info group-hover:text-black" />
                     <span>Hacer Networking</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70 group-hover:opacity-100" />
                   </button>

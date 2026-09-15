@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { activateOnKey } from '../utils/a11y';
 import { Artist, WorldState, Genre, CareerStage, PersonalityTraits } from '../types';
 import {
   AVATAR_PALETTES,
@@ -150,7 +151,7 @@ interface TraitChipProps {
 }
 
 const TraitChip: React.FC<TraitChipProps> = ({ label, variant = 'purple' }) => {
-  let styleClasses = 'bg-[#8B5CF6]/20 text-[#C084FC] border-[#8B5CF6]/30';
+  let styleClasses = 'bg-primary/20 text-primary-soft border-primary/30';
   if (label.startsWith('-') || variant === 'rose') {
     styleClasses = 'bg-rose-500/20 text-rose-300 border-rose-500/30';
   } else if (variant === 'emerald' || label.includes('Comercial') || label.includes('Ambición') || label.includes('Sociabilidad')) {
@@ -164,7 +165,7 @@ const TraitChip: React.FC<TraitChipProps> = ({ label, variant = 'purple' }) => {
   }
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border tracking-wide select-none transition-all shadow-xs ${styleClasses}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-2xs font-bold border tracking-wide select-none transition-all shadow-xs ${styleClasses}`}>
       {label}
     </span>
   );
@@ -477,7 +478,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey && e.altKey && (e.key === 'p' || e.key === 'P')) {
         setIsProdigy(prev => !prev);
-        setRollMessage('🔧 Modo Dev: Rasgo Prodigio alternado con atajo de desarrollo.');
+        setRollMessage('Modo Dev: Rasgo Prodigio alternado con atajo de desarrollo.');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -873,9 +874,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
   // Age category text helper
   const getAgeCategory = (a: number) => {
-    if (a <= 20) return { label: 'Joven Promesa', color: 'text-[#10B981] bg-[#10B981]/10 border-[#10B981]/30' };
-    if (a <= 27) return { label: 'Plena Juventud', color: 'text-[#06B6D4] bg-[#06B6D4]/10 border-[#06B6D4]/30' };
-    return { label: 'Madurez Artística', color: 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/30' };
+    if (a <= 20) return { label: 'Joven Promesa', color: 'text-success bg-success/10 border-success/30' };
+    if (a <= 27) return { label: 'Plena Juventud', color: 'text-info bg-info/10 border-info/30' };
+    return { label: 'Madurez Artística', color: 'text-warning bg-warning/10 border-warning/30' };
   };
   const ageCat = getAgeCategory(age);
 
@@ -884,28 +885,29 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
   return (
     <div
-      className="min-h-screen bg-[#0B0C10] text-[#F8FAFC] p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#8B5CF6]/30 selection:text-white"
+      className="min-h-screen bg-canvas text-fg p-4 sm:p-6 lg:p-8 font-sans selection:bg-primary/30 selection:text-white"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Top Navigation Bar */}
-        <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-5">
-          <div className="flex items-center gap-3.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
             <button
               onClick={onBackToMenu}
-              className="p-2.5 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-[#7C3AED]/50 transition-all cursor-pointer shadow-xs"
+              className="shrink-0 p-2.5 rounded-lg bg-surface border border-line text-fg hover:bg-surface-raised hover:border-primary-strong/50 transition-all cursor-pointer shadow-xs"
               title="Volver al Menú Principal"
+              aria-label="Volver al Menú Principal"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#F8FAFC] tracking-[-0.8px] flex items-center gap-2.5">
+              <h1 className="text-2xl sm:text-3xl font-bold text-fg tracking-[-0.8px] flex flex-wrap items-center gap-x-2.5 gap-y-1">
                 <span>Creación del Artista</span>
-                <span className="text-xs bg-[#16181F] text-[#C084FC] border border-[#7C3AED]/40 px-2.5 py-0.5 rounded-full font-bold">
+                <span className="whitespace-nowrap text-xs bg-surface text-primary-soft border border-primary-strong/40 px-2.5 py-0.5 rounded-full font-bold">
                   Año 1 • 2026
                 </span>
               </h1>
-              <p className="text-xs text-[#94A3B8] mt-0.5">
+              <p className="text-xs text-fg-muted mt-0.5">
                 Diseñá tu identidad visual, seleccioná tu concepto artístico e iniciá tu viaje en la industria musical.
               </p>
             </div>
@@ -916,7 +918,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               type="button"
               id="btn-quick-start-top"
               onClick={() => handleSubmit()}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-[8px] bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white font-bold text-xs shadow-[0_0_15px_rgba(124,58,237,0.35)] hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer border border-white/20"
+              className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-primary-strong to-primary text-white font-bold text-xs shadow-[0_0_15px_rgba(124,58,237,0.35)] hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer border border-white/20"
               title="Comenzar Carrera Directamente"
             >
               <Sparkles className="w-4 h-4 text-white" />
@@ -933,19 +935,19 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 1: Identidad & Origen */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
-                <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <User className="w-4 h-4 text-[#7C3AED]" />
+            <div className="bg-surface border border-line rounded-2xl p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="flex items-center justify-between border-b border-line pb-3">
+                <div className="flex items-center gap-2 text-fg font-bold text-xs uppercase tracking-wider">
+                  <User className="w-4 h-4 text-primary-strong" />
                   <span>1. Identidad & Origen</span>
                 </div>
                 <button
                   type="button"
                   onClick={handleRandomizeName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border border-[#2A2E3D] bg-[#0B0C10] text-[#F8FAFC] text-xs font-semibold hover:bg-[#1C1F2B] hover:border-[#7C3AED]/50 transition-all cursor-pointer shadow-xs group"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-canvas text-fg text-xs font-semibold hover:bg-surface-raised hover:border-primary-strong/50 transition-all cursor-pointer shadow-xs group"
                   title="Generar nombre contextualizado para el país seleccionado"
                 >
-                  <Shuffle className="w-3.5 h-3.5 text-[#06B6D4] group-hover:rotate-180 transition-transform duration-300" />
+                  <Shuffle className="w-3.5 h-3.5 text-info group-hover:rotate-180 transition-transform duration-300" />
                   <span>Aleatorio</span>
                 </button>
               </div>
@@ -953,7 +955,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Names Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider mb-1.5">
                     Nombre Artístico *
                   </label>
                   <input
@@ -962,12 +964,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Ej: Duki Nova"
-                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#7C3AED] transition-colors font-medium"
+                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-sm text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1 focus:ring-primary-strong transition-colors font-medium"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider mb-1.5">
                     Nombre Real
                   </label>
                   <input
@@ -975,21 +977,21 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={realName}
                     onChange={e => setRealName(e.target.value)}
                     placeholder="Ej: Mateo Morales"
-                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#7C3AED] transition-colors font-medium"
+                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-sm text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1 focus:ring-primary-strong transition-colors font-medium"
                   />
                 </div>
               </div>
 
               {/* Age Slider */}
               <div className="space-y-2 pt-1">
-                <div className="flex justify-between items-center text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                <div className="flex justify-between items-center text-xs font-semibold text-fg-muted uppercase tracking-wider">
                   <span>Edad Inicial</span>
                   <div className="flex items-center gap-2">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ageCat.color}`}>
+                    <span className={`text-2xs font-bold px-2 py-0.5 rounded-full border ${ageCat.color}`}>
                       {ageCat.label}
                     </span>
-                    <span className="text-[#F8FAFC] font-mono text-sm font-bold bg-[#0B0C10] px-2.5 py-0.5 rounded-[6px] border border-[#2A2E3D]">
-                      {age} Años <span className="text-[#94A3B8] text-xs font-sans font-normal">• Nacido en {2026 - age}</span>
+                    <span className="text-fg font-mono text-sm font-bold bg-canvas px-2.5 py-0.5 rounded-md border border-line">
+                      {age} Años <span className="text-fg-muted text-xs font-sans font-normal">• Nacido en {2026 - age}</span>
                     </span>
                   </div>
                 </div>
@@ -1005,31 +1007,40 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     style={{
                       background: `linear-gradient(to right, #7C3AED 0%, #8B5CF6 ${agePercentage}%, #0B0C10 ${agePercentage}%, #0B0C10 100%)`
                     }}
-                    className="w-full h-2 rounded-lg border border-[#2A2E3D] accent-[#7C3AED] cursor-pointer"
+                    className="w-full h-2 rounded-lg border border-line accent-primary-strong cursor-pointer"
                   />
                   
-                  <div className="relative w-full text-[10px] text-[#94A3B8] font-mono select-none mt-1.5 h-4">
+                  <div className="relative w-full text-2xs text-fg-muted font-mono select-none mt-1.5 h-4">
                     <span
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={activateOnKey}
                       onClick={() => setAge(16)}
                       className="absolute left-0 text-left cursor-pointer hover:text-emerald-400"
                     >
-                      <span className="font-bold text-[#F8FAFC]">16 Años</span>{' '}
-                      <span className="text-[#10B981] font-sans font-medium">• Joven Promesa</span>
+                      <span className="font-bold text-fg">16 Años</span>{' '}
+                      <span className="hidden sm:inline text-success font-sans font-medium">• Joven Promesa</span>
                     </span>
                     
                     <span
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={activateOnKey}
                       onClick={() => setAge(25)}
-                      className="absolute left-[47.37%] -translate-x-1/2 text-center cursor-pointer hover:text-[#C084FC]"
+                      className="absolute left-[47.37%] -translate-x-1/2 text-center cursor-pointer hover:text-primary-soft"
                     >
-                      <span className="font-bold text-[#F8FAFC]">25 Años</span>
+                      <span className="font-bold text-fg">25 Años</span>
                     </span>
                     
                     <span
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={activateOnKey}
                       onClick={() => setAge(35)}
                       className="absolute right-0 text-right cursor-pointer hover:text-amber-400"
                     >
-                      <span className="font-bold text-[#F8FAFC]">35 Años</span>{' '}
-                      <span className="text-[#F59E0B] font-sans font-medium">• Veterano</span>
+                      <span className="font-bold text-fg">35 Años</span>{' '}
+                      <span className="hidden sm:inline text-warning font-sans font-medium">• Veterano</span>
                     </span>
                   </div>
                 </div>
@@ -1038,19 +1049,19 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Country & Hometown Selector */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider mb-1.5">
                     País de Origen
                   </label>
                   <select
                     value={country}
                     onChange={e => handleCountryChange(e.target.value)}
-                    className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer font-medium"
+                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-xs text-fg focus:outline-none cursor-pointer font-medium"
                   >
                     {Object.keys(COUNTRY_CITIES).map(c => {
                       const meta = COUNTRY_GENRE_DEFAULTS[c];
                       const flag = meta?.flag || '🌍';
                       return (
-                        <option key={c} value={c} className="bg-[#0B0C10] text-[#F8FAFC]">
+                        <option key={c} value={c} className="bg-canvas text-fg">
                           {flag} {c}
                         </option>
                       );
@@ -1060,7 +1071,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider">
                       Ciudad Natal
                     </label>
                     <button
@@ -1071,7 +1082,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           setCustomCityText('');
                         }
                       }}
-                      className="text-[11px] text-[#06B6D4] hover:text-[#38BDF8] flex items-center gap-1 cursor-pointer font-semibold transition-colors"
+                      className="text-xs text-info hover:text-[#38BDF8] flex items-center gap-1 cursor-pointer font-semibold transition-colors"
                     >
                       {isCustomCity ? (
                         <>
@@ -1093,17 +1104,17 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           value={customCityText}
                           onChange={e => setCustomCityText(e.target.value)}
                           placeholder="Escribe tu ciudad o barrio (mín. 3 letras)..."
-                          className={`w-full bg-[#0B0C10] border rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-colors ${
+                          className={`w-full bg-canvas border rounded-lg px-3.5 py-2 text-xs text-fg placeholder:text-fg-subtle focus:outline-none transition-colors ${
                             customCityText.trim().length > 0 && !isCustomCityValid
                               ? 'border-amber-500/60 focus:border-amber-500'
                               : isCustomCityValid
                               ? 'border-emerald-500/60 focus:border-emerald-500'
-                              : 'border-[#06B6D4]/60 focus:border-[#06B6D4]'
+                              : 'border-info/60 focus:border-info'
                           }`}
                         />
                         {isCustomCityValid && (
                           <span
-                            className="p-2 rounded-[6px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0"
+                            className="p-2 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0"
                             title="Ciudad válida"
                           >
                             <Check className="w-3.5 h-3.5" />
@@ -1111,7 +1122,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         )}
                       </div>
                       {customCityText.trim().length > 0 && !isCustomCityValid && (
-                        <p className="text-[10px] text-amber-400 flex items-center gap-1">
+                        <p className="text-2xs text-amber-400 flex items-center gap-1">
                           <AlertCircle className="w-3 h-3 shrink-0" />
                           <span>Ingresa al menos 3 caracteres para tu ciudad personalizada.</span>
                         </p>
@@ -1121,10 +1132,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     <select
                       value={city}
                       onChange={e => setCity(e.target.value)}
-                      className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#7C3AED] rounded-[8px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
+                      className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-xs text-fg focus:outline-none cursor-pointer"
                     >
                       {(COUNTRY_CITIES[country] || []).map(ci => (
-                        <option key={ci} value={ci} className="bg-[#0B0C10] text-[#F8FAFC]">
+                        <option key={ci} value={ci} className="bg-canvas text-fg">
                           {ci}
                         </option>
                       ))}
@@ -1137,14 +1148,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 2: Estilo Musical & Géneros */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="border-b border-[#2A2E3D] pb-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Disc3 className="w-4 h-4 text-[#7C3AED]" />
+            <div className="bg-surface border border-line rounded-2xl p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="border-b border-line pb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-fg font-bold text-xs uppercase tracking-wider">
+                  <Disc3 className="w-4 h-4 text-primary-strong" />
                   <span>2. Estilo Musical & Géneros</span>
                 </div>
                 {COUNTRY_GENRE_DEFAULTS[country] && (
-                  <span className="text-[10px] text-[#C084FC] bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 px-2.5 py-0.5 rounded-full font-bold">
+                  <span className="text-2xs text-primary-soft bg-primary/15 border border-primary/30 px-2.5 py-0.5 rounded-full font-bold">
                     Escena {COUNTRY_GENRE_DEFAULTS[country].flag} {country}
                   </span>
                 )}
@@ -1152,7 +1163,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Main Genre Selection Grid */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider">
                   Género Musical Principal *
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -1169,33 +1180,33 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           setMainGenreId(g.id);
                           setSecondaryGenres(secondaryGenres.filter(sg => sg !== g.id));
                         }}
-                        className={`p-3 rounded-[10px] border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                        className={`p-3 rounded-control border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
                           isSelected
-                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-[#7C3AED]'
+                            ? 'bg-primary-strong/20 border-primary-strong shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-primary-strong'
                             : isRecommended
-                            ? 'bg-[#0B0C10] border-[#8B5CF6]/50 hover:border-[#7C3AED] hover:bg-[#1C1F2B]'
-                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
+                            ? 'bg-canvas border-primary/50 hover:border-primary-strong hover:bg-surface-raised'
+                            : 'bg-canvas border-line hover:border-primary-strong/40 hover:bg-surface-raised'
                         }`}
                       >
                         <div>
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-bold text-[#F8FAFC]">
+                            <span className="text-xs font-bold text-fg">
                               {g.name}
                             </span>
-                            {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC] shrink-0" />}
+                            {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-primary-soft shrink-0" />}
                           </div>
-                          <span className="text-[10px] text-[#94A3B8] line-clamp-1">
+                          <span className="text-2xs text-fg-muted line-clamp-1">
                             {g.aestheticTone || g.originCountry || ''}
                           </span>
                         </div>
 
                         {isRecommended && (
-                          <span className="text-[9px] font-bold text-[#C084FC] bg-[#8B5CF6]/20 px-1.5 py-0.5 rounded-[4px] border border-[#8B5CF6]/40 w-fit mt-1.5">
-                            ✨ Sugerido para {country}
+                          <span className="text-2xs font-bold text-primary-soft bg-primary/20 px-1.5 py-0.5 rounded-sm border border-primary/40 w-fit mt-1.5">
+                           Sugerido para {country}
                           </span>
                         )}
                         {!isRecommended && isCountrySecondary && (
-                          <span className="text-[9px] font-semibold text-cyan-300 bg-cyan-950/40 px-1.5 py-0.5 rounded-[4px] border border-cyan-500/30 w-fit mt-1.5">
+                          <span className="text-2xs font-semibold text-cyan-300 bg-cyan-950/40 px-1.5 py-0.5 rounded-sm border border-cyan-500/30 w-fit mt-1.5">
                             Popular en {country}
                           </span>
                         )}
@@ -1208,10 +1219,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Secondary Subgenres (Chips/Badges) */}
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between items-center">
-                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider">
                     Influencias & Subgéneros Secundarios
                   </label>
-                  <span className="text-[11px] font-mono text-[#C084FC]">
+                  <span className="text-xs font-mono text-primary-soft">
                     {cleanCountTag(secondaryGenres.length, 3, 'seleccionados')}
                   </span>
                 </div>
@@ -1229,16 +1240,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           onClick={() => toggleSecondaryGenre(g.id)}
                           className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
                             isSelected
-                              ? 'bg-[#7C3AED]/25 border-[#7C3AED] text-white shadow-xs'
+                              ? 'bg-primary-strong/25 border-primary-strong text-white shadow-xs'
                               : isRecommendedSub
-                              ? 'bg-[#0B0C10] border-[#8B5CF6]/40 text-[#C084FC] hover:text-[#F8FAFC] hover:border-[#7C3AED]'
-                              : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#7C3AED]/40'
+                              ? 'bg-canvas border-primary/40 text-primary-soft hover:text-fg hover:border-primary-strong'
+                              : 'bg-canvas border-line text-fg-muted hover:text-fg hover:border-primary-strong/40'
                           }`}
                         >
                           <span>{isSelected ? '✓ ' : '+ '}</span>
                           <span>{g.name}</span>
                           {isRecommendedSub && !isSelected && (
-                            <span className="text-[9px] text-[#C084FC] font-mono">★</span>
+                            <span className="text-2xs text-primary-soft font-mono">★</span>
                           )}
                         </button>
                       );
@@ -1250,13 +1261,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 3: Arquetipo & Filosofía Creativa (Rango Underground: 18 - 35) */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
-                <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Brain className="w-4 h-4 text-[#7C3AED]" />
+            <div className="bg-surface border border-line rounded-2xl p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="flex items-center justify-between border-b border-line pb-3">
+                <div className="flex items-center gap-2 text-fg font-bold text-xs uppercase tracking-wider">
+                  <Brain className="w-4 h-4 text-primary-strong" />
                   <span>3. Arquetipo Artístico & Habilidades Iniciales</span>
                 </div>
-                <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
+                <span className="text-2xs font-mono text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
                   Nivel Amateur • 18 - 35 / 100
                 </span>
               </div>
@@ -1313,20 +1324,20 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       type="button"
                       key={item.id}
                       onClick={() => setArchetype(item.id as any)}
-                      className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-[#7C3AED]'
-                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
+                          ? 'bg-primary-strong/20 border-primary-strong shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-primary-strong'
+                          : 'bg-canvas border-line hover:border-primary-strong/40 hover:bg-surface-raised'
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#F8FAFC]">
+                          <span className="text-xs font-bold text-fg">
                             {item.label}
                           </span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />}
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-primary-soft" />}
                         </div>
-                        <p className="text-[11px] text-[#94A3B8] leading-relaxed mb-2.5">
+                        <p className="text-xs text-fg-muted leading-relaxed mb-2.5">
                           {item.desc}
                         </p>
                       </div>
@@ -1342,12 +1353,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {/* Informative Realistic Skill Curve Banner */}
-              <div className="bg-[#0B0C10] p-3.5 rounded-[12px] border border-[#2A2E3D] flex items-start gap-3 text-xs text-[#94A3B8]">
-                <div className="p-2 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] text-[#C084FC] shrink-0 mt-0.5">
-                  <TrendingUp className="w-4 h-4 text-[#8B5CF6]" />
+              <div className="bg-canvas p-3.5 rounded-xl border border-line flex items-start gap-3 text-xs text-fg-muted">
+                <div className="p-2 rounded-lg bg-surface border border-line text-primary-soft shrink-0 mt-0.5">
+                  <TrendingUp className="w-4 h-4 text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <span className="font-bold text-[#F8FAFC] block">
+                  <span className="font-bold text-fg block">
                     Curva de Progresión Realista (Nivel Amateur: 18 - 35 / 100)
                   </span>
                   <p className="leading-relaxed">
@@ -1358,21 +1369,21 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Archetype Skill Breakdown or Custom Point Buy System */}
               {archetype !== 'custom' ? (
-                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] space-y-3.5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2E3D] pb-3">
+                <div className="bg-canvas p-4 rounded-xl border border-line space-y-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line pb-3">
                     <div>
-                      <span className="text-xs font-bold text-[#C084FC] block uppercase tracking-wider">
+                      <span className="text-xs font-bold text-primary-soft block uppercase tracking-wider">
                         Desglose de Habilidades Iniciales: {ARCHETYPE_PRESETS[archetype]?.name}
                       </span>
-                      <p className="text-[11px] text-[#94A3B8]">
+                      <p className="text-xs text-fg-muted">
                         {ARCHETYPE_PRESETS[archetype]?.subtitle}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono text-[#94A3B8]">
+                      <span className="text-xs font-mono text-fg-muted">
                         Promedio Inicial:
                       </span>
-                      <span className="text-xs font-mono font-bold text-[#F8FAFC] bg-[#16181F] px-2.5 py-0.5 rounded-[6px] border border-[#2A2E3D]">
+                      <span className="text-xs font-mono font-bold text-fg bg-surface px-2.5 py-0.5 rounded-md border border-line">
                         {averageSkillRating} / 100
                       </span>
                     </div>
@@ -1387,35 +1398,40 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       return (
                         <div
                           key={meta.key}
-                          className="bg-[#16181F] p-3 rounded-[10px] border border-[#2A2E3D] space-y-2 hover:border-[#7C3AED]/40 transition-colors"
+                          className="bg-surface p-3 rounded-control border border-line space-y-2 hover:border-primary-strong/40 transition-colors"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D]">
+                              <div className="p-1 rounded-md bg-canvas border border-line">
                                 <IconComp className={`w-3.5 h-3.5 ${meta.iconColor}`} />
                               </div>
-                              <span className="text-xs font-bold text-[#F8FAFC]">
+                              <span className="text-xs font-bold text-fg">
                                 {meta.label}
                               </span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.color}`}>
+                              <span className={`text-2xs font-bold px-2 py-0.5 rounded-full border ${tier.color}`}>
                                 {tier.label}
                               </span>
-                              <span className="font-mono font-bold text-xs text-[#F8FAFC]">
+                              <span className="font-mono font-bold text-xs text-fg">
                                 {val}/100
                               </span>
                             </div>
                           </div>
 
-                          <div className="w-full bg-[#0B0C10] h-2 rounded-full overflow-hidden border border-[#2A2E3D]">
+                          <div className="w-full bg-canvas h-2 rounded-full overflow-hidden border border-line">
                             <div
                               className={`h-full bg-gradient-to-r ${meta.gradient} rounded-full transition-all duration-300`}
+                              role="progressbar"
+                              aria-label={meta.label}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                              aria-valuenow={Math.round(Number(Math.min(100, Math.max(0, val))))}
                               style={{ width: `${Math.min(100, Math.max(0, val))}%` }}
                             />
                           </div>
 
-                          <p className="text-[10px] text-[#94A3B8] leading-tight">
+                          <p className="text-2xs text-fg-muted leading-tight">
                             {meta.desc}
                           </p>
                         </div>
@@ -1425,28 +1441,28 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
               ) : (
                 /* Point Buy Mode Controller */
-                <div className="bg-[#0B0C10] p-4 sm:p-5 rounded-[14px] border border-[#7C3AED]/40 space-y-4 shadow-xl">
+                <div className="bg-canvas p-4 sm:p-5 rounded-card border border-primary-strong/40 space-y-4 shadow-xl">
                   {/* Point Buy Header & Status */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2E3D] pb-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3.5">
                     <div>
                       <div className="flex items-center gap-2">
-                        <Sliders className="w-4 h-4 text-[#C084FC]" />
-                        <span className="text-xs font-bold text-[#C084FC] uppercase tracking-wider">
+                        <Sliders className="w-4 h-4 text-primary-soft" />
+                        <span className="text-xs font-bold text-primary-soft uppercase tracking-wider">
                           Modo Personalizado • Sistema Point-Buy
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#94A3B8] mt-0.5">
+                      <p className="text-xs text-fg-muted mt-0.5">
                         Base: {CUSTOM_BASE_STAT} pts por stat • Máximo inicial: {CUSTOM_MAX_STAT} pts • Bolsa de {CUSTOM_POINTS_POOL} pts libres.
                       </p>
                     </div>
 
                     <div className="flex items-center gap-2.5 shrink-0">
                       <div
-                        className={`px-3 py-1.5 rounded-[8px] border text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs ${
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-bold font-mono flex items-center gap-1.5 shadow-xs ${
                           remainingCustomPoints === 0
                             ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                             : remainingCustomPoints > 0
-                            ? 'bg-[#7C3AED]/20 text-[#C084FC] border-[#7C3AED]/50'
+                            ? 'bg-primary-strong/20 text-primary-soft border-primary-strong/50'
                             : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                         }`}
                       >
@@ -1456,7 +1472,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         </span>
                       </div>
 
-                      <span className="text-xs font-mono font-bold text-[#F8FAFC] bg-[#16181F] px-2.5 py-1.5 rounded-[8px] border border-[#2A2E3D]">
+                      <span className="text-xs font-mono font-bold text-fg bg-surface px-2.5 py-1.5 rounded-lg border border-line">
                         Promedio: {averageSkillRating}/100
                       </span>
                     </div>
@@ -1464,13 +1480,18 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                   {/* Point Budget Visual Progress Bar */}
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-[10px] font-mono text-[#94A3B8]">
+                    <div className="flex justify-between text-2xs font-mono text-fg-muted">
                       <span>Puntos Asignados: {spentCustomPoints} pts</span>
                       <span>Restantes: {remainingCustomPoints} pts</span>
                     </div>
-                    <div className="w-full bg-[#16181F] h-2 rounded-full overflow-hidden border border-[#2A2E3D]">
+                    <div className="w-full bg-surface h-2 rounded-full overflow-hidden border border-line">
                       <div
                         className="h-full bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#EC4899] transition-all duration-300"
+                        role="progressbar"
+                        aria-label="Puntos asignados"
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(Number(Math.min(100, (spentCustomPoints / CUSTOM_POINTS_POOL) * 100)))}
                         style={{ width: `${Math.min(100, (spentCustomPoints / CUSTOM_POINTS_POOL) * 100)}%` }}
                       />
                     </div>
@@ -1478,34 +1499,34 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                   {/* Point Buy Quick Presets Bar */}
                   <div className="flex items-center gap-2 flex-wrap pt-1">
-                    <span className="text-[11px] font-semibold text-[#94A3B8]">
+                    <span className="text-xs font-semibold text-fg-muted">
                       Plantillas Rápidas:
                     </span>
                     <button
                       type="button"
                       onClick={() => handleApplyCustomPreset('balanced')}
-                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-[#7C3AED]/50 text-[#F8FAFC] transition-colors cursor-pointer"
+                      className="px-2.5 py-1 rounded-md text-xs font-semibold bg-surface hover:bg-surface-raised border border-line hover:border-primary-strong/50 text-fg transition-colors cursor-pointer"
                     >
                       Equilibrado (22-23 pts)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApplyCustomPreset('producer')}
-                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-cyan-500/50 text-[#F8FAFC] transition-colors cursor-pointer"
+                      className="px-2.5 py-1 rounded-md text-xs font-semibold bg-surface hover:bg-surface-raised border border-line hover:border-cyan-500/50 text-fg transition-colors cursor-pointer"
                     >
                       Foco Producción & Técnica
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApplyCustomPreset('showman')}
-                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-[#1C1F2B] border border-[#2A2E3D] hover:border-amber-500/50 text-[#F8FAFC] transition-colors cursor-pointer"
+                      className="px-2.5 py-1 rounded-md text-xs font-semibold bg-surface hover:bg-surface-raised border border-line hover:border-amber-500/50 text-fg transition-colors cursor-pointer"
                     >
                       Foco Carisma & Escenario
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApplyCustomPreset('reset')}
-                      className="px-2.5 py-1 rounded-[6px] text-[11px] font-semibold bg-[#16181F] hover:bg-rose-950/30 border border-[#2A2E3D] hover:border-rose-500/50 text-rose-300 transition-colors cursor-pointer flex items-center gap-1"
+                      className="px-2.5 py-1 rounded-md text-xs font-semibold bg-surface hover:bg-rose-950/30 border border-line hover:border-rose-500/50 text-rose-300 transition-colors cursor-pointer flex items-center gap-1"
                     >
                       <RotateCcw className="w-3 h-3" />
                       <span>Base (18 pts)</span>
@@ -1524,23 +1545,23 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       return (
                         <div
                           key={meta.key}
-                          className="bg-[#16181F] p-3.5 rounded-[12px] border border-[#2A2E3D] space-y-2.5 hover:border-[#7C3AED]/40 transition-colors"
+                          className="bg-surface p-3.5 rounded-xl border border-line space-y-2.5 hover:border-primary-strong/40 transition-colors"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="p-1 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D]">
+                              <div className="p-1 rounded-md bg-canvas border border-line">
                                 <IconComp className={`w-3.5 h-3.5 ${meta.iconColor}`} />
                               </div>
-                              <span className="text-xs font-bold text-[#F8FAFC]">
+                              <span className="text-xs font-bold text-fg">
                                 {meta.label}
                               </span>
                             </div>
 
                             <div className="flex items-center gap-1.5">
-                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${tier.color}`}>
+                              <span className={`text-2xs font-bold px-2 py-0.5 rounded-full border ${tier.color}`}>
                                 {tier.label}
                               </span>
-                              <span className="font-mono font-bold text-xs text-[#F8FAFC] bg-[#0B0C10] px-2 py-0.5 rounded-[4px] border border-[#2A2E3D]">
+                              <span className="font-mono font-bold text-xs text-fg bg-canvas px-2 py-0.5 rounded-sm border border-line">
                                 {val}/100
                               </span>
                             </div>
@@ -1552,10 +1573,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               type="button"
                               onClick={() => handleStepTrait(meta.key, -1)}
                               disabled={!canDecrement}
-                              className={`p-1.5 rounded-[6px] border transition-colors cursor-pointer ${
+                              className={`p-1.5 rounded-md border transition-colors cursor-pointer ${
                                 canDecrement
-                                  ? 'bg-[#0B0C10] border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-rose-500/60'
-                                  : 'bg-[#0B0C10]/40 border-[#2A2E3D]/40 text-[#64748B] cursor-not-allowed opacity-50'
+                                  ? 'bg-canvas border-line text-fg hover:bg-surface-raised hover:border-rose-500/60'
+                                  : 'bg-canvas/40 border-line/40 text-fg-subtle cursor-not-allowed opacity-50'
                               }`}
                               title="Disminuir -1 punto"
                             >
@@ -1569,17 +1590,17 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               step={1}
                               value={val}
                               onChange={e => handleCustomTraitChange(meta.key, Number(e.target.value))}
-                              className="w-full h-2 rounded-lg bg-[#0B0C10] border border-[#2A2E3D] accent-[#7C3AED] cursor-pointer"
+                              className="w-full h-2 rounded-lg bg-canvas border border-line accent-primary-strong cursor-pointer"
                             />
 
                             <button
                               type="button"
                               onClick={() => handleStepTrait(meta.key, 1)}
                               disabled={!canIncrement}
-                              className={`p-1.5 rounded-[6px] border transition-colors cursor-pointer ${
+                              className={`p-1.5 rounded-md border transition-colors cursor-pointer ${
                                 canIncrement
-                                  ? 'bg-[#0B0C10] border-[#2A2E3D] text-[#F8FAFC] hover:bg-[#1C1F2B] hover:border-[#7C3AED]'
-                                  : 'bg-[#0B0C10]/40 border-[#2A2E3D]/40 text-[#64748B] cursor-not-allowed opacity-50'
+                                  ? 'bg-canvas border-line text-fg hover:bg-surface-raised hover:border-primary-strong'
+                                  : 'bg-canvas/40 border-line/40 text-fg-subtle cursor-not-allowed opacity-50'
                               }`}
                               title={
                                 remainingCustomPoints <= 0
@@ -1593,7 +1614,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                             </button>
                           </div>
 
-                          <p className="text-[10px] text-[#94A3B8] leading-tight">
+                          <p className="text-2xs text-fg-muted leading-tight">
                             {meta.desc}
                           </p>
                         </div>
@@ -1607,10 +1628,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 4: Punto de Partida / Background */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="border-b border-[#2A2E3D] pb-3">
-                <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <TrendingUp className="w-4 h-4 text-[#7C3AED]" />
+            <div className="bg-surface border border-line rounded-2xl p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="border-b border-line pb-3">
+                <div className="flex items-center gap-2 text-fg font-bold text-xs uppercase tracking-wider">
+                  <TrendingUp className="w-4 h-4 text-primary-strong" />
                   <span>4. Punto de Partida / Background</span>
                 </div>
               </div>
@@ -1648,24 +1669,24 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       type="button"
                       key={item.id}
                       onClick={() => setStartingLevel(item.id as any)}
-                      className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-[#7C3AED]'
-                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
+                          ? 'bg-primary-strong/20 border-primary-strong shadow-[0_0_15px_rgba(124,58,237,0.25)] ring-1 ring-primary-strong'
+                          : 'bg-canvas border-line hover:border-primary-strong/40 hover:bg-surface-raised'
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#F8FAFC]">
+                          <span className="text-xs font-bold text-fg">
                             {item.label}
                           </span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#C084FC]" />}
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-primary-soft" />}
                         </div>
-                        <p className="text-[11px] text-[#94A3B8] leading-relaxed mb-2">
+                        <p className="text-xs text-fg-muted leading-relaxed mb-2">
                           {item.desc}
                         </p>
                       </div>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30 w-fit">
+                      <span className="text-2xs font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30 w-fit">
                         {item.badge}
                       </span>
                     </button>
@@ -1677,22 +1698,22 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 5: Identidad Visual & Avatar Vectorial del Artista */}
             {/* ========================================================================= */}
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-5 sm:p-6 space-y-5 shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3 flex-wrap gap-2">
-                <div className="flex items-center gap-2 text-[#F8FAFC] font-bold text-xs uppercase tracking-wider">
-                  <Palette className="w-4 h-4 text-[#7C3AED]" />
+            <div className="bg-surface border border-line rounded-2xl p-5 sm:p-6 space-y-5 shadow-lg">
+              <div className="flex items-center justify-between border-b border-line pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2 text-fg font-bold text-xs uppercase tracking-wider">
+                  <Palette className="w-4 h-4 text-primary-strong" />
                   <span>5. Identidad Visual & Avatar del Artista</span>
                 </div>
                 
                 {/* Clean Mode Selector Tabs: Vector Symbol vs Initials */}
-                <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D]">
+                <div className="flex items-center gap-1 bg-canvas p-1 rounded-lg border border-line">
                   <button
                     type="button"
                     onClick={() => setAvatarType('symbol')}
-                    className={`px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'symbol'
-                        ? 'bg-[#7C3AED] text-white shadow-xs'
-                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                        ? 'bg-primary-strong text-white shadow-xs'
+                        : 'text-fg-muted hover:text-fg'
                     }`}
                   >
                     <Crown className="w-3.5 h-3.5" />
@@ -1702,10 +1723,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setAvatarType('initials')}
-                    className={`px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'initials'
-                        ? 'bg-[#7C3AED] text-white shadow-xs'
-                        : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                        ? 'bg-primary-strong text-white shadow-xs'
+                        : 'text-fg-muted hover:text-fg'
                     }`}
                   >
                     <User className="w-3.5 h-3.5" />
@@ -1717,10 +1738,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Curated Vector Presets Quick Bar */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider">
                     Presets de Identidad Vectorial
                   </label>
-                  <span className="text-[11px] text-[#94A3B8]">Gradientes & Íconos Curados</span>
+                  <span className="text-xs text-fg-muted">Gradientes & Íconos Curados</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {VECTOR_PRESETS.map((preset) => {
@@ -1730,10 +1751,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         type="button"
                         key={preset.id}
                         onClick={() => handleApplyPreset(preset)}
-                        className={`p-2.5 rounded-[12px] border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
                           isSelected
-                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-[0_0_12px_rgba(124,58,237,0.3)] ring-1 ring-[#7C3AED]'
-                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
+                            ? 'bg-primary-strong/20 border-primary-strong shadow-[0_0_12px_rgba(124,58,237,0.3)] ring-1 ring-primary-strong'
+                            : 'bg-canvas border-line hover:border-primary-strong/40 hover:bg-surface-raised'
                         }`}
                       >
                         <ArtistAvatar
@@ -1741,13 +1762,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           avatarColor={preset.color}
                           avatarIcon={preset.icon}
                           size="sm"
-                          rounded="rounded-[8px]"
+                          rounded="rounded-lg"
                         />
                         <div className="min-w-0">
-                          <span className="text-[11px] font-bold text-[#F8FAFC] block truncate">
+                          <span className="text-xs font-bold text-fg block truncate">
                             {preset.name.split('(')[0].trim()}
                           </span>
-                          <span className="text-[9px] text-[#94A3B8] block truncate uppercase">
+                          <span className="text-2xs text-fg-muted block truncate uppercase">
                             {preset.category}
                           </span>
                         </div>
@@ -1759,8 +1780,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Vector Symbols Selector (When in Symbol mode) */}
               {avatarType === 'symbol' && (
-                <div className="space-y-2.5 pt-2 border-t border-[#2A2E3D]">
-                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                <div className="space-y-2.5 pt-2 border-t border-line">
+                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider">
                     Símbolo Escénico / Ícono de Marca
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-7 gap-2.5">
@@ -1775,10 +1796,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                             setAvatarIcon(sym.id);
                             setSelectedPresetId(null);
                           }}
-                          className={`p-2.5 rounded-[12px] border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
+                          className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
                             isSelected
-                              ? 'bg-[#7C3AED]/25 border-[#7C3AED] shadow-[0_0_15px_rgba(124,58,237,0.35)] ring-1 ring-[#7C3AED]'
-                              : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/50 hover:bg-[#1C1F2B]'
+                              ? 'bg-primary-strong/25 border-primary-strong shadow-[0_0_15px_rgba(124,58,237,0.35)] ring-1 ring-primary-strong'
+                              : 'bg-canvas border-line hover:border-primary-strong/50 hover:bg-surface-raised'
                           }`}
                         >
                           <div
@@ -1786,7 +1807,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           >
                             <IconComp className="w-4 h-4" />
                           </div>
-                          <span className="text-[10px] font-semibold text-[#F8FAFC] truncate w-full text-center">
+                          <span className="text-2xs font-semibold text-fg truncate w-full text-center">
                             {sym.label.split('/')[0].trim()}
                           </span>
                         </button>
@@ -1798,27 +1819,27 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Initials Mode Notice */}
               {avatarType === 'initials' && (
-                <div className="bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D] text-center space-y-2 pt-2 border-t border-[#2A2E3D]">
+                <div className="bg-canvas p-4 rounded-xl border border-line text-center space-y-2 pt-2 border-t border-line">
                   <ArtistAvatar
                     name={name}
                     avatarColor={avatarColor}
                     size="lg"
-                    rounded="rounded-[14px]"
+                    rounded="rounded-card"
                     className="mx-auto shadow-lg"
                   />
-                  <p className="text-xs text-[#94A3B8]">
+                  <p className="text-xs text-fg-muted">
                     Tu avatar se generará dinámicamente con las iniciales limpias de tu nombre artístico sobre la paleta cromática activa.
                   </p>
                 </div>
               )}
 
               {/* Studio After Dark Gradient Palette Selector */}
-              <div className="space-y-2.5 pt-2 border-t border-[#2A2E3D]">
+              <div className="space-y-2.5 pt-2 border-t border-line">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider">
                     Paleta de Color de Fondo
                   </label>
-                  <span className="text-[11px] text-[#94A3B8]">Gradientes Obsidian & Neón</span>
+                  <span className="text-xs text-fg-muted">Gradientes Obsidian & Neón</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
@@ -1831,22 +1852,22 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           setAvatarColor(p.val);
                           setSelectedPresetId(null);
                         }}
-                        className={`p-2.5 rounded-[10px] border flex items-center gap-2.5 transition-all cursor-pointer ${
+                        className={`p-2.5 rounded-control border flex items-center gap-2.5 transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-xs ring-1 ring-[#7C3AED]'
-                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40 hover:bg-[#1C1F2B]'
+                            ? 'bg-primary-strong/20 border-primary-strong shadow-xs ring-1 ring-primary-strong'
+                            : 'bg-canvas border-line hover:border-primary-strong/40 hover:bg-surface-raised'
                         }`}
                       >
                         <div
-                          className={`w-6 h-6 rounded-[6px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 shadow-xs flex items-center justify-center`}
+                          className={`w-6 h-6 rounded-md bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 shadow-xs flex items-center justify-center`}
                         >
                           {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
                         </div>
                         <div className="min-w-0 text-left">
-                          <span className="text-[11px] font-semibold text-[#F8FAFC] block truncate">
+                          <span className="text-xs font-semibold text-fg block truncate">
                             {p.label.split('(')[0].trim()}
                           </span>
-                          <span className="text-[9px] text-[#94A3B8] block truncate">
+                          <span className="text-2xs text-fg-muted block truncate">
                             {p.description}
                           </span>
                         </div>
@@ -1861,10 +1882,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* RASGO ULTRA-RARO: Promesa / Prodigio */}
             {/* ========================================================================= */}
             <div
-              className={`p-5 rounded-[16px] border transition-all ${
+              className={`p-5 rounded-2xl border transition-all ${
                 isProdigy
-                  ? 'bg-gradient-to-r from-amber-500/15 via-[#16181F] to-purple-500/15 text-[#F8FAFC] border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.15)]'
-                  : 'bg-[#16181F] text-[#F8FAFC] border-[#2A2E3D]'
+                  ? 'bg-gradient-to-r from-amber-500/15 via-surface to-purple-500/15 text-fg border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.15)]'
+                  : 'bg-surface text-fg border-line'
               }`}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -1873,29 +1894,29 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     className={`p-3 rounded-full ${
                       isProdigy
                         ? 'bg-amber-400 text-stone-950 shadow-[0_0_12px_rgba(251,191,36,0.5)]'
-                        : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#7C3AED]'
+                        : 'bg-canvas border border-line text-primary-strong'
                     }`}
                   >
                     {isProdigy ? <Crown className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#F8FAFC]">
+                      <span className="text-xs font-bold uppercase tracking-wider text-fg">
                         Bonificación Opcional: Rasgo Promesa / Prodigio
                       </span>
                       <span
-                        className={`text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold ${
+                        className={`text-2xs px-2.5 py-0.5 rounded-full font-mono font-bold ${
                           isProdigy
                             ? 'bg-amber-400/20 text-amber-300 border border-amber-400/30'
-                            : 'bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8]'
+                            : 'bg-canvas border border-line text-fg-muted'
                         }`}
                       >
                         Probabilidad: 1 en 100.000
                       </span>
                     </div>
-                    <p className={`text-xs mt-1 leading-relaxed ${isProdigy ? 'text-amber-200/90' : 'text-[#94A3B8]'}`}>
+                    <p className={`text-xs mt-1 leading-relaxed ${isProdigy ? 'text-amber-200/90' : 'text-fg-muted'}`}>
                       {isProdigy
-                        ? '✨ ¡ACTIVADO! Talento generacional irrepetible con atributos iniciales perfectos (95-100) y multiplicador x3 permanente.'
+                        ? '¡ACTIVADO! Talento generacional irrepetible con atributos iniciales perfectos (95-100) y multiplicador x3 permanente.'
                         : 'Permite a los jugadores audaces tentar a la suerte antes de comenzar su carrera en busca de un prodigio histórico.'}
                     </p>
                   </div>
@@ -1906,13 +1927,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     <button
                       type="button"
                       onClick={handleRollProdigyLuck}
-                      className="px-4 py-2 rounded-[8px] text-xs font-bold border border-[#2A2E3D] bg-[#0B0C10] hover:bg-[#1C1F2B] hover:border-[#06B6D4]/60 text-[#F8FAFC] transition-all cursor-pointer flex items-center gap-2 shadow-xs"
+                      className="px-4 py-2 rounded-lg text-xs font-bold border border-line bg-canvas hover:bg-surface-raised hover:border-info/60 text-fg transition-all cursor-pointer flex items-center gap-2 shadow-xs"
                     >
-                      <Dices className="w-4 h-4 text-[#06B6D4]" />
+                      <Dices className="w-4 h-4 text-info" />
                       <span>Probar Suerte</span>
                     </button>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 bg-amber-400/10 px-3 py-1.5 rounded-[8px] border border-amber-400/30">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 bg-amber-400/10 px-3 py-1.5 rounded-lg border border-amber-400/30">
                       <ShieldCheck className="w-4 h-4" />
                       <span>PRODIGIO ACTIVO</span>
                     </div>
@@ -1921,7 +1942,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {rollMessage && (
-                <div className="mt-3 pt-3 border-t border-[#2A2E3D] text-xs font-mono text-[#C084FC] animate-fade-in">
+                <div className="mt-3 pt-3 border-t border-line text-xs font-mono text-primary-soft animate-fade-in">
                   {rollMessage}
                 </div>
               )}
@@ -1930,71 +1951,71 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
           {/* Right Column: Live Artist Profile Card & Launch CTA */}
           <div className="space-y-6 lg:sticky lg:top-6">
-            <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 shadow-2xl space-y-6">
+            <div className="bg-surface border border-line rounded-2xl p-6 shadow-2xl space-y-6">
               
               {/* Avatar Live Display */}
               <div className="text-center space-y-3">
                 <div className="relative inline-block mx-auto">
-                  <div className="p-1 rounded-[18px] bg-[#0B0C10] border-2 border-[#2A2E3D] shadow-xl">
+                  <div className="p-1 rounded-panel bg-canvas border-2 border-line shadow-xl">
                     <ArtistAvatar
                       name={name}
                       avatarColor={avatarColor}
                       avatarIcon={avatarType === 'symbol' ? avatarIcon : undefined}
                       size="xl"
-                      rounded="rounded-[14px]"
+                      rounded="rounded-card"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-extrabold text-[#F8FAFC] tracking-tight">
+                  <h2 className="text-xl font-extrabold text-fg tracking-tight">
                     {name || 'Nuevo Artista'}
                   </h2>
-                  <p className="text-xs text-[#94A3B8] font-normal">
+                  <p className="text-xs text-fg-muted font-normal">
                     {realName ? `"${cleanQuotes(realName)}"` : ''} • {age} Años
                   </p>
-                  <p className="text-xs text-[#94A3B8] flex items-center justify-center gap-1 mt-0.5">
-                    <MapPin className="w-3 h-3 text-[#06B6D4]" />
+                  <p className="text-xs text-fg-muted flex items-center justify-center gap-1 mt-0.5">
+                    <MapPin className="w-3 h-3 text-info" />
                     <span>{formatCityCountry(finalResolvedCity, country)}</span>
                   </p>
                 </div>
 
                 {isProdigy && (
-                  <div className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1.5 mx-auto shadow-xs">
+                  <div className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 mx-auto shadow-xs">
                     <Crown className="w-3.5 h-3.5 text-amber-300" />
                     <span>Prodigio Musical • Crecimiento x3</span>
                   </div>
                 )}
 
                 <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-                  <span className="px-2.5 py-0.5 bg-[#0B0C10] border border-[#2A2E3D] text-[#F8FAFC] rounded-full text-xs font-semibold">
+                  <span className="px-2.5 py-0.5 bg-canvas border border-line text-fg rounded-full text-xs font-semibold">
                     {selectedMainGenre?.name || 'Género'}
                   </span>
-                  <span className="px-2 py-0.5 bg-[#0B0C10] border border-[#2A2E3D] text-[#94A3B8] rounded-full text-[11px] font-mono">
+                  <span className="px-2 py-0.5 bg-canvas border border-line text-fg-muted rounded-full text-xs font-mono">
                     {startingLevel.toUpperCase()}
                   </span>
                 </div>
               </div>
 
               {/* Skills Profile Section in Preview Card */}
-              <div className="border-t border-[#2A2E3D] pt-4 space-y-2.5 text-xs">
+              <div className="border-t border-line pt-4 space-y-2.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider">
+                  <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider">
                     Habilidades Iniciales
                   </h3>
-                  <span className="text-[10px] font-mono text-[#C084FC] font-bold">
+                  <span className="text-2xs font-mono text-primary-soft font-bold">
                     {averageSkillRating}/100 Promedio
                   </span>
                 </div>
 
-                <div className="bg-[#0B0C10] p-3 rounded-[10px] border border-[#2A2E3D] space-y-2">
+                <div className="bg-canvas p-3 rounded-control border border-line space-y-2">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#94A3B8]">Especialidad Destacada:</span>
+                    <span className="text-fg-muted">Especialidad Destacada:</span>
                     <div className="flex items-center gap-1.5">
                       {topTwoTraits.map((t, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded-[4px] bg-[#16181F] text-[#C084FC] border border-[#7C3AED]/30 font-mono font-bold text-[10px]"
+                          className="px-2 py-0.5 rounded-sm bg-surface text-primary-soft border border-primary-strong/30 font-mono font-bold text-2xs"
                         >
                           {t.name}: {t.val}
                         </span>
@@ -2002,57 +2023,62 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     </div>
                   </div>
 
-                  <div className="w-full bg-[#16181F] h-2 rounded-full overflow-hidden border border-[#2A2E3D]">
+                  <div className="w-full bg-surface h-2 rounded-full overflow-hidden border border-line">
                     <div
-                      className="h-full bg-gradient-to-r from-cyan-500 via-[#8B5CF6] to-[#EC4899] rounded-full"
+                      className="h-full bg-gradient-to-r from-cyan-500 via-primary to-accent rounded-full"
+                      role="progressbar"
+                      aria-label="Promedio de habilidades"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={Math.round(Number(Math.min(100, Math.max(0, Number(averageSkillRating)))))}
                       style={{ width: `${Math.min(100, Math.max(0, Number(averageSkillRating)))}%` }}
                     />
                   </div>
 
-                  <p className="text-[10px] text-[#64748B] leading-tight">
-                    💡 Margen de desarrollo: +~75 pts mediante grabaciones, tienda de estudio y eventos.
+                  <p className="text-2xs text-fg-subtle leading-tight">
+                   Margen de desarrollo: +~75 pts mediante grabaciones, tienda de estudio y eventos.
                   </p>
                 </div>
               </div>
 
               {/* Starting Stats Breakdown */}
-              <div className="border-t border-[#2A2E3D] pt-4 space-y-2.5 text-xs">
-                <h3 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
+              <div className="border-t border-line pt-4 space-y-2.5 text-xs">
+                <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-2">
                   Condiciones Iniciales
                 </h3>
 
-                <div className="flex justify-between items-center bg-[#0B0C10] px-3.5 py-2.5 rounded-[8px] border border-[#2A2E3D]">
-                  <span className="text-[#94A3B8] flex items-center gap-2">
-                    <DollarSign className="w-3.5 h-3.5 text-[#10B981]" />
+                <div className="flex justify-between items-center bg-canvas px-3.5 py-2.5 rounded-lg border border-line">
+                  <span className="text-fg-muted flex items-center gap-2">
+                    <DollarSign className="w-3.5 h-3.5 text-success" />
                     Fondos Iniciales
                   </span>
-                  <span className="font-bold text-[#10B981] font-mono">
+                  <span className="font-bold text-success font-mono">
                     {formatMoney(computedStats.funds)}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center bg-[#0B0C10] px-3.5 py-2.5 rounded-[8px] border border-[#2A2E3D]">
-                  <span className="text-[#94A3B8] flex items-center gap-2">
-                    <Users className="w-3.5 h-3.5 text-[#06B6D4]" />
+                <div className="flex justify-between items-center bg-canvas px-3.5 py-2.5 rounded-lg border border-line">
+                  <span className="text-fg-muted flex items-center gap-2">
+                    <Users className="w-3.5 h-3.5 text-info" />
                     Comunidad de Fans
                   </span>
-                  <span className="font-bold text-[#06B6D4] font-mono">
+                  <span className="font-bold text-info font-mono">
                     {formatFans(computedStats.fansCount)}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center bg-[#0B0C10] px-3.5 py-2.5 rounded-[8px] border border-[#2A2E3D]">
-                  <span className="text-[#94A3B8] flex items-center gap-2">
-                    <TrendingUp className="w-3.5 h-3.5 text-[#7C3AED]" />
+                <div className="flex justify-between items-center bg-canvas px-3.5 py-2.5 rounded-lg border border-line">
+                  <span className="text-fg-muted flex items-center gap-2">
+                    <TrendingUp className="w-3.5 h-3.5 text-primary-strong" />
                     Popularidad
                   </span>
-                  <span className="font-bold text-[#C084FC] font-mono">
+                  <span className="font-bold text-primary-soft font-mono">
                     {computedStats.popularity}/100
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center bg-[#0B0C10] px-3.5 py-2.5 rounded-[8px] border border-[#2A2E3D]">
-                  <span className="text-[#94A3B8] flex items-center gap-2">
+                <div className="flex justify-between items-center bg-canvas px-3.5 py-2.5 rounded-lg border border-line">
+                  <span className="text-fg-muted flex items-center gap-2">
                     <Flame className="w-3.5 h-3.5 text-orange-400" />
                     Hype Inicial
                   </span>
@@ -2066,7 +2092,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <button
                 type="submit"
                 id="btn-launch-career-bottom"
-                className="w-full py-4 px-6 rounded-[10px] bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#EC4899] hover:from-[#6D28D9] hover:to-[#DB2777] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(124,58,237,0.4)] active:scale-[0.98] transition-all cursor-pointer border border-white/20"
+                className="w-full py-4 px-6 rounded-control bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#EC4899] hover:from-[#6D28D9] hover:to-[#DB2777] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(124,58,237,0.4)] active:scale-[0.98] transition-all cursor-pointer border border-white/20"
               >
                 <Sparkles className="w-4 h-4 text-white" />
                 <span>Comenzar Carrera de Artista</span>

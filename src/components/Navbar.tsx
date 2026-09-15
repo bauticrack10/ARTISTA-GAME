@@ -63,6 +63,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     onTabChange(tabId);
   };
 
+  // Keep the active tab visible when the strip overflows (narrow screens, deep-linked tabs).
+  useEffect(() => {
+    document.getElementById(`nav-tab-${currentTab}`)?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
+  }, [currentTab]);
+
   const currentMonth = world?.currentMonth || 1;
   const currentYear = world?.currentYear || 2026;
   const monthName = TimeSystem.getMonthName(currentMonth);
@@ -98,11 +103,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
-      className="sticky top-0 z-40 bg-[#0B0C10]/95 backdrop-blur-md border-b border-[#2A2E3D] text-[#F8FAFC]"
+      className="sticky top-0 z-40 bg-canvas/95 backdrop-blur-md border-b border-line text-fg"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* Fila 1: Logo + Tiempo actual + Botonera de Avance (CTA Principal) + Métricas Normalizadas */}
-      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3 sm:gap-4 border-b border-[#2A2E3D] overflow-x-auto scrollbar-none">
+      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-x-3 gap-y-2 sm:gap-x-4 border-b border-line">
         
         {/* Izquierda: Logo ("EL ARTISTA") */}
         <div className="flex items-center gap-3 shrink-0">
@@ -111,57 +116,58 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onReturnToTitle();
             }}
-            className="flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer text-left group"
+            className="tap flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer text-left group"
             title="Volver al Menú Principal"
           >
             <div
-              className="w-8 h-8 rounded-[8px] bg-gradient-to-tr from-[#8B5CF6] via-[#A855F7] to-[#EC4899] text-white flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(139,92,246,0.4)]"
+              className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary via-[#A855F7] to-accent text-white flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(139,92,246,0.4)]"
             >
               <Disc3 className="w-4.5 h-4.5 text-white animate-spin-slow" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold tracking-[-0.3px] text-[#F8FAFC] text-xs leading-none flex items-center gap-1.5">
+              <span className="font-bold tracking-[-0.3px] text-fg text-xs leading-none flex items-center gap-1.5">
                 EL ARTISTA
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">
+                <span className="hidden sm:inline text-2xs font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40">
                   PRO
                 </span>
               </span>
-              <span className="text-[9px] text-[#94A3B8] tracking-wider uppercase leading-tight mt-0.5">
+              <span className="hidden sm:block text-2xs text-fg-muted tracking-wider uppercase leading-tight mt-0.5">
                 Simulador Musical
               </span>
             </div>
           </button>
         </div>
 
-        {/* Centro: Indicador de Tiempo actual + Botonera de avance */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Centro: Indicador de Tiempo actual + Botonera de avance (fila propia en móvil) */}
+        <div className="order-last md:order-none w-full md:w-auto flex items-center gap-2 md:shrink-0">
           {/* Selector de Tiempo Condensado */}
           <div
-            className="flex items-center gap-2 bg-[#16181F] px-3 py-1.5 rounded-[8px] border border-[#2A2E3D] text-xs shadow-xs whitespace-nowrap"
+            className="flex items-center gap-2 bg-surface px-3 py-1.5 rounded-lg border border-line text-xs shadow-xs whitespace-nowrap"
             title={`Fecha actual en la industria: ${monthName} ${currentYear} • ${semesterShort}`}
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 ring-2 ring-emerald-400/30" />
-            <span className="font-bold text-[#F8FAFC]">
+            <span className="font-bold text-fg">
               {monthName} {currentYear}
             </span>
-            <span className="text-[#94A3B8] font-medium hidden sm:inline">
+            <span className="text-fg-muted font-medium hidden sm:inline">
               • {semesterShort}
             </span>
           </div>
 
           {/* Botonera de Simulación / Avance Integrada como CTA Principal */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex flex-1 md:flex-none items-center gap-1.5 min-w-0">
             {/* Toggle 6M / 1Y */}
-            <div className="flex items-center bg-[#16181F] p-0.5 rounded-[6px] text-xs font-semibold border border-[#2A2E3D]">
+            <div className="flex items-center bg-surface p-0.5 rounded-md text-xs font-semibold border border-line">
               <button
                 onClick={() => {
                   playSound('click');
                   setCycleMonths(6);
                 }}
-                className={`px-2.5 py-1 rounded-[4px] transition-all cursor-pointer text-xs ${
+                aria-pressed={cycleMonths === 6}
+                className={`min-h-8 px-2.5 py-1 rounded-sm transition-all cursor-pointer text-xs ${
                   cycleMonths === 6
-                    ? 'bg-[#8B5CF6] text-white shadow-xs font-bold'
-                    : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    ? 'bg-primary text-white shadow-xs font-bold'
+                    : 'text-fg-muted hover:text-fg'
                 }`}
                 title="Simular 6 Meses (1 Semestre)"
               >
@@ -172,10 +178,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   playSound('click');
                   setCycleMonths(12);
                 }}
-                className={`px-2.5 py-1 rounded-[4px] transition-all cursor-pointer text-xs ${
+                aria-pressed={cycleMonths === 12}
+                className={`min-h-8 px-2.5 py-1 rounded-sm transition-all cursor-pointer text-xs ${
                   cycleMonths === 12
-                    ? 'bg-[#8B5CF6] text-white shadow-xs font-bold'
-                    : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    ? 'bg-primary text-white shadow-xs font-bold'
+                    : 'text-fg-muted hover:text-fg'
                 }`}
                 title="Simular 1 Año Completo"
               >
@@ -190,57 +197,63 @@ export const Navbar: React.FC<NavbarProps> = ({
                 playSound('click');
                 onAdvanceCycle(cycleMonths);
               }}
-              className="group relative flex items-center gap-2 bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#EC4899] hover:from-[#6D28D9] hover:via-[#7C3AED] hover:to-[#DB2777] text-white px-4 py-1.5 rounded-[8px] text-xs font-bold cursor-pointer active:scale-[0.98] transition-all shadow-[0_0_15px_rgba(124,58,237,0.35)] shrink-0 border border-white/20"
+              className="tap group relative flex flex-1 md:flex-none justify-center items-center gap-2 bg-gradient-to-r from-primary-strong via-primary to-accent hover:from-[#6D28D9] hover:via-primary-strong hover:to-[#DB2777] text-white px-4 py-1.5 rounded-lg text-xs font-bold cursor-pointer active:scale-[0.98] transition-all shadow-[0_0_15px_rgba(124,58,237,0.35)] border border-white/20 whitespace-nowrap"
               title={`Avanzar ciclo de ${cycleMonths === 6 ? '6 meses (1 Semestre)' : '1 año (2 Semestres)'} y simular lanzamientos, charts y eventos`}
             >
               <Play className="w-3.5 h-3.5 fill-white text-white group-hover:scale-110 transition-transform shrink-0" />
               <span className="tracking-tight font-semibold">
-                Avanzar Ciclo ({cycleMonths === 6 ? '+6M' : '+1Y'})
+                Avanzar<span className="hidden sm:inline"> Ciclo</span> ({cycleMonths === 6 ? '+6M' : '+1Y'})
               </span>
             </button>
           </div>
         </div>
 
         {/* Derecha: Píldoras de recursos indispensables (Fondos, Fans, Energía) */}
-        <div className="flex items-center gap-2 text-xs shrink-0">
+        <div className="flex flex-1 md:flex-none justify-end min-w-0">
+        <div className="flex items-center gap-2 text-xs max-w-full overflow-x-auto scroll-fade-x [&>*]:shrink-0">
           {/* Dinero / Fondos */}
           <div
-            className="flex items-center flex-row gap-1 bg-[#16181F] border border-emerald-500/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-emerald-400"
+            className="flex items-center flex-row gap-1 bg-surface border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs shadow-xs text-emerald-400"
             title={`Fondos Monetarios Disponibles: ${formatMoney(playerFunds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             <span className="font-bold text-emerald-400 font-mono whitespace-nowrap">
               {formatMoney(playerFunds)}
             </span>
-            <span className="text-[10px] text-emerald-500/80 font-sans hidden lg:inline">
+            <span className="text-2xs text-emerald-500/80 font-sans hidden lg:inline">
               Fondos
             </span>
           </div>
 
           {/* Comunidad de Fans (formateado explícitamente como "4.15k Fans" / "150 Fans") */}
           <div
-            className="flex items-center gap-1.5 bg-[#16181F] border border-[#8B5CF6]/30 px-2.5 py-1 rounded-[8px] text-xs shadow-xs text-[#C084FC]"
+            className="flex items-center gap-1.5 bg-surface border border-primary/30 px-2.5 py-1 rounded-lg text-xs shadow-xs text-primary-soft"
             title={`Comunidad de Fans Activos: ${playerFans.toLocaleString('es-AR')} fans`}
           >
-            <Users className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
-            <span className="font-bold text-[#C084FC] font-mono">
+            <Users className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="font-bold text-primary-soft font-mono">
               {formatFans(playerFans)}
             </span>
           </div>
 
           {/* Energía Vital con micro-barra */}
           <div
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] border text-xs shadow-xs ${energyStyle.bg}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs shadow-xs ${energyStyle.bg}`}
             title={`Energía Vital del Artista: ${playerEnergy}% • ${
               playerEnergy < 85 ? 'Giras Bloqueadas: Requiere ≥85%' : 'Giras Habilitadas'
             }`}
           >
             <Zap className={`w-3.5 h-3.5 shrink-0 ${energyStyle.icon}`} />
-            <span className="font-bold font-mono text-[#F8FAFC]">{playerEnergy}%</span>
-            <span className="text-[10px] text-[#94A3B8] font-sans hidden sm:inline">Energía</span>
+            <span className="font-bold font-mono text-fg">{playerEnergy}%</span>
+            <span className="text-2xs text-fg-muted font-sans hidden sm:inline">Energía</span>
             <div className="w-5 sm:w-6 h-1.5 bg-white/10 rounded-full overflow-hidden shrink-0 hidden sm:block">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${energyStyle.bar}`}
+                role="progressbar"
+                aria-label="Energía"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(Number(Math.min(100, Math.max(0, playerEnergy))))}
                 style={{ width: `${Math.min(100, Math.max(0, playerEnergy))}%` }}
               />
             </div>
@@ -249,38 +262,40 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Badge Prodigio */}
           {player?.isProdigy && (
             <div
-              className="hidden 2xl:flex items-center gap-1 bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/40 px-2 py-1 rounded-[8px] text-[11px] font-bold shadow-xs"
+              className="hidden 2xl:flex items-center gap-1 bg-warning/15 text-[#FBBF24] border border-warning/40 px-2 py-1 rounded-lg text-xs font-bold shadow-xs"
               title="Rasgo: Promesa / Prodigio • x3 Ganancia permanente en progreso"
             >
-              <Crown className="w-3 h-3 text-[#F59E0B] fill-current shrink-0" />
+              <Crown className="w-3 h-3 text-warning fill-current shrink-0" />
               <span>x3 PRODIGIO</span>
             </div>
           )}
 
           {/* Control de Audio / SFX Engine */}
-          <div className="flex items-center gap-1.5 bg-[#16181F] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 p-1 rounded-[8px] transition-colors">
+          <div className="flex items-center gap-1.5 bg-surface border border-line hover:border-primary/40 p-1 rounded-lg transition-colors">
             <button
               id="btn-toggle-audio-sfx"
               onClick={handleToggleSound}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-[6px] transition-all cursor-pointer text-xs font-semibold ${
+              aria-pressed={soundEnabled}
+              aria-label="Efectos de sonido"
+              className={`min-h-8 flex items-center gap-1.5 px-2 py-1 rounded-md transition-all cursor-pointer text-xs font-semibold ${
                 soundEnabled
-                  ? 'bg-[#8B5CF6]/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.25)]'
-                  : 'bg-[#0B0C10] text-[#64748B] border border-transparent hover:text-[#94A3B8]'
+                  ? 'bg-primary/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.25)]'
+                  : 'bg-canvas text-fg-subtle border border-transparent hover:text-fg-muted'
               }`}
               title={soundEnabled ? 'Silenciar Efectos de Sonido (Mute)' : 'Activar Efectos de Sonido (Unmute)'}
             >
               {soundEnabled ? (
                 <Volume2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 animate-pulse" />
               ) : (
-                <VolumeX className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
+                <VolumeX className="w-3.5 h-3.5 text-fg-subtle shrink-0" />
               )}
-              <span className="hidden md:inline text-[11px]">
+              <span className="hidden md:inline text-xs">
                 {soundEnabled ? 'SFX' : 'MUTE'}
               </span>
             </button>
 
             {/* Audio Reactive Equalizer Bars */}
-            <div className="px-1 py-0.5 flex items-center" title={soundEnabled ? 'Equalizador de audio' : 'Audio Silenciado'}>
+            <div className="px-1 py-0.5 hidden sm:flex items-center" title={soundEnabled ? 'Equalizador de audio' : 'Audio Silenciado'}>
               <AudioEqualizer isPlaying={soundEnabled} />
             </div>
           </div>
@@ -288,7 +303,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Perfil Rápido del Jugador */}
           <button
             onClick={() => handleTabClick('dashboard')}
-            className="flex items-center gap-2 pl-1 pr-2 sm:pr-2.5 py-1 rounded-[8px] bg-[#16181F] hover:bg-[#1C1F28] border border-[#2A2E3D] hover:border-[#8B5CF6]/40 text-xs transition-colors cursor-pointer shrink-0 shadow-xs"
+            className="tap hidden sm:flex items-center gap-2 pl-1 pr-2 sm:pr-2.5 py-1 rounded-lg bg-surface hover:bg-surface-raised border border-line hover:border-primary/40 text-xs transition-colors cursor-pointer shrink-0 shadow-xs"
             title={`Perfil de ${playerName} • Ir al Inicio`}
           >
             <ArtistAvatar
@@ -296,17 +311,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               avatarColor={player?.avatarColor}
               avatarIcon={player?.avatarIcon}
               size="xs"
-              rounded="rounded-[4px]"
+              rounded="rounded-sm"
             />
-            <span className="font-semibold text-[#F8FAFC] max-w-[80px] sm:max-w-[110px] truncate">
+            <span className="font-semibold text-fg max-w-[80px] sm:max-w-[110px] truncate">
               {playerName}
             </span>
           </button>
         </div>
+        </div>
       </div>
 
       {/* Fila 2: Menú de Navegación Horizontal */}
-      <nav className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 overflow-x-auto py-2 scrollbar-none text-xs font-normal scroll-smooth">
+      <nav className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 overflow-x-auto scroll-fade-x py-2 text-xs font-normal scroll-smooth">
         {[
           { id: 'dashboard', label: 'Inicio', icon: Compass, color: 'text-amber-400' },
           { id: 'studio', label: 'Estudio & Música', icon: Disc3, color: 'text-purple-400' },
@@ -325,13 +341,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               key={tab.id}
               id={`nav-tab-${tab.id}`}
               onClick={() => handleTabClick(tab.id)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-[8px] whitespace-nowrap transition-all cursor-pointer ${
+              aria-current={isActive ? 'page' : undefined}
+              className={`tap shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-gradient-to-r from-[#8B5CF6]/25 to-[#EC4899]/25 border border-[#8B5CF6]/60 text-[#F8FAFC] font-bold shadow-[0_0_12px_rgba(139,92,246,0.25)]'
-                  : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#16181F]/70 border border-transparent'
+                  ? 'bg-gradient-to-r from-primary/25 to-accent/25 border border-primary/60 text-fg font-bold shadow-[0_0_12px_rgba(139,92,246,0.25)]'
+                  : 'text-fg-muted hover:text-fg hover:bg-surface/70 border border-transparent'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#C084FC]' : tab.color}`} />
+              <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-primary-soft' : tab.color}`} />
               <span>{tab.label}</span>
             </button>
           );

@@ -89,7 +89,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div
-      className="space-y-6 pb-8 text-[#F8FAFC]"
+      className="space-y-6 pb-8 text-fg"
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* 2-Column Responsive Layout: Main Area (8 cols) vs News Sidebar (4 cols) */}
@@ -153,20 +153,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {isAvatarModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div
-            className="bg-[#16181F] border border-[#2A2E3D] rounded-[16px] max-w-lg w-full p-6 space-y-5 text-[#F8FAFC] shadow-2xl transition-all max-h-[90vh] overflow-y-auto"
+            className="bg-surface border border-line rounded-2xl max-w-lg w-full p-6 space-y-5 text-fg shadow-2xl transition-all max-h-[90vh] overflow-y-auto"
             style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#2A2E3D] pb-3">
+            <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-[#7C3AED]" />
-                <h3 className="text-lg font-bold tracking-[-0.4px] text-[#F8FAFC]">
+                <Palette className="w-5 h-5 text-primary-strong" />
+                <h3 className="text-lg font-bold tracking-[-0.4px] text-fg">
                   Identidad Visual & Avatar del Artista
                 </h3>
               </div>
               <button
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="p-1 rounded-[6px] hover:bg-[#1C1F2B] text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer transition-colors"
+                className="p-1 rounded-md hover:bg-surface-raised text-fg-muted hover:text-fg cursor-pointer transition-colors"
                 title="Cerrar modal"
               >
                 <X className="w-4 h-4" />
@@ -174,32 +174,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             {/* Current Live Preview */}
-            <div className="flex items-center gap-4 bg-[#0B0C10] p-4 rounded-[12px] border border-[#2A2E3D]">
+            <div className="flex items-center gap-4 bg-canvas p-4 rounded-xl border border-line">
               <ArtistAvatar
                 name={player?.name}
                 avatarColor={selectedColor}
                 avatarIcon={avatarType === 'symbol' ? selectedIcon : undefined}
                 size="lg"
-                rounded="rounded-[12px]"
+                rounded="rounded-xl"
                 className="shrink-0 shadow-md"
               />
               <div className="min-w-0">
-                <h4 className="text-sm font-bold text-[#F8FAFC] truncate">{player?.name || 'Artista'}</h4>
-                <p className="text-xs text-[#94A3B8] mt-0.5">
+                <h4 className="text-sm font-bold text-fg truncate">{player?.name || 'Artista'}</h4>
+                <p className="text-xs text-fg-muted mt-0.5">
                   {avatarType === 'symbol' ? 'Avatar Vectorial con Símbolo Escénico' : 'Avatar con Iniciales Tipográficas'}
                 </p>
               </div>
             </div>
 
             {/* Mode Switcher */}
-            <div className="flex items-center gap-2 p-1 bg-[#0B0C10] rounded-[8px] border border-[#2A2E3D]">
+            <div className="flex items-center gap-2 p-1 bg-canvas rounded-lg border border-line">
               <button
                 type="button"
                 onClick={() => setAvatarType('symbol')}
-                className={`flex-1 py-1.5 rounded-[6px] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   avatarType === 'symbol'
-                    ? 'bg-[#7C3AED] text-white shadow-xs'
-                    : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    ? 'bg-primary-strong text-white shadow-xs'
+                    : 'text-fg-muted hover:text-fg'
                 }`}
               >
                 <Crown className="w-3.5 h-3.5" />
@@ -208,10 +208,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <button
                 type="button"
                 onClick={() => setAvatarType('initials')}
-                className={`flex-1 py-1.5 rounded-[6px] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   avatarType === 'initials'
-                    ? 'bg-[#7C3AED] text-white shadow-xs'
-                    : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                    ? 'bg-primary-strong text-white shadow-xs'
+                    : 'text-fg-muted hover:text-fg'
                 }`}
               >
                 <User className="w-3.5 h-3.5" />
@@ -221,7 +221,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {/* Quick Presets */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
+              <label className="text-xs font-semibold uppercase tracking-wider text-fg-muted block">
                 Presets de Estilo Rápido
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -230,16 +230,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     key={preset.id}
                     type="button"
                     onClick={() => handleApplyPreset(preset)}
-                    className="p-2 rounded-[8px] border border-[#2A2E3D] bg-[#0B0C10] hover:border-[#7C3AED]/50 hover:bg-[#1C1F2B] transition-all flex items-center gap-2 cursor-pointer text-left"
+                    className="p-2 rounded-lg border border-line bg-canvas hover:border-primary-strong/50 hover:bg-surface-raised transition-all flex items-center gap-2 cursor-pointer text-left"
                   >
                     <ArtistAvatar
                       name={preset.name}
                       avatarColor={preset.color}
                       avatarIcon={preset.icon}
                       size="xs"
-                      rounded="rounded-[4px]"
+                      rounded="rounded-sm"
                     />
-                    <span className="text-[10px] font-bold text-[#F8FAFC] truncate">
+                    <span className="text-2xs font-bold text-fg truncate">
                       {preset.name}
                     </span>
                   </button>
@@ -250,7 +250,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             {/* Vector Icons Selector (Symbol Mode) */}
             {avatarType === 'symbol' && (
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
+                <label className="text-xs font-semibold uppercase tracking-wider text-fg-muted block">
                   Seleccionar Símbolo Escénico
                 </label>
                 <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
@@ -262,16 +262,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         type="button"
                         key={sym.id}
                         onClick={() => setSelectedIcon(sym.id)}
-                        className={`p-2 rounded-[10px] border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
+                        className={`p-2 rounded-control border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
                           isSelected
-                            ? 'bg-[#7C3AED]/25 border-[#7C3AED] shadow-xs ring-1 ring-[#7C3AED]'
-                            : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40'
+                            ? 'bg-primary-strong/25 border-primary-strong shadow-xs ring-1 ring-primary-strong'
+                            : 'bg-canvas border-line hover:border-primary-strong/40'
                         }`}
                       >
                         <div className={`p-1.5 rounded-full bg-gradient-to-tr ${selectedColor} text-white shadow-xs`}>
                           <IconComp className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-semibold text-[#F8FAFC] truncate w-full">
+                        <span className="text-2xs font-semibold text-fg truncate w-full">
                           {sym.label.split('/')[0].trim()}
                         </span>
                       </button>
@@ -283,7 +283,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {/* Gradient Palette Selection */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] block">
+              <label className="text-xs font-semibold uppercase tracking-wider text-fg-muted block">
                 Paleta Cromática
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -294,18 +294,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       type="button"
                       key={p.id}
                       onClick={() => setSelectedColor(p.val)}
-                      className={`p-2 rounded-[8px] border text-left flex items-center gap-2 transition-all cursor-pointer ${
+                      className={`p-2 rounded-lg border text-left flex items-center gap-2 transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#7C3AED]/20 border-[#7C3AED] shadow-xs ring-1 ring-[#7C3AED]'
-                          : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#7C3AED]/40'
+                          ? 'bg-primary-strong/20 border-primary-strong shadow-xs ring-1 ring-primary-strong'
+                          : 'bg-canvas border-line hover:border-primary-strong/40'
                       }`}
                     >
                       <div
-                        className={`w-5 h-5 rounded-[4px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 flex items-center justify-center`}
+                        className={`w-5 h-5 rounded-sm bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 flex items-center justify-center`}
                       >
                         {isSelected && <Check className="w-3 h-3 text-white" />}
                       </div>
-                      <span className="text-[10px] font-semibold text-[#F8FAFC] truncate">
+                      <span className="text-2xs font-semibold text-fg truncate">
                         {p.label}
                       </span>
                     </button>
@@ -315,18 +315,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#2A2E3D]">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-line">
               <button
                 type="button"
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="px-4 py-2 rounded-[8px] text-xs font-semibold bg-[#0B0C10] text-[#94A3B8] border border-[#2A2E3D] hover:text-[#F8FAFC] hover:bg-[#1C1F2B] cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-lg text-xs font-semibold bg-canvas text-fg-muted border border-line hover:text-fg hover:bg-surface-raised cursor-pointer transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveAvatar}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white px-5 py-2 rounded-[8px] text-xs font-bold hover:opacity-90 cursor-pointer shadow-[0_0_15px_rgba(124,58,237,0.4)] active:scale-[0.98] transition-all"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white px-5 py-2 rounded-lg text-xs font-bold hover:opacity-90 cursor-pointer shadow-[0_0_15px_rgba(124,58,237,0.4)] active:scale-[0.98] transition-all"
               >
                 <Check className="w-4 h-4 text-white" />
                 <span>Guardar Cambios</span>

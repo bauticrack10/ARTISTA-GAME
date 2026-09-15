@@ -1,5 +1,102 @@
 @import "tailwindcss";
 
+/* Design tokens: single source for the Studio After Dark palette, type scale and radii. */
+@theme {
+  --color-canvas: #0b0c10;
+  --color-surface: #16181f;
+  --color-surface-raised: #1c1f2b;
+  --color-line: #2a2e3d;
+  --color-fg: #f8fafc;
+  --color-fg-muted: #94a3b8;
+  /* Was #64748b (4.1:1 on canvas); lifted to pass WCAG AA on canvas and surface. */
+  --color-fg-subtle: #8190a5;
+  --color-primary: #8b5cf6;
+  --color-primary-strong: #7c3aed;
+  --color-primary-soft: #c084fc;
+  --color-accent: #ec4899;
+  --color-info: #06b6d4;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+
+  /* Type floor: nothing below 12px. */
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.125rem;
+
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --radius-panel: 18px;
+}
+
+/* Minimum pointer target for compact desktop controls. */
+@utility tap {
+  min-height: 2.25rem;
+}
+
+/* Edge fade that only appears on the side where a horizontal strip has hidden content. */
+@property --fade-l {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+@property --fade-r {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes scroll-fade-x {
+  from { --fade-l: 0px; --fade-r: 32px; }
+  8% { --fade-l: 32px; }
+  92% { --fade-r: 32px; }
+  to { --fade-l: 32px; --fade-r: 0px; }
+}
+@utility scroll-fade-x {
+  scrollbar-width: thin;
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%);
+  /* Where the fade can signal overflow, the scrollbar is redundant; elsewhere it stays as the hint. */
+  @supports (animation-timeline: scroll()) {
+    scrollbar-width: none;
+    animation: scroll-fade-x linear both;
+    animation-timeline: scroll(self inline);
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-primary-soft);
+    outline-offset: 2px;
+  }
+
+  /* Touch devices: every control gets a 44px hit area. */
+  @media (pointer: coarse) {
+    button,
+    select,
+    [role='tab'],
+    input:not([type='range']):not([type='checkbox']):not([type='radio']) {
+      min-height: 44px;
+    }
+    button {
+      min-width: 44px;
+      touch-action: manipulation;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
 @layer base {
   :root {
     /* Studio After Dark / Synthwave Moderno Theme */
@@ -60,12 +157,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #d8d6ce;
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #bbb9b2;
+    background: rgba(255, 255, 255, 0.28);
   }
 
   .dark ::-webkit-scrollbar-thumb,

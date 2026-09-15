@@ -135,15 +135,15 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
   };
 
   return (
-    <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-12 text-[#F8FAFC]">
+    <div className="max-w-[1600px] w-full mx-auto space-y-6 pb-12 text-fg">
       {/* Header & Tour Gating Ribbon */}
-      <div className="bg-[#16181F] p-6 rounded-[12px] border border-[#2A2E3D] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-surface p-6 rounded-xl border border-line flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-sm">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.9px] text-[#F8FAFC] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#8B5CF6]" />
+          <h1 className="text-2xl font-semibold tracking-[-0.9px] text-fg flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
             Giras, Conciertos & En Vivo
           </h1>
-          <p className="text-xs text-[#94A3B8] mt-1 font-normal">
+          <p className="text-xs text-fg-muted mt-1 font-normal">
             Llevá tu música al escenario real, vendé entradas, llená recintos y recaudá fondos para tu carrera.
           </p>
         </div>
@@ -152,7 +152,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
         <div className="flex items-center gap-2 flex-wrap text-xs">
           {/* Gate 1: Catálogo */}
           <div
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border text-xs shadow-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs shadow-xs transition-colors ${
               tourGates.hasCatalog
                 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
                 : 'bg-rose-950/40 border-rose-500/40 text-rose-400'
@@ -164,13 +164,13 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             {tourGates.hasCatalog ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
-              <span className="text-[10px] uppercase font-bold text-rose-400">Mín. 2S</span>
+              <span className="text-2xs uppercase font-bold text-rose-400">Mín. 2S</span>
             )}
           </div>
 
           {/* Gate 2: Oyentes */}
           <div
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border text-xs shadow-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs shadow-xs transition-colors ${
               tourGates.hasAudience
                 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
                 : 'bg-rose-950/40 border-rose-500/40 text-rose-400'
@@ -182,13 +182,13 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             {tourGates.hasAudience ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
-              <span className="text-[10px] uppercase font-bold text-rose-400">Mín. 1K</span>
+              <span className="text-2xs uppercase font-bold text-rose-400">Mín. 1K</span>
             )}
           </div>
 
           {/* Gate 3: Energía Vital */}
           <div
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border text-xs shadow-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs shadow-xs transition-colors ${
               tourGates.hasEnergy
                 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
                 : 'bg-rose-950/40 border-rose-500/40 text-rose-400'
@@ -200,7 +200,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             {tourGates.hasEnergy ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
-              <span className="text-[10px] uppercase font-bold text-rose-400">Mín. {MIN_TOUR_ENERGY}%</span>
+              <span className="text-2xs uppercase font-bold text-rose-400">Mín. {MIN_TOUR_ENERGY}%</span>
             )}
           </div>
         </div>
@@ -208,14 +208,14 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
 
       {/* Tour Requirements Restriction Alert Banner (Detailed Tooltip / Explanatory Breakdown) */}
       {!isTourAllowed && (
-        <div className="bg-rose-950/30 border border-rose-500/40 rounded-[12px] p-5 flex items-start gap-3.5 text-xs text-rose-200 shadow-md">
+        <div className="bg-rose-950/30 border border-rose-500/40 rounded-xl p-5 flex items-start gap-3.5 text-xs text-rose-200 shadow-md">
           <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
           <div className="space-y-2 flex-1">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-rose-200 text-sm">
                 Compuertas de Gira Bloqueadas • {tourGates.requirements.filter((r) => r.met).length}/3 Requisitos
               </h3>
-              <span className="text-[11px] font-mono text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-500/30">
+              <span className="text-xs font-mono text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-500/30">
                 Giras Inhabilitadas
               </span>
             </div>
@@ -226,7 +226,7 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
               {tourGates.requirements.map((req) => (
                 <div
                   key={req.id}
-                  className={`p-2.5 rounded-[8px] border text-xs ${
+                  className={`p-2.5 rounded-lg border text-xs ${
                     req.met
                       ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
                       : 'bg-rose-950/50 border-rose-500/50 text-rose-200'
@@ -235,15 +235,15 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
                   <div className="flex items-center justify-between font-semibold mb-1">
                     <span>{req.label}</span>
                     {req.met ? (
-                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">✓ CUMPLIDO</span>
+                      <span className="text-2xs font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">✓ CUMPLIDO</span>
                     ) : (
-                      <span className="text-[10px] font-bold text-rose-400 bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-500/30">✗ PENDIENTE</span>
+                      <span className="text-2xs font-bold text-rose-400 bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-500/30">✗ PENDIENTE</span>
                     )}
                   </div>
-                  <div className="text-[11px] text-[#94A3B8]">
+                  <div className="text-xs text-fg-muted">
                     Actual: <strong className={req.met ? 'text-emerald-400' : 'text-rose-400'}>{req.currentValue}</strong> • Requerido: <strong>{req.requiredValue}</strong>
                   </div>
-                  <p className="text-[10px] text-[#94A3B8]/90 mt-1">
+                  <p className="text-2xs text-fg-muted/90 mt-1">
                     {req.helpText}
                   </p>
                 </div>
@@ -254,31 +254,31 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
       )}
 
       {notification && (
-        <div className="bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 px-4 py-3 rounded-[12px] flex items-center gap-2 text-xs font-semibold shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+        <div className="bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 px-4 py-3 rounded-xl flex items-center gap-2 text-xs font-semibold shadow-[0_0_15px_rgba(16,185,129,0.2)]">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           {notification}
         </div>
       )}
 
       {/* Tour Booking Form */}
-      <form onSubmit={handleStartTour} className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-6 space-y-6 shadow-sm">
-        <div className="border-b border-[#2A2E3D] pb-3 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2">
-            <Ticket className="w-4 h-4 text-[#8B5CF6]" />
+      <form onSubmit={handleStartTour} className="bg-surface border border-line rounded-xl p-6 space-y-6 shadow-sm">
+        <div className="border-b border-line pb-3 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-fg flex items-center gap-2">
+            <Ticket className="w-4 h-4 text-primary" />
             Organizar Nueva Gira de Conciertos
           </h2>
           <div
-            className="cursor-help flex items-center gap-1 text-xs text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
+            className="cursor-help flex items-center gap-1 text-xs text-fg-muted hover:text-fg transition-colors"
             title={tourGates.tooltipText}
           >
-            <Info className="w-3.5 h-3.5 text-[#06B6D4]" />
+            <Info className="w-3.5 h-3.5 text-info" />
             <span>Condiciones de Gira</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider mb-1.5">
               Nombre de la Gira *
             </label>
             <input
@@ -287,23 +287,23 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
               placeholder="Ej: Tour Inmortal 2026, Noches de Fuego Live..."
               value={tourName}
               onChange={(e) => setTourName(e.target.value)}
-              className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2 text-xs text-[#F8FAFC] placeholder:text-[#94A3B8]/60 focus:outline-none transition-colors"
+              className="w-full bg-canvas border border-line focus:border-primary rounded-md px-3.5 py-2 text-xs text-fg placeholder:text-fg-muted/60 focus:outline-none transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider mb-1.5">
               Escala & Formato del Recinto
             </label>
             <select
               value={selectedTier}
               onChange={(e) => setSelectedTier(e.target.value as TourTier)}
-              className="w-full bg-[#0B0C10] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2 text-xs text-[#F8FAFC] focus:outline-none transition-colors"
+              className="w-full bg-canvas border border-line focus:border-primary rounded-md px-3.5 py-2 text-xs text-fg focus:outline-none transition-colors"
             >
               {(Object.keys(tierDetails) as TourTier[]).map((t) => {
                 const isUnlocked = availableTiers.includes(t);
                 return (
-                  <option key={t} value={t} disabled={!isUnlocked} className="bg-[#0B0C10] text-[#F8FAFC]">
+                  <option key={t} value={t} disabled={!isUnlocked} className="bg-canvas text-fg">
                     {tierDetails[t].title} {isUnlocked ? '' : `• Requiere Popularidad ${tierDetails[t].minPop}+`}
                   </option>
                 );
@@ -314,16 +314,16 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
 
         {/* Selected Tier Info Card */}
         <div
-          className={`p-4 rounded-[8px] border border-[#2A2E3D] space-y-2 border-l-4 ${TIER_BORDER_COLORS[selectedTier]} ${TIER_BG_ACCENT[selectedTier]}`}
+          className={`p-4 rounded-lg border border-line space-y-2 border-l-4 ${TIER_BORDER_COLORS[selectedTier]} ${TIER_BG_ACCENT[selectedTier]}`}
         >
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-[#F8FAFC]">{tierDetails[selectedTier].title}</h3>
-            <span className="text-xs text-[#94A3B8]">
-              Ganancia Est: <strong className="text-[#F8FAFC] font-semibold">{tierDetails[selectedTier].estRevenue}</strong>
+            <h3 className="font-semibold text-sm text-fg">{tierDetails[selectedTier].title}</h3>
+            <span className="text-xs text-fg-muted">
+              Ganancia Est: <strong className="text-fg font-semibold">{tierDetails[selectedTier].estRevenue}</strong>
             </span>
           </div>
-          <p className="text-xs text-[#94A3B8] font-normal">{tierDetails[selectedTier].desc}</p>
-          <div className="flex items-center gap-4 text-xs text-[#94A3B8] pt-1">
+          <p className="text-xs text-fg-muted font-normal">{tierDetails[selectedTier].desc}</p>
+          <div className="flex items-center gap-4 text-xs text-fg-muted pt-1">
             <span>
               Desgaste: <strong className="text-rose-400 font-semibold">{tierDetails[selectedTier].fatigue}</strong>
             </span>
@@ -332,8 +332,8 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#2A2E3D]">
-          <div className="text-xs text-[#94A3B8]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-line">
+          <div className="text-xs text-fg-muted">
             {!isTourAllowed && (
               <span
                 className="text-rose-400 font-semibold flex items-center gap-1 cursor-help"
@@ -349,10 +349,10 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
             type="submit"
             disabled={!isTourAllowed}
             title={tourGates.tooltipText}
-            className={`font-semibold text-xs px-5 py-2.5 rounded-[6px] transition-all flex items-center gap-2 ${
+            className={`font-semibold text-xs px-5 py-2.5 rounded-md transition-all flex items-center gap-2 ${
               isTourAllowed
                 ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-98 cursor-pointer'
-                : 'bg-[#2A2E3D] text-[#94A3B8] cursor-not-allowed opacity-60'
+                : 'bg-line text-fg-muted cursor-not-allowed opacity-60'
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -362,14 +362,14 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
       </form>
 
       {/* History of Tours */}
-      <div className="bg-[#16181F] border border-[#2A2E3D] rounded-[12px] p-6 space-y-4 shadow-sm">
-        <h2 className="text-base font-semibold text-[#F8FAFC] flex items-center gap-2 border-b border-[#2A2E3D] pb-3">
-          <MapPin className="w-4 h-4 text-[#06B6D4]" />
+      <div className="bg-surface border border-line rounded-xl p-6 space-y-4 shadow-sm">
+        <h2 className="text-base font-semibold text-fg flex items-center gap-2 border-b border-line pb-3">
+          <MapPin className="w-4 h-4 text-info" />
           Historial de Giras Realizadas • {playerTours.length}
         </h2>
 
         {playerTours.length === 0 ? (
-          <div className="text-center py-8 text-[#94A3B8] text-xs">No has realizado ninguna gira todavía.</div>
+          <div className="text-center py-8 text-fg-muted text-xs">No has realizado ninguna gira todavía.</div>
         ) : (
           <div className="space-y-3">
             {playerTours.map((t) => {
@@ -377,25 +377,25 @@ export const ToursView: React.FC<ToursViewProps> = ({ player, world, onBookTour 
               return (
                 <div
                   key={t.id}
-                  className={`bg-[#0B0C10] p-4 rounded-[8px] border border-[#2A2E3D] flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 ${TIER_BORDER_COLORS[t.tier]} hover:border-[#8B5CF6]/50 hover:bg-[#16181F] transition-all`}
+                  className={`bg-canvas p-4 rounded-lg border border-line flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 ${TIER_BORDER_COLORS[t.tier]} hover:border-primary/50 hover:bg-surface transition-all`}
                 >
                   <div>
-                    <h3 className="text-sm font-semibold text-[#F8FAFC] flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-fg flex items-center gap-2">
                       {t.name}
-                      <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-semibold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
+                      <span className={`text-2xs px-2 py-0.5 rounded-sm font-semibold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
                         {t.tier}
                       </span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-semibold ${ticketBadge.cls}`}>
+                      <span className={`text-2xs px-2 py-0.5 rounded-sm font-semibold ${ticketBadge.cls}`}>
                         {ticketBadge.label}
                       </span>
                     </h3>
-                    <p className="text-xs text-[#94A3B8] mt-1 font-normal">
+                    <p className="text-xs text-fg-muted mt-1 font-normal">
                       Año {t.year} • {t.stops?.length || 0} Ciudades • {(t.totalTicketsSold || 0).toLocaleString('es-AR')} de {(t.totalCapacity || 0).toLocaleString('es-AR')} Tickets Vendidos
                     </p>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-xs text-[#94A3B8] block font-normal">Ganancia Neta</span>
+                    <span className="text-xs text-fg-muted block font-normal">Ganancia Neta</span>
                     <span className="text-sm font-semibold text-emerald-400 font-mono">
                       +${(t.netArtistProfit || 0).toLocaleString('es-AR')}
                     </span>

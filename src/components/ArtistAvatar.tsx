@@ -44,7 +44,7 @@ export interface ArtistAvatarProps {
   avatarIcon?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
   className?: string;
-  rounded?: 'rounded-[4px]' | 'rounded-[6px]' | 'rounded-[8px]' | 'rounded-[12px]' | 'rounded-[14px]' | 'rounded-[16px]' | 'rounded-full';
+  rounded?: 'rounded-sm' | 'rounded-md' | 'rounded-lg' | 'rounded-xl' | 'rounded-card' | 'rounded-2xl' | 'rounded-full';
   showInitialsFallback?: boolean;
 }
 
@@ -54,13 +54,13 @@ export const ArtistAvatar: React.FC<ArtistAvatarProps> = ({
   avatarIcon,
   size = 'md',
   className = '',
-  rounded = 'rounded-[12px]',
+  rounded = 'rounded-xl',
   showInitialsFallback = true
 }) => {
   const IconComponent = avatarIcon ? ICON_MAP[avatarIcon] : null;
 
   const sizeClasses: Record<string, string> = {
-    xs: 'w-5 h-5 text-[10px]',
+    xs: 'w-5 h-5 text-2xs',
     sm: 'w-8 h-8 text-xs',
     md: 'w-12 h-12 text-sm',
     lg: 'w-16 h-16 text-lg',

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { activateOnKey } from '../utils/a11y';
 import {
   Artist,
   WorldState,
@@ -585,23 +586,23 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div
-        className="bg-[#16181F] border border-[#2A2E3D] max-w-4xl w-full rounded-[18px] flex flex-col overflow-hidden text-[#F8FAFC] shadow-2xl relative my-auto max-h-[92vh]"
+        className="bg-surface border border-line max-w-4xl w-full rounded-panel flex flex-col overflow-hidden text-fg shadow-2xl relative my-auto max-h-[92vh]"
         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
       >
         {/* Ambient Top Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b from-[#8B5CF6]/25 to-transparent blur-2xl pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b from-primary/25 to-transparent blur-2xl pointer-events-none" />
 
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-[#2A2E3D] bg-[#16181F]/90 backdrop-blur-md flex items-center justify-between relative z-10">
+        <div className="px-6 py-4 border-b border-line bg-surface/90 backdrop-blur-md flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-[8px] bg-[#0B0C10] border border-[#8B5CF6]/40 text-[#C084FC] shadow-[0_0_12px_rgba(139,92,246,0.3)] shrink-0">
+            <div className="p-2 rounded-lg bg-canvas border border-primary/40 text-primary-soft shadow-[0_0_12px_rgba(139,92,246,0.3)] shrink-0">
               <Users className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#C084FC] bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 px-2 py-0.5 rounded-[4px] inline-block">
+              <span className="text-2xs uppercase font-bold tracking-wider text-primary-soft bg-primary/15 border border-primary/30 px-2 py-0.5 rounded-sm inline-block">
                 Estudio de Alianzas Musicales
               </span>
-              <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#F8FAFC]">
+              <h2 className="text-base sm:text-lg font-bold tracking-tight text-fg">
                 Colaboración Musical & Grabación Conjunta
               </h2>
             </div>
@@ -612,7 +613,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               playSound('click');
               onClose();
             }}
-            className="p-1.5 rounded-[6px] hover:bg-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
+            className="p-1.5 rounded-md hover:bg-line text-fg-muted hover:text-fg transition-colors cursor-pointer"
             title="Cerrar modal"
           >
             <X className="w-5 h-5" />
@@ -622,11 +623,11 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 relative z-10 text-xs">
           {/* SECTION 1: COLLABORATOR SELECTION & PROFILE HERO CARD */}
-          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-2xl p-5 space-y-4 shadow-inner">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2E3D] pb-3">
+          <div className="bg-canvas border border-line rounded-2xl p-5 space-y-4 shadow-inner">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-[#8B5CF6]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-fg flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-primary" />
                   Perfil del Artista Colaborador
                 </span>
               </div>
@@ -651,42 +652,47 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
             {targetArtist && (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
                 {/* Left Card: Artist ID & Main Stats (4 cols) */}
-                <div className="md:col-span-4 bg-[#16181F] border border-[#2A2E3D] rounded-xl p-4 flex items-center gap-3.5 shadow-sm">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#8B5CF6] via-[#EC4899] to-indigo-950 text-white font-extrabold text-xl flex items-center justify-center shrink-0 border border-white/20 shadow-md">
+                <div className="md:col-span-4 bg-surface border border-line rounded-xl p-4 flex items-center gap-3.5 shadow-sm">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary via-accent to-indigo-950 text-white font-extrabold text-xl flex items-center justify-center shrink-0 border border-white/20 shadow-md">
                     {targetArtist.name.charAt(0)}
                   </div>
                   <div className="min-w-0 space-y-1">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="font-bold text-sm text-[#F8FAFC] truncate">
+                      <h3 className="font-bold text-sm text-fg truncate">
                         {targetArtist.name}
                       </h3>
-                      <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-[4px] bg-[#8B5CF6]/20 border border-[#8B5CF6]/40 text-[#C084FC]">
+                      <span className="text-2xs uppercase font-bold px-1.5 py-0.5 rounded-sm bg-primary/20 border border-primary/40 text-primary-soft">
                         {targetArtist.careerStage}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#94A3B8]">
+                    <p className="text-xs text-fg-muted">
                       {targetArtist.country} • {world.genres[targetArtist.mainGenreId]?.name || targetArtist.mainGenreId}
                     </p>
-                    <div className="flex items-center gap-3 text-[11px] font-mono pt-0.5">
+                    <div className="flex items-center gap-3 text-xs font-mono pt-0.5">
                       <span>Pop: <strong className="text-emerald-400">{targetArtist.stats.popularity}</strong></span>
-                      <span>Oyentes: <strong className="text-[#C084FC]">{formatCompactNumber(targetArtist.stats.monthlyListeners)}</strong></span>
+                      <span>Oyentes: <strong className="text-primary-soft">{formatCompactNumber(targetArtist.stats.monthlyListeners)}</strong></span>
                     </div>
                   </div>
                 </div>
 
                 {/* Middle Card: Affinity, Respect & Sound Synergy Gauges (5 cols) */}
-                <div className="md:col-span-5 bg-[#16181F] border border-[#2A2E3D] rounded-xl p-3.5 space-y-2.5">
+                <div className="md:col-span-5 bg-surface border border-line rounded-xl p-3.5 space-y-2.5">
                   {/* Gauge 1: Afinidad Mutua */}
                   <div>
-                    <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-[#94A3B8]">Afinidad Mutua</span>
-                      <span className={`font-mono font-bold ${(relationship?.affinity ?? 0) >= 20 ? 'text-emerald-400' : (relationship?.affinity ?? 0) < 0 ? 'text-rose-400' : 'text-[#F8FAFC]'}`}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-fg-muted">Afinidad Mutua</span>
+                      <span className={`font-mono font-bold ${(relationship?.affinity ?? 0) >= 20 ? 'text-emerald-400' : (relationship?.affinity ?? 0) < 0 ? 'text-rose-400' : 'text-fg'}`}>
                         {(relationship?.affinity ?? 0) > 0 ? `+${relationship?.affinity}` : relationship?.affinity ?? 0}
                       </span>
                     </div>
-                    <div className="w-full bg-[#0B0C10] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-canvas h-1.5 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${(relationship?.affinity ?? 0) >= 0 ? 'bg-gradient-to-r from-[#8B5CF6] to-[#10B981]' : 'bg-gradient-to-r from-amber-500 to-rose-600'}`}
+                        role="progressbar"
+                        aria-label="Afinidad mutua"
+                        aria-valuemin={-100}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(Number(relationship?.affinity ?? 0))}
                         style={{ width: `${Math.max(10, Math.min(100, ((relationship?.affinity ?? 0) + 100) / 2))}%` }}
                       />
                     </div>
@@ -694,13 +700,18 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
                   {/* Gauge 2: Respeto Profesional */}
                   <div>
-                    <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-[#94A3B8]">Respeto Profesional</span>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-fg-muted">Respeto Profesional</span>
                       <span className="font-mono font-bold text-cyan-400">{relationship?.respect ?? 50}%</span>
                     </div>
-                    <div className="w-full bg-[#0B0C10] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-canvas h-1.5 rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-[#06B6D4]"
+                        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-info"
+                        role="progressbar"
+                        aria-label="Respeto profesional"
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(Number(relationship?.respect ?? 50))}
                         style={{ width: `${relationship?.respect ?? 50}%` }}
                       />
                     </div>
@@ -708,16 +719,21 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
                   {/* Gauge 3: Sinergia Sonora Estimada */}
                   <div>
-                    <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-[#94A3B8] flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-[#EC4899]" />
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-fg-muted flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-accent" />
                         Sinergia Sonora Estimada
                       </span>
                       <span className="font-mono font-bold text-pink-400">{soundSynergy}%</span>
                     </div>
-                    <div className="w-full bg-[#0B0C10] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-canvas h-1.5 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]"
+                        role="progressbar"
+                        aria-label="Sinergia sonora"
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(Number(soundSynergy))}
                         style={{ width: `${soundSynergy}%` }}
                       />
                     </div>
@@ -725,19 +741,19 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 </div>
 
                 {/* Right Card: Real-time Acceptance Probability Indicator (3 cols) */}
-                <div className="md:col-span-3 bg-[#16181F] border border-[#2A2E3D] rounded-xl p-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#94A3B8]">
+                <div className="md:col-span-3 bg-surface border border-line rounded-xl p-3.5 flex flex-col items-center justify-center text-center space-y-1.5 shadow-sm">
+                  <span className="text-2xs uppercase font-bold tracking-wider text-fg-muted">
                     Probabilidad de Aceptación
                   </span>
                   <div className="flex items-center gap-1.5">
                     <span
                       className={`text-2xl font-extrabold font-mono ${
                         acceptanceProbability >= 70
-                          ? 'text-[#10B981] drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                          ? 'text-success drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]'
                           : acceptanceProbability >= 45
-                          ? 'text-[#06B6D4]'
+                          ? 'text-info'
                           : acceptanceProbability >= 25
-                          ? 'text-[#F59E0B]'
+                          ? 'text-warning'
                           : 'text-[#F43F5E]'
                       }`}
                     >
@@ -745,7 +761,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                     </span>
                   </div>
                   <span
-                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                    className={`text-2xs font-bold px-2 py-0.5 rounded-full border ${
                       acceptanceProbability >= 70
                         ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300'
                         : acceptanceProbability >= 45
@@ -771,12 +787,12 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
           {/* SECTION 2: FORMAT SELECTOR (5 Options) */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#F8FAFC] flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-[#8B5CF6]" />
+              <label className="block text-xs font-bold uppercase tracking-wider text-fg flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-primary" />
                 1. Selector de Formato de Colaboración
               </label>
-              <span className="text-[11px] text-[#94A3B8]">
-                Formato activo: <strong className="text-[#C084FC]">{selectedFormatConfig.name}</strong>
+              <span className="text-xs text-fg-muted">
+                Formato activo: <strong className="text-primary-soft">{selectedFormatConfig.name}</strong>
               </span>
             </div>
 
@@ -788,6 +804,9 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 return (
                   <div
                     key={fOption.id}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={activateOnKey}
                     onClick={() => {
                       playSound('click');
                       setFormat(fOption.id);
@@ -795,28 +814,28 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                     className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between gap-2.5 cursor-pointer ${
                       isSelected
                         ? `bg-gradient-to-br from-[#16181F] to-[#8B5CF6]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.35)] ring-1 ring-[#8B5CF6]`
-                        : 'bg-[#0B0C10] border-[#2A2E3D] hover:border-[#8B5CF6]/40 hover:bg-white/[0.02]'
+                        : 'bg-canvas border-line hover:border-primary/40 hover:bg-white/[0.02]'
                     }`}
                   >
                     <div className="space-y-1.5">
                       <div className="flex items-start justify-between gap-1.5">
-                        <div className={`p-1.5 rounded-[6px] ${isSelected ? 'bg-[#8B5CF6]/25 text-[#C084FC]' : 'bg-[#16181F] text-[#94A3B8]'}`}>
+                        <div className={`p-1.5 rounded-md ${isSelected ? 'bg-primary/25 text-primary-soft' : 'bg-surface text-fg-muted'}`}>
                           <FormatIcon className="w-4 h-4" />
                         </div>
-                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${fOption.badgeClass}`}>
+                        <span className={`text-2xs font-bold px-1.5 py-0.5 rounded border ${fOption.badgeClass}`}>
                           {fOption.tag}
                         </span>
                       </div>
 
-                      <h4 className="text-xs font-bold text-[#F8FAFC]">
+                      <h4 className="text-xs font-bold text-fg">
                         {fOption.name}
                       </h4>
-                      <p className="text-[10px] text-[#94A3B8] leading-snug">
+                      <p className="text-2xs text-fg-muted leading-snug">
                         {fOption.subtitle}
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-[#2A2E3D] flex items-center justify-between text-[10px] font-mono text-[#94A3B8]">
+                    <div className="pt-2 border-t border-line flex items-center justify-between text-2xs font-mono text-fg-muted">
                       <span>{fOption.tracksCount} {fOption.tracksCount === 1 ? 'Pista' : 'Pistas'}</span>
                       <span className="text-rose-400">-{fOption.energyCost}% Ene</span>
                     </div>
@@ -827,10 +846,10 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
           </div>
 
           {/* SECTION 3: FULL CUSTOMIZATION (Title, Credits, Genres, Producer, Budgets, Longevity) */}
-          <div className="bg-[#0B0C10] border border-[#2A2E3D] rounded-2xl p-5 space-y-5 shadow-inner">
-            <div className="flex items-center gap-2 border-b border-[#2A2E3D] pb-3">
-              <Sliders className="w-4 h-4 text-[#8B5CF6]" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#F8FAFC]">
+          <div className="bg-canvas border border-line rounded-2xl p-5 space-y-5 shadow-inner">
+            <div className="flex items-center gap-2 border-b border-line pb-3">
+              <Sliders className="w-4 h-4 text-primary" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-fg">
                 2. Personalización Creativa & Producción Integral
               </h3>
             </div>
@@ -841,13 +860,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 {/* Project Title */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-[11px] font-bold uppercase text-[#F8FAFC]">
+                    <label className="block text-xs font-bold uppercase text-fg">
                       Nombre del Proyecto *
                     </label>
                     <button
                       type="button"
                       onClick={handleGenerateTitle}
-                      className="text-[11px] text-[#C084FC] hover:text-[#E879F9] underline font-bold cursor-pointer transition-colors"
+                      className="text-xs text-primary-soft hover:text-[#E879F9] underline font-bold cursor-pointer transition-colors"
                     >
                       Generar Título Aleatorio
                     </button>
@@ -858,13 +877,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     placeholder="Ej: Oasis, Modo Diablo, Fuego Cruzado..."
-                    className="w-full bg-[#16181F] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3.5 py-2 text-xs text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none"
+                    className="w-full bg-surface border border-line focus:border-primary rounded-md px-3.5 py-2 text-xs text-fg placeholder:text-fg-subtle focus:outline-none"
                   />
                 </div>
 
                 {/* Credits Format Selector */}
                 <div>
-                  <label className="block text-[11px] font-bold uppercase text-[#F8FAFC] mb-1.5">
+                  <label className="block text-xs font-bold uppercase text-fg mb-1.5">
                     Formato de Créditos en Portada & Plataformas
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -878,17 +897,20 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                       return (
                         <div
                           key={cOption.id}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={activateOnKey}
                           onClick={() => {
                             playSound('click');
                             setCreditFormat(cOption.id as CreditFormat);
                           }}
                           className={`p-2 rounded-lg border text-center transition-all cursor-pointer truncate ${
                             isSelected
-                              ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-[#F8FAFC] font-bold shadow-xs'
-                              : 'bg-[#16181F] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC]'
+                              ? 'bg-primary/20 border-primary text-fg font-bold shadow-xs'
+                              : 'bg-surface border-line text-fg-muted hover:text-fg'
                           }`}
                         >
-                          <span className="text-[11px] truncate block">{cOption.label}</span>
+                          <span className="text-xs truncate block">{cOption.label}</span>
                         </div>
                       );
                     })}
@@ -898,7 +920,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 {/* Genre & Subgenre */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase text-[#F8FAFC] mb-1.5">
+                    <label className="block text-xs font-bold uppercase text-fg mb-1.5">
                       Género Principal
                     </label>
                     <select
@@ -907,7 +929,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                         setGenreId(e.target.value);
                         setSubGenreId('');
                       }}
-                      className="w-full bg-[#16181F] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
+                      className="w-full bg-surface border border-line focus:border-primary rounded-md px-3 py-2 text-xs text-fg focus:outline-none cursor-pointer"
                     >
                       {Object.values(world.genres).map((g: any) => (
                         <option key={g.id} value={g.id}>
@@ -918,13 +940,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase text-[#F8FAFC] mb-1.5">
+                    <label className="block text-xs font-bold uppercase text-fg mb-1.5">
                       Subgénero / Estilo
                     </label>
                     <select
                       value={subGenreId}
                       onChange={e => setSubGenreId(e.target.value)}
-                      className="w-full bg-[#16181F] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
+                      className="w-full bg-surface border border-line focus:border-primary rounded-md px-3 py-2 text-xs text-fg focus:outline-none cursor-pointer"
                     >
                       <option value="">Fusión Estándar</option>
                       {availableSubgenres.map(sg => (
@@ -938,20 +960,20 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
                 {/* Producer Selector */}
                 <div>
-                  <label className="block text-[11px] font-bold uppercase text-[#F8FAFC] mb-1.5">
+                  <label className="block text-xs font-bold uppercase text-fg mb-1.5">
                     Productor Musical / Beatmaker
                   </label>
                   <select
                     value={producerId}
                     onChange={e => setProducerId(e.target.value)}
-                    className="w-full bg-[#16181F] border border-[#2A2E3D] focus:border-[#8B5CF6] rounded-[6px] px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none cursor-pointer"
+                    className="w-full bg-surface border border-line focus:border-primary rounded-md px-3 py-2 text-xs text-fg focus:outline-none cursor-pointer"
                   >
                     <option value="">Home Studio / Producción Conjunta ($0)</option>
                     {(Object.values(world.producers) as Producer[]).map(p => {
                       const check = IndustryEngine.canWorkWithProducer(player, p);
                       return (
                         <option key={p.id} value={p.id} disabled={!check.canWork}>
-                          {check.canWork ? '' : '🔒 '}{p.name} (+{p.qualityBoost}% Calidad) — ${p.costPerTrack.toLocaleString()}/track {!check.canWork ? `[Bloqueado: ${check.missingReasons[0] || ''}]` : ''}
+                          {check.canWork ? '' : '[Bloqueado] '}{p.name} (+{p.qualityBoost}% Calidad) — ${p.costPerTrack.toLocaleString()}/track {!check.canWork ? `[Bloqueado: ${check.missingReasons[0] || ''}]` : ''}
                         </option>
                       );
                     })}
@@ -963,16 +985,16 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               <div className="space-y-4">
                 {/* Budgets Sliders */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full min-w-0">
-                  <div className="bg-[#16181F] p-3.5 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                  <div className="bg-surface p-3.5 rounded-xl border border-line space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
                     <div className="flex items-center justify-between">
-                      <span className="block text-[11px] font-semibold text-[#F59E0B]">
+                      <span className="block text-xs font-semibold text-warning">
                         Presupuesto de Producción
                       </span>
-                      <span className="text-[10px] text-[#94A3B8] font-mono">
+                      <span className="text-2xs text-fg-muted font-mono">
                         Máx: $30.000
                       </span>
                     </div>
-                    <div className="text-xs font-bold font-mono text-[#F59E0B]">
+                    <div className="text-xs font-bold font-mono text-warning">
                       {budgetProduction === 0 ? '$0 (Básico)' : `$${budgetProduction.toLocaleString('es-AR')}`}
                     </div>
                     <div className="space-y-1.5 pt-1">
@@ -983,9 +1005,9 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                         step="500"
                         value={budgetProduction}
                         onChange={e => setBudgetProduction(Number(e.target.value))}
-                        className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-[#F59E0B] focus:outline-none"
+                        className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-warning focus:outline-none"
                       />
-                      <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                      <div className="flex items-center justify-between text-2xs text-fg-muted font-mono px-0.5">
                         <span>$0</span>
                         <span>$15.000</span>
                         <span>$30.000</span>
@@ -993,12 +1015,12 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="bg-[#16181F] p-3.5 rounded-xl border border-[#2A2E3D] space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
+                  <div className="bg-surface p-3.5 rounded-xl border border-line space-y-2 w-full min-w-0 flex flex-col justify-between shadow-inner">
                     <div className="flex items-center justify-between">
-                      <span className="block text-[11px] font-semibold text-emerald-400">
+                      <span className="block text-xs font-semibold text-emerald-400">
                         Presupuesto de Marketing
                       </span>
-                      <span className="text-[10px] text-[#94A3B8] font-mono">
+                      <span className="text-2xs text-fg-muted font-mono">
                         Máx: $30.000
                       </span>
                     </div>
@@ -1015,7 +1037,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                         onChange={e => setBudgetMarketing(Number(e.target.value))}
                         className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-[#3E4556] accent-emerald-500 focus:outline-none"
                       />
-                      <div className="flex items-center justify-between text-[10px] text-[#94A3B8] font-mono px-0.5">
+                      <div className="flex items-center justify-between text-2xs text-fg-muted font-mono px-0.5">
                         <span>$0</span>
                         <span>$15.000</span>
                         <span>$30.000</span>
@@ -1026,8 +1048,8 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
                 {/* Longevity Curve Selector */}
                 <div>
-                  <label className="block text-[11px] font-bold uppercase text-[#F8FAFC] mb-1.5 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#06B6D4]" />
+                  <label className="block text-xs font-bold uppercase text-fg mb-1.5 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-info" />
                     Curva de Longevidad Estimada
                   </label>
                   <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
@@ -1037,6 +1059,9 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                       return (
                         <div
                           key={lOpt.id}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={activateOnKey}
                           onClick={() => {
                             playSound('click');
                             setLongevityCurve(lOpt.id);
@@ -1044,18 +1069,18 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                           className={`p-2.5 rounded-lg border flex items-center justify-between text-xs cursor-pointer transition-all ${
                             isSelected
                               ? 'bg-gradient-to-r from-[#8B5CF6]/25 to-[#06B6D4]/25 border-[#06B6D4] text-[#F8FAFC]'
-                              : 'bg-[#16181F] border-[#2A2E3D] text-[#94A3B8] hover:text-[#F8FAFC]'
+                              : 'bg-surface border-line text-fg-muted hover:text-fg'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <LIcon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#38BDF8]' : 'text-[#94A3B8]'}`} />
+                            <LIcon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#38BDF8]' : 'text-fg-muted'}`} />
                             <div className="min-w-0">
-                              <span className="font-bold text-[11px] block text-[#F8FAFC]">{lOpt.label}</span>
-                              <span className="text-[10px] text-[#94A3B8] truncate block">{lOpt.description}</span>
+                              <span className="font-bold text-xs block text-fg">{lOpt.label}</span>
+                              <span className="text-2xs text-fg-muted truncate block">{lOpt.description}</span>
                             </div>
                           </div>
-                          <span className={`text-[9px] font-bold font-mono px-2 py-0.5 rounded border shrink-0 ${
-                            isSelected ? 'bg-cyan-950/60 border-cyan-500/40 text-cyan-300' : 'bg-[#0B0C10] border-[#2A2E3D] text-[#94A3B8]'
+                          <span className={`text-2xs font-bold font-mono px-2 py-0.5 rounded border shrink-0 ${
+                            isSelected ? 'bg-cyan-950/60 border-cyan-500/40 text-cyan-300' : 'bg-canvas border-line text-fg-muted'
                           }`}>
                             {lOpt.badge}
                           </span>
@@ -1066,34 +1091,34 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 </div>
 
                 {/* Cost Breakdown & Feasibility Card */}
-                <div className={`p-3.5 rounded-xl border space-y-1.5 text-[11px] font-mono ${
+                <div className={`p-3.5 rounded-xl border space-y-1.5 text-xs font-mono ${
                   isFundsInsufficient || isEnergyInsufficient
                     ? 'bg-rose-950/20 border-rose-500/40 shadow-xs'
-                    : 'bg-[#16181F] border-[#2A2E3D]'
+                    : 'bg-surface border-line'
                 }`}>
-                  <div className="flex justify-between text-[#94A3B8]">
+                  <div className="flex justify-between text-fg-muted">
                     <span>Producción + Marketing:</span>
-                    <span className="text-[#F8FAFC] font-semibold">${(budgetProduction + budgetMarketing).toLocaleString()}</span>
+                    <span className="text-fg font-semibold">${(budgetProduction + budgetMarketing).toLocaleString()}</span>
                   </div>
                   {selectedProducer && (
-                    <div className="flex justify-between text-[#94A3B8]">
+                    <div className="flex justify-between text-fg-muted">
                       <span>Beatmaker ({selectedProducer.name}):</span>
-                      <span className="text-[#F8FAFC] font-semibold">+${producerFee.toLocaleString()}</span>
+                      <span className="text-fg font-semibold">+${producerFee.toLocaleString()}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-[#94A3B8] pt-1 border-t border-[#2A2E3D]">
-                    <span className="font-bold text-[#F8FAFC]">Costo Total Inversión:</span>
-                    <span className={`font-bold ${isFundsInsufficient ? 'text-rose-400' : 'text-[#C084FC]'}`}>
+                  <div className="flex justify-between text-fg-muted pt-1 border-t border-line">
+                    <span className="font-bold text-fg">Costo Total Inversión:</span>
+                    <span className={`font-bold ${isFundsInsufficient ? 'text-rose-400' : 'text-primary-soft'}`}>
                       ${totalCost.toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex justify-between text-[#94A3B8]">
+                  <div className="flex justify-between text-fg-muted">
                     <span>Energía Requerida:</span>
-                    <span className={`font-semibold ${isEnergyInsufficient ? 'text-rose-400' : 'text-[#F8FAFC]'}`}>
+                    <span className={`font-semibold ${isEnergyInsufficient ? 'text-rose-400' : 'text-fg'}`}>
                       -{selectedFormatConfig.energyCost}% (Disponible: {player.stats.energy}%)
                     </span>
                   </div>
-                  <div className="flex justify-between text-[#94A3B8]">
+                  <div className="flex justify-between text-fg-muted">
                     <span>Fondos Disponibles:</span>
                     <span className={`font-bold ${isFundsInsufficient ? 'text-rose-400' : 'text-emerald-400'}`}>
                       ${player.stats.funds.toLocaleString()}
@@ -1106,7 +1131,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
           {/* SECTION 4: REJECTION FEEDBACK ALERT (If rejected) */}
           {rejectionFeedback && (
-            <div className="bg-gradient-to-r from-rose-950/60 via-[#16181F] to-rose-950/40 border border-rose-500/40 rounded-xl p-4 space-y-2 text-xs shadow-md animate-fade-in">
+            <div className="bg-gradient-to-r from-rose-950/60 via-surface to-rose-950/40 border border-rose-500/40 rounded-xl p-4 space-y-2 text-xs shadow-md animate-fade-in">
               <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
                 <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
                 <span>Propuesta Rechazada por {targetArtist.name}</span>
@@ -1114,7 +1139,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               <p className="text-rose-200/90 leading-relaxed">
                 {rejectionFeedback.reason}
               </p>
-              <div className="p-2.5 rounded-[6px] bg-[#0B0C10] border border-rose-500/30 text-[11px] text-amber-300 flex items-start gap-2">
+              <div className="p-2.5 rounded-md bg-canvas border border-rose-500/30 text-xs text-amber-300 flex items-start gap-2">
                 <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
                 <span><strong>Consejo Estratégico:</strong> {rejectionFeedback.advice}</span>
               </div>
@@ -1123,8 +1148,8 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-[#2A2E3D] bg-[#16181F]/90 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
-          <div className="text-xs text-[#94A3B8] text-center sm:text-left">
+        <div className="px-6 py-4 border-t border-line bg-surface/90 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
+          <div className="text-xs text-fg-muted text-center sm:text-left">
             {isFundsInsufficient ? (
               <span className="text-rose-400 flex items-center gap-1 font-medium">
                 <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes para este presupuesto.
@@ -1135,7 +1160,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               </span>
             ) : (
               <span>
-                Crédito oficial: <strong className="text-[#F8FAFC]">"{getCreditPreview()}"</strong>
+                Crédito oficial: <strong className="text-fg">"{getCreditPreview()}"</strong>
               </span>
             )}
           </div>
@@ -1147,7 +1172,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 playSound('click');
                 onClose();
               }}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-[6px] text-xs font-semibold bg-[#0B0C10] hover:bg-white/[0.04] text-[#CBD5E1] border border-[#2A2E3D] transition-all cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-md text-xs font-semibold bg-canvas hover:bg-white/[0.04] text-[#CBD5E1] border border-line transition-all cursor-pointer"
             >
               Cancelar
             </button>
@@ -1156,9 +1181,9 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               type="button"
               onClick={handleSendProposal}
               disabled={isNegotiating || isFundsInsufficient || isEnergyInsufficient || !title.trim()}
-              className={`w-full sm:w-auto px-6 py-2.5 rounded-[6px] text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+              className={`w-full sm:w-auto px-6 py-2.5 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                 isNegotiating || isFundsInsufficient || isEnergyInsufficient || !title.trim()
-                  ? 'bg-[#2A2E3D] text-[#64748B] cursor-not-allowed opacity-60'
+                  ? 'bg-line text-fg-subtle cursor-not-allowed opacity-60'
                   : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-98 cursor-pointer'
               }`}
             >

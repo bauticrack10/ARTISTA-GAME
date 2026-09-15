@@ -298,34 +298,34 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 
   return (
     <div
-      className={`bg-[#16181F] border border-[#2A2E3D] rounded-[16px] p-6 space-y-5 shadow-lg text-[#F8FAFC] ${className}`}
+      className={`bg-surface border border-line rounded-2xl p-6 space-y-5 shadow-lg text-fg ${className}`}
       style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       {/* Encabezado con Título y Selector de Pestañas */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2A2E3D] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-[6px] bg-[#0B0C10] border border-[#2A2E3D] text-white">
-              <Sliders className="w-4 h-4 text-[#8B5CF6]" />
+            <div className="p-1.5 rounded-md bg-canvas border border-line text-white">
+              <Sliders className="w-4 h-4 text-primary" />
             </div>
-            <h2 className="text-base font-bold text-[#F8FAFC] tracking-[-0.4px]">
+            <h2 className="text-base font-bold text-fg tracking-[-0.4px]">
               Perfil & Atributos del Artista
             </h2>
           </div>
-          <p className="text-xs text-[#94A3B8] mt-0.5">
+          <p className="text-xs text-fg-muted mt-0.5">
             Métricas de rendimiento en vivo y habilidades intrínsecas con lectura visual rápida.
           </p>
         </div>
 
         {/* 1. Pestañas internas: Alternancia limpia */}
-        <div className="flex items-center gap-1 bg-[#0B0C10] p-1 rounded-[8px] border border-[#2A2E3D] shrink-0 self-start sm:self-auto">
+        <div className="flex items-center gap-1 bg-canvas p-1 rounded-lg border border-line shrink-0 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setActiveTab('main')}
-            className={`px-3.5 py-1.5 text-xs rounded-[6px] font-bold transition-all cursor-pointer ${
+            className={`min-h-8 px-3.5 py-1.5 text-xs rounded-md font-bold transition-all cursor-pointer ${
               activeTab === 'main'
-                ? 'bg-[#8B5CF6] text-white shadow-xs'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                ? 'bg-primary text-white shadow-xs'
+                : 'text-fg-muted hover:text-fg'
             }`}
           >
             Métricas Clave
@@ -333,10 +333,10 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('personality')}
-            className={`px-3.5 py-1.5 text-xs rounded-[6px] font-bold transition-all cursor-pointer ${
+            className={`min-h-8 px-3.5 py-1.5 text-xs rounded-md font-bold transition-all cursor-pointer ${
               activeTab === 'personality'
-                ? 'bg-[#8B5CF6] text-white shadow-xs'
-                : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                ? 'bg-primary text-white shadow-xs'
+                : 'text-fg-muted hover:text-fg'
             }`}
           >
             Personalidad & Skills
@@ -358,29 +358,29 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
             return (
               <div
                 key={metric.id}
-                className={`bg-[#0B0C10] rounded-[12px] p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs border hover:scale-[1.02] hover:shadow-md ${
+                className={`bg-canvas rounded-xl p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs border hover:scale-[1.02] hover:shadow-md ${
                   isEnergy && isEnergyHighFatigue
                     ? 'border-rose-500/40 bg-rose-500/10'
                     : isEnergy && isEnergyMildFatigue
                     ? 'border-amber-500/30 bg-amber-500/5'
-                    : 'border-[#2A2E3D] hover:border-[#8B5CF6]/50'
+                    : 'border-line hover:border-primary/50'
                 }`}
               >
                 {/* Header de la tarjeta */}
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-[#F8FAFC]">
+                  <span className="font-bold text-fg">
                     {metric.label}
                   </span>
-                  <div className="p-1 rounded-[6px] bg-[#16181F] border border-[#2A2E3D]">
+                  <div className="p-1 rounded-md bg-surface border border-line">
                     <Icon className={`w-3.5 h-3.5 ${metric.iconColor}`} />
                   </div>
                 </div>
 
                 {/* Valor numérico & Badges de Estado */}
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-2xl font-bold text-[#F8FAFC] tracking-tight font-mono tabular-nums">
+                  <p className="text-2xl font-bold text-fg tracking-tight font-mono tabular-nums">
                     {metric.value}
-                    <span className="text-xs text-[#94A3B8] font-normal font-sans"> / 100</span>
+                    <span className="text-xs text-fg-muted font-normal font-sans"> / 100</span>
                   </p>
 
                   {/* Claridad en Requisitos y Badges para Energía Vital */}
@@ -393,7 +393,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                           ? 'Fatiga leve (<85%). Puedes grabar temas pero requieres ≥85% para armar giras. Descansá para recuperar.'
                           : 'Fatiga alta (<40%). Riesgo de bajo rendimiento y fatiga en conciertos. Tomá un retiro de descanso.'
                       }
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-[4px] flex items-center gap-1 border transition-colors ${
+                      className={`text-2xs font-semibold px-2 py-0.5 rounded-sm flex items-center gap-1 border transition-colors ${
                         isEnergyOptimal
                           ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                           : isEnergyMildFatigue
@@ -422,15 +422,20 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                 </div>
 
                 {/* Barra de progreso temática con degradado específico */}
-                <div className="w-full bg-[#16181F] border border-[#2A2E3D] h-3.5 rounded-full overflow-hidden p-0.5">
+                <div className="w-full bg-surface border border-line h-3.5 rounded-full overflow-hidden p-0.5">
                   <div
                     className={`bg-gradient-to-r ${metric.gradient} h-full rounded-full transition-all duration-500 shadow-sm`}
+                    role="progressbar"
+                    aria-label={metric.label}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round(Number(Math.min(100, Math.max(0, metric.value))))}
                     style={{ width: `${Math.min(100, Math.max(0, metric.value))}%` }}
                   />
                 </div>
 
                 {/* Descripción de impacto visual rápido */}
-                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                <p className="text-xs text-fg-muted leading-relaxed">
                   {metric.description}
                 </p>
               </div>
@@ -443,27 +448,27 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
       {activeTab === 'personality' && (
         <div className="space-y-5">
           {/* Tarjeta Guía de Progresión y Entrenamiento */}
-          <div className="bg-gradient-to-br from-[#0B0C10] to-[#13151D] border border-[#8B5CF6]/30 rounded-[12px] p-4 sm:p-5 space-y-4 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2A2E3D] pb-3">
+          <div className="bg-gradient-to-br from-[#0B0C10] to-[#13151D] border border-[#8B5CF6]/30 rounded-xl p-4 sm:p-5 space-y-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line pb-3">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-[6px] bg-[#8B5CF6]/20 text-[#C084FC]">
+                <div className="p-1.5 rounded-md bg-primary/20 text-primary-soft">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#F8FAFC]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-fg">
                     ¿Cómo progresar y entrenar tus Habilidades?
                   </h3>
-                  <p className="text-[11px] text-[#94A3B8]">
+                  <p className="text-xs text-fg-muted">
                     Tus atributos definen la calidad final de tus temas, el carisma escénico y tu éxito comercial.
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-[#8B5CF6]/20 text-[#C084FC] border border-[#8B5CF6]/40">
+                <span className="text-2xs font-bold px-2 py-0.5 rounded-sm bg-primary/20 text-primary-soft border border-primary/40">
                   Escala 1 - 100
                 </span>
                 {player?.isProdigy && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-400/50 flex items-center gap-1 shadow-xs">
+                  <span className="text-2xs font-bold px-2 py-0.5 rounded-sm bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-400/50 flex items-center gap-1 shadow-xs">
                     <Crown className="w-3 h-3 text-amber-400" />
                     Prodigio x3
                   </span>
@@ -473,64 +478,64 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 
             {/* 4 Canales de Entrenamiento & Progresión */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] space-y-1 hover:border-[#8B5CF6]/40 transition-colors">
-                <div className="flex items-center gap-1.5 text-[#C084FC] font-bold text-[11px]">
-                  <ShoppingBag className="w-3.5 h-3.5 text-[#C084FC] shrink-0" />
+              <div className="p-3 rounded-lg bg-surface border border-line space-y-1 hover:border-primary/40 transition-colors">
+                <div className="flex items-center gap-1.5 text-primary-soft font-bold text-xs">
+                  <ShoppingBag className="w-3.5 h-3.5 text-primary-soft shrink-0" />
                   <span>1. Tienda & Masterclasses</span>
                 </div>
-                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                <p className="text-xs text-fg-muted leading-relaxed">
                   Masterclasses, libros de teoría, coach vocal y equipamiento aumentan tus habilidades de forma <strong>permanente</strong>.
                 </p>
               </div>
 
-              <div className="p-3 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] space-y-1 hover:border-[#06B6D4]/40 transition-colors">
-                <div className="flex items-center gap-1.5 text-[#06B6D4] font-bold text-[11px]">
-                  <Music2 className="w-3.5 h-3.5 text-[#06B6D4] shrink-0" />
+              <div className="p-3 rounded-lg bg-surface border border-line space-y-1 hover:border-info/40 transition-colors">
+                <div className="flex items-center gap-1.5 text-info font-bold text-xs">
+                  <Music2 className="w-3.5 h-3.5 text-info shrink-0" />
                   <span>2. Grabaciones & Hits</span>
                 </div>
-                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                <p className="text-xs text-fg-muted leading-relaxed">
                   Componer singles, EPs, álbumes y colaboraciones ejercita tu técnica, creatividad compositiva y originalidad.
                 </p>
               </div>
 
-              <div className="p-3 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] space-y-1 hover:border-amber-400/40 transition-colors">
-                <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px]">
+              <div className="p-3 rounded-lg bg-surface border border-line space-y-1 hover:border-amber-400/40 transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-400 font-bold text-xs">
                   <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span>3. Decisiones & Prensa</span>
                 </div>
-                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                <p className="text-xs text-fg-muted leading-relaxed">
                   Tus respuestas en dilemas narrativos, entrevistas y contratos discográficos forjan tu disciplina y tolerancia al riesgo.
                 </p>
               </div>
 
-              <div className="p-3 rounded-[8px] bg-[#16181F] border border-[#2A2E3D] space-y-1 hover:border-emerald-400/40 transition-colors">
-                <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-[11px]">
+              <div className="p-3 rounded-lg bg-surface border border-line space-y-1 hover:border-emerald-400/40 transition-colors">
+                <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-xs">
                   <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span>4. Bienestar & Enfoque</span>
                 </div>
-                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                <p className="text-xs text-fg-muted leading-relaxed">
                   Mantener la energía vital óptima (≥85%) previene bloqueos creativos y maximiza la inspiración en sesiones de estudio.
                 </p>
               </div>
             </div>
 
             {/* Leyenda de Rangos de Nivel */}
-            <div className="pt-2 border-t border-[#2A2E3D] flex items-center justify-between flex-wrap gap-2 text-[10px] text-[#94A3B8]">
-              <span className="font-semibold text-[#F8FAFC]">Rangos Oficiales de Nivel:</span>
+            <div className="pt-2 border-t border-line flex items-center justify-between flex-wrap gap-2 text-2xs text-fg-muted">
+              <span className="font-semibold text-fg">Rangos Oficiales de Nivel:</span>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2 py-0.5 rounded-[4px] bg-zinc-800/80 text-zinc-300 border border-zinc-700/60 font-medium">
+                <span className="px-2 py-0.5 rounded-sm bg-zinc-800/80 text-zinc-300 border border-zinc-700/60 font-medium">
                   Principiante (1-30)
                 </span>
-                <span className="px-2 py-0.5 rounded-[4px] bg-amber-950/60 text-amber-300 border border-amber-500/40 font-medium">
+                <span className="px-2 py-0.5 rounded-sm bg-amber-950/60 text-amber-300 border border-amber-500/40 font-medium">
                   En Desarrollo (31-50)
                 </span>
-                <span className="px-2 py-0.5 rounded-[4px] bg-cyan-950/60 text-cyan-300 border border-cyan-500/40 font-medium">
+                <span className="px-2 py-0.5 rounded-sm bg-cyan-950/60 text-cyan-300 border border-cyan-500/40 font-medium">
                   Competente (51-70)
                 </span>
-                <span className="px-2 py-0.5 rounded-[4px] bg-purple-950/60 text-purple-300 border border-purple-500/40 font-medium">
+                <span className="px-2 py-0.5 rounded-sm bg-purple-950/60 text-purple-300 border border-purple-500/40 font-medium">
                   Avanzado (71-85)
                 </span>
-                <span className="px-2 py-0.5 rounded-[4px] bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-yellow-300 border border-yellow-400/50 font-bold">
+                <span className="px-2 py-0.5 rounded-sm bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-yellow-300 border border-yellow-400/50 font-bold">
                   Maestro / Élite (86-100)
                 </span>
               </div>
@@ -546,40 +551,45 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
               return (
                 <div
                   key={trait.id}
-                  className="bg-[#0B0C10] border border-[#2A2E3D] hover:border-[#8B5CF6]/50 rounded-[12px] p-4 space-y-3 transition-all duration-200 ease-out shadow-xs hover:scale-[1.01] hover:shadow-md flex flex-col justify-between"
+                  className="bg-canvas border border-line hover:border-primary/50 rounded-xl p-4 space-y-3 transition-all duration-200 ease-out shadow-xs hover:scale-[1.01] hover:shadow-md flex flex-col justify-between"
                 >
                   <div className="space-y-2.5">
                     {/* Header de Atributo: Icono, Nombre, Badge de Nivel y Valor */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <div className="p-1.5 rounded-[6px] bg-[#16181F] border border-[#2A2E3D] shrink-0">
+                        <div className="p-1.5 rounded-md bg-surface border border-line shrink-0">
                           <Icon className={`w-4 h-4 ${trait.iconColor}`} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-[#F8FAFC] text-sm leading-tight">
+                            <span className="font-bold text-fg text-sm leading-tight">
                               {trait.label}
                             </span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-[4px] border ${tierInfo.badge}`}>
+                            <span className={`text-2xs font-bold px-2 py-0.5 rounded-sm border ${tierInfo.badge}`}>
                               {tierInfo.name}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <span className="font-mono tabular-nums text-[#F8FAFC] font-bold text-xs bg-[#16181F] border border-[#2A2E3D] px-2.5 py-1 rounded-[6px] shrink-0">
-                        {trait.val}<span className="text-[10px] text-[#94A3B8] font-normal font-sans"> / 100</span>
+                      <span className="font-mono tabular-nums text-fg font-bold text-xs bg-surface border border-line px-2.5 py-1 rounded-md shrink-0">
+                        {trait.val}<span className="text-2xs text-fg-muted font-normal font-sans"> / 100</span>
                       </span>
                     </div>
 
                     {/* Barra de progreso temática */}
                     <div className="space-y-1">
-                      <div className="w-full bg-[#16181F] border border-[#2A2E3D] h-3.5 rounded-full overflow-hidden p-0.5 relative">
+                      <div className="w-full bg-surface border border-line h-3.5 rounded-full overflow-hidden p-0.5 relative">
                         <div
                           className={`bg-gradient-to-r ${trait.gradient} h-full rounded-full transition-all duration-500 shadow-sm`}
+                          role="progressbar"
+                          aria-label={trait.label}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-valuenow={Math.round(Number(Math.min(100, Math.max(0, trait.val))))}
                           style={{ width: `${Math.min(100, Math.max(0, trait.val))}%` }}
                         />
                       </div>
-                      <div className="flex items-center justify-between text-[9px] text-[#64748B] font-mono px-0.5">
+                      <div className="flex items-center justify-between text-2xs text-fg-subtle font-mono px-0.5">
                         <span>1</span>
                         <span>30</span>
                         <span>50</span>
@@ -590,13 +600,13 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                     </div>
 
                     {/* Descripción de impacto visual */}
-                    <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                    <p className="text-xs text-fg-muted leading-relaxed">
                       {trait.description}
                     </p>
                   </div>
 
                   {/* Indicador de Próximo Nivel / Rango */}
-                  <div className="pt-2 border-t border-[#1C1F2A] flex items-center justify-between text-[10px]">
+                  <div className="pt-2 border-t border-[#1C1F2A] flex items-center justify-between text-2xs">
                     {tierInfo.nextTier ? (
                       <span className="text-[#A78BFA] flex items-center gap-1 font-medium">
                         <TrendingUp className="w-3 h-3 text-[#A78BFA]" />
@@ -608,7 +618,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                         Nivel Máximo de Maestría Alcanzado
                       </span>
                     )}
-                    <span className="text-[10px] font-mono text-[#64748B]">
+                    <span className="text-2xs font-mono text-fg-subtle">
                       Nivel {tierInfo.rangeLabel}
                     </span>
                   </div>
@@ -620,16 +630,16 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
       )}
 
       {/* Pie del Panel con Micro-leyenda de balance */}
-      <div className="pt-3 border-t border-[#2A2E3D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-[#94A3B8]">
+      <div className="pt-3 border-t border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-fg-muted">
         <div className="flex items-center gap-1.5">
-          <Info className="w-3.5 h-3.5 text-[#06B6D4]" />
+          <Info className="w-3.5 h-3.5 text-info" />
           <span>
             {activeTab === 'main'
               ? 'Las métricas se actualizan dinámicamente con tus lanzamientos, eventos y giras.'
               : 'Las habilidades se mejoran mediante práctica continua, lanzamientos, decisiones de carrera y compras en la tienda.'}
           </span>
         </div>
-        <span className="text-[11px] font-bold text-[#C084FC]">
+        <span className="text-xs font-bold text-primary-soft">
           {player?.name || 'Artista'} • {player?.careerStage || 'Underground'}
         </span>
       </div>
