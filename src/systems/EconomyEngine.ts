@@ -2,9 +2,6 @@ import { Artist, RecordLabel, Manager } from '../types';
 import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
 
 export class EconomyEngine {
-  // Baseline average streaming payout per 1,000 streams in USD (~$2.20 to $3.80 dynamic CPM)
-  static STREAM_PAYOUT_PER_THOUSAND = 3.2;
-
   /**
    * Calculates dynamic CPM (streaming payout per 1,000 streams in USD).
    * Reflects real-world music market demographics:

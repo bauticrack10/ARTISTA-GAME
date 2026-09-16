@@ -43,7 +43,6 @@ export interface DistributionOrLabelOption {
 
 export class IndustryEngine {
   public static readonly MIN_MONTHLY_LISTENERS_FOR_MAJOR_SCOUTS = 100000;
-  public static readonly MIN_MONTHLY_LISTENERS_FOR_UNDERGROUND_BOUTIQUE = 8000;
 
   /**
    * Obtiene la escalera completa de distribución y sellos discográficos disponibles en el mundo,

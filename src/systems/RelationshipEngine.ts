@@ -17,6 +17,7 @@ import {
 } from '../types';
 import { SocialFeedEngine } from './SocialFeedEngine';
 import { INITIAL_MANAGERS } from '../data/producersAndManagers';
+import { COUNTRY_TO_REGION_MAP } from '../data/initialArtists';
 
 export const CAREER_STAGE_TIERS: Record<CareerStage, number> = {
   Underground: 0,
@@ -169,9 +170,13 @@ export class RelationshipEngine {
     const targetSphere = this.getArtistCulturalSphere(target);
     const sameSphere = reqSphere === targetSphere;
 
-    const reqRegions = requester.influenceRegions || [];
-    const targetRegions = target.influenceRegions || [];
-    const hasSharedRegion = reqRegions.some(r => targetRegions.includes(r) && r !== 'Global');
+    // Región de origen real (dónde nació/creció la escena del artista), no su alcance de mercado:
+    // influenceRegions describe hasta dónde llega la fama de un artista (una superestrella global
+    // puede listar casi todas las regiones), así que usarlo aquí haría que cualquier megastar
+    // "comparta región" con cualquier artista local sin importar cuán lejano sea culturalmente.
+    const reqHomeRegions = (requester.countryCode && COUNTRY_TO_REGION_MAP[requester.countryCode.toUpperCase()]) || requester.influenceRegions || [];
+    const targetHomeRegions = (target.countryCode && COUNTRY_TO_REGION_MAP[target.countryCode.toUpperCase()]) || target.influenceRegions || [];
+    const hasSharedRegion = reqHomeRegions.some(r => targetHomeRegions.includes(r) && r !== 'Global');
 
     const sharesLanguageOrRegion = sameLanguage || sameSphere || hasSharedRegion;
 
@@ -1037,11 +1042,14 @@ export class RelationshipEngine {
       history: []
     };
 
-    // 1. Rechazo tajante si hay feudo abierto, rivalidad activa o afinidad fuertemente negativa (< -20)
-    if (rel.relationType === 'feud' || rel.relationType === 'rival' || rel.activeRivalry) {
+    // 1. Rechazo tajante si hay feudo abierto o rivalidad activa (tiradera reciente sin resolver).
+    // Nota: relationType 'rival' por sí solo NO implica hostilidad -- puede describir una rivalidad
+    // histórica y amistosa (ej. dúos con "competencia sana" y afinidad alta). Solo bloquea si el
+    // conflicto está realmente vigente (feud) o fue declarado activo por una tiradera (activeRivalry).
+    if (rel.relationType === 'feud') {
       return {
         willAccept: false,
-        reason: `${target.name} está en conflicto / rivalidad activa con vos y rechazó la propuesta de colaboración tajantemente.`,
+        reason: `Hay un feudo abierto entre vos y ${target.name}: la escena sigue de cerca el conflicto y su equipo rechazó la propuesta de colaboración tajantemente.`,
         chemistryScore: 0,
         crossFanbasePotential: 0,
         acceptanceProbability: 0,
@@ -1049,6 +1057,18 @@ export class RelationshipEngine {
       };
     }
 
+    if (rel.activeRivalry) {
+      return {
+        willAccept: false,
+        reason: `${target.name} mantiene una rivalidad activa con vos tras el último cruce de tiraderas y rechazó la propuesta de colaboración tajantemente.`,
+        chemistryScore: 0,
+        crossFanbasePotential: 0,
+        acceptanceProbability: 0,
+        successBoost: 0
+      };
+    }
+
+    // Afinidad fuertemente negativa (< -20): rechazo tajante aunque no haya feudo ni tiradera formal.
     if (rel.affinity < -20) {
       return {
         willAccept: false,
