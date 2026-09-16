@@ -6,6 +6,7 @@ import { INITIAL_ARTISTS } from './src/data/initialArtists';
 import { INITIAL_GENRES } from './src/data/genres';
 import { INITIAL_LABELS } from './src/data/labels';
 import { INITIAL_PRODUCERS, INITIAL_MANAGERS } from './src/data/producersAndManagers';
+import { formatMoney } from './src/utils/formatters';
 
 interface TestStats {
   passed: number;
@@ -234,9 +235,9 @@ function runAllIndustryTests() {
   }
 
   // -------------------------------------------------------------
-  // CASO 3: Artista con 5.000 oyentes -> Desbloquea Callejón Records y recibe anticipo de $2.000
+  // CASO 3: Artista con 5.000 oyentes -> Desbloquea Callejón Records y recibe anticipo dinámico (piso $15.000+)
   // -------------------------------------------------------------
-  console.log('\n🔹 CASO 3: Artista con 5.000 oyentes -> Desbloquea Callejón Records y recibe anticipo de $2.000');
+  console.log('\n🔹 CASO 3: Artista con 5.000 oyentes -> Desbloquea Callejón Records y recibe anticipo dinámico');
   {
     const world = createBaseWorld();
     const artist = createTestArtist({
@@ -257,7 +258,7 @@ function runAllIndustryTests() {
     // 1. Verificación de metadata
     assert(Boolean(callejon), 'Callejón Records existe en world.labels');
     assert(callejon.minMonthlyListeners === 5000, 'Callejón Records requiere 5.000 oyentes mensuales');
-    assert(callejon.advancePayment === 2000, 'Callejón Records ofrece un anticipo de $2.000');
+    assert(callejon.advancePayment === 15000, 'Callejón Records publica un piso de anticipo de $15.000 (escalable con audiencia y catálogo)');
     assert(callejon.commissionPct === 30, 'Callejón Records tiene 30% de comisión (70% para el artista)');
     assert(callejon.creativeFreedomAllowed === 85, 'Callejón Records permite 85% de control creativo');
 
@@ -275,29 +276,33 @@ function runAllIndustryTests() {
     assert(checkUnder.missingReasons.some(r => r.includes('5.000') || r.includes('5000')), 'Detalla requisito de 5.000 oyentes');
 
     // 4. Firma del contrato
+    // El anticipo real es dinámico (piso base + facturación proyectada + audiencia + catálogo, ver
+    // IndustryEngine.generateDynamicLabelOffer), así que solo verificamos que respeta el piso publicado
+    // en callejon.advancePayment, no un monto fijo -- igual que ya se hace para los Majors en el CASO 5.
     const initialFunds = artist.stats.funds; // 300
     const signResult = IndustryEngine.signDeal(artist, callejon, world);
 
     assert(signResult.success === true, 'Firma exitosa con Callejón Records');
     assert(artist.labelId === 'label_callejon_records', 'artist.labelId se actualiza a label_callejon_records');
     assert(artist.activeContract?.royaltyPercentage === 70, 'artist.activeContract tiene 70% de regalías (100 - 30%)');
-    assert(artist.activeContract?.signingBonus === 2000, 'artist.activeContract tiene signingBonus = $2.000');
+    assert(Boolean(artist.activeContract?.signingBonus && artist.activeContract.signingBonus >= callejon.advancePayment), `artist.activeContract.signingBonus respeta el piso de ${formatMoney(callejon.advancePayment)} (obtenido: ${formatMoney(artist.activeContract?.signingBonus || 0)})`);
     assert(artist.activeContract?.creativeControl === 85, 'artist.activeContract tiene 85% de control creativo');
     assert(artist.activeContract?.albumsRequired === 1, 'artist.activeContract requiere 1 álbum');
-    assert(artist.stats.funds === initialFunds + 2000, `Fondos del artista aumentaron a $2.300 ($300 inicial + $2.000 anticipo)`);
+    const callejonBonus = artist.activeContract!.signingBonus;
+    assert(artist.stats.funds === initialFunds + callejonBonus, `Fondos del artista aumentaron en el monto exacto del anticipo (${formatMoney(initialFunds)} + ${formatMoney(callejonBonus)} = ${formatMoney(artist.stats.funds)})`);
     assert(callejon.rosterArtistIds.includes(artist.id), 'Callejón Records incluye al artista en su roster');
 
     // 5. Verificación en el Ledger Financiero
-    const advTx = (artist.financialLedger || []).find(tx => tx.category === 'contract' && tx.amount === 2000 && tx.type === 'income');
-    assert(Boolean(advTx), 'El ledger registra el ingreso del anticipo de $2.000');
-    assert(advTx?.resultingBalance === 2300, 'El balance resultante en el ledger es exactamente $2.300');
+    const advTx = (artist.financialLedger || []).find(tx => tx.category === 'contract' && tx.amount === callejonBonus && tx.type === 'income');
+    assert(Boolean(advTx), `El ledger registra el ingreso del anticipo de ${formatMoney(callejonBonus)}`);
+    assert(advTx?.resultingBalance === initialFunds + callejonBonus, 'El balance resultante en el ledger coincide con fondos iniciales + anticipo');
     assert(advTx?.description.includes('Callejón Records'), 'La descripción del ledger menciona a Callejón Records');
   }
 
   // -------------------------------------------------------------
-  // CASO 4: Artista con 12.000 oyentes -> Desbloquea Bohemian Groove Local y recibe anticipo de $5.000
+  // CASO 4: Artista con 12.000 oyentes -> Desbloquea Bohemian Groove Local y recibe anticipo dinámico (piso $25.000+)
   // -------------------------------------------------------------
-  console.log('\n🔹 CASO 4: Artista con 12.000 oyentes -> Desbloquea Bohemian Groove Local y recibe anticipo de $5.000');
+  console.log('\n🔹 CASO 4: Artista con 12.000 oyentes -> Desbloquea Bohemian Groove Local y recibe anticipo dinámico');
   {
     const world = createBaseWorld();
     const artist = createTestArtist({
@@ -318,7 +323,7 @@ function runAllIndustryTests() {
     // 1. Verificación de metadata
     assert(Boolean(bohemian), 'Bohemian Groove Local existe en world.labels');
     assert(bohemian.minMonthlyListeners === 12000, 'Bohemian Groove Local requiere 12.000 oyentes');
-    assert(bohemian.advancePayment === 5000, 'Bohemian Groove Local ofrece anticipo de $5.000');
+    assert(bohemian.advancePayment === 25000, 'Bohemian Groove Local publica un piso de anticipo de $25.000 (escalable con audiencia y catálogo)');
     assert(bohemian.commissionPct === 35, 'Bohemian Groove Local tiene 35% de comisión (65% regalías artista)');
     assert(bohemian.creativeFreedomAllowed === 80, 'Bohemian Groove Local otorga 80% de libertad creativa');
 
@@ -334,22 +339,23 @@ function runAllIndustryTests() {
     const checkUnder = IndustryEngine.canSignDeal(artistUnder, bohemian);
     assert(checkUnder.canSign === false, 'Artista con 11.999 oyentes NO puede firmar con Bohemian Groove Local');
 
-    // 4. Firma del contrato
+    // 4. Firma del contrato (anticipo dinámico: solo se valida que respete el piso publicado)
     const initialFunds = artist.stats.funds; // 1500
     const signResult = IndustryEngine.signDeal(artist, bohemian, world);
 
     assert(signResult.success === true, 'Firma exitosa con Bohemian Groove Local');
     assert(artist.labelId === 'label_bohemian_groove_local', 'artist.labelId se actualiza a label_bohemian_groove_local');
     assert(artist.activeContract?.royaltyPercentage === 65, 'artist.activeContract tiene 65% de regalías');
-    assert(artist.activeContract?.signingBonus === 5000, 'artist.activeContract tiene signingBonus = $5.000');
+    assert(Boolean(artist.activeContract?.signingBonus && artist.activeContract.signingBonus >= bohemian.advancePayment), `artist.activeContract.signingBonus respeta el piso de ${formatMoney(bohemian.advancePayment)} (obtenido: ${formatMoney(artist.activeContract?.signingBonus || 0)})`);
     assert(artist.activeContract?.creativeControl === 80, 'artist.activeContract tiene 80% de control creativo');
-    assert(artist.stats.funds === initialFunds + 5000, `Fondos del artista aumentaron a $6.500 ($1.500 inicial + $5.000 anticipo)`);
+    const bohemianBonus = artist.activeContract!.signingBonus;
+    assert(artist.stats.funds === initialFunds + bohemianBonus, `Fondos del artista aumentaron en el monto exacto del anticipo (${formatMoney(initialFunds)} + ${formatMoney(bohemianBonus)} = ${formatMoney(artist.stats.funds)})`);
     assert(bohemian.rosterArtistIds.includes(artist.id), 'Bohemian Groove Local incluye al artista en su roster');
 
     // 5. Verificación de Ledger
-    const advTx = (artist.financialLedger || []).find(tx => tx.category === 'contract' && tx.amount === 5000 && tx.type === 'income');
-    assert(Boolean(advTx), 'El ledger registra el ingreso de $5.000 de anticipo');
-    assert(advTx?.resultingBalance === 6500, 'El balance resultante en el ledger es $6.500');
+    const advTx = (artist.financialLedger || []).find(tx => tx.category === 'contract' && tx.amount === bohemianBonus && tx.type === 'income');
+    assert(Boolean(advTx), `El ledger registra el ingreso de ${formatMoney(bohemianBonus)} de anticipo`);
+    assert(advTx?.resultingBalance === initialFunds + bohemianBonus, 'El balance resultante en el ledger coincide con fondos iniciales + anticipo');
   }
 
   // -------------------------------------------------------------
@@ -436,13 +442,12 @@ function runAllIndustryTests() {
   // -------------------------------------------------------------
   console.log('\n🔹 CASO 6: EconomyEngine cálculo exacto de regalías netas por contrato');
   {
-    assert(EconomyEngine.STREAM_PAYOUT_PER_THOUSAND === 3.5, 'EconomyEngine base payout es $3.50 por 1.000 streams ($0.0035/stream)');
-
+    // El payout por stream NO es un monto plano: EconomyEngine.getStreamingCPM() escala de $2.20 (pop <= 20)
+    // a $3.80 (pop > 85) según la popularidad del artista (ver doc del método). Cada subcaso usa el CPM que
+    // le corresponde a la popularidad del artista de prueba en vez de asumir una tarifa fija para todos.
     const totalMonthlyStreams = 1000000; // 1 Millón de streams
-    // Gross streaming = (1,000,000 / 1000) * 3.5 = $3,500.00
-    const expectedGross = 3500;
 
-    // Subcaso 6.1: SoundDrop Free (85% artista / 15% comisión)
+    // Subcaso 6.1: SoundDrop Free (85% artista / 15% comisión), artista pop=10 -> CPM $2.20
     {
       const artist = createTestArtist({
         stats: { popularity: 10, reputation: 10, artisticCredibility: 10, energy: 100, monthlyListeners: 10000, totalStreams: 1000000, funds: 1000, fansCount: 100, fanbaseLoyalty: 50, hype: 20 },
@@ -461,12 +466,13 @@ function runAllIndustryTests() {
           annualFee: 0
         }
       });
+      const expectedGross = Math.floor(EconomyEngine.getStreamingCPM(artist) * (totalMonthlyStreams / 1000));
       const finances = EconomyEngine.calculateMonthlyFinances(artist, totalMonthlyStreams, INITIAL_LABELS['distro_sounddrop_free'], undefined);
-      assert(finances.streamingRevenueGross === expectedGross, `[SoundDrop] Ingreso bruto por streaming: $${finances.streamingRevenueGross} (esperado: $3.500)`);
-      assert(finances.artistStreamingNet === Math.floor(expectedGross * 0.85), `[SoundDrop 85%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $2.975)`);
+      assert(finances.streamingRevenueGross === expectedGross, `[SoundDrop] Ingreso bruto por streaming a CPM $${EconomyEngine.getStreamingCPM(artist).toFixed(2)}: $${finances.streamingRevenueGross} (esperado: $${expectedGross})`);
+      assert(finances.artistStreamingNet === Math.floor(expectedGross * 0.85), `[SoundDrop 85%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $${Math.floor(expectedGross * 0.85)})`);
     }
 
-    // Subcaso 6.2: DistroWave Pro (100% artista / 0% comisión)
+    // Subcaso 6.2: DistroWave Pro (100% artista / 0% comisión), artista pop=10 -> CPM $2.20
     {
       const artist = createTestArtist({
         stats: { popularity: 10, reputation: 10, artisticCredibility: 10, energy: 100, monthlyListeners: 10000, totalStreams: 1000000, funds: 1000, fansCount: 100, fanbaseLoyalty: 50, hype: 20 },
@@ -485,12 +491,13 @@ function runAllIndustryTests() {
           annualFee: 20
         }
       });
+      const expectedGross = Math.floor(EconomyEngine.getStreamingCPM(artist) * (totalMonthlyStreams / 1000));
       const finances = EconomyEngine.calculateMonthlyFinances(artist, totalMonthlyStreams, INITIAL_LABELS['distro_distrowave_pro'], undefined);
-      assert(finances.streamingRevenueGross === expectedGross, `[DistroWave] Ingreso bruto por streaming: $${finances.streamingRevenueGross} (esperado: $3.500)`);
-      assert(finances.artistStreamingNet === Math.floor(expectedGross * 1.00), `[DistroWave 100%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $3.500)`);
+      assert(finances.streamingRevenueGross === expectedGross, `[DistroWave] Ingreso bruto por streaming: $${finances.streamingRevenueGross} (esperado: $${expectedGross})`);
+      assert(finances.artistStreamingNet === Math.floor(expectedGross * 1.00), `[DistroWave 100%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $${expectedGross})`);
     }
 
-    // Subcaso 6.3: Callejón Records (70% artista / 30% sello)
+    // Subcaso 6.3: Callejón Records (70% artista / 30% sello), artista pop=20 -> CPM $2.20
     {
       const artist = createTestArtist({
         stats: { popularity: 20, reputation: 25, artisticCredibility: 30, energy: 100, monthlyListeners: 20000, totalStreams: 1000000, funds: 2000, fansCount: 500, fanbaseLoyalty: 60, hype: 30 },
@@ -509,12 +516,13 @@ function runAllIndustryTests() {
           annualFee: 0
         }
       });
+      const expectedGross = Math.floor(EconomyEngine.getStreamingCPM(artist) * (totalMonthlyStreams / 1000));
       const finances = EconomyEngine.calculateMonthlyFinances(artist, totalMonthlyStreams, INITIAL_LABELS['label_callejon_records'], undefined);
-      assert(finances.streamingRevenueGross === expectedGross, `[Callejón] Ingreso bruto por streaming: $${finances.streamingRevenueGross} (esperado: $3.500)`);
-      assert(finances.artistStreamingNet === Math.floor(expectedGross * 0.70), `[Callejón 70%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $2.450)`);
+      assert(finances.streamingRevenueGross === expectedGross, `[Callejón] Ingreso bruto por streaming: $${finances.streamingRevenueGross} (esperado: $${expectedGross})`);
+      assert(finances.artistStreamingNet === Math.floor(expectedGross * 0.70), `[Callejón 70%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $${Math.floor(expectedGross * 0.70)})`);
     }
 
-    // Subcaso 6.4: Major (Universal Interscope, 20% artista / 80% sello)
+    // Subcaso 6.4: Major (Universal Interscope, 20% artista / 80% sello), artista pop=80 -> CPM $3.30
     {
       const artist = createTestArtist({
         stats: { popularity: 80, reputation: 75, artisticCredibility: 70, energy: 100, monthlyListeners: 200000, totalStreams: 1000000, funds: 100000, fansCount: 50000, fanbaseLoyalty: 80, hype: 80 },
@@ -533,26 +541,29 @@ function runAllIndustryTests() {
           annualFee: 0
         }
       });
+      const expectedGross = Math.floor(EconomyEngine.getStreamingCPM(artist) * (totalMonthlyStreams / 1000));
       const finances = EconomyEngine.calculateMonthlyFinances(artist, totalMonthlyStreams, INITIAL_LABELS['label_universal_interscope'], undefined);
-      assert(finances.streamingRevenueGross === expectedGross, `[Major Universal] Ingreso bruto por streaming: $${finances.streamingRevenueGross} (esperado: $3.500)`);
-      assert(finances.artistStreamingNet === Math.floor(expectedGross * 0.20), `[Major 20%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $700)`);
+      assert(finances.streamingRevenueGross === expectedGross, `[Major Universal] Ingreso bruto por streaming: $${finances.streamingRevenueGross} (esperado: $${expectedGross})`);
+      assert(finances.artistStreamingNet === Math.floor(expectedGross * 0.20), `[Major 20%] Regalías netas artista: $${finances.artistStreamingNet} (esperado: $${Math.floor(expectedGross * 0.20)})`);
     }
 
-    // Subcaso 6.5: Fallback con objeto RecordLabel cuando no hay activeContract
+    // Subcaso 6.5: Fallback con objeto RecordLabel cuando no hay activeContract (artista default, pop=5 -> CPM $2.20)
     {
       const artist = createTestArtist({ activeContract: null });
+      const cpm = EconomyEngine.getStreamingCPM(artist);
+      const fallbackGross = Math.floor(cpm * 100); // 100,000 streams
 
       const fSoundDrop = EconomyEngine.calculateMonthlyFinances(artist, 100000, INITIAL_LABELS['distro_sounddrop_free'], undefined);
-      assert(fSoundDrop.artistStreamingNet === Math.floor(350 * 0.85), 'Fallback SoundDrop Free calcula 85% correctamente');
+      assert(fSoundDrop.artistStreamingNet === Math.floor(fallbackGross * 0.85), 'Fallback SoundDrop Free calcula 85% correctamente');
 
       const fDistroWave = EconomyEngine.calculateMonthlyFinances(artist, 100000, INITIAL_LABELS['distro_distrowave_pro'], undefined);
-      assert(fDistroWave.artistStreamingNet === Math.floor(350 * 1.00), 'Fallback DistroWave Pro calcula 100% correctamente');
+      assert(fDistroWave.artistStreamingNet === Math.floor(fallbackGross * 1.00), 'Fallback DistroWave Pro calcula 100% correctamente');
 
       const fCallejon = EconomyEngine.calculateMonthlyFinances(artist, 100000, INITIAL_LABELS['label_callejon_records'], undefined);
-      assert(fCallejon.artistStreamingNet === Math.floor(350 * 0.70), 'Fallback Callejón Records calcula 70% correctamente');
+      assert(fCallejon.artistStreamingNet === Math.floor(fallbackGross * 0.70), 'Fallback Callejón Records calcula 70% correctamente');
 
       const fUniversal = EconomyEngine.calculateMonthlyFinances(artist, 100000, INITIAL_LABELS['label_universal_interscope'], undefined);
-      assert(fUniversal.artistStreamingNet === Math.floor(350 * 0.20), 'Fallback Universal Interscope calcula 20% correctamente');
+      assert(fUniversal.artistStreamingNet === Math.floor(fallbackGross * 0.20), 'Fallback Universal Interscope calcula 20% correctamente');
     }
   }
 
@@ -603,22 +614,25 @@ function runAllIndustryTests() {
     assert(feeTx?.category === 'contract' && feeTx.type === 'expense' && feeTx.amount === 20, 'Paso 2: Ledger registra gasto de $20 por cuota de DistroWave');
     assert(feeTx?.resultingBalance === 80, 'Paso 2: Balance registrado en ledger es $80');
 
-    // --- Paso 3: Crecimiento a 5.000 oyentes y firma con Callejón Records ($2.000 anticipo) ---
-    console.log('   Paso 3: Artista crece a 5.000 oyentes y firma con Callejón Records ($2.000 anticipo)');
+    // --- Paso 3: Crecimiento a 5.000 oyentes y firma con Callejón Records (anticipo dinámico) ---
+    console.log('   Paso 3: Artista crece a 5.000 oyentes y firma con Callejón Records');
     artist.stats.monthlyListeners = 5000;
+    const fundsBeforeCallejon = artist.stats.funds; // 80
     const signCallejon = IndustryEngine.signDeal(artist, callejon, world);
     assert(signCallejon.success === true, 'Paso 3: Firma con Callejón Records fue exitosa');
     assert(artist.labelId === 'label_callejon_records', 'Paso 3: labelId se actualizó a label_callejon_records');
     assert(!distrowave.rosterArtistIds.includes(artist.id), 'Paso 3: DistroWave roster YA NO contiene al artista');
     assert(callejon.rosterArtistIds.includes(artist.id), 'Paso 3: Callejón Records roster contiene al artista');
-    assert(artist.stats.funds === 80 + 2000, 'Paso 3: Fondos aumentaron a $2.080 ($80 + $2.000 anticipo)');
+    const callejonBonus = artist.activeContract?.signingBonus || 0;
+    assert(callejonBonus >= callejon.advancePayment, `Paso 3: El anticipo respeta el piso de ${formatMoney(callejon.advancePayment)}`);
+    assert(artist.stats.funds === fundsBeforeCallejon + callejonBonus, `Paso 3: Fondos aumentaron en el anticipo exacto (${formatMoney(fundsBeforeCallejon)} + ${formatMoney(callejonBonus)})`);
     assert(artist.activeContract?.royaltyPercentage === 70, 'Paso 3: Contrato activo tiene 70% de regalías');
     assert(artist.activeContract?.albumsRequired === 1, 'Paso 3: Requiere 1 álbum');
 
     // Verificar ledger tras anticipo
     const advCallejonTx = (artist.financialLedger || [])[0];
-    assert(advCallejonTx?.category === 'contract' && advCallejonTx.type === 'income' && advCallejonTx.amount === 2000, 'Paso 3: Ledger registra ingreso de $2.000 por anticipo de Callejón');
-    assert(advCallejonTx?.resultingBalance === 2080, 'Paso 3: Balance registrado en ledger es $2.080');
+    assert(advCallejonTx?.category === 'contract' && advCallejonTx.type === 'income' && advCallejonTx.amount === callejonBonus, `Paso 3: Ledger registra ingreso de ${formatMoney(callejonBonus)} por anticipo de Callejón`);
+    assert(advCallejonTx?.resultingBalance === fundsBeforeCallejon + callejonBonus, 'Paso 3: Balance registrado en ledger coincide con fondos + anticipo');
 
     // --- Paso 4: Cumplimiento de contrato y liberación a Agente Libre ---
     console.log('   Paso 4: Artista entrega álbum acordado y cumple contrato');
@@ -628,26 +642,29 @@ function runAllIndustryTests() {
     assert(artist.labelId === null, 'Paso 4: labelId es null');
     assert(!callejon.rosterArtistIds.includes(artist.id), 'Paso 4: Callejón Records roster YA NO contiene al artista (contrato finalizado)');
 
-    // --- Paso 5: Crecimiento a 12.000 oyentes y firma con Bohemian Groove Local ($5.000 anticipo) ---
-    console.log('   Paso 5: Artista crece a 12.000 oyentes y firma con Bohemian Groove Local ($5.000 anticipo)');
+    // --- Paso 5: Crecimiento a 12.000 oyentes y firma con Bohemian Groove Local (anticipo dinámico) ---
+    console.log('   Paso 5: Artista crece a 12.000 oyentes y firma con Bohemian Groove Local');
     artist.stats.monthlyListeners = 12000;
+    const fundsBeforeBohemian = artist.stats.funds; // fundsBeforeCallejon + callejonBonus
     const signBohemian = IndustryEngine.signDeal(artist, bohemian, world);
     assert(signBohemian.success === true, 'Paso 5: Firma con Bohemian Groove Local fue exitosa');
     assert(artist.labelId === 'label_bohemian_groove_local', 'Paso 5: labelId es label_bohemian_groove_local');
     assert(bohemian.rosterArtistIds.includes(artist.id), 'Paso 5: Bohemian Groove roster contiene al artista');
-    assert(artist.stats.funds === 2080 + 5000, 'Paso 5: Fondos aumentaron a $7.080 ($2.080 + $5.000 anticipo)');
+    const bohemianBonus = artist.activeContract?.signingBonus || 0;
+    assert(bohemianBonus >= bohemian.advancePayment, `Paso 5: El anticipo respeta el piso de ${formatMoney(bohemian.advancePayment)}`);
+    assert(artist.stats.funds === fundsBeforeBohemian + bohemianBonus, `Paso 5: Fondos aumentaron en el anticipo exacto (${formatMoney(fundsBeforeBohemian)} + ${formatMoney(bohemianBonus)})`);
     assert(artist.activeContract?.royaltyPercentage === 65, 'Paso 5: Contrato activo tiene 65% de regalías');
 
     const advBohemianTx = (artist.financialLedger || [])[0];
-    assert(advBohemianTx?.category === 'contract' && advBohemianTx.type === 'income' && advBohemianTx.amount === 5000, 'Paso 5: Ledger registra ingreso de $5.000 por anticipo de Bohemian Groove');
-    assert(advBohemianTx?.resultingBalance === 7080, 'Paso 5: Balance registrado en ledger es $7.080');
+    assert(advBohemianTx?.category === 'contract' && advBohemianTx.type === 'income' && advBohemianTx.amount === bohemianBonus, `Paso 5: Ledger registra ingreso de ${formatMoney(bohemianBonus)} por anticipo de Bohemian Groove`);
+    assert(advBohemianTx?.resultingBalance === fundsBeforeBohemian + bohemianBonus, 'Paso 5: Balance registrado en ledger coincide con fondos + anticipo');
 
     // --- Paso 6: Verificación de integridad histórica del Ledger ---
     console.log('   Paso 6: Auditoría de integridad cronológica del Ledger');
     const ledger = artist.financialLedger || [];
     assert(ledger.length >= 3, `El ledger contiene todas las transacciones históricas (${ledger.length} txs)`);
-    assert(ledger[0].amount === 5000 && ledger[0].resultingBalance === 7080, 'Ledger Tx 1: Bohemian Anticipo +$5.000 -> Bal $7.080');
-    assert(ledger[1].amount === 2000 && ledger[1].resultingBalance === 2080, 'Ledger Tx 2: Callejón Anticipo +$2.000 -> Bal $2.080');
+    assert(ledger[0].amount === bohemianBonus && ledger[0].resultingBalance === fundsBeforeBohemian + bohemianBonus, 'Ledger Tx 1: Anticipo de Bohemian Groove registrado con el balance correcto');
+    assert(ledger[1].amount === callejonBonus && ledger[1].resultingBalance === fundsBeforeCallejon + callejonBonus, 'Ledger Tx 2: Anticipo de Callejón registrado con el balance correcto');
     assert(ledger[2].amount === 20 && ledger[2].resultingBalance === 80, 'Ledger Tx 3: DistroWave Cuota -$20 -> Bal $80');
   }
 

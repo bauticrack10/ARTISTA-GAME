@@ -341,12 +341,15 @@ export function runQACollaborationAndOffersSuite(): boolean {
     const engine = new GameEngine(player);
     engine.getWorld().artists[difficultArtist.id] = difficultArtist;
 
-    // Establecer afinidad inicial neutra (10)
+    // Establecer afinidad inicial neutra (10). modifyRelationship() aplica DELTAS, no valores absolutos,
+    // y el respeto ya nace en 50 por defecto (getOrCreateRelationship) -- pasar respectDelta=50 aquí lo
+    // empujaba hasta el techo de 100, inflando el score de aceptación y haciendo que el colaborador
+    // "difícil" aceptase pese al presupuesto insuficiente. respectDelta=0 deja el respeto en su base neutra.
     RelationshipEngine.modifyRelationship(
       engine.getPlayer(),
       difficultArtist,
       10,
-      50,
+      0,
       'neutral',
       'Primer contacto inicial.'
     );

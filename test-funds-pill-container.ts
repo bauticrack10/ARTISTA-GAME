@@ -24,7 +24,9 @@ function runFundsPillTests() {
   const navbar = fs.readFileSync('./src/components/Navbar.tsx', 'utf8');
   assert(navbar.includes('flex items-center flex-row gap-1'), 'Navbar usa flex items-center flex-row gap-1');
   assert(navbar.includes('font-bold text-emerald-400 font-mono whitespace-nowrap'), 'Navbar usa font-bold font-mono whitespace-nowrap para $ y cifra');
-  assert(navbar.includes('{formatMoney(player.stats.funds)}'), 'Navbar formatea con formatMoney(player.stats.funds) de forma atómica');
+  // Navbar deriva "playerFunds" de player.stats.funds una sola vez y lo formatea de forma atómica
+  // (el nombre de la variable intermedia es un detalle de estilo, no afecta el comportamiento).
+  assert(/const playerFunds = player\?\.stats\?\.funds/.test(navbar) && navbar.includes('{formatMoney(playerFunds)}'), 'Navbar formatea los fondos del jugador con formatMoney() de forma atómica');
 
   // --- TEST 2: LifestyleShopView.tsx Balance Card ---
   console.log('\n--- TEST 2: Tarjeta de Fondos en LifestyleShopView.tsx ---');
