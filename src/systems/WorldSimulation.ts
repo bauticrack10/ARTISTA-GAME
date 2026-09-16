@@ -28,9 +28,14 @@ export class WorldSimulation {
 
     const activeTrends = Object.values(world.trends).filter(t => t.stage !== 'exhausted');
 
-    // 1. Spawning new generational artists (approx 1 every 6-12 months if active artists < 60)
-    const activeArtists = Object.values(world.artists).filter(a => !a.isRetired);
-    if (activeArtists.length < 50 && (world.currentMonth === 1 || world.currentMonth === 7)) {
+    // 1. Spawning new generational artists (approx 1 every 6-12 months, hasta un techo de artistas
+    // procedurales activos). El techo se mide solo sobre los artistas GENERADOS ("artist_gen_..."),
+    // no sobre el roster completo: el catálogo curado (INITIAL_ARTISTS) ya arranca con 280+ artistas
+    // reales, así que contar el roster completo contra un techo de 50 dejaba el spawning
+    // permanentemente apagado desde el primer mes de cualquier partida nueva.
+    const activeProceduralArtists = Object.values(world.artists).filter(a => !a.isRetired && a.id.startsWith('artist_gen_'));
+    if (activeProceduralArtists.length < 150 && (world.currentMonth === 1 || world.currentMonth === 7)) {
+      const activeArtists = Object.values(world.artists).filter(a => !a.isRetired);
       const seedIdx = (world.currentYear * 12 + world.currentMonth + activeArtists.length) * 17;
       
       // Seleccionar país global de la base de 35+ países

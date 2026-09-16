@@ -1136,15 +1136,24 @@ export class RelationshipEngine {
     const stageGap = targetTier - requesterTier;
 
     // Regla de Oro: Si la brecha de carrera es abismal (>= 3 niveles, ej: Underground/Emerging pidiéndole a Superstar/Legend como Bad Bunny, Duki o Rosalía)
-    // Sin amistad previa consolidada (afinidad >= 50 o feats previos), el management descarta de plano la propuesta.
-    if (stageGap >= 3 && (rel.affinity < 50 && (rel.pastCollabsCount || 0) === 0 && rel.relationType !== 'friend' && rel.relationType !== 'collaborator')) {
+    // Sin amistad previa consolidada (afinidad >= 50 o feats previos), el management descarta de plano la propuesta,
+    // A MENOS que el presupuesto o el manager ya hayan comprado esa credibilidad (mismos criterios que la barrera
+    // de superestrella de arriba: hasAdequateSuperstarBudget / hasEliteManager). Sin este escape, un artista con
+    // $0 y uno con un presupuesto de primer nivel recibían exactamente el mismo rechazo tajante (2% fijo),
+    // anulando en la práctica la barrera "pagá más y probá de nuevo" que esta misma función ofrece unas líneas arriba.
+    if (
+      stageGap >= 3 &&
+      rel.affinity < 50 && (rel.pastCollabsCount || 0) === 0 &&
+      rel.relationType !== 'friend' && rel.relationType !== 'collaborator' &&
+      !hasAdequateSuperstarBudget && !hasEliteManager
+    ) {
       const reason = `El equipo de management de ${target.name} declinó la solicitud: consideran que la brecha de exposición con un artista en etapa ${requester.careerStage} es demasiado amplia sin validación previa en los charts o una relación personal consolidada.`;
       return {
         willAccept: false,
         reason,
         chemistryScore: 5,
         crossFanbasePotential: 100,
-        acceptanceProbability: 2,
+        acceptanceProbability: Math.max(2, Math.min(18, Math.round(budgetProduction / 2200))),
         successBoost: 0
       };
     }

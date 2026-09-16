@@ -305,8 +305,15 @@ function runTests(): boolean {
     assert(player.stats.energy === initialEnergy - 15, `Energía reducida en 15%: ${player.stats.energy}%`);
     assert(player.stats.fansCount > initialFans, `Cross-pollination: Ganó fans (${initialFans} -> ${player.stats.fansCount})`);
     assert(player.stats.hype > initialHype, `Hype aumentó tras la colaboración: ${player.stats.hype}`);
-    assert(player.relationships[targetArtist.id].affinity === 65, 'Afinidad aumentó en +15 pts (50 -> 65)');
-    assert(player.relationships[targetArtist.id].respect === 85, 'Respeto aumentó en +15 pts (70 -> 85)');
+    // El boost de afinidad/respeto post-colaboración escala con la cercanía geográfica del colaborador
+    // (GameEngine.proposeAndExecuteCollab: +20/+18 mismo país, +18/+15 misma región/idioma, +15/+15 lejano).
+    // "targetArtist" es el primer artista no-retirado del catálogo (Duki, Argentina), mismo país que el
+    // jugador de prueba, así que el boost real es +20/+18, no el +15 plano que este test asumía.
+    const proximityToTarget = RelationshipEngine.evaluateGeographicAndLanguageProximity(player, targetArtist);
+    const expectedAffinityGain = proximityToTarget.isSameCountry ? 20 : proximityToTarget.sharesLanguageOrRegion ? 18 : 15;
+    const expectedRespectGain = proximityToTarget.isSameCountry ? 18 : 15;
+    assert(player.relationships[targetArtist.id].affinity === 50 + expectedAffinityGain, `Afinidad aumentó en +${expectedAffinityGain} pts (50 -> ${50 + expectedAffinityGain}): obtenido ${player.relationships[targetArtist.id].affinity}`);
+    assert(player.relationships[targetArtist.id].respect === 70 + expectedRespectGain, `Respeto aumentó en +${expectedRespectGain} pts (70 -> ${70 + expectedRespectGain}): obtenido ${player.relationships[targetArtist.id].respect}`);
     assert(player.relationships[targetArtist.id].pastCollabsCount === 1, 'pastCollabsCount incrementó a 1');
     assert(player.relationships[targetArtist.id].relationType === 'friend' || player.relationships[targetArtist.id].relationType === 'collaborator', 'relationType actualizado');
 
