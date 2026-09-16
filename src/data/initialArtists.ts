@@ -34,8 +34,10 @@ export function getArtistsByCountry(country: string): Artist[] {
 
 /**
  * Mapping helper for countries to regions when influenceRegions is not explicitly set.
+ * Exported so other systems (e.g. RelationshipEngine's geographic proximity check) can
+ * find an artist's actual home region instead of confusing it with their market reach.
  */
-const COUNTRY_TO_REGION_MAP: Record<string, MusicRegion[]> = {
+export const COUNTRY_TO_REGION_MAP: Record<string, MusicRegion[]> = {
   AR: ['Argentina', 'LatinAmerica'],
   UY: ['LatinAmerica'],
   CL: ['LatinAmerica'],
@@ -43,9 +45,15 @@ const COUNTRY_TO_REGION_MAP: Record<string, MusicRegion[]> = {
   MX: ['Mexico', 'LatinAmerica'],
   PR: ['USA', 'LatinAmerica'],
   DO: ['LatinAmerica'],
+  PE: ['LatinAmerica'],
+  CU: ['LatinAmerica'],
+  VE: ['LatinAmerica'],
+  EC: ['LatinAmerica'],
+  JM: ['LatinAmerica'],
   US: ['USA'],
   CA: ['USA'],
   ES: ['Spain', 'Europe'],
+  PT: ['Europe'],
   GB: ['UK', 'Europe'],
   FR: ['Europe'],
   DE: ['Europe'],

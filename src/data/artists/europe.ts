@@ -2974,7 +2974,7 @@ export const EUROPE_ARTISTS: Record<string, Artist> = {
     primaryMarkets: ['Polonia', 'UK', 'Alemania'],
     influenceRegions: ['Europe'],
     personality: { creativity: 96, ambition: 98, discipline: 94, charisma: 99, skill: 97, commercialAppeal: 98, originality: 97, riskTolerance: 98, sociability: 92, independence: 94 },
-    stats: { popularity: 88, reputation: 95, artisticCredibility: 95, energy: 94, monthlyListeners: 3400000, totalStreams: 2400000000, funds: 7500000, fansCount: 5800000, fanbaseLoyalty: 99, hype: 94 },
+    stats: { popularity: 88, reputation: 95, artisticCredibility: 95, energy: 94, monthlyListeners: 5200000, totalStreams: 2400000000, funds: 7500000, fansCount: 5800000, fanbaseLoyalty: 99, hype: 94 },
     careerStage: 'Superstar',
     labelId: 'label_sbm_label',
     managerId: null,
@@ -3010,7 +3010,7 @@ export const EUROPE_ARTISTS: Record<string, Artist> = {
     primaryMarkets: ['Rusia', 'Kazajistán', 'Ucrania', 'Alemania', 'Dubái'],
     influenceRegions: ['Europe', 'Asia'],
     personality: { creativity: 96, ambition: 99, discipline: 96, charisma: 100, skill: 94, commercialAppeal: 99, originality: 98, riskTolerance: 100, sociability: 94, independence: 98 },
-    stats: { popularity: 89, reputation: 90, artisticCredibility: 88, energy: 98, monthlyListeners: 4500000, totalStreams: 3800000000, funds: 18000000, fansCount: 14000000, fanbaseLoyalty: 98, hype: 95 },
+    stats: { popularity: 89, reputation: 90, artisticCredibility: 88, energy: 98, monthlyListeners: 5500000, totalStreams: 3800000000, funds: 18000000, fansCount: 14000000, fanbaseLoyalty: 98, hype: 95 },
     careerStage: 'Superstar',
     labelId: null,
     managerId: null,
@@ -3057,6 +3057,45 @@ export const EUROPE_ARTISTS: Record<string, Artist> = {
     isRetired: false,
     historicalNotes: ['Graduado de Oxford y padre del rap intelectual, la lírica compleja y el battle rap en ruso.'],
     generationIndex: 0,
+    influences: []
+  },
+
+  // ==========================================
+  // PORTUGAL
+  // ==========================================
+  artist_salvador_sobral: {
+    id: 'artist_salvador_sobral',
+    name: 'Salvador Sobral',
+    realName: 'Salvador Vilar Braamcamp Sobral',
+    isPlayer: false,
+    avatarColor: 'from-[#DC2626] via-[#065F46] to-[#78350F]',
+    avatarIcon: 'mic',
+    country: 'Portugal',
+    city: 'Lisboa',
+    countryCode: 'PT',
+    birthYear: 1989,
+    careerStartYear: 2016,
+    mainGenreId: 'jazz_bossa',
+    subGenreIds: ['fado_contemporaneo'],
+    language: 'pt',
+    popularityLocal: 82,
+    popularityRegional: 55,
+    popularityGlobal: 40,
+    tourDrawCapacity: 5000,
+    primaryMarkets: ['Portugal', 'Europe'],
+    influenceRegions: ['Europe'],
+    personality: { creativity: 92, ambition: 72, discipline: 84, charisma: 82, skill: 90, commercialAppeal: 58, originality: 90, riskTolerance: 65, sociability: 70, independence: 85 },
+    stats: { popularity: 42, reputation: 82, artisticCredibility: 90, energy: 78, monthlyListeners: 1400000, totalStreams: 210000000, funds: 1800000, fansCount: 1100000, fanbaseLoyalty: 85, hype: 22 },
+    careerStage: 'Established',
+    labelId: null,
+    managerId: null,
+    relationships: {},
+    eras: [{ id: 'era_sobral_amar_pelos_dois', name: 'Eurovisión & "Amar pelos Dois"', startYear: 2017, startMonth: 5, genreFocus: 'jazz_bossa', stage: 'Established', highlightSummary: 'Ganó Eurovisión 2017 con una balada de jazz íntimo, rompiendo la fórmula pop del festival, en medio de su recuperación de un trasplante de corazón.' }],
+    awardsWon: ['Eurovision Song Contest - Ganador 2017'],
+    legacyScore: 58,
+    isRetired: false,
+    historicalNotes: ['Su victoria en Eurovisión con un tema de jazz minimalista, cantado en portugués, fue un hito cultural para la música lusófona.'],
+    generationIndex: 1,
     influences: []
   }
 };
