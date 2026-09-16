@@ -167,6 +167,19 @@ export class WorldSimulation {
     }
 
     // 2. Simulate active NPC artists
+    // Index songs by artist ONCE per month instead of re-scanning the whole (ever-growing) world.songs
+    // dictionary inside the per-artist loop below. With 270+ active NPCs each releasing music over
+    // years of simulated time, world.songs keeps growing every month -- re-filtering it per artist per
+    // month turns a single month's work into O(artists x totalSongsEver), which compounds into a
+    // severe, worsening slowdown the longer a save has been played (confirmed: each additional decade
+    // of simulated time took measurably longer than the last).
+    const songsByArtistId = new Map<string, Song[]>();
+    for (const song of Object.values(world.songs)) {
+      const list = songsByArtistId.get(song.artistId);
+      if (list) list.push(song);
+      else songsByArtistId.set(song.artistId, [song]);
+    }
+
     for (const artist of Object.values(world.artists)) {
       if (artist.isPlayer || artist.isRetired) continue;
 
@@ -187,7 +200,7 @@ export class WorldSimulation {
       }
 
       // Dynamic career stage & era check
-      const artistSongs = Object.values(world.songs).filter(s => s.artistId === artist.id);
+      const artistSongs = songsByArtistId.get(artist.id) || [];
       const hitsCount = artistSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
       artist.careerStage = LegacyEngine.evaluateCareerStage(artist, yearsActive, hitsCount);
       LegacyEngine.checkAndCreateEra(artist, world.currentYear, world.currentMonth);

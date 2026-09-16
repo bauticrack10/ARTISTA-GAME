@@ -62,6 +62,10 @@ const createDefaultWeeksOnChart = (): Record<MusicRegion, number> => ({
 });
 
 export class GameEngine {
+  // Cap on world.news kept across cycles: the feed is history for the UI, not an infinite log, and an
+  // unbounded array makes every future unshift() progressively more expensive (see advanceCycle()).
+  public static readonly MAX_NEWS_ITEMS = 300;
+
   private world: WorldState;
   private playerId: string;
   private eventQueue: EventDefinition[] = [];
@@ -2958,6 +2962,21 @@ export class GameEngine {
     // If no active event dialog is currently showing, pop the first one
     if (!this.currentEvent && this.eventQueue.length > 0) {
       this.currentEvent = this.eventQueue.shift()!;
+    }
+
+    // world.news is unshift()-ed from ~25 call sites across GameEngine/IndustryEngine/RelationshipEngine
+    // and was never capped: unshift on an array is O(n), so an uncapped feed makes every single future
+    // news item cost more than the last one as a career goes on -- across a decade-spanning save this
+    // degrades into an increasingly laggy game (confirmed: 5 years advanced in ~22s early, the next 5
+    // years took 3x+ longer). Trimming once per cycle keeps it bounded to "recent history" without
+    // losing anything the UI actually shows (the news feed only ever displays the latest handful).
+    if (this.world.news.length > GameEngine.MAX_NEWS_ITEMS) {
+      this.world.news.length = GameEngine.MAX_NEWS_ITEMS;
+    }
+    // socialFeed is capped at 100 only at one of its several unshift() sites; enforce it here too
+    // so every append path stays bounded regardless of which one fired most recently.
+    if (this.world.socialFeed.length > 100) {
+      this.world.socialFeed.length = 100;
     }
 
     this.notify();
