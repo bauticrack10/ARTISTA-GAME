@@ -1,6 +1,126 @@
-import { Song, Artist, MusicTrend, Genre } from '../types';
+import {
+  Song,
+  Artist,
+  MusicTrend,
+  Genre,
+  EditorialPlaylist,
+  YouTubeComment,
+  SnippetCampaignConfig,
+  SnippetCampaignResult,
+  WorldState,
+  TikTokInfluencerTier
+} from '../types';
+
+export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
+  {
+    id: 'todays_top_hits',
+    name: "Today's Top Hits",
+    curator: 'Spotify Editorial',
+    region: 'Global',
+    followers: 32000000,
+    streamMultiplier: 1.8,
+    genreFilters: [],
+    description: 'Los mayores éxitos del planeta en este momento. La lista editorial más escuchada del mundo.',
+    coverGradient: 'from-blue-600 via-indigo-600 to-purple-800',
+    trackIds: [],
+    maxTracks: 50
+  },
+  {
+    id: 'viva_latino',
+    name: 'Viva Latino',
+    curator: 'Spotify Editorial',
+    region: 'LatinAmerica',
+    followers: 14000000,
+    streamMultiplier: 1.6,
+    genreFilters: ['urban', 'reggaeton', 'trap_latino', 'pop', 'latin_pop', 'musica_mexicana'],
+    description: 'El corazón de la música latina. Los temas que están encendiendo las pistas de baile de todo el mundo.',
+    coverGradient: 'from-amber-500 via-rose-500 to-red-600',
+    trackIds: [],
+    maxTracks: 50
+  },
+  {
+    id: 'exitos_argentina',
+    name: 'Éxitos Argentina',
+    curator: 'Spotify Editorial',
+    region: 'Argentina',
+    followers: 3800000,
+    streamMultiplier: 1.4,
+    genreFilters: ['trap_latino', 'urban', 'cumbia', 'rock', 'pop', 'rkt', 'cuarteto'],
+    description: 'Lo que más suena en las calles de Buenos Aires, Córdoba, Rosario y todo el país.',
+    coverGradient: 'from-sky-400 via-blue-600 to-slate-900',
+    trackIds: [],
+    maxTracks: 50
+  },
+  {
+    id: 'rap_caviar',
+    name: 'Rap Caviar',
+    curator: 'Spotify Editorial',
+    region: 'USA',
+    followers: 12000000,
+    streamMultiplier: 1.5,
+    genreFilters: ['hip_hop', 'trap', 'rap', 'trap_latino'],
+    description: 'Puro peso pesado del hip-hop y el trap contemporáneo sin censura.',
+    coverGradient: 'from-neutral-900 via-zinc-800 to-black',
+    trackIds: [],
+    maxTracks: 50
+  },
+  {
+    id: 'baila_reggaeton',
+    name: 'Baila Reggaeton',
+    curator: 'Spotify Editorial',
+    region: 'LatinAmerica',
+    followers: 10500000,
+    streamMultiplier: 1.5,
+    genreFilters: ['reggaeton', 'urban', 'dembow', 'latin_pop'],
+    description: 'Perreo intenso, dembow y los himnos definitivos del género urbano.',
+    coverGradient: 'from-purple-600 via-pink-600 to-rose-600',
+    trackIds: [],
+    maxTracks: 50
+  },
+  {
+    id: 'mansion_trap',
+    name: 'Mansión Trap',
+    curator: 'Spotify Editorial',
+    region: 'Argentina',
+    followers: 4200000,
+    streamMultiplier: 1.35,
+    genreFilters: ['trap_latino', 'hip_hop', 'urban', 'rap'],
+    description: 'El sonido que nació en Antezana 247 y conquistó los parlantes de habla hispana.',
+    coverGradient: 'from-violet-900 via-purple-800 to-zinc-950',
+    trackIds: [],
+    maxTracks: 45
+  },
+  {
+    id: 'indie_chill',
+    name: 'Indie Chill',
+    curator: 'Spotify Editorial',
+    region: 'Global',
+    followers: 2500000,
+    streamMultiplier: 1.25,
+    genreFilters: ['indie_rock', 'alternative', 'bedroom_pop', 'synthwave', 'experimental'],
+    description: 'Vibras relajadas, guitarras atmosféricas y sonidos independientes para desconectar.',
+    coverGradient: 'from-teal-600 via-emerald-700 to-slate-900',
+    trackIds: [],
+    maxTracks: 40
+  },
+  {
+    id: 'descubrimiento_semanal',
+    name: 'Descubrimiento Semanal',
+    curator: 'Algorítmica Personalizada',
+    region: 'Global',
+    followers: 18000000,
+    streamMultiplier: 1.2,
+    genreFilters: [],
+    description: 'Tu mezcla semanal y algorítmica de música nueva hecha a la medida de tus gustos.',
+    coverGradient: 'from-emerald-500 via-teal-600 to-indigo-900',
+    trackIds: [],
+    maxTracks: 60
+  }
+];
 
 export class StreamingEngine {
+  static EDITORIAL_PLAYLISTS = EDITORIAL_PLAYLISTS;
+
   /**
    * Calculates realistic monthly streams for a single song based on:
    * 1. Core fanbase engagement and loyalty
@@ -8,6 +128,7 @@ export class StreamingEngine {
    * 3. Song musical quality, commercial appeal, originality and release hype
    * 4. Trend alignment and genre health
    * 5. Lifecycles and longevity curves (avoiding 0-to-millions absurd jumps)
+   * 6. Editorial Playlist inclusions
    */
   static calculateSongMonthlyStreams(
     song: Song,
@@ -17,7 +138,8 @@ export class StreamingEngine {
     activeTrends: MusicTrend[],
     genre: Genre | undefined,
     allArtists?: Record<string, Artist>,
-    artistCatalog?: Song[]
+    artistCatalog?: Song[],
+    playlistsOrWorld?: Record<string, EditorialPlaylist> | WorldState
   ): { streams: number; wentViralNow: boolean; becomesClassicNow: boolean } {
     const ageMonths = (currentYear - song.releaseYear) * 12 + (currentMonth - song.releaseMonth);
     if (ageMonths < 0) return { streams: 0, wentViralNow: false, becomesClassicNow: false };
@@ -103,7 +225,8 @@ export class StreamingEngine {
 
     const singlePromotedMultiplier = isTopHit ? 1.0 : isSingleOrPromoted ? 0.85 : 0.38;
     const songAppealScore = (qualityFactor * 0.35 + commercialFactor * 0.45 + originalityFactor * 0.20) * (0.55 + hypeFactor * 0.45);
-    const algorithmicStreams = maxAlgorithmicPool * songAppealScore * trendBoost * genreBoost * singlePromotedMultiplier;
+    const playlistMultiplier = playlistsOrWorld ? StreamingEngine.getSongPlaylistMultiplier(song.id, playlistsOrWorld) : 1.0;
+    const algorithmicStreams = maxAlgorithmicPool * songAppealScore * trendBoost * genreBoost * singlePromotedMultiplier * playlistMultiplier;
 
     // 5.1 Impulso de alcance algorítmico y cross-fanbase derivado del artista colaborador
     let collabBoost = 0;
@@ -628,4 +751,391 @@ export class StreamingEngine {
     const newFansMonthly = Math.floor(monthlyListeners * baseConversionRate * catchUpMultiplier);
     return Math.max(5, newFansMonthly);
   }
+
+  /**
+   * Obtiene el multiplicador acumulado de streams si la canción se encuentra
+   * incluida en una o más listas editoriales activas.
+   */
+  static getSongPlaylistMultiplier(
+    songId: string,
+    worldOrPlaylists?: WorldState | Record<string, EditorialPlaylist>
+  ): number {
+    if (!worldOrPlaylists) return 1.0;
+    const playlistsMap: Record<string, EditorialPlaylist> | undefined =
+      'playlists' in worldOrPlaylists ? worldOrPlaylists.playlists : (worldOrPlaylists as Record<string, EditorialPlaylist>);
+    if (!playlistsMap) return 1.0;
+
+    let maxMultiplier = 1.0;
+    let playlistsFound = 0;
+
+    for (const pl of Object.values(playlistsMap)) {
+      if (pl.trackIds && pl.trackIds.includes(songId)) {
+        if (pl.streamMultiplier > maxMultiplier) {
+          maxMultiplier = pl.streamMultiplier;
+        }
+        playlistsFound++;
+      }
+    }
+
+    if (playlistsFound > 1) {
+      // Sinergia por rotación simultánea en múltiples playlists editoriales
+      const synergy = 1.0 + (playlistsFound - 1) * 0.08;
+      return Math.min(2.5, Math.round(maxMultiplier * synergy * 100) / 100);
+    }
+
+    return maxMultiplier;
+  }
+
+  /**
+   * Actualiza y rota las canciones de todas las playlists editoriales en base
+   * a la novedad, calidad, tracción de streaming y afinidad estilística de cada tema.
+   */
+  static updatePlaylists(world: WorldState): Record<string, EditorialPlaylist> {
+    if (!world.playlists) {
+      world.playlists = {};
+      for (const pl of EDITORIAL_PLAYLISTS) {
+        world.playlists[pl.id] = { ...pl, trackIds: [...pl.trackIds] };
+      }
+    }
+
+    const allSongs = Object.values(world.songs || {});
+    if (allSongs.length === 0) return world.playlists;
+
+    for (const pl of Object.values(world.playlists)) {
+      // 1. Filtrar canciones elegibles por lanzamiento y género
+      const candidateSongs = allSongs.filter(song => {
+        const age = (world.currentYear - song.releaseYear) * 12 + (world.currentMonth - song.releaseMonth);
+        if (age < 0) return false;
+
+        if (pl.genreFilters && pl.genreFilters.length > 0) {
+          const mainMatch = pl.genreFilters.includes(song.genreId);
+          const subMatch = song.subGenreIds?.some(sg => pl.genreFilters.includes(sg));
+          if (!mainMatch && !subMatch) return false;
+        }
+
+        return true;
+      });
+
+      // 2. Puntuar candidatos según perfil editorial
+      const scored = candidateSongs.map(song => {
+        const artist = world.artists[song.artistId];
+        const age = (world.currentYear - song.releaseYear) * 12 + (world.currentMonth - song.releaseMonth);
+
+        // Bonificación por novedad (lanzamientos recientes dominan las playlists)
+        let recencyScore = 0;
+        if (age <= 1) recencyScore = 42;
+        else if (age <= 3) recencyScore = 28;
+        else if (age <= 6) recencyScore = 18;
+        else if (age <= 12) recencyScore = 8;
+        else if (song.isClassic) recencyScore = 14;
+
+        // Calidad y potencial comercial
+        const musicalScore = song.quality * 0.35 + song.commercialAppeal * 0.45;
+
+        // Popularidad y tracción del artista
+        const artistPop = artist ? artist.stats.popularity : 20;
+        const artistHype = artist ? artist.stats.hype : 20;
+        const streamLog = Math.min(30, Math.log10((song.streamsLastMonth || 0) + 1) * 5);
+
+        // Afinidades específicas por curaduría
+        let synergy = 0;
+        if (pl.id === 'descubrimiento_semanal') {
+          // Destaca artistas emergentes y breakout con temas brillantes
+          if (artistPop <= 58 && song.quality >= 65) synergy += 35;
+        } else if (pl.id === 'todays_top_hits') {
+          // Los hits masivos del planeta
+          if (artistPop >= 70 || (song.streamsLastMonth || 0) > 400000) synergy += 30;
+        } else if (pl.id === 'mansion_trap' || pl.id === 'exitos_argentina') {
+          if (artist?.country === 'Argentina' || ['trap_latino', 'rock', 'cumbia', 'rkt'].includes(song.genreId)) {
+            synergy += 25;
+          }
+        } else if (pl.id === 'viva_latino' || pl.id === 'baila_reggaeton') {
+          if (['Argentina', 'Mexico', 'Spain', 'Colombia', 'Puerto Rico', 'Chile'].includes(artist?.country || '')) {
+            synergy += 20;
+          }
+        }
+
+        const score = musicalScore + recencyScore + (artistPop * 0.3) + (artistHype * 0.2) + streamLog + synergy;
+        return { songId: song.id, score };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      pl.trackIds = scored.slice(0, pl.maxTracks).map(s => s.songId);
+    }
+
+    return world.playlists;
+  }
+
+  /**
+   * Generador dinámico de comentarios de fans para YouTube / plataformas de video.
+   * Produce reacciones creíbles con likes, avatares, lunfardo argentino/latino,
+   * memes virales, citas líricas y menciones a directores o artistas invitados.
+   */
+  static generateVideoComments(song: Song, artist: Artist, world?: WorldState): YouTubeComment[] {
+    const comments: YouTubeComment[] = [];
+
+    const AVATAR_GRADIENTS = [
+      'from-purple-500 to-indigo-600',
+      'from-rose-500 to-amber-500',
+      'from-emerald-400 to-teal-600',
+      'from-sky-400 to-blue-600',
+      'from-orange-500 to-red-600',
+      'from-fuchsia-500 to-purple-700',
+      'from-amber-400 to-orange-600',
+      'from-cyan-400 to-indigo-700'
+    ];
+
+    // 1. Comentario fijado oficial del artista
+    comments.push({
+      id: `comment_pinned_${song.id}`,
+      authorName: artist.name,
+      authorHandle: `@${artist.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_oficial`,
+      avatarGradient: artist.avatarColor || 'from-violet-600 to-purple-900',
+      content: `¡Gracias de corazón a toda la gente que está bancando "${song.title}" desde el minuto cero! ¿Cuál es la barra que más les llegó? Los leo a todos acá abajo 👇🔥`,
+      likes: Math.floor(Math.max(120, (song.streamsTotal || 5000) * 0.015 + 450)),
+      timeAgo: 'hace 1 día',
+      isPinned: true,
+      isHeartedByArtist: true,
+      sentiment: 'positive'
+    });
+
+    // 2. Comentarios con lunfardo y jerga urbana argentina / latina
+    const slangTemplates = [
+      `nooo hermano qué temazo lpm, pusiste la vara en otra galaxia con "${song.title}"`,
+      `el beatswitch del medio me reinició la vida entera, qué producción descomunal`,
+      `como te vas a tirar esas barras amigo estás completamente desquiciado`,
+      `bancando desde que tenías dos maquetas subidas a Soundcloud, te mereces todo esto y más`,
+      `este tema en vivo en el festival va a ser un pogo histórico, no va a quedar una valla sana`,
+      `el flow que clavó en el segundo verso no tiene ningún tipo de sentido, una cátedra`,
+      `literalmente revivió la música con este lanzamiento, qué orgullo de escena`,
+      `el coro se me pegó al cerebro y no puedo parar de cantarlo en el laburo`
+    ];
+
+    const USER_PROFILES = [
+      { name: 'Lautaro Gómez', handle: '@lautaro_baires' },
+      { name: 'Valentina Rossi', handle: '@valen_mdp' },
+      { name: 'Franco Fernández', handle: '@fran_flow77' },
+      { name: 'Camila Benítez', handle: '@cami_urban' },
+      { name: 'Matias Álvarez', handle: '@mati_cordoba' },
+      { name: 'Sofía Navarro', handle: '@sofi_musica' },
+      { name: 'Lucas Pereyra', handle: '@lucas_trap_arg' },
+      { name: 'Agustina Ríos', handle: '@agus_vibes' },
+      { name: 'Thiago Morales', handle: '@thiago_bars' },
+      { name: 'Micaela Duarte', handle: '@mica_beats' }
+    ];
+
+    // Mezclar y agregar comentarios en lunfardo
+    for (let i = 0; i < 4; i++) {
+      const profile = USER_PROFILES[i % USER_PROFILES.length];
+      const text = slangTemplates[i % slangTemplates.length];
+      const grad = AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length];
+      const commentLikes = Math.floor(Math.max(25, (song.streamsTotal || 2000) * 0.003 * (4 - i) + 40));
+
+      comments.push({
+        id: `comment_slang_${song.id}_${i}`,
+        authorName: profile.name,
+        authorHandle: profile.handle,
+        avatarGradient: grad,
+        content: text,
+        likes: commentLikes,
+        timeAgo: `${i * 3 + 2} horas`,
+        isHeartedByArtist: i === 0,
+        sentiment: 'hype'
+      });
+    }
+
+    // 3. Comentarios de humor y memes de YouTube
+    const memeTemplates = [
+      `0% autotune, 0% polémicas baratas, 100% talento y corazón puro.`,
+      `Mi psicóloga: "La música no puede curarte". / Esta canción a las 3 de la mañana:`,
+      `El algoritmo de YouTube por fin recomendó una obra maestra en lugar de videos raros.`,
+      `Like si estás acá antes de los 10 millones de reproducciones 🔥`,
+      `La batería y el bajo de "${song.title}" están pagando el alquiler de mis auriculares.`,
+      `Nadie: / Absolutamente nadie: / ${artist.name} lanzando la mayor joya del año sin avisar:`
+    ];
+
+    for (let i = 0; i < 3; i++) {
+      const profile = USER_PROFILES[(i + 4) % USER_PROFILES.length];
+      const text = memeTemplates[i % memeTemplates.length];
+      const grad = AVATAR_GRADIENTS[(i + 4) % AVATAR_GRADIENTS.length];
+      const commentLikes = Math.floor(Math.max(40, (song.streamsTotal || 2500) * 0.004 * (3 - i) + 85));
+
+      comments.push({
+        id: `comment_meme_${song.id}_${i}`,
+        authorName: profile.name,
+        authorHandle: profile.handle,
+        avatarGradient: grad,
+        content: text,
+        likes: commentLikes,
+        timeAgo: `${i * 5 + 6} horas`,
+        sentiment: 'meme'
+      });
+    }
+
+    // 4. Mención a la dirección del videoclip si existe
+    if (song.musicVideo) {
+      comments.push({
+        id: `comment_video_director_${song.id}`,
+        authorName: 'Marcos Visuals',
+        authorHandle: '@marcos_filmmaker',
+        avatarGradient: 'from-zinc-700 to-neutral-900',
+        content: `La dirección de arte de ${song.musicVideo.directorTier} en este video es una locura absoluta. El concepto "${song.musicVideo.concept}" parece una película cinematográfica de Hollywood, qué nivel visual.`,
+        likes: Math.floor(Math.max(50, (song.streamsTotal || 3000) * 0.005 + 130)),
+        timeAgo: 'hace 18 horas',
+        isHeartedByArtist: true,
+        sentiment: 'analytical'
+      });
+    }
+
+    // 5. Mención a colaboraciones si cuenta con feats
+    if (song.featuredArtistIds && song.featuredArtistIds.length > 0 && world?.artists) {
+      for (const featId of song.featuredArtistIds) {
+        const featArtist = world.artists[featId];
+        if (featArtist) {
+          comments.push({
+            id: `comment_feat_${featId}_${song.id}`,
+            authorName: 'Lucía Santoro',
+            authorHandle: '@lu_musicbox',
+            avatarGradient: 'from-rose-500 to-indigo-600',
+            content: `La química vocal entre ${artist.name} y ${featArtist.name} es de otro planeta. La manera en que combinaron los estilos demuestra por qué son los mejores de la escena. ¡Necesitamos un EP juntos ya!`,
+            likes: Math.floor(Math.max(60, (song.streamsTotal || 4000) * 0.006 + 210)),
+            timeAgo: 'hace 1 día',
+            sentiment: 'positive'
+          });
+        }
+      }
+    }
+
+    // 6. Comentario de apreciación lírica
+    comments.push({
+      id: `comment_lyric_${song.id}`,
+      authorName: 'Joaquín Estévez',
+      authorHandle: '@joaco_critica',
+      avatarGradient: 'from-teal-500 to-emerald-700',
+      content: `La evolución sonora de ${artist.name} es admirable. En "${song.title}" no solo hay ritmo, hay narrativa y madurez musical. Definitivamente uno de los puntos más altos de su catálogo.`,
+      likes: Math.floor(Math.max(30, (song.streamsTotal || 2000) * 0.002 + 75)),
+      timeAgo: 'hace 2 días',
+      sentiment: 'analytical'
+    });
+
+    return comments;
+  }
+
+  /**
+   * Simula una campaña de snippets promocionales en TikTok / Reels para impulsar un tema.
+   * Evalúa presupuesto, concepto del trend, tier de creadores, afinidad con el género
+   * y calcula visualizaciones generadas, creaciones UGC de usuarios, conversión
+   * a streams en plataformas digitales y nuevos oyentes mensuales.
+   */
+  static simulateSnippetCampaign(
+    params: SnippetCampaignConfig & { song: Song; artist: Artist }
+  ): SnippetCampaignResult {
+    const { song, artist, budget, concept } = params;
+    const safeBudget = Math.max(250, budget || 1000);
+
+    // 1. Determinar el tier de creadores
+    let tier: TikTokInfluencerTier = params.influencerTier || 'micro';
+    if (!params.influencerTier) {
+      if (safeBudget >= 14000) tier = 'mega';
+      else if (safeBudget >= 3500) tier = 'macro';
+      else tier = 'micro';
+    }
+
+    // Views base por dólar invertido según el tier de influencer
+    let viewsPerDollar = 380;
+    if (tier === 'macro') viewsPerDollar = 290;
+    else if (tier === 'mega') viewsPerDollar = 220;
+
+    // 2. Potencial del gancho auditivo (Hook Score)
+    const hookQuality = (song.commercialAppeal * 0.45) + (song.quality * 0.30) + (song.originality * 0.25);
+
+    // 3. Sinergia del concepto con el género musical
+    let synergyBoost = 1.0;
+    const genreStr = (song.genreId || '').toLowerCase();
+    const conceptStr = (concept || '').toLowerCase();
+
+    if (conceptStr.includes('baile') || conceptStr.includes('coreograf')) {
+      if (['reggaeton', 'urban', 'pop', 'latin_pop', 'dembow', 'rkt'].includes(genreStr)) {
+        synergyBoost = 1.35;
+      }
+    } else if (conceptStr.includes('meme') || conceptStr.includes('sped up') || conceptStr.includes('acelerado')) {
+      if (['trap_latino', 'drill', 'synthwave', 'pop', 'hip_hop'].includes(genreStr)) {
+        synergyBoost = 1.30;
+      }
+    } else if (conceptStr.includes('drop') || conceptStr.includes('gimnasio') || conceptStr.includes('motivaci')) {
+      if (['trap_latino', 'electronic', 'rock', 'drill'].includes(genreStr)) {
+        synergyBoost = 1.30;
+      }
+    } else if (conceptStr.includes('pov') || conceptStr.includes('melanc')) {
+      if (['indie_rock', 'alternative', 'r&b', 'bedroom_pop'].includes(genreStr)) {
+        synergyBoost = 1.35;
+      }
+    } else if (conceptStr.includes('lip-sync') || conceptStr.includes('glow-up')) {
+      synergyBoost = 1.20;
+    }
+
+    // 4. Tracción y cálculo de reproducciones de video en TikTok
+    const hypeBonus = 1.0 + ((artist.stats.hype || 30) / 160);
+    const charismaBonus = 1.0 + ((artist.personality.charisma || 60) / 300);
+    const overallMultiplier = (hookQuality / 52) * synergyBoost * hypeBonus * charismaBonus;
+
+    const tiktokViews = Math.max(12000, Math.floor(safeBudget * viewsPerDollar * overallMultiplier));
+    const reach = Math.floor(tiktokViews * 0.68);
+
+    // 5. Creaciones UGC (User-Generated Content con el audio oficial)
+    const ugcCreations = Math.max(15, Math.floor(tiktokViews / (220 + Math.random() * 110)));
+
+    // 6. Nivel de viralidad
+    let viralTier: 'global' | 'nacional' | 'local' | 'none' = 'none';
+    if (tiktokViews >= 8000000) viralTier = 'global';
+    else if (tiktokViews >= 2000000) viralTier = 'nacional';
+    else if (tiktokViews >= 450000) viralTier = 'local';
+
+    const isViralTrend = viralTier !== 'none';
+
+    // 7. Conversión a streams en DSPs (Spotify, Apple Music, etc.)
+    // Entre el 2.2% y 4.8% de los espectadores buscan la canción completa
+    const conversionRate = 0.022 + (song.commercialAppeal / 100) * 0.025;
+    const streamsBoostGenerated = Math.floor(tiktokViews * conversionRate);
+
+    // Nuevos oyentes mensuales y fans ganados
+    const monthlyListenersGained = Math.floor(streamsBoostGenerated / 3.1);
+    const fansGained = Math.max(10, Math.floor(monthlyListenersGained * 0.045));
+    const hypeGained = Math.min(38, Math.floor(6 + (tiktokViews / 550000) * 3));
+
+    // 8. Titulares y reacción comunitaria
+    let headline = '';
+    let communityReaction = '';
+
+    if (viralTier === 'global') {
+      headline = `Fenómeno Global: El audio de "${song.title}" explota en TikTok con ${(tiktokViews / 1000000).toFixed(1)}M de reproducciones`;
+      communityReaction = `Celebridades e influencers de todo el mundo están usando el audio. El trend se convirtió en un desafío viral internacional que catapultó a ${artist.name} a las listas globales.`;
+    } else if (viralTier === 'nacional') {
+      headline = `Trend Viral: "${song.title}" domina las redes y suma más de ${(tiktokViews / 1000000).toFixed(1)}M de vistas`;
+      communityReaction = `Gran recepción entre creadores de contenido del país. Miles de personas crearon videos con el audio bajo el concepto "${concept}".`;
+    } else if (viralTier === 'local') {
+      headline = `Campaña efectiva: El snippet de "${song.title}" genera tracción orgánica con ${(tiktokViews / 1000).toFixed(0)}k vistas`;
+      communityReaction = `La comunidad de seguidores y creadores emergentes compartió el sonido masivamente, generando un flujo constante de nuevos oyentes.`;
+    } else {
+      headline = `Campaña completada: "${song.title}" acumula ${(tiktokViews / 1000).toFixed(0)}k reproducciones en TikTok`;
+      communityReaction = `Difusión adecuada para reforzar el lanzamiento entre los fanáticos del género sin llegar a detonar una ola viral masiva.`;
+    }
+
+    return {
+      success: true,
+      reach,
+      tiktokViews,
+      ugcCreations,
+      streamsBoostGenerated,
+      monthlyListenersGained,
+      fansGained,
+      hypeGained,
+      isViralTrend,
+      viralTier,
+      headline,
+      communityReaction,
+      costSpent: safeBudget
+    };
+  }
 }
+

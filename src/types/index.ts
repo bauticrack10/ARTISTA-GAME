@@ -221,6 +221,8 @@ export interface Artist {
   language?: string;
   tourDrawCapacity?: number;
   countryCode?: string;
+  livePerformanceHistory?: LiveShowResult[];
+  snippetCampaigns?: SnippetCampaign[];
 }
 
 export type TransactionCategory =
@@ -340,7 +342,128 @@ export interface Song {
   wentViral: boolean;
   isPlayerSong?: boolean;
   musicVideo?: MusicVideoData;
+  comments?: FanComment[];
+  inPlaylists?: Array<{ playlistId: string; position: number }>;
+  snippetCampaigns?: SnippetCampaign[];
 }
+
+// ==========================================
+// PILAR 2: STREAMING, PLAYLISTS & SOCIAL REDES
+// ==========================================
+
+export interface EditorialPlaylistTrack {
+  songId: string;
+  artistId: string;
+  addedMonth: number;
+  addedYear: number;
+  position: number;
+}
+
+export interface EditorialPlaylist {
+  id: string;
+  name: string;
+  curator: string;
+  description: string;
+  followers: number;
+  genreFilter: string;
+  streamMultiplier: number;
+  coverGradient: string;
+  tracks: Array<{
+    songId: string;
+    artistId: string;
+    addedMonth: number;
+    addedYear: number;
+    position: number;
+  }>;
+  region?: MusicRegion;
+  genreFilters?: string[];
+  trackIds?: string[];
+  maxTracks?: number;
+}
+
+export type FanCommentSentiment = 'rave' | 'praise' | 'funny' | 'debate' | 'critical';
+
+export interface FanComment {
+  id: string;
+  author: string;
+  avatarColor: string;
+  text: string;
+  likes: number;
+  timestamp: string;
+  isPinned?: boolean;
+  sentiment: 'rave' | 'praise' | 'funny' | 'debate' | 'critical';
+  songId: string;
+}
+
+export type SnippetType =
+  | 'acoustic_teaser'
+  | 'dance_challenge'
+  | 'beat_drop'
+  | 'studio_leak'
+  | 'controversy_hook';
+
+export type SnippetPlatform = 'tiktok' | 'reels';
+
+export interface SnippetCampaign {
+  id: string;
+  songId?: string;
+  songTitle?: string;
+  snippetType: 'acoustic_teaser' | 'dance_challenge' | 'beat_drop' | 'studio_leak' | 'controversy_hook';
+  platform: 'tiktok' | 'reels';
+  views: number;
+  engagementRate: number;
+  hypeGenerated: number;
+  cost: number;
+  month: number;
+  year: number;
+}
+
+export interface YouTubeComment {
+  id: string;
+  authorName: string;
+  authorHandle: string;
+  avatarGradient: string;
+  content: string;
+  likes: number;
+  timeAgo: string;
+  isPinned?: boolean;
+  isHeartedByArtist?: boolean;
+  sentiment: 'positive' | 'fan_quote' | 'meme' | 'analytical' | 'hype';
+}
+
+export type TikTokSnippetConcept =
+  | 'Trend de Baile & Coreografía'
+  | 'POV Melancólico & Estética'
+  | 'Lip-Sync & Transición Glow-Up'
+  | 'Audio Meme Acelerado (Sped Up)'
+  | 'Drop Épico de Gimnasio / Motivación';
+
+export type TikTokInfluencerTier = 'micro' | 'macro' | 'mega';
+
+export interface SnippetCampaignConfig {
+  songId: string;
+  budget: number;
+  concept: TikTokSnippetConcept | string;
+  influencerTier?: TikTokInfluencerTier;
+}
+
+export interface SnippetCampaignResult {
+  success: boolean;
+  reach: number;
+  tiktokViews: number;
+  ugcCreations: number;
+  streamsBoostGenerated: number;
+  monthlyListenersGained: number;
+  fansGained: number;
+  hypeGained: number;
+  isViralTrend: boolean;
+  viralTier: 'local' | 'nacional' | 'global' | 'none';
+  headline: string;
+  communityReaction: string;
+  costSpent: number;
+}
+
+
 
 export interface Album {
   id: string;
@@ -574,6 +697,193 @@ export interface Tour {
   hypeGenerated: number;
   fanbaseGained: number;
 }
+
+// ==========================================
+// PILAR 3: FESTIVALES GLOBALES & SHOW EN VIVO
+// ==========================================
+
+export type FestivalSlot = 'opening_act' | 'sunset_slot' | 'sub_headliner' | 'headliner';
+
+export interface FestivalDefinition {
+  id: string;
+  name: string;
+  city: string;
+  country: string;
+  flag: string;
+  scheduledMonth: number;
+  dailyCapacity: number;
+  genres: string[];
+  reputation: number;
+  description: string;
+  bannerGradient: string;
+  minReputationRequired: number;
+  location?: string;
+  month?: number;
+  capacity?: number;
+  prestige?: number;
+  icon?: string;
+}
+
+export interface GlobalFestival {
+  id: string;
+  name: string;
+  location: string;
+  country: string;
+  month: number;
+  genres: string[];
+  capacity: number;
+  prestige: number;
+  description: string;
+  bannerGradient?: string;
+  icon?: string;
+}
+
+export interface FestivalInvitation {
+  id: string;
+  festivalId: string;
+  year: number;
+  month: number;
+  slot: FestivalSlot;
+  basePay: number;
+  minPopularity: number;
+  expiresMonth: number;
+  expiresYear: number;
+  accepted?: boolean;
+  rejected?: boolean;
+  festivalName?: string;
+  location?: string;
+  country?: string;
+  slotTitle?: string;
+  payout?: number;
+  audienceExpected?: number;
+  prestigeBoost?: number;
+  status?: 'pending' | 'accepted' | 'declined' | 'completed';
+}
+
+export type LiveStageVisualTier = 'basic' | '3d_screens' | 'monumental_mapping';
+export type LiveStagePyroTier = 'none' | 'sparks_fog' | 'flamethrowers_lasers';
+export type LiveStageCrewTier = 'solo_dj' | 'live_band' | 'elite_dancers_choir';
+
+export interface LiveStageProduction {
+  visualsTier: 'basic' | '3d_screens' | 'monumental_mapping';
+  pyroTier: 'none' | 'sparks_fog' | 'flamethrowers_lasers';
+  crewTier: 'solo_dj' | 'live_band' | 'elite_dancers_choir';
+  guestArtistIds: string[];
+}
+
+export type StageVisualTier = LiveStageVisualTier;
+export type StagePyroTier = LiveStagePyroTier;
+export type StageCrewTier = LiveStageCrewTier;
+
+export interface StageProductionConfig {
+  visuals: StageVisualTier;
+  pyro: StagePyroTier;
+  crew: StageCrewTier;
+}
+
+export interface LiveShowDilemmaOptionEffect {
+  crowdEuphoriaDelta: number;
+  hypeDelta: number;
+  fansDelta: number;
+  reviewNote: string;
+}
+
+export interface LiveShowDilemmaOption {
+  label: string;
+  description: string;
+  energyCost: number;
+  successChance: number;
+  successEffect: {
+    crowdEuphoriaDelta: number;
+    hypeDelta: number;
+    fansDelta: number;
+    reviewNote: string;
+  };
+  failureEffect: {
+    crowdEuphoriaDelta: number;
+    hypeDelta: number;
+    fansDelta: number;
+    reviewNote: string;
+  };
+}
+
+export interface LiveShowDilemmaChoice {
+  id: string;
+  text: string;
+  description: string;
+  statCheck?: { stat: keyof ArtistStats | keyof PersonalityTraits; min: number };
+  consequenceDescription: string;
+  scoreModifier: number;
+  hypeModifier: number;
+  energyModifier: number;
+  reputationModifier: number;
+  credibilityModifier: number;
+  fansMultiplier: number;
+}
+
+export type LiveShowDilemmaCategory =
+  | 'sound_failure'
+  | 'crowd_surge'
+  | 'weather'
+  | 'guest_cameo'
+  | 'unrehearsed_song'
+  | 'mic_drop';
+
+export interface LiveShowDilemma {
+  id: string;
+  title: string;
+  situation: string;
+  category: 'sound_failure' | 'crowd_surge' | 'weather' | 'guest_cameo' | 'unrehearsed_song' | 'mic_drop';
+  options: LiveShowDilemmaOption[];
+  contextDescription?: string;
+  condition?: (artist: Artist, slot: FestivalSlot) => boolean;
+  choices?: LiveShowDilemmaChoice[];
+}
+
+export interface LiveShowReview {
+  outlet: 'Rolling Stone' | 'Pitchfork' | 'Billboard' | 'NME' | 'Indie Hoy' | string;
+  headline: string;
+  snippet: string;
+  rating: number;
+}
+
+export interface LiveShowResult {
+  festivalId: string;
+  festivalName: string;
+  slot: FestivalSlot;
+  crowdRating: number;
+  grossRevenue: number;
+  netProfit: number;
+  fansGained: number;
+  hypeGained: number;
+  energyUsed: number;
+  pressHeadline: string;
+  pressQuote: string;
+  pressRating: number;
+  year: number;
+  month: number;
+  performanceScore?: number;
+  attendance?: number;
+  payoutGross?: number;
+  productionCost?: number;
+  reputationGained?: number;
+  credibilityGained?: number;
+  energySpent?: number;
+  dilemmaEncountered?: {
+    dilemmaTitle: string;
+    chosenOptionText: string;
+    consequenceText: string;
+  };
+  pressReviews?: LiveShowReview[];
+  viralMoment?: {
+    occurred: boolean;
+    description: string;
+    tiktokViewsGained?: number;
+  };
+  newsHeadline?: string;
+  newsBody?: string;
+}
+
 
 export interface ChartEntry {
   rank: number;
@@ -942,6 +1252,11 @@ export interface WorldState {
   financialLedger?: FinancialTransaction[];
   pendingCollabOffers?: IncomingCollabOffer[];
   activeCollabPacts?: CollabPact[];
+  editorialPlaylists?: Record<string, EditorialPlaylist>;
+  playlists?: Record<string, EditorialPlaylist>;
+  festivalInvitations?: FestivalInvitation[];
+  activeFestivalsThisMonth?: string[];
+  festivalHistory?: LiveShowResult[];
 }
 
 export interface GameSaveState {
@@ -951,5 +1266,6 @@ export interface GameSaveState {
   playerId: string;
   world: WorldState;
 }
+
 
 
