@@ -18,6 +18,7 @@ import { EventModal } from './components/EventModal';
 import { EraMilestoneModal, EraMilestoneData } from './components/EraMilestoneModal';
 import { CollaborationModal } from './components/CollaborationModal';
 import { ReleaseConfirmationModal } from './components/ReleaseConfirmationModal';
+import { StreamingPlatformView } from './components/StreamingPlatformView';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { playSound } from './utils/audioSystem';
 import { CollabOfferNotification, SpontaneousCollabOffer } from './components/CollabOfferNotification';
@@ -396,6 +397,16 @@ export default function App() {
           />
         )}
 
+        {currentTab === 'streaming' && (
+          <StreamingPlatformView
+            player={player}
+            world={world}
+            onPitchSong={(songId, playlistId) => getEngine().pitchSongToPlaylist(songId, playlistId)}
+            onLaunchSnippet={(params) => getEngine().launchSnippetCampaign(params)}
+            onInteractComment={(songId, commentId, action) => getEngine().interactWithVideoComment(songId, commentId, action)}
+          />
+        )}
+
         {currentTab === 'lifestyle' && (
           <LifestyleShopView
             player={player}
@@ -417,6 +428,7 @@ export default function App() {
             player={player}
             world={world}
             onBookTour={(tier, name) => getEngine().bookTour(tier, name)}
+            onExecuteLiveShow={(params) => getEngine().executeLiveShow(params)}
           />
         )}
 

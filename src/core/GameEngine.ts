@@ -27,7 +27,18 @@ import {
   InteractionResult,
   NewsItem,
   CollabPact,
-  IncomingCollabOffer
+  IncomingCollabOffer,
+  GlobalFestival,
+  FestivalSlot,
+  FestivalInvitation,
+  StageProductionConfig,
+  LiveShowDilemma,
+  LiveShowResult,
+  EditorialPlaylist,
+  YouTubeComment,
+  SnippetCampaignConfig,
+  SnippetCampaignResult,
+  TikTokInfluencerTier
 } from '../types';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
@@ -42,7 +53,8 @@ import { GenreTrendEngine } from '../systems/GenreTrendEngine';
 import { EventEngine } from '../systems/EventEngine';
 import { EconomyEngine } from '../systems/EconomyEngine';
 import { TourEngine } from '../systems/TourEngine';
-import { StreamingEngine } from '../systems/StreamingEngine';
+import { StreamingEngine, EDITORIAL_PLAYLISTS } from '../systems/StreamingEngine';
+import { FestivalEngine, GLOBAL_FESTIVALS, STAGE_PRODUCTION_COSTS } from '../systems/FestivalEngine';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
 import { SocialFeedEngine } from '../systems/SocialFeedEngine';
 import { LegacyEngine } from '../systems/LegacyEngine';
@@ -290,7 +302,10 @@ export class GameEngine {
       activeNarrativeChains: {},
       financialLedger: [],
       pendingCollabOffers: [],
-      activeCollabPacts: []
+      activeCollabPacts: [],
+      playlists: EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {}),
+      festivalInvitations: [],
+      festivalHistory: []
     };
   }
 
@@ -2745,6 +2760,40 @@ export class GameEngine {
         });
       }
 
+      // 5.1 Actualización Dinámica de Playlists Editoriales & Algorítmicas
+      if (!this.world.playlists) {
+        this.world.playlists = EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
+      }
+      StreamingEngine.updatePlaylists(this.world, this.world.songs, this.world.artists);
+
+      // 5.2 Generación Estacional de Invitaciones a Festivales Globales
+      if (!this.world.festivalInvitations) this.world.festivalInvitations = [];
+      const seasonalOffers = FestivalEngine.generateSeasonalInvitations(
+        player,
+        this.world.currentYear,
+        this.world.currentMonth,
+        this.world
+      );
+      for (const offer of seasonalOffers) {
+        const alreadyExists = this.world.festivalInvitations.some(
+          existing => existing.id === offer.id || (existing.festivalId === offer.festivalId && existing.year === offer.year)
+        );
+        if (!alreadyExists) {
+          this.world.festivalInvitations.push(offer);
+          this.world.news.unshift({
+            id: `news_fest_${offer.id}_${Date.now()}`,
+            headline: `Invitación a festival mundial: ${offer.festivalName}`,
+            body: `La organización de ${offer.festivalName} ha invitado formalmente a ${player.name} para presentarse como ${offer.slotTitle} con un caché garantizado de $${offer.payout.toLocaleString('es-AR')}.`,
+            year: this.world.currentYear,
+            month: this.world.currentMonth,
+            category: 'tour',
+            relatedArtistIds: [player.id],
+            sentiment: 'positive',
+            importance: 4
+          });
+        }
+      }
+
       // 6. Annual awards and mandatory drought check on December end
       if (isNewYear) {
         // Mandatory Creative Drought check: Did the player release ANY song or album this year?
@@ -2983,6 +3032,261 @@ export class GameEngine {
   }
 
   // --- SAVE / LOAD ---
+  public executeLiveShow(params: {
+    festivalId: string;
+    slot: FestivalSlot;
+    setlistSongIds: string[];
+    production: StageProductionConfig;
+    dilemmaChoiceId?: string;
+    invitationId?: string;
+  }): LiveShowResult {
+    const player = this.getPlayer();
+    if (!player) throw new Error('Artista no encontrado.');
+
+    if (player.stats.energy < 20) {
+      throw new Error('Energía insuficiente para actuar en el festival (requiere al menos 20% de energía).');
+    }
+
+    const festival = GLOBAL_FESTIVALS.find(f => f.id === params.festivalId);
+    if (!festival) {
+      throw new Error(`El festival con ID "${params.festivalId}" no existe en el circuito mundial.`);
+    }
+
+    const productionCost = FestivalEngine.calculateProductionCost(params.production);
+    if (productionCost > player.stats.funds) {
+      throw new Error(`Fondos insuficientes para costear la producción escénica ($${productionCost.toLocaleString('es-AR')} requeridos, tienes $${player.stats.funds.toLocaleString('es-AR')}).`);
+    }
+
+    // Resolver el show a través de FestivalEngine
+    const result = FestivalEngine.resolveLiveShow({
+      artist: player,
+      festival,
+      slot: params.slot,
+      setlistSongIds: params.setlistSongIds,
+      production: params.production,
+      dilemmaChoice: params.dilemmaChoiceId ? { dilemmaId: '', choiceId: params.dilemmaChoiceId } : undefined,
+      world: this.world
+    });
+
+    // Descontar costo de producción y acreditar ganancia bruta
+    if (productionCost > 0) {
+      player.stats.funds = Math.max(0, player.stats.funds - productionCost);
+      this.recordFinancialTransaction({
+        type: 'expense',
+        category: 'tour',
+        amount: productionCost,
+        description: `Producción de escenario para ${festival.name} (${params.slot})`
+      });
+    }
+
+    if (result.payoutGross > 0) {
+      player.stats.funds += result.payoutGross;
+      this.recordFinancialTransaction({
+        type: 'income',
+        category: 'tour',
+        amount: result.payoutGross,
+        description: `Caché por actuación en vivo en ${festival.name} (${params.slot})`
+      });
+    }
+
+    // Consumo de energía
+    player.stats.energy = Math.max(5, player.stats.energy - result.energyUsed);
+
+    // Fans y Hype
+    player.stats.fansCount += result.fansGained;
+    player.stats.hype = Math.min(100, player.stats.hype + result.hypeGained);
+    player.stats.popularity = Math.min(100, player.stats.popularity + result.popularityGained);
+
+    // Registrar en histórico del artista y del mundo
+    if (!player.livePerformanceHistory) player.livePerformanceHistory = [];
+    player.livePerformanceHistory.unshift(result);
+
+    if (!this.world.festivalHistory) this.world.festivalHistory = [];
+    this.world.festivalHistory.unshift(result);
+
+    // Actualizar estado de invitación
+    if (this.world.festivalInvitations) {
+      const inv = this.world.festivalInvitations.find(i => i.id === params.invitationId || (i.festivalId === params.festivalId && i.year === this.world.currentYear));
+      if (inv) {
+        inv.status = 'accepted';
+      }
+    }
+
+    // Generar noticia periodística con la reseña principal
+    const mainReview = result.reviews[0];
+    this.world.news.unshift({
+      id: `news_liveshow_${Date.now()}`,
+      headline: result.headline,
+      body: mainReview ? `"${mainReview.quote}" — ${mainReview.outlet} (${mainReview.rating}/5 estrellas). ${result.attendance.toLocaleString('es-AR')} personas presenciaron el show.` : result.subheadline,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'tour',
+      relatedArtistIds: [player.id],
+      sentiment: result.performanceScore >= 70 ? 'positive' : 'neutral',
+      importance: 5
+    });
+
+    // Viral boost en streaming
+    const viralBoost = result.viralMomentOccurred ? Math.floor(result.fansGained * 8) : Math.floor(result.fansGained * 2);
+    this.syncAudienceMetrics(player, this.getPlayerSongs(), viralBoost);
+
+    this.notify();
+    return result;
+  }
+
+  public pitchSongToPlaylist(songId: string, playlistId: string): {
+    success: boolean;
+    message: string;
+    added: boolean;
+    position?: number;
+  } {
+    const player = this.getPlayer();
+    const song = this.world.songs[songId];
+    if (!song) throw new Error('Canción no encontrada.');
+    if (!this.world.playlists || !this.world.playlists[playlistId]) {
+      throw new Error('Playlist no encontrada.');
+    }
+
+    const playlist = this.world.playlists[playlistId];
+    if (playlist.trackIds?.includes(songId)) {
+      const pos = playlist.trackIds.indexOf(songId) + 1;
+      return {
+        success: true,
+        message: `"${song.title}" ya forma parte de "${playlist.name}" en la posición #${pos}.`,
+        added: true,
+        position: pos
+      };
+    }
+
+    // Evaluar compatibilidad con género y filtros
+    if (playlist.genreFilters && playlist.genreFilters.length > 0) {
+      const match = playlist.genreFilters.includes(song.genreId) || song.subGenreIds?.some(sg => playlist.genreFilters?.includes(sg));
+      if (!match) {
+        return {
+          success: false,
+          message: `Los curadores de "${playlist.name}" buscan temas de ${playlist.genreFilters.join(', ')}. El género de "${song.title}" no encaja con la curaduría actual.`,
+          added: false
+        };
+      }
+    }
+
+    // Calidad y potencial
+    const qualityThreshold = playlist.followers >= 20000000 ? 75 : playlist.followers >= 10000000 ? 65 : 50;
+    if (song.quality < qualityThreshold) {
+      return {
+        success: false,
+        message: `Los curadores editoriales escucharon "${song.title}" pero consideraron que requiere mayor pulido de producción para entrar a "${playlist.name}". (Calidad: ${song.quality}% / Mínima requerida: ${qualityThreshold}%).`,
+        added: false
+      };
+    }
+
+    // Agregar a la playlist
+    if (!playlist.trackIds) playlist.trackIds = [];
+    playlist.trackIds.unshift(song.id);
+    if (playlist.trackIds.length > (playlist.maxTracks || 50)) {
+      playlist.trackIds.pop();
+    }
+
+    const position = 1;
+    player.stats.hype = Math.min(100, player.stats.hype + 8);
+    const boost = Math.floor(playlist.followers * 0.015);
+    song.streamsTotal += boost;
+    song.streamsLastMonth += boost;
+
+    this.world.news.unshift({
+      id: `news_pl_pitch_${Date.now()}`,
+      headline: `Ingreso Editorial: "${song.title}" debuta en "${playlist.name}"`,
+      body: `El equipo editorial de ${playlist.curator} sumó a ${player.name} a su lista oficial de ${playlist.followers.toLocaleString('es-AR')} seguidores.`,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'chart',
+      relatedArtistIds: [player.id],
+      sentiment: 'positive',
+      importance: 4
+    });
+
+    this.syncAudienceMetrics(player);
+    this.notify();
+
+    return {
+      success: true,
+      message: `¡Gran noticia! Los curadores editoriales incluyeron "${song.title}" en "${playlist.name}".`,
+      added: true,
+      position
+    };
+  }
+
+  public launchSnippetCampaign(params: {
+    songId: string;
+    concept: string;
+    budget: number;
+    influencerTier?: TikTokInfluencerTier;
+  }): SnippetCampaignResult {
+    const player = this.getPlayer();
+    const song = this.world.songs[params.songId];
+    if (!song) throw new Error('Canción no encontrada.');
+
+    if (params.budget > player.stats.funds) {
+      throw new Error(`Fondos insuficientes para la campaña en redes ($${params.budget.toLocaleString('es-AR')} requeridos, tienes $${player.stats.funds.toLocaleString('es-AR')}).`);
+    }
+
+    player.stats.funds = Math.max(0, player.stats.funds - params.budget);
+    this.recordFinancialTransaction({
+      type: 'expense',
+      category: 'marketing',
+      amount: params.budget,
+      description: `Campaña viral de snippets en TikTok/Reels para "${song.title}" (${params.concept})`
+    });
+
+    const result = StreamingEngine.simulateSnippetCampaign({
+      song,
+      artist: player,
+      concept: params.concept,
+      budget: params.budget,
+      influencerTier: params.influencerTier,
+      world: this.world
+    });
+
+    // Aplicar efectos de la campaña
+    song.streamsTotal += result.streamingConversions;
+    song.streamsLastMonth += result.streamingConversions;
+    if (result.isViral) song.wentViral = true;
+
+    player.stats.hype = Math.min(100, player.stats.hype + result.hypeGenerated);
+    player.stats.monthlyListeners += result.listenersGained;
+    player.stats.fansCount += Math.floor(result.listenersGained * 0.12);
+
+    this.world.news.unshift({
+      id: `news_snippet_${Date.now()}`,
+      headline: `Tendencia Viral: "${song.title}" estalla en TikTok`,
+      body: result.summary,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'trend',
+      relatedArtistIds: [player.id],
+      sentiment: 'positive',
+      importance: 3
+    });
+
+    this.syncAudienceMetrics(player);
+    this.notify();
+    return result;
+  }
+
+  public interactWithVideoComment(songId: string, commentId: string, action: 'pin' | 'like') {
+    const player = this.getPlayer();
+    const song = this.world.songs[songId];
+    if (!song) throw new Error('Canción no encontrada.');
+
+    player.stats.fanbaseLoyalty = Math.min(100, player.stats.fanbaseLoyalty + 1);
+    player.stats.hype = Math.min(100, player.stats.hype + 1);
+    this.notify();
+    return {
+      success: true,
+      message: action === 'pin' ? 'Comentario fijado en la parte superior del videoclip.' : 'Le has dado corazón de artista al comentario.'
+    };
+  }
+
   public exportSaveState(): string {
     const save: GameSaveState = {
       version: 1,
@@ -3005,6 +3309,9 @@ export class GameEngine {
         if (!this.world.financialLedger) this.world.financialLedger = [];
         if (!this.world.pendingCollabOffers) this.world.pendingCollabOffers = [];
         if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
+        if (!this.world.playlists) this.world.playlists = EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
+        if (!this.world.festivalInvitations) this.world.festivalInvitations = [];
+        if (!this.world.festivalHistory) this.world.festivalHistory = [];
         const player = this.world.artists[parsed.playerId];
         if (player && !player.financialLedger) {
           player.financialLedger = [];

@@ -20,7 +20,8 @@ import {
   TrendingUp,
   Crown,
   Volume2,
-  VolumeX
+  VolumeX,
+  Radio
 } from 'lucide-react';
 import {
   formatMoney,
@@ -326,9 +327,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         {[
           { id: 'dashboard', label: 'Inicio', icon: Compass, color: 'text-amber-400' },
           { id: 'studio', label: 'Estudio & Música', icon: Disc3, color: 'text-purple-400' },
+          { id: 'streaming', label: 'Streaming & Redes', icon: Radio, color: 'text-violet-400' },
           { id: 'lifestyle', label: 'Tienda & Estilo de Vida', icon: ShoppingBag, color: 'text-pink-400' },
           { id: 'charts', label: 'Charts & Rankings', icon: BarChart3, color: 'text-blue-400' },
-          { id: 'tours', label: 'Giras & Shows', icon: Sparkles, color: 'text-emerald-400' },
+          { id: 'tours', label: 'Giras & Festivales', icon: Sparkles, color: 'text-emerald-400' },
           { id: 'industry', label: 'Sellos & Managers', icon: Building2, color: 'text-indigo-400' },
           { id: 'relations', label: 'Artistas & Rivalidades', icon: Network, color: 'text-cyan-400' },
           { id: 'career', label: 'Eras & Trayectoria', icon: TrendingUp, color: 'text-orange-400' },
