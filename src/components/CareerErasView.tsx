@@ -244,26 +244,23 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
   });
 
   return (
-    <div
-      className="space-y-8 pb-16 text-fg"
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-    >
+    <div className="space-y-8 pb-16 text-[#F4F4F6]">
       {/* 1. HEADER SECTION */}
-      <div className="bg-surface p-6 sm:p-8 rounded-2xl border border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm">
+      <div className="bg-[#111114] p-6 sm:p-8 rounded-[6px] border border-[#242429] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xs font-bold uppercase tracking-wider bg-teal-950/60 text-teal-300 border border-teal-500/40 px-2.5 py-0.5 rounded-sm">
+            <span className="text-2xs font-bold uppercase tracking-wider bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-mono">
               Trayectoria & Legado
             </span>
-            <span className="text-xs text-fg-muted">
+            <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
               {yearsActive + 1} Años de Actividad • {player.careerStage}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-fg tracking-[-1.1px] mt-1.5 flex items-center gap-2.5">
-            <TrendingUp className="w-7 h-7 text-teal-400" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F4F4F6] tracking-tight mt-1.5 flex items-center gap-2.5">
+            <TrendingUp className="w-7 h-7 text-[#FF4F00]" />
             Carrera, Discografía & Hitos de {player.name}
           </h1>
-          <p className="text-xs text-fg-muted mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-[#8E8E99] mt-1 max-w-2xl leading-relaxed">
             Revisa la cronología completa de tu trayectoria: el desempeño de tu discografía, la mejor gira de tu vida, las estatuillas ganadas y la evolución estética entre tus distintas Eras.
           </p>
         </div>
@@ -284,79 +281,79 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   year: world.currentYear
                 })
               }
-              className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.4)] text-xs px-4 py-3 rounded-md hover:opacity-95 active:scale-98 transition-all cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#F4F4F6] hover:bg-white text-[#09090B] font-bold text-xs px-4 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer shadow-none"
             >
-              <Newspaper className="w-4 h-4 text-amber-300" />
+              <Newspaper className="w-4 h-4 text-[#FF4F00]" />
               <span>Generar Portada de Revista</span>
             </button>
           )}
 
           {/* Legacy Score Box */}
-          <div className="bg-canvas px-5 py-3 rounded-xl border border-amber-500/40 text-center font-mono shrink-0 shadow-sm bg-gradient-to-br from-canvas to-amber-950/20">
-            <span className="text-2xs text-amber-400 block uppercase tracking-wider font-bold">
+          <div className="bg-[#09090B] px-5 py-3 rounded-[6px] border border-[#242429] text-center font-mono tabular-nums shrink-0 shadow-sm">
+            <span className="text-2xs text-[#F59E0B] block uppercase tracking-wider font-bold">
               Puntaje de Legado
             </span>
-            <span className="text-2xl sm:text-3xl font-bold text-amber-400">
+            <span className="text-2xl sm:text-3xl font-bold text-[#F59E0B]">
               {player.legacyScore}
-              <span className="text-sm font-normal text-fg-muted">/100</span>
+              <span className="text-sm font-normal text-[#8E8E99]">/100</span>
             </span>
           </div>
         </div>
       </div>
 
-      {/* 2. EXECUTIVE KPI CARDS WITH VIBRANT COLORS */}
+      {/* 2. EXECUTIVE KPI CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-        <div className="bg-surface border border-purple-500/30 p-3.5 rounded-control space-y-1 shadow-2xs">
-          <span className="text-2xs text-purple-300 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
             Total Streams
           </span>
-          <p className="text-base sm:text-lg font-bold text-purple-400 font-mono">
+          <p className="text-base sm:text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
             {(player.stats.totalStreams / 1000000).toFixed(1)}M
           </p>
         </div>
 
-        <div className="bg-surface border border-orange-500/30 p-3.5 rounded-control space-y-1 shadow-2xs">
-          <span className="text-2xs text-orange-300 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
             Hits Top 10
           </span>
-          <p className="text-base sm:text-lg font-bold text-orange-400 font-mono">
-            {totalHits} <span className="text-xs font-normal text-fg-muted">temas</span>
+          <p className="text-base sm:text-lg font-bold text-[#FF4F00] font-mono tabular-nums">
+            {totalHits} <span className="text-xs font-normal text-[#8E8E99]">temas</span>
           </p>
         </div>
 
-        <div className="bg-surface border border-amber-500/30 p-3.5 rounded-control space-y-1 shadow-2xs">
-          <span className="text-2xs text-amber-300 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
             Hits #1 Charts
           </span>
-          <p className="text-base sm:text-lg font-bold text-amber-400 font-mono">
-            {totalNo1s} <span className="text-xs font-normal text-fg-muted">himnos</span>
+          <p className="text-base sm:text-lg font-bold text-[#00E599] font-mono tabular-nums">
+            {totalNo1s} <span className="text-xs font-normal text-[#8E8E99]">himnos</span>
           </p>
         </div>
 
-        <div className="bg-surface border border-blue-500/30 p-3.5 rounded-control space-y-1 shadow-2xs">
-          <span className="text-2xs text-blue-300 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
             Álbumes Lanzados
           </span>
-          <p className="text-base sm:text-lg font-bold text-blue-400 font-mono">
-            {playerAlbums.length} <span className="text-xs font-normal text-fg-muted">LPs</span>
+          <p className="text-base sm:text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
+            {playerAlbums.length} <span className="text-xs font-normal text-[#8E8E99]">LPs</span>
           </p>
         </div>
 
-        <div className="bg-surface border border-yellow-500/30 p-3.5 rounded-control space-y-1 shadow-2xs">
-          <span className="text-2xs text-yellow-300 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
             Premios Ganados
           </span>
-          <p className="text-base sm:text-lg font-bold text-yellow-400 font-mono">
-            {player.awardsWon.length} <span className="text-xs font-normal text-fg-muted">trofeos</span>
+          <p className="text-base sm:text-lg font-bold text-[#F59E0B] font-mono tabular-nums">
+            {player.awardsWon.length} <span className="text-xs font-normal text-[#8E8E99]">trofeos</span>
           </p>
         </div>
 
-        <div className="bg-surface border border-emerald-500/30 p-3.5 rounded-control space-y-1 shadow-2xs">
-          <span className="text-2xs text-emerald-300 uppercase tracking-wider block font-bold font-mono">
+        <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
             Giras Realizadas
           </span>
-          <p className="text-base sm:text-lg font-bold text-emerald-400 font-mono">
-            {playerTours.length} <span className="text-xs font-normal text-fg-muted">tours</span>
+          <p className="text-base sm:text-lg font-bold text-[#00E599] font-mono tabular-nums">
+            {playerTours.length} <span className="text-xs font-normal text-[#8E8E99]">tours</span>
           </p>
         </div>
       </div>
@@ -365,56 +362,56 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* A. MEJOR DISCO */}
         <div className="bg-surface border border-line rounded-2xl p-6 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-line pb-3">
+          <div className="flex items-center justify-between border-b border-[#242429] pb-3">
             <div className="flex items-center gap-2">
-              <Disc3 className="w-5 h-5 text-indigo-400" />
-              <h2 className="text-base font-semibold text-fg">
+              <Disc3 className="w-5 h-5 text-[#FF4F00]" />
+              <h2 className="text-base font-bold text-[#F4F4F6]">
                 Mejor Disco Histórico • Obra Cumbre
               </h2>
             </div>
-            <span className="text-2xs uppercase font-bold bg-amber-950/60 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-sm shadow-2xs">
-             Récord de Ventas & Streams
+            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 px-2.5 py-0.5 rounded-[4px] font-mono">
+              Récord de Ventas & Streams
             </span>
           </div>
 
           {bestAlbum ? (
-            <div className="bg-canvas border border-line rounded-xl p-5 space-y-4 shadow-xs">
+            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-5 space-y-4 shadow-sm">
               <div className="flex flex-col sm:flex-row items-start gap-4">
-                {/* Cover Gradient */}
+                {/* Cover */}
                 <div
-                  className={`w-24 h-24 sm:w-28 sm:h-28 rounded-xl border-2 border-white/20 bg-gradient-to-br ${bestAlbum.coverGradient || ARTISTIC_COVER_GRADIENTS[0]} shrink-0 flex flex-col justify-end p-2.5 text-white shadow-md`}
+                  className={`w-24 h-24 sm:w-28 sm:h-28 rounded-[4px] border border-[#242429] bg-gradient-to-br ${bestAlbum.coverGradient || ARTISTIC_COVER_GRADIENTS[0]} shrink-0 flex flex-col justify-end p-2.5 text-white shadow-sm`}
                 >
                   <Disc3 className="w-5 h-5 opacity-90" />
-                  <span className="text-2xs font-extrabold uppercase truncate mt-auto drop-shadow-sm">
+                  <span className="text-2xs font-extrabold uppercase truncate mt-auto drop-shadow-sm font-mono">
                     {bestAlbum.type}
                   </span>
                 </div>
 
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-fg-muted">
+                    <span className="text-xs font-mono text-[#8E8E99] tabular-nums">
                       Lanzado en {formatReleaseDate(bestAlbum.releaseMonth, bestAlbum.releaseYear, 'long')}
                     </span>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-sm bg-emerald-950/60 text-emerald-400 border border-emerald-500/40">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] text-[#00E599] border border-[#00E599]/30 font-mono tabular-nums">
                       Crítica: {bestAlbum.criticalScore}/100
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-semibold text-fg tracking-[-0.5px]">
+                  <h3 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
                     {bestAlbum.title}
                   </h3>
 
                   <div className="flex items-center gap-2">
-                    <span className={`text-2xs font-bold px-2 py-0.5 rounded-full ${getGenreBadgeClass(bestAlbum.genreId)}`}>
+                    <span className={`text-2xs font-bold px-2 py-0.5 rounded-[4px] ${getGenreBadgeClass(bestAlbum.genreId)} font-mono`}>
                       {world.genres[bestAlbum.genreId]?.name || bestAlbum.genreId}
                     </span>
-                    <span className="text-xs text-fg-muted font-mono">
+                    <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
                       {bestAlbum.songIds.length} canciones
                     </span>
                   </div>
 
                   {bestAlbum.criticalReviewText && (
-                    <p className="text-xs text-fg-muted italic bg-surface p-2.5 rounded-md border border-line">
+                    <p className="text-xs text-[#8E8E99] italic bg-[#111114] p-2.5 rounded-[4px] border border-[#242429]">
                       "{bestAlbum.criticalReviewText}"
                     </p>
                   )}
@@ -422,34 +419,34 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               </div>
 
               {/* Metrics Bar */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-line text-center font-mono">
-                <div className="bg-purple-950/40 p-2 rounded-md border border-purple-500/30">
-                  <span className="text-2xs text-purple-300 uppercase block font-semibold">Streams Totales</span>
-                  <span className="text-xs sm:text-sm font-bold text-purple-400">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center font-mono tabular-nums">
+                <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Streams Totales</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#F4F4F6]">
                     {(bestAlbum.totalStreams / 1000000).toFixed(1)}M
                   </span>
                 </div>
-                <div className="bg-indigo-950/40 p-2 rounded-md border border-indigo-500/30">
-                  <span className="text-2xs text-indigo-300 uppercase block font-semibold">Ventas Debut</span>
-                  <span className="text-xs sm:text-sm font-bold text-indigo-400">
+                <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Ventas Debut</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#FF4F00]">
                     {(bestAlbum.firstWeekSales || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
-                <div className="bg-emerald-950/40 p-2 rounded-md border border-emerald-500/30">
-                  <span className="text-2xs text-emerald-300 uppercase block font-semibold">Score Comercial</span>
-                  <span className="text-xs sm:text-sm font-bold text-emerald-400">
+                <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Score Comercial</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#00E599]">
                     {bestAlbum.commercialScore}/100
                   </span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-canvas border border-line rounded-xl p-6 text-center space-y-2">
-              <div className="w-10 h-10 rounded-full bg-surface text-fg-muted mx-auto flex items-center justify-center border border-line">
+            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-6 text-center space-y-2">
+              <div className="w-10 h-10 rounded-[4px] bg-[#111114] text-[#8E8E99] mx-auto flex items-center justify-center border border-[#242429]">
                 <Disc3 className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-semibold text-fg">Aún no has publicado un álbum</h3>
-              <p className="text-xs text-fg-muted max-w-sm mx-auto">
+              <h3 className="text-sm font-semibold text-[#F4F4F6]">Aún no has publicado un álbum</h3>
+              <p className="text-xs text-[#8E8E99] max-w-sm mx-auto">
                 Dirígete al Estudio para componer y producir tu primer LP o EP conceptual y consagrar tu sonido.
               </p>
             </div>
@@ -457,75 +454,75 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         </div>
 
         {/* B. MEJOR GIRA */}
-        <div className="bg-surface border border-line rounded-2xl p-6 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-line pb-3">
+        <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#242429] pb-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-              <h2 className="text-base font-semibold text-fg">
+              <Sparkles className="w-5 h-5 text-[#FF4F00]" />
+              <h2 className="text-base font-bold text-[#F4F4F6]">
                 Mejor Gira Histórica • Mayor Recaudación
               </h2>
             </div>
-            <span className="text-2xs uppercase font-bold bg-orange-950/60 text-orange-300 border border-orange-500/40 px-2.5 py-0.5 rounded-sm shadow-2xs">
-             Récord de Asistencia & Taquilla
+            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#00E599] border border-[#00E599]/40 px-2.5 py-0.5 rounded-[4px] font-mono">
+              Récord de Asistencia & Taquilla
             </span>
           </div>
 
           {bestTour ? (
-            <div className="bg-canvas border border-line rounded-xl p-5 space-y-4 shadow-xs">
+            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-5 space-y-4 shadow-sm">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-fg-muted">
+                  <span className="text-xs font-mono text-[#8E8E99] tabular-nums">
                     Año {bestTour.year} • Mes {bestTour.month}
                   </span>
-                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-sm bg-amber-950/60 text-amber-300 border border-amber-500/40">
+                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-[4px] bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 font-mono">
                     Nivel: {bestTour.tier}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-semibold text-fg tracking-[-0.5px]">
+                <h3 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
                   {bestTour.name}
                 </h3>
 
-                <p className="text-xs text-fg-muted flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                <p className="text-xs text-[#8E8E99] flex items-center gap-1.5 font-mono">
+                  <MapPin className="w-3.5 h-3.5 text-[#EF4444]" />
                   {bestTour.stops.length} ciudades visitadas: {bestTour.stops.slice(0, 4).map(s => s.city).join(', ')}...
                 </p>
               </div>
 
               {/* Tour Numbers */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-line text-center font-mono">
-                <div className="bg-emerald-950/40 p-2 rounded-md border border-emerald-500/30">
-                  <span className="text-2xs text-emerald-300 uppercase block font-semibold">Recaudación Bruta</span>
-                  <span className="text-xs sm:text-sm font-bold text-emerald-400">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center font-mono tabular-nums">
+                <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Recaudación Bruta</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#00E599]">
                     ${(bestTour.grossRevenue || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
-                <div className="bg-blue-950/40 p-2 rounded-md border border-blue-500/30">
-                  <span className="text-2xs text-blue-300 uppercase block font-semibold">Beneficio Neto</span>
-                  <span className="text-xs sm:text-sm font-bold text-blue-400">
+                <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Beneficio Neto</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#00E599]">
                     ${(bestTour.netArtistProfit || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
-                <div className="bg-purple-950/40 p-2 rounded-md border border-purple-500/30">
-                  <span className="text-2xs text-purple-300 uppercase block font-semibold">Asistencia</span>
-                  <span className="text-xs sm:text-sm font-bold text-purple-400">
+                <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Asistencia</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#F4F4F6]">
                     {(bestTour.totalTicketsSold || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-surface p-2.5 rounded-md border border-line flex items-center justify-between text-xs text-fg-muted">
-                <span>Tasa de Ocupación: <strong className="text-emerald-400">{Math.round((bestTour.totalTicketsSold / Math.max(1, bestTour.totalCapacity)) * 100)}%</strong></span>
-                <span>Hype Generado: <strong className="text-orange-400">+{bestTour.hypeGenerated}</strong></span>
+              <div className="bg-[#111114] p-2.5 rounded-[4px] border border-[#242429] flex items-center justify-between text-xs text-[#8E8E99] font-mono tabular-nums">
+                <span>Tasa de Ocupación: <strong className="text-[#00E599]">{Math.round((bestTour.totalTicketsSold / Math.max(1, bestTour.totalCapacity)) * 100)}%</strong></span>
+                <span>Hype Generado: <strong className="text-[#FF4F00]">+{bestTour.hypeGenerated}</strong></span>
               </div>
             </div>
           ) : (
-            <div className="bg-canvas border border-line rounded-xl p-6 text-center space-y-2">
-              <div className="w-10 h-10 rounded-full bg-surface text-fg-muted mx-auto flex items-center justify-center border border-line">
+            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-6 text-center space-y-2">
+              <div className="w-10 h-10 rounded-[4px] bg-[#111114] text-[#8E8E99] mx-auto flex items-center justify-center border border-[#242429]">
                 <Sparkles className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-semibold text-fg">Aún no has salido de gira</h3>
-              <p className="text-xs text-fg-muted max-w-sm mx-auto">
+              <h3 className="text-sm font-semibold text-[#F4F4F6]">Aún no has salido de gira</h3>
+              <p className="text-xs text-[#8E8E99] max-w-sm mx-auto">
                 Cuando acumules 85% de energía, organizá tu primer tour en la sección de Giras & Shows para llenar clubes, teatros y estadios.
               </p>
             </div>
@@ -534,23 +531,23 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       </div>
 
       {/* 4. CHRONOLOGICAL ERAS TIMELINE */}
-      <div className="bg-surface border border-line rounded-2xl p-6 space-y-6 shadow-sm">
-        <div className="flex items-center justify-between border-b border-line pb-3">
+      <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#242429] pb-3">
           <div>
-            <h2 className="text-base font-semibold text-fg flex items-center gap-2">
-              <History className="w-5 h-5 text-teal-400" />
+            <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+              <History className="w-5 h-5 text-[#FF4F00]" />
               Evolución de Eras Musicales ({player.eras.length})
             </h2>
-            <p className="text-xs text-fg-muted mt-0.5">
+            <p className="text-xs text-[#8E8E99] mt-0.5">
               Transiciones estéticas, cambios sonoros y madurez cultural del artista
             </p>
           </div>
-          <span className="text-xs font-mono text-fg-muted bg-canvas px-2.5 py-1 rounded-md border border-line">
-            Etapa Actual: <strong className="text-primary">{player.careerStage}</strong>
+          <span className="text-xs font-mono tabular-nums text-[#8E8E99] bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429]">
+            Etapa Actual: <strong className="text-[#FF4F00]">{player.careerStage}</strong>
           </span>
         </div>
 
-        <div className="relative pl-6 sm:pl-8 border-l-2 border-teal-500/40 space-y-6 my-2">
+        <div className="relative pl-6 sm:pl-8 border-l-2 border-[#242429] space-y-6 my-2">
           {player.eras.map((era, index) => {
             const isCurrent = index === player.eras.length - 1;
             const eraAlbums = playerAlbums.filter(a => a.releaseYear >= era.startYear && (!era.endYear || a.releaseYear <= era.endYear));
@@ -563,59 +560,59 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 <div
                   className={`absolute -left-[31px] sm:-left-[39px] top-2 w-4 h-4 rounded-full border-2 transition-all ${
                     isCurrent
-                      ? 'bg-teal-400 border-teal-300 ring-4 ring-teal-500/30'
-                      : 'bg-surface border-teal-500/50'
+                      ? 'bg-[#FF4F00] border-[#FF4F00]'
+                      : 'bg-[#18181C] border-[#242429]'
                   }`}
                 />
 
-                <div className="bg-canvas p-5 sm:p-6 rounded-xl border border-line space-y-3 shadow-xs hover:border-teal-500/50 transition-all">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-line pb-2.5">
+                <div className="bg-[#09090B] p-5 sm:p-6 rounded-[6px] border border-[#242429] space-y-3 shadow-sm hover:border-[#3F3F46] transition-all">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-[#242429] pb-2.5">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                      <h3 className="text-base font-semibold text-fg">
+                      <h3 className="text-base font-bold text-[#F4F4F6]">
                         {era.name}
                       </h3>
-                      <span className="text-2xs uppercase font-bold bg-teal-950/60 text-teal-300 border border-teal-500/40 px-2 py-0.5 rounded-sm">
+                      <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#8E8E99] border border-[#242429] px-2 py-0.5 rounded-[4px] font-mono">
                         {era.stage}
                       </span>
                       {isCurrent && (
-                        <span className="text-2xs font-bold bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-2 py-0.5 rounded-sm shadow-[0_0_10px_rgba(20,184,166,0.3)]">
+                        <span className="text-2xs font-bold font-mono bg-[#FF4F00] text-white px-2 py-0.5 rounded-[4px]">
                           Era Vigente
                         </span>
                       )}
                     </div>
 
-                    <span className="text-xs font-mono text-fg-muted">
+                    <span className="text-xs font-mono text-[#8E8E99] tabular-nums">
                       {TimeSystem.getMonthName(era.startMonth)} {era.startYear} — {era.endYear ? `${TimeSystem.getMonthName(era.endMonth || 12)} ${era.endYear}` : 'Presente'}
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-fg-muted leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#8E8E99] leading-relaxed">
                     {era.highlightSummary}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-fg-muted pt-1">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E99] pt-1">
                     <div className="flex items-center gap-1.5">
                       <span>Enfoque Sonoro:</span>
-                      <span className={`text-2xs font-bold px-2 py-0.5 rounded-full ${eraGenreTheme.badgeBg} ${eraGenreTheme.badgeText}`}>
+                      <span className={`text-2xs font-bold font-mono px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#F4F4F6]`}>
                         {world.genres[era.genreFocus]?.name || era.genreFocus}
                       </span>
                     </div>
                     <span>•</span>
-                    <span>
-                      Lanzamientos en esta Era: <strong className="text-primary font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles{eraSingles.filter(s => s.musicVideo).length > 0 ? ` • ${eraSingles.filter(s => s.musicVideo).length} videoclips` : ''}</strong>
+                    <span className="font-mono tabular-nums">
+                      Lanzamientos en esta Era: <strong className="text-[#F4F4F6] font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles{eraSingles.filter(s => s.musicVideo).length > 0 ? ` • ${eraSingles.filter(s => s.musicVideo).length} videoclips` : ''}</strong>
                     </span>
                   </div>
 
                   {/* Albums released during this era */}
                   {eraAlbums.length > 0 && (
-                    <div className="pt-2 border-t border-line flex items-center gap-2 overflow-x-auto scroll-fade-x">
-                      <span className="text-2xs uppercase text-fg-muted font-semibold shrink-0">
+                    <div className="pt-2 border-t border-[#242429] flex items-center gap-2 overflow-x-auto scroll-fade-x">
+                      <span className="text-2xs uppercase text-[#8E8E99] font-mono font-semibold shrink-0">
                         Discos Clave:
                       </span>
                       {eraAlbums.map(alb => (
                         <span
                           key={alb.id}
-                          className="bg-indigo-950/60 text-indigo-300 text-xs px-2.5 py-1 rounded-md border border-indigo-500/40 whitespace-nowrap font-semibold"
+                          className="bg-[#18181C] text-[#F4F4F6] text-xs px-2.5 py-1 rounded-[4px] border border-[#242429] whitespace-nowrap font-mono tabular-nums"
                         >
                          {alb.title} • {alb.criticalScore} pts
                         </span>
@@ -625,8 +622,8 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
 
                   {/* Era Quick Actions */}
                   {onOpenMilestone && (
-                    <div className="pt-2 border-t border-line flex items-center justify-between">
-                      <span className="text-xs text-fg-muted">
+                    <div className="pt-2 border-t border-[#242429] flex items-center justify-between">
+                      <span className="text-xs text-[#8E8E99]">
                         Registrado en los archivos de la crítica y la prensa musical.
                       </span>
                       <button
@@ -641,9 +638,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                             quote: era.highlightSummary
                           })
                         }
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-fg hover:text-primary hover:underline cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F4F4F6] hover:text-[#FF4F00] transition-colors cursor-pointer"
                       >
-                        <Newspaper className="w-3.5 h-3.5 text-amber-400" />
+                        <Newspaper className="w-3.5 h-3.5 text-[#FF4F00]" />
                         <span>Ver Portada de Revista de esta Era</span>
                       </button>
                     </div>
@@ -656,40 +653,40 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       </div>
 
       {/* 5. FULL DISCOGRAPHY SECTION */}
-      <div className="bg-surface border border-line rounded-2xl p-6 space-y-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
+      <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
           <div>
-            <h2 className="text-base font-semibold text-fg flex items-center gap-2">
-              <Disc3 className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+              <Disc3 className="w-5 h-5 text-[#FF4F00]" />
               Catálogo Discográfico Completo ({playerAlbums.length} Proyectos)
             </h2>
-            <p className="text-xs text-fg-muted mt-0.5">
+            <p className="text-xs text-[#8E8E99] mt-0.5">
               Todos los álbumes, EPs y mixtapes lanzados a lo largo de tu carrera
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-md border border-line text-xs shadow-2xs">
-            <span className="text-2xs text-fg-muted uppercase px-2 font-mono">Ordenar:</span>
+          <div className="flex items-center gap-1.5 bg-[#09090B] p-1 rounded-[4px] border border-[#242429] text-xs">
+            <span className="text-2xs text-[#8E8E99] uppercase px-2 font-mono">Ordenar:</span>
             <button
               onClick={() => setDiscographySort('streams')}
-              className={`px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${
-                discographySort === 'streams' ? 'bg-primary text-white font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]' : 'text-fg-muted hover:text-fg'
+              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-mono ${
+                discographySort === 'streams' ? 'bg-[#F4F4F6] text-[#09090B] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
               }`}
             >
               Streams
             </button>
             <button
               onClick={() => setDiscographySort('score')}
-              className={`px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${
-                discographySort === 'score' ? 'bg-primary text-white font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]' : 'text-fg-muted hover:text-fg'
+              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-mono ${
+                discographySort === 'score' ? 'bg-[#F4F4F6] text-[#09090B] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
               }`}
             >
               Crítica
             </button>
             <button
               onClick={() => setDiscographySort('date')}
-              className={`px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${
-                discographySort === 'date' ? 'bg-primary text-white font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]' : 'text-fg-muted hover:text-fg'
+              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-mono ${
+                discographySort === 'date' ? 'bg-[#F4F4F6] text-[#09090B] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
               }`}
             >
               Fecha
@@ -698,10 +695,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         </div>
 
         {sortedAlbums.length === 0 ? (
-          <div className="bg-canvas border border-line rounded-xl p-8 text-center space-y-2">
-            <Disc3 className="w-8 h-8 text-fg-muted mx-auto" />
-            <h3 className="text-sm font-semibold text-fg">Sin Discografía Aún</h3>
-            <p className="text-xs text-fg-muted">
+          <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-8 text-center space-y-2">
+            <Disc3 className="w-8 h-8 text-[#8E8E99] mx-auto" />
+            <h3 className="text-sm font-semibold text-[#F4F4F6]">Sin Discografía Aún</h3>
+            <p className="text-xs text-[#8E8E99]">
               Lanza tu primer álbum o EP en la pestaña de Estudio para comenzar a construir tu catálogo.
             </p>
           </div>
@@ -714,63 +711,63 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               return (
                 <div
                   key={album.id}
-                  className={`bg-canvas p-5 rounded-xl border transition-all space-y-3 flex flex-col justify-between shadow-xs ${
-                    isBest ? 'border-amber-500/60 ring-2 ring-amber-500/30' : 'border-line hover:border-indigo-500/50'
+                  className={`bg-[#09090B] p-5 rounded-[6px] border transition-all space-y-3 flex flex-col justify-between shadow-sm ${
+                    isBest ? 'border-[#FF4F00]/50' : 'border-[#242429] hover:border-[#3F3F46]'
                   }`}
                 >
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
                       <div
-                        className={`w-16 h-16 rounded-lg bg-gradient-to-br ${coverGrad} shrink-0 border-2 border-white/20 shadow-sm flex items-end p-1.5 text-white text-2xs font-bold uppercase`}
+                        className={`w-16 h-16 rounded-[4px] bg-gradient-to-br ${coverGrad} shrink-0 border border-[#242429] shadow-sm flex items-end p-1.5 text-white text-2xs font-bold uppercase font-mono`}
                       >
                         {album.type}
                       </div>
 
                       <div className="space-y-0.5 flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-2xs font-mono text-fg-muted">
+                          <span className="text-2xs font-mono text-[#8E8E99] tabular-nums">
                             {TimeSystem.getMonthName(album.releaseMonth || 1)} {album.releaseYear}
                           </span>
                           {isBest && (
-                            <span className="bg-amber-950/60 text-amber-300 border border-amber-500/40 text-2xs font-bold px-1.5 py-0.5 rounded-sm">
+                            <span className="bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 text-2xs font-bold px-1.5 py-0.5 rounded-[4px] font-mono">
                               Mejor Disco
                             </span>
                           )}
                         </div>
 
-                        <h3 className="text-sm font-semibold text-fg truncate">
+                        <h3 className="text-sm font-bold text-[#F4F4F6] truncate">
                           {album.title}
                         </h3>
 
                         <div className="flex items-center gap-1.5 pt-0.5">
-                          <span className={`text-2xs font-bold px-1.5 py-0.5 rounded-full ${albumGenre.badgeBg} ${albumGenre.badgeText}`}>
+                          <span className={`text-2xs font-bold font-mono px-1.5 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#F4F4F6]`}>
                             {world.genres[album.genreId]?.name || album.genreId}
                           </span>
-                          <span className="text-2xs text-fg-muted">
+                          <span className="text-2xs text-[#8E8E99] font-mono tabular-nums">
                             {album.songIds.length} tracks
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-1.5 text-center font-mono text-xs">
-                      <div className="bg-purple-950/40 p-1.5 rounded-sm border border-purple-500/30">
-                        <span className="text-2xs text-purple-300 uppercase block font-semibold">Streams</span>
-                        <span className="font-bold text-purple-400">{(album.totalStreams / 1000000).toFixed(1)}M</span>
+                    <div className="grid grid-cols-3 gap-1.5 text-center font-mono text-xs tabular-nums">
+                      <div className="bg-[#18181C] p-1.5 rounded-[4px] border border-[#242429]">
+                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Streams</span>
+                        <span className="font-bold text-[#F4F4F6]">{(album.totalStreams / 1000000).toFixed(1)}M</span>
                       </div>
-                      <div className="bg-indigo-950/40 p-1.5 rounded-sm border border-indigo-500/30">
-                        <span className="text-2xs text-indigo-300 uppercase block font-semibold">Ventas</span>
-                        <span className="font-bold text-indigo-400">{(album.firstWeekSales || 0).toLocaleString('es-AR')}</span>
+                      <div className="bg-[#18181C] p-1.5 rounded-[4px] border border-[#242429]">
+                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Ventas</span>
+                        <span className="font-bold text-[#FF4F00]">{(album.firstWeekSales || 0).toLocaleString('es-AR')}</span>
                       </div>
-                      <div className="bg-emerald-950/40 p-1.5 rounded-sm border border-emerald-500/30">
-                        <span className="text-2xs text-emerald-300 uppercase block font-semibold">Crítica</span>
-                        <span className="font-bold text-emerald-400">{album.criticalScore}/100</span>
+                      <div className="bg-[#18181C] p-1.5 rounded-[4px] border border-[#242429]">
+                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Crítica</span>
+                        <span className="font-bold text-[#00E599]">{album.criticalScore}/100</span>
                       </div>
                     </div>
                   </div>
 
                   {album.criticalReviewText && (
-                    <p className="text-xs text-fg-muted italic line-clamp-2 border-t border-line pt-2">
+                    <p className="text-xs text-[#8E8E99] italic line-clamp-2 border-t border-[#242429] pt-2">
                       "{album.criticalReviewText}"
                     </p>
                   )}
@@ -782,14 +779,14 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       </div>
 
       {/* 6. CHRONOLOGICAL TRAJECTORY LOG (TIMELINE DIARY) */}
-      <div className="bg-surface border border-line rounded-2xl p-6 space-y-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
+      <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
           <div>
-            <h2 className="text-base font-semibold text-fg flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-[#FF4F00]" />
               Registro Histórico Cronológico de Carrera ({timelineItems.length} Hitos)
             </h2>
-            <p className="text-xs text-fg-muted mt-0.5">
+            <p className="text-xs text-[#8E8E99] mt-0.5">
               Diario cronológico detallado de cada lanzamiento, premio, gira y acontecimiento
             </p>
           </div>
@@ -806,10 +803,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               <button
                 key={f.id}
                 onClick={() => setTimelineFilter(f.id as any)}
-                className={`px-3 py-1 rounded-md transition-colors cursor-pointer border whitespace-nowrap ${
+                className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer border whitespace-nowrap font-mono ${
                   timelineFilter === f.id
-                    ? 'bg-primary text-white border-primary font-semibold shadow-[0_0_10px_rgba(139,92,246,0.3)]'
-                    : 'bg-canvas text-fg-muted border-line hover:text-fg hover:bg-surface'
+                    ? 'bg-[#F4F4F6] text-[#09090B] font-bold border-[#F4F4F6]'
+                    : 'bg-[#09090B] text-[#8E8E99] border-[#242429] hover:text-[#F4F4F6] hover:bg-[#18181C]'
                 }`}
               >
                 {f.label}
@@ -819,7 +816,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         </div>
 
         {filteredTimeline.length === 0 ? (
-          <div className="text-center py-8 text-fg-muted text-xs">
+          <div className="text-center py-8 text-[#8E8E99] text-xs font-mono">
             No se encontraron eventos para el filtro seleccionado.
           </div>
         ) : (
@@ -829,42 +826,40 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               return (
                 <div
                   key={item.id}
-                  className="bg-canvas p-4 rounded-xl border border-line flex items-start justify-between gap-4 hover:border-indigo-500/40 transition-all shadow-2xs"
+                  className="bg-[#09090B] p-4 rounded-[6px] border border-[#242429] flex items-start justify-between gap-4 hover:border-[#3F3F46] transition-all shadow-sm"
                 >
                   <div className="flex items-start gap-3.5">
-                    <div
-                      className={`p-2.5 rounded-lg border shrink-0 mt-0.5 ${item.iconBgClass}`}
-                    >
-                      <ItemIcon className="w-4 h-4" />
+                    <div className="p-2.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#F4F4F6] shrink-0 mt-0.5">
+                      <ItemIcon className="w-4 h-4 text-[#FF4F00]" />
                     </div>
 
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-semibold text-fg">
+                        <span className="text-xs font-bold text-[#F4F4F6]">
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className={`text-2xs font-bold uppercase px-2 py-0.5 rounded-sm border ${item.badgeClass || 'bg-surface text-fg border-line'}`}>
+                          <span className={`text-2xs font-bold font-mono uppercase px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#8E8E99]`}>
                             {item.badge}
                           </span>
                         )}
                       </div>
 
-                      <p className="text-xs text-fg-muted leading-relaxed">
+                      <p className="text-xs text-[#8E8E99] leading-relaxed">
                         {item.description}
                       </p>
 
                       {item.metrics && (
-                        <p className="text-xs font-mono text-purple-400 font-semibold pt-0.5">
+                        <p className="text-xs font-mono tabular-nums text-[#00E599] font-semibold pt-0.5">
                           {item.metrics}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0 font-mono text-xs text-fg-muted">
-                    <span className="block font-bold text-fg">{item.year}</span>
-                    <span className="text-2xs text-fg-muted">Mes {item.month}</span>
+                  <div className="text-right shrink-0 font-mono tabular-nums text-xs text-[#8E8E99]">
+                    <span className="block font-bold text-[#F4F4F6]">{item.year}</span>
+                    <span className="text-2xs text-[#8E8E99]">Mes {item.month}</span>
                   </div>
                 </div>
               );

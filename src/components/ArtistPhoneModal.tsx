@@ -75,44 +75,43 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case 'manager':
-        return { label: 'Mánager / Negocios', bg: 'bg-emerald-950/70 border-emerald-500/40 text-emerald-400' };
+        return { label: 'Mánager / Negocios', bg: 'bg-[#00E599]/10 border-[#00E599]/30 text-[#00E599]' };
       case 'artist':
-        return { label: 'Colega / Artista', bg: 'bg-purple-950/70 border-purple-500/40 text-purple-300' };
+        return { label: 'Colega / Artista', bg: 'bg-[#18181C] border-[#3F3F46] text-[#F4F4F6]' };
       case 'press':
-        return { label: 'Prensa / Medios', bg: 'bg-blue-950/70 border-blue-500/40 text-blue-300' };
+        return { label: 'Prensa / Medios', bg: 'bg-[#18181C] border-[#FF4F00]/30 text-[#FF4F00]' };
       case 'drama':
-        return { label: 'Rival / Polémica', bg: 'bg-rose-950/70 border-rose-500/40 text-rose-300' };
+        return { label: 'Rival / Polémica', bg: 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]' };
       default:
-        return { label: 'Círculo Íntimo', bg: 'bg-amber-950/70 border-amber-500/40 text-amber-300' };
+        return { label: 'Círculo Íntimo', bg: 'bg-[#F59E0B]/10 border-[#F59E0B]/30 text-[#F59E0B]' };
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       {/* Smartphone Chassis Container */}
       <div
-        className="w-full max-w-[420px] h-[780px] max-h-[92vh] bg-[#0E1017] border-4 border-[#2A2E3D] rounded-[48px] shadow-[0_0_60px_rgba(139,92,246,0.3)] flex flex-col overflow-hidden relative text-fg select-none"
-        style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+        className="w-full max-w-[420px] h-[780px] max-h-[92vh] bg-[#09090B] border border-[#242429] rounded-[8px] shadow-2xl flex flex-col overflow-hidden relative text-[#F4F4F6] select-none"
       >
-        {/* Dynamic Island / Notch */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-5 bg-black rounded-full z-30 flex items-center justify-center px-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-700 mr-auto" />
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
+        {/* Dynamic Island / Hardware Sensor Bar */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-4 bg-[#111114] border border-[#242429] rounded-[4px] z-30 flex items-center justify-center px-2">
+          <div className="w-2 h-2 rounded-[2px] bg-[#18181C] border border-[#3F3F46] mr-auto" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#00E599] animate-pulse" />
         </div>
 
         {/* Top Status Bar */}
-        <div className="h-10 px-6 pt-2 flex items-center justify-between text-2xs font-bold text-fg-muted shrink-0 z-20">
+        <div className="h-10 px-6 pt-2 flex items-center justify-between text-2xs font-mono font-bold text-[#8E8E99] shrink-0 z-20">
           <span>{world?.currentMonth ? `${world.currentMonth}:00` : '12:00'}</span>
           <div className="flex items-center gap-2">
-            <span className="text-3xs font-mono bg-white/10 px-1 rounded text-white">5G</span>
-            <Wifi className="w-3 h-3" />
-            <Battery className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-3xs font-mono bg-[#18181C] border border-[#242429] px-1 rounded-[2px] text-[#F4F4F6]">5G</span>
+            <Wifi className="w-3 h-3 text-[#8E8E99]" />
+            <Battery className="w-3.5 h-3.5 text-[#00E599]" />
           </div>
         </div>
 
         {/* Floating Effect Toast */}
         {feedbackEffect && (
-          <div className="absolute top-12 left-4 right-4 z-40 bg-gradient-to-r from-primary to-accent text-white px-3 py-2 rounded-xl text-xs font-bold text-center shadow-lg border border-white/20 animate-bounce">
+          <div className="absolute top-12 left-4 right-4 z-40 bg-[#FF4F00] text-white px-3 py-2 rounded-[4px] text-xs font-mono font-bold text-center shadow-lg border border-[#FF4F00]">
             {feedbackEffect}
           </div>
         )}
@@ -120,11 +119,11 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
         {/* Main Screen Content Area */}
         <div className="flex-1 overflow-y-auto flex flex-col px-3.5 pb-2">
           {/* Header Title with Close & Mark Read */}
-          <div className="flex items-center justify-between py-2 border-b border-line mb-2">
+          <div className="flex items-center justify-between py-2 border-b border-[#242429] mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-fg tracking-tight">iArtist OS</span>
+              <span className="text-sm font-bold font-mono text-[#F4F4F6] tracking-tight">iArtist OS</span>
               {unreadCount > 0 && (
-                <span className="bg-primary text-white text-3xs font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                <span className="bg-[#FF4F00] text-white text-3xs font-mono font-bold px-1.5 py-0.5 rounded-[4px]">
                   {unreadCount} nuevo{unreadCount > 1 ? 's' : ''}
                 </span>
               )}
@@ -136,7 +135,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                     playSound('click');
                     onMarkAllAsRead();
                   }}
-                  className="text-3xs font-medium text-fg-muted hover:text-fg px-2 py-1 rounded bg-surface border border-line cursor-pointer"
+                  className="text-3xs font-mono font-medium text-[#8E8E99] hover:text-[#F4F4F6] px-2 py-1 rounded-[4px] bg-[#18181C] border border-[#242429] cursor-pointer"
                   title="Marcar todos como leídos"
                 >
                   Leídos
@@ -147,7 +146,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                   playSound('click');
                   onClose();
                 }}
-                className="w-7 h-7 rounded-full bg-surface hover:bg-line border border-line flex items-center justify-center text-fg-muted hover:text-fg cursor-pointer"
+                className="w-7 h-7 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] flex items-center justify-center text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -159,11 +158,11 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
             <div className="flex-1 flex flex-col min-h-0">
               {messages.length === 0 ? (
                 <div className="my-auto text-center p-6 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-surface border border-line mx-auto flex items-center justify-center text-fg-muted">
+                  <div className="w-12 h-12 rounded-[4px] bg-[#111114] border border-[#242429] mx-auto flex items-center justify-center text-[#8E8E99]">
                     <MessageSquare className="w-6 h-6" />
                   </div>
-                  <h4 className="text-sm font-bold text-fg">Bandeja de Entrada Vacía</h4>
-                  <p className="text-xs text-fg-muted">
+                  <h4 className="text-sm font-bold text-[#F4F4F6]">Bandeja de Entrada Vacía</h4>
+                  <p className="text-xs text-[#8E8E99]">
                     Avanza el mes para recibir propuestas de sellos, beats de productores o mensajes de rivales.
                   </p>
                 </div>
@@ -171,16 +170,16 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                 /* Thread View */
                 <div className="flex-1 flex flex-col min-h-0">
                   {/* Back to list button & Sender info */}
-                  <div className="flex items-center justify-between bg-surface border border-line rounded-xl p-2.5 mb-2 shrink-0">
+                  <div className="flex items-center justify-between bg-[#111114] border border-[#242429] rounded-[4px] p-2.5 mb-2 shrink-0">
                     <button
                       onClick={() => setSelectedMessageId(null)}
-                      className="text-xs font-semibold text-primary-soft hover:underline cursor-pointer flex items-center gap-1"
+                      className="text-xs font-mono font-semibold text-[#FF4F00] hover:underline cursor-pointer flex items-center gap-1"
                     >
                       ← Volver
                     </button>
                     <div className="text-right">
-                      <span className="text-xs font-bold text-fg block">{activeMessage.senderName}</span>
-                      <span className={`text-3xs px-1.5 py-0.5 rounded border ${getCategoryBadge(activeMessage.category).bg}`}>
+                      <span className="text-xs font-bold text-[#F4F4F6] block">{activeMessage.senderName}</span>
+                      <span className={`text-3xs font-mono px-1.5 py-0.5 rounded-[4px] border ${getCategoryBadge(activeMessage.category).bg}`}>
                         {getCategoryBadge(activeMessage.category).label}
                       </span>
                     </div>
@@ -190,14 +189,14 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                   <div className="flex-1 overflow-y-auto space-y-3 p-1">
                     {/* Incoming Message Bubble */}
                     <div className="flex items-start gap-2 max-w-[90%]">
-                      <div className={`w-8 h-8 rounded-full bg-gradient-to-tr ${activeMessage.senderAvatarColor || 'from-violet-500 to-fuchsia-500'} flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm`}>
+                      <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#F4F4F6] text-xs font-mono font-bold shrink-0">
                         {activeMessage.senderName.slice(0, 1)}
                       </div>
-                      <div className="bg-[#1C202F] border border-[#2D3349] p-3 rounded-2xl rounded-tl-sm text-xs text-slate-100 shadow-sm leading-relaxed">
+                      <div className="bg-[#111114] border border-[#242429] p-3 rounded-[4px] text-xs text-[#F4F4F6] leading-relaxed">
                         <p>{activeMessage.text}</p>
-                        <div className="flex items-center justify-end gap-1 mt-1.5 text-3xs text-slate-400">
+                        <div className="flex items-center justify-end gap-1 mt-1.5 text-2xs font-mono text-[#8E8E99]">
                           <span>Año {activeMessage.sentYear} • Mes {activeMessage.sentMonth}</span>
-                          <CheckCheck className="w-3 h-3 text-cyan-400" />
+                          <CheckCheck className="w-3 h-3 text-[#00E599]" />
                         </div>
                       </div>
                     </div>
@@ -205,13 +204,13 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                     {/* If Already Answered: Outgoing Bubble */}
                     {typeof activeMessage.chosenReplyIndex === 'number' && activeMessage.choices?.[activeMessage.chosenReplyIndex] && (
                       <div className="flex items-start justify-end gap-2 max-w-[90%] ml-auto">
-                        <div className="bg-primary/25 border border-primary/40 p-3 rounded-2xl rounded-tr-sm text-xs text-white shadow-sm leading-relaxed text-right">
-                          <p className="font-semibold text-primary-soft">
+                        <div className="bg-[#FF4F00]/15 border border-[#FF4F00]/40 p-3 rounded-[4px] text-xs text-white leading-relaxed text-right">
+                          <p className="font-semibold text-[#FF4F00]">
                             {activeMessage.choices[activeMessage.chosenReplyIndex].replyText}
                           </p>
-                          <div className="flex items-center justify-end gap-1 mt-1 text-3xs text-primary-soft/80">
+                          <div className="flex items-center justify-end gap-1 mt-1 text-2xs font-mono text-[#FF4F00]/80">
                             <span>Respuesta Enviada</span>
-                            <CheckCheck className="w-3 h-3 text-primary-soft" />
+                            <CheckCheck className="w-3 h-3 text-[#FF4F00]" />
                           </div>
                         </div>
                       </div>
@@ -220,25 +219,25 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
 
                   {/* Reply Choices Section */}
                   {typeof activeMessage.chosenReplyIndex !== 'number' && activeMessage.choices && activeMessage.choices.length > 0 && (
-                    <div className="pt-2 border-t border-line space-y-1.5 shrink-0">
-                      <span className="text-3xs uppercase font-bold text-fg-muted block px-1">
+                    <div className="pt-2 border-t border-[#242429] space-y-1.5 shrink-0">
+                      <span className="text-2xs uppercase font-mono font-bold text-[#8E8E99] block px-1">
                         Elige tu respuesta:
                       </span>
                       {activeMessage.choices.map((choice, idx) => (
                         <button
                           key={idx}
                           onClick={() => handleReply(activeMessage.id, idx)}
-                          className="w-full text-left bg-surface hover:bg-surface-raised border border-line hover:border-primary/50 p-2.5 rounded-xl transition-all cursor-pointer group active:scale-98 flex items-center justify-between gap-2"
+                          className="w-full text-left bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] p-2.5 rounded-[4px] transition-all cursor-pointer group active:translate-y-[1px] flex items-center justify-between gap-2"
                         >
                           <div className="min-w-0">
-                            <span className="text-xs font-bold text-fg group-hover:text-primary-soft block">
+                            <span className="text-xs font-bold text-[#F4F4F6] group-hover:text-[#FF4F00] block">
                               {choice.label}
                             </span>
-                            <p className="text-2xs text-fg-muted truncate">
+                            <p className="text-2xs text-[#8E8E99] truncate">
                               "{choice.replyText}"
                             </p>
                           </div>
-                          <Send className="w-3.5 h-3.5 text-primary group-hover:translate-x-0.5 transition-transform shrink-0" />
+                          <Send className="w-3.5 h-3.5 text-[#FF4F00] group-hover:translate-x-0.5 transition-transform shrink-0" />
                         </button>
                       ))}
                     </div>
@@ -253,31 +252,31 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                       <button
                         key={msg.id}
                         onClick={() => handleSelectMessage(msg)}
-                        className={`w-full text-left p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2.5 ${
+                        className={`w-full text-left p-2.5 rounded-[4px] border transition-all cursor-pointer flex items-center gap-2.5 ${
                           !msg.isRead
-                            ? 'bg-primary/10 border-primary/40 shadow-[0_0_10px_rgba(139,92,246,0.15)]'
-                            : 'bg-surface hover:bg-surface-raised border-line'
+                            ? 'bg-[#18181C] border-[#FF4F00]/50'
+                            : 'bg-[#111114] hover:bg-[#18181C] border-[#242429]'
                         }`}
                       >
-                        <div className={`w-10 h-10 rounded-full bg-gradient-to-tr ${msg.senderAvatarColor || 'from-violet-500 to-fuchsia-500'} flex items-center justify-center text-white text-xs font-bold shrink-0 relative`}>
+                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#F4F4F6] text-xs font-mono font-bold shrink-0 relative">
                           {msg.senderName.slice(0, 1)}
                           {!msg.isRead && (
-                            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-canvas" />
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FF4F00]" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
-                            <span className={`text-xs font-bold truncate ${!msg.isRead ? 'text-white' : 'text-fg'}`}>
+                            <span className={`text-xs font-bold truncate ${!msg.isRead ? 'text-[#FF4F00]' : 'text-[#F4F4F6]'}`}>
                               {msg.senderName}
                             </span>
-                            <span className="text-3xs text-fg-muted font-mono shrink-0">
+                            <span className="text-2xs text-[#8E8E99] font-mono shrink-0">
                               M{msg.sentMonth}
                             </span>
                           </div>
-                          <p className="text-2xs text-fg-muted truncate">
+                          <p className="text-2xs text-[#8E8E99] truncate">
                             {msg.text}
                           </p>
-                          <span className={`text-3xs px-1 rounded border inline-block mt-1 ${badge.bg}`}>
+                          <span className={`text-3xs font-mono px-1 rounded-[2px] border inline-block mt-1 ${badge.bg}`}>
                             {badge.label}
                           </span>
                         </div>
@@ -292,12 +291,12 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
           {/* TAB 2: TRENDX (VIRALES & TWITTER) */}
           {activeApp === 'feed' && (
             <div className="flex-1 overflow-y-auto space-y-2.5 pr-0.5">
-              <div className="bg-gradient-to-r from-blue-900/30 to-violet-900/30 border border-blue-500/30 rounded-xl p-3">
-                <span className="text-3xs uppercase font-bold text-blue-400 block tracking-wider">
+              <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-3">
+                <span className="text-2xs uppercase font-mono font-bold text-[#8E8E99] block tracking-wider">
                   Tendencias Globales
                 </span>
-                <h4 className="text-xs font-bold text-fg mt-0.5">#{player.name.replace(/\s+/g, '')}</h4>
-                <p className="text-3xs text-fg-muted">
+                <h4 className="text-xs font-bold text-[#F4F4F6] mt-0.5">#{player.name.replace(/\s+/g, '')}</h4>
+                <p className="text-2xs text-[#8E8E99] font-mono tabular-nums">
                   {(player.stats?.monthlyListeners || 50000).toLocaleString('es-AR')} personas hablando de esto en vivo.
                 </p>
               </div>
@@ -326,18 +325,18 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                   retweets: '980'
                 }
               ].map((tweet, idx) => (
-                <div key={idx} className="bg-surface border border-line rounded-xl p-3 space-y-1.5">
+                <div key={idx} className="bg-[#111114] border border-[#242429] rounded-[4px] p-3 space-y-1.5">
                   <div className="flex items-center justify-between text-2xs">
-                    <span className="font-bold text-fg">{tweet.handle}</span>
-                    <span className="text-fg-muted font-mono">{tweet.user}</span>
+                    <span className="font-bold text-[#F4F4F6]">{tweet.handle}</span>
+                    <span className="text-[#8E8E99] font-mono">{tweet.user}</span>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed">{tweet.text}</p>
-                  <div className="flex items-center gap-4 text-3xs text-fg-muted pt-1 border-t border-line">
-                    <span className="flex items-center gap-1 hover:text-rose-400">
-                      <Heart className="w-3 h-3 text-rose-500" /> {tweet.likes}
+                  <p className="text-xs text-[#F4F4F6] leading-relaxed">{tweet.text}</p>
+                  <div className="flex items-center gap-4 text-2xs font-mono text-[#8E8E99] pt-1 border-t border-[#242429]">
+                    <span className="flex items-center gap-1 hover:text-[#EF4444]">
+                      <Heart className="w-3 h-3 text-[#EF4444]" /> {tweet.likes}
                     </span>
-                    <span className="flex items-center gap-1 hover:text-emerald-400">
-                      <TrendingUp className="w-3 h-3 text-emerald-400" /> {tweet.retweets}
+                    <span className="flex items-center gap-1 hover:text-[#00E599]">
+                      <TrendingUp className="w-3 h-3 text-[#00E599]" /> {tweet.retweets}
                     </span>
                   </div>
                 </div>
@@ -349,21 +348,20 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
           {activeApp === 'wallet' && (
             <div className="flex-1 overflow-y-auto space-y-3 pr-0.5">
               {/* Virtual Black Card */}
-              <div className="w-full h-44 rounded-2xl bg-gradient-to-tr from-slate-950 via-purple-950 to-slate-900 border border-purple-500/40 p-4 text-white flex flex-col justify-between shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-2xl pointer-events-none" />
+              <div className="w-full h-44 rounded-[6px] bg-[#111114] border border-[#242429] p-4 text-[#F4F4F6] flex flex-col justify-between relative overflow-hidden">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold tracking-widest uppercase text-purple-300">
+                  <span className="text-xs font-mono font-bold tracking-widest uppercase text-[#8E8E99]">
                     ARTIST BLACK CARD
                   </span>
-                  <Sparkles className="w-4 h-4 text-warning" />
+                  <Sparkles className="w-4 h-4 text-[#F59E0B]" />
                 </div>
                 <div>
-                  <span className="text-3xs uppercase tracking-wider text-slate-400 block">Fondos Disponibles</span>
-                  <span className="text-2xl font-bold font-mono tracking-tight text-emerald-400">
+                  <span className="text-2xs uppercase font-mono tracking-wider text-[#8E8E99] block">Fondos Disponibles</span>
+                  <span className="text-2xl font-bold font-mono tabular-nums tracking-tight text-[#00E599]">
                     {formatMoney(player.stats?.funds || 0)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-2xs font-mono text-slate-400">
+                <div className="flex items-center justify-between text-2xs font-mono text-[#8E8E99]">
                   <span>TITULAR: {player.name.toUpperCase()}</span>
                   <span>EXP: 12/32</span>
                 </div>
@@ -371,23 +369,23 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
 
               {/* Quick Stats Grid */}
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-surface border border-line p-2.5 rounded-xl">
-                  <span className="text-3xs text-fg-muted uppercase block">Comunidad Fiel</span>
-                  <span className="font-bold text-primary-soft font-mono">
+                <div className="bg-[#111114] border border-[#242429] p-2.5 rounded-[4px]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-mono">Comunidad Fiel</span>
+                  <span className="font-bold text-[#F4F4F6] font-mono tabular-nums">
                     {formatFans(player.stats?.fansCount || 0)}
                   </span>
                 </div>
-                <div className="bg-surface border border-line p-2.5 rounded-xl">
-                  <span className="text-3xs text-fg-muted uppercase block">Nivel de Hype</span>
-                  <span className="font-bold text-warning font-mono">
+                <div className="bg-[#111114] border border-[#242429] p-2.5 rounded-[4px]">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-mono">Nivel de Hype</span>
+                  <span className="font-bold text-[#F59E0B] font-mono tabular-nums">
                     {player.stats?.hype || 0}/100 🔥
                   </span>
                 </div>
               </div>
 
               {/* Financial Tip */}
-              <div className="bg-surface border border-line p-3 rounded-xl text-xs text-fg-muted space-y-1">
-                <span className="font-bold text-fg block">💡 Consejo de Mánager:</span>
+              <div className="bg-[#111114] border border-[#242429] p-3 rounded-[4px] text-xs text-[#8E8E99] space-y-1">
+                <span className="font-bold text-[#F4F4F6] block font-mono">💡 Consejo de Mánager:</span>
                 <p>
                   Mantén siempre un colchón de al menos $15.000 para emergencias de giras y producciones de videoclips.
                 </p>
@@ -397,23 +395,23 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
         </div>
 
         {/* Bottom Smartphone Navigation Dock */}
-        <div className="h-16 border-t border-line bg-surface/95 backdrop-blur-md px-6 flex items-center justify-around shrink-0 z-20">
+        <div className="h-14 border-t border-[#242429] bg-[#111114] px-6 flex items-center justify-around shrink-0 z-20">
           <button
             onClick={() => {
               playSound('click');
               setActiveApp('messages');
             }}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${
-              activeApp === 'messages' ? 'text-primary font-bold' : 'text-fg-muted hover:text-fg'
+            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-mono ${
+              activeApp === 'messages' ? 'text-[#FF4F00] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
             <div className="relative">
               <MessageSquare className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary ring-2 ring-surface" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#FF4F00]" />
               )}
             </div>
-            <span className="text-3xs">DMs</span>
+            <span className="text-3xs uppercase">DMs</span>
           </button>
 
           <button
@@ -421,12 +419,12 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
               playSound('click');
               setActiveApp('feed');
             }}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${
-              activeApp === 'feed' ? 'text-primary font-bold' : 'text-fg-muted hover:text-fg'
+            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-mono ${
+              activeApp === 'feed' ? 'text-[#FF4F00] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
             <TrendingUp className="w-5 h-5" />
-            <span className="text-3xs">TrendX</span>
+            <span className="text-3xs uppercase">TrendX</span>
           </button>
 
           <button
@@ -434,18 +432,18 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
               playSound('click');
               setActiveApp('wallet');
             }}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${
-              activeApp === 'wallet' ? 'text-primary font-bold' : 'text-fg-muted hover:text-fg'
+            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-mono ${
+              activeApp === 'wallet' ? 'text-[#FF4F00] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
             <CreditCard className="w-5 h-5" />
-            <span className="text-3xs">Banco</span>
+            <span className="text-3xs uppercase">Banco</span>
           </button>
         </div>
 
         {/* Home Indicator Bar */}
-        <div className="h-4 bg-[#0E1017] flex items-center justify-center shrink-0">
-          <div className="w-28 h-1 rounded-full bg-white/30" />
+        <div className="h-3 bg-[#09090B] flex items-center justify-center shrink-0">
+          <div className="w-24 h-1 rounded-[1px] bg-[#242429]" />
         </div>
       </div>
     </div>

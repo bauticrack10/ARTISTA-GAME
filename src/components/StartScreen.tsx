@@ -63,33 +63,28 @@ export const StartScreen: React.FC<StartScreenProps> = ({
   };
 
   return (
-    <div
-      className="min-h-screen bg-canvas text-fg flex flex-col justify-between relative overflow-hidden isolate selection:bg-primary/30 selection:text-white"
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-    >
-      {/* Ambient Stage Glow Orbs */}
-      <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-primary/20 via-accent/10 to-transparent blur-[120px] pointer-events-none z-0" />
-      <div className="absolute top-[30%] right-[-100px] w-[500px] h-[400px] bg-accent/10 blur-[140px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] left-[-100px] w-[500px] h-[400px] bg-info/10 blur-[140px] pointer-events-none z-0" />
+    <div className="min-h-screen bg-[#09090B] text-[#F4F4F6] flex flex-col justify-between relative overflow-hidden isolate selection:bg-[#FF4F00] selection:text-white">
+      {/* Subtle Analog Grain Overlay */}
+      <div className="absolute inset-0 analog-grain pointer-events-none opacity-40 z-0" />
 
       {/* Top Bar / Brand */}
-      <header className="max-w-6xl w-full mx-auto px-6 py-6 flex items-center justify-between z-10">
+      <header className="max-w-6xl w-full mx-auto px-6 py-6 flex items-center justify-between z-10 border-b border-[#242429]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-white flex items-center justify-center shadow-[0_0_15px_rgba(139,92,246,0.5)]">
+          <div className="w-9 h-9 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#FF4F00] flex items-center justify-center">
             <Disc3 className="w-5 h-5 animate-spin-slow" />
           </div>
           <div>
-            <span className="text-base font-bold tracking-[-0.5px] text-fg block leading-tight">
+            <span className="text-base font-extrabold tracking-tight text-[#F4F4F6] block leading-tight">
               EL ARTISTA
             </span>
-            <span className="text-2xs font-semibold text-fg-muted tracking-wider uppercase">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[#52525B]">
               Music Career Simulator
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-fg-muted bg-surface border border-line px-3 py-1 rounded-md shadow-xs">
+          <span className="text-xs font-mono text-[#8E8E99] bg-[#111114] border border-[#242429] px-2.5 py-1 rounded-[4px] tabular-nums">
             v2.0 • 2026
           </span>
         </div>
@@ -97,19 +92,19 @@ export const StartScreen: React.FC<StartScreenProps> = ({
 
       {/* Main Hero & Menu */}
       <main className="max-w-5xl w-full mx-auto px-6 py-8 flex flex-col items-center text-center my-auto space-y-8 z-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface/90 border border-primary/40 text-[#CBD5E1] text-xs font-medium backdrop-blur-md shadow-[0_0_12px_rgba(139,92,246,0.2)]">
-          <Sparkles className="w-3.5 h-3.5 text-primary" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99] text-xs font-mono">
+          <Sparkles className="w-3.5 h-3.5 text-[#FF4F00]" />
           <span>Simulador Profundo de la Industria Musical & Estudio</span>
         </div>
 
         <div className="space-y-3 max-w-3xl">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-1.5px] text-fg leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#F4F4F6] leading-[1.05]">
             Construí tu Legado{' '}
-            <span className="bg-gradient-to-r from-[#8B5CF6] via-[#C084FC] to-[#EC4899] bg-clip-text text-transparent">
+            <span className="text-[#FF4F00]">
               Musical
             </span>
           </h1>
-          <p className="text-fg-muted text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          <p className="text-[#8E8E99] text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             Desde tus primeras grabaciones caseras en el underground hasta encabezar los charts globales y recibir premios de leyenda. Creá tu artista, moldeá tu sonido y desafiá a la industria.
           </p>
         </div>
@@ -117,16 +112,16 @@ export const StartScreen: React.FC<StartScreenProps> = ({
         {/* Genre tags (informative, not interactive) */}
         <ul className="flex items-center justify-center gap-2 flex-wrap max-w-2xl" aria-label="Géneros disponibles">
           {[
-            { label: 'Trap Latino', icon: Flame, color: 'text-primary-soft' },
-            { label: 'Reggaetón & Urbano', icon: TreePalm, color: 'text-[#FBBF24]' },
-            { label: 'Pop Moderno', icon: Sparkles, color: 'text-[#F472B6]' },
-            { label: 'R&B & Neo-Soul', icon: Mic, color: 'text-[#818CF8]' },
-            { label: 'Rock Alternativo', icon: Guitar, color: 'text-[#34D399]' },
-            { label: 'Drill & Grime', icon: Zap, color: 'text-[#FB7185]' }
+            { label: 'Trap Latino', icon: Flame, color: 'text-[#FF4F00]' },
+            { label: 'Reggaetón & Urbano', icon: TreePalm, color: 'text-[#F59E0B]' },
+            { label: 'Pop Moderno', icon: Sparkles, color: 'text-[#F4F4F6]' },
+            { label: 'R&B & Neo-Soul', icon: Mic, color: 'text-[#8E8E99]' },
+            { label: 'Rock Alternativo', icon: Guitar, color: 'text-[#00E599]' },
+            { label: 'Drill & Grime', icon: Zap, color: 'text-[#EF4444]' }
           ].map(({ label, icon: Icon, color }) => (
             <li
               key={label}
-              className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full bg-white/[0.04] text-[#CBD5E1] border border-white/[0.08]"
+              className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-[4px] bg-[#111114] text-[#8E8E99] border border-[#242429]"
             >
               <Icon className={`w-3.5 h-3.5 ${color}`} aria-hidden="true" />
               {label}
@@ -135,12 +130,12 @@ export const StartScreen: React.FC<StartScreenProps> = ({
         </ul>
 
         {/* Grouped Action Buttons */}
-        <div className="w-full max-w-md space-y-3.5">
+        <div className="w-full max-w-md space-y-3">
           {/* NUEVA CARRERA (Dominant Primary CTA) */}
           <button
             id="btn-start-new-career"
             onClick={onNewCareer}
-            className="w-full py-4 px-6 rounded-lg bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:from-[#7C3AED] hover:to-[#DB2777] text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(139,92,246,0.4)] cursor-pointer"
+            className="w-full py-3.5 px-6 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-mono font-bold text-sm flex items-center justify-center gap-2.5 transition-all active:translate-y-[1px] cursor-pointer border border-[#FF4F00]"
           >
             <UserPlus className="w-4 h-4 text-white" />
             <span>Iniciar Nueva Carrera</span>
@@ -151,26 +146,26 @@ export const StartScreen: React.FC<StartScreenProps> = ({
             <button
               id="btn-continue-career"
               onClick={onContinue}
-              className="w-full p-4 rounded-xl bg-surface hover:bg-[#1C1F28] border border-line hover:border-success/60 text-left transition-all cursor-pointer group shadow-md hover:scale-[1.01]"
+              className="w-full p-4 rounded-[6px] bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] text-left transition-all cursor-pointer group"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-success/15 border border-success/40 text-success flex items-center justify-center group-hover:bg-success group-hover:text-black transition-colors">
+                  <div className="w-7 h-7 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#00E599] flex items-center justify-center group-hover:border-[#00E599] transition-colors">
                     <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                   </div>
-                  <span className="font-bold text-fg text-xs group-hover:text-white">
+                  <span className="font-bold text-[#F4F4F6] text-xs font-mono">
                     Continuar Partida Guardada
                   </span>
                 </div>
-                <span className="text-xs font-mono font-semibold text-success bg-success/10 border border-success/30 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-mono font-semibold text-[#00E599] bg-[#00E599]/10 border border-[#00E599]/30 px-2 py-0.5 rounded-[2px] tabular-nums">
                   {TimeSystem.getMonthName(savedGame.month || 1)} {savedGame.year || 2026} • Año {savedGame.careerYear || 1}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs text-fg-muted pl-9">
-                <span className="font-medium text-[#CBD5E1]">
+              <div className="flex items-center justify-between text-xs text-[#8E8E99] pl-9 font-mono tabular-nums">
+                <span className="font-medium text-[#F4F4F6]">
                   {savedGame.player.name || 'Artista'} • {savedGame.player.country || 'Argentina'}
                 </span>
-                <span className="font-mono font-bold text-success">
+                <span className="font-mono font-bold text-[#00E599] tabular-nums">
                   ${(savedGame.player.stats?.funds ?? 0).toLocaleString('es-AR')}
                 </span>
               </div>
@@ -178,7 +173,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
           ) : (
             <button
               disabled
-              className="w-full py-3.5 px-4 rounded-lg bg-surface/50 border border-line/50 text-fg-subtle opacity-60 text-xs flex items-center justify-center gap-2 cursor-not-allowed"
+              className="w-full py-3 px-4 rounded-[4px] bg-[#111114]/60 border border-[#242429] text-[#52525B] text-xs font-mono flex items-center justify-center gap-2 cursor-not-allowed"
             >
               <Play className="w-3.5 h-3.5 opacity-40" />
               <span>Continuar • Sin partida guardada</span>
@@ -189,18 +184,18 @@ export const StartScreen: React.FC<StartScreenProps> = ({
           <div className="grid grid-cols-2 gap-3 pt-1">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="btn-ghost-dark text-xs !py-2.5 rounded-lg border border-line bg-surface/70 hover:bg-surface text-fg-muted hover:text-fg hover:border-primary/50 transition-all flex items-center justify-center gap-2"
+              className="text-xs py-2 rounded-[4px] border border-[#242429] bg-[#111114] hover:bg-[#18181C] hover:border-[#3F3F46] text-[#8E8E99] hover:text-[#F4F4F6] font-mono transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <FolderOpen className="w-3.5 h-3.5 text-primary" />
+              <FolderOpen className="w-3.5 h-3.5 text-[#8E8E99]" />
               <span>Cargar JSON</span>
             </button>
 
             <button
               onClick={onLoadDemo}
-              className="btn-ghost-dark text-xs !py-2.5 rounded-lg border border-line bg-surface/70 hover:bg-surface text-fg-muted hover:text-fg hover:border-warning/50 transition-all flex items-center justify-center gap-2"
+              className="text-xs py-2 rounded-[4px] border border-[#242429] bg-[#111114] hover:bg-[#18181C] hover:border-[#3F3F46] text-[#8E8E99] hover:text-[#F4F4F6] font-mono transition-all flex items-center justify-center gap-2 cursor-pointer"
               title="Cargar partida de prueba con Bhavi en Año 10"
             >
-              <Sparkles className="w-3.5 h-3.5 text-warning" />
+              <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
               <span>Modo Demo</span>
             </button>
           </div>
@@ -214,61 +209,61 @@ export const StartScreen: React.FC<StartScreenProps> = ({
           />
         </div>
 
-        {/* 4 Feature Highlights Grid with Glassmorphism and Vibrant Neon Accents */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 w-full pt-4 text-left">
-          <div className="bg-surface p-4 rounded-xl border border-line hover:border-primary/50 hover:shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all group">
-            <div className="w-8 h-8 rounded-md bg-primary/15 border border-primary/30 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <Disc3 className="w-4 h-4 text-primary" />
+        {/* 4 Feature Highlights Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full pt-4 text-left">
+          <div className="bg-[#111114] p-4 rounded-[6px] border border-[#242429] hover:border-[#3F3F46] transition-all group">
+            <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center mb-2.5">
+              <Disc3 className="w-4 h-4 text-[#FF4F00]" />
             </div>
-            <h4 className="text-xs font-bold text-fg">Estudio & Hits</h4>
-            <p className="text-xs text-fg-muted mt-1 leading-relaxed">Producción de singles, álbumes conceptuales y feats.</p>
+            <h4 className="text-xs font-bold text-[#F4F4F6]">Estudio & Hits</h4>
+            <p className="text-xs text-[#8E8E99] mt-1 leading-relaxed">Producción de singles, álbumes conceptuales y feats.</p>
           </div>
 
-          <div className="bg-surface p-4 rounded-xl border border-line hover:border-info/50 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all group">
-            <div className="w-8 h-8 rounded-md bg-info/15 border border-info/30 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <TrendingUp className="w-4 h-4 text-info" />
+          <div className="bg-[#111114] p-4 rounded-[6px] border border-[#242429] hover:border-[#3F3F46] transition-all group">
+            <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center mb-2.5">
+              <TrendingUp className="w-4 h-4 text-[#00E599]" />
             </div>
-            <h4 className="text-xs font-bold text-fg">Charts Globales</h4>
-            <p className="text-xs text-fg-muted mt-1 leading-relaxed">Rankings regionales en tiempo real y rotación radial.</p>
+            <h4 className="text-xs font-bold text-[#F4F4F6]">Charts Globales</h4>
+            <p className="text-xs text-[#8E8E99] mt-1 leading-relaxed">Rankings regionales en tiempo real y rotación radial.</p>
           </div>
 
-          <div className="bg-surface p-4 rounded-xl border border-line hover:border-success/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all group">
-            <div className="w-8 h-8 rounded-md bg-success/15 border border-success/30 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <Sparkles className="w-4 h-4 text-success" />
+          <div className="bg-[#111114] p-4 rounded-[6px] border border-[#242429] hover:border-[#3F3F46] transition-all group">
+            <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center mb-2.5">
+              <Sparkles className="w-4 h-4 text-[#F59E0B]" />
             </div>
-            <h4 className="text-xs font-bold text-fg">Giras Mundiales</h4>
-            <p className="text-xs text-fg-muted mt-1 leading-relaxed">Desde clubes underground hasta estadios masivos.</p>
+            <h4 className="text-xs font-bold text-[#F4F4F6]">Giras Mundiales</h4>
+            <p className="text-xs text-[#8E8E99] mt-1 leading-relaxed">Desde clubes underground hasta estadios masivos.</p>
           </div>
 
-          <div className="bg-surface p-4 rounded-xl border border-line hover:border-warning/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] transition-all group">
-            <div className="w-8 h-8 rounded-md bg-warning/15 border border-warning/30 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <Award className="w-4 h-4 text-warning" />
+          <div className="bg-[#111114] p-4 rounded-[6px] border border-[#242429] hover:border-[#3F3F46] transition-all group">
+            <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center mb-2.5">
+              <Award className="w-4 h-4 text-[#F4F4F6]" />
             </div>
-            <h4 className="text-xs font-bold text-fg">Galas & Eras</h4>
-            <p className="text-xs text-fg-muted mt-1 leading-relaxed">Grammys, transiciones de era y legado histórico.</p>
+            <h4 className="text-xs font-bold text-[#F4F4F6]">Galas & Eras</h4>
+            <p className="text-xs text-[#8E8E99] mt-1 leading-relaxed">Grammys, transiciones de era y legado histórico.</p>
           </div>
         </div>
       </main>
 
       {/* Footer Features Info */}
-      <footer className="max-w-6xl w-full mx-auto px-6 py-4 border-t border-line text-xs text-fg-muted flex flex-wrap items-center justify-between gap-4 z-10">
+      <footer className="max-w-6xl w-full mx-auto px-6 py-4 border-t border-[#242429] text-xs text-[#8E8E99] font-mono flex flex-wrap items-center justify-between gap-4 z-10">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-1.5">
-            <TrendingUp className="w-3.5 h-3.5 text-info" />
+            <TrendingUp className="w-3.5 h-3.5 text-[#00E599]" />
             <span>Charts Oficiales Top 50</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-primary" />
+            <Users className="w-3.5 h-3.5 text-[#FF4F00]" />
             <span>Mundo Autónomo de NPCs</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Award className="w-3.5 h-3.5 text-warning" />
+            <Award className="w-3.5 h-3.5 text-[#F59E0B]" />
             <span>Galas & Premios Anuales</span>
           </div>
         </div>
 
         <div>
-          <span className="font-mono text-xs">Versión 2.0 • Studio After Dark</span>
+          <span className="font-mono text-xs text-[#52525B]">Versión 2.0 • Studio Analog Master</span>
         </div>
       </footer>
     </div>
