@@ -20,7 +20,8 @@
     "test:curves": "tsx test-streaming-catalog-and-curves.ts",
     "test:sync": "tsx test-streaming-sync-engine.ts",
     "test:emergent": "tsx test-emergent-events.ts",
-    "test:collab-qa": "tsx test-collab-and-offers-qa.ts"
+    "test:collab-qa": "tsx test-collab-and-offers-qa.ts",
+    "test:simulation": "tsx test-phone-and-simulation-enhancements.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

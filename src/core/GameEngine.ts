@@ -38,8 +38,13 @@ import {
   YouTubeComment,
   SnippetCampaignConfig,
   SnippetCampaignResult,
-  TikTokInfluencerTier
+  TikTokInfluencerTier,
+  ArtistPhoneMessage,
+  ArtistPhoneChoice,
+  YearEndWrappedData,
+  SimulationStepMonths
 } from '../types';
+import { PhoneMessageEngine } from '../systems/PhoneMessageEngine';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
 import { INITIAL_LABELS } from '../data/labels';
@@ -305,7 +310,11 @@ export class GameEngine {
       activeCollabPacts: [],
       playlists: EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {}),
       festivalInvitations: [],
-      festivalHistory: []
+      festivalHistory: [],
+      phoneMessages: [],
+      unreadPhoneCount: 0,
+      activeYearEndWrapped: null,
+      playerWrappedHistory: []
     };
   }
 
@@ -752,6 +761,9 @@ export class GameEngine {
       budget: number;
       directorTier: string;
     };
+    isDissTrack?: boolean;
+    dissTargetArtistId?: string;
+    dissAngle?: 'lyrical' | 'expose' | 'flex_numbers';
   }): Song {
     const player = this.getPlayer();
     if (!params.title || !params.title.trim()) {
@@ -920,10 +932,133 @@ export class GameEngine {
         views: initialViews,
         releaseYear: this.world.currentYear,
         releaseMonth: this.world.currentMonth
-      } : undefined
+      } : undefined,
+      isDissTrack: params.isDissTrack,
+      dissTargetArtistId: params.dissTargetArtistId,
+      dissAngle: params.dissAngle
     };
 
     this.world.songs[songId] = newSong;
+
+    // Soporte de Diss Tracks en releaseSong: enfrentamiento lírico
+    if (params.isDissTrack && params.dissTargetArtistId) {
+      const target = this.world.artists[params.dissTargetArtistId];
+      if (target) {
+        // Comparar habilidad lírica y hype del jugador vs el defensor
+        const playerLyrical = Number((player.personality.skill * 0.40 + player.personality.originality * 0.35 + player.stats.artisticCredibility * 0.25).toFixed(1));
+        const targetLyrical = Number((target.personality.skill * 0.40 + target.personality.originality * 0.35 + target.stats.artisticCredibility * 0.25).toFixed(1));
+        const playerPower = playerLyrical + (player.stats.hype * 0.1);
+        const targetPower = targetLyrical + (target.stats.hype * 0.1);
+        const diff = playerPower - targetPower;
+
+        let outcomeType: 'lyrical_victory' | 'street_tie' | 'backfire' = 'street_tie';
+        let headline = '';
+        let body = '';
+        let hypeGainPlayer = 28;
+        let hypeGainTarget = 15;
+        let affinityDelta = -40;
+        let respectDelta = 5;
+
+        if (diff >= 3) {
+          outcomeType = 'lyrical_victory';
+          hypeGainPlayer = 45;
+          hypeGainTarget = 10;
+          respectDelta = 15;
+          affinityDelta = -50;
+          headline = `¡Guerra Lírica Total! "${params.title}" de ${player.name} destroza a ${target.name} con barras demoledoras`;
+          body = `El nuevo single de ${player.name} es una tiradera despiadada contra ${target.name}. La escena urbana declara ganador unánime a ${player.name} (${playerPower.toFixed(1)} vs ${targetPower.toFixed(1)}).`;
+          player.stats.artisticCredibility = Math.min(100, player.stats.artisticCredibility + 6);
+          target.stats.reputation = Math.max(0, target.stats.reputation - 8);
+        } else if (diff > -3) {
+          outcomeType = 'street_tie';
+          hypeGainPlayer = 28;
+          hypeGainTarget = 25;
+          respectDelta = 10;
+          affinityDelta = -35;
+          headline = `¡Choque de Titanes! "${params.title}" de ${player.name} enciende un feroz enfrentamiento con ${target.name}`;
+          body = `La tiradera de ${player.name} contra ${target.name} generó un debate volcánico en redes. Ambos artistas demuestran calibre de peso pesado en un cruce parejísimo (${playerPower.toFixed(1)} vs ${targetPower.toFixed(1)}).`;
+          player.stats.artisticCredibility = Math.min(100, player.stats.artisticCredibility + 2);
+        } else {
+          outcomeType = 'backfire';
+          hypeGainPlayer = 15;
+          hypeGainTarget = 35;
+          respectDelta = 0;
+          affinityDelta = -30;
+          headline = `¡Tiro por la culata! El diss track "${params.title}" de ${player.name} contra ${target.name} genera burlas y memes`;
+          body = `La tiradera de ${player.name} no alcanzó el peso lírico de ${target.name} (${playerPower.toFixed(1)} vs ${targetPower.toFixed(1)}). En redes destacan la superioridad técnica del defensor.`;
+          player.stats.reputation = Math.max(0, player.stats.reputation - 6);
+          player.stats.artisticCredibility = Math.max(0, player.stats.artisticCredibility - 5);
+          target.stats.reputation = Math.min(100, target.stats.reputation + 5);
+        }
+
+        player.stats.hype = Math.min(100, player.stats.hype + hypeGainPlayer);
+        target.stats.hype = Math.min(100, target.stats.hype + hypeGainTarget);
+
+        RelationshipEngine.modifyRelationship(
+          player,
+          target,
+          affinityDelta,
+          respectDelta,
+          'rival',
+          `Single Tiradera "${params.title}" [${outcomeType}] (Lírica: ${playerLyrical} vs ${targetLyrical}) en Año ${this.world.currentYear} - Mes ${this.world.currentMonth}.`
+        );
+
+        const relA = player.relationships[target.id];
+        if (relA) {
+          relA.activeRivalry = true;
+          relA.lastDissYear = this.world.currentYear;
+          relA.lastDissMonth = this.world.currentMonth;
+          relA.dissCount = (relA.dissCount || 0) + 1;
+        }
+        const relB = target.relationships[player.id];
+        if (relB) {
+          relB.activeRivalry = true;
+          relB.lastDissYear = this.world.currentYear;
+          relB.lastDissMonth = this.world.currentMonth;
+          relB.dissCount = (relB.dissCount || 0) + 1;
+        }
+
+        if (!this.world.activeBeefs) this.world.activeBeefs = {};
+        const beefId = `beef_${target.id}`;
+        const existingBeef = this.world.activeBeefs[beefId];
+        this.world.activeBeefs[beefId] = {
+          id: beefId,
+          targetId: target.id,
+          targetName: target.name,
+          stage: existingBeef ? 'all_out_war' : 'diss_tracks',
+          hypeMultiplier: outcomeType === 'lyrical_victory' ? 1.6 : 1.3,
+          hypeGenerated: (existingBeef?.hypeGenerated || 0) + hypeGainPlayer,
+          tensionLevel: Math.min(100, (existingBeef?.tensionLevel || 50) + 35),
+          dissTracksExchanged: [...(existingBeef?.dissTracksExchanged || []), params.title],
+          turnsActive: (existingBeef?.turnsActive || 0) + 1,
+          lastActionDescription: headline,
+          playerWon: outcomeType === 'lyrical_victory' ? true : outcomeType === 'backfire' ? false : undefined
+        };
+
+        this.world.news.unshift({
+          id: `news_diss_track_${songId}`,
+          headline,
+          body,
+          year: this.world.currentYear,
+          month: this.world.currentMonth,
+          category: 'rivalry',
+          relatedArtistIds: [player.id, target.id],
+          sentiment: outcomeType === 'backfire' ? 'negative' : 'shocking',
+          importance: 5
+        });
+
+        if (!this.world.socialFeed) this.world.socialFeed = [];
+        const dissPosts = SocialFeedEngine.generateDissLyricalPosts(
+          this.world,
+          player,
+          target,
+          outcomeType,
+          playerLyrical,
+          targetLyrical
+        );
+        this.world.socialFeed.unshift(...dissPosts);
+      }
+    }
 
     if (params.featuredArtistIds && params.featuredArtistIds.length > 0) {
       if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
@@ -2588,12 +2723,12 @@ export class GameEngine {
     this.advanceCycle(6);
   }
 
-  public advanceCycle(monthsCount: 6 | 12 = 6, isVacation: boolean = false) {
+  public advanceCycle(monthsCount: 1 | 3 | 6 | 12 = 1, isVacation: boolean = false) {
     const collectedEvents: EventDefinition[] = [];
     const cycleStartYear = this.world.currentYear;
     const cycleStartMonth = this.world.currentMonth;
     let organicEventsCount = 0;
-    const maxOrganicEvents = monthsCount === 12 ? 2 : 1;
+    const maxOrganicEvents = monthsCount >= 12 ? 2 : 1;
 
     for (let step = 0; step < monthsCount; step++) {
       const isNewYear = this.world.currentMonth === 12;
@@ -2828,6 +2963,9 @@ export class GameEngine {
             importance: 5
           });
         }
+
+        // Generar Spotify Wrapped Anual del jugador
+        this.generateYearEndWrapped(droughtYear);
       }
 
       // 7. Update player career stage & legacy
@@ -3028,6 +3166,288 @@ export class GameEngine {
       this.world.socialFeed.length = 100;
     }
 
+    // Efectos de vacaciones si se activaron en el ciclo
+    if (isVacation) {
+      player.stats.energy = Math.min(100, player.stats.energy + 25);
+      player.stats.hype = Math.max(10, player.stats.hype - 5);
+      this.world.news.unshift({
+        id: `news_vacation_${Date.now()}`,
+        headline: `${player.name} se toma unas vacaciones para desconectar del ritmo frenético`,
+        body: `El artista decidió poner una pausa temporal en su agenda para recuperar energía física y mental lejos de los reflectores.`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: 'personal',
+        relatedArtistIds: [player.id],
+        sentiment: 'neutral',
+        importance: 2
+      });
+    }
+
+    // Generación e integración de mensajes interactivos del teléfono móvil (WhatsApp / DMs)
+    if (!this.world.phoneMessages) this.world.phoneMessages = [];
+    const incomingMessages = PhoneMessageEngine.generateSeasonalMessages(player, this.world, monthsCount);
+    if (incomingMessages.length > 0) {
+      this.world.phoneMessages.unshift(...incomingMessages);
+      if (this.world.phoneMessages.length > 40) {
+        this.world.phoneMessages.length = 40;
+      }
+    }
+    this.updateUnreadPhoneCount();
+
+    this.notify();
+  }
+
+  // ==========================================
+  // PILAR SMARTPHONE & DMs INTERACTIVOS
+  // ==========================================
+
+  public replyToPhoneMessage(messageId: string, choiceIndex: number): void {
+    if (!this.world.phoneMessages) return;
+    const msg = this.world.phoneMessages.find(m => m.id === messageId);
+    if (!msg) return;
+
+    // Si ya fue respondido, ignorar
+    if (msg.chosenReplyIndex !== undefined) return;
+
+    const choice = msg.choices?.[choiceIndex];
+    if (!choice) return;
+
+    msg.isRead = true;
+    msg.chosenReplyIndex = choiceIndex;
+
+    const player = this.getPlayer();
+    const effects = choice.effects;
+
+    if (effects.fundsDelta) {
+      player.stats.funds = Math.max(0, player.stats.funds + effects.fundsDelta);
+      this.recordFinancialTransaction({
+        type: effects.fundsDelta > 0 ? 'income' : 'expense',
+        category: effects.fundsDelta > 0 ? 'sponsorship' : 'production',
+        amount: Math.abs(effects.fundsDelta),
+        description: `Smartphone: ${choice.label}`
+      });
+    }
+
+    if (effects.hypeDelta) {
+      player.stats.hype = Math.max(0, Math.min(100, player.stats.hype + effects.hypeDelta));
+    }
+
+    if (effects.fansDelta) {
+      player.stats.fansCount = Math.max(0, player.stats.fansCount + effects.fansDelta);
+    }
+
+    if (effects.energyDelta) {
+      player.stats.energy = Math.max(0, Math.min(100, player.stats.energy + effects.energyDelta));
+    }
+
+    if (effects.relationshipDelta) {
+      const targetArtist = this.world.artists[effects.relationshipDelta.artistId];
+      if (targetArtist) {
+        RelationshipEngine.modifyRelationship(
+          player,
+          targetArtist,
+          effects.relationshipDelta.delta,
+          Math.floor(effects.relationshipDelta.delta * 0.5),
+          undefined,
+          `Interacción Smartphone: ${choice.label} (${effects.relationshipDelta.delta > 0 ? '+' : ''}${effects.relationshipDelta.delta} Afinidad)`
+        );
+      }
+    }
+
+    if (effects.newsHeadline) {
+      if (!this.world.news) this.world.news = [];
+      this.world.news.unshift({
+        id: `news_phone_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        headline: effects.newsHeadline,
+        body: `${player.name} tomó una decisión en su carrera: "${choice.replyText}"`,
+        year: this.world.currentYear,
+        month: this.world.currentMonth,
+        category: msg.category === 'manager' ? 'industry' : msg.category === 'drama' ? 'rivalry' : 'culture',
+        relatedArtistIds: effects.relationshipDelta ? [player.id, effects.relationshipDelta.artistId] : [player.id],
+        sentiment: (effects.hypeDelta || 0) >= 0 ? 'positive' : 'negative',
+        importance: 3
+      });
+    }
+
+    this.updateUnreadPhoneCount();
+    this.notify();
+  }
+
+  public markAllPhoneMessagesRead(): void {
+    if (this.world.phoneMessages) {
+      for (const msg of this.world.phoneMessages) {
+        msg.isRead = true;
+      }
+    }
+    this.world.unreadPhoneCount = 0;
+    this.notify();
+  }
+
+  private updateUnreadPhoneCount(): void {
+    if (!this.world.phoneMessages) {
+      this.world.unreadPhoneCount = 0;
+      return;
+    }
+    this.world.unreadPhoneCount = this.world.phoneMessages.filter(m => !m.isRead).length;
+  }
+
+  // ==========================================
+  // PILAR SPOTIFY WRAPPED ANUAL
+  // ==========================================
+
+  public generateYearEndWrapped(year: number): YearEndWrappedData {
+    const player = this.getPlayer();
+    const playerSongs = Object.values(this.world.songs).filter(s => s.artistId === player.id);
+
+    // Streams acumulados ese año y canción más escuchada
+    let topSongTitle = playerSongs.length > 0 ? playerSongs[0].title : 'Sin lanzamientos';
+    let topSongStreams = 0;
+    let totalStreamsYear = 0;
+
+    for (const song of playerSongs) {
+      const streamsThisYear = song.monthlyStreamsHistory && song.monthlyStreamsHistory.length > 0
+        ? song.monthlyStreamsHistory.slice(-12).reduce((a, b) => a + b, 0)
+        : song.streamsTotal;
+
+      totalStreamsYear += streamsThisYear;
+      if (streamsThisYear > topSongStreams || (topSongStreams === 0 && song.streamsTotal > 0)) {
+        topSongStreams = streamsThisYear > 0 ? streamsThisYear : song.streamsTotal;
+        topSongTitle = song.title;
+      }
+    }
+
+    if (totalStreamsYear === 0 && player.stats.totalStreams > 0) {
+      totalStreamsYear = Math.floor(player.stats.totalStreams * 0.4);
+    }
+
+    // Mejor posición en charts globales
+    let peakGlobal: number | undefined = undefined;
+    for (const song of playerSongs) {
+      const pos = song.peakPosition?.Global;
+      if (pos && (peakGlobal === undefined || pos < peakGlobal)) {
+        peakGlobal = pos;
+      }
+    }
+
+    // Premios ganados ese año
+    const awardsWonYear: string[] = [];
+    const ceremony = this.world.awardsHistory?.find(c => c.year === year);
+    if (ceremony) {
+      for (const cat of ceremony.categories) {
+        if (cat.winner && cat.winner.id === player.id) {
+          awardsWonYear.push(cat.title);
+        }
+      }
+    }
+
+    // País principal y bandera
+    const countryFlagMap: Record<string, string> = {
+      'Argentina': '🇦🇷',
+      'México': '🇲🇽',
+      'Mexico': '🇲🇽',
+      'España': '🇪🇸',
+      'Spain': '🇪🇸',
+      'USA': '🇺🇸',
+      'Estados Unidos': '🇺🇸',
+      'Colombia': '🇨🇴',
+      'Chile': '🇨🇱',
+      'Puerto Rico': '🇵🇷',
+      'Brasil': '🇧🇷',
+      'Brazil': '🇧🇷',
+      'UK': '🇬🇧',
+      'Reino Unido': '🇬🇧',
+      'Uruguay': '🇺🇾',
+      'Perú': '🇵🇪',
+      'Peru': '🇵🇪',
+      'Francia': '🇫🇷',
+      'Alemania': '🇩🇪',
+      'Italia': '🇮🇹',
+      'Japón': '🇯🇵',
+      'Corea del Sur': '🇰🇷'
+    };
+
+    const topCountry = player.country || 'Argentina';
+    const topCountryFlag = countryFlagMap[topCountry] || '🌐';
+
+    // Género dominante
+    const genreCounts: Record<string, number> = {};
+    for (const song of playerSongs) {
+      genreCounts[song.genreId] = (genreCounts[song.genreId] || 0) + 1;
+    }
+    let dominantGenreId = player.mainGenreId || 'trap_latino';
+    let maxCount = 0;
+    for (const [gid, cnt] of Object.entries(genreCounts)) {
+      if (cnt > maxCount) {
+        maxCount = cnt;
+        dominantGenreId = gid;
+      }
+    }
+    const dominantGenreName = this.world.genres[dominantGenreId]?.name || dominantGenreId;
+
+    // Fondos generados ese año
+    let fundsEarnedYear = 0;
+    if (this.world.financialLedger) {
+      fundsEarnedYear = this.world.financialLedger
+        .filter(t => t.type === 'income' && t.date?.startsWith(`${year}`))
+        .reduce((acc, t) => acc + t.amount, 0);
+    }
+    if (fundsEarnedYear === 0) {
+      fundsEarnedYear = Math.max(5000, Math.floor(totalStreamsYear * 0.0035 + player.stats.popularity * 1200));
+    }
+
+    // Fans ganados
+    const fansGainedYear = Math.max(500, Math.floor(player.stats.fansCount * 0.25 + totalStreamsYear * 0.0008));
+
+    // Veredicto de la industria
+    let industryVerdict = 'Un año de constancia y exploración que sentó cimientos firmes para el futuro.';
+    if (awardsWonYear.length > 0 || (peakGlobal && peakGlobal <= 3)) {
+      industryVerdict = '¡Dominio histórico! Te consolidaste como una de las figuras más influyentes y galardonadas del planeta.';
+    } else if (totalStreamsYear > 20000000 || (peakGlobal && peakGlobal <= 10)) {
+      industryVerdict = 'Consagración definitiva en el mainstream. Tus canciones sonaron en cada rincón del mundo.';
+    } else if (totalStreamsYear > 2000000 || player.stats.popularity >= 50) {
+      industryVerdict = 'Crecimiento meteórico. Rompiste fronteras y multiplicaste tu impacto cultural.';
+    } else if (playerSongs.length > 0) {
+      industryVerdict = 'Sonido propio y autenticidad. La escena subterránea y los críticos respetan tu visión.';
+    }
+
+    const quoteShareable = awardsWonYear.length > 0
+      ? `🏆 ${year}: El año dorado de ${player.name}. Gracias a los millones que hicieron esto posible.`
+      : `🎵 ${year}: ${totalStreamsYear.toLocaleString('es-AR')} reproducciones. Esto recién comienza.`;
+
+    const wrappedData: YearEndWrappedData = {
+      year,
+      artistName: player.name,
+      totalStreamsYear,
+      topSongTitle,
+      topSongStreams,
+      topCountry,
+      topCountryFlag,
+      peakGlobalChartPosition: peakGlobal,
+      awardsWonYear,
+      fansGainedYear,
+      fundsEarnedYear,
+      dominantGenre: dominantGenreName,
+      industryVerdict,
+      quoteShareable
+    };
+
+    this.world.activeYearEndWrapped = wrappedData;
+    return wrappedData;
+  }
+
+  public dismissYearEndWrapped(): void {
+    if (this.world.activeYearEndWrapped) {
+      if (!this.world.playerWrappedHistory) {
+        this.world.playerWrappedHistory = [];
+      }
+      const alreadySaved = this.world.playerWrappedHistory.some(
+        w => w.year === this.world.activeYearEndWrapped!.year
+      );
+      if (!alreadySaved) {
+        this.world.playerWrappedHistory.push({ ...this.world.activeYearEndWrapped });
+      }
+      this.world.activeYearEndWrapped = null;
+    }
     this.notify();
   }
 

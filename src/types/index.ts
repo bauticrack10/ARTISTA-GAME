@@ -223,6 +223,8 @@ export interface Artist {
   countryCode?: string;
   livePerformanceHistory?: LiveShowResult[];
   snippetCampaigns?: SnippetCampaign[];
+  phoneMessages?: ArtistPhoneMessage[];
+  unreadPhoneCount?: number;
 }
 
 export type TransactionCategory =
@@ -345,6 +347,9 @@ export interface Song {
   comments?: FanComment[];
   inPlaylists?: Array<{ playlistId: string; position: number }>;
   snippetCampaigns?: SnippetCampaign[];
+  isDissTrack?: boolean;
+  dissTargetArtistId?: string;
+  dissAngle?: 'lyrical' | 'expose' | 'flex_numbers';
 }
 
 // ==========================================
@@ -1078,6 +1083,18 @@ export interface BeefState {
   playerWon?: boolean;
 }
 
+export interface DissBattleOutcome {
+  attackerId: string;
+  defenderId: string;
+  attackerScore: number;
+  defenderScore: number;
+  winnerId: string | 'draw';
+  publicReaction: string;
+  viralScore: number;
+  attackerHypeDelta: number;
+  defenderHypeDelta: number;
+}
+
 export interface NewsItem {
   id: string;
   headline: string;
@@ -1222,6 +1239,66 @@ export interface EventContext {
   activeBeef?: BeefState;
 }
 
+// ==========================================
+// PILAR: SMARTPHONE & ARTIST DMS
+// ==========================================
+
+export interface ArtistPhoneChoice {
+  label: string;
+  replyText: string;
+  effects: {
+    fundsDelta?: number;
+    hypeDelta?: number;
+    fansDelta?: number;
+    energyDelta?: number;
+    relationshipDelta?: { artistId: string; delta: number };
+    newsHeadline?: string;
+  };
+}
+
+export interface ArtistPhoneMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderAvatarColor: string;
+  senderAvatarIcon?: string;
+  category: 'manager' | 'artist' | 'fan' | 'press' | 'drama';
+  text: string;
+  sentMonth: number;
+  sentYear: number;
+  choices?: ArtistPhoneChoice[];
+  isRead?: boolean;
+  chosenReplyIndex?: number;
+}
+
+// ==========================================
+// PILAR: SPOTIFY WRAPPED ANUAL (RESUMEN FIN DE AÑO)
+// ==========================================
+
+export interface YearEndWrappedData {
+  year: number;
+  artistName: string;
+  totalStreamsYear: number;
+  topSongTitle: string;
+  topSongStreams: number;
+  topCountry: string;
+  topCountryFlag: string;
+  peakGlobalChartPosition?: number;
+  awardsWonYear: string[];
+  fansGainedYear: number;
+  fundsEarnedYear: number;
+  dominantGenre: string;
+  industryVerdict: string;
+  quoteShareable: string;
+}
+
+// ==========================================
+// PILAR: CICLO DE SIMULACIÓN FLEXIBLE (1M, 3M, 6M, 12M)
+// ==========================================
+
+export type SimulationStepMonths = 1 | 3 | 6 | 12;
+export type AdvanceTimeMonths = 1 | 3 | 6 | 12;
+
 export interface WorldState {
   currentYear: number;
   currentMonth: number;
@@ -1265,6 +1342,10 @@ export interface WorldState {
   festivalInvitations?: FestivalInvitation[];
   activeFestivalsThisMonth?: string[];
   festivalHistory?: LiveShowResult[];
+  phoneMessages?: ArtistPhoneMessage[];
+  unreadPhoneCount?: number;
+  activeYearEndWrapped?: YearEndWrappedData | null;
+  playerWrappedHistory?: YearEndWrappedData[];
 }
 
 export interface GameSaveState {
