@@ -356,11 +356,9 @@ export default function App() {
         className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-primary/30 selection:text-white relative overflow-x-clip"
         style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
       >
-      {/* Ambient Stage Backdrop Glows (Contained & Non-blocking) */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[300px] bg-primary/10 blur-[130px]" />
-        <div className="absolute top-1/3 right-0 w-[500px] h-[400px] bg-accent/08 blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[400px] bg-info/08 blur-[150px]" />
+      {/* Subtle Studio Backdrop Vignette */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#0B0C10]">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[350px] bg-primary/[0.04] blur-[140px]" />
       </div>
 
       {/* Top App Bar & Navigation */}

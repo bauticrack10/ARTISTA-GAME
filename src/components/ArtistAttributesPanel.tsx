@@ -41,7 +41,7 @@ export function getSkillTier(val: number): SkillTierInfo {
   if (value <= 30) {
     return {
       name: 'Principiante',
-      badge: 'bg-zinc-800/90 text-zinc-300 border-zinc-700/80',
+      badge: 'bg-white/[0.04] text-slate-400 border-white/10',
       rangeLabel: '1 - 30',
       nextTier: 'En Desarrollo',
       pointsToNext: 31 - value
@@ -50,7 +50,7 @@ export function getSkillTier(val: number): SkillTierInfo {
   if (value <= 50) {
     return {
       name: 'En Desarrollo',
-      badge: 'bg-amber-950/60 text-amber-300 border-amber-500/40',
+      badge: 'bg-white/[0.08] text-slate-300 border-white/15',
       rangeLabel: '31 - 50',
       nextTier: 'Competente',
       pointsToNext: 51 - value
@@ -59,7 +59,7 @@ export function getSkillTier(val: number): SkillTierInfo {
   if (value <= 70) {
     return {
       name: 'Competente',
-      badge: 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40',
+      badge: 'bg-primary/15 text-primary-soft border-primary/30',
       rangeLabel: '51 - 70',
       nextTier: 'Avanzado',
       pointsToNext: 71 - value
@@ -68,7 +68,7 @@ export function getSkillTier(val: number): SkillTierInfo {
   if (value <= 85) {
     return {
       name: 'Avanzado',
-      badge: 'bg-purple-950/60 text-purple-300 border-purple-500/40',
+      badge: 'bg-primary/25 text-white border-primary/40 font-bold',
       rangeLabel: '71 - 85',
       nextTier: 'Maestro / Élite',
       pointsToNext: 86 - value
@@ -76,7 +76,7 @@ export function getSkillTier(val: number): SkillTierInfo {
   }
   return {
     name: 'Maestro / Élite',
-    badge: 'bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-yellow-300 border-yellow-400/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]',
+    badge: 'bg-gradient-to-r from-primary/30 via-accent/30 to-primary/30 text-white border-primary/50 shadow-[0_0_10px_rgba(139,92,246,0.25)] font-extrabold',
     rangeLabel: '86 - 100',
     nextTier: null,
     pointsToNext: 0
@@ -128,170 +128,170 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
       id: 'popularity',
       label: 'Popularidad',
       value: stats.popularity ?? 0,
-      gradient: 'from-amber-400 to-yellow-500',
-      bgTrack: 'bg-amber-100/70',
-      textAccent: 'text-amber-900',
+      gradient: 'from-[#7C3AED] to-[#8B5CF6]',
+      bgTrack: 'bg-white/[0.05]',
+      textAccent: 'text-white',
       icon: TrendingUp,
-      iconColor: 'text-amber-600',
+      iconColor: 'text-primary-soft',
       description: 'Alcance masivo, oyentes globales y demanda de conciertos.'
     },
     {
       id: 'reputation',
       label: 'Reputación Crítica',
       value: stats.reputation ?? 0,
-      gradient: 'from-cyan-400 to-blue-500',
-      bgTrack: 'bg-cyan-100/70',
-      textAccent: 'text-cyan-900',
+      gradient: 'from-[#7C3AED] to-[#8B5CF6]',
+      bgTrack: 'bg-white/[0.05]',
+      textAccent: 'text-white',
       icon: ShieldCheck,
-      iconColor: 'text-cyan-600',
+      iconColor: 'text-primary-soft',
       description: 'Respeto de la industria, prensa especializada y galas.'
     },
     {
       id: 'artisticCredibility',
       label: 'Credibilidad Artística',
       value: stats.artisticCredibility ?? 0,
-      gradient: 'from-purple-500 to-indigo-500',
-      bgTrack: 'bg-purple-100/70',
-      textAccent: 'text-purple-900',
+      gradient: 'from-[#7C3AED] to-[#8B5CF6]',
+      bgTrack: 'bg-white/[0.05]',
+      textAccent: 'text-white',
       icon: Award,
-      iconColor: 'text-purple-600',
+      iconColor: 'text-primary-soft',
       description: 'Autenticidad sonora, estatus de culto y valor de catálogo.'
     },
     {
       id: 'fanbaseLoyalty',
       label: 'Fidelidad de Fans',
       value: stats.fanbaseLoyalty ?? 50,
-      gradient: 'from-pink-500 to-rose-600',
-      bgTrack: 'bg-pink-100/70',
-      textAccent: 'text-rose-900',
+      gradient: 'from-[#7C3AED] to-[#8B5CF6]',
+      bgTrack: 'bg-white/[0.05]',
+      textAccent: 'text-white',
       icon: Heart,
-      iconColor: 'text-rose-600',
+      iconColor: 'text-primary-soft',
       description: 'Comunidad devota, tickets asegurados y apoyo incondicional.'
     },
     {
       id: 'hype',
       label: 'Hype Escénico',
       value: stats.hype ?? 0,
-      gradient: 'from-orange-500 to-amber-600',
-      bgTrack: 'bg-orange-100/70',
-      textAccent: 'text-orange-900',
+      gradient: 'from-[#7C3AED] via-[#A855F7] to-[#EC4899]',
+      bgTrack: 'bg-white/[0.05]',
+      textAccent: 'text-white',
       icon: Flame,
-      iconColor: 'text-orange-600',
+      iconColor: 'text-primary-soft',
       description: 'Fervor viral del momento; decae mensualmente sin lanzamientos.'
     },
     {
       id: 'energy',
       label: 'Energía Vital',
       value: stats.energy ?? 100,
-      gradient: (stats.energy ?? 100) >= 85 ? 'from-emerald-400 to-teal-500' : (stats.energy ?? 100) >= 40 ? 'from-amber-400 to-orange-500' : 'from-rose-500 to-red-600',
-      bgTrack: (stats.energy ?? 100) >= 85 ? 'bg-emerald-100/70' : (stats.energy ?? 100) >= 40 ? 'bg-amber-100/70' : 'bg-rose-100/70',
-      textAccent: (stats.energy ?? 100) >= 85 ? 'text-emerald-900' : (stats.energy ?? 100) >= 40 ? 'text-amber-900' : 'text-rose-900',
+      gradient: (stats.energy ?? 100) >= 85 ? 'from-emerald-500 to-teal-400' : (stats.energy ?? 100) >= 40 ? 'from-amber-500 to-yellow-400' : 'from-rose-500 to-red-500',
+      bgTrack: 'bg-white/[0.05]',
+      textAccent: 'text-white',
       icon: Zap,
       iconColor: (stats.energy ?? 100) >= 85 ? 'text-emerald-400' : (stats.energy ?? 100) >= 40 ? 'text-amber-400' : 'text-rose-400',
       description: 'Condición física y mental para grabaciones en estudio y giras en vivo.'
     }
   ];
 
-  // 2. Personalidad & Skills (10 atributos con barras gruesas temáticas y rangos de progresión)
+  // 2. Personalidad & Skills (10 atributos con barras limpias Obsidian en Violeta Neón)
   const personalitySkills = [
     {
       id: 'creativity',
       label: 'Creatividad & Vanguardia',
       val: personality.creativity ?? 26,
-      gradient: 'from-purple-500 to-indigo-600',
-      bgTrack: 'bg-purple-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Sparkles,
-      iconColor: 'text-purple-400',
+      iconColor: 'text-slate-400',
       description: 'Innovación conceptual, experimentación sonora y trascendencia artística en canciones.'
     },
     {
       id: 'skill',
       label: 'Habilidad Musical / Skill',
       val: personality.skill ?? 26,
-      gradient: 'from-blue-500 to-cyan-400',
-      bgTrack: 'bg-blue-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Music2,
-      iconColor: 'text-cyan-400',
+      iconColor: 'text-slate-400',
       description: 'Técnica vocal, virtuosismo instrumental, métrica lírica y pulido en estudio.'
     },
     {
       id: 'charisma',
       label: 'Carisma & Presencia',
       val: personality.charisma ?? 24,
-      gradient: 'from-amber-400 to-orange-500',
-      bgTrack: 'bg-amber-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Crown,
-      iconColor: 'text-amber-400',
+      iconColor: 'text-slate-400',
       description: 'Magnetismo mediático, impacto en directos, viralidad y conexión de masas.'
     },
     {
       id: 'commercialAppeal',
       label: 'Atractivo Comercial',
       val: personality.commercialAppeal ?? 22,
-      gradient: 'from-emerald-400 to-teal-500',
-      bgTrack: 'bg-emerald-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: DollarSign,
-      iconColor: 'text-emerald-400',
+      iconColor: 'text-slate-400',
       description: 'Potencial de hits mundiales, rotación en playlists masivas y radio.'
     },
     {
       id: 'originality',
       label: 'Originalidad & Identidad',
       val: personality.originality ?? 25,
-      gradient: 'from-pink-500 to-rose-500',
-      bgTrack: 'bg-pink-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Target,
-      iconColor: 'text-rose-400',
+      iconColor: 'text-slate-400',
       description: 'Sello sonoro inconfundible, distinción estilística y aclamación crítica.'
     },
     {
       id: 'discipline',
       label: 'Disciplina de Trabajo',
       val: personality.discipline ?? 24,
-      gradient: 'from-indigo-500 to-blue-600',
-      bgTrack: 'bg-indigo-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: ShieldCheck,
-      iconColor: 'text-indigo-400',
+      iconColor: 'text-slate-400',
       description: 'Rigor profesional, menor fatiga en estudio y cumplimiento de fechas de lanzamiento.'
     },
     {
       id: 'ambition',
       label: 'Ambición de Éxito',
       val: personality.ambition ?? 24,
-      gradient: 'from-orange-500 to-red-500',
-      bgTrack: 'bg-orange-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Flame,
-      iconColor: 'text-orange-400',
+      iconColor: 'text-slate-400',
       description: 'Impulso por dominar las listas globales y escalar el tamaño de giras y recintos.'
     },
     {
       id: 'riskTolerance',
       label: 'Tolerancia al Riesgo',
       val: personality.riskTolerance ?? 24,
-      gradient: 'from-teal-400 to-emerald-500',
-      bgTrack: 'bg-teal-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Zap,
-      iconColor: 'text-teal-400',
+      iconColor: 'text-slate-400',
       description: 'Facilidad para transicionar de género musical y probar fórmulas conceptuales audaces.'
     },
     {
       id: 'sociability',
       label: 'Sociabilidad & Networking',
       val: personality.sociability ?? 22,
-      gradient: 'from-cyan-500 to-blue-500',
-      bgTrack: 'bg-cyan-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Users,
-      iconColor: 'text-cyan-400',
+      iconColor: 'text-slate-400',
       description: 'Afinidad con colegas de la industria, facilidad para colaboraciones y featurings estelares.'
     },
     {
       id: 'independence',
       label: 'Autonomía & Visión Indie',
       val: personality.independence ?? 24,
-      gradient: 'from-violet-500 to-purple-600',
-      bgTrack: 'bg-violet-100',
+      gradient: 'from-[#7C3AED] to-[#A78BFA]',
+      bgTrack: 'bg-white/[0.05]',
       icon: Compass,
-      iconColor: 'text-violet-400',
+      iconColor: 'text-slate-400',
       description: 'Control creativo, capacidad de autogestión y resistencia a imposiciones discográficas.'
     }
   ];
@@ -358,29 +358,29 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
             return (
               <div
                 key={metric.id}
-                className={`bg-canvas rounded-xl p-4 space-y-2.5 transition-all duration-200 ease-out shadow-xs border hover:scale-[1.02] hover:shadow-md ${
+                className={`bg-[#12141D] rounded-xl p-4 space-y-2.5 transition-all duration-200 border shadow-xs ${
                   isEnergy && isEnergyHighFatigue
                     ? 'border-rose-500/40 bg-rose-500/10'
                     : isEnergy && isEnergyMildFatigue
                     ? 'border-amber-500/30 bg-amber-500/5'
-                    : 'border-line hover:border-primary/50'
+                    : 'border-[#232738] hover:border-primary/40'
                 }`}
               >
                 {/* Header de la tarjeta */}
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-fg">
+                  <span className="font-bold text-white">
                     {metric.label}
                   </span>
-                  <div className="p-1 rounded-md bg-surface border border-line">
+                  <div className="p-1 rounded-md bg-white/[0.04] border border-white/5">
                     <Icon className={`w-3.5 h-3.5 ${metric.iconColor}`} />
                   </div>
                 </div>
 
                 {/* Valor numérico & Badges de Estado */}
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-2xl font-bold text-fg tracking-tight font-mono tabular-nums">
+                  <p className="text-2xl font-bold text-white tracking-tight font-mono tabular-nums">
                     {metric.value}
-                    <span className="text-xs text-fg-muted font-normal font-sans"> / 100</span>
+                    <span className="text-xs text-slate-500 font-normal font-sans"> / 100</span>
                   </p>
 
                   {/* Claridad en Requisitos y Badges para Energía Vital */}
@@ -422,7 +422,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                 </div>
 
                 {/* Barra de progreso temática con degradado específico */}
-                <div className="w-full bg-surface border border-line h-3.5 rounded-full overflow-hidden p-0.5">
+                <div className="w-full bg-white/[0.06] border border-white/5 h-2 rounded-full overflow-hidden p-0.5">
                   <div
                     className={`bg-gradient-to-r ${metric.gradient} h-full rounded-full transition-all duration-500 shadow-sm`}
                     role="progressbar"
@@ -435,7 +435,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                 </div>
 
                 {/* Descripción de impacto visual rápido */}
-                <p className="text-xs text-fg-muted leading-relaxed">
+                <p className="text-3xs text-slate-400 leading-relaxed">
                   {metric.description}
                 </p>
               </div>
@@ -551,34 +551,34 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
               return (
                 <div
                   key={trait.id}
-                  className="bg-canvas border border-line hover:border-primary/50 rounded-xl p-4 space-y-3 transition-all duration-200 ease-out shadow-xs hover:scale-[1.01] hover:shadow-md flex flex-col justify-between"
+                  className="bg-[#12141D] border border-[#232738] hover:border-primary/40 rounded-xl p-4 space-y-3 transition-all duration-200 shadow-xs flex flex-col justify-between"
                 >
                   <div className="space-y-2.5">
                     {/* Header de Atributo: Icono, Nombre, Badge de Nivel y Valor */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <div className="p-1.5 rounded-md bg-surface border border-line shrink-0">
+                        <div className="p-1.5 rounded-md bg-white/[0.04] border border-white/5 shrink-0">
                           <Icon className={`w-4 h-4 ${trait.iconColor}`} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-fg text-sm leading-tight">
+                            <span className="font-bold text-white text-sm leading-tight">
                               {trait.label}
                             </span>
-                            <span className={`text-2xs font-bold px-2 py-0.5 rounded-sm border ${tierInfo.badge}`}>
+                            <span className={`text-3xs font-bold px-2 py-0.5 rounded-sm border ${tierInfo.badge}`}>
                               {tierInfo.name}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <span className="font-mono tabular-nums text-fg font-bold text-xs bg-surface border border-line px-2.5 py-1 rounded-md shrink-0">
-                        {trait.val}<span className="text-2xs text-fg-muted font-normal font-sans"> / 100</span>
+                      <span className="font-mono tabular-nums text-white font-bold text-xs bg-white/[0.04] border border-white/5 px-2.5 py-1 rounded-md shrink-0">
+                        {trait.val}<span className="text-3xs text-slate-500 font-normal font-sans"> / 100</span>
                       </span>
                     </div>
 
                     {/* Barra de progreso temática */}
                     <div className="space-y-1">
-                      <div className="w-full bg-surface border border-line h-3.5 rounded-full overflow-hidden p-0.5 relative">
+                      <div className="w-full bg-white/[0.06] border border-white/5 h-2 rounded-full overflow-hidden p-0.5 relative">
                         <div
                           className={`bg-gradient-to-r ${trait.gradient} h-full rounded-full transition-all duration-500 shadow-sm`}
                           role="progressbar"
@@ -589,7 +589,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                           style={{ width: `${Math.min(100, Math.max(0, trait.val))}%` }}
                         />
                       </div>
-                      <div className="flex items-center justify-between text-2xs text-fg-subtle font-mono px-0.5">
+                      <div className="flex items-center justify-between text-3xs text-slate-500 font-mono px-0.5">
                         <span>1</span>
                         <span>30</span>
                         <span>50</span>

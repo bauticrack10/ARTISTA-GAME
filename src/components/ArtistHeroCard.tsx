@@ -319,126 +319,124 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             </div>
 
             {/* Compact Discography & Legacy Badges */}
-            <div className="flex items-center gap-2 sm:gap-3 text-xs text-fg-muted flex-wrap pt-0.5">
+            <div className="flex items-center gap-2 text-xs text-slate-400 flex-wrap pt-0.5">
               <button
                 onClick={handleOpenModal}
-                className="flex items-center gap-1.5 text-fg bg-surface hover:bg-surface-raised border border-line hover:border-primary/50 px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors shadow-xs"
+                className="flex items-center gap-1.5 text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-primary/50 px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors shadow-xs"
               >
-                <Edit3 className="w-3.5 h-3.5 text-primary" />
+                <Edit3 className="w-3.5 h-3.5 text-primary-soft" />
                 <span>Editar Identidad</span>
               </button>
 
               <span
-                className="inline-flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-lg border border-line text-fg font-medium text-xs shadow-xs"
+                className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs shadow-xs"
                 title={`Comunidad de fans activos: ${(playerStats.fansCount || 0).toLocaleString('es-AR')} fans`}
               >
-                <Users className="w-3.5 h-3.5 text-primary" />
+                <Users className="w-3.5 h-3.5 text-primary-soft" />
                 <span>{formatFans(playerStats.fansCount)}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-lg border border-line text-fg font-medium text-xs">
-                <Disc3 className="w-3.5 h-3.5 text-primary" />
+              <span className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs">
+                <Disc3 className="w-3.5 h-3.5 text-slate-400" />
                 <span>{computedSongsCount} Singles</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-lg border border-line text-fg font-medium text-xs">
-                <Layers className="w-3.5 h-3.5 text-info" />
+              <span className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs">
+                <Layers className="w-3.5 h-3.5 text-slate-400" />
                 <span>{computedAlbumsCount} Álbumes</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-lg border border-line text-fg font-medium text-xs">
-                <Award className="w-3.5 h-3.5 text-warning" />
+              <span className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs">
+                <Award className="w-3.5 h-3.5 text-primary-soft" />
                 <span>
-                  Legado: <strong className="font-semibold text-[#FBBF24]">{player?.legacyScore ?? 0}/100</strong>
+                  Legado: <strong className="font-semibold text-white">{player?.legacyScore ?? 0}/100</strong>
                 </span>
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Quick Metric Tiles */}
+        {/* Right Side: Quick Metric Tiles (Obsidian Pacificados) */}
         <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto shrink-0 min-w-[280px] xl:min-w-[340px]">
           {/* Tile 1: Oyentes Mensuales */}
           <div
-            className={`bg-surface border rounded-xl p-3 text-left shadow-xs transition-all duration-300 ${
+            className={`bg-[#12141D] border rounded-xl p-3 text-left shadow-xs transition-all duration-300 ${
               isListenersSurging
-                ? 'border-emerald-400 bg-emerald-950/20 shadow-[0_0_18px_rgba(16,185,129,0.35)] scale-[1.02]'
-                : 'border-emerald-500/30 hover:border-emerald-500/60'
+                ? 'border-primary bg-primary/10 shadow-[0_0_18px_rgba(139,92,246,0.3)] scale-[1.02]'
+                : 'border-[#232738] hover:border-primary/40'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-2xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
-                <Headphones className="w-3 h-3 text-emerald-400" />
-                Oyentes Mensuales
+              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <Headphones className="w-3 h-3 text-primary-soft" />
+                Oyentes / Mes
               </span>
               {isListenersSurging && (
-                <span className="text-2xs font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 animate-pulse">
+                <span className="text-3xs font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40 animate-pulse">
                   ▲ En Auge
                 </span>
               )}
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-emerald-400 font-mono block mt-0.5 tracking-tight transition-transform">
+            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.monthlyListeners)}
-              <span className="text-xs font-normal text-emerald-500/80 font-sans ml-1">/mes</span>
             </span>
-            <span className={`text-2xs font-medium block ${listenerGrowth.isPositive ? 'text-emerald-500/80' : 'text-fg-muted'}`}>
+            <span className={`text-3xs font-medium block mt-0.5 ${listenerGrowth.isPositive ? 'text-emerald-400' : 'text-slate-500'}`}>
               {listenerGrowth.label}
             </span>
           </div>
 
           {/* Tile 2: Streams Totales */}
           <div
-            className={`bg-surface border rounded-xl p-3 text-left shadow-xs transition-all duration-300 ${
+            className={`bg-[#12141D] border rounded-xl p-3 text-left shadow-xs transition-all duration-300 ${
               isStreamsSurging
-                ? 'border-primary bg-primary/20 shadow-[0_0_18px_rgba(139,92,246,0.35)] scale-[1.02]'
-                : 'border-primary/30 hover:border-primary/60'
+                ? 'border-primary bg-primary/10 shadow-[0_0_18px_rgba(139,92,246,0.3)] scale-[1.02]'
+                : 'border-[#232738] hover:border-primary/40'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-2xs font-bold uppercase tracking-wider text-primary-soft flex items-center gap-1">
-                <Disc3 className="w-3 h-3 text-primary" />
-                Streams Globales
+              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <Disc3 className="w-3 h-3 text-primary-soft" />
+                Streams Totales
               </span>
               {isStreamsSurging && (
-                <span className="text-2xs font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40 animate-pulse">
+                <span className="text-3xs font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40 animate-pulse">
                   ▲ Viral
                 </span>
               )}
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-primary-soft font-mono block mt-0.5 tracking-tight transition-transform">
+            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.totalStreams)}
-              <span className="text-xs font-normal text-primary-soft/80 font-sans ml-1">tot.</span>
             </span>
-            <span className="text-2xs text-primary-soft/80 font-medium block">
-              Catálogo activo
+            <span className="text-3xs text-slate-500 font-medium block mt-0.5">
+              Catálogo acumulado
             </span>
           </div>
 
           {/* Tile 3: Hype Escénico */}
-          <div className="bg-surface border border-orange-500/30 rounded-xl p-3 text-left shadow-xs hover:border-orange-500/60 transition-colors">
-            <span className="text-2xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1">
-              <Flame className="w-3 h-3 text-orange-400" />
+          <div className="bg-[#12141D] border border-[#232738] hover:border-primary/40 rounded-xl p-3 text-left shadow-xs transition-colors">
+            <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <Flame className="w-3 h-3 text-amber-400" />
               Hype Escénico
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-orange-400 font-mono block mt-0.5 tracking-tight">
-              {playerStats.hype} / 100
+            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
+              {playerStats.hype} <span className="text-xs font-normal text-slate-500 font-sans">/ 100</span>
             </span>
-            <span className="text-2xs text-orange-500/80 font-medium block">
-              {playerStats.hype >= 70 ? 'En Tendencia' : 'Fase Creativa'}
+            <span className="text-3xs text-slate-500 font-medium block mt-0.5">
+              {playerStats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
             </span>
           </div>
 
           {/* Tile 4: Popularidad & Fidelidad */}
-          <div className="bg-surface border border-amber-500/30 rounded-xl p-3 text-left shadow-xs hover:border-amber-500/60 transition-colors">
-            <span className="text-2xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
-              <Crown className="w-3 h-3 text-amber-400" />
+          <div className="bg-[#12141D] border border-[#232738] hover:border-primary/40 rounded-xl p-3 text-left shadow-xs transition-colors">
+            <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <Crown className="w-3 h-3 text-primary-soft" />
               Popularidad
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-amber-400 font-mono block mt-0.5 tracking-tight">
-              {playerStats.popularity} / 100
+            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
+              {playerStats.popularity} <span className="text-xs font-normal text-slate-500 font-sans">/ 100</span>
             </span>
-            <span className="text-2xs text-amber-500/80 font-medium block">
-              Fidelidad: {playerStats.fanbaseLoyalty} / 100
+            <span className="text-3xs text-slate-500 font-medium block mt-0.5">
+              Fidelidad: {playerStats.fanbaseLoyalty}%
             </span>
           </div>
         </div>
