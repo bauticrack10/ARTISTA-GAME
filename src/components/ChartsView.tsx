@@ -40,29 +40,29 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
   ];
 
   return (
-    <div className="space-y-6 pb-12 text-fg">
+    <div className="space-y-6 pb-12 text-[#F4F4F6]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-6 rounded-2xl border border-line shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#111114] p-6 rounded-[6px] border border-[#242429] shadow-xs">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-2xs uppercase font-bold tracking-wider bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 px-2.5 py-0.5 rounded-sm">
+            <span className="text-[10px] uppercase font-mono font-bold tracking-widest bg-[#18181C] text-[#8E8E99] border border-[#242429] px-2.5 py-0.5 rounded-[4px]">
               Rankings Oficiales
             </span>
-            <span className="text-xs text-fg-muted">
+            <span className="text-xs font-mono text-[#8E8E99]">
               Año {currentYear} • Mes {currentMonth}
             </span>
           </div>
-          <h1 className="text-2xl font-semibold text-fg tracking-[-0.9px] flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-info" />
+          <h1 className="text-2xl font-bold text-[#F4F4F6] tracking-tight flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-[#FF4F00]" />
             Charts Oficiales de Streaming & Ventas
           </h1>
-          <p className="text-xs text-fg-muted mt-1">
+          <p className="text-xs text-[#8E8E99] mt-1">
             Rankings oficiales actualizados mensualmente en base al consumo real de streaming y rotación radial.
           </p>
         </div>
 
         {/* Region Selector */}
-        <div role="tablist" aria-label="Región del ranking" className="flex items-center gap-1 overflow-x-auto scroll-fade-x bg-canvas p-1.5 rounded-lg border border-line max-w-full sm:max-w-[60%] text-xs shadow-xs">
+        <div role="tablist" aria-label="Región del ranking" className="flex items-center gap-1 overflow-x-auto scroll-fade-x bg-[#09090B] p-1.5 rounded-[4px] border border-[#242429] max-w-full sm:max-w-[60%] text-xs shadow-xs">
           {regions.map(r => {
             const isActive = selectedRegion === r.id;
             return (
@@ -71,10 +71,10 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setSelectedRegion(r.id)}
-                className={`tap shrink-0 px-3 py-1.5 rounded-md font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                className={`tap shrink-0 px-3 py-1.5 rounded-[4px] font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-primary text-white shadow-[0_0_12px_rgba(139,92,246,0.3)]'
-                    : 'text-fg-muted hover:text-fg hover:bg-surface'
+                    ? 'bg-[#FF4F00] text-white'
+                    : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
                 }`}
               >
                 {r.label}
@@ -85,8 +85,8 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
       </div>
 
       {/* Chart List Table */}
-      <div role="table" aria-label={`Ranking ${formatMusicRegionLabel(selectedRegion)}`} className="bg-surface border border-line rounded-card overflow-hidden shadow-sm">
-        <div role="row" className={`${CHART_GRID} px-4 py-3 border-b border-line text-2xs text-fg-muted font-bold uppercase tracking-wider bg-surface`}>
+      <div role="table" aria-label={`Ranking ${formatMusicRegionLabel(selectedRegion)}`} className="bg-[#111114] border border-[#242429] rounded-[6px] overflow-hidden shadow-xs">
+        <div role="row" className={`${CHART_GRID} px-4 py-3 border-b border-[#242429] text-[10px] text-[#52525B] font-mono font-bold uppercase tracking-widest bg-[#111114]`}>
           <span role="columnheader" className="text-center">Pos.</span>
           <span role="columnheader">Canción & Artista</span>
           <span role="columnheader" className="hidden sm:block text-right">Streams / sem.</span>
@@ -96,17 +96,17 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
 
         {currentChart.entries.length === 0 ? (
           <div className="p-10 flex flex-col items-center gap-4 text-center">
-            <BarChart3 className="w-8 h-8 text-fg-subtle" aria-hidden="true" />
+            <BarChart3 className="w-8 h-8 text-[#52525B]" aria-hidden="true" />
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-fg">Todavía no hay ranking para esta región</p>
-              <p className="text-xs text-fg-muted max-w-md">
+              <p className="text-sm font-semibold text-[#F4F4F6]">Todavía no hay ranking para esta región</p>
+              <p className="text-xs text-[#8E8E99] max-w-md">
                 Los charts se calculan al avanzar el tiempo con el streaming acumulado de cada lanzamiento.
               </p>
             </div>
             {onAdvanceCycle && (
               <button
                 onClick={onAdvanceCycle}
-                className="tap inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-strong text-white text-xs font-semibold cursor-pointer transition-colors"
+                className="tap inline-flex items-center gap-2 px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-mono font-bold cursor-pointer transition-colors active:translate-y-[1px]"
               >
                 <Play className="w-3.5 h-3.5 fill-white" aria-hidden="true" />
                 Avanzar ciclo (+6M)
@@ -114,28 +114,28 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
             )}
           </div>
         ) : (
-          <div role="rowgroup" className="divide-y divide-line">
+          <div role="rowgroup" className="divide-y divide-[#1C1C21]">
             {currentChart.entries.map((entry, idx) => {
               const isPlayerSong = entry.artistId === player?.id;
-              let movement = <Minus className="w-3.5 h-3.5 text-fg-muted" />;
+              let movement = <Minus className="w-3.5 h-3.5 text-[#52525B]" />;
 
               if (entry.lastRank === null) {
                 movement = (
-                  <span className="text-2xs font-bold text-purple-300 uppercase bg-purple-950/60 border border-purple-500/40 px-1.5 py-0.5 rounded-sm">
+                  <span className="text-[10px] font-mono font-bold text-[#FF4F00] uppercase bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-1.5 py-0.5 rounded-[4px]">
                     NEW
                   </span>
                 );
               } else if (entry.lastRank > entry.rank) {
                 movement = (
-                  <span className="flex items-center text-xs font-bold text-emerald-400">
-                    <TrendingUp className="w-3.5 h-3.5 mr-0.5 text-emerald-400" />
+                  <span className="flex items-center text-xs font-mono font-bold text-[#00E599] tabular-nums">
+                    <TrendingUp className="w-3.5 h-3.5 mr-0.5 text-[#00E599]" />
                     +{entry.lastRank - entry.rank}
                   </span>
                 );
               } else if (entry.lastRank < entry.rank) {
                 movement = (
-                  <span className="flex items-center text-xs font-semibold text-rose-400">
-                    <TrendingDown className="w-3.5 h-3.5 mr-0.5 text-rose-400" />
+                  <span className="flex items-center text-xs font-mono font-semibold text-[#EF4444] tabular-nums">
+                    <TrendingDown className="w-3.5 h-3.5 mr-0.5 text-[#EF4444]" />
                     -{entry.rank - entry.lastRank}
                   </span>
                 );
@@ -149,28 +149,28 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 <div
                   key={entry.songId}
                   role="row"
-                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-surface-raised ${
+                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-[#18181C] border-b border-[#1C1C21] ${
                     isPlayerSong
-                      ? 'bg-primary/15 border-l-4 border-l-primary'
+                      ? 'bg-[#FF4F00]/10 border-l-4 border-l-[#FF4F00]'
                       : isNo1
-                      ? 'bg-amber-500/10'
+                      ? 'bg-[#F59E0B]/5'
                       : idx % 2 === 0
-                      ? 'bg-surface'
-                      : 'bg-canvas'
+                      ? 'bg-[#111114]'
+                      : 'bg-[#0D0D10]'
                   }`}
                 >
                     {/* Position */}
                     <div role="cell" className="flex flex-col items-center justify-center font-mono">
                       <div className="flex items-center gap-1">
-                        {isNo1 && <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />}
-                        <span className={`text-base font-bold ${
+                        {isNo1 && <Crown className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B]" />}
+                        <span className={`text-base font-bold tabular-nums ${
                           isNo1
-                            ? 'text-amber-400 font-extrabold text-lg drop-shadow-[0_0_8px_rgba(251,191,36,0.4)]'
+                            ? 'text-[#F59E0B] font-extrabold text-lg'
                             : isTop3
-                            ? 'text-primary'
+                            ? 'text-[#FF4F00]'
                             : isTop10
-                            ? 'text-info'
-                            : 'text-fg-muted'
+                            ? 'text-[#F4F4F6]'
+                            : 'text-[#8E8E99]'
                         }`}>
                           #{entry.rank}
                         </span>
@@ -180,32 +180,32 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
 
                     {/* Song & artist */}
                     <div role="cell" className="min-w-0">
-                      <h4 className="font-semibold text-fg text-sm line-clamp-1 flex items-center gap-2">
+                      <h4 className="font-semibold text-[#F4F4F6] text-sm line-clamp-1 flex items-center gap-2">
                         {entry.title}
                         {isPlayerSong && (
-                          <span className="shrink-0 text-2xs bg-gradient-to-r from-primary to-accent text-white font-bold px-2 py-0.5 rounded-sm shadow-[0_0_8px_rgba(139,92,246,0.4)]">
+                          <span className="shrink-0 text-[10px] bg-[#FF4F00] text-white font-mono font-bold px-2 py-0.5 rounded-[4px]">
                             TU TEMA
                           </span>
                         )}
                         {isNo1 && (
-                          <span className="text-2xs bg-amber-950/60 text-amber-300 border border-amber-500/40 font-bold px-1.5 py-0.5 rounded-sm">
+                          <span className="text-[10px] bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 font-mono font-bold px-1.5 py-0.5 rounded-[4px]">
                             #1 HIT
                           </span>
                         )}
                       </h4>
-                      <p className="text-fg-muted text-xs line-clamp-1">
+                      <p className="text-[#8E8E99] text-xs line-clamp-1">
                         {entry.artistName}
                       </p>
                     </div>
 
                     {/* Metrics */}
-                    <span role="cell" className="hidden sm:block font-mono font-bold text-primary-soft text-right tabular-nums">
+                    <span role="cell" className="hidden sm:block font-mono font-bold text-[#00E599] text-right tabular-nums">
                       {entry.streamsThisWeek.toLocaleString('es-AR')}
                     </span>
-                    <span role="cell" className={`font-mono font-bold text-center tabular-nums ${entry.peakRank === 1 ? 'text-amber-400 font-extrabold' : 'text-fg'}`}>
+                    <span role="cell" className={`font-mono font-bold text-center tabular-nums ${entry.peakRank === 1 ? 'text-[#F59E0B] font-extrabold' : 'text-[#F4F4F6]'}`}>
                       #{entry.peakRank}
                     </span>
-                    <span role="cell" className="font-mono text-fg-muted text-center tabular-nums">
+                    <span role="cell" className="font-mono text-[#8E8E99] text-center tabular-nums">
                       {entry.weeksOnChart}
                     </span>
                 </div>
