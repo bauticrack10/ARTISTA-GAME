@@ -437,8 +437,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 }) => {
   // 1. Identity & Origin
   const [country, setCountry] = useState('Argentina');
-  const [name, setName] = useState('Duki Nova');
-  const [realName, setRealName] = useState('Mateo Morales');
+  const [name, setName] = useState('');
+  const [realName, setRealName] = useState('');
   const [age, setAge] = useState(19);
   const [city, setCity] = useState('Buenos Aires');
   const [isCustomCity, setIsCustomCity] = useState(false);
@@ -465,13 +465,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const [isProdigy, setIsProdigy] = useState<boolean>(() => Math.random() < 0.00001);
   const [rollCount, setRollCount] = useState(0);
   const [rollMessage, setRollMessage] = useState<string | null>(null);
-
-  // Initialize with authentic regional name
-  useEffect(() => {
-    const generated = generateArtistName('Argentina');
-    setName(generated.stageName);
-    setRealName(generated.realName);
-  }, []);
 
   // Developer testing keyboard shortcut (Shift+Alt+P in dev mode only)
   useEffect(() => {
@@ -518,11 +511,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
         setSecondaryGenres(validSubs);
       }
     }
-
-    // Generate new regional name matching selected country
-    const generated = generateArtistName(newCountry, cities[0]);
-    setName(generated.stageName);
-    setRealName(generated.realName);
   };
 
   const toggleSecondaryGenre = (genreId: string) => {
@@ -956,15 +944,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider mb-1.5">
-                    Nombre Artístico *
+                    Nombre Artístico
                   </label>
                   <input
                     type="text"
-                    required
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    placeholder="Ej: Duki Nova"
-                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-sm text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1 focus:ring-primary-strong transition-colors font-medium"
+                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-sm text-fg focus:outline-none focus:ring-1 focus:ring-primary-strong transition-colors font-medium"
                   />
                 </div>
 
@@ -976,8 +962,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     type="text"
                     value={realName}
                     onChange={e => setRealName(e.target.value)}
-                    placeholder="Ej: Mateo Morales"
-                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-sm text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1 focus:ring-primary-strong transition-colors font-medium"
+                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-sm text-fg focus:outline-none focus:ring-1 focus:ring-primary-strong transition-colors font-medium"
                   />
                 </div>
               </div>
@@ -1958,7 +1943,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 <div className="relative inline-block mx-auto">
                   <div className="p-1 rounded-panel bg-canvas border-2 border-line shadow-xl">
                     <ArtistAvatar
-                      name={name}
+                      name={name.trim() || 'Artista'}
                       avatarColor={avatarColor}
                       avatarIcon={avatarType === 'symbol' ? avatarIcon : undefined}
                       size="xl"
@@ -1969,10 +1954,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                 <div>
                   <h2 className="text-xl font-extrabold text-fg tracking-tight">
-                    {name || 'Nuevo Artista'}
+                    {name.trim() || 'Tu Nombre Artístico'}
                   </h2>
                   <p className="text-xs text-fg-muted font-normal">
-                    {realName ? `"${cleanQuotes(realName)}"` : ''} • {age} Años
+                    {realName.trim() ? `"${cleanQuotes(realName)}" • ` : ''}{age} Años
                   </p>
                   <p className="text-xs text-fg-muted flex items-center justify-center gap-1 mt-0.5">
                     <MapPin className="w-3 h-3 text-info" />
