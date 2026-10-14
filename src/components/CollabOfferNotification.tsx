@@ -89,28 +89,20 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
           ? 'fixed bottom-5 right-5 z-50 max-w-md w-full animate-bounce-in shadow-2xl'
           : 'w-full'
       } ${className}`}
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
     >
       <div
-        className={`bg-surface border rounded-xl p-5 relative overflow-hidden backdrop-blur-xl transition-all duration-200 ${
+        className={`bg-[#111114] border rounded-[6px] p-5 relative overflow-hidden transition-all duration-200 ${
           isProducer
-            ? 'border-info/40 shadow-[0_0_25px_rgba(6,182,212,0.15)] hover:border-info/70'
-            : 'border-primary/40 shadow-[0_0_25px_rgba(139,92,246,0.15)] hover:border-primary/70'
+            ? 'border-[#00E599]/40 hover:border-[#00E599]/70'
+            : 'border-[#FF4F00]/40 hover:border-[#FF4F00]/70'
         }`}
       >
         {/* Left Decorative Accent Strip */}
         <div
-          className={`absolute left-0 top-0 bottom-0 w-1.5 ${
+          className={`absolute left-0 top-0 bottom-0 w-1 ${
             isProducer
-              ? 'bg-gradient-to-b from-info to-teal-400'
-              : 'bg-gradient-to-b from-[#8B5CF6] to-[#EC4899]'
-          }`}
-        />
-
-        {/* Ambient Glow */}
-        <div
-          className={`absolute -top-12 -right-12 w-36 h-36 rounded-full blur-2xl pointer-events-none opacity-20 ${
-            isProducer ? 'bg-info' : 'bg-primary'
+              ? 'bg-[#00E599]'
+              : 'bg-[#FF4F00]'
           }`}
         />
 
@@ -118,20 +110,20 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
         <div className="flex items-center justify-between gap-2 mb-3 relative z-10">
           <div className="flex items-center gap-1.5">
             {isProducer ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-2xs font-bold uppercase tracking-wider bg-info/15 border border-info/40 text-[#67E8F9] shadow-[0_0_10px_rgba(6,182,212,0.2)]">
-                <Sliders className="w-3 h-3 text-info" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold uppercase tracking-wider bg-[#18181C] border border-[#242429] text-[#00E599]">
+                <Sliders className="w-3 h-3 text-[#00E599]" />
                 Propuesta de Productor • Beatmaker
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-2xs font-bold uppercase tracking-wider bg-primary/15 border border-primary/40 text-primary-soft shadow-[0_0_10px_rgba(139,92,246,0.2)]">
-                <Mic2 className="w-3 h-3 text-primary" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold uppercase tracking-wider bg-[#18181C] border border-[#242429] text-[#FF4F00]">
+                <Mic2 className="w-3 h-3 text-[#FF4F00]" />
                 Invitación de Feat • Cantante
               </span>
             )}
           </div>
 
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-bold bg-amber-950/50 border border-amber-500/40 text-amber-300">
-            <Clock className="w-2.5 h-2.5 text-amber-400" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold bg-[#18181C] border border-[#F59E0B]/30 text-[#F59E0B]">
+            <Clock className="w-2.5 h-2.5 text-[#F59E0B]" />
             Expira en {offer.expiresInMonths} {offer.expiresInMonths === 1 ? 'mes' : 'meses'}
           </span>
         </div>
@@ -139,10 +131,10 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
         {/* Sender Profile Row */}
         <div className="flex items-start gap-3 relative z-10 mb-3">
           <div
-            className={`w-11 h-11 rounded-lg flex items-center justify-center font-extrabold text-base text-white shrink-0 border ${
+            className={`w-10 h-10 rounded-[4px] flex items-center justify-center font-bold text-base text-[#F4F4F6] shrink-0 border ${
               isProducer
-                ? 'bg-gradient-to-br from-info to-cyan-950 border-info/40 shadow-sm'
-                : 'bg-gradient-to-br from-primary to-pink-950 border-primary/40 shadow-sm'
+                ? 'bg-[#18181C] border-[#00E599]/40 text-[#00E599]'
+                : 'bg-[#18181C] border-[#FF4F00]/40 text-[#FF4F00]'
             }`}
           >
             {senderInitial}
@@ -150,89 +142,89 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
 
           <div className="min-w-0 flex-1 space-y-0.5">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-fg truncate">
+              <h3 className="text-sm font-bold text-[#F4F4F6] truncate">
                 {senderName}
               </h3>
-              <span className="text-2xs uppercase font-bold text-fg-muted px-1.5 py-0.2 rounded bg-canvas border border-line">
+              <span className="text-2xs uppercase font-bold text-[#8E8E99] px-1.5 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] font-mono">
                 {offer.genreName}
               </span>
             </div>
 
-            <p className="text-xs text-fg-muted">
-              Track propuesto: <strong className="text-fg">"{offer.trackTitle}"</strong>
+            <p className="text-xs text-[#8E8E99]">
+              Track propuesto: <strong className="text-[#F4F4F6]">"{offer.trackTitle}"</strong>
             </p>
           </div>
         </div>
 
         {/* Quote / Pitch Message */}
-        <div className="bg-canvas border border-line rounded-lg p-3 mb-3 text-xs italic text-[#CBD5E1] relative z-10 leading-relaxed">
+        <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-3 mb-3 text-xs italic text-[#D4D4D8] relative z-10 leading-relaxed">
           "{offer.pitchQuote}"
         </div>
 
         {/* Financial & Impact Badges Matrix */}
-        <div className="grid grid-cols-3 gap-2 mb-4 relative z-10 text-xs font-mono">
-          <div className="bg-canvas border border-line p-2 rounded-md space-y-0.5">
-            <span className="text-2xs uppercase font-bold text-fg-muted block">Regalías</span>
-            <span className="text-emerald-400 font-bold">{offer.royaltySplitPlayer}% Split</span>
+        <div className="grid grid-cols-3 gap-2 mb-4 relative z-10 text-xs font-mono tabular-nums">
+          <div className="bg-[#09090B] border border-[#242429] p-2 rounded-[4px] space-y-0.5">
+            <span className="text-2xs uppercase font-bold text-[#52525B] tracking-wider block">Regalías</span>
+            <span className="text-[#00E599] font-bold">{offer.royaltySplitPlayer}% Split</span>
           </div>
 
-          <div className="bg-canvas border border-line p-2 rounded-md space-y-0.5">
-            <span className="text-2xs uppercase font-bold text-fg-muted block">
+          <div className="bg-[#09090B] border border-[#242429] p-2 rounded-[4px] space-y-0.5">
+            <span className="text-2xs uppercase font-bold text-[#52525B] tracking-wider block">
               {isProducer ? 'Boost Calidad' : 'Anticipo'}
             </span>
-            <span className="text-primary-soft font-bold">
+            <span className="text-[#F4F4F6] font-bold">
               {isProducer ? `+${offer.qualityBoostPercent || 15}% Prod.` : offer.upfrontFeeOrAdvance > 0 ? `+${formatMoney(offer.upfrontFeeOrAdvance)}` : 'Sin Costo'}
             </span>
           </div>
 
-          <div className="bg-canvas border border-line p-2 rounded-md space-y-0.5">
-            <span className="text-2xs uppercase font-bold text-fg-muted block">Impacto</span>
-            <span className="text-[#67E8F9] font-bold">{offer.projectedExposure}</span>
+          <div className="bg-[#09090B] border border-[#242429] p-2 rounded-[4px] space-y-0.5">
+            <span className="text-2xs uppercase font-bold text-[#52525B] tracking-wider block">Impacto</span>
+            <span className="text-[#F4F4F6] font-bold">{offer.projectedExposure}</span>
           </div>
         </div>
 
-        {/* Interactive Action Buttons (design.md: 6px standard, 9999px pills) */}
+        {/* Interactive Action Buttons */}
         <div className="flex items-center gap-2 relative z-10">
-          {/* Demo audio pill button (9999px) */}
+          {/* Demo audio button */}
           <button
             type="button"
             onClick={handleToggleDemo}
-            className={`px-3 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3 py-2 rounded-[4px] text-xs font-mono font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
               isPlayingDemo
-                ? 'bg-primary/25 text-[#E879F9] border-primary'
-                : 'bg-canvas text-[#CBD5E1] border-line hover:border-slate-500'
+                ? 'bg-[#FF4F00]/15 text-[#FF4F00] border-[#FF4F00]'
+                : 'bg-[#18181C] text-[#8E8E99] border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
             }`}
             title="Escuchar maqueta de audio de muestra"
           >
             {isPlayingDemo ? (
               <>
-                <Volume2 className="w-3.5 h-3.5 text-[#E879F9] animate-pulse" />
+                <Volume2 className="w-3.5 h-3.5 text-[#FF4F00] animate-pulse" />
                 <span className="text-xs">Sonando</span>
               </>
             ) : (
               <>
-                <Headphones className="w-3.5 h-3.5 text-fg-muted" />
+                <Headphones className="w-3.5 h-3.5 text-[#8E8E99]" />
                 <span className="text-xs">Maqueta</span>
               </>
             )}
           </button>
 
-          {/* Decline Ghost Button (6px) */}
+          {/* Decline Ghost Button */}
           <button
             type="button"
             onClick={handleDecline}
-            className="flex-1 py-2 px-3 rounded-md text-xs font-semibold bg-canvas hover:bg-white/[0.04] text-fg-muted hover:text-fg border border-line hover:border-slate-500 transition-all cursor-pointer text-center"
+            className="flex-1 py-2 px-3 rounded-[4px] text-xs font-mono font-semibold bg-[#18181C] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer text-center"
           >
             Declinar
           </button>
 
-          {/* Accept Primary Inset Button (6px) */}
+          {/* Accept Primary Button */}
           <button
             type="button"
             onClick={handleAccept}
-            className="flex-1 py-2 px-3.5 rounded-md text-xs font-bold bg-success hover:bg-[#059669] text-canvas shadow-[0_0_15px_rgba(16,185,129,0.35)] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1"
+            className="flex-1 py-2 px-3.5 rounded-[4px] text-xs font-mono font-bold bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] transition-all cursor-pointer flex items-center justify-center gap-1"
           >
-            <Check className="w-3.5 h-3.5 text-canvas" />
+            <Check className="w-3.5 h-3.5 text-white" />
             <span>Aceptar</span>
           </button>
         </div>

@@ -256,58 +256,58 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'neutral',
         label: 'Neutral',
-        className: 'bg-canvas text-fg-muted border border-line',
-        dotClass: 'bg-fg-muted'
+        className: 'bg-[#18181C] text-[#8E8E99] border border-[#242429] font-mono',
+        dotClass: 'bg-[#52525B]'
       };
     }
 
-    // Feudo Activo (Rojo / Carmesí pulsante)
+    // Feudo Activo (Clipping Red #EF4444)
     if (rel.relationType === 'feud' || rel.affinity <= -40) {
       return {
         key: 'feud',
         label: 'Feudo Activo',
-        className: 'bg-rose-950/80 text-rose-200 border border-rose-500/60 animate-pulse font-bold shadow-[0_0_12px_rgba(244,63,94,0.35)]',
-        dotClass: 'bg-[#F43F5E]'
+        className: 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/40 font-mono font-bold',
+        dotClass: 'bg-[#EF4444]'
       };
     }
 
-    // Rivalidad (Naranja / Fuego)
+    // Rivalidad (Amber Peak #F59E0B)
     if (rel.relationType === 'rival' || rel.affinity < -15) {
       return {
         key: 'rival',
         label: 'Rivalidad',
-        className: 'bg-orange-950/60 text-orange-300 border border-orange-500/50 shadow-[0_0_10px_rgba(249,115,22,0.2)]',
-        dotClass: 'bg-[#F97316]'
+        className: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/40 font-mono font-bold',
+        dotClass: 'bg-[#F59E0B]'
       };
     }
 
-    // Colaboradores (Dorado / Ámbar)
+    // Colaboradores (LED Emerald #00E599)
     if (rel.relationType === 'collaborator' || (rel.pastCollabsCount && rel.pastCollabsCount > 0)) {
       return {
         key: 'collaborator',
         label: 'Colaboradores',
-        className: 'bg-amber-950/60 text-amber-300 border border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]',
-        dotClass: 'bg-warning'
+        className: 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/40 font-mono font-bold',
+        dotClass: 'bg-[#00E599]'
       };
     }
 
-    // Amistad (Violeta / Fucsia)
+    // Amistad (Signal Orange #FF4F00)
     if (rel.relationType === 'friend' || rel.affinity >= 35) {
       return {
         key: 'friend',
         label: 'Amistad',
-        className: 'bg-purple-950/60 text-purple-300 border border-purple-500/50 shadow-[0_0_10px_rgba(139,92,246,0.25)]',
-        dotClass: 'bg-primary'
+        className: 'bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/40 font-mono font-bold',
+        dotClass: 'bg-[#FF4F00]'
       };
     }
 
-    // Respeto Mutuo (Cian / Esmeralda)
+    // Respeto Mutuo (Crisp Chalk #F4F4F6)
     if (rel.relationType === 'mentor' || rel.relationType === 'protege' || (rel.respect >= 65 && rel.affinity >= 10)) {
       return {
         key: 'respect',
         label: 'Respeto Mutuo',
-        className: 'bg-cyan-950/60 text-cyan-300 border border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.2)]',
-        dotClass: 'bg-info'
+        className: 'bg-[#F4F4F6]/10 text-[#F4F4F6] border border-[#242429] font-mono font-bold',
+        dotClass: 'bg-[#F4F4F6]'
       };
     }
 
@@ -315,8 +315,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     return {
       key: 'neutral',
       label: 'Neutral',
-      className: 'bg-canvas text-fg-muted border border-line',
-      dotClass: 'bg-fg-muted'
+      className: 'bg-[#18181C] text-[#8E8E99] border border-[#242429] font-mono',
+      dotClass: 'bg-[#52525B]'
     };
   };
 
@@ -500,45 +500,39 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   }, [otherArtists, player, filter, regionFilter, genreFilter, stageFilter, statusFilter, searchQuery, world.genres]);
 
   return (
-    <div
-      className="space-y-6 pb-16 text-fg"
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-    >
+    <div className="space-y-6 pb-16 text-[#F4F4F6]">
       {/* Header & Advanced Filters Panel */}
-      <div className="bg-surface p-5 sm:p-6 rounded-2xl border border-line space-y-5 shadow-lg relative overflow-hidden">
-        {/* Ambient Top Glow */}
-        <div className="absolute top-0 right-0 w-96 h-40 bg-gradient-to-l from-primary/15 via-accent/08 to-transparent blur-3xl pointer-events-none" />
-
+      <div className="bg-[#111114] p-5 sm:p-6 rounded-[6px] border border-[#242429] space-y-5 relative">
         {/* Top Header Row: Title & Search */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 relative z-10">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-canvas border border-primary/40 text-primary shadow-[0_0_12px_rgba(139,92,246,0.25)]">
+              <div className="p-2 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#FF4F00]">
                 <Network className="w-5 h-5" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-fg">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F4F4F6]">
                 Ecosistema, Vínculos & Escenas Globales
               </h1>
             </div>
-            <p className="text-xs sm:text-sm text-fg-muted max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#8E8E99] max-w-2xl leading-relaxed">
               Explorá la escena internacional (+35 países), gestioná alianzas, colaboraciones de estudio y disputas líricas.
             </p>
           </div>
 
           {/* Quick Search Input */}
           <div className="relative w-full lg:w-72">
-            <Search className="w-4 h-4 text-fg-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-[#8E8E99] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Buscar por nombre, país, ciudad o género..."
+              placeholder="Buscar por nombre, país o género..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-canvas border border-line rounded-lg pl-9 pr-8 py-2 text-xs text-fg placeholder-fg-muted/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] pl-9 pr-8 py-2 text-xs font-mono text-[#F4F4F6] placeholder-[#52525B] focus:outline-none focus:border-[#FF4F00] transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-fg-muted hover:text-fg text-xs p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8E8E99] hover:text-[#F4F4F6] text-xs p-1"
                 title="Limpiar búsqueda"
               >
                 ✕
@@ -548,22 +542,22 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
         </div>
 
         {/* Advanced Filter Bar: 4 Dropdowns + Reset */}
-        <div className="bg-canvas/80 p-3.5 sm:p-4 rounded-xl border border-line relative z-10 space-y-3">
+        <div className="bg-[#09090B] p-3.5 sm:p-4 rounded-[4px] border border-[#242429] relative z-10 space-y-3 font-mono">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-fg uppercase tracking-wider">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-primary" />
+            <div className="flex items-center gap-2 text-xs font-bold text-[#F4F4F6] uppercase tracking-wider">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#FF4F00]" />
               <span>Filtros Avanzados de Escena & Artistas</span>
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-fg-muted">
-                Mostrando <strong className="text-fg font-semibold">{filteredArtists.length}</strong> de {otherArtists.length} artistas
+              <span className="text-xs text-[#8E8E99] tabular-nums">
+                Mostrando <strong className="text-[#F4F4F6] font-bold">{filteredArtists.length}</strong> de {otherArtists.length} artistas
               </span>
               {hasActiveFilters && (
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-[#F43F5E] bg-accent/10 hover:bg-accent/20 border border-accent/30 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-bold text-[#EF4444] hover:text-white bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/30 px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer"
                   title="Restablecer todos los filtros a sus valores predeterminados"
                 >
                   <RotateCcw className="w-3 h-3" />
@@ -573,22 +567,22 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
             {/* 1. Filtro de Región / Escena */}
             <div>
-              <label className="block text-2xs font-bold text-fg-muted uppercase tracking-wider mb-1 flex items-center gap-1">
-                <Globe className="w-3 h-3 text-info" />
+              <label className="block text-2xs font-bold text-[#52525B] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <Globe className="w-3 h-3 text-[#00E599]" />
                 <span>Región / Escena</span>
               </label>
               <select
                 value={regionFilter}
                 onChange={(e) => setRegionFilter(e.target.value)}
-                className={`w-full bg-surface border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary cursor-pointer transition-colors ${
-                  regionFilter !== 'all' ? 'border-info text-[#38BDF8] font-semibold' : 'border-line'
+                className={`w-full bg-[#18181C] border rounded-[4px] px-3 py-1.5 text-xs text-[#F4F4F6] focus:outline-none focus:border-[#FF4F00] cursor-pointer transition-colors ${
+                  regionFilter !== 'all' ? 'border-[#00E599] text-[#00E599] font-bold' : 'border-[#242429]'
                 }`}
               >
                 {REGION_FILTER_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id} className="bg-surface text-fg">
+                  <option key={opt.id} value={opt.id} className="bg-[#18181C] text-[#F4F4F6]">
                     {opt.id === 'my_scene'
                       ? `Mi Escena Local (${getCountryFlag(player.country)} ${player.country || 'Local'})`
                       : opt.flag
@@ -601,19 +595,19 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
             {/* 2. Filtro de Género */}
             <div>
-              <label className="block text-2xs font-bold text-fg-muted uppercase tracking-wider mb-1 flex items-center gap-1">
-                <Disc3 className="w-3 h-3 text-primary" />
+              <label className="block text-2xs font-bold text-[#52525B] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <Disc3 className="w-3 h-3 text-[#FF4F00]" />
                 <span>Género Musical</span>
               </label>
               <select
                 value={genreFilter}
                 onChange={(e) => setGenreFilter(e.target.value)}
-                className={`w-full bg-surface border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary cursor-pointer transition-colors ${
-                  genreFilter !== 'all' ? 'border-primary text-primary-soft font-semibold' : 'border-line'
+                className={`w-full bg-[#18181C] border rounded-[4px] px-3 py-1.5 text-xs text-[#F4F4F6] focus:outline-none focus:border-[#FF4F00] cursor-pointer transition-colors ${
+                  genreFilter !== 'all' ? 'border-[#FF4F00] text-[#FF4F00] font-bold' : 'border-[#242429]'
                 }`}
               >
                 {GENRE_FILTER_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id} className="bg-surface text-fg">
+                  <option key={opt.id} value={opt.id} className="bg-[#18181C] text-[#F4F4F6]">
                     {opt.label}
                   </option>
                 ))}
@@ -622,19 +616,19 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
             {/* 3. Filtro de Nivel de Fama / Etapa */}
             <div>
-              <label className="block text-2xs font-bold text-fg-muted uppercase tracking-wider mb-1 flex items-center gap-1">
-                <TrendingUp className="w-3 h-3 text-amber-400" />
+              <label className="block text-2xs font-bold text-[#52525B] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-[#F59E0B]" />
                 <span>Nivel de Fama / Etapa</span>
               </label>
               <select
                 value={stageFilter}
                 onChange={(e) => setStageFilter(e.target.value)}
-                className={`w-full bg-surface border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary cursor-pointer transition-colors ${
-                  stageFilter !== 'all' ? 'border-amber-500 text-amber-300 font-semibold' : 'border-line'
+                className={`w-full bg-[#18181C] border rounded-[4px] px-3 py-1.5 text-xs text-[#F4F4F6] focus:outline-none focus:border-[#FF4F00] cursor-pointer transition-colors ${
+                  stageFilter !== 'all' ? 'border-[#F59E0B] text-[#F59E0B] font-bold' : 'border-[#242429]'
                 }`}
               >
                 {STAGE_FILTER_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id} className="bg-surface text-fg">
+                  <option key={opt.id} value={opt.id} className="bg-[#18181C] text-[#F4F4F6]">
                     {opt.label}
                   </option>
                 ))}
@@ -643,19 +637,19 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
             {/* 4. Filtro de Estado */}
             <div>
-              <label className="block text-2xs font-bold text-fg-muted uppercase tracking-wider mb-1 flex items-center gap-1">
-                <UserCheck className="w-3 h-3 text-emerald-400" />
+              <label className="block text-2xs font-bold text-[#52525B] uppercase tracking-wider mb-1 flex items-center gap-1">
+                <UserCheck className="w-3 h-3 text-[#00E599]" />
                 <span>Estado de Actividad</span>
               </label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                className={`w-full bg-surface border rounded-lg px-3 py-1.5 text-xs text-fg focus:outline-none focus:border-primary cursor-pointer transition-colors ${
-                  statusFilter !== 'active' ? 'border-emerald-500 text-emerald-300 font-semibold' : 'border-line'
+                className={`w-full bg-[#18181C] border rounded-[4px] px-3 py-1.5 text-xs text-[#F4F4F6] focus:outline-none focus:border-[#FF4F00] cursor-pointer transition-colors ${
+                  statusFilter !== 'active' ? 'border-[#00E599] text-[#00E599] font-bold' : 'border-[#242429]'
                 }`}
               >
                 {STATUS_FILTER_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id} className="bg-surface text-fg">
+                  <option key={opt.id} value={opt.id} className="bg-[#18181C] text-[#F4F4F6]">
                     {opt.label}
                   </option>
                 ))}
@@ -666,70 +660,70 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       </div>
 
       {/* Navigation Filter Tabs */}
-      <div className="flex items-center gap-1.5 bg-surface p-1.5 rounded-xl border border-line text-xs overflow-x-auto scroll-fade-x shadow-sm">
+      <div className="flex items-center gap-1.5 bg-[#111114] p-1.5 rounded-[4px] border border-[#242429] text-xs font-mono font-bold overflow-x-auto scroll-fade-x">
         <button
           onClick={() => { playSound('click'); setFilter('all'); }}
-          className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer whitespace-nowrap ${
+          className={`px-3.5 py-1.5 rounded-[4px] transition-all cursor-pointer whitespace-nowrap ${
             filter === 'all'
-              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-              : 'text-fg-muted hover:text-fg hover:bg-canvas'
+              ? 'bg-[#FF4F00] text-white'
+              : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
           }`}
         >
           Todos ({otherArtists.length + ecosystemContacts.length})
         </button>
         <button
           onClick={() => { playSound('click'); setFilter('friends'); }}
-          className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-[4px] transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
             filter === 'friends'
-              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-              : 'text-fg-muted hover:text-fg hover:bg-canvas'
+              ? 'bg-[#FF4F00] text-white'
+              : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
           }`}
         >
-          <Heart className="w-3.5 h-3.5 text-purple-400" />
+          <Heart className="w-3.5 h-3.5 text-[#FF4F00]" />
           <span>Amistad & Respeto</span>
         </button>
         <button
           onClick={() => { playSound('click'); setFilter('collabs'); }}
-          className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-[4px] transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
             filter === 'collabs'
-              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-              : 'text-fg-muted hover:text-fg hover:bg-canvas'
+              ? 'bg-[#FF4F00] text-white'
+              : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <Sparkles className="w-3.5 h-3.5 text-[#00E599]" />
           <span>Colaboradores</span>
         </button>
         <button
           onClick={() => { playSound('click'); setFilter('rivals'); }}
-          className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-[4px] transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
             filter === 'rivals'
-              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-              : 'text-fg-muted hover:text-fg hover:bg-canvas'
+              ? 'bg-[#FF4F00] text-white'
+              : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
           }`}
         >
-          <Flame className="w-3.5 h-3.5 text-orange-400" />
+          <Flame className="w-3.5 h-3.5 text-[#F59E0B]" />
           <span>Rivales</span>
         </button>
         <button
           onClick={() => { playSound('click'); setFilter('feuds'); }}
-          className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-[4px] transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
             filter === 'feuds'
-              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-              : 'text-fg-muted hover:text-fg hover:bg-canvas'
+              ? 'bg-[#FF4F00] text-white'
+              : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
           }`}
         >
-          <Swords className="w-3.5 h-3.5 text-rose-400" />
+          <Swords className="w-3.5 h-3.5 text-[#EF4444]" />
           <span>Feudos Activos ({activeBeefs.length})</span>
         </button>
         <button
           onClick={() => { playSound('click'); setFilter('ecosystem'); }}
-          className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-[4px] transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
             filter === 'ecosystem'
-              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-              : 'text-fg-muted hover:text-fg hover:bg-canvas'
+              ? 'bg-[#FF4F00] text-white'
+              : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
           }`}
         >
-          <UserCheck className="w-3.5 h-3.5 text-teal-400" />
+          <UserCheck className="w-3.5 h-3.5 text-[#00E599]" />
           <span>Ecosistema Urbano ({ecosystemContacts.length})</span>
         </button>
       </div>
@@ -758,38 +752,38 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={beef.id}
-                  className="bg-surface border border-rose-500/40 rounded-card p-5 space-y-4 shadow-lg relative overflow-hidden"
+                  className="bg-[#111114] border border-[#EF4444]/40 rounded-[6px] p-5 space-y-4 shadow-sm relative overflow-hidden"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-rose-950/80 text-rose-200 flex items-center justify-center font-black text-xs border border-rose-500/50 shadow-[0_0_12px_rgba(244,63,94,0.3)] shrink-0">
+                      <div className="w-10 h-10 rounded-[4px] bg-[#18181C] text-[#EF4444] flex items-center justify-center font-mono font-bold text-xs border border-[#EF4444]/40 shrink-0">
                         VS
                       </div>
                       <div>
-                        <h3 className="font-bold text-sm sm:text-base text-fg tracking-tight">
+                        <h3 className="font-bold text-sm sm:text-base text-[#F4F4F6] tracking-tight">
                           {beef.targetName}
                         </h3>
-                        <span className="text-xs text-fg-muted flex items-center gap-1 mt-0.5">
-                          <TrendingUp className="w-3 h-3 text-orange-400" />
-                          Hype generado: <strong className="text-orange-400 font-semibold">+{beef.hypeGenerated || 25}</strong>
+                        <span className="text-xs text-[#8E8E99] flex items-center gap-1 mt-0.5 font-mono tabular-nums">
+                          <TrendingUp className="w-3 h-3 text-[#FF4F00]" />
+                          Hype generado: <strong className="text-[#FF4F00] font-semibold">+{beef.hypeGenerated || 25}</strong>
                         </span>
                       </div>
                     </div>
 
-                    <span className={`text-2xs uppercase font-bold tracking-wider px-2.5 py-1 rounded-md border ${stageBadge.color}`}>
+                    <span className={`text-2xs uppercase font-bold tracking-wider px-2.5 py-1 rounded-[4px] border ${stageBadge.color}`}>
                       {stageBadge.label}
                     </span>
                   </div>
 
                   {/* Tension Meter */}
-                  <div className="space-y-1.5 bg-canvas p-3 rounded-control border border-line">
+                  <div className="space-y-1.5 bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
                     <div className="flex justify-between text-xs">
-                      <span className="text-fg-muted">Nivel de Tensión Bélica</span>
-                      <span className="font-mono font-bold text-rose-400">{beef.tensionLevel || 50}/100</span>
+                      <span className="text-[#8E8E99]">Nivel de Tensión Bélica</span>
+                      <span className="font-mono tabular-nums font-bold text-[#EF4444]">{beef.tensionLevel || 50}/100</span>
                     </div>
-                    <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#18181C] h-1.5 rounded-[2px] overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-[#F59E0B] via-[#FF4F00] to-[#EF4444] rounded-[2px] transition-all duration-500"
                         role="progressbar"
                         aria-label="Nivel de tensión"
                         aria-valuemin={0}
@@ -802,12 +796,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* Diss Tracks Exchanged */}
                   {beef.dissTracksExchanged && beef.dissTracksExchanged.length > 0 && (
-                    <div className="text-xs text-fg-muted space-y-1 bg-canvas/60 p-2.5 rounded-lg border border-line/60">
-                      <span className="font-semibold text-fg flex items-center gap-1">
-                        <Radio className="w-3 h-3 text-rose-400" />
+                    <div className="text-xs text-[#8E8E99] space-y-1 bg-[#09090B] p-2.5 rounded-[4px] border border-[#242429]">
+                      <span className="font-semibold text-[#F4F4F6] flex items-center gap-1">
+                        <Radio className="w-3 h-3 text-[#EF4444]" />
                         Historial de Tiraderas:
                       </span>
-                      <ul className="list-disc list-inside text-2xs italic space-y-0.5 text-fg-muted">
+                      <ul className="list-disc list-inside text-2xs italic space-y-0.5 text-[#8E8E99]">
                         {beef.dissTracksExchanged.map((track, i) => (
                           <li key={i} className="truncate">{track}</li>
                         ))}
@@ -817,16 +811,16 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* Interactive Beef Action Buttons */}
                   {onInteractBeef && beef.stage !== 'settled' && (
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-line">
+                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429]">
                       <button
                         onClick={() => {
                           playSound('click');
                           onInteractBeef(beef.targetName, beef.targetId, 'respond_social');
                         }}
-                        className="bg-canvas hover:bg-white/[0.05] text-fg border border-line hover:border-primary/50 py-2 px-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        className="bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] py-2 px-2 text-xs font-semibold rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Responder en Redes (+Hype, chicana pública)"
                       >
-                        <MessageSquare className="w-3.5 h-3.5 text-primary" />
+                        <MessageSquare className="w-3.5 h-3.5 text-[#FF4F00]" />
                         <span>Chicana</span>
                       </button>
 
@@ -835,7 +829,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           playSound('chart_no1');
                           onInteractBeef(beef.targetName, beef.targetId, 'drop_diss');
                         }}
-                        className="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold py-2 px-2 text-xs rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.4)]"
+                        className="bg-[#EF4444] hover:bg-[#DC2626] text-white font-bold py-2 px-2 text-xs rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Lanzar Diss Track demoledor en plataformas"
                       >
                         <Swords className="w-3.5 h-3.5 text-white" />
@@ -847,10 +841,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           playSound('click');
                           onInteractBeef(beef.targetName, beef.targetId, 'ignore');
                         }}
-                        className="bg-canvas hover:bg-white/[0.05] text-fg-muted hover:text-fg border border-line py-2 px-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        className="bg-[#18181C] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] py-2 px-2 text-xs font-semibold rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Ignorar provocaciones (+Disciplina, +Credibilidad)"
                       >
-                        <ShieldCheck className="w-3.5 h-3.5 text-fg-muted" />
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#8E8E99]" />
                         <span>Ignorar</span>
                       </button>
                     </div>
@@ -867,14 +861,14 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
         <div className="space-y-3.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-1 rounded-md bg-purple-950/70 border border-primary/40 text-primary">
+              <div className="p-1 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#FF4F00]">
                 <UserCheck className="w-4 h-4" />
               </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-fg">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-[#F4F4F6]">
                 Personajes Recurrentes del Ecosistema Urbano ({ecosystemContacts.length})
               </h2>
             </div>
-            <span className="text-xs text-fg-muted">
+            <span className="text-xs text-[#8E8E99]">
               Productores de barrio, managers, críticos y contactos clave
             </span>
           </div>
@@ -887,45 +881,45 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={npc.id}
-                  className="bg-surface border border-line rounded-card p-4 space-y-3.5 flex flex-col justify-between shadow-md hover:border-primary/50 transition-all group"
+                  className="bg-[#111114] border border-[#242429] rounded-[6px] p-4 space-y-3.5 flex flex-col justify-between hover:border-[#3F3F46] transition-all group"
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-tr ${npc.avatarGradient || 'from-stone-700 to-zinc-900'} text-fg font-bold text-sm flex items-center justify-center shrink-0 shadow-sm border border-white/10`}>
+                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] text-[#F4F4F6] font-mono font-bold text-sm flex items-center justify-center shrink-0 border border-[#242429]">
                           {npc.name.charAt(0)}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-bold text-sm text-fg truncate">
+                          <h3 className="font-bold text-sm text-[#F4F4F6] truncate">
                             {npc.name}
                           </h3>
-                          <span className={`text-2xs font-semibold px-1.5 py-0.5 rounded-sm border ${badge.color} inline-block mt-0.5`}>
+                          <span className={`text-2xs font-semibold px-1.5 py-0.5 rounded-[4px] border ${badge.color} inline-block mt-0.5`}>
                             {badge.label}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <p className="text-xs text-fg-muted leading-relaxed line-clamp-3">
+                    <p className="text-xs text-[#8E8E99] leading-relaxed line-clamp-3">
                       {npc.description || npc.bio}
                     </p>
                   </div>
 
                   {/* Meters: Afinidad, Lealtad, Tensión */}
-                  <div className="space-y-1.5 bg-canvas p-2.5 rounded-control border border-line text-xs">
+                  <div className="space-y-1.5 bg-[#09090B] p-2.5 rounded-[4px] border border-[#242429] text-xs font-mono tabular-nums">
                     <div className="flex justify-between">
-                      <span className="text-fg-muted">Afinidad / Confianza</span>
-                      <span className={`font-mono font-semibold ${npc.affinity > 0 ? 'text-emerald-400' : npc.affinity < 0 ? 'text-rose-400' : 'text-fg'}`}>
+                      <span className="text-[#8E8E99]">Afinidad / Confianza</span>
+                      <span className={`font-semibold ${npc.affinity > 0 ? 'text-[#00E599]' : npc.affinity < 0 ? 'text-[#EF4444]' : 'text-[#F4F4F6]'}`}>
                         {npc.affinity > 0 ? `+${npc.affinity}` : npc.affinity}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-fg-muted">Lealtad al Proyecto</span>
-                      <span className="font-mono font-semibold text-fg">{npc.loyalty}%</span>
+                      <span className="text-[#8E8E99]">Lealtad al Proyecto</span>
+                      <span className="font-semibold text-[#F4F4F6]">{npc.loyalty}%</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-fg-muted">Tensión Acumulada</span>
-                      <span className={`font-mono font-semibold ${(npc.tension ?? npc.tensionLevel ?? 0) > 40 ? 'text-rose-400 font-bold' : 'text-fg'}`}>
+                      <span className="text-[#8E8E99]">Tensión Acumulada</span>
+                      <span className={`font-semibold ${(npc.tension ?? npc.tensionLevel ?? 0) > 40 ? 'text-[#EF4444] font-bold' : 'text-[#F4F4F6]'}`}>
                         {(npc.tension ?? npc.tensionLevel ?? 0)}%
                       </span>
                     </div>
@@ -933,23 +927,23 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* NPC Interaction Actions */}
                   {onInteractEcosystemNPC && (
-                    <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-line/80">
+                    <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-[#242429]">
                       {role === 'beatmaker_barrio' && (
                         <>
                           <button
                             onClick={() => { playSound('click'); onInteractEcosystemNPC(npc.id, 'collab_beat'); }}
-                            className="bg-canvas hover:bg-white/[0.05] text-fg border border-line hover:border-primary/50 py-1.5 px-2 text-2xs font-semibold rounded-md flex items-center justify-center gap-1 transition-all cursor-pointer"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Producir beat con Nico 808"
                           >
-                            <Volume2 className="w-3 h-3 text-primary" />
+                            <Volume2 className="w-3 h-3 text-[#FF4F00]" />
                             <span>Sesión Beat</span>
                           </button>
                           <button
                             onClick={() => { playSound('money'); onInteractEcosystemNPC(npc.id, 'buy_exclusive'); }}
-                            className="bg-canvas hover:bg-white/[0.05] text-fg border border-line hover:border-emerald-500/50 py-1.5 px-2 text-2xs font-semibold rounded-md flex items-center justify-center gap-1 transition-all cursor-pointer"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#00E599] border border-[#00E599]/30 hover:border-[#00E599]/60 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Comprar instrumental exclusiva ($500)"
                           >
-                            <DollarSign className="w-3 h-3 text-emerald-400" />
+                            <DollarSign className="w-3 h-3 text-[#00E599]" />
                             <span>Exclusiva</span>
                           </button>
                         </>
@@ -959,18 +953,18 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => { playSound('click'); onInteractEcosystemNPC(npc.id, 'hang_out'); }}
-                            className="bg-canvas hover:bg-white/[0.05] text-fg border border-line hover:border-primary/50 py-1.5 px-2 text-2xs font-semibold rounded-md flex items-center justify-center gap-1 transition-all cursor-pointer"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Reunión en reservado con Tony"
                           >
-                            <Coffee className="w-3 h-3 text-primary" />
+                            <Coffee className="w-3 h-3 text-[#FF4F00]" />
                             <span>Reunión</span>
                           </button>
                           <button
                             onClick={() => { playSound('click'); onInteractEcosystemNPC(npc.id, 'call_out'); }}
-                            className="bg-canvas hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 border border-rose-500/30 py-1.5 px-2 text-2xs font-semibold rounded-md flex items-center justify-center gap-1 transition-all cursor-pointer"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#EF4444] hover:text-[#F87171] border border-[#EF4444]/30 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Auditar finanzas / Confrontar cuentas dudosas"
                           >
-                            <AlertTriangle className="w-3 h-3 text-rose-400" />
+                            <AlertTriangle className="w-3 h-3 text-[#EF4444]" />
                             <span>Auditar</span>
                           </button>
                         </>
@@ -980,10 +974,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => { playSound('chart_no1'); onInteractEcosystemNPC(npc.id, 'call_out'); }}
-                            className="bg-canvas hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 border border-rose-500/30 py-1.5 px-2 text-2xs font-semibold rounded-md flex items-center justify-center gap-1 transition-all cursor-pointer col-span-2 shadow-xs"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#FF4F00] border border-[#FF4F00]/40 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer col-span-2 active:translate-y-[1px]"
                             title="Desafiar en redes públicas (+Hype)"
                           >
-                            <Zap className="w-3 h-3 text-orange-400" />
+                            <Zap className="w-3 h-3 text-[#FF4F00]" />
                             <span>Desafiar en Redes</span>
                           </button>
                         </>
@@ -993,15 +987,15 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => { playSound('click'); onInteractBeef(npc.name, npc.id, 'respond_social'); }}
-                            className="bg-canvas hover:bg-white/[0.05] text-fg border border-line hover:border-primary/50 py-1.5 px-2 text-2xs font-semibold rounded-md flex items-center justify-center gap-1 transition-all cursor-pointer"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Responder chicanas en redes"
                           >
-                            <MessageSquare className="w-3 h-3 text-primary" />
+                            <MessageSquare className="w-3.5 h-3.5 text-[#FF4F00]" />
                             <span>Chicana</span>
                           </button>
                           <button
                             onClick={() => { playSound('chart_no1'); onInteractBeef(npc.name, npc.id, 'drop_diss'); }}
-                            className="bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold py-1.5 px-2 text-2xs rounded-md flex items-center justify-center gap-1 cursor-pointer transition-all shadow-[0_0_12px_rgba(244,63,94,0.4)]"
+                            className="bg-[#EF4444] hover:bg-[#DC2626] text-white font-bold py-1.5 px-2 text-2xs rounded-[4px] flex items-center justify-center gap-1 cursor-pointer transition-all active:translate-y-[1px]"
                             title="Tiradera Lírica"
                           >
                             <Swords className="w-3 h-3 text-white" />
@@ -1023,23 +1017,23 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-1 rounded-md bg-primary/20 border border-primary/40 text-primary">
+              <div className="p-1 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#FF4F00]">
                 <User className="w-4 h-4" />
               </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-fg">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-[#F4F4F6]">
                 Artistas & Colegas de la Industria ({filteredArtists.length})
               </h2>
             </div>
-            <span className="text-xs text-fg-muted">
+            <span className="text-xs text-[#8E8E99]">
               Evaluación en tiempo real de afinidad, respeto y disponibilidad de interacciones
             </span>
           </div>
 
           {filteredArtists.length === 0 ? (
-            <div className="bg-surface border border-line rounded-card p-8 text-center space-y-2">
-              <Info className="w-8 h-8 text-fg-muted mx-auto opacity-50" />
-              <p className="text-sm font-semibold text-fg">No se encontraron artistas para este filtro</p>
-              <p className="text-xs text-fg-muted">Prueba cambiando la categoría o limpiando la búsqueda.</p>
+            <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-8 text-center space-y-2">
+              <Info className="w-8 h-8 text-[#52525B] mx-auto opacity-50" />
+              <p className="text-sm font-semibold text-[#F4F4F6]">No se encontraron artistas para este filtro</p>
+              <p className="text-xs text-[#8E8E99]">Prueba cambiando la categoría o limpiando la búsqueda.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5">
@@ -1062,20 +1056,20 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 return (
                   <div
                     key={artist.id}
-                    className="bg-surface border border-line rounded-card p-5 space-y-4 flex flex-col justify-between shadow-md hover:border-primary/50 transition-all group"
+                    className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 space-y-4 flex flex-col justify-between hover:border-[#3F3F46] transition-all group"
                   >
                     {/* Header Info & State Badge */}
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-11 h-11 rounded-lg bg-canvas border border-line flex items-center justify-center text-fg font-bold text-base shadow-xs shrink-0 group-hover:border-primary/40 transition-colors">
+                          <div className="w-11 h-11 rounded-[4px] bg-[#09090B] border border-[#242429] flex items-center justify-center text-[#F4F4F6] font-mono font-bold text-base shrink-0 group-hover:border-[#3F3F46] transition-colors">
                             {artist.name.charAt(0)}
                           </div>
                           <div className="min-w-0">
-                            <h3 className="font-bold text-sm sm:text-base text-fg truncate">
+                            <h3 className="font-bold text-sm sm:text-base text-[#F4F4F6] truncate">
                               {artist.name}
                             </h3>
-                            <p className="text-xs text-fg-muted truncate">
+                            <p className="text-xs text-[#8E8E99] truncate">
                               {world.genres[artist.mainGenreId]?.name || artist.mainGenreId}
                             </p>
                           </div>
@@ -1084,7 +1078,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         {/* 1. ESTADO DE RELACIÓN CLARO Y VISIBLE */}
                         <div className="shrink-0">
                           <span
-                            className={`text-2xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5 ${badgeConfig.className}`}
+                            className={`text-2xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] flex items-center gap-1.5 ${badgeConfig.className}`}
                             title={`Estado de relación: ${badgeConfig.label}`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${badgeConfig.dotClass}`} />
@@ -1094,33 +1088,33 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       </div>
 
                       {/* Location Badge: Flag Country • City */}
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-canvas border border-line text-xs text-fg-muted font-medium w-fit max-w-full">
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-[#09090B] border border-[#242429] text-xs text-[#8E8E99] font-medium w-fit max-w-full">
                         <span className="text-xs shrink-0">{getCountryFlag(artist.country, artist.countryCode)}</span>
-                        <span className="text-fg font-semibold truncate">{artist.country || 'Global'}</span>
-                        <span className="text-fg-subtle shrink-0">•</span>
-                        <span className="text-fg-muted truncate">{artist.city || 'Escena Local'}</span>
+                        <span className="text-[#F4F4F6] font-semibold truncate">{artist.country || 'Global'}</span>
+                        <span className="text-[#52525B] shrink-0">•</span>
+                        <span className="text-[#8E8E99] truncate">{artist.city || 'Escena Local'}</span>
                       </div>
 
                       {/* Stat Metrics Bar */}
-                      <div className="flex items-center justify-between text-xs text-fg-muted font-mono bg-canvas/70 px-3 py-1.5 rounded-lg border border-line/60">
-                        <span>Pop: <strong className="text-fg font-semibold">{artist.stats.popularity}</strong></span>
-                        <span>Oyentes: <strong className="text-fg font-semibold">{formatCompactNumber(artist.stats.monthlyListeners)}</strong></span>
-                        <span>Etapa: <strong className="text-fg-muted">{artist.careerStage}</strong></span>
+                      <div className="flex items-center justify-between text-xs text-[#8E8E99] font-mono tabular-nums bg-[#09090B] px-3 py-1.5 rounded-[4px] border border-[#242429]">
+                        <span>Pop: <strong className="text-[#F4F4F6] font-semibold">{artist.stats.popularity}</strong></span>
+                        <span>Oyentes: <strong className="text-[#F4F4F6] font-semibold">{formatCompactNumber(artist.stats.monthlyListeners)}</strong></span>
+                        <span>Etapa: <strong className="text-[#8E8E99]">{artist.careerStage}</strong></span>
                       </div>
                     </div>
 
                     {/* Relationship Meters: Afinidad & Respeto */}
-                    <div className="space-y-2.5 bg-canvas p-3 rounded-control border border-line text-xs">
+                    <div className="space-y-2.5 bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-xs font-mono tabular-nums">
                       <div>
                         <div className="flex justify-between text-xs mb-1">
-                          <span className="text-fg-muted">Afinidad Mutua</span>
-                          <span className={`font-semibold font-mono ${rel.affinity > 0 ? 'text-accent' : rel.affinity < 0 ? 'text-rose-400' : 'text-fg'}`}>
+                          <span className="text-[#8E8E99]">Afinidad Mutua</span>
+                          <span className={`font-semibold font-mono tabular-nums ${rel.affinity > 0 ? 'text-[#00E599]' : rel.affinity < 0 ? 'text-[#EF4444]' : 'text-[#F4F4F6]'}`}>
                             {rel.affinity > 0 ? `+${rel.affinity}` : rel.affinity}
                           </span>
                         </div>
-                        <div className="w-full bg-surface h-1.5 rounded-full overflow-hidden">
+                        <div className="w-full bg-[#18181C] h-1.5 rounded-[2px] overflow-hidden">
                           <div
-                            className={`h-full rounded-full ${rel.affinity < 0 ? 'bg-rose-500' : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]'}`}
+                            className={`h-full rounded-[2px] ${rel.affinity < 0 ? 'bg-[#EF4444]' : 'bg-[#FF4F00]'}`}
                             role="progressbar"
                             aria-label="Afinidad mutua"
                             aria-valuemin={-100}
@@ -1133,12 +1127,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                       <div>
                         <div className="flex justify-between text-xs mb-1">
-                          <span className="text-fg-muted">Respeto Profesional</span>
-                          <span className="font-semibold text-cyan-300 font-mono">{rel.respect}%</span>
+                          <span className="text-[#8E8E99]">Respeto Profesional</span>
+                          <span className="font-semibold text-[#00E599] font-mono tabular-nums">{rel.respect}%</span>
                         </div>
-                        <div className="w-full bg-surface h-1.5 rounded-full overflow-hidden">
+                        <div className="w-full bg-[#18181C] h-1.5 rounded-[2px] overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-[#8B5CF6] to-[#06B6D4] h-full rounded-full"
+                            className="bg-[#00E599] h-full rounded-[2px]"
                             role="progressbar"
                             aria-label="Respeto profesional"
                             aria-valuemin={0}
@@ -1150,21 +1144,21 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       </div>
 
                       {rel.history && rel.history.length > 0 && (
-                        <div className="pt-2 border-t border-line text-2xs text-fg-muted italic line-clamp-1">
+                        <div className="pt-2 border-t border-[#242429] text-2xs text-[#8E8E99] italic line-clamp-1">
                           Último: "{cleanQuotes(rel.history[rel.history.length - 1])}"
                         </div>
                       )}
                     </div>
 
                     {/* 2. BOTONES DE ACCIÓN CON COOLDOWN Y TOOLTIPS */}
-                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-line/80">
+                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-[#242429]">
                       {/* PROPOSE COLLAB */}
                       <button
                         onClick={() => handleExecuteInteraction(artist, 'collab_request')}
-                        className="bg-gradient-to-r from-[#8B5CF6]/20 to-[#EC4899]/20 hover:from-[#8B5CF6] hover:to-[#EC4899] text-[#F8FAFC] hover:text-white border border-[#8B5CF6]/50 hover:border-[#EC4899] py-2 px-2 text-xs font-bold rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer shadow-[0_0_10px_rgba(139,92,246,0.25)] hover:shadow-[0_0_15px_rgba(236,72,153,0.4)] group/btn"
+                        className="bg-[#FF4F00] hover:bg-[#E04500] text-white py-2 px-2 text-xs font-bold rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px] group/btn"
                         title="Proponer Colaboración Musical Personalizada (Single, EP o Álbum)"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-primary-soft group-hover/btn:text-white transition-transform group-hover/btn:scale-110" />
+                        <Sparkles className="w-3.5 h-3.5 text-white" />
                         <span>Proponer Colab</span>
                       </button>
 
@@ -1172,19 +1166,19 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       {shoutoutCheck.canPerform || shoutoutCheck.canSend ? (
                         <button
                           onClick={() => handleExecuteInteraction(artist, 'shoutout')}
-                          className="bg-canvas hover:bg-accent/10 text-fg hover:text-white border border-line hover:border-accent/60 py-2 px-2 text-xs font-medium rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer shadow-xs hover:shadow-[0_0_12px_rgba(236,72,153,0.25)] group/btn"
+                          className="bg-[#18181C] hover:bg-[#242429] text-[#00E599] border border-[#00E599]/30 hover:border-[#00E599]/60 py-2 px-2 text-xs font-medium rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px] group/btn"
                           title={shoutoutCheck.probableConsequence || 'Elogio Público • Consecuencia: +Afinidad, +Respeto y +Hype en la escena musical'}
                         >
-                          <Heart className="w-3.5 h-3.5 text-accent group-hover/btn:scale-110 transition-transform" />
+                          <Heart className="w-3.5 h-3.5 text-[#00E599]" />
                           <span>Elogio</span>
                         </button>
                       ) : (
                         <button
                           disabled
-                          className="bg-canvas/80 text-fg-muted/60 border border-line/60 py-2 px-2 text-2xs font-medium rounded-lg flex flex-col items-center gap-1 opacity-60 cursor-not-allowed transition-all"
+                          className="bg-[#09090B] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-mono tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
                           title={`Disponible en Año ${shoutoutCheck.availableYear} • Mes ${shoutoutCheck.availableMonth}`}
                         >
-                          <Clock className="w-3.5 h-3.5 text-fg-muted/70" />
+                          <Clock className="w-3.5 h-3.5 text-[#52525B]" />
                           <span>Cooldown: {shoutoutCheck.cooldownRemainingMonths}m</span>
                         </button>
                       )}
@@ -1193,19 +1187,19 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       {dissCheck.canPerform || dissCheck.canSend ? (
                         <button
                           onClick={() => handleExecuteInteraction(artist, 'diss')}
-                          className="bg-canvas hover:bg-rose-500/10 text-rose-400 hover:text-rose-300 border border-rose-500/30 hover:border-rose-500/60 py-2 px-2 text-xs font-medium rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer shadow-xs hover:shadow-[0_0_12px_rgba(244,63,94,0.3)] group/btn"
+                          className="bg-[#18181C] hover:bg-[#242429] text-[#EF4444] hover:text-[#F87171] border border-[#EF4444]/30 hover:border-[#EF4444]/60 py-2 px-2 text-xs font-medium rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px] group/btn"
                           title={dissCheck.probableConsequence || 'Tiradera / Diss Track • Consecuencia: +Hype masivo, desata Feudo Activo con barras líricas'}
                         >
-                          <Swords className="w-3.5 h-3.5 text-rose-400 group-hover/btn:scale-110 transition-transform" />
+                          <Swords className="w-3.5 h-3.5 text-[#EF4444]" />
                           <span>Tiradera</span>
                         </button>
                       ) : (
                         <button
                           disabled
-                          className="bg-canvas/80 text-fg-muted/60 border border-line/60 py-2 px-2 text-2xs font-medium rounded-lg flex flex-col items-center gap-1 opacity-60 cursor-not-allowed transition-all"
+                          className="bg-[#09090B] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-mono tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
                           title={`Disponible en Año ${dissCheck.availableYear} • Mes ${dissCheck.availableMonth}`}
                         >
-                          <Lock className="w-3.5 h-3.5 text-fg-muted/70" />
+                          <Lock className="w-3.5 h-3.5 text-[#52525B]" />
                           <span>Cooldown: {dissCheck.cooldownRemainingMonths}m</span>
                         </button>
                       )}
@@ -1220,36 +1214,16 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
       {/* 3. MODAL / POP-UP DE RESULTADO NARRATIVO DE INTERACCIÓN */}
       {activeModalResult && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
-          <div
-            className="bg-surface border border-line max-w-2xl w-full rounded-panel flex flex-col overflow-hidden text-fg shadow-2xl relative my-auto max-h-[92vh]"
-            style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-          >
-            {/* Ambient Top Glow */}
-            <div
-              className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-28 blur-3xl pointer-events-none ${
-                activeModalResult.badge.variant === 'danger'
-                  ? 'bg-rose-600/25'
-                  : activeModalResult.badge.variant === 'warning'
-                  ? 'bg-amber-600/20'
-                  : activeModalResult.badge.variant === 'purple'
-                  ? 'bg-purple-600/25'
-                  : 'bg-emerald-600/25'
-              }`}
-            />
-
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+          <div className="bg-[#111114] border border-[#242429] max-w-2xl w-full rounded-[6px] flex flex-col overflow-hidden text-[#F4F4F6] shadow-2xl relative my-auto max-h-[92vh]">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-line bg-surface/90 backdrop-blur-md flex items-center justify-between relative z-10">
+            <div className="px-6 py-4 border-b border-[#242429] bg-[#111114] flex items-center justify-between relative z-10">
               <div className="flex items-center gap-3">
                 <div
-                  className={`p-2 rounded-lg bg-canvas border shrink-0 ${
-                    activeModalResult.badge.variant === 'danger'
-                      ? 'border-rose-500/50 text-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
-                      : activeModalResult.badge.variant === 'warning'
-                      ? 'border-amber-500/50 text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
-                      : activeModalResult.badge.variant === 'purple'
-                      ? 'border-purple-500/50 text-purple-300 shadow-[0_0_12px_rgba(139,92,246,0.3)]'
-                      : 'border-emerald-500/50 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                  className={`p-2 rounded-[4px] bg-[#18181C] border shrink-0 ${
+                    activeModalResult.actionType === 'diss'
+                      ? 'border-[#EF4444]/50 text-[#EF4444]'
+                      : 'border-[#00E599]/50 text-[#00E599]'
                   }`}
                 >
                   {activeModalResult.actionType === 'diss' ? (
@@ -1260,10 +1234,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 </div>
 
                 <div>
-                  <span className="text-2xs uppercase font-bold tracking-wider text-fg-muted inline-block">
+                  <span className="text-2xs uppercase font-bold tracking-wider text-[#8E8E99] inline-block font-mono">
                     {activeModalResult.actionType === 'diss' ? 'Tiradera / Guerra Lírica' : 'Mención / Elogio Público'} • Repercusión Escénica
                   </span>
-                  <h2 className="text-base sm:text-lg font-bold tracking-tight text-fg">
+                  <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#F4F4F6]">
                     Resultado de Interacción
                   </h2>
                 </div>
@@ -1271,7 +1245,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
               <button
                 onClick={() => { playSound('click'); setActiveModalResult(null); }}
-                className="p-1.5 rounded-md hover:bg-line text-fg-muted hover:text-fg transition-colors cursor-pointer"
+                className="p-1.5 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] transition-colors cursor-pointer"
                 title="Cerrar ventana"
               >
                 <X className="w-5 h-5" />
@@ -1281,35 +1255,25 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto space-y-6 flex-1 relative z-10">
               {/* Title & Result Badge Banner */}
-              <div
-                className={`rounded-card p-5 border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md ${
-                  activeModalResult.badge.variant === 'danger'
-                    ? 'bg-gradient-to-r from-rose-950/60 via-surface to-canvas border-rose-500/50'
-                    : activeModalResult.badge.variant === 'warning'
-                    ? 'bg-gradient-to-r from-amber-950/50 via-surface to-canvas border-amber-500/50'
-                    : activeModalResult.badge.variant === 'purple'
-                    ? 'bg-gradient-to-r from-purple-950/60 via-surface to-canvas border-purple-500/50'
-                    : 'bg-gradient-to-r from-emerald-950/60 via-surface to-canvas border-emerald-500/50'
-                }`}
-              >
+              <div className="rounded-[6px] p-5 border border-[#242429] bg-[#18181C] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
                 <div className="space-y-1">
-                  <h3 className="text-lg sm:text-xl font-black tracking-tight text-fg">
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#F4F4F6]">
                     {activeModalResult.title}
                   </h3>
-                  <p className="text-xs text-fg-muted">
-                    Interacción con <strong className="text-fg font-semibold">{activeModalResult.targetArtistName}</strong>
+                  <p className="text-xs text-[#8E8E99]">
+                    Interacción con <strong className="text-[#F4F4F6] font-semibold">{activeModalResult.targetArtistName}</strong>
                   </p>
                 </div>
 
                 <span
-                  className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg border shadow-xs ${
+                  className={`text-xs font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-[4px] border ${
                     activeModalResult.badge.variant === 'danger'
-                      ? 'bg-rose-950/80 text-rose-200 border-rose-500/60'
+                      ? 'bg-[#18181C] text-[#EF4444] border-[#EF4444]/40'
                       : activeModalResult.badge.variant === 'warning'
-                      ? 'bg-amber-950/80 text-amber-200 border-amber-500/60'
+                      ? 'bg-[#18181C] text-[#F59E0B] border-[#F59E0B]/40'
                       : activeModalResult.badge.variant === 'purple'
-                      ? 'bg-purple-950/80 text-purple-200 border-purple-500/60'
-                      : 'bg-emerald-950/80 text-emerald-200 border-emerald-500/60'
+                      ? 'bg-[#18181C] text-[#FF4F00] border-[#FF4F00]/40'
+                      : 'bg-[#18181C] text-[#00E599] border-[#00E599]/40'
                   }`}
                 >
                   {activeModalResult.badge.label}
@@ -1318,70 +1282,70 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
               {/* Narrative Text */}
               <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-primary" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5">
+                  <Radio className="w-3.5 h-3.5 text-[#FF4F00]" />
                   Repercusión en la Escena Urbana
                 </h4>
-                <div className="bg-canvas p-4 rounded-xl border border-line text-xs sm:text-sm text-fg leading-relaxed">
+                <div className="bg-[#09090B] p-4 rounded-[4px] border border-[#242429] text-xs sm:text-sm text-[#F4F4F6] leading-relaxed">
                   {activeModalResult.narrativeText}
                 </div>
               </div>
 
               {/* Highlighted Numeric Changes Grid */}
               <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99]">
                   Impacto en Métricas & Relaciones
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {activeModalResult.statDeltas.hype !== undefined && (
-                    <div className="bg-canvas p-3 rounded-control border border-line text-center space-y-0.5">
-                      <span className="text-2xs text-fg-muted uppercase tracking-wider block">Hype</span>
-                      <span className="font-mono font-bold text-sm text-orange-400">
+                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Hype</span>
+                      <span className="font-mono tabular-nums font-bold text-sm text-[#FF4F00]">
                         {activeModalResult.statDeltas.hype > 0 ? `+${activeModalResult.statDeltas.hype}` : activeModalResult.statDeltas.hype}
                       </span>
                     </div>
                   )}
 
                   {activeModalResult.statDeltas.affinity !== undefined && (
-                    <div className="bg-canvas p-3 rounded-control border border-line text-center space-y-0.5">
-                      <span className="text-2xs text-fg-muted uppercase tracking-wider block">Afinidad</span>
-                      <span className={`font-mono font-bold text-sm ${activeModalResult.statDeltas.affinity > 0 ? 'text-accent' : 'text-rose-400'}`}>
+                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Afinidad</span>
+                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.affinity > 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.affinity > 0 ? `+${activeModalResult.statDeltas.affinity}` : activeModalResult.statDeltas.affinity}
                       </span>
                     </div>
                   )}
 
                   {activeModalResult.statDeltas.respect !== undefined && (
-                    <div className="bg-canvas p-3 rounded-control border border-line text-center space-y-0.5">
-                      <span className="text-2xs text-fg-muted uppercase tracking-wider block">Respeto</span>
-                      <span className={`font-mono font-bold text-sm ${activeModalResult.statDeltas.respect > 0 ? 'text-cyan-300' : 'text-rose-400'}`}>
+                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Respeto</span>
+                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.respect > 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.respect > 0 ? `+${activeModalResult.statDeltas.respect}` : activeModalResult.statDeltas.respect}
                       </span>
                     </div>
                   )}
 
                   {activeModalResult.statDeltas.credibility !== undefined && (
-                    <div className="bg-canvas p-3 rounded-control border border-line text-center space-y-0.5">
-                      <span className="text-2xs text-fg-muted uppercase tracking-wider block">Credibilidad</span>
-                      <span className={`font-mono font-bold text-sm ${activeModalResult.statDeltas.credibility >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Credibilidad</span>
+                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.credibility >= 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.credibility >= 0 ? `+${activeModalResult.statDeltas.credibility}` : activeModalResult.statDeltas.credibility}
                       </span>
                     </div>
                   )}
 
                   {activeModalResult.statDeltas.discipline !== undefined && (
-                    <div className="bg-canvas p-3 rounded-control border border-line text-center space-y-0.5">
-                      <span className="text-2xs text-fg-muted uppercase tracking-wider block">Disciplina</span>
-                      <span className={`font-mono font-bold text-sm ${activeModalResult.statDeltas.discipline >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Disciplina</span>
+                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.discipline >= 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.discipline >= 0 ? `+${activeModalResult.statDeltas.discipline}` : activeModalResult.statDeltas.discipline}
                       </span>
                     </div>
                   )}
 
                   {activeModalResult.statDeltas.energy !== undefined && (
-                    <div className="bg-canvas p-3 rounded-control border border-line text-center space-y-0.5">
-                      <span className="text-2xs text-fg-muted uppercase tracking-wider block">Energía</span>
-                      <span className="font-mono font-bold text-sm text-fg-muted">
+                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Energía</span>
+                      <span className="font-mono tabular-nums font-bold text-sm text-[#8E8E99]">
                         {activeModalResult.statDeltas.energy}
                       </span>
                     </div>
@@ -1391,21 +1355,21 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
               {/* Newspaper Clipping Card */}
               <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted flex items-center gap-1.5">
-                  <Newspaper className="w-3.5 h-3.5 text-emerald-400" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5">
+                  <Newspaper className="w-3.5 h-3.5 text-[#00E599]" />
                   Titular de Prensa Generado
                 </h4>
-                <div className="bg-canvas border border-emerald-500/30 rounded-xl p-4 space-y-2 shadow-sm relative overflow-hidden">
-                  <div className="flex items-center justify-between text-2xs text-fg-muted pb-1.5 border-b border-line">
-                    <span className="font-bold uppercase tracking-wider text-emerald-400">
+                <div className="bg-[#09090B] border border-[#242429] rounded-[6px] p-4 space-y-2 shadow-sm relative overflow-hidden">
+                  <div className="flex items-center justify-between text-2xs text-[#8E8E99] pb-1.5 border-b border-[#242429] font-mono tabular-nums">
+                    <span className="font-bold uppercase tracking-wider text-[#00E599]">
                       PRENSA URBANA • RADAR MUSICAL
                     </span>
                     <span>Año {world.currentYear} • Mes {world.currentMonth}</span>
                   </div>
-                  <h5 className="text-sm sm:text-base font-bold text-fg tracking-tight leading-snug">
+                  <h5 className="text-sm sm:text-base font-bold text-[#F4F4F6] tracking-tight leading-snug">
                     "{cleanQuotes(activeModalResult.pressHeadline)}"
                   </h5>
-                  <p className="text-xs text-fg-muted leading-relaxed">
+                  <p className="text-xs text-[#8E8E99] leading-relaxed">
                     {activeModalResult.pressBody}
                   </p>
                 </div>
@@ -1413,10 +1377,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             </div>
 
             {/* Modal Footer CTA */}
-            <div className="px-6 py-4 border-t border-line bg-surface flex items-center justify-end relative z-10">
+            <div className="px-6 py-4 border-t border-[#242429] bg-[#111114] flex items-center justify-end relative z-10">
               <button
                 onClick={() => { playSound('click'); setActiveModalResult(null); }}
-                className="w-full sm:w-auto bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] hover:from-[#7C3AED] hover:to-[#DB2777] text-white font-semibold py-2.5 px-6 rounded-lg text-xs sm:text-sm transition-all cursor-pointer shadow-[0_0_20px_rgba(139,92,246,0.4)] flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-[#F4F4F6] hover:bg-[#FFFFFF] text-[#09090B] font-bold py-2.5 px-6 rounded-[4px] text-xs sm:text-sm transition-all cursor-pointer active:translate-y-[1px] flex items-center justify-center gap-2"
               >
                 <span>Continuar</span>
               </button>

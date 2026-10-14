@@ -270,29 +270,26 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
   };
 
   return (
-    <div className="space-y-8 pb-24 sm:pb-28 lg:pb-32 font-sans text-fg bg-surface min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl border border-line">
-      {/* Header Banner - Studio After Dark Theme with vibrant accents */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-line pb-6">
+    <div className="space-y-8 pb-24 sm:pb-28 lg:pb-32 font-sans text-[#F4F4F6] bg-[#09090B] min-h-screen p-4 sm:p-6 lg:p-8 rounded-[6px] border border-[#242429]">
+      {/* Header Banner - Studio Matte Rack Theme */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#242429] pb-6">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-3 py-0.5 rounded-full text-xs font-bold bg-info/20 text-info border border-info/40 tracking-tight">
+          <div className="flex items-center gap-2 mb-1.5 font-mono">
+            <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-bold bg-[#18181C] text-[#8E8E99] border border-[#242429] tracking-wider uppercase">
               Inversión & Bienestar
             </span>
             {player.isProdigy && (
-              <span className="px-3 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-amber-300 border border-amber-400/40 flex items-center gap-1 shadow-sm">
-                <Crown className="w-3 h-3 text-amber-400 fill-current" />
+              <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
+                <Crown className="w-3 h-3 text-[#F59E0B] fill-current" />
                 Prodigio x3
               </span>
             )}
           </div>
-          <h1
-            className="text-3xl sm:text-4xl font-semibold tracking-[-0.9px] text-fg flex items-center gap-2.5"
-            style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-          >
-            <ShoppingBag className="w-7 h-7 text-info" />
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#F4F4F6] flex items-center gap-2.5">
+            <ShoppingBag className="w-7 h-7 text-[#FF4F00]" />
             Tienda & Estilo de Vida
           </h1>
-          <p className="text-sm text-fg-muted mt-1.5 max-w-2xl font-normal leading-relaxed">
+          <p className="text-sm text-[#8E8E99] mt-1.5 max-w-2xl font-normal leading-relaxed">
             Invertí los fondos generados por tus lanzamientos y giras en mejoras tangibles con beneficios pasivos permanentes: calidad de estudio casero o profesional, recuperación de energía, mitigación de fatiga y prestigio.
           </p>
         </div>
@@ -300,12 +297,12 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         {/* Balance & Financial History Triggers */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
           {/* Balance Card: FONDOS DISPONIBLES */}
-          <div className="bg-canvas border border-emerald-500/40 rounded-xl p-4 flex items-center flex-row gap-3.5 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-            <div className="p-3 bg-emerald-950/60 rounded-full text-emerald-400 border border-emerald-500/40 shrink-0">
+          <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center flex-row gap-3.5 shadow-xs">
+            <div className="p-3 bg-[#18181C] rounded-[4px] text-[#00E599] border border-[#242429] shrink-0">
               <DollarSign className="w-6 h-6" />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-2xs text-fg-muted block font-semibold uppercase tracking-wider">
+              <span className="text-2xs text-[#52525B] block font-mono font-semibold uppercase tracking-wider">
                 Fondos Disponibles
               </span>
               <span className="text-2xl font-bold text-emerald-400 font-mono tracking-tight whitespace-nowrap inline-flex items-center">
@@ -320,23 +317,23 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               playSound('click');
               setIsLedgerOpen(true);
             }}
-            className="bg-canvas hover:bg-[#1C1F28] border border-primary/40 hover:border-primary rounded-xl p-4 flex items-center gap-3 transition-all cursor-pointer shadow-[0_0_15px_rgba(139,92,246,0.15)] group"
+            className="bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-4 flex items-center gap-3 transition-all cursor-pointer shadow-xs group"
           >
-            <div className="p-3 bg-primary/15 rounded-full text-primary-soft border border-primary/30 group-hover:scale-105 transition-transform">
+            <div className="p-3 bg-[#18181C] rounded-[4px] text-[#8E8E99] group-hover:text-[#F4F4F6] border border-[#242429]">
               <Receipt className="w-6 h-6" />
             </div>
-            <div className="text-left">
+            <div className="text-left font-mono">
               <div className="flex items-center gap-1.5">
-                <span className="text-2xs text-primary-soft font-bold uppercase tracking-wider">
+                <span className="text-2xs text-[#52525B] font-bold uppercase tracking-wider">
                   Historial Financiero
                 </span>
-                <span className="px-1.5 py-0.5 rounded-full text-2xs font-mono font-bold bg-primary/20 text-white">
+                <span className="px-1.5 py-0.5 rounded-[4px] text-2xs font-mono font-bold bg-[#18181C] text-[#F4F4F6] border border-[#242429] tabular-nums">
                   {player.financialLedger?.length || 0}
                 </span>
               </div>
-              <span className="text-sm font-semibold text-fg flex items-center gap-1">
+              <span className="text-sm font-semibold text-[#F4F4F6] flex items-center gap-1 font-sans">
                 Ver Libro Contable
-                <ChevronRight className="w-3.5 h-3.5 text-primary group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className="w-3.5 h-3.5 text-[#FF4F00] group-hover:translate-x-0.5 transition-transform" />
               </span>
             </div>
           </button>
@@ -364,33 +361,35 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       {/* ========================================================================= */}
       {/* TARJETA DE COSTOS OPERATIVOS SEMESTRALES (6-MONTH OPERATING COSTS) */}
       {/* ========================================================================= */}
-      <div className="bg-gradient-to-br from-[#0B0C10] to-[#13151D] border border-[#8B5CF6]/30 rounded-xl p-5 space-y-4 shadow-[0_0_20px_rgba(139,92,246,0.12)]">
+      <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 space-y-4">
         {/* Card Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-primary/15 border border-primary/30 text-primary-soft">
+            <div className="p-2 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
               <Calendar className="w-4 h-4" />
-                   <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-fg flex items-center gap-1.5">
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5 font-mono">
                   Costos Operativos Semestrales Proyectados
                 </h2>
-                <span className={`px-2.5 py-0.5 rounded-full text-2xs font-bold border ${operationalCosts.solvencyBadge}`}>
+                <span className={`px-2 py-0.5 rounded-[4px] font-mono text-2xs font-bold border ${operationalCosts.solvencyBadge}`}>
                   {operationalCosts.solvencyLabel}
                 </span>
               </div>
-              <p className="text-xs text-fg-muted mt-0.5">
+              <p className="text-xs text-[#8E8E99] mt-0.5 font-mono">
                 {operationalCosts.solvencyMessage}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 font-mono">
             <button
               onClick={() => {
                 playSound('click');
                 setShowCostBreakdown(!showCostBreakdown);
               }}
-              className="px-3 py-1.5 rounded-lg bg-surface hover:bg-[#1C1F28] border border-line text-xs font-semibold text-primary-soft hover:border-primary/50 transition-all cursor-pointer"
+              className="px-3 py-1.5 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#8E8E99] hover:text-[#F4F4F6] hover:border-[#3F3F46] transition-all cursor-pointer"
             >
               {showCostBreakdown ? 'Ocultar Desglose' : 'Ver Desglose Detallado'}
             </button>
@@ -400,9 +399,9 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 playSound('click');
                 setIsLedgerOpen(true);
               }}
-              className="px-3 py-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/40 text-xs font-semibold text-white transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#F4F4F6] transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <Receipt className="w-3.5 h-3.5 text-primary-soft" />
+              <Receipt className="w-3.5 h-3.5 text-[#FF4F00]" />
               Auditoría
             </button>
           </div>
@@ -411,51 +410,51 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         {/* Metric Breakdown Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           {/* Total Semi-Annual Cost */}
-          <div className="p-3.5 bg-surface border border-primary/30 rounded-lg space-y-1">
-            <div className="flex items-center justify-between text-fg-muted">
-              <span className="text-xs font-semibold">Costo Semestral Total</span>
-              <span className="text-2xs font-mono text-primary-soft">Burn Rate</span>
+          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <div className="flex items-center justify-between text-[#8E8E99]">
+              <span className="text-xs font-mono font-semibold">Costo Semestral Total</span>
+              <span className="text-2xs font-mono text-[#52525B]">Burn Rate</span>
             </div>
-            <div className="text-lg font-bold text-rose-400 font-mono">
+            <div className="text-lg font-bold text-[#EF4444] font-mono tabular-nums">
               {formatMoney(operationalCosts.semiAnnualTotal)}
             </div>
-            <span className="text-2xs text-fg-muted font-mono block">
+            <span className="text-2xs text-[#8E8E99] font-mono tabular-nums block">
               {formatMoney(operationalCosts.monthlyTotalBurn)} / mes promedio
             </span>
           </div>
 
           {/* Living Cost Semi-Annual */}
-          <div className="p-3.5 bg-surface border border-line rounded-lg space-y-1">
-            <span className="text-fg-muted block text-xs font-semibold">Costo de Vida Base</span>
-            <div className="text-lg font-bold text-fg font-mono">
+          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Costo de Vida Base</span>
+            <div className="text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
               {formatMoney(operationalCosts.semiAnnualLiving)}
             </div>
-            <span className="text-2xs text-fg-muted font-mono block">
+            <span className="text-2xs text-[#8E8E99] font-mono tabular-nums block">
               {`${formatMoney(operationalCosts.monthlyBaseLiving)}/mes • Vivienda & Crew`}
             </span>
           </div>
 
           {/* Upkeep Semi-Annual */}
-          <div className="p-3.5 bg-surface border border-line rounded-lg space-y-1">
-            <span className="text-fg-muted block text-xs font-semibold">Mantenimiento Equipos</span>
-            <div className="text-lg font-bold text-fg font-mono">
+          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Mantenimiento Equipos</span>
+            <div className="text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
               {formatMoney(operationalCosts.semiAnnualUpkeep)}
             </div>
-            <span className="text-2xs text-fg-muted font-mono block">
+            <span className="text-2xs text-[#8E8E99] font-mono tabular-nums block">
               {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes (${ownedUpgrades.length} activos)`}
             </span>
           </div>
 
           {/* Runway Coverage */}
-          <div className="p-3.5 bg-surface border border-emerald-500/30 rounded-lg space-y-1">
-            <div className="flex items-center justify-between text-fg-muted">
-              <span className="text-xs font-semibold">Cobertura / Runway</span>
-              <Wallet className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <div className="flex items-center justify-between text-[#8E8E99]">
+              <span className="text-xs font-mono font-semibold">Cobertura / Runway</span>
+              <Wallet className="w-3.5 h-3.5 text-[#00E599]" />
             </div>
-            <div className="text-lg font-bold text-emerald-400 font-mono">
+            <div className="text-lg font-bold text-[#00E599] font-mono tabular-nums">
               {operationalCosts.runwayMonths >= 99 ? '∞ Meses' : `${operationalCosts.runwayMonths.toFixed(1)} meses`}
             </div>
-            <span className="text-2xs text-emerald-500/80 font-mono block">
+            <span className="text-2xs text-[#8E8E99] font-mono block">
               {`Con saldo actual de ${formatMoney(player.stats.funds)}`}
             </span>
           </div>
@@ -463,43 +462,43 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
 
         {/* Expandable Detailed Breakdown */}
         {showCostBreakdown && (
-          <div className="p-4 bg-canvas border border-line rounded-lg space-y-3 text-xs animate-in fade-in duration-200">
-            <div className="flex items-center justify-between border-b border-line pb-2">
-              <span className="font-bold text-fg uppercase tracking-wider text-xs">
+          <div className="p-4 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-3 text-xs animate-in fade-in duration-200">
+            <div className="flex items-center justify-between border-b border-[#242429] pb-2">
+              <span className="font-bold text-[#F4F4F6] uppercase tracking-wider text-xs font-mono">
                 Desglose Fijo Mensual vs. Proyección Semestral
               </span>
-              <span className="text-xs text-fg-muted font-mono">
+              <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
                 Popularidad del Artista: {player.stats.popularity}%
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3 rounded-lg bg-surface border border-line space-y-1">
-                <div className="text-fg-muted font-semibold text-xs">1. Gastos de Vida & Equipo Personal</div>
-                <div className="font-mono text-fg">
-                  Mensual: <strong className="text-rose-300">{formatMoney(operationalCosts.monthlyBaseLiving)}</strong>
+              <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
+                <div className="text-[#8E8E99] font-semibold text-xs font-mono">1. Gastos de Vida & Equipo Personal</div>
+                <div className="font-mono text-[#F4F4F6] tabular-nums">
+                  Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyBaseLiving)}</strong>
                 </div>
-                <div className="font-mono text-fg-muted text-xs">
+                <div className="font-mono text-[#8E8E99] text-xs tabular-nums">
                   Semestral: {formatMoney(operationalCosts.semiAnnualLiving)}
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-surface border border-line space-y-1">
-                <div className="text-fg-muted font-semibold text-xs">2. Mantenimiento de Mejoras & Bienes</div>
-                <div className="font-mono text-fg">
-                  Mensual: <strong className="text-rose-300">{formatMoney(operationalCosts.monthlyUpkeep)}</strong>
+              <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
+                <div className="text-[#8E8E99] font-semibold text-xs font-mono">2. Mantenimiento de Mejoras & Bienes</div>
+                <div className="font-mono text-[#F4F4F6] tabular-nums">
+                  Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyUpkeep)}</strong>
                 </div>
-                <div className="font-mono text-fg-muted text-xs">
+                <div className="font-mono text-[#8E8E99] text-xs tabular-nums">
                   Semestral: {formatMoney(operationalCosts.semiAnnualUpkeep)}
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-surface border border-line space-y-1">
-                <div className="text-fg-muted font-semibold text-xs">3. Comisión Estimada de Manager</div>
-                <div className="font-mono text-fg">
-                  Mensual: <strong className="text-rose-300">{formatMoney(operationalCosts.monthlyManagerCommission)}</strong>
+              <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
+                <div className="text-[#8E8E99] font-semibold text-xs font-mono">3. Comisión Estimada de Manager</div>
+                <div className="font-mono text-[#F4F4F6] tabular-nums">
+                  Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyManagerCommission)}</strong>
                 </div>
-                <div className="font-mono text-fg-muted text-xs">
+                <div className="font-mono text-[#8E8E99] text-xs tabular-nums">
                   Semestral: {formatMoney(operationalCosts.semiAnnualManager)}
                 </div>
               </div>
@@ -509,75 +508,75 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       </div>
 
       {/* Banner de Progresión y Entrenamiento de Habilidades */}
-      <div className="bg-gradient-to-r from-[#0B0C10] via-[#16181F] to-[#0B0C10] border border-[#8B5CF6]/40 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[0_0_20px_rgba(139,92,246,0.12)]">
+      <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="p-3 bg-primary/15 rounded-xl text-primary-soft border border-primary/30 shrink-0">
+          <div className="p-3 bg-[#18181C] rounded-[4px] text-[#FF4F00] border border-[#242429] shrink-0">
             <Sparkles className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base font-bold text-fg tracking-tight">
+              <h3 className="text-base font-bold text-[#F4F4F6] tracking-tight">
                 Entrenamiento & Potenciadores de Habilidad Permanente
               </h3>
               {player?.isProdigy && (
-                <span className="px-2.5 py-0.5 rounded-full text-2xs font-bold bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-400/50 flex items-center gap-1 shadow-xs">
-                  <Crown className="w-3 h-3 text-amber-400" />
+                <span className="px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
+                  <Crown className="w-3 h-3 text-[#F59E0B]" />
                   Bono Prodigio 3x Activo
                 </span>
               )}
             </div>
-            <p className="text-xs text-fg-muted mt-1 leading-relaxed max-w-3xl">
+            <p className="text-xs text-[#8E8E99] mt-1 leading-relaxed max-w-3xl">
               Las masterclasses, libros de teoría, coach vocal, equipamiento y herramientas de home studio potencian tus habilidades de forma <strong>permanente e irreversible</strong> para toda tu carrera musical.
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <span className="text-xs font-mono px-3 py-1.5 rounded-lg bg-canvas border border-primary/30 text-primary-soft font-semibold">
+          <span className="text-xs font-mono px-3 py-1.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99] font-semibold">
             +Skill • +Creatividad • +Carisma • +Disciplina
           </span>
         </div>
       </div>
 
       {/* Active Buffs Summary Bar with Rich Palette */}
-      <div className="bg-canvas border border-line rounded-xl p-5 space-y-3 shadow-md">
-        <div className="flex items-center justify-between border-b border-line pb-2.5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-fg flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-primary" />
-            Resumen de Buffs Pasivos Activos • {ownedUpgrades.length} Adquiridos
+      <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 space-y-3">
+        <div className="flex items-center justify-between border-b border-[#242429] pb-2.5">
+          <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5">
+            <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
+            Resumen de Buffs Pasivos Activos • <span className="tabular-nums">{ownedUpgrades.length}</span> Adquiridos
           </h2>
-          <span className="text-xs text-fg-muted font-mono">
-            Mantenimiento Total: <strong className="text-rose-400 font-bold">${activeBuffs.monthlyUpkeep.toLocaleString()}/mes</strong>
+          <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
+            Mantenimiento Total: <strong className="text-[#EF4444] font-bold">${activeBuffs.monthlyUpkeep.toLocaleString()}/mes</strong>
           </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 text-xs">
-          <div className="p-3 bg-info/10 border border-info/30 rounded-lg space-y-1">
-            <span className="text-info block text-xs font-semibold">Bono de Calidad</span>
-            <span className="text-base font-bold text-info font-mono">
+          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Bono de Calidad</span>
+            <span className="text-base font-bold text-[#00E599] font-mono tabular-nums">
               {`+${activeBuffs.qualityBonus} Calidad`}
             </span>
           </div>
 
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg space-y-1">
-            <span className="text-emerald-300 block text-xs font-semibold">Energía Pasiva</span>
-            <span className="text-base font-bold text-emerald-400 font-mono">
+          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Energía Pasiva</span>
+            <span className="text-base font-bold text-[#00E599] font-mono tabular-nums">
               {`+${activeBuffs.passiveEnergy}/mes`}
             </span>
           </div>
 
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg space-y-1">
-            <span className="text-rose-300 block text-xs font-semibold">Mitigación de Gira</span>
-            <span className="text-base font-bold text-rose-400 font-mono">
+          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Mitigación de Gira</span>
+            <span className="text-base font-bold text-[#F59E0B] font-mono tabular-nums">
               {Math.round(activeBuffs.tourFatigueReduction * 100) > 0
                 ? `-${Math.round(activeBuffs.tourFatigueReduction * 100)}% Fatiga`
                 : '0% Fatiga'}
             </span>
           </div>
 
-          <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg space-y-1">
-            <span className="text-amber-300 block text-xs font-semibold">Estabilidad de Hype</span>
-            <span className="text-base font-bold text-amber-400 font-mono">
+          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
+            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Estabilidad de Hype</span>
+            <span className="text-base font-bold text-[#F4F4F6] font-mono tabular-nums">
               {`+${Math.round(activeBuffs.hypeDecayReduction * 100)}% Retención`}
             </span>
           </div>
@@ -585,17 +584,9 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       </div>
 
       {/* Category Filter Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1">
+      <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 font-mono text-xs">
         {CATEGORY_TABS.map(tab => {
           const isActive = activeCategory === tab.id;
-          const activeClasses: Record<string, string> = {
-            all: 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold shadow-[0_0_15px_rgba(139,92,246,0.4)] border-transparent',
-            home_studio: 'bg-amber-500/25 border border-amber-400 text-amber-300 font-bold shadow-[0_0_12px_rgba(245,158,11,0.3)]',
-            studio: 'bg-info/25 border border-info text-info font-bold shadow-[0_0_12px_rgba(6,182,212,0.3)]',
-            real_estate: 'bg-emerald-500/25 border border-emerald-400 text-emerald-300 font-bold shadow-[0_0_12px_rgba(16,185,129,0.3)]',
-            vehicles: 'bg-rose-500/25 border border-rose-400 text-rose-300 font-bold shadow-[0_0_12px_rgba(244,63,94,0.3)]',
-            coaching: 'bg-purple-500/25 border border-purple-400 text-primary-soft font-bold shadow-[0_0_12px_rgba(139,92,246,0.3)]'
-          };
           return (
             <button
               key={tab.id}
@@ -603,10 +594,10 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 playSound('click');
                 setActiveCategory(tab.id);
               }}
-              className={`px-4 py-2 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
+              className={`px-4 py-2 rounded-[4px] text-xs transition-all cursor-pointer whitespace-nowrap border ${
                 isActive
-                  ? activeClasses[tab.id] || activeClasses.all
-                  : 'bg-canvas text-fg-muted border-line hover:text-fg hover:border-primary/40'
+                  ? 'bg-[#FF4F00] text-white font-bold border-[#FF4F00]'
+                  : 'bg-[#18181C] text-[#8E8E99] border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
               }`}
             >
               {tab.label}
@@ -715,34 +706,31 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           return (
             <div
               key={item.id}
-              className={`bg-canvas border rounded-xl p-5 flex flex-col justify-between transition-all shadow-md hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] ${categoryBorderLeft[item.category] || ''} ${
+              className={`border rounded-[4px] p-5 flex flex-col justify-between transition-all ${categoryBorderLeft[item.category] || ''} ${
                 isOwned
-                  ? 'border-emerald-500/50 ring-1 ring-emerald-500/40'
-                  : 'border-line hover:border-primary/50'
+                  ? 'border-[#00E599]/60 bg-[#111114]'
+                  : 'bg-[#111114] border-[#242429] hover:bg-[#151519] hover:border-[#3F3F46]'
               }`}
             >
               <div className="space-y-3">
                 {/* Card Top: Icon, Title & Category */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-lg shrink-0 bg-surface border border-line">
+                    <div className="p-2.5 rounded-[4px] shrink-0 bg-[#18181C] border border-[#242429]">
                       {getItemIcon(item.iconName, item.category)}
                     </div>
                     <div>
-                      <h3
-                        className="text-base font-semibold text-fg tracking-normal leading-snug"
-                        style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-                      >
+                      <h3 className="text-base font-bold text-[#F4F4F6] tracking-tight leading-snug">
                         {item.name}
                       </h3>
-                      <span className={`text-xs font-semibold block mt-0.5 ${colorClasses.accentText}`}>
+                      <span className={`text-xs font-mono font-semibold block mt-0.5 ${colorClasses.accentText}`}>
                         {getCategoryLabel(item.category)}
                       </span>
                     </div>
                   </div>
 
                   {isOwned && (
-                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/40 flex items-center gap-1 shrink-0">
+                    <span className="px-2 py-0.5 rounded-[4px] text-xs font-mono font-bold bg-[#18181C] text-[#00E599] border border-[#00E599]/40 flex items-center gap-1 shrink-0">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       En Posesión
                     </span>
@@ -750,27 +738,27 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 </div>
 
                 {/* Description */}
-                <p className="text-xs text-fg-muted font-normal leading-relaxed">
+                <p className="text-xs text-[#8E8E99] font-normal leading-relaxed">
                   {item.description}
                 </p>
 
                 {/* Passive Buff Pill */}
-                <div className={`p-2.5 rounded-lg border text-xs font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
+                <div className={`p-2.5 rounded-[4px] border text-xs font-mono font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
                   <span>{item.buffDescription}</span>
                 </div>
 
                 {/* Explicit Skill & Stat Badges */}
                 {effectBadges.length > 0 && (
-                  <div className="pt-2 border-t border-[#1C1F2A] space-y-1.5">
-                    <span className="text-2xs uppercase font-bold tracking-wider text-fg-subtle block">
+                  <div className="pt-2 border-t border-[#242429] space-y-1.5 font-mono">
+                    <span className="text-2xs uppercase font-bold tracking-wider text-[#52525B] block">
                       Potenciadores Aplicados:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {effectBadges.map((badge, idx) => (
                         <span
                           key={idx}
-                          className={`px-2 py-0.5 rounded-sm text-2xs font-bold border flex items-center gap-1 ${badge.badgeClass}`}
+                          className={`px-2 py-0.5 rounded-[4px] text-2xs font-bold border flex items-center gap-1 ${badge.badgeClass}`}
                         >
                           {badge.icon}
                           <span>{badge.label}</span>
@@ -782,12 +770,12 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               </div>
 
               {/* Card Footer: Cost & Action Button */}
-              <div className="mt-5 pt-4 border-t border-line flex items-center justify-between gap-3">
+              <div className="mt-5 pt-4 border-t border-[#242429] flex items-center justify-between gap-3 font-mono">
                 <div className="min-w-0 flex-1">
-                  <div className="text-lg font-bold text-fg font-mono tracking-tight whitespace-nowrap">
+                  <div className="text-lg font-bold text-[#F4F4F6] font-mono tabular-nums tracking-tight whitespace-nowrap">
                     {formatMoney(item.price)}
                   </div>
-                  <span className="text-xs text-fg-muted font-mono block truncate">
+                  <span className="text-xs text-[#8E8E99] font-mono tabular-nums block truncate">
                     {item.monthlyUpkeep > 0 ? `+${formatMoney(item.monthlyUpkeep)}/mes` : 'Sin costo mensual'}
                   </span>
                 </div>
@@ -806,8 +794,8 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                       disabled={!canAfford}
                       className={`h-10 min-h-[40px] px-4 text-xs font-bold rounded-md transition-all flex items-center justify-center whitespace-nowrap shrink-0 ${
                         canAfford
-                          ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.4)] hover:opacity-95 active:opacity-85 cursor-pointer'
-                          : 'bg-surface text-fg-subtle border border-line cursor-not-allowed opacity-60'
+                          ? 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
+                          : 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed opacity-60'
                       }`}
                     >
                       {canAfford ? 'Comprar Mejora' : 'Fondos Insuficientes'}

@@ -430,35 +430,32 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
   };
 
   return (
-    <div
-      className="space-y-6 pb-12 font-sans text-fg"
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
-    >
+    <div className="space-y-6 pb-12 text-[#F4F4F6]">
       {/* Consolidated Header Banner & Navigation */}
-      <div className="bg-surface p-6 sm:p-8 rounded-xl border border-line flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 shadow-md backdrop-blur-md">
+      <div className="bg-[#111114] p-6 sm:p-8 rounded-[6px] border border-[#242429] flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-wider font-semibold text-fg-muted px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-line">
+            <span className="text-2xs uppercase tracking-wider font-mono font-bold text-[#8E8E99] px-2.5 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429]">
               Industria Musical
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-fg tracking-tight mt-1.5">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F4F4F6] tracking-tight mt-1.5">
             Representación, Sellos & Mercado de Fichajes
           </h1>
-          <p className="text-sm text-fg-muted mt-1 max-w-2xl">
+          <p className="text-sm text-[#8E8E99] mt-1 max-w-2xl leading-relaxed">
             Gestioná tus acuerdos discográficos, distribuí tu música en plataformas globales, monitoreá el radar de cazatalentos A&R y contratá managers por tiers de requisitos.
           </p>
         </div>
 
         {/* Unified Top Tabs Navigation */}
-        <div className="flex flex-wrap gap-2 pt-2 xl:pt-0 shrink-0">
+        <div className="flex flex-wrap gap-1.5 pt-2 xl:pt-0 shrink-0">
           <button
             id="tab-btn-current"
             onClick={() => handleTabSwitch('current')}
-            className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-mono font-bold transition-all cursor-pointer ${
               activeTab === 'current'
-                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                ? 'bg-[#FF4F00] text-white'
+                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
             }`}
           >
             Situación Actual
@@ -466,10 +463,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           <button
             id="tab-btn-distribution"
             onClick={() => handleTabSwitch('distribution_labels')}
-            className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-mono font-bold transition-all cursor-pointer ${
               activeTab === 'distribution_labels'
-                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                ? 'bg-[#FF4F00] text-white'
+                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
             }`}
           >
             Distribución & Sellos
@@ -477,10 +474,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           <button
             id="tab-btn-radar"
             onClick={() => handleTabSwitch('radar')}
-            className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-mono font-bold transition-all cursor-pointer ${
               activeTab === 'radar'
-                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                ? 'bg-[#FF4F00] text-white'
+                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
             }`}
           >
             Radar de A&R
@@ -488,10 +485,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           <button
             id="tab-btn-managers"
             onClick={() => handleTabSwitch('managers')}
-            className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-mono font-bold transition-all cursor-pointer ${
               activeTab === 'managers'
-                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                ? 'bg-[#FF4F00] text-white'
+                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
             }`}
           >
             Mercado de Managers
@@ -499,10 +496,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           <button
             id="tab-btn-own-label"
             onClick={() => handleTabSwitch('own_label')}
-            className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-mono font-bold transition-all cursor-pointer ${
               activeTab === 'own_label'
-                ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                ? 'bg-[#FF4F00] text-white'
+                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
             }`}
           >
             Sello Propio
@@ -512,8 +509,8 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
 
       {/* Notifications */}
       {notification && (
-        <div className="bg-surface border border-primary/40 text-fg px-4 py-3 rounded-lg flex items-center gap-2 text-xs font-medium shadow-md animate-fadeIn">
-          <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
+        <div className="bg-[#111114] border border-[#FF4F00]/40 text-[#F4F4F6] px-4 py-3 rounded-[4px] flex items-center gap-2 text-xs font-mono font-medium animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-[#00E599] shrink-0" />
           <span>{notification}</span>
         </div>
       )}
@@ -522,20 +519,20 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {activeTab === 'current' && (
         <div className="space-y-6">
           {/* Card 1: Contrato Activo o Estado de Distribución */}
-          <div className="bg-surface border border-line rounded-xl p-6 space-y-5 shadow-md">
-            <div className="flex items-center justify-between border-b border-line pb-4">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[#242429] pb-4">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-semibold text-fg">
+                <Building2 className="w-5 h-5 text-[#FF4F00]" />
+                <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
                   Contrato / Distribución Actual
                 </h2>
               </div>
               {currentLabel && activeContract ? (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success/20 border border-success/40 text-success">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599]">
                   {isCurrentArtistOwned ? 'Sello Propio' : isCurrentDistributor ? 'Distribución Activa' : 'Contrato Vigente'}
                 </span>
               ) : (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/[0.04] border border-line text-fg-muted">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
                   Agente Libre / Independiente
                 </span>
               )}
@@ -543,39 +540,39 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
 
             {currentLabel && activeContract ? (
               <div className="space-y-5">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-canvas p-5 rounded-lg border border-line">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#09090B] p-5 rounded-[4px] border border-[#242429]">
                   <div>
                     <div className="flex items-center gap-2.5">
-                      <h3 className="text-xl font-semibold text-fg">
+                      <h3 className="text-xl font-bold text-[#F4F4F6]">
                         {currentLabel.name}
                       </h3>
-                      <span className="text-xs uppercase font-semibold px-2.5 py-0.5 rounded-sm bg-white/[0.06] border border-line text-fg">
+                      <span className="text-xs font-mono uppercase font-bold px-2.5 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
                         {isCurrentArtistOwned ? 'Sello Propio' : isCurrentDistributor ? 'Distribuidora Digital' : currentLabel.type === 'major' ? 'Major Label' : currentLabel.type === 'indie' ? 'Sello Indie' : 'Sello Local / Boutique'}
                       </span>
                     </div>
-                    <p className="text-xs text-fg-muted mt-1.5">
+                    <p className="text-xs text-[#8E8E99] mt-1.5 font-mono">
                       {currentLabel.country} • Roster de artistas: {currentLabel.rosterArtistIds.length} integrantes
                     </p>
                   </div>
 
-                  <div className="text-left md:text-right text-xs text-fg-muted shrink-0">
-                    <span className="block font-medium text-fg">Firmado en {activeContract.signedYear}</span>
+                  <div className="text-left md:text-right text-xs text-[#8E8E99] font-mono shrink-0">
+                    <span className="block font-bold text-[#F4F4F6]">Firmado en {activeContract.signedYear}</span>
                     <span>Duración: {activeContract.durationYears} {activeContract.durationYears === 1 ? 'año' : 'años'}</span>
                   </div>
                 </div>
 
                 {/* Progress bar of Albums (if applicable) */}
                 {activeContract.albumsRequired > 0 && (
-                  <div className="bg-canvas border border-line p-4 rounded-lg space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-fg">Compromiso de Álbumes de Estudio:</span>
-                      <span className="font-semibold text-fg">
+                  <div className="bg-[#09090B] border border-[#242429] p-4 rounded-[4px] space-y-2">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="font-bold text-[#F4F4F6]">Compromiso de Álbumes de Estudio:</span>
+                      <span className="font-bold text-[#FF4F00] tabular-nums">
                         {activeContract.albumsDelivered} de {activeContract.albumsRequired} Entregados • {Math.min(100, Math.floor((activeContract.albumsDelivered / activeContract.albumsRequired) * 100))}%
                       </span>
                     </div>
-                    <div className="w-full bg-surface h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#18181C] h-2 rounded-[2px] overflow-hidden">
                       <div
-                        className="bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+                        className="bg-[#FF4F00] h-full rounded-[2px] transition-all duration-300"
                         role="progressbar"
                         aria-label="Álbumes entregados del contrato"
                         aria-valuemin={0}
@@ -584,7 +581,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                         style={{ width: `${Math.min(100, (activeContract.albumsDelivered / activeContract.albumsRequired) * 100)}%` }}
                       />
                     </div>
-                    <p className="text-xs text-fg-muted">
+                    <p className="text-xs text-[#8E8E99] leading-relaxed">
                       Al completar todos los álbumes exigidos, el contrato se considerará cumplido y quedarás en libertad para renovar o cambiar de entidad.
                     </p>
                   </div>
@@ -592,46 +589,46 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
 
                 {/* Terms Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="bg-canvas border border-line p-3.5 rounded-lg space-y-1">
-                    <span className="text-xs text-fg-muted block">Regalías Artista</span>
-                    <span className="text-lg font-semibold text-fg">{activeContract.royaltyPercentage}%</span>
-                    <span className="text-2xs text-fg-muted block">{100 - activeContract.royaltyPercentage}% para la entidad</span>
+                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-mono block">Regalías Artista</span>
+                    <span className="text-lg font-bold font-mono tabular-nums text-[#00E599]">{activeContract.royaltyPercentage}%</span>
+                    <span className="text-2xs text-[#8E8E99] font-mono block">{100 - activeContract.royaltyPercentage}% para la entidad</span>
                   </div>
 
-                  <div className="bg-canvas border border-line p-3.5 rounded-lg space-y-1">
-                    <span className="text-xs text-fg-muted block">Anticipo Cobrado</span>
-                    <span className="text-lg font-semibold text-fg">{formatMoney(activeContract.signingBonus)}</span>
-                    <span className="text-2xs text-fg-muted block">Firma inicial</span>
+                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-mono block">Anticipo Cobrado</span>
+                    <span className="text-lg font-bold font-mono tabular-nums text-[#F4F4F6]">{formatMoney(activeContract.signingBonus)}</span>
+                    <span className="text-2xs text-[#8E8E99] font-mono block">Firma inicial</span>
                   </div>
 
-                  <div className="bg-canvas border border-line p-3.5 rounded-lg space-y-1">
-                    <span className="text-xs text-fg-muted block">Músculo de Marketing</span>
-                    <span className="text-lg font-semibold text-fg">{activeContract.marketingPower}%</span>
-                    <span className="text-2xs text-fg-muted block">Potencia promocional</span>
+                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-mono block">Músculo Marketing</span>
+                    <span className="text-lg font-bold font-mono tabular-nums text-[#F4F4F6]">{activeContract.marketingPower}%</span>
+                    <span className="text-2xs text-[#8E8E99] font-mono block">Potencia promocional</span>
                   </div>
 
-                  <div className="bg-canvas border border-line p-3.5 rounded-lg space-y-1">
-                    <span className="text-xs text-fg-muted block">Control Creativo</span>
-                    <span className="text-lg font-semibold text-fg">{activeContract.creativeControl}%</span>
-                    <span className="text-2xs text-fg-muted block">Libertad de dirección</span>
+                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-mono block">Control Creativo</span>
+                    <span className="text-lg font-bold font-mono tabular-nums text-[#F4F4F6]">{activeContract.creativeControl}%</span>
+                    <span className="text-2xs text-[#8E8E99] font-mono block">Libertad de dirección</span>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="bg-canvas border border-line p-5 rounded-lg space-y-2">
-                  <h3 className="text-base font-semibold text-fg">
+                <div className="bg-[#09090B] border border-[#242429] p-5 rounded-[4px] space-y-2">
+                  <h3 className="text-base font-bold text-[#F4F4F6]">
                     Artista 100% Independiente
                   </h3>
-                  <p className="text-xs text-fg-muted leading-relaxed">
-                    Conservás el <strong className="text-fg">100% de tus regalías de streaming</strong> y la propiedad absoluta de todos tus másters. Los costos de producción y marketing dependen exclusivamente de tus propios fondos.
+                  <p className="text-xs text-[#8E8E99] leading-relaxed">
+                    Conservás el <strong className="text-[#00E599]">100% de tus regalías de streaming</strong> y la propiedad absoluta de todos tus másters. Los costos de producción y marketing dependen exclusivamente de tus propios fondos.
                   </p>
                 </div>
 
-                <div className="p-4 bg-canvas border border-line rounded-lg text-xs text-fg-muted space-y-1">
-                  <span className="font-semibold text-fg block">Opciones en la Industria:</span>
+                <div className="p-4 bg-[#09090B] border border-[#242429] rounded-[4px] text-xs text-[#8E8E99] space-y-1">
+                  <span className="font-bold text-[#F4F4F6] block">Opciones en la Industria:</span>
                   <p>
-                    Podés elegir una distribuidora digital abierta desde la pestaña <strong className="text-fg">Distribución & Sellos</strong> en la barra superior o esperar a recibir ofertas exclusivas mediante el <strong className="text-fg">Radar de A&R</strong> al superar los 100.000 oyentes mensuales.
+                    Podés elegir una distribuidora digital abierta desde la pestaña <strong className="text-[#FF4F00]">Distribución & Sellos</strong> en la barra superior o esperar a recibir ofertas exclusivas mediante el <strong className="text-[#FF4F00]">Radar de A&R</strong> al superar los 100.000 oyentes mensuales.
                   </p>
                 </div>
               </div>
@@ -639,46 +636,46 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           </div>
 
           {/* Card 2: Representación Oficial (Manager) */}
-          <div className="bg-surface border border-line rounded-xl p-6 space-y-4 shadow-md">
-            <div className="flex items-center justify-between border-b border-line pb-4">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#242429] pb-4">
               <div className="flex items-center gap-2">
-                <UserCheck className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-semibold text-fg">
+                <UserCheck className="w-5 h-5 text-[#FF4F00]" />
+                <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
                   Representación Oficial (Manager)
                 </h2>
               </div>
               {currentManager && (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-purple-300">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#FF4F00]/10 border border-[#FF4F00]/30 text-[#FF4F00]">
                   {tierNames[currentManager.tier]}
                 </span>
               )}
             </div>
 
             {currentManager ? (
-              <div className="bg-canvas p-5 rounded-lg border border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base font-semibold text-fg">{currentManager.name}</h3>
-                    <span className="text-2xs uppercase font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] border border-line text-fg">
+                    <h3 className="text-base font-bold text-[#F4F4F6]">{currentManager.name}</h3>
+                    <span className="text-2xs font-mono uppercase font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
                       {currentManager.commissionFeePct}% Comisión
                     </span>
                   </div>
-                  <p className="text-xs text-fg-muted max-w-xl">
+                  <p className="text-xs text-[#8E8E99] max-w-xl leading-relaxed">
                     {currentManager.bio}
                   </p>
-                  <p className="text-xs text-fg-muted pt-1">
-                    <strong className="text-fg">Especialidades:</strong> {currentManager.specialties.join(' • ')}
+                  <p className="text-xs text-[#8E8E99] pt-1">
+                    <strong className="text-[#F4F4F6]">Especialidades:</strong> {currentManager.specialties.join(' • ')}
                   </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 shrink-0">
-                  <div className="text-left md:text-right text-xs">
-                    <span className="font-semibold text-fg block">{currentManager.commissionFeePct}% Comisión</span>
-                    <span className="text-fg-muted">Negociación: {currentManager.negotiationSkill}% • Contactos: {currentManager.industryNetwork}%</span>
+                  <div className="text-left md:text-right text-xs font-mono">
+                    <span className="font-bold text-[#00E599] block">{currentManager.commissionFeePct}% Comisión</span>
+                    <span className="text-[#8E8E99]">Negociación: {currentManager.negotiationSkill}% • Contactos: {currentManager.industryNetwork}%</span>
                   </div>
                   <button
                     onClick={handleFireManager}
-                    className="text-xs text-rose-400 hover:text-rose-300 font-medium px-3.5 py-2 rounded-md border border-rose-500/30 hover:bg-rose-500/10 transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="text-xs font-mono text-[#EF4444] hover:text-white font-medium px-3.5 py-2 rounded-[4px] border border-[#EF4444]/30 hover:bg-[#EF4444]/20 transition-colors cursor-pointer flex items-center gap-1.5"
                   >
                     <UserMinus className="w-3.5 h-3.5" />
                     Finalizar Vínculo
@@ -686,10 +683,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="bg-canvas p-5 rounded-lg border border-line text-xs text-fg-muted space-y-1">
-                <p className="font-semibold text-fg text-sm">Sin Representación Oficial</p>
+              <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] text-xs text-[#8E8E99] space-y-1">
+                <p className="font-bold text-[#F4F4F6] text-sm">Sin Representación Oficial</p>
                 <p>
-                  Actualmente gestionás tus propios contactos y fechas sin pagar comisiones de management. Podés contratar un representante calificado desde la pestaña <strong className="text-fg">Mercado de Managers</strong> en la barra superior.
+                  Actualmente gestionás tus propios contactos y fechas sin pagar comisiones de management. Podés contratar un representante calificado desde la pestaña <strong className="text-[#FF4F00]">Mercado de Managers</strong> en la barra superior.
                 </p>
               </div>
             )}
@@ -704,46 +701,46 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           {(() => {
             const valuation = IndustryEngine.calculateArtistValuation(player, world);
             return (
-              <div className="bg-surface border border-line rounded-xl p-6 space-y-4 shadow-md backdrop-blur-md">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
+              <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
                   <div className="flex items-center gap-2.5">
-                    <TrendingUp className="w-5 h-5 text-success" />
+                    <TrendingUp className="w-5 h-5 text-[#00E599]" />
                     <div>
-                      <h2 className="text-base font-semibold text-fg">
+                      <h2 className="text-base font-bold text-[#F4F4F6] tracking-tight">
                         Valoración Comercial & Poder de Fichaje
                       </h2>
-                      <p className="text-xs text-fg-muted">
+                      <p className="text-xs text-[#8E8E99]">
                         Métricas en tiempo real que fundamentan los adelantos y presupuestos promocionales escalados de cada sello.
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success/15 border border-success/30 text-success self-start sm:self-auto">
+                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599] self-start sm:self-auto">
                     Facturación Anual Proyectada: {formatMoney(valuation.projectedGrossAnnual)}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="bg-canvas p-3 rounded-lg border border-line">
-                    <span className="text-2xs text-fg-muted block">Run-Rate Streaming:</span>
-                    <span className="font-semibold text-fg text-sm">{formatMoney(valuation.projectedStreamingGross)}/año</span>
-                    <span className="text-2xs text-fg-muted block">~{formatCompactNumber(valuation.projectedAnnualStreams)} streams/año</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono tabular-nums">
+                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
+                    <span className="text-2xs uppercase text-[#52525B] block">Run-Rate Streaming:</span>
+                    <span className="font-bold text-[#F4F4F6] text-sm">{formatMoney(valuation.projectedStreamingGross)}/año</span>
+                    <span className="text-2xs text-[#8E8E99] block">~{formatCompactNumber(valuation.projectedAnnualStreams)} streams/año</span>
                   </div>
-                  <div className="bg-canvas p-3 rounded-lg border border-line">
-                    <span className="text-2xs text-fg-muted block">Merchandise Anual:</span>
-                    <span className="font-semibold text-fg text-sm">{formatMoney(valuation.projectedMerchGross)}/año</span>
-                    <span className="text-2xs text-fg-muted block">{formatCompactNumber(player.stats.fansCount || 0)} fans fidelizados</span>
+                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
+                    <span className="text-2xs uppercase text-[#52525B] block">Merchandise Anual:</span>
+                    <span className="font-bold text-[#F4F4F6] text-sm">{formatMoney(valuation.projectedMerchGross)}/año</span>
+                    <span className="text-2xs text-[#8E8E99] block">{formatCompactNumber(player.stats.fansCount || 0)} fans fidelizados</span>
                   </div>
-                  <div className="bg-canvas p-3 rounded-lg border border-line">
-                    <span className="text-2xs text-fg-muted block">Valor de Catálogo:</span>
-                    <span className="font-semibold text-fg text-sm">{formatMoney(valuation.catalogValuation)}</span>
-                    <span className="text-2xs text-fg-muted block">{valuation.catalogSongCount} temas • {valuation.catalogHitCount} hits</span>
+                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
+                    <span className="text-2xs uppercase text-[#52525B] block">Valor de Catálogo:</span>
+                    <span className="font-bold text-[#F4F4F6] text-sm">{formatMoney(valuation.catalogValuation)}</span>
+                    <span className="text-2xs text-[#8E8E99] block">{valuation.catalogSongCount} temas • {valuation.catalogHitCount} hits</span>
                   </div>
-                  <div className="bg-canvas p-3 rounded-lg border border-line">
-                    <span className="text-2xs text-fg-muted block">Multiplicador de Firma:</span>
-                    <span className="font-semibold text-primary text-sm">
+                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
+                    <span className="text-2xs uppercase text-[#52525B] block">Multiplicador de Firma:</span>
+                    <span className="font-bold text-[#FF4F00] text-sm">
                       {currentManager ? `Manager: +${Math.round((currentManager.negotiationSkill / 100) * 25)}%` : 'Base • Sin Manager'}
                     </span>
-                    <span className="text-2xs text-fg-muted block">
+                    <span className="text-2xs text-[#8E8E99] block">
                       {player.isProdigy ? 'Prodigio • +20%' : 'Estándar de Industria'}
                     </span>
                   </div>
@@ -753,18 +750,18 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           })()}
 
           {/* Filters Bar */}
-          <div className="bg-surface border border-line rounded-xl p-6 space-y-4 shadow-md">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
             <div>
-              <h2 className="text-lg font-semibold text-fg">
+              <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
                 Escalera de Distribución & Sellos Discográficos
               </h2>
-              <p className="text-xs text-fg-muted mt-0.5">
+              <p className="text-xs text-[#8E8E99] mt-0.5">
                 Elegí el modelo de distribución adecuado según tu tracción de oyentes mensuales, objetivos de regalías y respaldo promocional.
               </p>
             </div>
 
             {/* Filter Pills */}
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1 font-mono">
               {[
                 { id: 'all', label: 'Todas' },
                 { id: 'distributor', label: 'Distribuidoras' },
@@ -778,10 +775,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                     playSound('click');
                     setDistFilter(f.id as DistributionFilter);
                   }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer ${
                     distFilter === f.id
-                      ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                      : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                      ? 'bg-[#F4F4F6] text-[#09090B]'
+                      : 'bg-[#09090B] text-[#8E8E99] border border-[#242429] hover:border-[#3F3F46] hover:text-[#F4F4F6]'
                   }`}
                 >
                   {f.label}
@@ -821,12 +818,12 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                 return (
                   <div
                     key={opt.id}
-                    className={`bg-surface rounded-xl p-5 border transition-all space-y-4 flex flex-col justify-between shadow-md ${
+                    className={`bg-[#111114] rounded-[6px] p-5 border transition-all space-y-4 flex flex-col justify-between ${
                       isCurrent
-                        ? 'border-success ring-1 ring-success'
+                        ? 'border-[#00E599]'
                         : isUnlocked
-                        ? 'border-line hover:border-primary/60'
-                        : 'border-line opacity-80'
+                        ? 'border-[#242429] hover:border-[#3F3F46]'
+                        : 'border-[#242429] opacity-75'
                     }`}
                   >
                     <div className="space-y-3.5">
@@ -834,15 +831,15 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                       <div className="flex items-start justify-between gap-2.5">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-10 h-10 rounded-lg bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center shrink-0 shadow-sm`}
+                            className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#F4F4F6] flex items-center justify-center shrink-0"
                           >
                             {renderOptionIcon(opt.iconType)}
                           </div>
                           <div>
-                            <h3 className="font-semibold text-sm text-fg leading-snug">
+                            <h3 className="font-bold text-sm text-[#F4F4F6] leading-snug">
                               {opt.name}
                             </h3>
-                            <span className="text-2xs uppercase font-semibold text-fg-muted block">
+                            <span className="text-2xs uppercase font-mono font-bold text-[#8E8E99] block">
                               {opt.typeLabel}
                             </span>
                           </div>
@@ -850,52 +847,52 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
 
                         {/* Requirement badge */}
                         {hasListeners ? (
-                          <span className="flex items-center gap-1 text-xs font-semibold text-success bg-success/15 px-2.5 py-0.5 rounded-full border border-success/30 shrink-0">
-                            <Check className="w-3 h-3 text-success" />
+                          <span className="flex items-center gap-1 text-xs font-mono font-bold text-[#00E599] bg-[#00E599]/10 px-2 py-0.5 rounded-[4px] border border-[#00E599]/30 shrink-0">
+                            <Check className="w-3 h-3 text-[#00E599]" />
                             {opt.minListeners === 0 ? 'Abierto' : `${formatCompactNumber(opt.minListeners)}`}
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 text-xs font-semibold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20 shrink-0">
-                            <Lock className="w-3 h-3 text-amber-400" />
+                          <span className="flex items-center gap-1 text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded-[4px] border border-[#F59E0B]/30 shrink-0">
+                            <Lock className="w-3 h-3 text-[#F59E0B]" />
                             {formatCompactNumber(opt.minListeners)}
                           </span>
                         )}
                       </div>
 
                       {/* Description */}
-                      <p className="text-xs text-fg-muted leading-relaxed min-h-[36px]">
+                      <p className="text-xs text-[#8E8E99] leading-relaxed min-h-[36px]">
                         {opt.description}
                       </p>
 
                       {/* Key Terms Grid */}
-                      <div className="bg-canvas p-3 rounded-lg border border-line grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] grid grid-cols-2 gap-2 text-xs font-mono tabular-nums">
                         <div>
-                          <span className="text-2xs text-fg-muted block">Regalías Artista:</span>
-                          <span className="font-semibold text-fg">{dynamicOffer.royaltyPercentage}%</span>
+                          <span className="text-2xs uppercase text-[#52525B] block">Regalías Artista:</span>
+                          <span className="font-bold text-[#00E599]">{dynamicOffer.royaltyPercentage}%</span>
                         </div>
                         <div>
-                          <span className="text-2xs text-fg-muted block">Anticipo Dinámico:</span>
-                          <span className={`font-semibold font-mono ${displayAdvance > 0 ? 'text-success' : 'text-fg'}`}>
+                          <span className="text-2xs uppercase text-[#52525B] block">Anticipo Dinámico:</span>
+                          <span className={`font-bold ${displayAdvance > 0 ? 'text-[#00E599]' : 'text-[#F4F4F6]'}`}>
                             {displayAdvance > 0 ? formatMoney(displayAdvance) : '$0'}
                           </span>
                         </div>
                         <div>
-                          <span className="text-2xs text-fg-muted block">Presupuesto Mkt:</span>
-                          <span className="font-semibold text-fg">
+                          <span className="text-2xs uppercase text-[#52525B] block">Presupuesto Mkt:</span>
+                          <span className="font-bold text-[#F4F4F6]">
                             {dynamicOffer.marketingBudgetPerRelease && dynamicOffer.marketingBudgetPerRelease > 0 ? `${formatMoney(dynamicOffer.marketingBudgetPerRelease)}/lanz.` : (opt.annualFee > 0 ? `$${opt.annualFee}/año` : 'Sin cuota')}
                           </span>
                         </div>
                         <div>
-                          <span className="text-2xs text-fg-muted block">Control Creativo:</span>
-                          <span className="font-semibold text-fg">{dynamicOffer.creativeControl}%</span>
+                          <span className="text-2xs uppercase text-[#52525B] block">Control Creativo:</span>
+                          <span className="font-bold text-[#F4F4F6]">{dynamicOffer.creativeControl}%</span>
                         </div>
                         <div>
-                          <span className="text-2xs text-fg-muted block">Marketing Power:</span>
-                          <span className="font-semibold text-fg">{opt.marketingPower}%</span>
+                          <span className="text-2xs uppercase text-[#52525B] block">Marketing Power:</span>
+                          <span className="font-bold text-[#F4F4F6]">{opt.marketingPower}%</span>
                         </div>
                         <div>
-                          <span className="text-2xs text-fg-muted block">Compromiso:</span>
-                          <span className="font-semibold text-fg">
+                          <span className="text-2xs uppercase text-[#52525B] block">Compromiso:</span>
+                          <span className="font-bold text-[#F4F4F6]">
                             {dynamicOffer.albumsRequired > 0 ? `${dynamicOffer.albumsRequired} Álbumes` : 'Sin entregas'}
                           </span>
                         </div>
@@ -905,20 +902,20 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                   {/* Actions */}
                   <div>
                     {isCurrent ? (
-                      <div className="w-full text-center py-2.5 bg-success/15 text-success font-semibold text-xs rounded-md border border-success/30">
+                      <div className="w-full text-center py-2.5 bg-[#00E599]/10 text-[#00E599] font-mono font-bold text-xs rounded-[4px] border border-[#00E599]/30">
                         Contrato Actual
                       </div>
                     ) : isUnlocked ? (
                       <button
                         onClick={() => handleSignOption(opt)}
-                        className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold text-xs py-2.5 rounded-md shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
+                        className="w-full bg-[#FF4F00] hover:bg-[#E04500] text-white font-mono font-bold text-xs py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
                       >
                         {opt.category === 'distributor' ? 'Distribuir Aquí' : 'Firmar Contrato'}
                       </button>
                     ) : (
                       <button
                         disabled
-                        className="w-full bg-canvas text-fg-subtle font-medium text-xs py-2.5 rounded-md border border-line cursor-not-allowed flex items-center justify-center gap-1.5"
+                        className="w-full bg-[#09090B] text-[#52525B] font-mono font-medium text-xs py-2.5 rounded-[4px] border border-[#242429] cursor-not-allowed flex items-center justify-center gap-1.5"
                       >
                         <Lock className="w-3.5 h-3.5" />
                         Bloqueado • Faltan {(opt.minListeners - player.stats.monthlyListeners).toLocaleString()} oyentes
@@ -936,21 +933,21 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {activeTab === 'radar' && (
         <div className="space-y-6">
           {/* Scout Radar Progress */}
-          <div className="bg-surface border border-line rounded-xl p-6 space-y-5 shadow-md">
-            <div className="flex items-center justify-between border-b border-line pb-4">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[#242429] pb-4">
               <div className="flex items-center gap-2">
-                <Radio className="w-5 h-5 text-primary" />
+                <Radio className="w-5 h-5 text-[#FF4F00]" />
                 <div>
-                  <h2 className="text-lg font-semibold text-fg">
+                  <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
                     Radar de Cazatalentos & Scouting A&R
                   </h2>
-                  <p className="text-xs text-fg-muted">
+                  <p className="text-xs text-[#8E8E99]">
                     Monitoreo en tiempo real del interés de directivos discográficos nacionales e internacionales.
                   </p>
                 </div>
               </div>
 
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-purple-300">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#FF4F00]/10 border border-[#FF4F00]/30 text-[#FF4F00]">
                 {scoutRadar.scoutInterestLevel === 'bidding_war_target'
                   ? '¡Guerra de Fichajes!'
                   : scoutRadar.scoutInterestLevel === 'high_priority'
@@ -962,19 +959,19 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
             </div>
 
             {/* Threshold Progress Box */}
-            <div className="bg-canvas p-5 rounded-lg border border-line space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
-                <span className="font-semibold text-fg">
+            <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-mono tabular-nums">
+                <span className="font-bold text-[#F4F4F6]">
                   Umbral de Fichaje Profesional • Mínimo 100.000 Oyentes Mensuales:
                 </span>
-                <span className="font-semibold text-fg">
+                <span className="font-bold text-[#FF4F00]">
                   {scoutRadar.monthlyListeners.toLocaleString()} / {scoutRadar.thresholdListeners.toLocaleString()} • {scoutRadar.progressPercentage}%
                 </span>
               </div>
 
-              <div className="w-full bg-surface h-3 rounded-full overflow-hidden">
+              <div className="w-full bg-[#18181C] h-2.5 rounded-[2px] overflow-hidden">
                 <div
-                  className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#06B6D4] h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+                  className="bg-[#FF4F00] h-full rounded-[2px] transition-all duration-300"
                   role="progressbar"
                   aria-label="Progreso hacia el umbral de scouting"
                   aria-valuemin={0}
@@ -984,51 +981,51 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                 />
               </div>
 
-              <p className="text-xs text-fg-muted leading-relaxed">
+              <p className="text-xs text-[#8E8E99] leading-relaxed">
                 {scoutRadar.statusMessage}
               </p>
             </div>
 
             {/* Rules explanation */}
-            <div className="p-4 bg-canvas border border-line rounded-lg text-xs text-fg-muted space-y-1.5">
-              <p className="font-semibold text-fg flex items-center gap-1.5">
-                <AlertCircle className="w-4 h-4 text-primary" /> Dinámica del Mercado de Fichajes
+            <div className="p-4 bg-[#09090B] border border-[#242429] rounded-[4px] text-xs text-[#8E8E99] space-y-1.5">
+              <p className="font-bold text-[#F4F4F6] flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-[#FF4F00]" /> Dinámica del Mercado de Fichajes
               </p>
               <ul className="list-disc list-inside space-y-1 text-xs">
-                <li><strong className="text-fg">Monitoreo Automático:</strong> Los directivos de A&R evalúan tu crecimiento orgánico y repercusión en charts.</li>
-                <li><strong className="text-fg">Eventos Emergentes:</strong> Al alcanzar el umbral de oyentes, se dispararán eventos narrativos competitivos con ofertas millonarias contrastadas.</li>
-                <li><strong className="text-fg">Autonomía:</strong> Siempre podés rechazar ofertas para mantener tu sello independiente o distribución abierta.</li>
+                <li><strong className="text-[#F4F4F6]">Monitoreo Automático:</strong> Los directivos de A&R evalúan tu crecimiento orgánico y repercusión en charts.</li>
+                <li><strong className="text-[#F4F4F6]">Eventos Emergentes:</strong> Al alcanzar el umbral de oyentes, se dispararán eventos narrativos competitivos con ofertas millonarias contrastadas.</li>
+                <li><strong className="text-[#F4F4F6]">Autonomía:</strong> Siempre podés rechazar ofertas para mantener tu sello independiente o distribución abierta.</li>
               </ul>
             </div>
           </div>
 
           {/* Active Scouting Labels List */}
-          <div className="bg-surface border border-line rounded-xl p-6 space-y-4 shadow-md">
-            <h3 className="text-base font-semibold text-fg border-b border-line pb-3">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+            <h3 className="text-base font-bold text-[#F4F4F6] border-b border-[#242429] pb-3">
               Sellos Discográficos en Seguimiento • {scoutRadar.scoutingLabels.length}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {scoutRadar.scoutingLabels.map(label => (
-                <div key={label.id} className="bg-canvas p-4 rounded-lg border border-line space-y-2 flex flex-col justify-between hover:border-primary/40 transition-all">
+                <div key={label.id} className="bg-[#09090B] p-4 rounded-[4px] border border-[#242429] space-y-2 flex flex-col justify-between hover:border-[#3F3F46] transition-all">
                   <div>
                     <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-sm text-fg">{label.name}</h4>
-                      <span className="text-2xs uppercase font-semibold px-2 py-0.5 rounded-sm bg-white/[0.06] border border-line text-fg">
+                      <h4 className="font-bold text-sm text-[#F4F4F6]">{label.name}</h4>
+                      <span className="text-2xs uppercase font-mono font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
                         {label.type}
                       </span>
                     </div>
-                    <p className="text-xs text-fg-muted mt-1">
-                      {label.country} • Prestigio: {label.prestige}% • Músculo de Marketing: {label.marketingPower}%
+                    <p className="text-xs text-[#8E8E99] mt-1 font-mono">
+                      {label.country} • Prestigio: {label.prestige}% • Músculo Mkt: {label.marketingPower}%
                     </p>
-                    <p className="text-xs text-fg mt-2 leading-relaxed">
+                    <p className="text-xs text-[#8E8E99] mt-2 leading-relaxed">
                       {label.scoutingCriteria || 'Busca talentos con fuerte identidad sonora e impacto en la audiencia.'}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-line flex items-center justify-between text-xs text-fg-muted">
+                  <div className="pt-2 border-t border-[#242429] flex items-center justify-between text-xs text-[#8E8E99] font-mono">
                     <span>Libertad Creativa: {label.creativeFreedomAllowed}%</span>
-                    <span className="font-medium text-fg">
+                    <span className="font-bold text-[#F4F4F6]">
                       {label.type === 'major' ? 'Requiere 100k+ oyentes' : label.type === 'indie' ? 'Requiere 25k+ oyentes' : 'Enfoque Underground'}
                     </span>
                   </div>
@@ -1043,27 +1040,27 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {activeTab === 'managers' && (
         <div className="space-y-6">
           {/* Tier Filter Pills */}
-          <div className="bg-surface border border-line rounded-xl p-6 space-y-4 shadow-md">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
             <div>
-              <h2 className="text-lg font-semibold text-fg">
+              <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
                 Mercado de Managers & Representación
               </h2>
-              <p className="text-xs text-fg-muted mt-0.5">
+              <p className="text-xs text-[#8E8E99] mt-0.5">
                 Contratá al representante ideal según tu etapa de carrera. Cada nivel exige requisitos previos de audiencia, reputación y capital.
               </p>
             </div>
 
             {/* Filter buttons */}
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1 font-mono">
               <button
                 onClick={() => {
                   playSound('click');
                   setManagerTierFilter('all');
                 }}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer ${
                   managerTierFilter === 'all'
-                    ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                    : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                    ? 'bg-[#F4F4F6] text-[#09090B]'
+                    : 'bg-[#09090B] text-[#8E8E99] border border-[#242429] hover:border-[#3F3F46] hover:text-[#F4F4F6]'
                 }`}
               >
                 Todos los Tiers
@@ -1075,10 +1072,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                     playSound('click');
                     setManagerTierFilter(t);
                   }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer ${
                     managerTierFilter === t
-                      ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
-                      : 'bg-canvas text-fg-muted border border-line hover:text-fg hover:border-primary/40'
+                      ? 'bg-[#F4F4F6] text-[#09090B]'
+                      : 'bg-[#09090B] text-[#8E8E99] border border-[#242429] hover:border-[#3F3F46] hover:text-[#F4F4F6]'
                   }`}
                 >
                   {tierNames[t]}
@@ -1099,85 +1096,85 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
               return (
                 <div
                   key={m.id}
-                  className={`bg-surface rounded-xl p-5 border transition-all space-y-4 flex flex-col justify-between shadow-md ${
+                  className={`bg-[#111114] rounded-[6px] p-5 border transition-all space-y-4 flex flex-col justify-between ${
                     isHired
-                      ? 'border-success bg-surface ring-1 ring-success'
+                      ? 'border-[#00E599]'
                       : check.canHire
-                      ? 'border-line hover:border-primary/60'
-                      : 'border-line opacity-75'
+                      ? 'border-[#242429] hover:border-[#3F3F46]'
+                      : 'border-[#242429] opacity-75'
                   }`}
                 >
                   <div className="space-y-3">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-tr ${m.avatarGradient || 'from-stone-700 to-zinc-900'} text-fg font-semibold text-sm flex items-center justify-center shadow-sm`}>
+                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#F4F4F6] font-mono font-bold text-sm flex items-center justify-center">
                           {m.name.charAt(0)}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-fg">{m.name}</h3>
-                          <span className="text-2xs uppercase font-semibold text-fg-muted">
+                          <h3 className="font-bold text-sm text-[#F4F4F6]">{m.name}</h3>
+                          <span className="text-2xs uppercase font-mono font-bold text-[#8E8E99]">
                             {tierNames[m.tier]}
                           </span>
                         </div>
                       </div>
 
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] border border-line text-fg">
+                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
                         {m.commissionFeePct}% Comisión
                       </span>
                     </div>
 
                     {/* Bio */}
-                    <p className="text-xs text-fg-muted leading-relaxed">
+                    <p className="text-xs text-[#8E8E99] leading-relaxed">
                       {m.bio}
                     </p>
 
                     {/* Stats & Network */}
-                    <div className="grid grid-cols-3 gap-2 py-2 border-y border-line text-center text-xs">
+                    <div className="grid grid-cols-3 gap-2 py-2 border-y border-[#242429] text-center text-xs font-mono tabular-nums">
                       <div>
-                        <span className="text-2xs text-fg-muted block">Reputación</span>
-                        <span className="font-semibold text-fg">{m.reputation}%</span>
+                        <span className="text-2xs uppercase text-[#52525B] block">Reputación</span>
+                        <span className="font-bold text-[#F4F4F6]">{m.reputation}%</span>
                       </div>
                       <div>
-                        <span className="text-2xs text-fg-muted block">Negociación</span>
-                        <span className="font-semibold text-fg">{m.negotiationSkill}%</span>
+                        <span className="text-2xs uppercase text-[#52525B] block">Negociación</span>
+                        <span className="font-bold text-[#F4F4F6]">{m.negotiationSkill}%</span>
                       </div>
                       <div>
-                        <span className="text-2xs text-fg-muted block">Contactos</span>
-                        <span className="font-semibold text-fg">{m.industryNetwork}%</span>
+                        <span className="text-2xs uppercase text-[#52525B] block">Contactos</span>
+                        <span className="font-bold text-[#F4F4F6]">{m.industryNetwork}%</span>
                       </div>
                     </div>
 
                     {/* Specialties */}
-                    <div className="text-xs text-fg-muted">
-                      <span className="font-medium text-fg">Especialidades: </span>
+                    <div className="text-xs text-[#8E8E99]">
+                      <span className="font-bold text-[#F4F4F6]">Especialidades: </span>
                       {m.specialties.join(' • ')}
                     </div>
 
                     {/* Requirements Checklist */}
-                    <div className="bg-canvas p-3 rounded-lg border border-line space-y-1.5 text-xs">
-                      <span className="text-xs font-semibold text-fg block">Requisitos Previos:</span>
+                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] space-y-1.5 text-xs font-mono tabular-nums">
+                      <span className="text-2xs uppercase text-[#52525B] font-bold block">Requisitos Previos:</span>
 
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-fg-muted">Oyentes Mensuales:</span>
-                        <span className={`font-medium flex items-center gap-1 ${hasListeners ? 'text-success' : 'text-amber-400'}`}>
-                          {hasListeners ? <Check className="w-3 h-3 text-success" /> : <Lock className="w-3 h-3 text-amber-400" />}
+                        <span className="text-[#8E8E99]">Oyentes Mensuales:</span>
+                        <span className={`font-bold flex items-center gap-1 ${hasListeners ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
+                          {hasListeners ? <Check className="w-3 h-3 text-[#00E599]" /> : <Lock className="w-3 h-3 text-[#F59E0B]" />}
                           {m.requirements.minMonthlyListeners.toLocaleString()}
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-fg-muted">Reputación Mínima:</span>
-                        <span className={`font-medium flex items-center gap-1 ${hasRep ? 'text-success' : 'text-amber-400'}`}>
-                          {hasRep ? <Check className="w-3 h-3 text-success" /> : <Lock className="w-3 h-3 text-amber-400" />}
+                        <span className="text-[#8E8E99]">Reputación Mínima:</span>
+                        <span className={`font-bold flex items-center gap-1 ${hasRep ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
+                          {hasRep ? <Check className="w-3 h-3 text-[#00E599]" /> : <Lock className="w-3 h-3 text-[#F59E0B]" />}
                           {m.requirements.minReputation}%
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-fg-muted">Tarifa de Contratación:</span>
-                        <span className={`font-medium flex items-center gap-1 ${hasFunds ? 'text-success' : 'text-amber-400'}`}>
-                          {hasFunds ? <Check className="w-3 h-3 text-success" /> : <Lock className="w-3 h-3 text-amber-400" />}
+                        <span className="text-[#8E8E99]">Tarifa Contratación:</span>
+                        <span className={`font-bold flex items-center gap-1 ${hasFunds ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
+                          {hasFunds ? <Check className="w-3 h-3 text-[#00E599]" /> : <Lock className="w-3 h-3 text-[#F59E0B]" />}
                           {formatMoney(m.requirements.hiringFee)}
                         </span>
                       </div>
@@ -1187,20 +1184,20 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                   {/* Actions */}
                   <div>
                     {isHired ? (
-                      <div className="w-full text-center py-2.5 bg-success/15 text-success font-semibold text-xs rounded-md border border-success/30">
+                      <div className="w-full text-center py-2.5 bg-[#00E599]/10 text-[#00E599] font-mono font-bold text-xs rounded-[4px] border border-[#00E599]/30">
                         Representante Actual
                       </div>
                     ) : check.canHire ? (
                       <button
                         onClick={() => handleHireManager(m)}
-                        className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold text-xs py-2.5 rounded-md shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
+                        className="w-full bg-[#FF4F00] hover:bg-[#E04500] text-white font-mono font-bold text-xs py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
                       >
                         Contratar Representante • {formatMoney(m.requirements.hiringFee)}
                       </button>
                     ) : (
                       <button
                         disabled
-                        className="w-full bg-canvas text-fg-subtle font-medium text-xs py-2.5 rounded-md border border-line cursor-not-allowed flex items-center justify-center gap-1.5"
+                        className="w-full bg-[#09090B] text-[#52525B] font-mono font-medium text-xs py-2.5 rounded-[4px] border border-[#242429] cursor-not-allowed flex items-center justify-center gap-1.5"
                       >
                         <Lock className="w-3.5 h-3.5" /> Requisitos Bloqueados
                       </button>
@@ -1216,36 +1213,36 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {/* TAB 5: SELLO PROPIO */}
       {activeTab === 'own_label' && (
         <div className="space-y-6">
-          <div className="bg-surface border border-line rounded-xl p-6 sm:p-8 space-y-6 shadow-md">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 sm:p-8 space-y-6">
             <div className="space-y-1">
-              <h2 className="text-xl font-semibold text-fg">
+              <h2 className="text-xl font-bold text-[#F4F4F6] tracking-tight">
                 Fundar tu Propio Sello Discográfico
               </h2>
-              <p className="text-xs text-fg-muted leading-relaxed max-w-xl">
+              <p className="text-xs text-[#8E8E99] leading-relaxed max-w-xl">
                 Llegó el momento de tomar el control total de la cadena de valor musical. Fundar tu propio sello te permite retener el 95% de las regalías de streaming, autogestionar tus contratos y reclutar futuros artistas.
               </p>
             </div>
 
-            <div className="bg-canvas p-5 rounded-lg border border-line space-y-4">
-              <h3 className="text-xs font-semibold text-fg">Requisitos de Fundación:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div className="p-3 bg-surface rounded-md border border-line">
-                  <span className="text-fg-muted block">Inversión Legal Inicial:</span>
-                  <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.funds >= 25000 ? 'text-success' : 'text-amber-400'}`}>
+            <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] space-y-4">
+              <h3 className="text-xs font-mono uppercase font-bold text-[#8E8E99]">Requisitos de Fundación:</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono tabular-nums">
+                <div className="p-3 bg-[#18181C] rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs uppercase text-[#52525B] block">Inversión Inicial:</span>
+                  <span className={`font-bold text-sm flex items-center gap-1 mt-0.5 ${player.stats.funds >= 25000 ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
                     {player.stats.funds >= 25000 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                     $25,000 • Saldo: {formatMoney(player.stats.funds)}
                   </span>
                 </div>
-                <div className="p-3 bg-surface rounded-md border border-line">
-                  <span className="text-fg-muted block">Popularidad Mínima:</span>
-                  <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.popularity >= 40 ? 'text-success' : 'text-amber-400'}`}>
+                <div className="p-3 bg-[#18181C] rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs uppercase text-[#52525B] block">Popularidad Mínima:</span>
+                  <span className={`font-bold text-sm flex items-center gap-1 mt-0.5 ${player.stats.popularity >= 40 ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
                     {player.stats.popularity >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                     40/100 • Actual: {player.stats.popularity}/100
                   </span>
                 </div>
-                <div className="p-3 bg-surface rounded-md border border-line">
-                  <span className="text-fg-muted block">Reputación en la Escena:</span>
-                  <span className={`font-semibold text-sm flex items-center gap-1 mt-0.5 ${player.stats.reputation >= 40 ? 'text-success' : 'text-amber-400'}`}>
+                <div className="p-3 bg-[#18181C] rounded-[4px] border border-[#242429]">
+                  <span className="text-2xs uppercase text-[#52525B] block">Reputación en Escena:</span>
+                  <span className={`font-bold text-sm flex items-center gap-1 mt-0.5 ${player.stats.reputation >= 40 ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
                     {player.stats.reputation >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                     40/100 • Actual: {player.stats.reputation}/100
                   </span>
@@ -1254,7 +1251,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
 
               {/* Input for name */}
               <div className="space-y-2 pt-2">
-                <label className="block text-xs font-semibold text-fg">
+                <label className="block text-xs font-mono font-bold uppercase text-[#8E8E99]">
                   Nombre del Sello Discográfico:
                 </label>
                 <input
@@ -1262,17 +1259,17 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                   value={newLabelName}
                   onChange={(e) => setNewLabelName(e.target.value)}
                   placeholder="Ej: Mansión Records, La Cueva Discos..."
-                  className="w-full max-w-md bg-canvas border border-line text-fg placeholder:text-fg-subtle text-sm px-3.5 py-2.5 rounded-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  className="w-full max-w-md bg-[#18181C] border border-[#242429] text-[#F4F4F6] placeholder-[#52525B] font-mono text-sm px-3.5 py-2.5 rounded-[4px] focus:outline-none focus:border-[#FF4F00]"
                 />
               </div>
 
               <button
                 onClick={handleCreateOwnLabel}
                 disabled={player.stats.funds < 25000 || player.stats.popularity < 40 || player.stats.reputation < 40}
-                className={`px-5 py-2.5 rounded-md text-xs font-bold transition-all ${
+                className={`px-5 py-2.5 rounded-[4px] text-xs font-mono font-bold transition-all ${
                   player.stats.funds >= 25000 && player.stats.popularity >= 40 && player.stats.reputation >= 40
-                    ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-[0.98] cursor-pointer'
-                    : 'bg-surface text-fg-subtle border border-line cursor-not-allowed'
+                    ? 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
+                    : 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed'
                 }`}
               >
                 Constituir Sello Discográfico • $25,000

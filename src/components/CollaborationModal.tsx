@@ -84,8 +84,8 @@ const COLLAB_FORMATS: FormatOption[] = [
     minBudgetSuggested: 2000,
     icon: Disc3,
     tag: 'Single',
-    gradient: 'from-[#8B5CF6]/30 to-[#EC4899]/30',
-    badgeClass: 'bg-purple-950/60 border-purple-500/40 text-purple-300'
+    gradient: 'from-[#18181C] to-[#111114]',
+    badgeClass: 'bg-[#18181C] border-[#242429] text-[#F4F4F6]'
   },
   {
     id: 'album_track',
@@ -96,8 +96,8 @@ const COLLAB_FORMATS: FormatOption[] = [
     minBudgetSuggested: 2000,
     icon: Music2,
     tag: 'Album Cut',
-    gradient: 'from-[#06B6D4]/30 to-[#8B5CF6]/30',
-    badgeClass: 'bg-cyan-950/60 border-cyan-500/40 text-cyan-300'
+    gradient: 'from-[#18181C] to-[#111114]',
+    badgeClass: 'bg-[#18181C] border-[#242429] text-[#8E8E99]'
   },
   {
     id: 'ep_collab',
@@ -108,8 +108,8 @@ const COLLAB_FORMATS: FormatOption[] = [
     minBudgetSuggested: 6000,
     icon: Layers,
     tag: 'EP • 4 Tracks',
-    gradient: 'from-amber-500/30 to-rose-500/30',
-    badgeClass: 'bg-amber-950/60 border-amber-500/40 text-amber-300'
+    gradient: 'from-[#18181C] to-[#111114]',
+    badgeClass: 'bg-[#18181C] border-[#F59E0B]/40 text-[#F59E0B]'
   },
   {
     id: 'collab_album',
@@ -120,8 +120,8 @@ const COLLAB_FORMATS: FormatOption[] = [
     minBudgetSuggested: 14000,
     icon: Sparkles,
     tag: 'LP Conjunto • 6 Tracks',
-    gradient: 'from-[#EC4899]/30 via-[#8B5CF6]/30 to-[#10B981]/30',
-    badgeClass: 'bg-gradient-to-r from-violet-900/80 to-pink-900/80 border-pink-500/50 text-pink-200'
+    gradient: 'from-[#18181C] to-[#111114]',
+    badgeClass: 'bg-[#18181C] border-[#FF4F00]/50 text-[#FF4F00]'
   },
   {
     id: 'mixtape_collab',
@@ -132,8 +132,8 @@ const COLLAB_FORMATS: FormatOption[] = [
     minBudgetSuggested: 5000,
     icon: Radio,
     tag: 'Mixtape Callejera',
-    gradient: 'from-emerald-500/30 to-teal-500/30',
-    badgeClass: 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300'
+    gradient: 'from-[#18181C] to-[#111114]',
+    badgeClass: 'bg-[#18181C] border-[#00E599]/40 text-[#00E599]'
   }
 ];
 
@@ -584,25 +584,21 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div
-        className="bg-surface border border-line max-w-4xl w-full rounded-panel flex flex-col overflow-hidden text-fg shadow-2xl relative my-auto max-h-[92vh]"
-        style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+        className="bg-[#111114] border border-[#242429] max-w-4xl w-full rounded-[6px] flex flex-col overflow-hidden text-[#F4F4F6] shadow-2xl relative my-auto max-h-[92vh]"
       >
-        {/* Ambient Top Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b from-primary/25 to-transparent blur-2xl pointer-events-none" />
-
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-line bg-surface/90 backdrop-blur-md flex items-center justify-between relative z-10">
+        <div className="px-6 py-4 border-b border-[#242429] bg-[#18181C] flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-canvas border border-primary/40 text-primary-soft shadow-[0_0_12px_rgba(139,92,246,0.3)] shrink-0">
+            <div className="p-2 rounded-[4px] bg-[#111114] border border-[#242429] text-[#F4F4F6] shrink-0">
               <Users className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-2xs uppercase font-bold tracking-wider text-primary-soft bg-primary/15 border border-primary/30 px-2 py-0.5 rounded-sm inline-block">
+              <span className="text-2xs font-mono uppercase font-bold tracking-wider text-[#8E8E99] bg-[#111114] border border-[#242429] px-2 py-0.5 rounded-[4px] inline-block">
                 Estudio de Alianzas Musicales
               </span>
-              <h2 className="text-base sm:text-lg font-bold tracking-tight text-fg">
+              <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#F4F4F6]">
                 Colaboración Musical & Grabación Conjunta
               </h2>
             </div>
@@ -613,7 +609,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               playSound('click');
               onClose();
             }}
-            className="p-1.5 rounded-md hover:bg-line text-fg-muted hover:text-fg transition-colors cursor-pointer"
+            className="p-1.5 rounded-[4px] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] transition-colors cursor-pointer"
             title="Cerrar modal"
           >
             <X className="w-5 h-5" />
@@ -621,13 +617,13 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 relative z-10 text-xs">
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 relative z-10 text-xs bg-[#09090B]">
           {/* SECTION 1: COLLABORATOR SELECTION & PROFILE HERO CARD */}
-          <div className="bg-canvas border border-line rounded-2xl p-5 space-y-4 shadow-inner">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
+          <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-fg flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-primary" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-[#FF4F00]" />
                   Perfil del Artista Colaborador
                 </span>
               </div>
@@ -652,42 +648,42 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
             {targetArtist && (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
                 {/* Left Card: Artist ID & Main Stats (4 cols) */}
-                <div className="md:col-span-4 bg-surface border border-line rounded-xl p-4 flex items-center gap-3.5 shadow-sm">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary via-accent to-indigo-950 text-white font-extrabold text-xl flex items-center justify-center shrink-0 border border-white/20 shadow-md">
+                <div className="md:col-span-4 bg-[#18181C] border border-[#242429] rounded-[4px] p-4 flex items-center gap-3.5">
+                  <div className="w-14 h-14 rounded-[4px] bg-[#111114] text-[#F4F4F6] font-mono font-extrabold text-xl flex items-center justify-center shrink-0 border border-[#242429]">
                     {targetArtist.name.charAt(0)}
                   </div>
                   <div className="min-w-0 space-y-1">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="font-bold text-sm text-fg truncate">
+                      <h3 className="font-bold text-sm text-[#F4F4F6] truncate">
                         {targetArtist.name}
                       </h3>
-                      <span className="text-2xs uppercase font-bold px-1.5 py-0.5 rounded-sm bg-primary/20 border border-primary/40 text-primary-soft">
+                      <span className="text-2xs uppercase font-mono font-bold px-1.5 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
                         {targetArtist.careerStage}
                       </span>
                     </div>
-                    <p className="text-xs text-fg-muted">
+                    <p className="text-xs text-[#8E8E99]">
                       {targetArtist.country} • {world.genres[targetArtist.mainGenreId]?.name || targetArtist.mainGenreId}
                     </p>
                     <div className="flex items-center gap-3 text-xs font-mono pt-0.5">
-                      <span>Pop: <strong className="text-emerald-400">{targetArtist.stats.popularity}</strong></span>
-                      <span>Oyentes: <strong className="text-primary-soft">{formatCompactNumber(targetArtist.stats.monthlyListeners)}</strong></span>
+                      <span>Pop: <strong className="text-[#00E599] tabular-nums">{targetArtist.stats.popularity}</strong></span>
+                      <span>Oyentes: <strong className="text-[#F4F4F6] tabular-nums">{formatCompactNumber(targetArtist.stats.monthlyListeners)}</strong></span>
                     </div>
                   </div>
                 </div>
 
                 {/* Middle Card: Affinity, Respect & Sound Synergy Gauges (5 cols) */}
-                <div className="md:col-span-5 bg-surface border border-line rounded-xl p-3.5 space-y-2.5">
+                <div className="md:col-span-5 bg-[#18181C] border border-[#242429] rounded-[4px] p-3.5 space-y-2.5 font-mono">
                   {/* Gauge 1: Afinidad Mutua */}
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-fg-muted">Afinidad Mutua</span>
-                      <span className={`font-mono font-bold ${(relationship?.affinity ?? 0) >= 20 ? 'text-emerald-400' : (relationship?.affinity ?? 0) < 0 ? 'text-rose-400' : 'text-fg'}`}>
+                      <span className="text-[#8E8E99]">Afinidad Mutua</span>
+                      <span className={`font-mono font-bold tabular-nums ${(relationship?.affinity ?? 0) >= 20 ? 'text-[#00E599]' : (relationship?.affinity ?? 0) < 0 ? 'text-[#EF4444]' : 'text-[#F4F4F6]'}`}>
                         {(relationship?.affinity ?? 0) > 0 ? `+${relationship?.affinity}` : relationship?.affinity ?? 0}
                       </span>
                     </div>
-                    <div className="w-full bg-canvas h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#111114] h-1.5 rounded-[2px] overflow-hidden">
                       <div
-                        className={`h-full rounded-full ${(relationship?.affinity ?? 0) >= 0 ? 'bg-gradient-to-r from-[#8B5CF6] to-[#10B981]' : 'bg-gradient-to-r from-amber-500 to-rose-600'}`}
+                        className={`h-full rounded-[2px] ${(relationship?.affinity ?? 0) >= 0 ? 'bg-[#00E599]' : 'bg-[#EF4444]'}`}
                         role="progressbar"
                         aria-label="Afinidad mutua"
                         aria-valuemin={-100}
@@ -701,12 +697,12 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   {/* Gauge 2: Respeto Profesional */}
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-fg-muted">Respeto Profesional</span>
-                      <span className="font-mono font-bold text-cyan-400">{relationship?.respect ?? 50}%</span>
+                      <span className="text-[#8E8E99]">Respeto Profesional</span>
+                      <span className="font-mono font-bold text-[#F4F4F6] tabular-nums">{relationship?.respect ?? 50}%</span>
                     </div>
-                    <div className="w-full bg-canvas h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#111114] h-1.5 rounded-[2px] overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-info"
+                        className="h-full rounded-[2px] bg-[#00E599]"
                         role="progressbar"
                         aria-label="Respeto profesional"
                         aria-valuemin={0}
@@ -720,15 +716,15 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   {/* Gauge 3: Sinergia Sonora Estimada */}
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-fg-muted flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-accent" />
+                      <span className="text-[#8E8E99] flex items-center gap-1 font-mono">
+                        <Sparkles className="w-3 h-3 text-[#FF4F00]" />
                         Sinergia Sonora Estimada
                       </span>
-                      <span className="font-mono font-bold text-pink-400">{soundSynergy}%</span>
+                      <span className="font-mono font-bold text-[#FF4F00] tabular-nums">{soundSynergy}%</span>
                     </div>
-                    <div className="w-full bg-canvas h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#111114] h-1.5 rounded-[2px] overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]"
+                        className="h-full rounded-[2px] bg-[#FF4F00]"
                         role="progressbar"
                         aria-label="Sinergia sonora"
                         aria-valuemin={0}
@@ -811,33 +807,33 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                       playSound('click');
                       setFormat(fOption.id);
                     }}
-                    className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between gap-2.5 cursor-pointer ${
+                    className={`p-3.5 rounded-[4px] border transition-all flex flex-col justify-between gap-2.5 cursor-pointer ${
                       isSelected
-                        ? `bg-gradient-to-br from-[#16181F] to-[#8B5CF6]/20 border-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.35)] ring-1 ring-[#8B5CF6]`
-                        : 'bg-canvas border-line hover:border-primary/40 hover:bg-white/[0.02]'
+                        ? `bg-[#18181C] border-[#FF4F00] text-[#F4F4F6]`
+                        : 'bg-[#111114] border-[#242429] hover:border-[#3F3F46] text-[#8E8E99]'
                     }`}
                   >
                     <div className="space-y-1.5">
                       <div className="flex items-start justify-between gap-1.5">
-                        <div className={`p-1.5 rounded-md ${isSelected ? 'bg-primary/25 text-primary-soft' : 'bg-surface text-fg-muted'}`}>
+                        <div className={`p-1.5 rounded-[4px] ${isSelected ? 'bg-[#FF4F00] text-white' : 'bg-[#18181C] text-[#8E8E99]'}`}>
                           <FormatIcon className="w-4 h-4" />
                         </div>
-                        <span className={`text-2xs font-bold px-1.5 py-0.5 rounded border ${fOption.badgeClass}`}>
+                        <span className={`text-2xs font-mono font-bold px-1.5 py-0.5 rounded-[4px] border ${fOption.badgeClass}`}>
                           {fOption.tag}
                         </span>
                       </div>
 
-                      <h4 className="text-xs font-bold text-fg">
+                      <h4 className="text-xs font-bold text-[#F4F4F6]">
                         {fOption.name}
                       </h4>
-                      <p className="text-2xs text-fg-muted leading-snug">
+                      <p className="text-2xs text-[#8E8E99] leading-snug">
                         {fOption.subtitle}
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-line flex items-center justify-between text-2xs font-mono text-fg-muted">
+                    <div className="pt-2 border-t border-[#242429] flex items-center justify-between text-2xs font-mono text-[#8E8E99]">
                       <span>{fOption.tracksCount} {fOption.tracksCount === 1 ? 'Pista' : 'Pistas'}</span>
-                      <span className="text-rose-400">-{fOption.energyCost}% Ene</span>
+                      <span className="text-[#EF4444] tabular-nums">-{fOption.energyCost}% Ene</span>
                     </div>
                   </div>
                 );
@@ -846,10 +842,10 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
           </div>
 
           {/* SECTION 3: FULL CUSTOMIZATION (Title, Credits, Genres, Producer, Budgets, Longevity) */}
-          <div className="bg-canvas border border-line rounded-2xl p-5 space-y-5 shadow-inner">
-            <div className="flex items-center gap-2 border-b border-line pb-3">
-              <Sliders className="w-4 h-4 text-primary" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-fg">
+          <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 space-y-5">
+            <div className="flex items-center gap-2 border-b border-[#242429] pb-3">
+              <Sliders className="w-4 h-4 text-[#FF4F00]" />
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#F4F4F6]">
                 2. Personalización Creativa & Producción Integral
               </h3>
             </div>
@@ -859,14 +855,14 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               <div className="space-y-4">
                 {/* Project Title */}
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-bold uppercase text-fg">
+                  <div className="flex items-center justify-between mb-1.5 font-mono">
+                    <label className="block text-xs font-bold uppercase text-[#F4F4F6]">
                       Nombre del Proyecto *
                     </label>
                     <button
                       type="button"
                       onClick={handleGenerateTitle}
-                      className="text-xs text-primary-soft hover:text-[#E879F9] underline font-bold cursor-pointer transition-colors"
+                      className="text-xs text-[#FF4F00] hover:underline font-bold cursor-pointer transition-colors"
                     >
                       Generar Título Aleatorio
                     </button>
@@ -877,16 +873,16 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     placeholder="Ej: Oasis, Modo Diablo, Fuego Cruzado..."
-                    className="w-full bg-surface border border-line focus:border-primary rounded-md px-3.5 py-2 text-xs text-fg placeholder:text-fg-subtle focus:outline-none"
+                    className="w-full bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3.5 py-2 text-xs text-[#F4F4F6] placeholder-[#52525B] focus:outline-hidden font-mono"
                   />
                 </div>
 
                 {/* Credits Format Selector */}
                 <div>
-                  <label className="block text-xs font-bold uppercase text-fg mb-1.5">
+                  <label className="block text-xs font-mono font-bold uppercase text-[#F4F4F6] mb-1.5">
                     Formato de Créditos en Portada & Plataformas
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 font-mono">
                     {[
                       { id: 'player_feat_target', label: `${player.name} ft. ${targetArtist?.name || 'Artista'}` },
                       { id: 'target_feat_player', label: `${targetArtist?.name || 'Artista'} ft. ${player.name}` },
@@ -904,10 +900,10 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                             playSound('click');
                             setCreditFormat(cOption.id as CreditFormat);
                           }}
-                          className={`p-2 rounded-lg border text-center transition-all cursor-pointer truncate ${
+                          className={`p-2 rounded-[4px] border text-center transition-all cursor-pointer truncate ${
                             isSelected
-                              ? 'bg-primary/20 border-primary text-fg font-bold shadow-xs'
-                              : 'bg-surface border-line text-fg-muted hover:text-fg'
+                              ? 'bg-[#18181C] border-[#FF4F00] text-[#F4F4F6] font-bold'
+                              : 'bg-[#111114] border-[#242429] text-[#8E8E99] hover:border-[#3F3F46]'
                           }`}
                         >
                           <span className="text-xs truncate block">{cOption.label}</span>
@@ -1066,21 +1062,21 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                             playSound('click');
                             setLongevityCurve(lOpt.id);
                           }}
-                          className={`p-2.5 rounded-lg border flex items-center justify-between text-xs cursor-pointer transition-all ${
+                          className={`p-2.5 rounded-[4px] border flex items-center justify-between text-xs cursor-pointer transition-all ${
                             isSelected
-                              ? 'bg-gradient-to-r from-[#8B5CF6]/25 to-[#06B6D4]/25 border-[#06B6D4] text-[#F8FAFC]'
-                              : 'bg-surface border-line text-fg-muted hover:text-fg'
+                              ? 'bg-[#18181C] border-[#FF4F00] text-[#F4F4F6]'
+                              : 'bg-[#111114] border-[#242429] text-[#8E8E99] hover:border-[#3F3F46]'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <LIcon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#38BDF8]' : 'text-fg-muted'}`} />
+                            <LIcon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
                             <div className="min-w-0">
-                              <span className="font-bold text-xs block text-fg">{lOpt.label}</span>
-                              <span className="text-2xs text-fg-muted truncate block">{lOpt.description}</span>
+                              <span className="font-bold text-xs block text-[#F4F4F6]">{lOpt.label}</span>
+                              <span className="text-2xs text-[#8E8E99] truncate block">{lOpt.description}</span>
                             </div>
                           </div>
-                          <span className={`text-2xs font-bold font-mono px-2 py-0.5 rounded border shrink-0 ${
-                            isSelected ? 'bg-cyan-950/60 border-cyan-500/40 text-cyan-300' : 'bg-canvas border-line text-fg-muted'
+                          <span className={`text-2xs font-bold font-mono px-2 py-0.5 rounded-[4px] border shrink-0 ${
+                            isSelected ? 'bg-[#18181C] border-[#FF4F00]/50 text-[#FF4F00]' : 'bg-[#111114] border-[#242429] text-[#8E8E99]'
                           }`}>
                             {lOpt.badge}
                           </span>
@@ -1091,36 +1087,36 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 </div>
 
                 {/* Cost Breakdown & Feasibility Card */}
-                <div className={`p-3.5 rounded-xl border space-y-1.5 text-xs font-mono ${
+                <div className={`p-3.5 rounded-[4px] border space-y-1.5 text-xs font-mono ${
                   isFundsInsufficient || isEnergyInsufficient
-                    ? 'bg-rose-950/20 border-rose-500/40 shadow-xs'
-                    : 'bg-surface border-line'
+                    ? 'bg-[#1F1215] border-[#451A20]'
+                    : 'bg-[#18181C] border-[#242429]'
                 }`}>
-                  <div className="flex justify-between text-fg-muted">
+                  <div className="flex justify-between text-[#8E8E99]">
                     <span>Producción + Marketing:</span>
-                    <span className="text-fg font-semibold">${(budgetProduction + budgetMarketing).toLocaleString()}</span>
+                    <span className="text-[#F4F4F6] font-semibold tabular-nums">${(budgetProduction + budgetMarketing).toLocaleString()}</span>
                   </div>
                   {selectedProducer && (
-                    <div className="flex justify-between text-fg-muted">
+                    <div className="flex justify-between text-[#8E8E99]">
                       <span>Beatmaker ({selectedProducer.name}):</span>
-                      <span className="text-fg font-semibold">+${producerFee.toLocaleString()}</span>
+                      <span className="text-[#F4F4F6] font-semibold tabular-nums">+${producerFee.toLocaleString()}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-fg-muted pt-1 border-t border-line">
-                    <span className="font-bold text-fg">Costo Total Inversión:</span>
-                    <span className={`font-bold ${isFundsInsufficient ? 'text-rose-400' : 'text-primary-soft'}`}>
+                  <div className="flex justify-between text-[#8E8E99] pt-1 border-t border-[#242429]">
+                    <span className="font-bold text-[#F4F4F6]">Costo Total Inversión:</span>
+                    <span className={`font-bold tabular-nums ${isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#00E599]'}`}>
                       ${totalCost.toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex justify-between text-fg-muted">
+                  <div className="flex justify-between text-[#8E8E99]">
                     <span>Energía Requerida:</span>
-                    <span className={`font-semibold ${isEnergyInsufficient ? 'text-rose-400' : 'text-fg'}`}>
+                    <span className={`font-semibold tabular-nums ${isEnergyInsufficient ? 'text-[#EF4444]' : 'text-[#F4F4F6]'}`}>
                       -{selectedFormatConfig.energyCost}% (Disponible: {player.stats.energy}%)
                     </span>
                   </div>
-                  <div className="flex justify-between text-fg-muted">
+                  <div className="flex justify-between text-[#8E8E99]">
                     <span>Fondos Disponibles:</span>
-                    <span className={`font-bold ${isFundsInsufficient ? 'text-rose-400' : 'text-emerald-400'}`}>
+                    <span className={`font-bold tabular-nums ${isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#00E599]'}`}>
                       ${player.stats.funds.toLocaleString()}
                     </span>
                   </div>
@@ -1131,16 +1127,16 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
 
           {/* SECTION 4: REJECTION FEEDBACK ALERT (If rejected) */}
           {rejectionFeedback && (
-            <div className="bg-gradient-to-r from-rose-950/60 via-surface to-rose-950/40 border border-rose-500/40 rounded-xl p-4 space-y-2 text-xs shadow-md animate-fade-in">
-              <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
-                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="bg-[#1F1215] border border-[#451A20] rounded-[4px] p-4 space-y-2 text-xs font-mono animate-fade-in">
+              <div className="flex items-center gap-2 text-[#EF4444] font-bold text-sm">
+                <ShieldAlert className="w-4 h-4 text-[#EF4444] shrink-0" />
                 <span>Propuesta Rechazada por {targetArtist.name}</span>
               </div>
-              <p className="text-rose-200/90 leading-relaxed">
+              <p className="text-[#F4F4F6]/90 leading-relaxed font-sans">
                 {rejectionFeedback.reason}
               </p>
-              <div className="p-2.5 rounded-md bg-canvas border border-rose-500/30 text-xs text-amber-300 flex items-start gap-2">
-                <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="p-2.5 rounded-[4px] bg-[#111114] border border-[#242429] text-xs text-[#F59E0B] flex items-start gap-2">
+                <HelpCircle className="w-3.5 h-3.5 text-[#F59E0B] shrink-0 mt-0.5" />
                 <span><strong>Consejo Estratégico:</strong> {rejectionFeedback.advice}</span>
               </div>
             </div>
@@ -1148,19 +1144,19 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-line bg-surface/90 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
-          <div className="text-xs text-fg-muted text-center sm:text-left">
+        <div className="px-6 py-4 border-t border-[#242429] bg-[#18181C] flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10 font-mono">
+          <div className="text-xs text-[#8E8E99] text-center sm:text-left">
             {isFundsInsufficient ? (
-              <span className="text-rose-400 flex items-center gap-1 font-medium">
+              <span className="text-[#EF4444] flex items-center gap-1 font-medium">
                 <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes para este presupuesto.
               </span>
             ) : isEnergyInsufficient ? (
-              <span className="text-rose-400 flex items-center gap-1 font-medium">
+              <span className="text-[#EF4444] flex items-center gap-1 font-medium">
                 <Zap className="w-3.5 h-3.5" /> Energía insuficiente (requiere {selectedFormatConfig.energyCost}%).
               </span>
             ) : (
               <span>
-                Crédito oficial: <strong className="text-fg">"{getCreditPreview()}"</strong>
+                Crédito oficial: <strong className="text-[#F4F4F6]">"{getCreditPreview()}"</strong>
               </span>
             )}
           </div>
@@ -1172,7 +1168,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 playSound('click');
                 onClose();
               }}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-md text-xs font-semibold bg-canvas hover:bg-white/[0.04] text-[#CBD5E1] border border-line transition-all cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-[4px] text-xs font-mono font-semibold bg-[#111114] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer"
             >
               Cancelar
             </button>
@@ -1181,10 +1177,10 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
               type="button"
               onClick={handleSendProposal}
               disabled={isNegotiating || isFundsInsufficient || isEnergyInsufficient || !title.trim()}
-              className={`w-full sm:w-auto px-6 py-2.5 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+              className={`w-full sm:w-auto px-6 py-2.5 rounded-[4px] text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 ${
                 isNegotiating || isFundsInsufficient || isEnergyInsufficient || !title.trim()
-                  ? 'bg-line text-fg-subtle cursor-not-allowed opacity-60'
-                  : 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:opacity-95 active:scale-98 cursor-pointer'
+                  ? 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed'
+                  : 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
               }`}
             >
               {isNegotiating ? (

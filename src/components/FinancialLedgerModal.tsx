@@ -88,31 +88,26 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div
-        className="bg-surface border border-line max-w-4xl w-full rounded-panel p-6 sm:p-8 space-y-6 shadow-2xl text-fg relative overflow-hidden my-auto"
-        style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+        className="bg-[#111114] border border-[#242429] max-w-4xl w-full rounded-[6px] p-6 sm:p-8 space-y-6 shadow-2xl text-[#F4F4F6] relative overflow-hidden my-auto"
       >
-        {/* Ambient Glow */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-info/10 rounded-full blur-3xl pointer-events-none" />
-
         {/* Modal Header */}
-        <div className="flex items-start justify-between gap-4 border-b border-line pb-5 relative z-10">
+        <div className="flex items-start justify-between gap-4 border-b border-[#242429] pb-5 relative z-10">
           <div className="flex items-center gap-3.5">
-            <div className="p-3 rounded-xl bg-canvas border border-primary/40 text-primary shadow-[0_0_15px_rgba(139,92,246,0.25)]">
+            <div className="p-3 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#F4F4F6] shadow-xs">
               <Receipt className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-2xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40">
+                <span className="text-2xs font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
                   Trazabilidad Financiera
                 </span>
-                <span className="text-xs text-fg-muted font-mono">
+                <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
                   {transactions.length} registros
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-[-0.8px] text-fg mt-0.5">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F4F4F6] mt-0.5">
                 Libro Mayor & Historial de Transacciones
               </h2>
             </div>
@@ -120,7 +115,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-lg bg-canvas hover:bg-[#1C1F28] text-fg-muted hover:text-fg border border-line transition-colors cursor-pointer"
+            className="p-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] transition-colors cursor-pointer"
             title="Cerrar Historial"
           >
             <X className="w-5 h-5" />
@@ -129,59 +124,59 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
         {/* KPI Financial Summary Header */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 relative z-10">
-          <div className="bg-canvas border border-emerald-500/30 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-fg-muted uppercase tracking-wider block">
+              <span className="text-xs font-mono font-bold text-[#52525B] uppercase tracking-wider block">
                 Total Ingresos Acumulados
               </span>
-              <span className="text-xl font-bold text-emerald-400 font-mono tracking-tight mt-0.5 block">
+              <span className="text-xl font-bold text-[#00E599] font-mono tabular-nums tracking-tight mt-0.5 block">
                 +${totalIncome.toLocaleString()}
               </span>
             </div>
-            <div className="p-2.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+            <div className="p-2.5 rounded-[4px] bg-[#111114] text-[#00E599] border border-[#00E599]/30">
               <TrendingUp className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="bg-canvas border border-rose-500/30 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-fg-muted uppercase tracking-wider block">
+              <span className="text-xs font-mono font-bold text-[#52525B] uppercase tracking-wider block">
                 Total Gastos Acumulados
               </span>
-              <span className="text-xl font-bold text-rose-400 font-mono tracking-tight mt-0.5 block">
+              <span className="text-xl font-bold text-[#EF4444] font-mono tabular-nums tracking-tight mt-0.5 block">
                 -${totalExpenses.toLocaleString()}
               </span>
             </div>
-            <div className="p-2.5 rounded-full bg-rose-950/60 text-rose-400 border border-rose-500/30">
+            <div className="p-2.5 rounded-[4px] bg-[#1F1215] text-[#EF4444] border border-[#451A20]">
               <TrendingDown className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="bg-canvas border border-primary/30 rounded-xl p-4 flex items-center justify-between shadow-[0_0_15px_rgba(139,92,246,0.15)]">
+          <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-fg-muted uppercase tracking-wider block">
+              <span className="text-xs font-mono font-bold text-[#52525B] uppercase tracking-wider block">
                 Saldo Actual Disponible
               </span>
               <span className="text-xl font-bold text-fg font-mono tracking-tight mt-0.5 block whitespace-nowrap">
                 {formatMoney(currentFunds)}
               </span>
             </div>
-            <div className="p-2.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40">
+            <div className="p-2.5 rounded-[4px] bg-[#18181C] text-[#F4F4F6] border border-[#242429]">
               <DollarSign className="w-5 h-5" />
             </div>
           </div>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 relative z-10">
+        <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 relative z-10 font-mono text-xs">
           {CATEGORY_TABS.map(tab => (
             <button
               key={tab.id}
               onClick={() => setSelectedFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap border ${
+              className={`px-3 py-1.5 rounded-[4px] font-semibold transition-all cursor-pointer whitespace-nowrap border ${
                 selectedFilter === tab.id
-                  ? 'bg-primary/20 border-primary text-fg shadow-[0_0_12px_rgba(139,92,246,0.3)]'
-                  : 'bg-canvas text-fg-muted border-line hover:text-fg hover:border-primary/30'
+                  ? 'bg-[#FF4F00] border-[#FF4F00] text-white font-bold'
+                  : 'bg-[#18181C] text-[#8E8E99] border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
               }`}
             >
               {tab.label}
@@ -190,8 +185,8 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
         </div>
 
         {/* Transactions Table */}
-        <div className="border border-line rounded-xl overflow-hidden bg-canvas relative z-10">
-          <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-surface border-b border-line text-xs font-semibold text-fg-muted uppercase tracking-wider">
+        <div className="border border-[#242429] rounded-[4px] overflow-hidden bg-[#111114] relative z-10">
+          <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-[#18181C] border-b border-[#242429] text-xs font-mono font-bold text-[#8E8E99] uppercase tracking-wider">
             <div className="col-span-3 sm:col-span-2">Período</div>
             <div className="col-span-4 sm:col-span-5">Concepto / Detalle</div>
             <div className="hidden sm:block sm:col-span-2">Categoría</div>
@@ -199,12 +194,12 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
             <div className="col-span-2 sm:col-span-1 text-right">Saldo</div>
           </div>
 
-          <div className="divide-y divide-line/60 max-h-80 overflow-y-auto">
+          <div className="divide-y divide-[#1C1C21] max-h-80 overflow-y-auto">
             {filteredTransactions.length === 0 ? (
-              <div className="p-8 text-center text-fg-muted space-y-2">
-                <Receipt className="w-8 h-8 text-fg-subtle mx-auto" />
+              <div className="p-8 text-center text-[#8E8E99] space-y-2">
+                <Receipt className="w-8 h-8 text-[#52525B] mx-auto" />
                 <p className="text-sm">No hay transacciones registradas en esta categoría.</p>
-                <p className="text-xs text-fg-subtle">
+                <p className="text-xs text-[#52525B]">
                   Los lanzamientos, compras de equipamiento, costos de vida y giras generarán registros automáticos.
                 </p>
               </div>
@@ -217,36 +212,36 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
                 return (
                   <div
                     key={tx.id}
-                    className="grid grid-cols-12 gap-3 px-4 py-3 items-center text-xs hover:bg-surface/70 transition-colors"
+                    className="grid grid-cols-12 gap-3 px-4 py-3 items-center text-xs hover:bg-[#151519] transition-colors"
                   >
                     {/* Fecha */}
-                    <div className="col-span-3 sm:col-span-2 font-mono text-xs text-fg-muted flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-fg-subtle shrink-0" />
-                      <span>{formatReleaseDate(tx.month, tx.year, 'short')}</span>
+                    <div className="col-span-3 sm:col-span-2 font-mono text-xs text-[#8E8E99] flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-[#52525B] shrink-0" />
+                      <span className="tabular-nums">{formatReleaseDate(tx.month, tx.year, 'short')}</span>
                     </div>
 
                     {/* Concepto */}
-                    <div className="col-span-4 sm:col-span-5 font-medium text-fg truncate">
+                    <div className="col-span-4 sm:col-span-5 font-medium text-[#F4F4F6] truncate">
                       {tx.description}
                     </div>
 
                     {/* Categoría Badge */}
                     <div className="hidden sm:flex sm:col-span-2 items-center">
-                      <span className={`px-2 py-0.5 rounded-sm text-2xs font-bold border flex items-center gap-1 ${meta.color}`}>
+                      <span className={`px-2 py-0.5 rounded-[4px] font-mono text-2xs font-bold border flex items-center gap-1 ${meta.color}`}>
                         <CategoryIcon className="w-2.5 h-2.5 shrink-0" />
                         <span>{meta.label}</span>
                       </span>
                     </div>
 
                     {/* Importe */}
-                    <div className={`col-span-3 sm:col-span-2 text-right font-mono font-bold text-xs sm:text-sm ${
-                      isIncome ? 'text-emerald-400' : 'text-rose-400'
+                    <div className={`col-span-3 sm:col-span-2 text-right font-mono tabular-nums font-bold text-xs sm:text-sm ${
+                      isIncome ? 'text-[#00E599]' : 'text-[#EF4444]'
                     }`}>
                       {isIncome ? `+$${tx.amount.toLocaleString()}` : `-$${tx.amount.toLocaleString()}`}
                     </div>
 
                     {/* Saldo Resultante */}
-                    <div className="col-span-2 sm:col-span-1 text-right font-mono text-xs text-fg-muted">
+                    <div className="col-span-2 sm:col-span-1 text-right font-mono tabular-nums text-xs text-[#8E8E99]">
                       {tx.resultingBalance !== undefined ? `$${tx.resultingBalance.toLocaleString('es-AR')}` : '-'}
                     </div>
                   </div>
@@ -257,8 +252,8 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
         </div>
 
         {/* Footer info note */}
-        <div className="text-center pt-2 relative z-10 border-t border-line">
-          <span className="text-xs text-fg-muted">
+        <div className="text-center pt-2 relative z-10 border-t border-[#242429]">
+          <span className="text-xs text-[#52525B] font-mono">
             Todas las operaciones se auditan automáticamente y se guardan con la partida.
           </span>
         </div>
