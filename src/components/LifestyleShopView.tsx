@@ -442,7 +442,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {formatMoney(operationalCosts.semiAnnualUpkeep)}
             </div>
             <span className="text-2xs text-fg-muted font-mono block">
-              {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes • ${ownedUpgrades.length} activos`}
+              {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes (${ownedUpgrades.length} activos)`}
             </span>
           </div>
 
@@ -456,7 +456,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               {operationalCosts.runwayMonths >= 99 ? '∞ Meses' : `${operationalCosts.runwayMonths.toFixed(1)} meses`}
             </div>
             <span className="text-2xs text-emerald-500/80 font-mono block">
-              {`Con saldo actual de ${formatMoney(player?.stats?.funds || 0)}`}
+              {`Con saldo actual de ${formatMoney(player.stats.funds)}`}
             </span>
           </div>
         </div>

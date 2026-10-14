@@ -209,11 +209,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto md:ml-0">
           {/* Dinero / Fondos */}
           <div
-            className="flex items-center gap-1.5 bg-[#14161F] border border-[#252A3A] px-2.5 py-1 rounded-lg text-xs shadow-xs text-slate-200"
+            className="flex items-center flex-row gap-1 bg-[#14161F] border border-[#252A3A] px-2.5 py-1 rounded-lg text-xs shadow-xs text-slate-200"
             title={`Fondos: ${formatMoney(playerFunds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="font-bold font-mono text-emerald-400">{formatMoney(playerFunds)}</span>
+            <span className="font-bold text-emerald-400 font-mono whitespace-nowrap">{formatMoney(playerFunds)}</span>
           </div>
 
           {/* Fans */}
