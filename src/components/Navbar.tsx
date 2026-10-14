@@ -113,13 +113,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
-      className="sticky top-0 z-40 bg-[#0B0C10]/95 backdrop-blur-xl border-b border-[#1E2230] text-fg select-none"
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+      className="sticky top-0 z-40 bg-[#09090B] border-b border-[#242429] text-[#F4F4F6] select-none"
     >
       {/* =========================================================================
           FILA 1: Top Bar (Logo + Simulación de Tiempo + Recursos Pacificados)
          ========================================================================= */}
-      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 border-b border-[#181B26]">
+      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 border-b border-[#242429]">
         {/* Izquierda: Logo ("EL ARTISTA") */}
         <div className="flex items-center gap-3 shrink-0">
           <button
@@ -130,18 +129,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="tap flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer text-left group"
             title="Volver al Menú Principal"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary via-[#A855F7] to-accent text-white flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(139,92,246,0.35)]">
+            <div className="w-8 h-8 rounded-[4px] bg-[#FF4F00] text-white flex items-center justify-center shrink-0">
               <Disc3 className="w-4.5 h-4.5 text-white animate-spin-slow" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold tracking-tight text-white text-xs leading-none flex items-center gap-1.5">
+              <span className="font-bold tracking-tight text-[#F4F4F6] text-xs leading-none flex items-center gap-1.5">
                 EL ARTISTA
-                <span className="hidden sm:inline text-3xs font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/30">
+                <span className="hidden sm:inline text-3xs font-mono font-bold px-1.5 py-0.5 rounded-[2px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
                   PRO
                 </span>
               </span>
-              <span className="hidden sm:block text-3xs text-slate-400 tracking-wider uppercase leading-tight mt-0.5">
-                Career Simulator
+              <span className="hidden sm:block text-3xs text-[#8E8E99] font-mono tracking-wider uppercase leading-tight mt-0.5">
+                STUDIO CONSOLE
               </span>
             </div>
           </button>
@@ -151,20 +150,20 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="order-last md:order-none w-full md:w-auto flex items-center gap-2 md:shrink-0 justify-center">
           {/* Fecha en el Juego */}
           <div
-            className="flex items-center gap-2 bg-[#14161F] px-3 py-1.5 rounded-lg border border-[#252A3A] text-xs shadow-xs whitespace-nowrap"
+            className="flex items-center gap-2 bg-[#111114] px-3 py-1.5 rounded-[4px] border border-[#242429] text-xs shadow-xs whitespace-nowrap font-mono tabular-nums"
             title={`Fecha actual: ${monthName} ${currentYear} • ${semesterShort}`}
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 ring-2 ring-emerald-400/20" />
-            <span className="font-bold text-slate-100">
+            <span className="w-2 h-2 rounded-[2px] bg-[#00E599] shrink-0" />
+            <span className="font-bold text-[#F4F4F6]">
               {monthName} {currentYear}
             </span>
-            <span className="text-slate-400 text-3xs font-medium hidden sm:inline">
+            <span className="text-[#8E8E99] text-3xs font-medium hidden sm:inline">
               • {semesterShort}
             </span>
           </div>
 
           {/* Selector de Velocidad (1M / 3M / 6M / 1Y) */}
-          <div className="flex items-center bg-[#14161F] p-0.5 rounded-lg text-xs font-semibold border border-[#252A3A]">
+          <div className="flex items-center bg-[#111114] p-0.5 rounded-[4px] text-xs font-semibold border border-[#242429]">
             {([
               { val: 1, label: '1M', title: 'Avanzar 1 Mes (Paso a Paso)' },
               { val: 3, label: '3M', title: 'Avanzar 3 Meses (Trimestre)' },
@@ -178,10 +177,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setCycleMonths(opt.val);
                 }}
                 aria-pressed={cycleMonths === opt.val}
-                className={`min-h-8 px-2.5 py-1 rounded-md transition-all cursor-pointer text-xs font-semibold ${
+                className={`min-h-8 px-2.5 py-1 rounded-[3px] font-mono transition-all cursor-pointer text-xs ${
                   cycleMonths === opt.val
-                    ? 'bg-primary text-white shadow-xs font-bold'
-                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                    ? 'bg-[#FF4F00] text-white font-bold'
+                    : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
                 }`}
                 title={opt.title}
               >
@@ -197,7 +196,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onAdvanceCycle(cycleMonths);
             }}
-            className="tap group relative flex items-center gap-2 bg-gradient-to-r from-primary-strong via-primary to-accent hover:from-[#6D28D9] hover:via-primary-strong hover:to-[#DB2777] text-white px-4 py-1.5 rounded-lg text-xs font-bold cursor-pointer active:scale-98 transition-all shadow-[0_0_15px_rgba(124,58,237,0.3)] border border-white/20 whitespace-nowrap"
+            className="tap group relative flex items-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white px-4 py-1.5 rounded-[4px] font-mono text-xs font-bold cursor-pointer active:translate-y-[1px] transition-all border border-[#FF6F2E]/30 whitespace-nowrap"
             title={`Avanzar ciclo de ${cycleMonths === 1 ? '1 mes' : cycleMonths === 3 ? '3 meses' : cycleMonths === 6 ? '6 meses' : '1 año'}`}
           >
             <Play className="w-3.5 h-3.5 fill-white text-white group-hover:scale-110 transition-transform shrink-0" />
@@ -209,7 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto md:ml-0">
           {/* Dinero / Fondos */}
           <div
-            className="flex items-center flex-row gap-1 bg-[#14161F] border border-[#252A3A] px-2.5 py-1 rounded-lg text-xs shadow-xs text-slate-200"
+            className="flex items-center flex-row gap-1 bg-[#111114] border border-[#242429] px-2.5 py-1 rounded-[4px] text-xs text-[#F4F4F6]"
             title={`Fondos: ${formatMoney(playerFunds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
@@ -218,23 +217,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Fans */}
           <div
-            className="flex items-center gap-1.5 bg-[#14161F] border border-[#252A3A] px-2.5 py-1 rounded-lg text-xs shadow-xs text-slate-200"
+            className="flex items-center gap-1.5 bg-[#111114] border border-[#242429] px-2.5 py-1 rounded-[4px] text-xs text-[#F4F4F6]"
             title={`Fans activos: ${playerFans.toLocaleString('es-AR')}`}
           >
-            <Users className="w-3.5 h-3.5 text-primary shrink-0" />
-            <span className="font-bold font-mono text-primary-soft">{formatFans(playerFans)}</span>
+            <Users className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
+            <span className="font-bold font-mono text-[#F4F4F6]">{formatFans(playerFans)}</span>
           </div>
 
           {/* Energía con micro-barra */}
           <div
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs shadow-xs ${energyStyle.bg}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] border text-xs ${energyStyle.bg}`}
             title={`Energía: ${playerEnergy}%`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span className="font-bold font-mono">{playerEnergy}%</span>
-            <div className="w-6 h-1.5 bg-white/10 rounded-full overflow-hidden shrink-0 hidden sm:block">
+            <div className="w-6 h-1.5 bg-white/10 rounded-[2px] overflow-hidden shrink-0 hidden sm:block">
               <div
-                className={`h-full rounded-full transition-all duration-300 ${energyStyle.bar}`}
+                className={`h-full rounded-[2px] transition-all duration-300 ${energyStyle.bar}`}
                 style={{ width: `${Math.min(100, Math.max(0, playerEnergy))}%` }}
               />
             </div>
@@ -247,26 +246,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onOpenPhone?.();
             }}
-            className="tap relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14161F] hover:bg-[#1C1F2B] border border-[#252A3A] hover:border-primary/50 text-xs transition-colors cursor-pointer shrink-0 shadow-xs text-primary-soft group"
+            className="tap relative flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] text-xs transition-colors cursor-pointer shrink-0 text-[#F4F4F6] group"
             title="Abrir Smartphone (DMs, TrendX y Banco)"
           >
-            <Smartphone className="w-3.5 h-3.5 text-primary group-hover:scale-110 transition-transform shrink-0" />
-            <span className="hidden md:inline font-semibold text-slate-200">Teléfono</span>
+            <Smartphone className="w-3.5 h-3.5 text-[#8E8E99] group-hover:text-[#FF4F00] transition-colors shrink-0" />
+            <span className="hidden md:inline font-mono text-xs text-[#8E8E99]">Teléfono</span>
             {(world?.unreadPhoneCount ?? 0) > 0 && (
-              <span className="w-4 h-4 rounded-full bg-primary text-white text-3xs font-bold flex items-center justify-center animate-pulse shadow-sm">
+              <span className="w-4 h-4 rounded-[2px] bg-[#FF4F00] text-white text-3xs font-mono font-bold flex items-center justify-center shadow-xs">
                 {world.unreadPhoneCount}
               </span>
             )}
           </button>
 
           {/* Control de Audio / SFX */}
-          <div className="flex items-center gap-1 bg-[#14161F] border border-[#252A3A] p-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-[#111114] border border-[#242429] p-1 rounded-[4px]">
             <button
               id="btn-toggle-audio-sfx"
               onClick={handleToggleSound}
               aria-pressed={soundEnabled}
-              className={`p-1 rounded-md transition-all cursor-pointer ${
-                soundEnabled ? 'text-emerald-400 bg-emerald-500/10' : 'text-slate-500 hover:text-slate-300'
+              className={`p-1 rounded-[3px] transition-all cursor-pointer ${
+                soundEnabled ? 'text-emerald-400 bg-emerald-500/10' : 'text-[#52525B] hover:text-[#8E8E99]'
               }`}
               title={soundEnabled ? 'Silenciar Efectos de Sonido' : 'Activar Efectos de Sonido'}
             >
@@ -280,7 +279,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Perfil del Artista */}
           <button
             onClick={() => handleTabClick('dashboard')}
-            className="tap hidden sm:flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-lg bg-[#14161F] hover:bg-[#1C1F2B] border border-[#252A3A] text-xs transition-colors cursor-pointer shrink-0"
+            className="tap hidden sm:flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-[4px] bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] text-xs transition-colors cursor-pointer shrink-0"
             title={`Perfil de ${playerName} • Ir al Inicio`}
           >
             <ArtistAvatar
@@ -290,7 +289,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               size="xs"
               rounded="rounded-sm"
             />
-            <span className="font-semibold text-slate-200 max-w-[85px] truncate">
+            <span className="font-semibold text-[#F4F4F6] max-w-[85px] truncate">
               {playerName}
             </span>
           </button>
@@ -307,13 +306,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-tab-dashboard"
             onClick={() => handleTabClick('dashboard')}
-            className={`tap px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+            className={`tap px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               currentTab === 'dashboard'
-                ? 'bg-primary/20 border border-primary/60 text-white shadow-[0_0_15px_rgba(139,92,246,0.25)]'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent'
+                ? 'bg-[#18181C] border border-[#FF4F00] text-[#F4F4F6]'
+                : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#111114] border border-transparent'
             }`}
           >
-            <Compass className={`w-4 h-4 ${currentTab === 'dashboard' ? 'text-primary-soft' : 'text-slate-400'}`} />
+            <Compass className={`w-4 h-4 ${currentTab === 'dashboard' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Inicio</span>
           </button>
 
@@ -321,13 +320,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-tab-studio"
             onClick={() => handleTabClick('studio')}
-            className={`tap px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+            className={`tap px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeHub === 'music'
-                ? 'bg-primary/20 border border-primary/60 text-white shadow-[0_0_15px_rgba(139,92,246,0.25)]'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent'
+                ? 'bg-[#18181C] border border-[#FF4F00] text-[#F4F4F6]'
+                : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#111114] border border-transparent'
             }`}
           >
-            <Disc3 className={`w-4 h-4 ${activeHub === 'music' ? 'text-primary-soft' : 'text-slate-400'}`} />
+            <Disc3 className={`w-4 h-4 ${activeHub === 'music' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Música & Estudio</span>
           </button>
 
@@ -335,13 +334,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-hub-world"
             onClick={() => handleTabClick('streaming')}
-            className={`tap px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+            className={`tap px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeHub === 'world'
-                ? 'bg-primary/20 border border-primary/60 text-white shadow-[0_0_15px_rgba(139,92,246,0.25)]'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent'
+                ? 'bg-[#18181C] border border-[#FF4F00] text-[#F4F4F6]'
+                : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#111114] border border-transparent'
             }`}
           >
-            <Radio className={`w-4 h-4 ${activeHub === 'world' ? 'text-primary-soft' : 'text-slate-400'}`} />
+            <Radio className={`w-4 h-4 ${activeHub === 'world' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>El Mundo & Redes</span>
           </button>
 
@@ -349,41 +348,41 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-hub-career"
             onClick={() => handleTabClick('tours')}
-            className={`tap px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+            className={`tap px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeHub === 'career'
-                ? 'bg-primary/20 border border-primary/60 text-white shadow-[0_0_15px_rgba(139,92,246,0.25)]'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent'
+                ? 'bg-[#18181C] border border-[#FF4F00] text-[#F4F4F6]'
+                : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#111114] border border-transparent'
             }`}
           >
-            <Sparkles className={`w-4 h-4 ${activeHub === 'career' ? 'text-primary-soft' : 'text-slate-400'}`} />
+            <Sparkles className={`w-4 h-4 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Carrera & Escena</span>
           </button>
         </div>
 
-        {/* Sub-Navegación Contextual (Píldoras Limpias del Hub Activo) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto scroll-fade-x pt-1 md:pt-0 border-t md:border-t-0 border-[#1A1D29]">
+        {/* Sub-Navegación Contextual (Módulos Hardware Limpios del Hub Activo) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto scroll-fade-x pt-1 md:pt-0 border-t md:border-t-0 border-[#242429]">
           {/* Sub-pills de MÚSICA */}
           {activeHub === 'music' && (
             <>
               <button
                 onClick={() => handleTabClick('studio_single')}
-                className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                className="px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
               >
-                <Music2 className="w-3 h-3 text-primary-soft" />
+                <Music2 className="w-3 h-3 text-[#FF4F00]" />
                 <span>Grabar Single</span>
               </button>
               <button
                 onClick={() => handleTabClick('studio_album')}
-                className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                className="px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
               >
-                <Layers className="w-3 h-3 text-accent" />
+                <Layers className="w-3 h-3 text-[#FF4F00]" />
                 <span>Grabar Álbum / EP</span>
               </button>
               <button
                 onClick={() => handleTabClick('catalog')}
-                className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                className="px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
               >
-                <Disc3 className="w-3 h-3 text-cyan-400" />
+                <Disc3 className="w-3 h-3 text-[#00E599]" />
                 <span>Mi Catálogo</span>
               </button>
             </>
@@ -395,37 +394,37 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="nav-tab-streaming"
                 onClick={() => handleTabClick('streaming')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'streaming'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <Radio className="w-3 h-3 text-primary-soft" />
+                <Radio className="w-3 h-3 text-[#FF4F00]" />
                 <span>Streaming & Redes</span>
               </button>
               <button
                 id="nav-tab-charts"
                 onClick={() => handleTabClick('charts')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'charts'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <BarChart3 className="w-3 h-3 text-blue-400" />
+                <BarChart3 className="w-3 h-3 text-[#00E599]" />
                 <span>Charts & Rankings</span>
               </button>
               <button
                 id="nav-tab-relations"
                 onClick={() => handleTabClick('relations')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'relations'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <Network className="w-3 h-3 text-cyan-400" />
+                <Network className="w-3 h-3 text-[#8E8E99]" />
                 <span>Artistas & Feuds</span>
               </button>
             </>
@@ -437,61 +436,61 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="nav-tab-tours"
                 onClick={() => handleTabClick('tours')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'tours'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <Sparkles className="w-3 h-3 text-emerald-400" />
+                <Sparkles className="w-3 h-3 text-[#00E599]" />
                 <span>Giras & Festivales</span>
               </button>
               <button
                 id="nav-tab-awards"
                 onClick={() => handleTabClick('awards')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'awards'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <Award className="w-3 h-3 text-yellow-400" />
+                <Award className="w-3 h-3 text-[#F59E0B]" />
                 <span>Premios & Gala</span>
               </button>
               <button
                 id="nav-tab-industry"
                 onClick={() => handleTabClick('industry')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'industry'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <Building2 className="w-3 h-3 text-indigo-400" />
+                <Building2 className="w-3 h-3 text-[#8E8E99]" />
                 <span>Sellos & Mánagers</span>
               </button>
               <button
                 id="nav-tab-lifestyle"
                 onClick={() => handleTabClick('lifestyle')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'lifestyle'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <ShoppingBag className="w-3 h-3 text-pink-400" />
+                <ShoppingBag className="w-3 h-3 text-[#FF4F00]" />
                 <span>Tienda & Lujo</span>
               </button>
               <button
                 id="nav-tab-career"
                 onClick={() => handleTabClick('career')}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                   currentTab === 'career'
-                    ? 'bg-primary/20 text-white border border-primary/50'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10'
+                    ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                    : 'bg-[#111114] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
                 }`}
               >
-                <TrendingUp className="w-3 h-3 text-orange-400" />
+                <TrendingUp className="w-3 h-3 text-[#F59E0B]" />
                 <span>Eras</span>
               </button>
             </>
@@ -499,10 +498,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Sub-pill de INICIO */}
           {activeHub === 'dashboard' && (
-            <span className="text-3xs text-slate-400 flex items-center gap-1 px-2 py-0.5">
+            <span className="text-3xs text-[#8E8E99] flex items-center gap-1 px-2 py-0.5 font-mono">
               <span>Panel Principal</span>
-              <ChevronRight className="w-3 h-3 text-slate-500" />
-              <span className="text-white font-medium">Estado y Decisiones</span>
+              <ChevronRight className="w-3 h-3 text-[#52525B]" />
+              <span className="text-[#F4F4F6] font-medium">Estado y Decisiones</span>
             </span>
           )}
         </div>

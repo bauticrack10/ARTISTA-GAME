@@ -50,11 +50,11 @@ export interface ArtistAvatarProps {
 
 export const ArtistAvatar: React.FC<ArtistAvatarProps> = ({
   name = 'Artista',
-  avatarColor = 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
+  avatarColor = 'from-[#18181C] to-[#242429]',
   avatarIcon,
   size = 'md',
   className = '',
-  rounded = 'rounded-xl',
+  rounded = 'rounded-[4px]',
   showInitialsFallback = true
 }) => {
   const IconComponent = avatarIcon ? ICON_MAP[avatarIcon] : null;

@@ -213,21 +213,21 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
       case 'Established':
         return { bg: 'bg-blue-500/15', text: 'text-blue-400', border: 'border-blue-500/30', label: 'Consagrado' };
       case 'Mainstream':
-        return { bg: 'bg-purple-500/15', text: 'text-primary-soft', border: 'border-primary/30', label: 'Mainstream' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#F4F4F6]', border: 'border-[#242429]', label: 'Mainstream' };
       case 'Superstar':
-        return { bg: 'bg-amber-500/15', text: 'text-amber-400', border: 'border-amber-500/30', label: 'Superestrella' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#F59E0B]', border: 'border-[#F59E0B]/40', label: 'Superestrella' };
       case 'Legend':
-        return { bg: 'bg-gradient-to-r from-amber-500/20 to-purple-500/20', text: 'text-amber-300', border: 'border-amber-400/40', label: 'Leyenda' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#F59E0B]', border: 'border-[#F59E0B]/50', label: 'Leyenda' };
       case 'Comeback':
-        return { bg: 'bg-orange-500/15', text: 'text-orange-400', border: 'border-orange-500/30', label: 'Regreso Triunfal' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#FF4F00]', border: 'border-[#FF4F00]/40', label: 'Regreso Triunfal' };
       case 'Veteran':
-        return { bg: 'bg-slate-500/15', text: 'text-slate-300', border: 'border-slate-500/30', label: 'Veterano' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#8E8E99]', border: 'border-[#242429]', label: 'Veterano' };
       case 'Declining':
-        return { bg: 'bg-rose-500/15', text: 'text-rose-400', border: 'border-rose-500/30', label: 'En Declive' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#EF4444]', border: 'border-[#EF4444]/40', label: 'En Declive' };
       case 'Retired':
-        return { bg: 'bg-stone-500/15', text: 'text-stone-400', border: 'border-stone-500/30', label: 'Retirado' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#52525B]', border: 'border-[#242429]', label: 'Retirado' };
       default:
-        return { bg: 'bg-surface', text: 'text-fg-muted', border: 'border-line', label: stage };
+        return { bg: 'bg-[#18181C]', text: 'text-[#8E8E99]', border: 'border-[#242429]', label: stage };
     }
   };
 
@@ -235,8 +235,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
   return (
     <div
-      className={`bg-surface border border-line rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-lg space-y-6 text-fg ${className}`}
-      style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+      className={`bg-[#111114] border border-[#242429] rounded-[6px] p-6 md:p-8 relative overflow-hidden space-y-6 text-[#F4F4F6] ${className}`}
     >
       {/* Top Main Section: Portrait, Bio & Quick Metrics */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
@@ -244,24 +243,24 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 md:gap-6 w-full lg:w-auto">
           {/* Professional Vector Avatar Container */}
           <div className="relative shrink-0 group">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-card overflow-hidden border-2 border-line group-hover:border-primary/60 transition-colors shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-canvas flex items-center justify-center">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[4px] overflow-hidden border border-[#242429] group-hover:border-[#3F3F46] transition-colors bg-[#09090B] flex items-center justify-center">
               <ArtistAvatar
                 name={player?.name}
                 avatarColor={player?.avatarColor}
                 avatarIcon={player?.avatarIcon}
                 size="custom"
                 className="w-full h-full"
-                rounded="rounded-xl"
+                rounded="rounded-[4px]"
               />
             </div>
 
             {/* Quick Edit Overlay Button */}
             <button
               onClick={handleOpenModal}
-              className="absolute bottom-1 right-1 p-2 rounded-full bg-canvas/90 hover:bg-primary text-fg border border-line shadow-md transition-all cursor-pointer group-hover:scale-110"
+              className="absolute bottom-1 right-1 p-1.5 rounded-[4px] bg-[#111114]/90 hover:bg-[#18181C] text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer"
               title="Personalizar Avatar Vectorial"
             >
-              <Palette className="w-3.5 h-3.5" />
+              <Palette className="w-3.5 h-3.5 text-[#8E8E99]" />
             </button>
           </div>
 
@@ -269,173 +268,173 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
           <div className="space-y-2.5">
             {/* Header: Artist Stage Name + Badges */}
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-1px] text-fg leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-0.04em] text-[#F4F4F6] leading-none">
                 {player?.name || 'Artista'}
               </h1>
 
               {/* Career Stage Pill */}
               <span
-                className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${stageBadge.bg} ${stageBadge.text} border ${stageBadge.border} shadow-xs`}
+                className={`px-2.5 py-0.5 rounded-[4px] text-xs font-mono font-bold uppercase tracking-wider ${stageBadge.bg} ${stageBadge.text} border ${stageBadge.border}`}
               >
                 {stageBadge.label}
               </span>
 
               {/* Label Badge */}
               {currentLabel && (
-                <span className="px-3 py-1 rounded-full text-xs font-normal bg-surface text-[#CBD5E1] border border-line flex items-center gap-1.5">
-                  <Building2 className="w-3 h-3 text-fg-muted" />
+                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-mono bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
+                  <Building2 className="w-3 h-3 text-[#52525B]" />
                   {currentLabel.name}
                 </span>
               )}
 
               {/* Manager Badge */}
               {currentManager && (
-                <span className="px-3 py-1 rounded-full text-xs font-normal bg-surface text-[#CBD5E1] border border-line flex items-center gap-1.5">
-                  <User className="w-3 h-3 text-fg-muted" />
+                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-mono bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
+                  <User className="w-3 h-3 text-[#52525B]" />
                   Mgr: {currentManager.name}
                 </span>
               )}
             </div>
 
             {/* Subtitle: Real Name, City, Country, Age & Main Genre */}
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-fg-muted font-normal flex-wrap">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-[#8E8E99] font-normal flex-wrap">
               {player?.realName ? (
                 <>
-                  <span className="text-fg font-medium">"{cleanQuotes(player.realName)}"</span>
-                  <span className="text-fg-muted/60">•</span>
+                  <span className="text-[#F4F4F6] font-medium">"{cleanQuotes(player.realName)}"</span>
+                  <span className="text-[#52525B]">•</span>
                 </>
               ) : null}
               <span>
                 {formatCityCountry(player?.city, player?.country)}
               </span>
-              <span className="text-fg-muted/60">•</span>
-              <span className="font-mono text-fg">
+              <span className="text-[#52525B]">•</span>
+              <span className="font-mono tabular-nums text-[#F4F4F6]">
                 {TimeSystem.calculateAge(player?.birthYear || 2008, world?.currentYear || 2026)} años
               </span>
-              <span className="text-fg-muted/60">•</span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/20 text-primary-soft border border-primary/40">
+              <span className="text-[#52525B]">•</span>
+              <span className="px-2 py-0.5 rounded-[4px] text-xs font-mono font-bold bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30">
                 {mainGenreName}
               </span>
             </div>
 
             {/* Compact Discography & Legacy Badges */}
-            <div className="flex items-center gap-2 text-xs text-slate-400 flex-wrap pt-0.5">
+            <div className="flex items-center gap-2 text-xs text-[#8E8E99] flex-wrap pt-0.5">
               <button
                 onClick={handleOpenModal}
-                className="flex items-center gap-1.5 text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-primary/50 px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors shadow-xs"
+                className="flex items-center gap-1.5 text-[#F4F4F6] bg-[#18181C] hover:bg-[#242429] border border-[#242429] px-3 py-1 rounded-[4px] text-xs font-mono font-medium cursor-pointer transition-colors"
               >
-                <Edit3 className="w-3.5 h-3.5 text-primary-soft" />
+                <Edit3 className="w-3.5 h-3.5 text-[#FF4F00]" />
                 <span>Editar Identidad</span>
               </button>
 
               <span
-                className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs shadow-xs"
+                className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#F4F4F6] font-mono text-xs"
                 title={`Comunidad de fans activos: ${(playerStats.fansCount || 0).toLocaleString('es-AR')} fans`}
               >
-                <Users className="w-3.5 h-3.5 text-primary-soft" />
+                <Users className="w-3.5 h-3.5 text-[#FF4F00]" />
                 <span>{formatFans(playerStats.fansCount)}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs">
-                <Disc3 className="w-3.5 h-3.5 text-slate-400" />
+              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-mono text-xs">
+                <Disc3 className="w-3.5 h-3.5 text-[#52525B]" />
                 <span>{computedSongsCount} Singles</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs">
-                <Layers className="w-3.5 h-3.5 text-slate-400" />
+              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-mono text-xs">
+                <Layers className="w-3.5 h-3.5 text-[#52525B]" />
                 <span>{computedAlbumsCount} Álbumes</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/5 text-slate-300 font-medium text-xs">
-                <Award className="w-3.5 h-3.5 text-primary-soft" />
+              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-mono text-xs">
+                <Award className="w-3.5 h-3.5 text-[#00E599]" />
                 <span>
-                  Legado: <strong className="font-semibold text-white">{player?.legacyScore ?? 0}/100</strong>
+                  Legado: <strong className="font-semibold text-[#F4F4F6]">{player?.legacyScore ?? 0}/100</strong>
                 </span>
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Quick Metric Tiles (Obsidian Pacificados) */}
+        {/* Right Side: Quick Metric Tiles (Rack Analógico) */}
         <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto shrink-0 min-w-[280px] xl:min-w-[340px]">
           {/* Tile 1: Oyentes Mensuales */}
           <div
-            className={`bg-[#12141D] border rounded-xl p-3 text-left shadow-xs transition-all duration-300 ${
+            className={`bg-[#09090B] border rounded-[4px] p-3 text-left transition-all duration-150 ${
               isListenersSurging
-                ? 'border-primary bg-primary/10 shadow-[0_0_18px_rgba(139,92,246,0.3)] scale-[1.02]'
-                : 'border-[#232738] hover:border-primary/40'
+                ? 'border-[#00E599] bg-[#111114]'
+                : 'border-[#242429] hover:border-[#3F3F46]'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <Headphones className="w-3 h-3 text-primary-soft" />
-                Oyentes / Mes
+              <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+                <Headphones className="w-3 h-3 text-[#8E8E99]" />
+                OYENTES / MES
               </span>
               {isListenersSurging && (
-                <span className="text-3xs font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40 animate-pulse">
-                  ▲ En Auge
+                <span className="text-3xs font-mono font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
+                  ▲ AUGE
                 </span>
               )}
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.monthlyListeners)}
             </span>
-            <span className={`text-3xs font-medium block mt-0.5 ${listenerGrowth.isPositive ? 'text-emerald-400' : 'text-slate-500'}`}>
+            <span className={`text-3xs font-mono block mt-0.5 ${listenerGrowth.isPositive ? 'text-[#00E599]' : 'text-[#8E8E99]'}`}>
               {listenerGrowth.label}
             </span>
           </div>
 
           {/* Tile 2: Streams Totales */}
           <div
-            className={`bg-[#12141D] border rounded-xl p-3 text-left shadow-xs transition-all duration-300 ${
+            className={`bg-[#09090B] border rounded-[4px] p-3 text-left transition-all duration-150 ${
               isStreamsSurging
-                ? 'border-primary bg-primary/10 shadow-[0_0_18px_rgba(139,92,246,0.3)] scale-[1.02]'
-                : 'border-[#232738] hover:border-primary/40'
+                ? 'border-[#00E599] bg-[#111114]'
+                : 'border-[#242429] hover:border-[#3F3F46]'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <Disc3 className="w-3 h-3 text-primary-soft" />
-                Streams Totales
+              <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+                <Disc3 className="w-3 h-3 text-[#8E8E99]" />
+                STREAMS TOTALES
               </span>
               {isStreamsSurging && (
-                <span className="text-3xs font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/20 text-primary-soft border border-primary/40 animate-pulse">
-                  ▲ Viral
+                <span className="text-3xs font-mono font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
+                  ▲ VIRAL
                 </span>
               )}
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.totalStreams)}
             </span>
-            <span className="text-3xs text-slate-500 font-medium block mt-0.5">
+            <span className="text-3xs text-[#52525B] font-mono block mt-0.5">
               Catálogo acumulado
             </span>
           </div>
 
           {/* Tile 3: Hype Escénico */}
-          <div className="bg-[#12141D] border border-[#232738] hover:border-primary/40 rounded-xl p-3 text-left shadow-xs transition-colors">
-            <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Flame className="w-3 h-3 text-amber-400" />
-              Hype Escénico
+          <div className="bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-left transition-colors">
+            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+              <Flame className="w-3 h-3 text-[#F59E0B]" />
+              HYPE ESCÉNICO
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
-              {playerStats.hype} <span className="text-xs font-normal text-slate-500 font-sans">/ 100</span>
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
+              {playerStats.hype} <span className="text-xs font-normal text-[#52525B] font-mono">/ 100</span>
             </span>
-            <span className="text-3xs text-slate-500 font-medium block mt-0.5">
+            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
               {playerStats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
             </span>
           </div>
 
           {/* Tile 4: Popularidad & Fidelidad */}
-          <div className="bg-[#12141D] border border-[#232738] hover:border-primary/40 rounded-xl p-3 text-left shadow-xs transition-colors">
-            <span className="text-3xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Crown className="w-3 h-3 text-primary-soft" />
-              Popularidad
+          <div className="bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-left transition-colors">
+            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+              <Crown className="w-3 h-3 text-[#FF4F00]" />
+              POPULARIDAD
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-white font-mono block mt-1 tracking-tight">
-              {playerStats.popularity} <span className="text-xs font-normal text-slate-500 font-sans">/ 100</span>
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
+              {playerStats.popularity} <span className="text-xs font-normal text-[#52525B] font-mono">/ 100</span>
             </span>
-            <span className="text-3xs text-slate-500 font-medium block mt-0.5">
+            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
               Fidelidad: {playerStats.fanbaseLoyalty}%
             </span>
           </div>
@@ -444,21 +443,21 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
       {/* Bottom Block: Current Era Highlight Box */}
       {currentEra && (
-        <div className="pt-4 border-t border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-canvas p-4 rounded-xl border border-line">
+        <div className="pt-4 border-t border-[#242429] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-[#09090B] p-4 rounded-[4px] border border-[#242429]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-surface border border-line text-fg shrink-0">
-              <Sparkles className="w-4 h-4 text-amber-400 fill-current" />
+            <div className="p-2.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#F4F4F6] shrink-0">
+              <Sparkles className="w-4 h-4 text-[#F59E0B]" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-bold uppercase tracking-wider text-fg-muted">
-                  Era Actual:
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#52525B]">
+                  ERA ACTUAL:
                 </span>
-                <span className="text-xs font-bold text-fg">
+                <span className="text-xs font-bold text-[#F4F4F6]">
                   {currentEra.name}
                 </span>
               </div>
-              <p className="text-xs text-fg-muted mt-0.5 leading-relaxed">
+              <p className="text-xs text-[#8E8E99] mt-0.5 leading-relaxed">
                 {currentEra.highlightSummary}
               </p>
             </div>
@@ -466,7 +465,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
           <button
             onClick={() => onNavigate('career')}
-            className="text-xs text-fg hover:text-primary-soft flex items-center gap-1.5 font-semibold cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-surface hover:bg-surface-raised border border-line hover:border-primary/40 transition-colors shadow-xs"
+            className="text-xs text-[#F4F4F6] hover:text-[#FF4F00] flex items-center gap-1.5 font-mono font-semibold cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-[4px] bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] transition-colors"
           >
             <span>Ver Trayectoria</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -478,20 +477,19 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
       {isAvatarModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div
-            className="bg-surface border border-line rounded-2xl max-w-lg w-full p-6 space-y-5 text-fg shadow-2xl max-h-[90vh] overflow-y-auto"
-            style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+            className="bg-[#111114] border border-[#242429] rounded-[6px] max-w-lg w-full p-6 space-y-5 text-[#F4F4F6] shadow-2xl max-h-[90vh] overflow-y-auto"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-line pb-3">
+            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
               <div className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-primary-strong" />
-                <h3 className="text-lg font-bold tracking-[-0.4px] text-fg">
+                <Palette className="w-5 h-5 text-[#FF4F00]" />
+                <h3 className="text-lg font-bold tracking-tight text-[#F4F4F6]">
                   Identidad Visual & Avatar del Artista
                 </h3>
               </div>
               <button
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="p-1.5 rounded-md hover:bg-surface-raised text-fg-muted hover:text-fg cursor-pointer transition-colors"
+                className="p-1.5 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer transition-colors"
                 title="Cerrar modal"
               >
                 <X className="w-4 h-4" />
@@ -499,18 +497,18 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             </div>
 
             {/* Current Preview */}
-            <div className="flex items-center gap-4 bg-canvas p-4 rounded-xl border border-line">
+            <div className="flex items-center gap-4 bg-[#09090B] p-4 rounded-[4px] border border-[#242429]">
               <ArtistAvatar
                 name={player?.name}
                 avatarColor={selectedColor}
                 avatarIcon={avatarType === 'symbol' ? selectedIcon : undefined}
                 size="lg"
-                rounded="rounded-xl"
+                rounded="rounded-[4px]"
                 className="shrink-0 shadow-md"
               />
               <div className="space-y-0.5">
-                <h4 className="text-sm font-bold text-fg">{player.name}</h4>
-                <p className="text-xs text-fg-muted">
+                <h4 className="text-sm font-bold text-[#F4F4F6]">{player.name}</h4>
+                <p className="text-xs text-[#8E8E99]">
                   Vista previa de tu avatar visual en el panel y cartas del juego.
                 </p>
               </div>
@@ -640,18 +638,18 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-line">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#242429]">
               <button
                 type="button"
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="px-4 py-2 rounded-lg text-xs font-semibold bg-canvas text-fg-muted border border-line hover:text-fg hover:bg-surface-raised cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-[4px] text-xs font-mono font-semibold bg-[#111114] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:bg-[#18181C] cursor-pointer transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveAvatar}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white px-5 py-2 rounded-lg text-xs font-bold hover:opacity-90 cursor-pointer shadow-[0_0_15px_rgba(124,58,237,0.4)] active:scale-[0.98] transition-all"
+                className="flex items-center gap-1.5 bg-[#FF4F00] hover:bg-[#E04500] text-white px-5 py-2 rounded-[4px] text-xs font-mono font-bold cursor-pointer active:translate-y-[1px] transition-all"
               >
                 <Check className="w-4 h-4 text-white" />
                 <span>Guardar Cambios</span>

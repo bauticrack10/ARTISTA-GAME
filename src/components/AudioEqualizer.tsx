@@ -7,11 +7,11 @@ export const AudioEqualizer: React.FC<{ isPlaying?: boolean; className?: string 
   className = ''
 }) => {
   return (
-    <div className={`flex items-end gap-0.5 h-3.5 px-1.5 py-0.5 rounded-sm bg-canvas border border-line ${className}`}>
-      <span className={`w-0.5 rounded-full bg-primary transition-all duration-300 ${isPlaying ? 'animate-bounce h-3' : 'h-1 opacity-50'}`} style={{ animationDuration: '450ms' }} />
-      <span className={`w-0.5 rounded-full bg-accent transition-all duration-300 ${isPlaying ? 'animate-bounce h-2.5' : 'h-1.5 opacity-50'}`} style={{ animationDuration: '600ms', animationDelay: '100ms' }} />
-      <span className={`w-0.5 rounded-full bg-info transition-all duration-300 ${isPlaying ? 'animate-bounce h-3.5' : 'h-1 opacity-50'}`} style={{ animationDuration: '500ms', animationDelay: '200ms' }} />
-      <span className={`w-0.5 rounded-full bg-success transition-all duration-300 ${isPlaying ? 'animate-bounce h-2' : 'h-2 opacity-50'}`} style={{ animationDuration: '700ms', animationDelay: '300ms' }} />
+    <div className={`flex items-end gap-0.5 h-3.5 px-1.5 py-0.5 rounded-[2px] bg-[#09090B] border border-[#242429] ${className}`}>
+      <span className={`w-0.5 rounded-[1px] bg-[#00E599] transition-all duration-300 ${isPlaying ? 'animate-bounce h-3' : 'h-1 opacity-40'}`} style={{ animationDuration: '450ms' }} />
+      <span className={`w-0.5 rounded-[1px] bg-[#00E599] transition-all duration-300 ${isPlaying ? 'animate-bounce h-2.5' : 'h-1.5 opacity-40'}`} style={{ animationDuration: '600ms', animationDelay: '100ms' }} />
+      <span className={`w-0.5 rounded-[1px] bg-[#FF4F00] transition-all duration-300 ${isPlaying ? 'animate-bounce h-3.5' : 'h-1 opacity-40'}`} style={{ animationDuration: '500ms', animationDelay: '200ms' }} />
+      <span className={`w-0.5 rounded-[1px] bg-[#EF4444] transition-all duration-300 ${isPlaying ? 'animate-bounce h-2' : 'h-2 opacity-40'}`} style={{ animationDuration: '700ms', animationDelay: '300ms' }} />
     </div>
   );
 };
@@ -34,19 +34,19 @@ export const AudioToggleButton: React.FC<{ className?: string }> = ({ className 
   return (
     <button
       onClick={handleToggle}
-      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface border border-line hover:border-primary/50 text-xs transition-all cursor-pointer shadow-xs group ${className}`}
+      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] bg-[#111114] border border-[#242429] hover:border-[#3F3F46] text-xs transition-all cursor-pointer ${className}`}
       title={muted ? 'Activar Efectos de Sonido WebAudio' : 'Silenciar Efectos de Sonido'}
     >
       {muted ? (
         <>
-          <VolumeX className="w-3.5 h-3.5 text-fg-subtle group-hover:text-fg" />
-          <span className="text-2xs text-fg-subtle font-mono group-hover:text-fg">SFX OFF</span>
+          <VolumeX className="w-3.5 h-3.5 text-[#52525B]" />
+          <span className="text-2xs text-[#52525B] font-mono">SFX OFF</span>
         </>
       ) : (
         <>
-          <Volume2 className="w-3.5 h-3.5 text-primary group-hover:text-primary-soft" />
+          <Volume2 className="w-3.5 h-3.5 text-[#00E599]" />
           <AudioEqualizer isPlaying={true} />
-          <span className="text-2xs text-success font-mono font-bold">SFX ON</span>
+          <span className="text-2xs text-[#00E599] font-mono font-bold">SFX ON</span>
         </>
       )}
     </button>
