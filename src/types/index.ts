@@ -857,6 +857,7 @@ export interface LiveShowReview {
   outlet: 'Rolling Stone' | 'Pitchfork' | 'Billboard' | 'NME' | 'Indie Hoy' | string;
   headline: string;
   snippet: string;
+  quote?: string;
   rating: number;
 }
 
@@ -875,19 +876,20 @@ export interface LiveShowResult {
   pressRating: number;
   year: number;
   month: number;
+  slotTitle?: string;
+  headline?: string;
+  subheadline?: string;
   performanceScore?: number;
   attendance?: number;
   payoutGross?: number;
   productionCost?: number;
+  popularityGained?: number;
   reputationGained?: number;
   credibilityGained?: number;
   energySpent?: number;
-  dilemmaEncountered?: {
-    dilemmaTitle: string;
-    chosenOptionText: string;
-    consequenceText: string;
-  };
+  reviews?: LiveShowReview[];
   pressReviews?: LiveShowReview[];
+  viralMomentOccurred?: boolean;
   viralMoment?: {
     occurred: boolean;
     description: string;
@@ -895,6 +897,11 @@ export interface LiveShowResult {
   };
   newsHeadline?: string;
   newsBody?: string;
+  dilemmaEncountered?: {
+    dilemmaTitle: string;
+    chosenOptionText: string;
+    consequenceText: string;
+  };
 }
 
 

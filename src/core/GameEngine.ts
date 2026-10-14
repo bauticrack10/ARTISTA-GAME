@@ -3457,6 +3457,7 @@ export class GameEngine {
     slot: FestivalSlot;
     setlistSongIds: string[];
     production: StageProductionConfig;
+    dilemmaId?: string;
     dilemmaChoiceId?: string;
     invitationId?: string;
   }): LiveShowResult {
@@ -3484,7 +3485,7 @@ export class GameEngine {
       slot: params.slot,
       setlistSongIds: params.setlistSongIds,
       production: params.production,
-      dilemmaChoice: params.dilemmaChoiceId ? { dilemmaId: '', choiceId: params.dilemmaChoiceId } : undefined,
+      dilemmaChoice: params.dilemmaChoiceId ? { dilemmaId: params.dilemmaId, choiceId: params.dilemmaChoiceId } : undefined,
       world: this.world
     });
 
@@ -3510,12 +3511,13 @@ export class GameEngine {
     }
 
     // Consumo de energía
-    player.stats.energy = Math.max(5, player.stats.energy - result.energyUsed);
+    const energyUsed = result.energyUsed ?? result.energySpent ?? 20;
+    player.stats.energy = Math.max(5, player.stats.energy - energyUsed);
 
     // Fans y Hype
-    player.stats.fansCount += result.fansGained;
-    player.stats.hype = Math.min(100, player.stats.hype + result.hypeGained);
-    player.stats.popularity = Math.min(100, player.stats.popularity + result.popularityGained);
+    player.stats.fansCount += (result.fansGained || 0);
+    player.stats.hype = Math.min(100, player.stats.hype + (result.hypeGained || 0));
+    player.stats.popularity = Math.min(100, player.stats.popularity + (result.popularityGained || 2));
 
     // Registrar en histórico del artista y del mundo
     if (!player.livePerformanceHistory) player.livePerformanceHistory = [];
@@ -3533,21 +3535,31 @@ export class GameEngine {
     }
 
     // Generar noticia periodística con la reseña principal
-    const mainReview = result.reviews[0];
+    const reviewsList = result.reviews || result.pressReviews || [];
+    const mainReview = reviewsList[0];
+    const headline = result.headline || result.newsHeadline || `${player.name} en ${festival.name}`;
+    const quote = mainReview?.quote || mainReview?.snippet || 'Una presentación inolvidable.';
+    const rating = mainReview?.rating || 5;
+    const attendanceStr = (result.attendance || 0).toLocaleString('es-AR');
+    const bodyText = mainReview
+      ? `"${quote}" — ${mainReview.outlet} (${rating}/5 estrellas). ${attendanceStr} personas presenciaron el show.`
+      : (result.subheadline || result.newsBody || 'Concierto masivo ante miles de fanáticos.');
+
     this.world.news.unshift({
       id: `news_liveshow_${Date.now()}`,
-      headline: result.headline,
-      body: mainReview ? `"${mainReview.quote}" — ${mainReview.outlet} (${mainReview.rating}/5 estrellas). ${result.attendance.toLocaleString('es-AR')} personas presenciaron el show.` : result.subheadline,
+      headline,
+      body: bodyText,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'tour',
       relatedArtistIds: [player.id],
-      sentiment: result.performanceScore >= 70 ? 'positive' : 'neutral',
+      sentiment: (result.performanceScore || 70) >= 70 ? 'positive' : 'neutral',
       importance: 5
     });
 
     // Viral boost en streaming
-    const viralBoost = result.viralMomentOccurred ? Math.floor(result.fansGained * 8) : Math.floor(result.fansGained * 2);
+    const isViralMoment = result.viralMomentOccurred ?? result.viralMoment?.occurred ?? false;
+    const viralBoost = isViralMoment ? Math.floor((result.fansGained || 100) * 8) : Math.floor((result.fansGained || 100) * 2);
     this.syncAudienceMetrics(player, this.getPlayerSongs(), viralBoost);
 
     this.notify();

@@ -43,6 +43,7 @@ interface ToursViewProps {
     slot: FestivalSlot;
     setlistSongIds: string[];
     production: StageProductionConfig;
+    dilemmaId?: string;
     dilemmaChoiceId?: string;
     invitationId?: string;
   }) => LiveShowResult;
@@ -422,17 +423,17 @@ export const ToursView: React.FC<ToursViewProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="text-sm font-bold text-[#F8FAFC]">
-                          {show.headline}
+                          {show.headline || show.newsHeadline || show.festivalName}
                         </h3>
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 text-[#C084FC]">
-                          {show.slotTitle}
+                          {show.slotTitle || show.slot}
                         </span>
                       </div>
                       <p className="text-xs text-[#94A3B8] mt-1 italic">
-                        "{show.reviews[0]?.quote || show.subheadline}" — {show.reviews[0]?.outlet || 'Prensa'}
+                        "{show.reviews?.[0]?.quote || show.reviews?.[0]?.snippet || show.pressQuote || show.subheadline || 'Concierto inolvidable.'}" — {show.reviews?.[0]?.outlet || 'Prensa'}
                       </p>
                       <span className="text-[11px] text-[#64748B] font-mono block mt-1">
-                        Audiencia: {(show.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {show.performanceScore}%
+                        Audiencia: {(show.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {show.performanceScore ?? show.crowdRating ?? 75}%
                       </span>
                     </div>
 

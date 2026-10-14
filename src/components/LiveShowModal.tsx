@@ -52,6 +52,7 @@ interface LiveShowModalProps {
     slot: FestivalSlot;
     setlistSongIds: string[];
     production: StageProductionConfig;
+    dilemmaId?: string;
     dilemmaChoiceId?: string;
     invitationId?: string;
   }) => LiveShowResult;
@@ -130,6 +131,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
         slot,
         setlistSongIds: selectedSongIds,
         production: currentProductionConfig,
+        dilemmaId: currentDilemma?.id,
         dilemmaChoiceId: finalChoice,
         invitationId: invitation?.id
       });
@@ -430,20 +432,20 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               {/* Score Banner */}
               <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-950/40 via-[#16181F] to-emerald-950/40 border border-[#8B5CF6]/40 text-center space-y-2">
                 <span className="text-[10px] font-extrabold uppercase px-3 py-1 rounded-full bg-[#8B5CF6]/30 text-[#E9D5FF] border border-[#8B5CF6]/50">
-                  {showResult.slotTitle}
+                  {showResult.slotTitle || FestivalEngine.getSlotTitle(showResult.slot)}
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-black text-[#F8FAFC]">
-                  {showResult.headline}
+                  {showResult.headline || showResult.newsHeadline || 'Gran Concierto en Vivo'}
                 </h3>
                 <p className="text-xs text-[#94A3B8] max-w-lg mx-auto">
-                  {showResult.subheadline}
+                  {showResult.subheadline || showResult.newsBody || ''}
                 </p>
 
                 <div className="flex items-center justify-center gap-6 pt-3 font-mono">
                   <div>
                     <span className="text-[10px] text-[#94A3B8] block uppercase">Calificación Show</span>
                     <span className="text-xl font-black text-amber-400">
-                      {showResult.performanceScore}%
+                      {showResult.performanceScore ?? showResult.crowdRating ?? 75}%
                     </span>
                   </div>
                   <div className="w-px h-8 bg-[#2A2E3D]" />
@@ -474,19 +476,19 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                 <div className="p-3 rounded-xl bg-[#16181F] border border-[#2A2E3D]">
                   <span className="text-[10px] text-[#94A3B8] block uppercase">Hype Generado</span>
                   <span className="text-sm font-bold text-amber-400 font-mono">
-                    +{showResult.hypeGained} pts
+                    +{showResult.hypeGained || 0} pts
                   </span>
                 </div>
                 <div className="p-3 rounded-xl bg-[#16181F] border border-[#2A2E3D]">
                   <span className="text-[10px] text-[#94A3B8] block uppercase">Popularidad</span>
                   <span className="text-sm font-bold text-cyan-400 font-mono">
-                    +{showResult.popularityGained} pts
+                    +{showResult.popularityGained ?? 2} pts
                   </span>
                 </div>
                 <div className="p-3 rounded-xl bg-[#16181F] border border-[#2A2E3D]">
                   <span className="text-[10px] text-[#94A3B8] block uppercase">Energía Invertida</span>
                   <span className="text-sm font-bold text-rose-400 font-mono">
-                    -{showResult.energyUsed}%
+                    -{(showResult.energyUsed ?? showResult.energySpent ?? 20)}%
                   </span>
                 </div>
               </div>
@@ -499,27 +501,27 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {showResult.reviews.map((rev, idx) => (
+                  {(showResult.reviews || showResult.pressReviews || []).map((rev, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-[#16181F] border border-[#2A2E3D] space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-[#F8FAFC]">
                           {rev.outlet}
                         </span>
                         <div className="flex items-center gap-1 text-amber-400">
-                          {Array.from({ length: rev.rating }).map((_, i) => (
+                          {Array.from({ length: Math.min(5, Math.max(1, Math.round(rev.rating > 5 ? rev.rating / 2 : (rev.rating || 4)))) }).map((_, i) => (
                             <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                           ))}
                         </div>
                       </div>
                       <p className="text-xs text-[#CBD5E1] italic">
-                        "{rev.quote}"
+                        "{rev.quote || rev.snippet || 'Concierto inolvidable.'}"
                       </p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {showResult.viralMomentOccurred && (
+              {(showResult.viralMomentOccurred || showResult.viralMoment?.occurred) && (
                 <div className="p-3.5 rounded-xl bg-pink-950/40 border border-pink-500/40 text-pink-300 text-xs flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-pink-400 shrink-0" />
                   <span><strong>¡Momento Viral en Vivo!</strong> Videos del concierto alcanzaron millones de visualizaciones en TikTok, multiplicando las reproducciones en streaming.</span>

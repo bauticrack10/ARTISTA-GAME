@@ -372,7 +372,7 @@ export interface ResolveLiveShowParams {
   slot: FestivalSlot;
   setlistSongIds?: string[];
   production: StageProductionConfig;
-  dilemmaChoice?: { dilemmaId: string; choiceId: string };
+  dilemmaChoice?: { dilemmaId?: string; choiceId: string };
   world?: WorldState;
 }
 
@@ -624,8 +624,9 @@ export class FestivalEngine {
     let dilemmaEnergyDelta = 0;
     let fansMultiplier = 1.0;
 
-    if (dilemmaChoice) {
-      const dilemma = LIVE_SHOW_DILEMMAS.find(d => d.id === dilemmaChoice.dilemmaId);
+    if (dilemmaChoice && dilemmaChoice.choiceId) {
+      const dilemma = (dilemmaChoice.dilemmaId && LIVE_SHOW_DILEMMAS.find(d => d.id === dilemmaChoice.dilemmaId))
+        || LIVE_SHOW_DILEMMAS.find(d => d.choices.some(c => c.id === dilemmaChoice.choiceId));
       const option = dilemma?.choices.find(c => c.id === dilemmaChoice.choiceId);
 
       if (dilemma && option) {
@@ -697,55 +698,71 @@ export class FestivalEngine {
     // 9. Reseñas de Prensa Acreditada
     const pressReviews: LiveShowReview[] = [];
     if (performanceScore >= 85) {
+      const q1 = `"Con una puesta visual demoledora y magnetismo intacto, la presentación fue el punto cúspide de todo el festival. Una lección magistral de cómo conquistar a 100.000 almas."`;
+      const q2 = `"Lejos de apoyarse en pistas pregrabadas, la cohesión musical y el riesgo conceptual justifican con creces su lugar en la cima."`;
+      const q3 = `"El despliegue técnico y la conexión visceral con la marea humana confirmaron que estamos ante una de las fuerzas dominantes de la música contemporánea."`;
       pressReviews.push({
         outlet: 'Rolling Stone',
         headline: `Triunfo Absoluto: ${artist.name} corona una noche consagratoria en ${festival.name}`,
-        snippet: `"Con una puesta visual demoledora y magnetismo intacto, la presentación fue el punto cúspide de todo el festival. Una lección magistral de cómo conquistar a 100.000 almas."`,
-        rating: 9.6
+        snippet: q1,
+        quote: q1,
+        rating: 5
       });
       pressReviews.push({
         outlet: 'Pitchfork',
         headline: `Catarsis colectiva y ambición sonora: el show de ${artist.name}`,
-        snippet: `"Lejos de apoyarse en pistas pregrabadas, la cohesión musical y el riesgo conceptual justifican con creces su lugar en la cima."`,
-        rating: 8.9
+        snippet: q2,
+        quote: q2,
+        rating: 5
       });
       pressReviews.push({
         outlet: 'Billboard',
         headline: `${artist.name} rompe marcas de convocatoria y euforia en ${festival.name}`,
-        snippet: `"El despliegue técnico y la conexión visceral con la marea humana confirmaron que estamos ante una de las fuerzas dominantes de la música contemporánea."`,
-        rating: 9.4
+        snippet: q3,
+        quote: q3,
+        rating: 5
       });
     } else if (performanceScore >= 68) {
+      const q1 = `"Un set electrizante de principio a fin, manteniendo la tensión y entregando hit tras hit sin dar tregua."`;
+      const q2 = `"Hubo momentos de desborde y gran comunión, consolidando su estatus de atracción festivalera obligada."`;
+      const q3 = `"El repertorio funcionó como un reloj suizo frente a un público que no paró de saltar durante toda la hora de presentación."`;
       pressReviews.push({
         outlet: 'Billboard',
         headline: `${artist.name} enciende a las multitudes en ${festival.name}`,
-        snippet: `"Un set electrizante de principio a fin, manteniendo la tensión y entregando hit tras hit sin dar tregua."`,
-        rating: 7.8
+        snippet: q1,
+        quote: q1,
+        rating: 4
       });
       pressReviews.push({
         outlet: 'NME',
         headline: `Energía contagiosa y carisma en el paso de ${artist.name} por ${festival.name}`,
-        snippet: `"Hubo momentos de desborde y gran comunión, consolidando su estatus de atracción festivalera obligada."`,
-        rating: 7.5
+        snippet: q2,
+        quote: q2,
+        rating: 4
       });
       pressReviews.push({
         outlet: 'Indie Hoy',
         headline: `El pulso de la escena: ${artist.name} demostró poderío en vivo`,
-        snippet: `"El repertorio funcionó como un reloj suizo frente a un público que no paró de saltar durante toda la hora de presentación."`,
-        rating: 7.7
+        snippet: q3,
+        quote: q3,
+        rating: 4
       });
     } else {
+      const q1 = `"Destellos de talento que se vieron opacados por baches de ritmo y detalles de coordinación escénica."`;
+      const q2 = `"La producción no logró disimular del todo la desconexión en ciertos tramos del setlist."`;
       pressReviews.push({
         outlet: 'Rolling Stone',
         headline: `Paso irregular de ${artist.name} por ${festival.name}`,
-        snippet: `"Destellos de talento que se vieron opacados por baches de ritmo y detalles de coordinación escénica."`,
-        rating: 5.8
+        snippet: q1,
+        quote: q1,
+        rating: 3
       });
       pressReviews.push({
         outlet: 'NME',
         headline: `Un concierto cumplidor que dejó con ganas de más audacia`,
-        snippet: `"La producción no logró disimular del todo la desconexión en ciertos tramos del setlist."`,
-        rating: 5.5
+        snippet: q2,
+        quote: q2,
+        rating: 3
       });
     }
 
@@ -758,27 +775,45 @@ export class FestivalEngine {
 
     const newsBody = `En el marco de ${festival.name} (${festival.location}), ${artist.name} se presentó como ${this.getSlotTitle(slot)} ante una multitud estimada en ${attendance.toLocaleString()} espectadores. El show dejó una recaudación neta de $${netProfit.toLocaleString()} y cosechó una calificación de ${performanceScore}/100 por parte de los cronistas especializados.`;
 
+    const slotTitle = this.getSlotTitle(slot);
+    const popularityGained = Math.max(1, Math.floor((performanceScore / 100) * (slot === 'headliner' ? 6 : slot === 'sub_headliner' ? 4 : slot === 'sunset_slot' ? 3 : 2)));
+    const firstReview = pressReviews[0];
+    const headline = newsHeadline;
+    const subheadline = `${festival.name} • ${slotTitle} • ${attendance.toLocaleString('es-AR')} espectadores`;
+
     return {
       festivalId: festival.id,
       festivalName: festival.name,
       year: world?.currentYear || 2026,
       month: festival.month,
       slot,
+      slotTitle,
+      headline,
+      subheadline,
       performanceScore,
+      crowdRating: performanceScore,
       attendance,
       payoutGross,
+      grossRevenue: payoutGross,
       productionCost,
       netProfit,
       hypeGained,
       fansGained,
+      popularityGained,
       reputationGained,
       credibilityGained,
+      energyUsed: energySpent,
       energySpent,
-      dilemmaEncountered: dilemmaResultInfo,
+      reviews: pressReviews,
       pressReviews,
+      pressHeadline: firstReview?.headline || headline,
+      pressQuote: firstReview?.quote || firstReview?.snippet || '',
+      pressRating: firstReview?.rating || 4,
+      viralMomentOccurred: isViral,
       viralMoment,
       newsHeadline,
-      newsBody
+      newsBody,
+      dilemmaEncountered: dilemmaResultInfo
     };
   }
 }
