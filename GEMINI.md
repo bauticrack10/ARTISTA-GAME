@@ -6,7 +6,7 @@ Este archivo sirve como memoria central y contexto persistente para Antigravity 
 
 ## 📚 Documentación y Conocimiento del Proyecto
 * **Documento Maestro de Arquitectura y Reglas:** [`PROJECT_KNOWLEDGE.md`](PROJECT_KNOWLEDGE.md) — Contiene la descripción técnica exhaustiva de todos los motores (`GameEngine`, `AwardEngine`, `IndustryEngine`, `RelationshipEngine`, `EventEngine`, `ChartEngine`, `StreamingEngine`, `TourEngine`, `WorldSimulation`) y la base de datos global de artistas de 40 países.
-* **Sistema de Diseño Visual:** [`design.md`](design.md) — Lineamientos de paleta Obsidian `#0B0C10`, Slate Glass `#16181F`, bordes `#2A2E3D`, acento violeta `#8B5CF6`, tipografía `'Camera Plain Variable'` y avatares vectoriales.
+* **Sistema de Diseño Visual:** [`design.md`](design.md) — Sistema "Analog Master & Editorial Press": paleta sólida mate (`#09090B`, `#111114`, `#18181C`), bordes Hairline Slate (`#242429`), acento Signal Orange (`#FF4F00`), tipografía dual ('Inter'/'Plus Jakarta Sans' y 'JetBrains Mono' tabular-nums).
 
 ---
 
