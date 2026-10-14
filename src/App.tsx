@@ -19,6 +19,8 @@ import { EraMilestoneModal, EraMilestoneData } from './components/EraMilestoneMo
 import { CollaborationModal } from './components/CollaborationModal';
 import { ReleaseConfirmationModal } from './components/ReleaseConfirmationModal';
 import { StreamingPlatformView } from './components/StreamingPlatformView';
+import { ArtistPhoneModal } from './components/ArtistPhoneModal';
+import { YearEndWrappedModal } from './components/YearEndWrappedModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { playSound } from './utils/audioSystem';
 import { CollabOfferNotification, SpontaneousCollabOffer } from './components/CollabOfferNotification';
@@ -49,6 +51,7 @@ export default function App() {
   const [isCollabModalOpen, setIsCollabModalOpen] = useState<boolean>(false);
   const [selectedCollabArtistId, setSelectedCollabArtistId] = useState<string | undefined>(undefined);
   const [confirmedCollabRelease, setConfirmedCollabRelease] = useState<ReleaseConfirmationData | null>(null);
+  const [isPhoneOpen, setIsPhoneOpen] = useState<boolean>(false);
 
   const handleNavigate = (tab: string, subTab?: 'single' | 'album' | 'catalog') => {
     if (tab === 'catalog') {
@@ -279,7 +282,7 @@ export default function App() {
   };
 
   // In-Game actions
-  const handleAdvanceCycle = (months: 6 | 12) => {
+  const handleAdvanceCycle = (months: 1 | 3 | 6 | 12) => {
     getEngine().advanceCycle(months);
     playSound('money');
   };
@@ -368,6 +371,7 @@ export default function App() {
         onTabChange={handleNavigate}
         onAdvanceCycle={handleAdvanceCycle}
         onReturnToTitle={() => setAppMode('start_screen')}
+        onOpenPhone={() => setIsPhoneOpen(true)}
       />
 
       {/* Main Container */}
@@ -557,6 +561,25 @@ export default function App() {
           onDecline={(offerId) => {
             getEngine().declineCollabOffer(offerId);
           }}
+        />
+      )}
+
+      {/* Artist Smartphone Modal (WhatsApp DMs, TrendX & Wallet) */}
+      <ArtistPhoneModal
+        player={player}
+        world={world}
+        isOpen={isPhoneOpen}
+        onClose={() => setIsPhoneOpen(false)}
+        onReplyMessage={(msgId, choiceIdx) => getEngine().replyToPhoneMessage(msgId, choiceIdx)}
+        onMarkAllAsRead={() => getEngine().markAllPhoneMessagesRead()}
+      />
+
+      {/* Spotify Wrapped Year-End Story Modal */}
+      {world.activeYearEndWrapped && (
+        <YearEndWrappedModal
+          data={world.activeYearEndWrapped}
+          isOpen={!!world.activeYearEndWrapped}
+          onDismiss={() => getEngine().dismissYearEndWrapped()}
         />
       )}
     </div>

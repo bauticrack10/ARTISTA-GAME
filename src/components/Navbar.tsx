@@ -21,7 +21,8 @@ import {
   Crown,
   Volume2,
   VolumeX,
-  Radio
+  Radio,
+  Smartphone
 } from 'lucide-react';
 import {
   formatMoney,
@@ -34,8 +35,9 @@ interface NavbarProps {
   world: WorldState;
   currentTab: string;
   onTabChange: (tab: string) => void;
-  onAdvanceCycle: (months: 6 | 12) => void;
+  onAdvanceCycle: (months: 1 | 3 | 6 | 12) => void;
   onReturnToTitle: () => void;
+  onOpenPhone?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -44,9 +46,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   onTabChange,
   onAdvanceCycle,
-  onReturnToTitle
+  onReturnToTitle,
+  onOpenPhone
 }) => {
-  const [cycleMonths, setCycleMonths] = useState<6 | 12>(6);
+  const [cycleMonths, setCycleMonths] = useState<1 | 3 | 6 | 12>(1);
   const [soundEnabled, setSoundEnabled] = useState(() => audioSystem.isSoundEnabled());
 
   useEffect(() => {
@@ -157,38 +160,31 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Botonera de Simulación / Avance Integrada como CTA Principal */}
           <div className="flex flex-1 md:flex-none items-center gap-1.5 min-w-0">
-            {/* Toggle 6M / 1Y */}
+            {/* Selector de Simulación: 1M / 3M / 6M / 1Y */}
             <div className="flex items-center bg-surface p-0.5 rounded-md text-xs font-semibold border border-line">
-              <button
-                onClick={() => {
-                  playSound('click');
-                  setCycleMonths(6);
-                }}
-                aria-pressed={cycleMonths === 6}
-                className={`min-h-8 px-2.5 py-1 rounded-sm transition-all cursor-pointer text-xs ${
-                  cycleMonths === 6
-                    ? 'bg-primary text-white shadow-xs font-bold'
-                    : 'text-fg-muted hover:text-fg'
-                }`}
-                title="Simular 6 Meses (1 Semestre)"
-              >
-                6M
-              </button>
-              <button
-                onClick={() => {
-                  playSound('click');
-                  setCycleMonths(12);
-                }}
-                aria-pressed={cycleMonths === 12}
-                className={`min-h-8 px-2.5 py-1 rounded-sm transition-all cursor-pointer text-xs ${
-                  cycleMonths === 12
-                    ? 'bg-primary text-white shadow-xs font-bold'
-                    : 'text-fg-muted hover:text-fg'
-                }`}
-                title="Simular 1 Año Completo"
-              >
-                1Y
-              </button>
+              {([
+                { val: 1, label: '1M', title: 'Simular 1 Mes (Paso a Paso)' },
+                { val: 3, label: '3M', title: 'Simular 3 Meses (Trimestre)' },
+                { val: 6, label: '6M', title: 'Simular 6 Meses (Semestre)' },
+                { val: 12, label: '1Y', title: 'Simular 1 Año Completo' },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.val}
+                  onClick={() => {
+                    playSound('click');
+                    setCycleMonths(opt.val);
+                  }}
+                  aria-pressed={cycleMonths === opt.val}
+                  className={`min-h-8 px-2 py-1 rounded-sm transition-all cursor-pointer text-xs ${
+                    cycleMonths === opt.val
+                      ? 'bg-primary text-white shadow-xs font-bold'
+                      : 'text-fg-muted hover:text-fg'
+                  }`}
+                  title={opt.title}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
 
             {/* Botón de Acción Principal (Avanzar Ciclo) */}
@@ -199,11 +195,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onAdvanceCycle(cycleMonths);
               }}
               className="tap group relative flex flex-1 md:flex-none justify-center items-center gap-2 bg-gradient-to-r from-primary-strong via-primary to-accent hover:from-[#6D28D9] hover:via-primary-strong hover:to-[#DB2777] text-white px-4 py-1.5 rounded-lg text-xs font-bold cursor-pointer active:scale-[0.98] transition-all shadow-[0_0_15px_rgba(124,58,237,0.35)] border border-white/20 whitespace-nowrap"
-              title={`Avanzar ciclo de ${cycleMonths === 6 ? '6 meses (1 Semestre)' : '1 año (2 Semestres)'} y simular lanzamientos, charts y eventos`}
+              title={`Avanzar ciclo de ${cycleMonths === 1 ? '1 mes' : cycleMonths === 3 ? '3 meses' : cycleMonths === 6 ? '6 meses' : '1 año'} y simular lanzamientos, charts y eventos`}
             >
               <Play className="w-3.5 h-3.5 fill-white text-white group-hover:scale-110 transition-transform shrink-0" />
               <span className="tracking-tight font-semibold">
-                Avanzar<span className="hidden sm:inline"> Ciclo</span> ({cycleMonths === 6 ? '+6M' : '+1Y'})
+                Avanzar ({cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})
               </span>
             </button>
           </div>
@@ -294,12 +290,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {soundEnabled ? 'SFX' : 'MUTE'}
               </span>
             </button>
-
-            {/* Audio Reactive Equalizer Bars */}
-            <div className="px-1 py-0.5 hidden sm:flex items-center" title={soundEnabled ? 'Equalizador de audio' : 'Audio Silenciado'}>
-              <AudioEqualizer isPlaying={soundEnabled} />
-            </div>
           </div>
+
+          {/* Smartphone del Artista (DMs, Virales, Banco) */}
+          <button
+            id="btn-open-artist-phone"
+            onClick={() => {
+              playSound('click');
+              onOpenPhone?.();
+            }}
+            className="tap relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface hover:bg-surface-raised border border-line hover:border-primary/50 text-xs transition-colors cursor-pointer shrink-0 shadow-xs text-primary-soft group"
+            title="Abrir Smartphone del Artista (DMs, Virales y Banco)"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-primary group-hover:scale-110 transition-transform shrink-0" />
+            <span className="hidden md:inline font-semibold">Teléfono</span>
+            {(world?.unreadPhoneCount ?? 0) > 0 && (
+              <span className="w-4 h-4 rounded-full bg-primary text-white text-3xs font-bold flex items-center justify-center animate-pulse shadow-sm">
+                {world.unreadPhoneCount}
+              </span>
+            )}
+          </button>
 
           {/* Perfil Rápido del Jugador */}
           <button
