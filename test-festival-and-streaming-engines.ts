@@ -1,6 +1,7 @@
 import { FestivalEngine, GLOBAL_FESTIVALS, LIVE_SHOW_DILEMMAS, STAGE_PRODUCTION_COSTS } from './src/systems/FestivalEngine';
 import { StreamingEngine, EDITORIAL_PLAYLISTS } from './src/systems/StreamingEngine';
 import { Artist, Song, WorldState, GlobalFestival, FestivalSlot } from './src/types';
+import { GameEngine } from './src/core/GameEngine';
 
 function runFestivalAndStreamingEngineTests() {
   console.log('========================================================================');
@@ -315,6 +316,49 @@ function runFestivalAndStreamingEngineTests() {
   assert(snippetResult.streamsBoostGenerated > 0, `Generó conversión directa a plataformas de streaming (+${snippetResult.streamsBoostGenerated.toLocaleString()} streams)`);
   assert(snippetResult.monthlyListenersGained > 0, `Ganó nuevos oyentes mensuales (+${snippetResult.monthlyListenersGained.toLocaleString()})`);
   assert(snippetResult.isViralTrend, `Catalogado como trend viral (${snippetResult.viralTier})`);
+
+  // Verificación de compatibilidad de aliases para evitar errores en render UI
+  assert(snippetResult.viewsGenerated !== undefined && snippetResult.viewsGenerated === snippetResult.tiktokViews, 'Alias viewsGenerated está definido y coincide con tiktokViews');
+  assert(snippetResult.creationsCount !== undefined && snippetResult.creationsCount === snippetResult.ugcCreations, 'Alias creationsCount está definido y coincide con ugcCreations');
+  assert(snippetResult.streamingConversions !== undefined && snippetResult.streamingConversions === snippetResult.streamsBoostGenerated, 'Alias streamingConversions está definido y coincide con streamsBoostGenerated');
+  assert(snippetResult.listenersGained !== undefined && snippetResult.listenersGained === snippetResult.monthlyListenersGained, 'Alias listenersGained está definido y coincide con monthlyListenersGained');
+  assert(snippetResult.hypeGenerated !== undefined && snippetResult.hypeGenerated === snippetResult.hypeGained, 'Alias hypeGenerated está definido y coincide con hypeGained');
+  assert(snippetResult.concept !== undefined && snippetResult.concept.length > 0, 'Propiedad concept está definida');
+  assert(snippetResult.summary !== undefined && snippetResult.summary.length > 0, 'Propiedad summary está definida');
+
+  // Comprobación de formateo seguro toLocaleString
+  assert(typeof (snippetResult.viewsGenerated ?? 0).toLocaleString('es-AR') === 'string', 'viewsGenerated formatea con toLocaleString correctamente');
+  assert(typeof (snippetResult.creationsCount ?? 0).toLocaleString('es-AR') === 'string', 'creationsCount formatea con toLocaleString correctamente');
+  assert(typeof (snippetResult.streamingConversions ?? 0).toLocaleString('es-AR') === 'string', 'streamingConversions formatea con toLocaleString correctamente');
+
+  console.log('\n------------------------------------------------------------------------');
+  console.log('📋 SECCIÓN 10: Integración End-to-End con GameEngine.launchSnippetCampaign');
+  console.log('------------------------------------------------------------------------');
+
+  const engine = new GameEngine();
+  const testPlayer = engine.getPlayer();
+  testPlayer.stats.funds = 50000;
+
+  const releasedSong = engine.releaseSong({
+    title: 'Tema TikTok Test',
+    genreId: 'trap_latino',
+    subGenreIds: ['urban'],
+    featuredArtistIds: [],
+    budgetProduction: 2000,
+    budgetMarketing: 1000
+  });
+
+  const campaignRes = engine.launchSnippetCampaign({
+    songId: releasedSong.id,
+    concept: 'Trend de Baile & Coreografía',
+    budget: 3000
+  });
+
+  assert(campaignRes.success, 'GameEngine ejecutó launchSnippetCampaign con éxito');
+  assert(!isNaN(releasedSong.streamsTotal) && releasedSong.streamsTotal > 0, `streamsTotal es un número válido y no NaN (${releasedSong.streamsTotal})`);
+  assert(!isNaN(testPlayer.stats.hype) && testPlayer.stats.hype > 0, `player.stats.hype es un número válido (${testPlayer.stats.hype})`);
+  assert(!isNaN(testPlayer.stats.monthlyListeners) && testPlayer.stats.monthlyListeners > 0, `player.stats.monthlyListeners es un número válido (${testPlayer.stats.monthlyListeners})`);
+  assert(typeof (campaignRes.viewsGenerated ?? campaignRes.tiktokViews ?? 0).toLocaleString('es-AR') === 'string', 'viewsGenerated en campaignRes es seguro para toLocaleString');
 
   console.log('\n========================================================================');
   console.log(`🎉 TODAS LAS VERIFICACIONES COMPLETADAS CON ÉXITO (${passed}/${total})`);

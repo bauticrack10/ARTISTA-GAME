@@ -461,6 +461,14 @@ export interface SnippetCampaignResult {
   headline: string;
   communityReaction: string;
   costSpent: number;
+  concept?: string;
+  summary?: string;
+  viewsGenerated?: number;
+  creationsCount?: number;
+  streamingConversions?: number;
+  listenersGained?: number;
+  hypeGenerated?: number;
+  isViral?: boolean;
 }
 
 

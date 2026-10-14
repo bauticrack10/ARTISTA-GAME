@@ -315,7 +315,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                           <div className="p-2 rounded-lg bg-[#16181F] border border-[#2A2E3D]">
                             <span className="text-[10px] text-[#94A3B8] block uppercase">Audiencia Esperada</span>
                             <span className="text-sm font-bold text-[#C084FC]">
-                              {inv.audienceExpected.toLocaleString('es-AR')} personas
+                              {(inv.audienceExpected || 0).toLocaleString('es-AR')} personas
                             </span>
                           </div>
                         </div>
@@ -432,7 +432,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                         "{show.reviews[0]?.quote || show.subheadline}" — {show.reviews[0]?.outlet || 'Prensa'}
                       </p>
                       <span className="text-[11px] text-[#64748B] font-mono block mt-1">
-                        Audiencia: {show.attendance.toLocaleString('es-AR')} personas • Calificación: {show.performanceScore}%
+                        Audiencia: {(show.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {show.performanceScore}%
                       </span>
                     </div>
 

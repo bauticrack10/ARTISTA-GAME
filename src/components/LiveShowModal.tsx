@@ -164,7 +164,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
             </h2>
             <p className="text-xs text-white/90 flex items-center gap-1.5 drop-shadow-xs">
               <MapPin className="w-3.5 h-3.5 shrink-0" />
-              {festival.location} • {festival.capacity.toLocaleString('es-AR')} espectadores por día
+              {festival.location} • {(festival.capacity || 0).toLocaleString('es-AR')} espectadores por día
             </p>
           </div>
 
@@ -450,14 +450,14 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                   <div>
                     <span className="text-[10px] text-[#94A3B8] block uppercase">Audiencia Real</span>
                     <span className="text-xl font-black text-emerald-400">
-                      {showResult.attendance.toLocaleString('es-AR')}
+                      {(showResult.attendance || 0).toLocaleString('es-AR')}
                     </span>
                   </div>
                   <div className="w-px h-8 bg-[#2A2E3D]" />
                   <div>
                     <span className="text-[10px] text-[#94A3B8] block uppercase">Ganancia Neta</span>
                     <span className="text-xl font-black text-[#C084FC]">
-                      +{formatMoney(showResult.netProfit)}
+                      +{formatMoney(showResult.netProfit || 0)}
                     </span>
                   </div>
                 </div>
@@ -468,7 +468,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                 <div className="p-3 rounded-xl bg-[#16181F] border border-[#2A2E3D]">
                   <span className="text-[10px] text-[#94A3B8] block uppercase">Nuevos Fans</span>
                   <span className="text-sm font-bold text-emerald-400 font-mono">
-                    +{showResult.fansGained.toLocaleString('es-AR')}
+                    +{(showResult.fansGained || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="p-3 rounded-xl bg-[#16181F] border border-[#2A2E3D]">

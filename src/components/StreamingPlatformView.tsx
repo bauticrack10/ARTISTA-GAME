@@ -195,7 +195,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               <div>
                 <span className="text-[#94A3B8] block text-[10px] uppercase font-semibold">Oyentes Mensuales</span>
                 <span className="text-lg sm:text-xl font-bold font-mono text-emerald-400">
-                  {player.stats.monthlyListeners.toLocaleString('es-AR')}
+                  {(player.stats?.monthlyListeners ?? 0).toLocaleString('es-AR')}
                 </span>
               </div>
               <div className="w-px h-8 bg-[#2A2E3D]" />
@@ -791,13 +791,13 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 <div className="space-y-4 animate-fade-in">
                   <div className="p-4 rounded-xl bg-[#0B0C10] border border-[#8B5CF6]/50 space-y-2">
                     <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-pink-950/60 text-pink-300 border border-pink-500/30">
-                      Trend {lastSnippetResult.viralTier.toUpperCase()}
+                      Trend {(lastSnippetResult.viralTier || 'viral').toUpperCase()}
                     </span>
                     <h3 className="text-sm font-bold text-[#F8FAFC]">
-                      {lastSnippetResult.concept}
+                      {lastSnippetResult.headline || lastSnippetResult.concept || 'Campaña Viral'}
                     </h3>
                     <p className="text-xs text-[#CBD5E1] leading-relaxed">
-                      {lastSnippetResult.summary}
+                      {lastSnippetResult.communityReaction || lastSnippetResult.summary || ''}
                     </p>
                   </div>
 
@@ -805,25 +805,25 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     <div className="p-3 rounded-xl bg-[#0B0C10] border border-[#2A2E3D]">
                       <span className="text-[10px] text-[#94A3B8] block uppercase">Vistas TikTok</span>
                       <span className="text-sm font-bold text-pink-400">
-                        {lastSnippetResult.viewsGenerated.toLocaleString('es-AR')}
+                        {(lastSnippetResult.tiktokViews ?? lastSnippetResult.viewsGenerated ?? 0).toLocaleString('es-AR')}
                       </span>
                     </div>
                     <div className="p-3 rounded-xl bg-[#0B0C10] border border-[#2A2E3D]">
                       <span className="text-[10px] text-[#94A3B8] block uppercase">Videos UGC</span>
                       <span className="text-sm font-bold text-cyan-400">
-                        {lastSnippetResult.creationsCount.toLocaleString('es-AR')}
+                        {(lastSnippetResult.ugcCreations ?? lastSnippetResult.creationsCount ?? 0).toLocaleString('es-AR')}
                       </span>
                     </div>
                     <div className="p-3 rounded-xl bg-[#0B0C10] border border-[#2A2E3D]">
                       <span className="text-[10px] text-[#94A3B8] block uppercase">Streams Ganados</span>
                       <span className="text-sm font-bold text-emerald-400">
-                        +{lastSnippetResult.streamingConversions.toLocaleString('es-AR')}
+                        +{(lastSnippetResult.streamsBoostGenerated ?? lastSnippetResult.streamingConversions ?? 0).toLocaleString('es-AR')}
                       </span>
                     </div>
                     <div className="p-3 rounded-xl bg-[#0B0C10] border border-[#2A2E3D]">
                       <span className="text-[10px] text-[#94A3B8] block uppercase">Hype Creado</span>
                       <span className="text-sm font-bold text-amber-400">
-                        +{lastSnippetResult.hypeGenerated} pts
+                        +{lastSnippetResult.hypeGained ?? lastSnippetResult.hypeGenerated ?? 0} pts
                       </span>
                     </div>
                   </div>

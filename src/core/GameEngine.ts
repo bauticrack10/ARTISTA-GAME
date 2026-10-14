@@ -3247,19 +3247,25 @@ export class GameEngine {
       world: this.world
     });
 
-    // Aplicar efectos de la campaña
-    song.streamsTotal += result.streamingConversions;
-    song.streamsLastMonth += result.streamingConversions;
-    if (result.isViral) song.wentViral = true;
+    // Aplicar efectos de la campaña de forma segura
+    const streamsBoost = result.streamsBoostGenerated ?? result.streamingConversions ?? 0;
+    song.streamsTotal = (song.streamsTotal || 0) + streamsBoost;
+    song.streamsLastMonth = (song.streamsLastMonth || 0) + streamsBoost;
+    if (result.isViralTrend || result.isViral) song.wentViral = true;
 
-    player.stats.hype = Math.min(100, player.stats.hype + result.hypeGenerated);
-    player.stats.monthlyListeners += result.listenersGained;
-    player.stats.fansCount += Math.floor(result.listenersGained * 0.12);
+    const hypeGain = result.hypeGained ?? result.hypeGenerated ?? 0;
+    player.stats.hype = Math.min(100, (player.stats.hype || 0) + hypeGain);
+
+    const listenersGain = result.monthlyListenersGained ?? result.listenersGained ?? 0;
+    player.stats.monthlyListeners = (player.stats.monthlyListeners || 0) + listenersGain;
+
+    const fansGain = result.fansGained ?? Math.floor(listenersGain * 0.12);
+    player.stats.fansCount = (player.stats.fansCount || 0) + fansGain;
 
     this.world.news.unshift({
       id: `news_snippet_${Date.now()}`,
-      headline: `Tendencia Viral: "${song.title}" estalla en TikTok`,
-      body: result.summary,
+      headline: result.headline || `Tendencia Viral: "${song.title}" estalla en TikTok`,
+      body: result.communityReaction || result.summary || 'Campaña completada con éxito en redes.',
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'trend',

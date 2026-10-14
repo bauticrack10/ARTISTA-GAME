@@ -1125,15 +1125,23 @@ export class StreamingEngine {
       success: true,
       reach,
       tiktokViews,
+      viewsGenerated: tiktokViews,
       ugcCreations,
+      creationsCount: ugcCreations,
       streamsBoostGenerated,
+      streamingConversions: streamsBoostGenerated,
       monthlyListenersGained,
+      listenersGained: monthlyListenersGained,
       fansGained,
       hypeGained,
+      hypeGenerated: hypeGained,
       isViralTrend,
+      isViral: isViralTrend,
       viralTier,
       headline,
+      concept: concept || 'Trend Viral',
       communityReaction,
+      summary: communityReaction,
       costSpent: safeBudget
     };
   }
