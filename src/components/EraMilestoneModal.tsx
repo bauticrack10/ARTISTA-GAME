@@ -188,11 +188,11 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
         ctx.fillText('CHART TOPPER & MUSIC INDUSTRY REPORT', 600, 225);
       } else if (selectedPreset === 'underground_zine') {
         ctx.fillStyle = '#1c1c1c';
-        ctx.font = '900 90px "Courier New", monospace';
+        ctx.font = '900 90px "JetBrains Mono", monospace';
         ctx.fillText('UNDERGROUND ZINE', 600, 170);
 
         ctx.fillStyle = '#50504e';
-        ctx.font = 'bold 24px monospace';
+        ctx.font = 'bold 24px "JetBrains Mono", monospace';
         ctx.fillText('// 100% INDIE & CASSETTE CULTURE // ISSUE #01', 600, 220);
       } else {
         ctx.fillStyle = '#38bdf8';

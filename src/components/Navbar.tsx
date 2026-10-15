@@ -135,11 +135,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex flex-col">
               <span className="font-bold tracking-tight text-[#F4F4F6] text-xs leading-none flex items-center gap-1.5">
                 EL ARTISTA
-                <span className="hidden sm:inline text-3xs font-mono font-bold px-1.5 py-0.5 rounded-[2px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
+                <span className="hidden sm:inline text-3xs font-sans font-bold px-1.5 py-0.5 rounded-[2px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
                   PRO
                 </span>
               </span>
-              <span className="hidden sm:block text-3xs text-[#8E8E99] font-mono tracking-wider uppercase leading-tight mt-0.5">
+              <span className="hidden sm:block text-3xs text-[#8E8E99] font-sans font-medium tracking-wider uppercase leading-tight mt-0.5">
                 STUDIO CONSOLE
               </span>
             </div>
@@ -196,7 +196,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onAdvanceCycle(cycleMonths);
             }}
-            className="tap group relative flex items-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white px-4 py-1.5 rounded-[4px] font-mono text-xs font-bold cursor-pointer active:translate-y-[1px] transition-all border border-[#FF6F2E]/30 whitespace-nowrap"
+            className="tap group relative flex items-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white px-4 py-1.5 rounded-[4px] font-sans text-xs font-semibold cursor-pointer active:translate-y-[1px] transition-all border border-[#FF6F2E]/30 whitespace-nowrap"
             title={`Avanzar ciclo de ${cycleMonths === 1 ? '1 mes' : cycleMonths === 3 ? '3 meses' : cycleMonths === 6 ? '6 meses' : '1 año'}`}
           >
             <Play className="w-3.5 h-3.5 fill-white text-white group-hover:scale-110 transition-transform shrink-0" />
@@ -250,7 +250,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Abrir Smartphone (DMs, TrendX y Banco)"
           >
             <Smartphone className="w-3.5 h-3.5 text-[#8E8E99] group-hover:text-[#FF4F00] transition-colors shrink-0" />
-            <span className="hidden md:inline font-mono text-xs text-[#8E8E99]">Teléfono</span>
+            <span className="hidden md:inline font-sans text-xs text-[#8E8E99]">Teléfono</span>
             {(world?.unreadPhoneCount ?? 0) > 0 && (
               <span className="w-4 h-4 rounded-[2px] bg-[#FF4F00] text-white text-3xs font-mono font-bold flex items-center justify-center shadow-xs">
                 {world.unreadPhoneCount}
@@ -498,7 +498,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Sub-pill de INICIO */}
           {activeHub === 'dashboard' && (
-            <span className="text-3xs text-[#8E8E99] flex items-center gap-1 px-2 py-0.5 font-mono">
+            <span className="text-3xs text-[#8E8E99] flex items-center gap-1 px-2 py-0.5 font-sans">
               <span>Panel Principal</span>
               <ChevronRight className="w-3 h-3 text-[#52525B]" />
               <span className="text-[#F4F4F6] font-medium">Estado y Decisiones</span>

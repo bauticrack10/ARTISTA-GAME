@@ -353,8 +353,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div
-        className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-primary/30 selection:text-white relative overflow-x-clip"
-        style={{ fontFamily: "'Camera Plain Variable', ui-sans-serif, system-ui, sans-serif" }}
+        className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-primary/30 selection:text-white relative overflow-x-clip font-sans"
       >
       {/* Subtle Studio Backdrop Vignette */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#0B0C10]">
