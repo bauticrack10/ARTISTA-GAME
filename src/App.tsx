@@ -357,7 +357,7 @@ export default function App() {
       >
       {/* Subtle Studio Backdrop Vignette */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#0B0C10]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[350px] bg-primary/[0.04] blur-[140px]" />
+        <div className="absolute inset-0 analog-grain opacity-25" />
       </div>
 
       {/* Top App Bar & Navigation */}
@@ -369,6 +369,21 @@ export default function App() {
         onAdvanceCycle={handleAdvanceCycle}
         onReturnToTitle={() => setAppMode('start_screen')}
         onOpenPhone={() => setIsPhoneOpen(true)}
+        onExportSave={() => {
+          const json = getEngine().exportSaveState();
+          const blob = new Blob([json], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `el-artista-${(player?.name || 'carrera').toLowerCase().replace(/\s+/g, '-')}-${world?.currentYear || 2026}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }}
+        onImportSave={handleImportSaveState}
+        onResetCareer={() => {
+          try { localStorage.removeItem('el_artista_save'); } catch (e) {}
+          setAppMode('start_screen');
+        }}
       />
 
       {/* Main Container */}

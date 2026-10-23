@@ -97,7 +97,7 @@ export class PhoneMessageEngine {
 
     const senderId = manager ? manager.id : 'mgr_industry_agent';
     const senderName = manager ? manager.name : 'Agente de Talentos';
-    const avatarColor = '#8B5CF6';
+    const avatarColor = '#FF4F00';
 
     const brandReward = Math.max(8000, Math.floor(player.stats.popularity * 350 + player.stats.hype * 150));
     const privateShowFee = Math.max(12000, Math.floor(player.stats.popularity * 500 + 5000));
@@ -114,7 +114,7 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `Che ${player.name}, te veo con la energía por el piso en los últimos ensayos. Si no frenás un poco, nos vamos a estrellar contra la pared o te vas a quedar sin voz. Tomate un respiro antes de que sea tarde.`,
+        text: `Che ${player.name}, ayer en la prueba de sonido estabas cerrando los ojos entre tema y tema y la garganta te raspa al final de cada frase. Si no cortás dos días ahora, el foniatra nos va a cancelar el mes entero.`,
         choices: [
           {
             label: 'Alquilar retiro de spa (-$3.000, +25 Energía, -5 Hype)',
@@ -150,7 +150,7 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `Nos llegó una propuesta comercial de una marca internacional de bebidas energéticas. Ofrecen un pago directo de $${brandReward.toLocaleString('es-AR')} por una campaña de 3 posts y una mención en tu próximo single. ¿Qué hacemos?`,
+        text: `La gente de una bebida energética puso $${brandReward.toLocaleString('es-AR')} arriba de la mesa. Piden tres historias en Instagram y que la lata se vea cuatro segundos en tu próximo corte. ¿Firmamos o los mando a volar?`,
         choices: [
           {
             label: `Aceptar patrocinio (+$$${brandReward.toLocaleString('es-AR')}, +8 Hype, -6 Energía)`,
@@ -182,7 +182,7 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `Un empresario multimillonario quiere contratarte para un show acústico secreto y privado en su yate. Paga $${privateShowFee.toLocaleString('es-AR')} al contado, pero exige confidencialidad total y cero fotos.`,
+        text: `Salió un privado en Puerto Madero para el sábado: 40 minutos con pista o guitarra para el cumpleaños de un empresario. Pagan $${privateShowFee.toLocaleString('es-AR')} en mano al bajar del escenario, celulares afuera en puerta.`,
         choices: [
           {
             label: `Agarrar la plata fácil (+$$${privateShowFee.toLocaleString('es-AR')}, -12 Energía)`,
@@ -231,7 +231,7 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `¿Qué onda ${player.name}? Estuve en el laboratorio cocinando un beat experimental con una textura lo-fi y bajos distorsionados tremenda. Es exactamente para tu estilo. Venite al estudio hoy y grabamos una maqueta.`,
+        text: `¿Qué hacés ${player.name}? Armé un esqueleto en 92 BPM pasando el bajo por un pedal de distorsión roto y recortando muestras de vinilo viejo. Tiene tu tempo; si venís antes de las nueve grabamos voces de referencia.`,
         choices: [
           {
             label: 'Caer al estudio a experimentar (+14 Hype, +1.800 Fans, -10 Energía)',
@@ -269,11 +269,11 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `Se liberó un turno de 12 horas en el mejor estudio analógico de la ciudad (tienen una consola Neve vintage de 1974). Nos cobran $4.500 pero el mastering y la calidez sonora van a sonar a platino.`,
+        text: `Se cayó una reserva en el estudio grande del centro y me dejaron el turno de trasnoche a $4.500 con técnico incluido. Tienen la consola Neve 8014 andando y dos compresores ópticos recién calibrados.`,
         choices: [
           {
             label: 'Reservar la sesión analógica (-$4.500, +20 Hype, +2.500 Fans)',
-            replyText: 'Reservalo ya. La fidelidad de sonido de nuestro próximo material tiene que ser insuperable.',
+            replyText: 'Cerralo. Llevo los discos duros a las diez para pasar las voces por esa mesa.',
             effects: {
               fundsDelta: -4500,
               hypeDelta: 20,
@@ -409,7 +409,7 @@ export class PhoneMessageEngine {
     month: number
   ): ArtistPhoneMessage | null {
     const friendTypes = [
-      { name: 'Mamá', color: '#EC4899', icon: 'Heart' },
+      { name: 'Mamá', color: '#FF2A4B', icon: 'Heart' },
       { name: 'Tomi (Amigo del barrio)', color: '#3B82F6', icon: 'Smile' },
       { name: 'Santi (Amigo de la infancia)', color: '#F59E0B', icon: 'Users' }
     ];
@@ -525,7 +525,7 @@ export class PhoneMessageEngine {
     const pressOutlets = [
       { name: 'Cronista de Rolling Urbana', color: '#06B6D4', icon: 'Newspaper' },
       { name: 'Editor de Billboard Latino', color: '#3B82F6', icon: 'Radio' },
-      { name: 'Host de Podcast Trap & Flow', color: '#8B5CF6', icon: 'Mic' }
+      { name: 'Host de Podcast Trap & Flow', color: '#D4AF37', icon: 'Mic' }
     ];
     const picked = pressOutlets[Math.floor(Math.random() * pressOutlets.length)];
 
@@ -543,7 +543,7 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `Hola ${player.name}, te escribo de ${senderName}. Estamos preparando la edición especial sobre los artistas que están moldeando el sonido de la década y queremos proponerte ser la nota de tapa con sesión de fotos exclusiva.`,
+        text: `Hola ${player.name}, acá ${senderName}. Cerramos el número impreso del mes el jueves y tenemos seis páginas reservadas para hablar de tu método en el estudio, con sesión de fotos en rollo de 35mm.`,
         choices: [
           {
             label: 'Aceptar la portada de prensa (+22 Hype, +3.200 Fans, -8 Energía)',
@@ -575,7 +575,7 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `Nos llegó una filtración con un audio inédito tuyo criticando a colegas de la industria. Queremos darte la oportunidad de aclarar la situación o dar una declaración exclusiva antes de publicar la nota.`,
+        text: `Está circulando en grupos de WhatsApp un audio tuyo de camarines tirando munición pesada contra varios colegas. Va a salir publicado igual a las seis de la tarde; si querés dejar tu versión en dos líneas, te espero media hora.`,
         choices: [
           {
             label: 'Dar una declaración tajante y desafiante (+28 Hype, -6 Energía, Polémica)',

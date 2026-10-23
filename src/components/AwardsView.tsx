@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { activateOnKey } from '../utils/a11y';
-import { WorldState, Artist, AwardCeremony } from '../types';
+import { WorldState, Artist, AwardCeremony, OfficialCertification } from '../types';
+import { CertificationEngine } from '../systems/CertificationEngine';
 import {
   Award,
   Trophy,
@@ -71,6 +72,35 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       .slice(0, 5);
   }, [world?.artists, ceremonies]);
 
+  const playerCerts = useMemo(() => {
+    const list: OfficialCertification[] = [...(player.officialCertifications || [])];
+    const seen = new Set(list.map(c => c.id));
+
+    Object.values(world.songs || {}).forEach(s => {
+      if (s.artistId === player.id && s.certifications) {
+        s.certifications.forEach(c => {
+          if (!seen.has(c.id)) {
+            seen.add(c.id);
+            list.push(c);
+          }
+        });
+      }
+    });
+
+    Object.values(world.albums || {}).forEach(a => {
+      if (a.artistId === player.id && a.certifications) {
+        a.certifications.forEach(c => {
+          if (!seen.has(c.id)) {
+            seen.add(c.id);
+            list.push(c);
+          }
+        });
+      }
+    });
+
+    return list.sort((a, b) => (b.year * 12 + b.month) - (a.year * 12 + a.month));
+  }, [player, world]);
+
   return (
     <div className="space-y-6 pb-12 text-[#F4F4F6]">
       {/* Header */}
@@ -87,8 +117,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
             Galas de Premiación & Vitrina de Trofeos
           </h1>
           <p className="text-xs text-[#8E8E99] mt-1 max-w-2xl leading-relaxed">
-            Cada diciembre la academia de la música evalúa el impacto comercial, trascendencia cultural,
-            calidad crítica, composición y sofisticación técnica en las 8 categorías fundamentales inspiradas en los premios más prestigiosos del mundo.
+            Cada diciembre el jurado cierra planillas y vota las 8 ternas anuales cruzando cifras de ventas auditadas, recepción de la crítica e ingeniería de mezcla.
           </p>
         </div>
 
@@ -102,6 +131,62 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
             <span className="text-2xl font-bold text-[#F4F4F6]">{player.legacyScore}/100</span>
           </div>
         </div>
+      </div>
+
+      {/* Vitrina de Certificaciones Oficiales (Discos de Oro, Platino y Diamante) */}
+      <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#242429] pb-3">
+          <div className="flex items-center gap-2">
+            <Medal className="w-5 h-5 text-[#F59E0B]" />
+            <h2 className="text-base font-bold text-[#F4F4F6]">
+              Vitrina de Certificaciones Oficiales ({playerCerts.length})
+            </h2>
+          </div>
+          <span className="text-xs font-mono text-[#8E8E99]">
+            Umbrales oficiales: Oro (500k) • Platino (1M) • Diamante (10M)
+          </span>
+        </div>
+
+        {playerCerts.length === 0 ? (
+          <div className="p-8 rounded-[4px] bg-[#09090B] border border-[#242429] text-center space-y-2">
+            <Disc3 className="w-8 h-8 text-[#52525B] mx-auto opacity-50" />
+            <p className="text-sm font-semibold text-[#F4F4F6]">Aún no posees certificaciones oficiales</p>
+            <p className="text-xs text-[#8E8E99] max-w-md mx-auto">
+              Tus sencillos y álbumes recibirán placas oficiales de Disco de Oro (500.000 streams), Platino (1.000.000) o Diamante (10.000.000) automáticamente a medida que acumulen reproducciones y ventas globales.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {playerCerts.map((cert) => {
+              const styling = CertificationEngine.getCertificationStyling(cert.tier, cert.multiplier);
+              return (
+                <div
+                  key={cert.id}
+                  className={`p-4 rounded-[4px] border border-[#242429] bg-[#09090B] flex items-start justify-between gap-3 shadow-xs ${styling.frameClass}`}
+                >
+                  <div className="space-y-1 min-w-0">
+                    <span className={`text-3xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[2px] border ${styling.badgeClass}`}>
+                      {styling.displayName}
+                    </span>
+                    <h3 className="text-sm font-bold text-[#F4F4F6] truncate mt-1">
+                      {cert.targetTitle}
+                    </h3>
+                    <p className="text-2xs text-[#8E8E99] font-mono tabular-nums">
+                      {cert.targetType === 'single' ? 'Sencillo Oficial' : 'Álbum / Proyecto'} • Año {cert.year}, M{cert.month}
+                    </p>
+                    <p className="text-2xs text-[#00E599] font-mono tabular-nums">
+                      {(cert.unitsAchieved).toLocaleString('es-AR')} unidades acumuladas
+                    </p>
+                  </div>
+
+                  <div className="w-10 h-10 rounded-full border border-[#242429] bg-[#18181C] flex items-center justify-center shrink-0">
+                    <Disc3 className="w-5 h-5" style={{ color: styling.iconColor }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Hall of Fame: All-Time Leaderboard */}

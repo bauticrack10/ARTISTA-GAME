@@ -111,7 +111,7 @@ export function useAwardsGala({
         particleCount: 150,
         spread: 90,
         origin: { y: 0.6 },
-        colors: ['#f59e0b', '#ec4899', '#8b5cf6', '#10b981', '#06b6d4', '#f97316', '#ffd700']
+        colors: ['#FF4F00', '#FF2A4B', '#10B981', '#F59E0B', '#D4AF37', '#06B6D4']
       });
     } catch {
       // Confetti fallback

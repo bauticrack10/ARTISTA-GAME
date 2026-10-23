@@ -175,6 +175,21 @@ export interface CareerEra {
   highlightSummary: string;
 }
 
+export type CertificationTier = 'gold' | 'platinum' | 'multi_platinum' | 'diamond';
+
+export interface OfficialCertification {
+  id: string;
+  targetId: string;
+  targetTitle: string;
+  targetType: 'single' | 'album';
+  tier: CertificationTier;
+  multiplier?: number;
+  unitsAchieved: number;
+  year: number;
+  month: number;
+  label: string;
+}
+
 export interface Artist {
   id: string; // Unique GUID/ID (NEVER rely only on name)
   name: string;
@@ -225,6 +240,8 @@ export interface Artist {
   snippetCampaigns?: SnippetCampaign[];
   phoneMessages?: ArtistPhoneMessage[];
   unreadPhoneCount?: number;
+  officialCertifications?: OfficialCertification[];
+  retirementMonth?: number;
 }
 
 export type TransactionCategory =
@@ -350,6 +367,8 @@ export interface Song {
   isDissTrack?: boolean;
   dissTargetArtistId?: string;
   dissAngle?: 'lyrical' | 'expose' | 'flex_numbers';
+  certifications?: OfficialCertification[];
+  rolloutStrategy?: 'surprise_drop' | 'standard_rollout' | 'hype_campaign';
 }
 
 // ==========================================
@@ -501,6 +520,8 @@ export interface Album {
   marketingBudget?: number;
   producerId?: string;
   singlesIncludedCount?: number;
+  certifications?: OfficialCertification[];
+  rolloutStrategy?: 'surprise_drop' | 'standard_rollout' | 'hype_campaign';
 }
 
 export interface ReleaseBudgetBreakdown {
@@ -1123,6 +1144,8 @@ export interface EventChoice {
   costEnergy?: number;
   apply: (context: EventContext) => EventOutcome;
   riskWarning?: string;
+  successProbability?: number; // 0 - 100%
+  riskProbability?: number; // 0 - 100%
 }
 
 export interface EventOutcome {
@@ -1351,6 +1374,8 @@ export interface WorldState {
   festivalHistory?: LiveShowResult[];
   phoneMessages?: ArtistPhoneMessage[];
   unreadPhoneCount?: number;
+  officialCertifications?: OfficialCertification[];
+  retirementMonth?: number;
   activeYearEndWrapped?: YearEndWrappedData | null;
   playerWrappedHistory?: YearEndWrappedData[];
 }

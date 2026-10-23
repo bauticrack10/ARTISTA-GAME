@@ -258,7 +258,7 @@ export function runAllButtonsAndNavTests(): boolean {
     });
 
     engine.releaseSong({
-      title: 'Segundo Single QA',
+      title: (world.currentMonth = 2, 'Segundo Single QA'),
       genreId: 'trap_latino',
       subGenreIds: ['sub_trap_underground'],
       featuredArtistIds: [],
@@ -266,6 +266,7 @@ export function runAllButtonsAndNavTests(): boolean {
       budgetMarketing: 1000
     });
 
+    world.currentMonth = 3;
     // Lanzar 1 álbum
     engine.releaseAlbum({
       title: 'Álbum Debut Conceptual QA',
@@ -445,6 +446,7 @@ export function runAllButtonsAndNavTests(): boolean {
     // C) Límite de 5 singles por año
     const limitEngine = new GameEngine(createPlayerArtist({ stats: { funds: 500000, energy: 100 } }));
     for (let i = 1; i <= GameEngine.MAX_SINGLES_PER_YEAR; i++) {
+      limitEngine.getWorld().currentMonth = i;
       limitEngine.getPlayer().stats.energy = 100; // Recargar para prueba de singles
       limitEngine.releaseSong({
         title: `Single Cupo ${i}`,
@@ -459,7 +461,7 @@ export function runAllButtonsAndNavTests(): boolean {
     try {
       limitEngine.getPlayer().stats.energy = 100;
       limitEngine.releaseSong({
-        title: 'Single 6 Excedente',
+        title: (limitEngine.getWorld().currentMonth = 6, 'Single 6 Excedente'),
         genreId: 'trap_latino',
         subGenreIds: [],
         featuredArtistIds: [],

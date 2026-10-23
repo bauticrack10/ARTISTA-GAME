@@ -1,26 +1,36 @@
 @import "tailwindcss";
 
-/* Design tokens: single source for Analog Master & Editorial Press palette, type scale and radii. */
+/* Design tokens: single source for Analog Studio & Vinyl Press palette, 3-tier type scale and radii. */
 @theme {
-  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-display: 'Syne', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --color-canvas: #09090b;
-  --color-surface: #111114;
-  --color-surface-raised: #18181c;
-  --color-line: #242429;
-  --color-line-active: #3f3f46;
-  --color-fg: #f4f4f6;
-  --color-fg-muted: #8e8e99;
-  --color-fg-subtle: #52525b;
-  --color-primary: #ff4f00;
-  --color-primary-strong: #e04500;
-  --color-primary-soft: #ff6f2e;
-  --color-accent: #ff4f00;
-  --color-info: #06b6d4;
-  --color-success: #00e599;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  --color-canvas: #0B0B0C;
+  --color-studio: #0B0B0C;
+  --color-surface: #141417;
+  --color-console: #141417;
+  --color-surface-raised: #1C1C21;
+  --color-editorial: #1C1C21;
+  --color-editorial-paper: #F4F0EA;
+  --color-line: #26262B;
+  --color-line-active: #3F3F46;
+  --color-fg: #F4F0EA;
+  --color-fg-muted: #8E8E99;
+  --color-fg-subtle: #52525B;
+  --color-primary: #FF2A4B;
+  --color-primary-strong: #E11D48;
+  --color-primary-soft: #FF4A67;
+  --color-accent: #FF2A4B;
+  --color-rec: #FF2A4B;
+  --color-vu: #F59E0B;
+  --color-info: #06B6D4;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-gold: #D4AF37;
+  --color-platinum: #E2E8F0;
+  --color-diamond: #38BDF8;
 
   /* Type floor: nothing below 12px. */
   --text-2xs: 0.75rem;
@@ -103,31 +113,40 @@
 
 @layer base {
   :root {
-    --bg-base: #09090B;
-    --bg-surface: #111114;
-    --bg-elevated: #18181C;
-    --border-subtle: #242429;
+    --bg-base: #0B0B0C;
+    --bg-studio: #0B0B0C;
+    --bg-surface: #141417;
+    --bg-console: #141417;
+    --bg-elevated: #1C1C21;
+    --bg-editorial: #1C1C21;
+    --bg-editorial-paper: #F4F0EA;
+    --border-subtle: #26262B;
     --border-strong: #3F3F46;
-    --text-primary: #F4F4F6;
+    --text-primary: #F4F0EA;
     --text-secondary: #8E8E99;
     --text-muted: #52525B;
-    --accent-primary: #FF4F00;
-    --accent-emerald: #00E599;
+    --accent-primary: #FF2A4B;
+    --accent-rec: #FF2A4B;
+    --accent-vu: #F59E0B;
+    --accent-emerald: #10B981;
+    --cert-gold: #D4AF37;
+    --cert-platinum: #E2E8F0;
+    --cert-diamond: #38BDF8;
 
     /* Compat aliases */
-    --bg-main: var(--bg-base);
+    --bg-main: var(--bg-studio);
     --border-card: var(--border-subtle);
     --border-interactive: var(--border-strong);
     --accent-orange: var(--accent-primary);
   }
 
   body {
-    background-color: var(--bg-base);
+    background-color: var(--bg-studio);
     color: var(--text-primary);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    selection-background-color: #FF4F00;
+    selection-background-color: #FF2A4B;
     selection-color: #FFFFFF;
     margin: 0;
     padding: 0;
@@ -135,11 +154,22 @@
   }
 
   ::selection {
-    background-color: #FF4F00;
+    background-color: #FF2A4B;
     color: #FFFFFF;
   }
 
-  /* Números tabulares obligatorios en elementos monoespaciados */
+  /* Display Font: Syne para títulos de alto impacto y portadas */
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+  }
+
+  /* Sans Font: Plus Jakarta Sans para navegación y cuerpo */
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+
+  /* Números tabulares obligatorios en elementos monoespaciados: JetBrains Mono */
   .font-mono {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -175,28 +205,40 @@
   }
 }
 
+/* Capa global ultradiscreta de grano analógico (Dieter Rams / Vinyl texture) */
+.analog-noise-fixed {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
 /* Textura sutil de grano analógico para portadas de álbumes y hero cards */
 .analog-grain {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 0);
+  background-image: radial-gradient(rgba(244, 240, 234, 0.05) 1px, transparent 0);
   background-size: 3px 3px;
 }
 
-/* Superficie técnica de estudio (reemplaza las cards genéricas con blur) */
+/* Superficie técnica de estudio Analog Studio & Vinyl Press */
 .studio-panel {
-  background-color: #111114;
-  border: 1px solid #242429;
+  background-color: #141417;
+  border: 1px solid #26262B;
   border-radius: 6px;
 }
 
 .studio-panel-interactive {
-  background-color: #111114;
-  border: 1px solid #242429;
+  background-color: #141417;
+  border: 1px solid #26262B;
   border-radius: 6px;
   transition: border-color 150ms ease, background-color 150ms ease;
 }
 
 .studio-panel-interactive:hover {
-  background-color: #151519;
+  background-color: #1C1C21;
   border-color: #3F3F46;
 }
 
@@ -235,7 +277,7 @@
   width: 420px;
   height: 420px;
   background: radial-gradient(circle, rgba(6, 182, 212, 0.18) 0%, rgba(6, 182, 212, 0) 70%);
-  filter: blur(120px);
+  opacity: 0;
   border-radius: 9999px;
   pointer-events: none;
   animation: auroraFloat 18s ease-in-out infinite alternate;
@@ -248,7 +290,7 @@
   width: 480px;
   height: 480px;
   background: radial-gradient(circle, rgba(147, 51, 234, 0.18) 0%, rgba(147, 51, 234, 0) 70%);
-  filter: blur(120px);
+  opacity: 0;
   border-radius: 9999px;
   pointer-events: none;
   animation: auroraFloat 22s ease-in-out infinite alternate-reverse;
@@ -261,7 +303,7 @@
   width: 440px;
   height: 440px;
   background: radial-gradient(circle, rgba(236, 72, 153, 0.14) 0%, rgba(236, 72, 153, 0) 70%);
-  filter: blur(120px);
+  opacity: 0;
   border-radius: 9999px;
   pointer-events: none;
   animation: auroraFloat 20s ease-in-out infinite alternate;
@@ -275,24 +317,24 @@
 .glass-card-cyber,
 .glass-cyber {
   background-color: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  /* matte surface */
+  /* matte surface */
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel-deep {
   background-color: rgba(11, 13, 19, 0.75);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
+  /* matte surface */
+  /* matte surface */
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
 }
 
 .glass-pill-cyber {
   background-color: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* matte surface */
+  /* matte surface */
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #f1f5f9;
 }
@@ -371,11 +413,11 @@
 }
 
 .attr-bar-credibility {
-  background-image: linear-gradient(to right, #a855f7, #6366f1);
+  background-image: linear-gradient(to right, #d4af37, #b45309);
 }
 
 .attr-bar-loyalty {
-  background-image: linear-gradient(to right, #ec4899, #e11d48);
+  background-image: linear-gradient(to right, #ff2a4b, #e11d48);
 }
 
 .attr-bar-hype {
@@ -548,7 +590,7 @@
 
 .btn-primary-dark,
 .btn-neon-primary {
-  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #ff2a4b 0%, #e11d48 100%);
   color: #ffffff;
   border-radius: 8px;
   padding: 10px 20px;
@@ -655,7 +697,7 @@
   background-color: rgba(22, 24, 31, 0.7);
   border: 1px solid #2a2e3d;
   border-radius: 12px;
-  backdrop-filter: blur(8px);
+  /* matte surface */
 }
 
 /* Micro-interaction interactive card hover */
@@ -766,7 +808,7 @@
 
 /* Special Release Badges */
 .badge-status-viral {
-  background: linear-gradient(135deg, #d946ef 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #ff4f00 0%, #e11d48 100%);
   color: #ffffff;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(217, 70, 239, 0.35);

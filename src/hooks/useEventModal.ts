@@ -54,6 +54,8 @@ export interface ValidatedEventChoice {
   hasRisk: boolean;
   riskWarning?: string;
   riskSeverity?: 'warning' | 'danger';
+  successProbability?: number;
+  riskProbability?: number;
 }
 
 export interface CategoryMeta {
@@ -168,26 +170,26 @@ export const SYSTEM_DEFINITIONS: Record<string, { icon: LucideIcon; badgeClass: 
   },
   'Reputación': {
     icon: Sparkles,
-    badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
-    iconColor: 'text-purple-400',
+    badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    iconColor: 'text-amber-400',
     name: 'Reputación'
   },
   'reputation': {
     icon: Sparkles,
-    badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
-    iconColor: 'text-purple-400',
+    badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    iconColor: 'text-amber-400',
     name: 'Reputación'
   },
   'Credibilidad': {
     icon: Award,
-    badgeClass: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
-    iconColor: 'text-indigo-400',
+    badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    iconColor: 'text-emerald-400',
     name: 'Credibilidad'
   },
   'credibility': {
     icon: Award,
-    badgeClass: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
-    iconColor: 'text-indigo-400',
+    badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    iconColor: 'text-emerald-400',
     name: 'Credibilidad'
   },
   'Contratos': {
@@ -240,14 +242,14 @@ export const SYSTEM_DEFINITIONS: Record<string, { icon: LucideIcon; badgeClass: 
   },
   'Carrera': {
     icon: TrendingUp,
-    badgeClass: 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30',
-    iconColor: 'text-fuchsia-400',
+    badgeClass: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
+    iconColor: 'text-orange-400',
     name: 'Carrera'
   },
   'career': {
     icon: TrendingUp,
-    badgeClass: 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30',
-    iconColor: 'text-fuchsia-400',
+    badgeClass: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
+    iconColor: 'text-orange-400',
     name: 'Carrera'
   }
 };
@@ -538,9 +540,9 @@ function getImportanceMeta(
         label: 'Impacto de Industria',
         badgeText: 'NIVEL 3 • IMPACTO DE INDUSTRIA',
         categoryTier: 'major',
-        badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.2)]',
-        glowClass: 'from-purple-500/20 via-transparent to-transparent',
-        dotColor: 'bg-purple-400',
+        badgeClass: 'bg-orange-500/20 text-orange-300 border-orange-500/40',
+        glowClass: 'from-orange-500/20 via-transparent to-transparent',
+        dotColor: 'bg-orange-400',
         isPulse: false
       };
     case 2:
@@ -791,8 +793,8 @@ export function useEventModal({
         return {
           label: 'Creación & Estudio',
           icon: Music,
-          badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
-          glow: 'from-purple-500/20 via-transparent to-transparent'
+          badgeColor: 'bg-orange-500/20 text-orange-300 border-orange-500/40',
+          glow: 'from-orange-500/20 via-transparent to-transparent'
         };
       case 'industry':
         return {
@@ -820,8 +822,8 @@ export function useEventModal({
         return {
           label: 'Medios & Redes',
           icon: Radio,
-          badgeColor: 'bg-pink-500/20 text-pink-300 border-pink-500/40',
-          glow: 'from-pink-500/20 via-transparent to-transparent'
+          badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+          glow: 'from-rose-500/20 via-transparent to-transparent'
         };
       case 'shows':
         return {
@@ -841,8 +843,8 @@ export function useEventModal({
         return {
           label: 'Dilema Personal',
           icon: Sparkles,
-          badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
-          glow: 'from-indigo-500/20 via-transparent to-transparent'
+          badgeColor: 'bg-zinc-500/20 text-zinc-300 border-zinc-500/40',
+          glow: 'from-zinc-500/20 via-transparent to-transparent'
         };
     }
   }, [event.category]);
@@ -865,8 +867,8 @@ export function useEventModal({
       case 'rare':
         return {
           label: 'Evento Raro',
-          badgeClass: 'bg-purple-400/20 text-purple-300 border-purple-400/50 shadow-[0_0_10px_rgba(192,132,252,0.25)]',
-          dotColor: 'bg-purple-400'
+          badgeClass: 'bg-orange-500/20 text-orange-300 border-orange-500/50',
+          dotColor: 'bg-orange-400'
         };
       case 'uncommon':
         return {
@@ -918,6 +920,15 @@ export function useEventModal({
       const isEligible = isAffordable && hasEnoughEnergy && hasRequiredStat;
       const { chips, cleanedNarrative } = parseConsequences(choice.consequencesDescription || '');
       const { hasRisk, riskWarning, riskSeverity } = detectRiskWarning(choice, playerFunds);
+      let successProbability = choice.successProbability;
+      let riskProbability = choice.riskProbability;
+      if (hasRisk && (!successProbability || !riskProbability)) {
+        const disc = player?.personality?.discipline ?? 50;
+        const cred = player?.stats?.artisticCredibility ?? 50;
+        const rep = player?.stats?.reputation ?? 50;
+        successProbability = Math.min(85, Math.max(25, Math.floor(60 + (disc - 50) * 0.25 + (cred - 50) * 0.15 + (rep - 50) * 0.10)));
+        riskProbability = 100 - successProbability;
+      }
 
       return {
         raw: choice,
@@ -934,7 +945,9 @@ export function useEventModal({
         unmetReasons,
         hasRisk,
         riskWarning,
-        riskSeverity
+        riskSeverity,
+        successProbability,
+        riskProbability
       };
     });
   }, [rawChoices, player?.stats?.funds, player?.stats?.energy, player?.stats, player?.personality]);

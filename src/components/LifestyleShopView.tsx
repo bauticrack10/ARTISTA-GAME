@@ -52,7 +52,7 @@ const CATEGORY_TABS: Array<{ id: 'all' | LifestyleCategory; label: string; iconC
   { id: 'studio', label: 'Estudio & Micrófonos', iconColor: 'text-cyan-400' },
   { id: 'real_estate', label: 'Viviendas & Inmuebles', iconColor: 'text-emerald-400' },
   { id: 'vehicles', label: 'Vehículos & Movilidad', iconColor: 'text-rose-400' },
-  { id: 'coaching', label: 'Coaching & Salud', iconColor: 'text-purple-400' }
+  { id: 'coaching', label: 'Coaching & Salud', iconColor: 'text-orange-400' }
 ];
 
 export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({

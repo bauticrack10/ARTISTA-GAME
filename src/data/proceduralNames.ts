@@ -567,7 +567,21 @@ export const CITIES_BY_REGION: Record<string, Array<{ name: string; country: str
 /**
  * Extracts a normalized Set of existing song titles from various input structures.
  */
-function extractTitleSet(existingTitles?: Set<string> | string[] | Record<string, Song> | Song[]): Set<string> {
+const _titleSetCache = new WeakMap<object, Set<string>>();
+
+function extractTitleSet(existingTitles?: Set<string> | string[] | Record<string, any> | any[]): Set<string> {
+  if (!existingTitles) return new Set<string>();
+  if (typeof existingTitles === 'object' && !(existingTitles instanceof Set) && !Array.isArray(existingTitles)) {
+    let cached = _titleSetCache.get(existingTitles);
+    if (!cached) {
+      cached = new Set<string>();
+      Object.values(existingTitles).forEach((item: any) => {
+        if (item && item.title) cached!.add(normalizeTitle(item.title));
+      });
+      _titleSetCache.set(existingTitles, cached);
+    }
+    return cached;
+  }
   const result = new Set<string>();
   if (!existingTitles) return result;
 
@@ -656,6 +670,7 @@ export function generateUniqueSongTitle(params: {
     const norm = normalizeTitle(candidate);
 
     if (!existingSet.has(norm)) {
+      existingSet.add(norm);
       return candidate;
     }
   }
@@ -672,6 +687,7 @@ export function generateUniqueSongTitle(params: {
     const candidate = `${fallbackNoun} ${modifier}`;
     const norm = normalizeTitle(candidate);
     if (!existingSet.has(norm)) {
+      existingSet.add(norm);
       return candidate;
     }
   }
@@ -708,8 +724,8 @@ export function generateUniqueAlbumTitle(params: {
   genreId?: string;
   seedIndex?: number;
 }): string {
-  const existingSet = new Set<string>();
-  if (params.existingTitles) {
+  const existingSet = extractTitleSet(params.existingTitles);
+  if (false && params.existingTitles) {
     if (params.existingTitles instanceof Set) {
       params.existingTitles.forEach(t => existingSet.add(normalizeTitle(t)));
     } else if (Array.isArray(params.existingTitles)) {
@@ -743,6 +759,7 @@ export function generateUniqueAlbumTitle(params: {
 
     const norm = normalizeTitle(candidate);
     if (!existingSet.has(norm)) {
+      existingSet.add(norm);
       return candidate;
     }
   }

@@ -4,8 +4,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_nico_homestudio: {
     id: 'prod_nico_homestudio',
     name: "Nico 'Home Studio'",
-    tagline: 'Grabando en la pieza',
-    signatureStyle: '808s caseros, compresión cruda, loops directos y ritmo barrial accesible',
+    tagline: 'Grabando en la pieza con paneles de gomaespuma',
+    signatureStyle: '808s saturados en FL Studio y voces comprimidas directo por placa USB de dos canales',
     genreSpecialties: ['trap_latino', 'hip_hop_rap', 'reggaeton', 'drill'],
     reputation: 25,
     costPerTrack: 200,
@@ -19,8 +19,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_lauty_sample: {
     id: 'prod_lauty_sample',
     name: "Lauty 'Sample Digger'",
-    tagline: 'Crate digging & FL Studio',
-    signatureStyle: 'Samples de vinilo antiguos, melodías nostálgicas y texturas lo-fi con onda',
+    tagline: 'Bandeja Technics & Akai MPC',
+    signatureStyle: 'Recortes de vinilos de soul olvidados en bateas de Once con baterías sucias sin cuantizar',
     genreSpecialties: ['hip_hop_rap', 'trap_latino', 'r_and_b_soul', 'rock_alternativo'],
     reputation: 38,
     costPerTrack: 450,
@@ -34,8 +34,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_club_hustle: {
     id: 'prod_club_hustle',
     name: 'Club Hustle',
-    tagline: 'In the basement',
-    signatureStyle: 'Beats rápidos de bajo presupuesto pero mucha actitud callejera',
+    tagline: 'Sótano en Chacarita',
+    signatureStyle: 'Mezclas agresivas enfocadas en que el subgrave rompa los parlantes del boliche a las 4 AM',
     genreSpecialties: ['trap_latino', 'drill', 'hip_hop_rap'],
     reputation: 52,
     costPerTrack: 1500,
@@ -50,8 +50,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_synth_alchemist: {
     id: 'prod_synth_alchemist',
     name: 'Synth Alchemist',
-    tagline: 'Retro Wave Lab',
-    signatureStyle: 'Sintetizadores vintage Juno-106, cajas de ritmo analógicas y reverberaciones espaciales',
+    tagline: 'Sala Analógica en Poblenou',
+    signatureStyle: 'Colchones de Roland Juno-106 pasados por cinta Studer y reverbs de placas reales',
     genreSpecialties: ['pop_moderno', 'musica_electronica', 'r_and_b_soul'],
     reputation: 74,
     costPerTrack: 8000,
@@ -66,8 +66,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_oniria: {
     id: 'prod_oniria',
     name: 'Oniria',
-    tagline: 'Mueva Records',
-    signatureStyle: 'Trap crudo, beats experimentales, distorsión y texturas lo-fi',
+    tagline: 'Pionero del sonido Mansión',
+    signatureStyle: 'Arpegios oscuros, hi-hats en tresillos veloces y cadenas vocales con autotune al límite',
     genreSpecialties: ['trap_latino', 'drill'],
     reputation: 82,
     costPerTrack: 16000,
@@ -82,8 +82,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_tainy: {
     id: 'prod_tainy',
     name: 'Tainy',
-    tagline: 'Neon16',
-    signatureStyle: 'Dembow futurista, texturas ambient, armonías de pop vanguardista',
+    tagline: 'Neon16 Studios — Miami',
+    signatureStyle: 'Baterías de reggaetón filtradas bajo el agua y arreglos de sintetizador que facturan billones de streams',
     genreSpecialties: ['reggaeton', 'pop_moderno', 'trap_latino'],
     reputation: 96,
     costPerTrack: 55000,
@@ -98,8 +98,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_metro_boomin: {
     id: 'prod_metro_boomin',
     name: 'Metro Boomin',
-    tagline: 'If Young Metro don’t trust you...',
-    signatureStyle: '808s cinematográficos, melodías oscuras y góticas de piano y cuerdas',
+    tagline: 'Boominati Worldwide — Atlanta',
+    signatureStyle: 'Transiciones sin silencios entre cortes, cuerdas sombrías y subgraves mezclados en consola SSL 9000',
     genreSpecialties: ['hip_hop_rap', 'trap_latino'],
     reputation: 97,
     costPerTrack: 75000,
@@ -114,8 +114,8 @@ export const INITIAL_PRODUCERS: Record<string, Producer> = {
   prod_bizarrap: {
     id: 'prod_bizarrap',
     name: 'Bizarrap',
-    tagline: '¡Biza!',
-    signatureStyle: 'BZRP Music Sessions, drops explosivos, sintetizadores analógicos, fusión electrónica-urbana',
+    tagline: 'Home Studio — Ramos Mejía',
+    signatureStyle: 'Tomas vocales cara a cara con micrófono Neumann U87, drops de sintetizador y cortes de master listos para el #1 global',
     genreSpecialties: ['trap_latino', 'musica_electronica', 'hip_hop_rap', 'pop_moderno'],
     reputation: 98,
     costPerTrack: 85000,
@@ -147,7 +147,7 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 500,
       hiringFee: 500
     },
-    bio: 'Gestor del circuito callejero y clubes barriales. Ideal para dar los primeros pasos sin presiones corporativas.',
+    bio: 'Cierra fechas en clubes del conurbano a porcentaje de puerta y cobra en efectivo al terminar el show. No te ata con contratos de 360 grados.',
     avatarGradient: 'from-amber-600 to-stone-700'
   },
   mgr_brenda_fuga: {
@@ -166,14 +166,14 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 1200,
       hiringFee: 1200
     },
-    bio: 'Especialista en conectar artistas urbanos con beatmakers emergentes y festivales barriales.',
+    bio: 'Sube tus cortes a agregadoras independientes conservando el 100% de tus regalías fonográficas y te consigue lugar en festivales autogestionados.',
     avatarGradient: 'from-stone-700 to-zinc-800'
   },
 
-  // Tier 2: Regional & Indie Vanguard
+  // Tier 2: Regional & Indie
   mgr_clara_vanguard: {
     id: 'mgr_clara_vanguard',
-    name: 'Clara Vanguardia',
+    name: 'Clara Salvatierra',
     tier: 'regional',
     reputation: 82,
     negotiationSkill: 78,
@@ -187,7 +187,7 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 4000,
       hiringFee: 4000
     },
-    bio: 'Prensa cultural de vanguardia y giras por teatros independientes de Latinoamérica y Europa.',
+    bio: 'Arma circuitos de teatros a sala llena entre Buenos Aires, Montevideo, Santiago y Madrid. Tiene línea directa con editores de prensa musical y jurados de premiaciones.',
     avatarGradient: 'from-teal-700 to-emerald-900'
   },
   mgr_nico_street: {
@@ -206,8 +206,8 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 6000,
       hiringFee: 6000
     },
-    bio: 'Impulsor de tendencias virales en redes, colaboraciones regionales y festivales medianos.',
-    avatarGradient: 'from-blue-700 to-indigo-900'
+    bio: 'Negocia adelantos de distribución digital sin entregar la propiedad del master y cruza colaboraciones con los productores que están dominando el ranking del Cono Sur.',
+    avatarGradient: 'from-cyan-700 to-slate-900'
   },
 
   // Tier 3: Nacional / Consagrado
@@ -227,8 +227,8 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 18000,
       hiringFee: 18000
     },
-    bio: 'El arquitecto detrás del auge de la música urbana argentina y giras monumentales en estadios.',
-    avatarGradient: 'from-purple-800 to-indigo-950'
+    bio: 'Fundador de Dale Play. Lleva proyectos desde el Movistar Arena hasta agotar estadios de fútbol en Madrid y Buenos Aires, reteniendo el corte grueso del borderó.',
+    avatarGradient: 'from-orange-700 to-stone-950'
   },
   mgr_hernan_duque: {
     id: 'mgr_hernan_duque',
@@ -246,11 +246,11 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 25000,
       hiringFee: 25000
     },
-    bio: 'Estratega de rotación radial comercial, acuerdos de patrocinio y giras por arenas internacionales.',
+    bio: 'Ex director de A&R en multinacional. Destraba presupuestos de seis cifras en adelantos editoriales y asegura patrocinadores para financiar giras en México y España.',
     avatarGradient: 'from-amber-800 to-rose-950'
   },
 
-  // Tier 4: Élite / Global Visionary
+  // Tier 4: Élite / Global
   mgr_noah_assad: {
     id: 'mgr_noah_assad',
     name: 'Noah Assad',
@@ -267,8 +267,8 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 60000,
       hiringFee: 60000
     },
-    bio: 'La mente maestra global detrás del fenómeno de estadios mundiales y control estratégico de másters.',
-    avatarGradient: 'from-rose-800 to-black'
+    bio: 'Cofundador de Rimas Entertainment. Diseña contratos donde el artista retiene la mayoría de las regalías de streaming mientras encabeza Coachella y agota estadios en Estados Unidos.',
+    avatarGradient: 'from-rose-800 to-zinc-950'
   },
   mgr_max_thorne: {
     id: 'mgr_max_thorne',
@@ -286,7 +286,7 @@ export const INITIAL_MANAGERS: Record<string, Manager> = {
       minFunds: 100000,
       hiringFee: 100000
     },
-    bio: 'Representante de superestrellas mundiales en EE.UU. y Europa. Conexiones directas con la élite de la industria.',
+    bio: 'Opera desde Los Ángeles y Londres con promotores de Live Nation y AEG. Garantiza mínimos millonarios por tramo de gira y posiciona campañas directas para la votación de la Academia.',
     avatarGradient: 'from-amber-700 via-zinc-900 to-black'
   }
 };

@@ -58,6 +58,7 @@ import { GenreTrendEngine } from '../systems/GenreTrendEngine';
 import { EventEngine } from '../systems/EventEngine';
 import { EconomyEngine } from '../systems/EconomyEngine';
 import { TourEngine } from '../systems/TourEngine';
+import { CertificationEngine } from '../systems/CertificationEngine';
 import { StreamingEngine, EDITORIAL_PLAYLISTS } from '../systems/StreamingEngine';
 import { FestivalEngine, GLOBAL_FESTIVALS, STAGE_PRODUCTION_COSTS } from '../systems/FestivalEngine';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
@@ -100,7 +101,7 @@ export class GameEngine {
         realName: customPlayer.realName || 'Nombre Real',
         isPlayer: true,
         avatarUrl: customPlayer.avatarUrl,
-        avatarColor: customPlayer.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]',
+        avatarColor: customPlayer.avatarColor || 'from-amber-600 to-orange-800',
         avatarIcon: customPlayer.avatarIcon,
         country: customPlayer.country || 'Argentina',
         city: customPlayer.city || 'Buenos Aires',
@@ -173,7 +174,7 @@ export class GameEngine {
         name: 'Mi Artista',
         realName: 'Nombre Real',
         isPlayer: true,
-        avatarColor: 'from-[#7C3AED] via-[#8B5CF6] to-[#C026D3]',
+        avatarColor: 'from-amber-600 to-orange-800',
         avatarIcon: 'mic',
         country: 'Argentina',
         city: 'Buenos Aires',
@@ -268,8 +269,8 @@ export class GameEngine {
       news: [
         {
           id: 'news_init_1',
-          headline: 'Comienza una nueva era en la industria de la música',
-          body: 'Productores independientes y nuevas voces prometen redefinir los charts y las tendencias sonoras.',
+          headline: 'Arranca el calendario de lanzamientos con sellos independientes al frente',
+          body: 'Los estudios de grabación en Buenos Aires, Ciudad de México y Madrid reportan agenda llena para el primer trimestre de 2026.',
           year: 2026,
           month: 1,
           category: 'culture',
@@ -286,11 +287,11 @@ export class GameEngine {
           authorHandle: '@trapflow_arg',
           authorVerified: true,
           authorType: 'media',
-          authorAvatarGradient: 'from-purple-700 to-indigo-900',
+          authorAvatarGradient: 'from-amber-600 to-orange-800',
           badge: 'Radar de Nuevos Talentos',
           year: 2026,
           month: 1,
-          content: 'Comienza una nueva era en la escena urbana. Productores independientes y nuevas voces prometen redefinir los charts.',
+          content: 'Los estudios caseros de Buenos Aires están sacando mejores mezclas que las multinacionales este verano. Hay cuatro o cinco nombres nuevos para seguir de cerca.',
           likes: 540,
           retweetsOrShares: 85,
           commentsCount: 34,
@@ -775,6 +776,14 @@ export class GameEngine {
       throw new Error(`Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año). El cupo se reiniciará en enero (Semestre 1).`);
     }
 
+    // Anti-spam mensual: no saturar el mercado en el mismo mes; requiere avanzar tiempo para ver el impacto
+    const singlesThisMonth = Object.values(this.world.songs).filter(
+      s => s.artistId === player.id && s.isSingle && s.releaseYear === this.world.currentYear && s.releaseMonth === this.world.currentMonth
+    ).length;
+    if (singlesThisMonth >= 1) {
+      throw new Error(`Ya lanzaste un sencillo este mes (${this.world.currentYear}, Mes ${this.world.currentMonth}). Avanza el tiempo (+1M o +3M) para observar su debut en los charts y preparar la siguiente campaña.`);
+    }
+
     if (player.stats.energy < 15) {
       throw new Error('Energía insuficiente para grabar y publicar un single (requiere al menos 15% de energía).');
     }
@@ -848,11 +857,28 @@ export class GameEngine {
 
     const chosenLongevity = params.longevityCurve || perfEval.longevityCurve;
 
-    const baseQuality = Math.min(100, Math.max(10, Math.floor(
-      player.personality.skill * 0.40 +
-      player.personality.creativity * 0.30 +
-      perfEval.productionQuality * 0.30
+    // Fórmula de Calidad y Éxito Transparente (Skills + Estudio + Estado/Forma + Sinergia Género & Hype)
+    const skillsComponent = (player.personality.skill * 0.35 + player.personality.creativity * 0.35 + player.personality.charisma * 0.15 + player.personality.originality * 0.15);
+    const studioComponent = perfEval.productionQuality;
+    const formFactor = player.stats.energy >= 70 ? 4 : (player.stats.energy < 30 ? -Math.floor((30 - player.stats.energy) * 0.35) : 0);
+    
+    let genreSynergy = 0;
+    const activeTrends = Object.values(this.world.trends || {}).filter(t => t.stage !== 'exhausted');
+    for (const tr of activeTrends) {
+      if (tr.genreId === params.genreId || (params.subGenreIds && params.subGenreIds.includes(tr.genreId))) {
+        genreSynergy += Math.floor(tr.impactMultiplier * 3);
+      }
+    }
+    const hypeFactor = Math.floor(player.stats.hype * 0.10);
+
+    const baseQuality = Math.min(100, Math.max(12, Math.floor(
+      (skillsComponent * 0.40) +
+      (studioComponent * 0.35) +
+      (genreSynergy * 0.10) +
+      (hypeFactor * 0.10) +
+      formFactor
     )));
+
 
     const commercialAppeal = Math.min(100, Math.max(10, Math.floor(
       player.personality.commercialAppeal * 0.45 +
@@ -1252,12 +1278,12 @@ export class GameEngine {
     });
 
     const gradients = [
-      'from-amber-600 via-rose-950 to-black',
-      'from-purple-900 via-zinc-950 to-blue-950',
-      'from-emerald-700 via-teal-950 to-black',
-      'from-cyan-700 via-indigo-950 to-zinc-950',
-      'from-rose-700 via-amber-950 to-stone-950',
-      'from-indigo-800 via-slate-900 to-black'
+      'from-amber-600 to-orange-800',
+      'from-zinc-800 to-zinc-950',
+      'from-emerald-600 to-teal-900',
+      'from-cyan-700 to-slate-950',
+      'from-rose-600 to-red-900',
+      'from-stone-800 to-neutral-950'
     ];
 
     const newAlbum: Album = {
@@ -1688,7 +1714,7 @@ export class GameEngine {
         singlesIncludedCount: 0,
         peakChartPosition: createDefaultPeakPosition(),
         awards: [],
-        coverGradient: 'from-violet-600 via-fuchsia-600 to-indigo-950'
+        coverGradient: 'from-amber-600 to-orange-800'
       };
       this.world.albums[albumId] = createdAlbum;
 
@@ -2929,6 +2955,22 @@ export class GameEngine {
         }
       }
 
+      // 5.3 Certificaciones Oficiales de la Industria (Discos de Oro, Platino y Diamante)
+      const certRes = CertificationEngine.evaluateCertifications(this.world);
+      for (const item of certRes.newsItems) {
+        this.world.news.unshift({
+          id: `news_cert_${Date.now()}_${Math.random()}`,
+          headline: item.headline,
+          body: item.body,
+          year: this.world.currentYear,
+          month: this.world.currentMonth,
+          category: 'award',
+          relatedArtistIds: [item.relatedArtistId],
+          sentiment: 'positive',
+          importance: 5
+        });
+      }
+
       // 6. Annual awards and mandatory drought check on December end
       if (isNewYear) {
         // Mandatory Creative Drought check: Did the player release ANY song or album this year?
@@ -3738,33 +3780,141 @@ export class GameEngine {
 
   public importSaveState(jsonString: string): boolean {
     try {
-      const parsed: GameSaveState = JSON.parse(jsonString);
-      if (parsed && parsed.world && parsed.playerId) {
-        this.world = parsed.world;
-        if (!this.world.socialFeed) this.world.socialFeed = [];
-        if (!this.world.ecosystemContacts) this.world.ecosystemContacts = RelationshipEngine.getInitialEcosystemContacts();
-        if (!this.world.activeBeefs) this.world.activeBeefs = {};
-        if (!this.world.financialLedger) this.world.financialLedger = [];
-        if (!this.world.pendingCollabOffers) this.world.pendingCollabOffers = [];
-        if (!this.world.activeCollabPacts) this.world.activeCollabPacts = [];
-        if (!this.world.playlists) this.world.playlists = EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
-        if (!this.world.festivalInvitations) this.world.festivalInvitations = [];
-        if (!this.world.festivalHistory) this.world.festivalHistory = [];
-        const player = this.world.artists[parsed.playerId];
-        if (player && !player.financialLedger) {
-          player.financialLedger = [];
-        }
-        this.playerId = parsed.playerId;
-        this.currentEvent = null;
-        this.eventQueue = [];
-        this.notify();
-        return true;
+      if (!jsonString || typeof jsonString !== 'string') return false;
+      const parsed: any = JSON.parse(jsonString);
+      if (!parsed || typeof parsed !== 'object') return false;
+
+      const rawWorld = parsed.world || (parsed.artists ? parsed : null);
+      let rawPlayerId = parsed.playerId || (rawWorld && Object.values(rawWorld.artists || {}).find((a: any) => a.isPlayer)?.id);
+
+      if (!rawWorld) {
+        console.warn('Save state lacking world');
+        return false;
       }
-      return false;
+
+      this.world = rawWorld;
+
+      // 1. World Schema Migration & Safe Defaults
+      this.world.currentYear = Number(this.world.currentYear) || 2026;
+      this.world.currentMonth = Math.min(12, Math.max(1, Number(this.world.currentMonth) || 1));
+      this.world.artists = this.world.artists || {};
+      this.world.songs = this.world.songs || {};
+      this.world.albums = this.world.albums || {};
+      this.world.charts = this.world.charts || {};
+      this.world.trends = this.world.trends || {};
+      this.world.genres = this.world.genres || INITIAL_GENRES;
+      this.world.labels = this.world.labels || INITIAL_LABELS;
+      this.world.producers = this.world.producers || INITIAL_PRODUCERS;
+      this.world.managers = this.world.managers || INITIAL_MANAGERS;
+      this.world.news = Array.isArray(this.world.news) ? this.world.news : [];
+      this.world.awardsHistory = Array.isArray(this.world.awardsHistory) ? this.world.awardsHistory : [];
+      this.world.tours = Array.isArray(this.world.tours) ? this.world.tours : [];
+      this.world.socialFeed = Array.isArray(this.world.socialFeed) ? this.world.socialFeed : [];
+      this.world.ecosystemContacts = Array.isArray(this.world.ecosystemContacts) && this.world.ecosystemContacts.length > 0
+        ? this.world.ecosystemContacts
+        : RelationshipEngine.getInitialEcosystemContacts();
+      this.world.activeBeefs = this.world.activeBeefs || {};
+      this.world.financialLedger = Array.isArray(this.world.financialLedger) ? this.world.financialLedger : [];
+      this.world.pendingCollabOffers = Array.isArray(this.world.pendingCollabOffers) ? this.world.pendingCollabOffers : [];
+      this.world.activeCollabPacts = Array.isArray(this.world.activeCollabPacts) ? this.world.activeCollabPacts : [];
+      this.world.playlists = this.world.playlists || EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
+      this.world.festivalInvitations = Array.isArray(this.world.festivalInvitations) ? this.world.festivalInvitations : [];
+      this.world.festivalHistory = Array.isArray(this.world.festivalHistory) ? this.world.festivalHistory : [];
+      this.world.recentEventIdsHistory = Array.isArray(this.world.recentEventIdsHistory) ? this.world.recentEventIdsHistory : [];
+      this.world.activeNarrativeChains = this.world.activeNarrativeChains || {};
+      this.world.officialCertifications = Array.isArray(this.world.officialCertifications) ? this.world.officialCertifications : [];
+
+      // 2. Player Schema Migration & Safe Defaults
+      let player = rawPlayerId ? this.world.artists[rawPlayerId] : undefined;
+      if (!player) {
+        player = Object.values(this.world.artists).find((a: any) => a.isPlayer) as Artist;
+        if (player) {
+          rawPlayerId = player.id;
+        } else {
+          return false;
+        }
+      }
+
+      this.playerId = rawPlayerId;
+      player.isPlayer = true;
+      player.name = player.name || 'El Artista';
+      player.mainGenreId = player.mainGenreId || 'trap_latino';
+      player.subGenreIds = Array.isArray(player.subGenreIds) ? player.subGenreIds : [];
+      player.country = player.country || 'Argentina';
+      player.city = player.city || 'Buenos Aires';
+      player.birthYear = Number(player.birthYear) || 2005;
+      player.careerStartYear = Number(player.careerStartYear) || 2026;
+      player.careerStage = player.careerStage || 'Underground';
+      player.legacyScore = Number(player.legacyScore) || 0;
+      player.isRetired = Boolean(player.isRetired);
+
+      // Safe Stats Defaults
+      player.stats = player.stats || {} as any;
+      player.stats.funds = Number(player.stats.funds) >= 0 ? Number(player.stats.funds) : 1000;
+      player.stats.energy = Math.min(100, Math.max(0, Number(player.stats.energy) || 100));
+      player.stats.popularity = Math.min(100, Math.max(0, Number(player.stats.popularity) || 10));
+      player.stats.reputation = Math.min(100, Math.max(0, Number(player.stats.reputation) || 10));
+      player.stats.artisticCredibility = Math.min(100, Math.max(0, Number(player.stats.artisticCredibility) || 20));
+      player.stats.monthlyListeners = Number(player.stats.monthlyListeners) || 0;
+      player.stats.totalStreams = Number(player.stats.totalStreams) || 0;
+      player.stats.fansCount = Number(player.stats.fansCount) || 50;
+      player.stats.fanbaseLoyalty = Math.min(100, Math.max(0, Number(player.stats.fanbaseLoyalty) || 50));
+      player.stats.hype = Math.min(100, Math.max(0, Number(player.stats.hype) || 20));
+
+      // Safe Personality Defaults
+      player.personality = player.personality || {} as any;
+      player.personality.skill = Number(player.personality.skill) || 50;
+      player.personality.creativity = Number(player.personality.creativity) || 50;
+      player.personality.ambition = Number(player.personality.ambition) || 50;
+      player.personality.discipline = Number(player.personality.discipline) || 50;
+      player.personality.charisma = Number(player.personality.charisma) || 50;
+      player.personality.commercialAppeal = Number(player.personality.commercialAppeal) || 50;
+      player.personality.originality = Number(player.personality.originality) || 50;
+      player.personality.riskTolerance = Number(player.personality.riskTolerance) || 50;
+      player.personality.sociability = Number(player.personality.sociability) || 50;
+      player.personality.independence = Number(player.personality.independence) || 50;
+
+      // Safe Arrays
+      player.eras = Array.isArray(player.eras) && player.eras.length > 0 ? player.eras : [{
+        id: 'era_' + player.id + '_init',
+        name: 'Comienzo de Carrera',
+        startYear: player.careerStartYear,
+        startMonth: 1,
+        genreFocus: player.mainGenreId,
+        stage: player.careerStage,
+        highlightSummary: 'Primeros pasos en la escena musical.'
+      }];
+      player.relationships = player.relationships || {};
+      player.awardsWon = Array.isArray(player.awardsWon) ? player.awardsWon : [];
+      player.lifestyleUpgrades = Array.isArray(player.lifestyleUpgrades) ? player.lifestyleUpgrades : [];
+      player.financialLedger = Array.isArray(player.financialLedger) ? player.financialLedger : [];
+      player.officialCertifications = Array.isArray(player.officialCertifications) ? player.officialCertifications : [];
+      player.phoneMessages = Array.isArray(player.phoneMessages) ? player.phoneMessages : [];
+      player.unreadPhoneCount = Number(player.unreadPhoneCount) || 0;
+
+      // 3. Songs & Albums safe hydration
+      for (const song of Object.values(this.world.songs || {})) {
+        if (!song || typeof song !== 'object') continue;
+        song.peakPosition = song.peakPosition || createDefaultPeakPosition();
+        song.weeksOnChart = song.weeksOnChart || createDefaultWeeksOnChart();
+        song.monthlyStreamsHistory = Array.isArray(song.monthlyStreamsHistory) ? song.monthlyStreamsHistory : [];
+        song.certifications = Array.isArray(song.certifications) ? song.certifications : [];
+      }
+
+      for (const album of Object.values(this.world.albums || {})) {
+        if (!album || typeof album !== 'object') continue;
+        album.songIds = Array.isArray(album.songIds) ? album.songIds : [];
+        album.certifications = Array.isArray(album.certifications) ? album.certifications : [];
+        album.peakChartPosition = album.peakChartPosition || createDefaultPeakPosition();
+      }
+
+      this.currentEvent = null;
+      this.eventQueue = [];
+      this.notify();
+      return true;
     } catch (e) {
       console.error('Error importing save state:', e);
       return false;
     }
   }
 }
-

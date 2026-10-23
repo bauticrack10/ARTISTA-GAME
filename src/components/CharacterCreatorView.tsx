@@ -324,10 +324,10 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     label: 'Creatividad & Vanguardia',
     shortLabel: 'Creatividad',
     icon: Sparkles,
-    iconColor: 'text-purple-400',
-    gradient: 'from-purple-500 to-indigo-600',
-    bgTrack: 'bg-purple-950/40',
-    desc: 'Capacidad compositiva, experimentación sonora y profundidad conceptual.'
+    iconColor: 'text-[#FF4F00]',
+    gradient: 'from-[#FF4F00] to-[#D97706]',
+    bgTrack: 'bg-[#18181C]',
+    desc: 'Composición de estructuras, arreglos en cabina y búsqueda de texturas fuera de fórmula.'
   },
   {
     key: 'skill',
@@ -337,7 +337,7 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     iconColor: 'text-cyan-400',
     gradient: 'from-cyan-500 to-blue-600',
     bgTrack: 'bg-cyan-950/40',
-    desc: 'Técnica vocal, métrica rítmica, ejecución de instrumentos y pulido en estudio.'
+    desc: 'Afinación en primera toma, precisión rítmica, manejo de consola y limpieza de mezcla.'
   },
   {
     key: 'charisma',
@@ -347,7 +347,7 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     iconColor: 'text-amber-400',
     gradient: 'from-amber-400 to-orange-500',
     bgTrack: 'bg-amber-950/40',
-    desc: 'Magnetismo en tarima, soltura en redes y fidelización orgánica de fans.'
+    desc: 'Dominio de escenario en vivo, trato con cámaras y retención de público en cada fecha.'
   },
   {
     key: 'commercialAppeal',
@@ -357,27 +357,27 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     iconColor: 'text-emerald-400',
     gradient: 'from-emerald-400 to-teal-500',
     bgTrack: 'bg-emerald-950/40',
-    desc: 'Facilidad para crear ganchos pegadizos y sonar en playlists masivas.'
+    desc: 'Olfato para estribillos de rotación radial, cortes de difusión y entrada en listas editoriales.'
   },
   {
     key: 'originality',
     label: 'Originalidad Sonora',
     shortLabel: 'Originalidad',
     icon: Target,
-    iconColor: 'text-pink-400',
-    gradient: 'from-pink-500 to-rose-500',
-    bgTrack: 'bg-pink-950/40',
-    desc: 'Sello sonoro inconfundible, distinción estilística y respeto de la crítica underground.'
+    iconColor: 'text-[#FF2A4B]',
+    gradient: 'from-[#FF2A4B] to-[#9F1239]',
+    bgTrack: 'bg-[#18181C]',
+    desc: 'Timbre propio y firma de producción que pesan en las reseñas de prensa especializada.'
   },
   {
     key: 'discipline',
     label: 'Disciplina de Estudio',
     shortLabel: 'Disciplina',
     icon: ShieldCheck,
-    iconColor: 'text-blue-400',
-    gradient: 'from-blue-500 to-indigo-600',
-    bgTrack: 'bg-blue-950/40',
-    desc: 'Rigor en horas de grabación, cumplimiento de plazos y resistencia a la fatiga.'
+    iconColor: 'text-[#10B981]',
+    gradient: 'from-[#10B981] to-[#047857]',
+    bgTrack: 'bg-[#18181C]',
+    desc: 'Constancia en sesiones largas de grabación, entrega de másters a término y menor desgaste de gira.'
   },
   {
     key: 'ambition',
@@ -387,7 +387,7 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     iconColor: 'text-orange-400',
     gradient: 'from-orange-500 to-red-500',
     bgTrack: 'bg-orange-950/40',
-    desc: 'Impulso por trascender, superación de límites y búsqueda de escenarios mayores.'
+    desc: 'Presión en la mesa de negociación por mejores anticipos, cachés y plazas de mayor aforo.'
   },
   {
     key: 'riskTolerance',
@@ -397,7 +397,7 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     iconColor: 'text-yellow-400',
     gradient: 'from-yellow-400 to-amber-500',
     bgTrack: 'bg-yellow-950/40',
-    desc: 'Audacia para probar nuevas fórmulas sonoras y fusionar géneros.'
+    desc: 'Disposición a cambiar de sonido entre discos y financiar producciones caras sin respaldo.'
   },
   {
     key: 'sociability',
@@ -407,24 +407,24 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     iconColor: 'text-teal-400',
     gradient: 'from-teal-400 to-emerald-500',
     bgTrack: 'bg-teal-950/40',
-    desc: 'Química en el estudio con productores y facilidad para pactar feats.'
+    desc: 'Trato directo con productores, A&R y colegas para cerrar colaboraciones y repartir puntos.'
   },
   {
     key: 'independence',
     label: 'Autogestión / Independencia',
     shortLabel: 'Autogestión',
     icon: Headphones,
-    iconColor: 'text-indigo-400',
-    gradient: 'from-indigo-400 to-violet-500',
-    bgTrack: 'bg-indigo-950/40',
-    desc: 'Capacidad de autoproducción y autonomía en decisiones artísticas.'
+    iconColor: 'text-[#F59E0B]',
+    gradient: 'from-[#F59E0B] to-[#D97706]',
+    bgTrack: 'bg-[#18181C]',
+    desc: 'Capacidad para autoproducir maquetas, retener la propiedad de los másters y operar sin sello.'
   }
 ];
 
 export const getTraitDevelopmentTier = (val: number) => {
   if (val <= 20) return { label: 'Novato Base', color: 'text-slate-400 bg-slate-500/10 border-slate-500/30' };
   if (val <= 28) return { label: 'En Desarrollo', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30' };
-  if (val <= 38) return { label: 'Destacado Inicial', color: 'text-purple-300 bg-purple-500/20 border-purple-500/40' };
+  if (val <= 38) return { label: 'Destacado Inicial', color: 'text-[#FF4F00] bg-[#FF4F00]/20 border-[#FF4F00]/40' };
   if (val <= 60) return { label: 'Profesional', color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/40' };
   if (val <= 85) return { label: 'Élite de Escena', color: 'text-amber-400 bg-amber-500/20 border-amber-500/40' };
   return { label: 'Maestría Legendaria', color: 'text-rose-400 bg-rose-500/20 border-rose-500/40' };
@@ -458,7 +458,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   // 5. Visual Identity / Vector Avatar State
   const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>('symbol');
   const [avatarIcon, setAvatarIcon] = useState<string>('mic');
-  const [avatarColor, setAvatarColor] = useState<string>('from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
+  const [avatarColor, setAvatarColor] = useState<string>('from-[#FF4F00] to-[#D97706]');
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
 
   // 6. Prodigy Rare Trait (0.001% chance / 1 in 100,000)
@@ -487,7 +487,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     // Minor secret chance to proc prodigy on randomizer (1 in 100,000)
     if (Math.random() < 0.00001) {
       setIsProdigy(true);
-      setRollMessage('¡INCREÍBLE! ¡Has desbloqueado el rasgo Promesa / Prodigio (1 en 100.000)!');
+      setRollMessage('Oído absoluto detectado: activaste el rasgo Promesa / Prodigio (probabilidad 1 en 100.000).');
     }
   };
 
@@ -536,9 +536,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
     const won = Math.random() < 0.00001;
     if (won) {
       setIsProdigy(true);
-      setRollMessage('¡MILAGRO GENERACIONAL! ¡Has obtenido el rasgo Promesa / Prodigio (1 en 100.000)!');
+      setRollMessage('Caso 1 en 100.000: obtuviste el rasgo Promesa / Prodigio antes de entrar a cabina.');
     } else {
-      setRollMessage(`Intento #${rollCount + 1}: Probabilidad 0.001% (1 en 100.000). ¡Tu carrera inicia con talento auténtico!`);
+      setRollMessage(`Tirada #${rollCount + 1} (probabilidad 0.001%): sin bono de prodigio; vas a forjar tu oído a fuerza de horas de estudio.`);
       setTimeout(() => setRollMessage(null), 3500);
     }
   };
@@ -811,7 +811,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
       mainGenreId,
       subGenreIds: secondaryGenres,
       avatarUrl: undefined,
-      avatarColor: avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
+      avatarColor: avatarColor || 'from-[#FF4F00] to-[#D97706]',
       avatarIcon: avatarType === 'symbol' ? (avatarIcon || 'mic') : undefined,
       personality: finalPersonality,
       stats: {
@@ -839,8 +839,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           genreFocus: mainGenreId,
           stage: startStats.careerStage,
           highlightSummary: isProdigy
-            ? `Irrumpió en la escena en ${currentYear} en ${locationString}. Habilidad innata deslumbrante y aura de talento histórico.`
-            : `Inició su carrera musical en ${currentYear} en ${locationString}. Búsqueda del sonido propio y primeras grabaciones autogestionadas.`
+            ? `Debutó en ${currentYear} desde ${locationString} con oído absoluto y dominio precoz de consola.`
+            : `Empezó a grabar en ${currentYear} en ${locationString}, armando sus primeras maquetas y reteniendo sus propios másters.`
         }
       ],
       awardsWon: [],
@@ -895,7 +895,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </span>
               </h1>
               <p className="text-xs text-[#8E8E99] mt-0.5 font-mono">
-                Diseñá tu identidad visual, seleccioná tu concepto artístico e iniciá tu viaje en la industria musical.
+                Definí tu plaza de origen, sonido de cabecera, horas de estudio iniciales y presupuesto de arranque.
               </p>
             </div>
           </div>
@@ -1346,7 +1346,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     Curva de Progresión Realista (Nivel Amateur: 18 - 35 / 100)
                   </span>
                   <p className="leading-relaxed">
-                    Tu artista inicia en la escena underground. Las habilidades se desarrollarán y madurarán con el tiempo según los temas que grabes, el equipamiento de estudio que adquieras en la tienda de estilo de vida, el coaching vocal y las decisiones de carrera.
+                    Arrancás con métricas de circuito amateur. El oído para la mezcla, la técnica frente al micrófono y el aguante frente al desgaste de gira suben grabando catálogo, mejorando la cadena de audio del estudio y sumando fechas en vivo.
                   </p>
                 </div>
               </div>

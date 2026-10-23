@@ -42,51 +42,51 @@ export interface VectorAvatarPreset {
 export const AVATAR_PALETTES: AvatarPaletteOption[] = [
   {
     id: 'synth_violet',
-    label: 'Violeta Synth',
-    val: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
-    description: 'Atmósfera principal de estudio y neón nocturno'
+    label: 'Naranja Señal & Cinta',
+    val: 'from-[#FF4F00] via-[#EA580C] to-[#9A3412]',
+    description: 'Saturación cálida de consola analógica y cinta de dos pulgadas'
   },
   {
     id: 'cyber_magenta',
-    label: 'Magenta Neón & Cyber',
-    val: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]',
-    description: 'Energía vibrante y estética visual de vanguardia'
+    label: 'Rojo REC & Carmesí',
+    val: 'from-[#FF2A4B] via-[#E11D48] to-[#881337]',
+    description: 'Luz roja de cabina encendida en plena toma vocal'
   },
   {
     id: 'electric_cyan',
-    label: 'Cian & Azul Eléctrico',
-    val: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]',
-    description: 'Sonido futurista, síntesis digital y charts mundiales'
+    label: 'Cian Osciloscopio',
+    val: 'from-[#06B6D4] via-[#0284C7] to-[#0F172A]',
+    description: 'Medidores digitales de espectro y sintetizadores de rack'
   },
   {
     id: 'emerald_studio',
-    label: 'Esmeralda & Jade Studio',
+    label: 'Esmeralda VU Meter',
     val: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
-    description: 'Monitores de estudio, balance y precisión técnica'
+    description: 'Señal limpia en rango nominal sin saturar el bus maestro'
   },
   {
     id: 'gold_master',
-    label: 'Oro & Ámbar Master',
-    val: 'from-[#F59E0B] via-[#D97706] to-[#B45309]',
-    description: 'Prestigio, galas, hits platino y certificaciones'
+    label: 'Oro Vinilo & Ámbar',
+    val: 'from-[#D4AF37] via-[#F59E0B] to-[#B45309]',
+    description: 'Placa certificada por ventas físicas y millones de reproducciones'
   },
   {
     id: 'sunset_urban',
-    label: 'Atardecer Urbano',
-    val: 'from-[#F97316] via-[#E11D48] to-[#9333EA]',
-    description: 'Fuego callejero, flow caribeño y calidez rítmica'
+    label: 'Válvula & Terracota',
+    val: 'from-[#F97316] via-[#E11D48] to-[#7C2D12]',
+    description: 'Preamplificadores a válvulas al límite de ganancia en el club'
   },
   {
     id: 'midnight_obsidian',
-    label: 'Obsidiana & Índigo Profundo',
-    val: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
-    description: 'Elegancia nocturna, sesiones de medianoche y misterio'
+    label: 'Obsidiana & Chasis Mate',
+    val: 'from-[#27272A] via-[#18181C] to-[#09090B]',
+    description: 'Acero cepillado de compresores de estudio a medianoche'
   },
   {
     id: 'graphite_slate',
-    label: 'Grafito & Platino Dark',
+    label: 'Grafito & Pizarra',
     val: 'from-[#64748B] via-[#475569] to-[#1E293B]',
-    description: 'Estilo sobrio, minimalista e industrial'
+    description: 'Paneles acústicos oscuros y herrajes industriales de sala'
   }
 ];
 
@@ -112,17 +112,17 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
     id: 'trap_king',
     name: 'Trap King',
     category: 'urban',
-    color: 'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]',
+    color: 'from-[#FF4F00] via-[#EA580C] to-[#7C2D12]',
     icon: 'crown',
-    description: 'Realeza del género urbano, actitud imponente y barras directas.'
+    description: 'Subgraves que patean en el pecho y barras grabadas en una sola toma.'
   },
   {
     id: 'flow_street',
     name: 'Hype Master',
     category: 'urban',
-    color: 'from-[#F97316] via-[#E11D48] to-[#9333EA]',
+    color: 'from-[#F97316] via-[#E11D48] to-[#881337]',
     icon: 'flame',
-    description: 'Viralidad instantánea, carisma escénico y sonido explosivo.'
+    description: 'Dueño del pogo en festivales y de los cortes que suenan en cada auto del barrio.'
   },
   {
     id: 'studio_master',
@@ -130,23 +130,23 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
     category: 'electronic',
     color: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
     icon: 'headphones',
-    description: 'Dominio de sintetizadores, mezcla precisa y alquimia de beats.'
+    description: 'Oído quirúrgico en la consola para separar cada frecuencia de la mezcla.'
   },
   {
     id: 'pop_icon',
     name: 'Pop Icon',
     category: 'pop',
-    color: 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
+    color: 'from-[#FF2A4B] via-[#E11D48] to-[#9F1239]',
     icon: 'sparkles',
-    description: 'Estribillos globales, carisma mediático y presencia en charts.'
+    description: 'Estribillos radiales diseñados para rotar sin pausa y llenar arenas.'
   },
   {
     id: 'synth_electro',
-    name: 'Club & Cyber Nights',
+    name: 'Club & Modular Nights',
     category: 'electronic',
-    color: 'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]',
+    color: 'from-[#06B6D4] via-[#0284C7] to-[#0F172A]',
     icon: 'zap',
-    description: 'Sonido vanguardista de festival y rotación en playlists de club.'
+    description: 'Secuenciadores analógicos y bombos a 128 BPM pensados para la pista.'
   },
   {
     id: 'rock_legend',
@@ -154,22 +154,22 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
     category: 'rock',
     color: 'from-[#64748B] via-[#475569] to-[#1E293B]',
     icon: 'disc',
-    description: 'Guitarras potentes, energía cruda y autenticidad sin filtros.'
+    description: 'Amplificadores valvulares al diez y tomas en vivo sin edición digital.'
   },
   {
     id: 'lyrical_pro',
     name: 'Poeta del Micrófono',
     category: 'artistic',
-    color: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
+    color: 'from-[#27272A] via-[#18181C] to-[#09090B]',
     icon: 'mic',
-    description: 'Complejidad poética, métrica afilada y credibilidad artística.'
+    description: 'Pluma afilada sobre bombos secos de sampler; cero relleno comercial.'
   },
   {
     id: 'gold_legacy',
     name: 'Leyenda Platino',
     category: 'legend',
-    color: 'from-[#F59E0B] via-[#D97706] to-[#B45309]',
+    color: 'from-[#D4AF37] via-[#F59E0B] to-[#B45309]',
     icon: 'star',
-    description: 'Multi-galardonado, clásicos generacionales y estatus histórico.'
+    description: 'Catálogo histórico con regalías vitalicias y estadios agotados en preventa.'
   }
 ];

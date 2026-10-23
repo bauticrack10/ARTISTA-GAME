@@ -65,7 +65,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string>(
-    player?.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]'
+    player?.avatarColor || 'from-[#FF4F00] to-[#D97706]'
   );
   const [selectedIcon, setSelectedIcon] = useState<string>(player?.avatarIcon || 'mic');
   const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>(
@@ -182,7 +182,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
     if (onOpenAvatarModal) {
       onOpenAvatarModal();
     } else {
-      setSelectedColor(player?.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
+      setSelectedColor(player?.avatarColor || 'from-[#FF4F00] to-[#D97706]');
       setSelectedIcon(player?.avatarIcon || 'mic');
       setAvatarType(player?.avatarIcon ? 'symbol' : 'initials');
       setIsAvatarModalOpen(true);
@@ -421,7 +421,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               {playerStats.hype} <span className="text-xs font-normal text-[#52525B] font-mono">/ 100</span>
             </span>
             <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
-              {playerStats.hype >= 70 ? 'En Tendencia 🔥' : 'Fase Creativa'}
+              {playerStats.hype >= 70 ? 'Rotación Alta en Prensa' : 'Trabajo de Estudio'}
             </span>
           </div>
 
@@ -509,7 +509,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <div className="space-y-0.5">
                 <h4 className="text-sm font-bold text-[#F4F4F6]">{player.name}</h4>
                 <p className="text-xs text-[#8E8E99]">
-                  Vista previa de tu avatar visual en el panel y cartas del juego.
+                  Así figura tu sello visual en créditos de catálogo, comunicados de prensa y rankings.
                 </p>
               </div>
             </div>

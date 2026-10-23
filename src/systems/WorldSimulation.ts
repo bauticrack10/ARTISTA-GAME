@@ -67,13 +67,13 @@ export class WorldSimulation {
       const isProdigy = Math.random() < 0.00001;
 
       const AVATAR_COLORS = [
-        'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]',
-        'from-[#8B5CF6] via-[#9333EA] to-[#C026D3]',
-        'from-[#06B6D4] via-[#0284C7] to-[#4F46E5]',
+        'from-amber-600 to-orange-800',
+        'from-rose-600 to-red-900',
+        'from-cyan-600 to-slate-900',
         'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
         'from-[#F59E0B] via-[#D97706] to-[#B45309]',
-        'from-[#F97316] via-[#E11D48] to-[#9333EA]',
-        'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
+        'from-[#FF4F00] via-[#FF2A4B] to-[#18181C]',
+        'from-zinc-800 to-zinc-950',
         'from-[#64748B] via-[#475569] to-[#1E293B]'
       ];
       const AVATAR_ICONS = ['mic', 'crown', 'flame', 'disc', 'sparkles', 'zap', 'music', 'headphones', 'star', 'trophy'];
@@ -174,6 +174,8 @@ export class WorldSimulation {
     // severe, worsening slowdown the longer a save has been played (confirmed: each additional decade
     // of simulated time took measurably longer than the last).
     const songsByArtistId = new Map<string, Song[]>();
+    let totalSongsCounter = Object.keys(world.songs).length;
+    let totalAlbumsCounter = Object.keys(world.albums).length;
     for (const song of Object.values(world.songs)) {
       const list = songsByArtistId.get(song.artistId);
       if (list) list.push(song);
@@ -227,7 +229,7 @@ export class WorldSimulation {
             existingTitles: world.albums,
             artistName: artist.name,
             genreId: artist.mainGenreId,
-            seedIndex: Object.keys(world.albums).length + 1
+            seedIndex: ++totalAlbumsCounter
           });
           const albumId = `album_${artist.id}_${world.currentYear}_${world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
           const songCount = 8 + Math.floor(Math.random() * 6);
@@ -238,7 +240,7 @@ export class WorldSimulation {
               existingTitles: world.songs,
               artistName: artist.name,
               genreId: artist.mainGenreId,
-              seedIndex: Object.keys(world.songs).length + i + 1
+              seedIndex: ++totalSongsCounter
             });
             const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${i}_${Math.floor(Math.random() * 1000)}`;
 
@@ -281,7 +283,7 @@ export class WorldSimulation {
           }
 
           const gradients = [
-            'from-purple-900 via-indigo-950 to-black',
+            'from-zinc-800 to-zinc-950',
             'from-amber-600 via-rose-900 to-zinc-950',
             'from-emerald-800 via-teal-950 to-black',
             'from-blue-900 via-sky-950 to-neutral-900',
@@ -304,7 +306,7 @@ export class WorldSimulation {
             commercialScore: Math.floor(artist.personality.commercialAppeal * 0.6 + artist.stats.popularity * 0.4),
             peakChartPosition: { Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
             awards: [],
-            coverGradient: gradients[Object.keys(world.albums).length % gradients.length]
+            coverGradient: gradients[totalAlbumsCounter % gradients.length]
           };
 
           world.albums[albumId] = newAlbum;
@@ -315,7 +317,7 @@ export class WorldSimulation {
             existingTitles: world.songs,
             artistName: artist.name,
             genreId: artist.mainGenreId,
-            seedIndex: Object.keys(world.songs).length + 1
+            seedIndex: ++totalSongsCounter
           });
           const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 

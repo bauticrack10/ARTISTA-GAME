@@ -16,15 +16,15 @@ export const GENRE_THEMES: Record<string, GenreTheme> = {
   trap_latino: {
     id: 'trap_latino',
     name: 'Trap Latino',
-    badgeBg: 'bg-purple-100 dark:bg-purple-950/70',
-    badgeText: 'text-purple-800 dark:text-purple-300',
-    badgeBorder: 'border-purple-300 dark:border-purple-800/60',
-    gradient: 'from-violet-600 to-purple-800',
-    accentHex: '#8b5cf6',
-    textClass: 'text-purple-700 dark:text-purple-400',
-    bgSoft: 'bg-purple-50/70 dark:bg-purple-950/30',
-    borderClass: 'border-purple-200 dark:border-purple-800/40',
-    cyberGlow: 'shadow-[0_0_20px_rgba(139,92,246,0.35)]'
+    badgeBg: 'bg-orange-100 dark:bg-orange-950/70',
+    badgeText: 'text-orange-900 dark:text-orange-300',
+    badgeBorder: 'border-orange-300 dark:border-orange-800/60',
+    gradient: 'from-orange-600 to-amber-700',
+    accentHex: '#FF4F00',
+    textClass: 'text-orange-700 dark:text-orange-400',
+    bgSoft: 'bg-orange-50/70 dark:bg-orange-950/30',
+    borderClass: 'border-orange-200 dark:border-orange-800/40',
+    cyberGlow: 'shadow-[0_0_20px_rgba(255,79,0,0.35)]'
   },
   reggaeton: {
     id: 'reggaeton',
@@ -42,28 +42,28 @@ export const GENRE_THEMES: Record<string, GenreTheme> = {
   pop_moderno: {
     id: 'pop_moderno',
     name: 'Pop Moderno & Alt-Pop',
-    badgeBg: 'bg-pink-100 dark:bg-pink-950/70',
-    badgeText: 'text-pink-900 dark:text-pink-300',
-    badgeBorder: 'border-pink-300 dark:border-pink-800/60',
-    gradient: 'from-pink-500 to-rose-500',
-    accentHex: '#ec4899',
-    textClass: 'text-pink-700 dark:text-pink-400',
-    bgSoft: 'bg-pink-50/70 dark:bg-pink-950/30',
-    borderClass: 'border-pink-200 dark:border-pink-800/40',
-    cyberGlow: 'shadow-[0_0_20px_rgba(236,72,153,0.35)]'
+    badgeBg: 'bg-rose-100 dark:bg-rose-950/70',
+    badgeText: 'text-rose-900 dark:text-rose-300',
+    badgeBorder: 'border-rose-300 dark:border-rose-800/60',
+    gradient: 'from-rose-600 to-red-600',
+    accentHex: '#e11d48',
+    textClass: 'text-rose-700 dark:text-rose-400',
+    bgSoft: 'bg-rose-50/70 dark:bg-rose-950/30',
+    borderClass: 'border-rose-200 dark:border-rose-800/40',
+    cyberGlow: 'shadow-[0_0_20px_rgba(225,29,72,0.35)]'
   },
   r_and_b_soul: {
     id: 'r_and_b_soul',
     name: 'R&B & Neo-Soul',
-    badgeBg: 'bg-indigo-100 dark:bg-indigo-950/70',
-    badgeText: 'text-indigo-900 dark:text-indigo-300',
-    badgeBorder: 'border-indigo-300 dark:border-indigo-800/60',
-    gradient: 'from-indigo-600 to-blue-600',
-    accentHex: '#6366f1',
-    textClass: 'text-indigo-700 dark:text-indigo-400',
-    bgSoft: 'bg-indigo-50/70 dark:bg-indigo-950/30',
-    borderClass: 'border-indigo-200 dark:border-indigo-800/40',
-    cyberGlow: 'shadow-[0_0_20px_rgba(99,102,241,0.35)]'
+    badgeBg: 'bg-amber-100 dark:bg-amber-950/70',
+    badgeText: 'text-amber-900 dark:text-amber-300',
+    badgeBorder: 'border-amber-300 dark:border-amber-800/60',
+    gradient: 'from-amber-600 to-stone-700',
+    accentHex: '#d4af37',
+    textClass: 'text-amber-700 dark:text-amber-400',
+    bgSoft: 'bg-amber-50/70 dark:bg-amber-950/30',
+    borderClass: 'border-amber-200 dark:border-amber-800/40',
+    cyberGlow: 'shadow-[0_0_20px_rgba(212,175,55,0.35)]'
   },
   drill: {
     id: 'drill',
@@ -148,15 +148,15 @@ export const GENRE_THEMES: Record<string, GenreTheme> = {
 const DEFAULT_GENRE_THEME: GenreTheme = {
   id: 'default',
   name: 'Música Urbana',
-  badgeBg: 'bg-purple-100 dark:bg-purple-950/70',
-  badgeText: 'text-purple-800 dark:text-purple-300',
-  badgeBorder: 'border-purple-300 dark:border-purple-800/60',
-  gradient: 'from-purple-600 to-indigo-600',
-  accentHex: '#8b5cf6',
-  textClass: 'text-purple-700 dark:text-purple-400',
-  bgSoft: 'bg-purple-50/70 dark:bg-purple-950/30',
-  borderClass: 'border-purple-200 dark:border-purple-800/40',
-  cyberGlow: 'shadow-[0_0_20px_rgba(139,92,246,0.35)]'
+  badgeBg: 'bg-orange-100 dark:bg-orange-950/70',
+  badgeText: 'text-orange-900 dark:text-orange-300',
+  badgeBorder: 'border-orange-300 dark:border-orange-800/60',
+  gradient: 'from-orange-600 to-amber-600',
+  accentHex: '#FF4F00',
+  textClass: 'text-orange-700 dark:text-orange-400',
+  bgSoft: 'bg-orange-50/70 dark:bg-orange-950/30',
+  borderClass: 'border-orange-200 dark:border-orange-800/40',
+  cyberGlow: 'shadow-[0_0_20px_rgba(255,79,0,0.35)]'
 };
 
 export function getGenreTheme(genreId?: string): GenreTheme {
@@ -201,7 +201,7 @@ export const ATTRIBUTE_VISUAL_CONFIG: Record<string, AttributeVisualConfig> = {
     borderHoverClass: 'hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.25)]',
     hexFrom: '#fbbf24',
     hexTo: '#eab308',
-    description: 'Alcance masivo, oyentes globales y demanda de conciertos.'
+    description: 'Define cuántos tickets vendés al abrir boletería y qué tan arriba negociás tu caché en festivales.'
   },
   reputation: {
     id: 'reputation',
@@ -215,35 +215,35 @@ export const ATTRIBUTE_VISUAL_CONFIG: Record<string, AttributeVisualConfig> = {
     borderHoverClass: 'hover:border-cyan-400/60 hover:shadow-[0_0_20px_rgba(6,182,212,0.25)]',
     hexFrom: '#22d3ee',
     hexTo: '#3b82f6',
-    description: 'Respeto de la industria, prensa especializada y galas de premios.'
+    description: 'Determina si la prensa especializada reseña tus discos y qué productores de primera línea aceptan atenderte el teléfono.'
   },
   artisticCredibility: {
     id: 'artisticCredibility',
     label: 'Credibilidad Artística',
-    gradient: 'from-purple-500 to-indigo-500',
-    barGradientClass: 'bg-gradient-to-r from-purple-500 to-indigo-500',
-    bgTrack: 'bg-purple-100/70 dark:bg-purple-950/40',
-    glowClass: 'shadow-[0_0_15px_rgba(168,85,247,0.4)]',
-    textAccent: 'text-purple-900 dark:text-purple-400',
-    iconColor: 'text-purple-600 dark:text-purple-400',
-    borderHoverClass: 'hover:border-purple-400/60 hover:shadow-[0_0_20px_rgba(168,85,247,0.25)]',
-    hexFrom: '#a855f7',
-    hexTo: '#6366f1',
-    description: 'Autenticidad sonora, estatus de culto y valor trascendente de catálogo.'
+    gradient: 'from-amber-500 to-orange-600',
+    barGradientClass: 'bg-gradient-to-r from-amber-500 to-orange-600',
+    bgTrack: 'bg-amber-100/70 dark:bg-amber-950/40',
+    glowClass: 'shadow-[0_0_15px_rgba(212,175,55,0.4)]',
+    textAccent: 'text-amber-900 dark:text-amber-400',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    borderHoverClass: 'hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]',
+    hexFrom: '#D4AF37',
+    hexTo: '#d97706',
+    description: 'Mide cuánto respetan tu obra tus propios colegas. Sube al arriesgar en el estudio; cae en picada si vendés tu sonido por un jingle.'
   },
   fanbaseLoyalty: {
     id: 'fanbaseLoyalty',
     label: 'Fidelidad de Fans',
-    gradient: 'from-pink-500 to-rose-600',
-    barGradientClass: 'bg-gradient-to-r from-pink-500 to-rose-600',
-    bgTrack: 'bg-pink-100/70 dark:bg-pink-950/40',
-    glowClass: 'shadow-[0_0_15px_rgba(236,72,153,0.4)]',
-    textAccent: 'text-rose-900 dark:text-pink-400',
-    iconColor: 'text-rose-600 dark:text-pink-400',
-    borderHoverClass: 'hover:border-pink-400/60 hover:shadow-[0_0_20px_rgba(236,72,153,0.25)]',
-    hexFrom: '#ec4899',
+    gradient: 'from-rose-500 to-red-600',
+    barGradientClass: 'bg-gradient-to-r from-rose-500 to-red-600',
+    bgTrack: 'bg-rose-100/70 dark:bg-rose-950/40',
+    glowClass: 'shadow-[0_0_15px_rgba(225,29,72,0.4)]',
+    textAccent: 'text-rose-900 dark:text-rose-400',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    borderHoverClass: 'hover:border-rose-400/60 hover:shadow-[0_0_20px_rgba(225,29,72,0.25)]',
+    hexFrom: '#FF2A4B',
     hexTo: '#e11d48',
-    description: 'Comunidad devota, tickets asegurados y apoyo incondicional.'
+    description: 'El núcleo duro que agota tus preventas en diez minutos y defiende tus discos incluso cuando la crítica te da la espalda.'
   },
   hype: {
     id: 'hype',
@@ -255,9 +255,9 @@ export const ATTRIBUTE_VISUAL_CONFIG: Record<string, AttributeVisualConfig> = {
     textAccent: 'text-orange-900 dark:text-orange-400',
     iconColor: 'text-orange-600 dark:text-orange-400',
     borderHoverClass: 'hover:border-orange-400/60 hover:shadow-[0_0_20px_rgba(249,115,22,0.25)]',
-    hexFrom: '#f97316',
+    hexFrom: '#FF4F00',
     hexTo: '#d97706',
-    description: 'Fervor viral del momento; decae mensualmente sin lanzamientos.'
+    description: 'La conversación caliente alrededor de tu nombre esta semana. Si pasás meses sin sacar música ni pisar un escenario, se enfría rápido.'
   },
   energy: {
     id: 'energy',
@@ -271,7 +271,7 @@ export const ATTRIBUTE_VISUAL_CONFIG: Record<string, AttributeVisualConfig> = {
     borderHoverClass: 'hover:border-emerald-400/60 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)]',
     hexFrom: '#34d399',
     hexTo: '#14b8a6',
-    description: 'Condición física y mental para grabaciones y exigentes giras.'
+    description: 'Cuántas horas de estudio y vuelos de gira aguantás antes de quedarte sin voz o cancelar fechas por agotamiento.'
   }
 };
 
@@ -354,15 +354,15 @@ export const STAT_THEMES = {
     glowClass: 'shadow-[0_0_15px_rgba(34,211,238,0.4)]'
   },
   artisticCredibility: {
-    barGradient: 'bg-gradient-to-r from-purple-500 to-indigo-500',
-    gradient: 'from-purple-500 to-indigo-500',
-    textColor: 'text-purple-800 dark:text-purple-400',
-    iconColor: 'text-purple-600 dark:text-purple-400',
-    iconBg: 'bg-purple-100 dark:bg-purple-950/60',
-    cardBg: 'bg-purple-50/30 dark:bg-purple-950/20',
-    borderColor: 'border-purple-200 dark:border-purple-800/50',
-    borderHover: 'hover:border-purple-400/60 hover:shadow-[0_0_20px_rgba(168,85,247,0.25)]',
-    glowClass: 'shadow-[0_0_15px_rgba(168,85,247,0.4)]'
+    barGradient: 'bg-gradient-to-r from-amber-500 to-orange-600',
+    gradient: 'from-amber-500 to-orange-600',
+    textColor: 'text-amber-800 dark:text-amber-400',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconBg: 'bg-amber-100 dark:bg-amber-950/60',
+    cardBg: 'bg-amber-50/30 dark:bg-amber-950/20',
+    borderColor: 'border-amber-200 dark:border-amber-800/50',
+    borderHover: 'hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]',
+    glowClass: 'shadow-[0_0_15px_rgba(212,175,55,0.4)]'
   },
   hype: {
     barGradient: 'bg-gradient-to-r from-orange-500 to-amber-600',
@@ -376,15 +376,15 @@ export const STAT_THEMES = {
     glowClass: 'shadow-[0_0_15px_rgba(249,115,22,0.4)]'
   },
   fanbaseLoyalty: {
-    barGradient: 'bg-gradient-to-r from-pink-500 to-rose-600',
-    gradient: 'from-pink-500 to-rose-600',
-    textColor: 'text-pink-800 dark:text-pink-400',
-    iconColor: 'text-pink-600 dark:text-pink-400',
-    iconBg: 'bg-pink-100 dark:bg-pink-950/60',
-    cardBg: 'bg-pink-50/30 dark:bg-pink-950/20',
-    borderColor: 'border-pink-200 dark:border-pink-800/50',
-    borderHover: 'hover:border-pink-400/60 hover:shadow-[0_0_20px_rgba(236,72,153,0.25)]',
-    glowClass: 'shadow-[0_0_15px_rgba(236,72,153,0.4)]'
+    barGradient: 'bg-gradient-to-r from-rose-500 to-red-600',
+    gradient: 'from-rose-500 to-red-600',
+    textColor: 'text-rose-800 dark:text-rose-400',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    iconBg: 'bg-rose-100 dark:bg-rose-950/60',
+    cardBg: 'bg-rose-50/30 dark:bg-rose-950/20',
+    borderColor: 'border-rose-200 dark:border-rose-800/50',
+    borderHover: 'hover:border-rose-400/60 hover:shadow-[0_0_20px_rgba(225,29,72,0.25)]',
+    glowClass: 'shadow-[0_0_15px_rgba(225,29,72,0.4)]'
   },
   funds: {
     barGradient: 'bg-gradient-to-r from-emerald-500 to-green-600',
@@ -398,15 +398,15 @@ export const STAT_THEMES = {
     glowClass: 'shadow-[0_0_15px_rgba(16,185,129,0.4)]'
   },
   fansCount: {
-    barGradient: 'bg-gradient-to-r from-indigo-500 to-purple-600',
-    gradient: 'from-indigo-500 to-purple-600',
-    textColor: 'text-indigo-800 dark:text-indigo-400',
-    iconColor: 'text-indigo-600 dark:text-indigo-400',
-    iconBg: 'bg-indigo-100 dark:bg-indigo-950/60',
-    cardBg: 'bg-indigo-50/30 dark:bg-indigo-950/20',
-    borderColor: 'border-indigo-200 dark:border-indigo-800/50',
-    borderHover: 'hover:border-indigo-400/60 hover:shadow-[0_0_20px_rgba(99,102,241,0.25)]',
-    glowClass: 'shadow-[0_0_15px_rgba(99,102,241,0.4)]'
+    barGradient: 'bg-gradient-to-r from-cyan-500 to-teal-600',
+    gradient: 'from-cyan-500 to-teal-600',
+    textColor: 'text-cyan-800 dark:text-cyan-400',
+    iconColor: 'text-cyan-600 dark:text-cyan-400',
+    iconBg: 'bg-cyan-100 dark:bg-cyan-950/60',
+    cardBg: 'bg-cyan-50/30 dark:bg-cyan-950/20',
+    borderColor: 'border-cyan-200 dark:border-cyan-800/50',
+    borderHover: 'hover:border-cyan-400/60 hover:shadow-[0_0_20px_rgba(6,182,212,0.25)]',
+    glowClass: 'shadow-[0_0_15px_rgba(6,182,212,0.4)]'
   }
 };
 
@@ -456,12 +456,12 @@ export const LIFESTYLE_THEMES = {
     glow: 'rgba(244, 63, 94, 0.25)'
   },
   coaching: {
-    cardBorder: 'border-purple-200 dark:border-purple-800/60 hover:border-purple-400 dark:hover:border-purple-400/80',
-    iconBg: 'bg-purple-100 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60',
-    badge: 'bg-purple-100 dark:bg-purple-950/70 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-800/60',
-    accentText: 'text-purple-700 dark:text-purple-400',
-    lightBg: 'bg-purple-50/40 dark:bg-purple-950/20',
-    glow: 'rgba(139, 92, 246, 0.25)'
+    cardBorder: 'border-orange-200 dark:border-orange-800/60 hover:border-orange-400 dark:hover:border-orange-400/80',
+    iconBg: 'bg-orange-100 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60',
+    badge: 'bg-orange-100 dark:bg-orange-950/70 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-800/60',
+    accentText: 'text-orange-700 dark:text-orange-400',
+    lightBg: 'bg-orange-50/40 dark:bg-orange-950/20',
+    glow: 'rgba(255, 79, 0, 0.25)'
   }
 };
 
@@ -470,57 +470,57 @@ export const LIFESTYLE_THEMES = {
 /* ========================================================================= */
 
 export const RELEASE_BADGES = {
-  viral: 'bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white font-semibold shadow-sm px-2 py-0.5 rounded-[4px] shadow-[0_0_12px_rgba(217,70,239,0.35)]',
-  viralSoft: 'bg-fuchsia-100 dark:bg-fuchsia-950/60 text-fuchsia-800 dark:text-fuchsia-300 border border-fuchsia-300 dark:border-fuchsia-800/60 font-semibold px-2 py-0.5 rounded-[4px]',
+  viral: 'bg-gradient-to-r from-rose-600 to-orange-500 text-white font-semibold shadow-sm px-2 py-0.5 rounded-[4px] shadow-[0_0_12px_rgba(225,29,72,0.35)]',
+  viralSoft: 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800/60 font-semibold px-2 py-0.5 rounded-[4px]',
   hitTop10: 'bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold shadow-sm px-2 py-0.5 rounded-[4px] shadow-[0_0_12px_rgba(249,115,22,0.35)]',
   hitTop10Soft: 'bg-orange-100 dark:bg-orange-950/60 text-orange-900 dark:text-orange-300 border border-orange-300 dark:border-orange-800/60 font-semibold px-2 py-0.5 rounded-[4px]',
   classic: 'bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-950 font-bold shadow-sm px-2 py-0.5 rounded-[4px] shadow-[0_0_12px_rgba(245,158,11,0.35)]',
   classicSoft: 'bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60 font-bold px-2 py-0.5 rounded-[4px]',
   no1: 'bg-gradient-to-r from-yellow-400 via-amber-500 to-rose-500 text-white font-bold shadow-sm px-2 py-0.5 rounded-[4px] shadow-[0_0_15px_rgba(251,191,36,0.45)]',
-  single: 'bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50 font-medium px-2 py-0.5 rounded-[4px]',
-  album: 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 font-medium px-2 py-0.5 rounded-[4px]'
+  single: 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50 font-medium px-2 py-0.5 rounded-[4px]',
+  album: 'bg-cyan-100 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/50 font-medium px-2 py-0.5 rounded-[4px]'
 };
 
 export const ARTISTIC_COVER_GRADIENTS = [
-  'from-violet-600 via-fuchsia-600 to-indigo-900',
-  'from-amber-500 via-rose-600 to-purple-900',
-  'from-cyan-500 via-blue-600 to-indigo-900',
+  'from-orange-600 via-amber-600 to-stone-900',
+  'from-amber-500 via-rose-600 to-zinc-900',
+  'from-cyan-500 via-teal-600 to-slate-900',
   'from-emerald-500 via-teal-600 to-cyan-900',
-  'from-rose-500 via-pink-600 to-purple-900',
+  'from-rose-500 via-red-600 to-stone-900',
   'from-orange-500 via-amber-600 to-red-800',
-  'from-purple-600 via-indigo-700 to-slate-900',
+  'from-stone-600 via-zinc-700 to-slate-900',
   'from-teal-400 via-emerald-600 to-slate-900',
-  'from-fuchsia-600 via-purple-700 to-pink-900',
+  'from-red-600 via-rose-700 to-zinc-900',
   'from-yellow-500 via-orange-600 to-red-700'
 ];
 
 /* ========================================================================= */
-/* 5. CYBER-MUSIC STUDIO DESIGN TOKENS & UTILITIES */
+/* 5. ANALOG MASTER STUDIO DESIGN TOKENS & UTILITIES */
 /* ========================================================================= */
 
 export const CYBER_STUDIO_THEME = {
   palette: {
-    bgDeep: '#0b0d13',
-    bgSurface: '#0f1117',
-    glassSlate: 'rgba(15, 23, 42, 0.6)',
-    glassDeep: 'rgba(11, 13, 19, 0.75)',
-    borderSubtle: 'rgba(255, 255, 255, 0.1)',
-    borderHover: 'rgba(255, 255, 255, 0.3)'
+    bgDeep: '#09090B',
+    bgSurface: '#111114',
+    glassSlate: '#18181C',
+    glassDeep: '#111114',
+    borderSubtle: '#242429',
+    borderHover: '#3F3F46'
   },
   aurora: {
-    cyan: 'radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.15) 0%, transparent 45%)',
-    purple: 'radial-gradient(circle at 85% 20%, rgba(147, 51, 234, 0.16) 0%, transparent 50%)',
-    magenta: 'radial-gradient(circle at 50% 85%, rgba(236, 72, 153, 0.12) 0%, transparent 45%)'
+    cyan: 'radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.12) 0%, transparent 45%)',
+    purple: 'radial-gradient(circle at 85% 20%, rgba(255, 79, 0, 0.12) 0%, transparent 50%)',
+    magenta: 'radial-gradient(circle at 50% 85%, rgba(225, 29, 72, 0.10) 0%, transparent 45%)'
   },
   classes: {
-    card: 'bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-2xl',
-    cardHover: 'hover:border-white/25 hover:shadow-[0_0_25px_rgba(147,51,234,0.25)] hover:scale-[1.02] transition-all duration-300 ease-out',
-    panel: 'bg-slate-950/75 backdrop-blur-2xl border border-white/10 shadow-2xl',
-    input: 'bg-slate-900/70 border border-white/15 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 text-white placeholder-slate-400',
-    badge: 'bg-white/10 backdrop-blur-md border border-white/15 text-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-[9999px]',
+    card: 'bg-[#111114] border border-[#242429] shadow-xl',
+    cardHover: 'hover:border-[#3F3F46] hover:shadow-[0_0_25px_rgba(255,79,0,0.2)] transition-all duration-200 ease-out',
+    panel: 'bg-[#111114] border border-[#242429] shadow-2xl',
+    input: 'bg-[#09090B] border border-[#242429] focus:border-[#FF4F00] focus:ring-1 focus:ring-[#FF4F00]/50 text-white placeholder-zinc-500',
+    badge: 'bg-[#18181C] border border-[#242429] text-zinc-200 text-xs font-semibold px-2.5 py-0.5 rounded-[4px]',
     glowCyan: 'shadow-[0_0_25px_rgba(6,182,212,0.25)]',
-    glowPurple: 'shadow-[0_0_25px_rgba(147,51,234,0.25)]',
-    glowMagenta: 'shadow-[0_0_25px_rgba(236,72,153,0.25)]',
+    glowPurple: 'shadow-[0_0_25px_rgba(255,79,0,0.25)]',
+    glowMagenta: 'shadow-[0_0_25px_rgba(225,29,72,0.25)]',
     glowAmber: 'shadow-[0_0_25px_rgba(245,158,11,0.25)]',
     glowEmerald: 'shadow-[0_0_25px_rgba(16,185,129,0.25)]',
     glowRose: 'shadow-[0_0_25px_rgba(244,63,94,0.25)]'
@@ -547,7 +547,7 @@ export function getCyberGlowClass(color: 'cyan' | 'purple' | 'magenta' | 'amber'
     case 'rose':
       return CYBER_STUDIO_THEME.classes.glowRose;
     default:
-      return CYBER_STUDIO_THEME.classes.glowPurple;
+      return CYBER_STUDIO_THEME.classes.glowAmber;
   }
 }
 
@@ -558,4 +558,3 @@ export function formatTabularNumber(num: number): string {
 export function formatTabularCurrency(amount: number): string {
   return `$${amount.toLocaleString()}`;
 }
-

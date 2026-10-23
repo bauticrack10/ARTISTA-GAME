@@ -31,14 +31,17 @@ import {
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
 import { formatMoney, cleanQuotes, cleanParentheses, formatCityCountry, formatReleaseDate } from '../utils/formatters';
+import { LegacyCardModal } from './LegacyCardModal';
 
 interface CareerErasViewProps {
   player: Artist;
   world: WorldState;
   onOpenMilestone?: (data?: any) => void;
+  onRetireArtist?: () => void;
 }
 
-export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, onOpenMilestone }) => {
+export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, onOpenMilestone, onRetireArtist }) => {
+  const [legacyModalOpen, setLegacyModalOpen] = useState(false);
   const [timelineFilter, setTimelineFilter] = useState<'all' | 'releases' | 'tours' | 'awards' | 'eras'>('all');
   const [discographySort, setDiscographySort] = useState<'date' | 'streams' | 'score'>('streams');
 
@@ -106,9 +109,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
     title: `Debut Artístico en la Escena`,
     description: `Comienzo formal de la trayectoria artística en ${formatCityCountry(player.city, player.country)}. Enfoque sonoro inicial: ${world.genres[player.mainGenreId]?.name || player.mainGenreId}.`,
     badge: 'Inicio de Carrera',
-    badgeClass: 'bg-purple-900/40 text-purple-300 border-purple-500/40',
+    badgeClass: 'bg-orange-900/40 text-orange-300 border-orange-500/40',
     icon: Sparkles,
-    iconBgClass: 'bg-purple-950/60 text-purple-400 border-purple-500/40'
+    iconBgClass: 'bg-orange-950/60 text-orange-400 border-orange-500/40'
   });
 
   // Eras
@@ -287,6 +290,15 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               <span>Generar Portada de Revista</span>
             </button>
           )}
+
+          <button
+            id="btn-open-legacy-card"
+            onClick={() => setLegacyModalOpen(true)}
+            className="flex items-center justify-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold text-xs px-4 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer shadow-none font-mono"
+          >
+            <Disc3 className="w-4 h-4 text-white" />
+            <span>Ficha Oficial EPK</span>
+          </button>
 
           {/* Legacy Score Box */}
           <div className="bg-[#09090B] px-5 py-3 rounded-[6px] border border-[#242429] text-center font-mono tabular-nums shrink-0 shadow-sm">
@@ -867,6 +879,16 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
           </div>
         )}
       </div>
+
+      {/* Official Career EPK / Vinyl Legacy Card Modal */}
+      {legacyModalOpen && (
+        <LegacyCardModal
+          player={player}
+          world={world}
+          onClose={() => setLegacyModalOpen(false)}
+          onRetire={onRetireArtist}
+        />
+      )}
     </div>
   );
 };

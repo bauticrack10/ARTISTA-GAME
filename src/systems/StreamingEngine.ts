@@ -21,7 +21,7 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     streamMultiplier: 1.8,
     genreFilters: [],
     description: 'Los mayores éxitos del planeta en este momento. La lista editorial más escuchada del mundo.',
-    coverGradient: 'from-blue-600 via-indigo-600 to-purple-800',
+    coverGradient: 'from-amber-600 to-orange-800',
     trackIds: [],
     maxTracks: 50
   },
@@ -73,7 +73,7 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     streamMultiplier: 1.5,
     genreFilters: ['reggaeton', 'urban', 'dembow', 'latin_pop'],
     description: 'Perreo intenso, dembow y los himnos definitivos del género urbano.',
-    coverGradient: 'from-purple-600 via-pink-600 to-rose-600',
+    coverGradient: 'from-rose-600 to-red-900',
     trackIds: [],
     maxTracks: 50
   },
@@ -86,7 +86,7 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     streamMultiplier: 1.35,
     genreFilters: ['trap_latino', 'hip_hop', 'urban', 'rap'],
     description: 'El sonido que nació en Antezana 247 y conquistó los parlantes de habla hispana.',
-    coverGradient: 'from-violet-900 via-purple-800 to-zinc-950',
+    coverGradient: 'from-zinc-800 to-zinc-950',
     trackIds: [],
     maxTracks: 45
   },
@@ -112,7 +112,7 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     streamMultiplier: 1.2,
     genreFilters: [],
     description: 'Tu mezcla semanal y algorítmica de música nueva hecha a la medida de tus gustos.',
-    coverGradient: 'from-emerald-500 via-teal-600 to-indigo-900',
+    coverGradient: 'from-emerald-600 to-teal-900',
     trackIds: [],
     maxTracks: 60
   }
@@ -875,14 +875,14 @@ export class StreamingEngine {
     const comments: YouTubeComment[] = [];
 
     const AVATAR_GRADIENTS = [
-      'from-purple-500 to-indigo-600',
+      'from-amber-600 to-orange-800',
       'from-rose-500 to-amber-500',
       'from-emerald-400 to-teal-600',
       'from-sky-400 to-blue-600',
       'from-orange-500 to-red-600',
-      'from-fuchsia-500 to-purple-700',
+      'from-rose-600 to-red-900',
       'from-amber-400 to-orange-600',
-      'from-cyan-400 to-indigo-700'
+      'from-cyan-600 to-slate-900'
     ];
 
     // 1. Comentario fijado oficial del artista
@@ -890,7 +890,7 @@ export class StreamingEngine {
       id: `comment_pinned_${song.id}`,
       authorName: artist.name,
       authorHandle: `@${artist.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_oficial`,
-      avatarGradient: artist.avatarColor || 'from-violet-600 to-purple-900',
+      avatarGradient: artist.avatarColor || 'from-amber-600 to-orange-800',
       content: `¡Gracias de corazón a toda la gente que está bancando "${song.title}" desde el minuto cero! ¿Cuál es la barra que más les llegó? Los leo a todos acá abajo 👇🔥`,
       likes: Math.floor(Math.max(120, (song.streamsTotal || 5000) * 0.015 + 450)),
       timeAgo: 'hace 1 día',
@@ -996,7 +996,7 @@ export class StreamingEngine {
             id: `comment_feat_${featId}_${song.id}`,
             authorName: 'Lucía Santoro',
             authorHandle: '@lu_musicbox',
-            avatarGradient: 'from-rose-500 to-indigo-600',
+            avatarGradient: 'from-rose-600 to-red-900',
             content: `La química vocal entre ${artist.name} y ${featArtist.name} es de otro planeta. La manera en que combinaron los estilos demuestra por qué son los mejores de la escena. ¡Necesitamos un EP juntos ya!`,
             likes: Math.floor(Math.max(60, (song.streamsTotal || 4000) * 0.006 + 210)),
             timeAgo: 'hace 1 día',

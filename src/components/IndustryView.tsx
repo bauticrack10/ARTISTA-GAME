@@ -69,8 +69,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 20,
     durationYears: 1,
     albumsRequired: 0,
-    description: 'Cuota anual gratuita ($0). 85% de regalías directas para el artista y 15% de comisión por streaming. 100% de propiedad de másters.',
-    gradient: 'from-blue-600 to-indigo-900',
+    description: 'Sin costo fijo anual ($0). El artista retiene 85 puntos de regalía neta y el 100% de sus másters; la distribuidora descuenta el 15% sobre liquidaciones de streaming.',
+    gradient: 'from-[#18181C] to-[#111114]',
     iconType: 'disc'
   },
   {
@@ -86,8 +86,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 35,
     durationYears: 1,
     albumsRequired: 0,
-    description: 'Cuota anual plana de $20. 100% de regalías discográficas para el artista y 0% de comisión. Lanzamientos ilimitados en todas las plataformas.',
-    gradient: 'from-cyan-600 to-blue-900',
+    description: 'Tarifa plana de $20 al año. Cobrás el 100% de las regalías mecánicas y de reproducción sin comisiones sobre el catálogo ni cesión de derechos fonográficos.',
+    gradient: 'from-emerald-700 to-zinc-900',
     iconType: 'globe'
   },
   {
@@ -103,8 +103,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 52,
     durationYears: 1,
     albumsRequired: 0,
-    description: 'Cuota anual de $35. 100% de regalías, herramientas avanzadas de pre-save y pitch directo a curadores editoriales de playlists.',
-    gradient: 'from-emerald-600 to-teal-900',
+    description: 'Suscripción anual de $35 con retención total del máster (100% royalties), split sheets automáticos para colaboradores y envío anticipado a curadores de listas.',
+    gradient: 'from-teal-700 to-zinc-900',
     iconType: 'sparkles'
   },
 
@@ -122,8 +122,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 58,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Sello barrial que impulsa talentos emergentes desde 5k oyentes con adelantos dinámicos ($15k - $45k+) y producción en la escena.',
-    gradient: 'from-amber-600 to-stone-900',
+    description: 'Sello independiente de circuito local. Ofrece anticipos recuperables ($15k a $45k+), horas de estudio pagas y 70 puntos de regalía tras amortizar el adelanto (recoupment).',
+    gradient: 'from-amber-700 to-stone-900',
     iconType: 'flame'
   },
   {
@@ -139,7 +139,7 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 55,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Colectivo subterráneo de culto con 80% de regalías, 98% de control creativo y adelantos boutique ($30k - $120k+).',
+    description: 'Colectivo autogestionado con estructura de distribución física y digital: 80% de regalías, corte final sobre el máster y anticipos de $30k a $120k+.',
     gradient: 'from-stone-700 to-zinc-950',
     iconType: 'flame'
   },
@@ -156,8 +156,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 68,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Sello indie consolidado en la escena local con adelantos competitivos ($25k - $80k+), conexión con festivales y prensa.',
-    gradient: 'from-purple-600 to-rose-900',
+    description: 'Sello independiente con prensa especializada propia y circuito de salas medianas. Paga adelantos de $25k a $80k+ contra un split de 65/35 en regalías.',
+    gradient: 'from-rose-700 to-zinc-900',
     iconType: 'sparkles'
   },
 
@@ -175,8 +175,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 78,
     durationYears: 2,
     albumsRequired: 1,
-    description: 'Sello boutique de culto internacional enfocado en innovación sonora con adelantos dinámicos ($75k - $350k+).',
-    gradient: 'from-teal-600 to-cyan-950',
+    description: 'Casa discográfica independiente de alcance global. Invierte de $75k a $350k+ en mezcla, masterización y prensa internacional sin tocar el corte final del álbum.',
+    gradient: 'from-emerald-700 to-zinc-900',
     iconType: 'award'
   },
   {
@@ -192,8 +192,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 88,
     durationYears: 3,
     albumsRequired: 2,
-    description: 'Sello independiente líder del movimiento urbano sudamericano con adelantos de seis cifras ($100k - $800k+) y 65% de regalías.',
-    gradient: 'from-violet-600 to-purple-950',
+    description: 'Estructura líder del cono sur con fuerte rotación en listas urbanas y cierre de giras. Adelantos recuperables de $100k a $800k+ con 65 puntos para el artista.',
+    gradient: 'from-amber-700 to-stone-900',
     iconType: 'building'
   },
   {
@@ -209,8 +209,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 95,
     durationYears: 3,
     albumsRequired: 2,
-    description: 'Independencia a escala de Major global con mega adelantos ($250k - $2.5M+) y retención estratégica del control del artista.',
-    gradient: 'from-pink-600 to-rose-950',
+    description: 'Distribución y músculo comercial de multinacional bajo esquema joint venture: anticipos de $250k a $2.5M+ y 70% de retorno sobre el catálogo.',
+    gradient: 'from-rose-700 to-zinc-900',
     iconType: 'crown'
   },
 
@@ -228,8 +228,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 90,
     durationYears: 4,
     albumsRequired: 3,
-    description: 'Dominio de los charts hispanohablantes con giras masivas, festivales internacionales y mega adelantos millonarios ($350k - $2.5M+).',
-    gradient: 'from-amber-600 to-red-950',
+    description: 'Multinacional con pauta radial en toda Iberoamérica, presupuesto para videoclips de alto costo y adelantos de $350k a $2.5M+ sujetos a recoupment (25% royalties).',
+    gradient: 'from-amber-700 to-stone-900',
     iconType: 'building'
   },
   {
@@ -245,8 +245,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 96,
     durationYears: 4,
     albumsRequired: 3,
-    description: 'Coloso discográfico con alcance radial mundial y adelantos estelares millonarios ($500k - $4.5M+).',
-    gradient: 'from-blue-700 to-indigo-950',
+    description: 'Maquinaria corporativa global: anticipos de $500k a $4.5M+, sincronizaciones comerciales y rotación prioritaria a cambio de ceder el máster (22 puntos de regalía).',
+    gradient: 'from-[#18181C] to-[#111114]',
     iconType: 'building'
   },
   {
@@ -262,8 +262,8 @@ const DISTRIBUTION_OPTIONS: DistributionOption[] = [
     marketingPower: 98,
     durationYears: 4,
     albumsRequired: 3,
-    description: 'La mayor multinacional discográfica mundial con super anticipos de siete cifras ($750k - $6.0M+) y colocación prioritaria global.',
-    gradient: 'from-purple-700 to-black',
+    description: 'El mayor conglomerado fonográfico del mercado. Adelantos de siete cifras ($750k a $6.0M+) y campañas mundiales 360, bajo exigencia de 3 LP y 20% de regalías.',
+    gradient: 'from-rose-700 to-zinc-900',
     iconType: 'crown'
   }
 ];
@@ -443,7 +443,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
             Representación, Sellos & Mercado de Fichajes
           </h1>
           <p className="text-sm text-[#8E8E99] mt-1 max-w-2xl leading-relaxed">
-            Gestioná tus acuerdos discográficos, distribuí tu música en plataformas globales, monitoreá el radar de cazatalentos A&R y contratá managers por tiers de requisitos.
+            Negociá puntos de regalía, cesión o retención de másters, adelantos recuperables (recoupment) con discográficas y comisiones de representación.
           </p>
         </div>
 
@@ -582,7 +582,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                       />
                     </div>
                     <p className="text-xs text-[#8E8E99] leading-relaxed">
-                      Al completar todos los álbumes exigidos, el contrato se considerará cumplido y quedarás en libertad para renovar o cambiar de entidad.
+                      Cada LP de estudio entregado descuenta tu compromiso discográfico. Una vez completado el cupo de discos, quedás libre de exclusividad para renegociar puntos o distribuir por tu cuenta.
                     </p>
                   </div>
                 )}
@@ -621,7 +621,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                     Artista 100% Independiente
                   </h3>
                   <p className="text-xs text-[#8E8E99] leading-relaxed">
-                    Conservás el <strong className="text-[#00E599]">100% de tus regalías de streaming</strong> y la propiedad absoluta de todos tus másters. Los costos de producción y marketing dependen exclusivamente de tus propios fondos.
+                    Retenés el <strong className="text-[#00E599]">100% de tus regalías de reproducción</strong> y la titularidad de tus másters sin adelantos que amortizar (recoupment). Cada sesión de grabación, mezcla, masterización y campaña sale de tu propio bolsillo.
                   </p>
                 </div>
 
@@ -710,7 +710,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                         Valoración Comercial & Poder de Fichaje
                       </h2>
                       <p className="text-xs text-[#8E8E99]">
-                        Métricas en tiempo real que fundamentan los adelantos y presupuestos promocionales escalados de cada sello.
+                        Auditoría de catálogo, facturación anual de streaming y venta de tickets que usan los departamentos de A&R para tasar tu adelanto recuperable.
                       </p>
                     </div>
                   </div>
@@ -1219,7 +1219,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                 Fundar tu Propio Sello Discográfico
               </h2>
               <p className="text-xs text-[#8E8E99] leading-relaxed max-w-xl">
-                Llegó el momento de tomar el control total de la cadena de valor musical. Fundar tu propio sello te permite retener el 95% de las regalías de streaming, autogestionar tus contratos y reclutar futuros artistas.
+                Constituir tu propia estructura fonográfica exige $25.000 de capital operativo, pero te asegura el 95% de las regalías netas, la titularidad perpetua de los másters y cero deuda por adelantos recuperables.
               </p>
             </div>
 

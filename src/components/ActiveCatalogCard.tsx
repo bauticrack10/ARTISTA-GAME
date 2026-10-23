@@ -140,10 +140,10 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
 
           {/* Motivating Header & Subtitle */}
           <h3 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F6] tracking-[-0.03em]">
-            Tu catálogo está esperando tu primer hit underground
+            Todavía no hay másters registrados en tu discografía
           </h3>
           <p className="text-xs sm:text-sm text-[#8E8E99] max-w-lg mt-2.5 leading-relaxed font-normal">
-            Aún no has lanzado canciones. Entra al estudio de grabación, define tu dirección sonora y publica tu primer single para comenzar a acumular oyentes, reproducciones y regalías en los rankings globales.
+            Sin canciones publicadas no cobrás liquidaciones de streaming ni podés cerrar fechas en vivo. Reservá turno en cabina para grabar tu primer corte; el algoritmo recién empieza a medirte cuando el tema sale a la calle.
           </p>
 
           {/* Direct CTA Button */}

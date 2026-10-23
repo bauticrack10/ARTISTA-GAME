@@ -115,9 +115,24 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       onRest();
       setFeedbackMessage({
         title: 'Descanso Reflexivo Completado',
-        text: 'Recuperaste +50% de vitalidad, +2 Disciplina y +1 Creatividad. ¡Tu mente está despejada!',
+        text: 'Cortaste el teléfono por unos días: recuperaste +50% de energía física, +2 Disciplina y +1 Creatividad.',
         success: true
       });
+      return;
+    }
+
+    if (actionKey === 'home_rest') {
+      if (onExecuteDecision) {
+        const res = onExecuteDecision('home_rest');
+        if (res && res.success) {
+          playSound('click');
+          setFeedbackMessage({
+            title: res.title,
+            text: res.narrativeText,
+            success: true
+          });
+        }
+      }
       return;
     }
 
@@ -155,8 +170,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
             </h3>
             <p className="text-xs text-[#8E8E99]">
               {hubTab === 'pillars'
-                ? 'Gestiona lanzamientos, estilo de vida, giras mundiales y bienestar.'
-                : 'Entrena y potencia habilidades artísticas de forma permanente.'}
+                ? 'Coordiná sesiones de grabación, fechas de gira, equipamiento técnico y descansos antes de cerrar el mes.'
+                : 'Invertí tiempo y presupuesto en técnica vocal, composición, oído de mezcla o puesta en escena.'}
             </p>
           </div>
         </div>
@@ -433,96 +448,128 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           </div>
 
           {/* TARJETA 4: DESCANSO & BIENESTAR */}
-          <div className={`group relative bg-[#111114] border border-[#242429] rounded-[6px] p-5 transition-all duration-150 flex flex-col justify-between h-full space-y-4 ${
-            hasFundsForRest
-              ? 'hover:bg-[#18181C] hover:border-[#3F3F46] border-l-4 border-l-[#00E599]'
-              : 'border-l-4 border-l-[#EF4444]'
+          <div className={`group relative bg-[#141417] border border-[#26262B] rounded-[6px] p-5 transition-all duration-150 flex flex-col justify-between h-full space-y-4 hover:bg-[#1C1C21] hover:border-[#3F3F46] border-l-4 ${
+            isEnergyFull
+              ? 'border-l-[#52525B]'
+              : hasFundsForRest
+              ? 'border-l-[#10B981]'
+              : 'border-l-[#F59E0B]'
           }`}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className={`p-2.5 rounded-[4px] border flex items-center justify-center ${
                   hasFundsForRest
-                    ? 'bg-emerald-950/40 text-[#00E599] border-emerald-800/50'
-                    : 'bg-rose-950/40 text-[#EF4444] border-rose-800/50'
+                    ? 'bg-emerald-950/40 text-[#10B981] border-emerald-800/50'
+                    : 'bg-amber-950/40 text-[#F59E0B] border-amber-800/50'
                 }`}>
                   <Coffee className="w-5 h-5" />
                 </div>
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border font-mono ${
-                  hasFundsForRest
-                    ? 'text-[#00E599] bg-emerald-950/40 border-emerald-800/50'
-                    : 'text-[#EF4444] bg-rose-950/40 border-rose-800/50'
+                  isEnergyFull
+                    ? 'text-[#8E8E99] bg-[#1C1C21] border-[#26262B]'
+                    : hasFundsForRest
+                    ? 'text-[#10B981] bg-emerald-950/40 border-emerald-800/50'
+                    : 'text-[#F59E0B] bg-amber-950/40 border-amber-800/50'
                 }`}>
-                  {hasFundsForRest
+                  {isEnergyFull
+                    ? 'Energía al 100%'
+                    : hasFundsForRest
                     ? '+50 Energía • +2 Disc.'
-                    : 'Fondos Insuficientes'}
+                    : '+25 Energía • Gratis'}
                 </span>
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-[#F4F4F6] tracking-tight group-hover:text-white transition-colors">
+                <h3 className="text-base font-display font-bold text-[#F4F0EA] tracking-tight group-hover:text-white transition-colors">
                   Descanso & Bienestar
                 </h3>
                 <p className="text-xs text-[#8E8E99] mt-1 font-normal leading-relaxed">
-                  Retiro reflexivo para recuperar vitalidad inmediata y enfoque disciplinario.
+                  {hasFundsForRest
+                    ? 'Retiro reflexivo para recuperar vitalidad inmediata y enfoque mental.'
+                    : 'Reposo en casa sin costo para recargar energías y continuar tu carrera.'}
                 </p>
               </div>
 
-              <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-2.5 space-y-1.5">
+              <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#8E8E99] flex items-center gap-1">
-                    <BatteryCharging className="w-3 h-3 text-[#00E599]" />
-                    Recarga Inmediata:
+                    <BatteryCharging className="w-3 h-3 text-[#10B981]" />
+                    Recarga Disponible:
                   </span>
-                  <span className="font-bold font-mono text-[#00E599]">+50 Vitalidad</span>
+                  <span className="font-bold font-mono text-[#10B981]">
+                    {hasFundsForRest ? '+50 Vitalidad' : '+25 Vitalidad (Gratis)'}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between text-xs border-t border-[#242429] pt-1">
+                <div className="flex items-center justify-between text-xs border-t border-[#26262B] pt-1">
                   <span className="text-[#8E8E99] flex items-center gap-1">
-                    {hasFundsForRest ? (
-                      <DollarSign className="w-3 h-3 text-[#00E599]" />
-                    ) : (
-                      <AlertTriangle className="w-3 h-3 text-[#EF4444]" />
-                    )}
-                    Costo de Retiro:
+                    <DollarSign className="w-3 h-3 text-[#10B981]" />
+                    Costo:
                   </span>
-                  <span className={`font-mono font-semibold tabular-nums ${hasFundsForRest ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
-                    {hasFundsForRest
-                      ? '$400 • Acción Inmediata'
-                      : `Insuficiente ($${currentFunds.toLocaleString('es-AR')} / $${REST_COST.toLocaleString('es-AR')})`}
+                  <span className="font-mono font-semibold tabular-nums text-[#F4F0EA]">
+                    {hasFundsForRest ? '$400 (Spa) / $0 (Casa)' : '$0 • Descanso Libre'}
                   </span>
                 </div>
               </div>
             </div>
 
-            <button
-              id="btn-take-vacation"
-              onClick={() => {
-                if (canRest) {
-                  playSound('click');
-                  handleRunDecision('reflective_rest');
-                }
-              }}
-              disabled={!canRest}
-              className={`w-full flex items-center justify-center gap-2 font-bold text-xs py-2.5 px-3 rounded-[4px] transition-all ${
-                canRest
-                  ? 'bg-[#18181C] hover:bg-[#242429] text-[#00E599] border border-emerald-800/60 cursor-pointer'
-                  : 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
-              }`}
-              title={restTooltip}
-            >
-              <Zap className={`w-3.5 h-3.5 ${canRest ? 'text-[#00E599] fill-current' : 'text-[#52525B]'}`} />
-              <span>
-                {!hasFundsForRest
-                  ? 'Tomar Retiro de Descanso'
-                  : isEnergyFull
-                  ? 'Energía al Máximo'
-                  : 'Tomar Retiro de Descanso'}
-              </span>
-              <ArrowRight
-                className={`w-3.5 h-3.5 ml-auto transition-all ${
-                  canRest ? 'opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5' : 'opacity-30'
-                }`}
-              />
-            </button>
+            <div className="space-y-2">
+              {hasFundsForRest ? (
+                <>
+                  <button
+                    id="btn-take-vacation"
+                    onClick={() => {
+                      if (!isEnergyFull) {
+                        playSound('click');
+                        handleRunDecision('reflective_rest');
+                      }
+                    }}
+                    disabled={isEnergyFull}
+                    className={`w-full flex items-center justify-center gap-2 font-bold text-xs py-2 px-3 rounded-[4px] transition-all ${
+                      !isEnergyFull
+                        ? 'bg-[#1C1C21] hover:bg-[#26262B] text-[#10B981] border border-emerald-800/60 cursor-pointer'
+                        : 'bg-[#1C1C21]/40 text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50'
+                    }`}
+                    title={isEnergyFull ? 'Energía al máximo' : 'Tomar retiro reflexivo ($400, +50 energía)'}
+                  >
+                    <Zap className={`w-3.5 h-3.5 ${!isEnergyFull ? 'text-[#10B981] fill-current' : 'text-[#52525B]'}`} />
+                    <span>{isEnergyFull ? 'Energía al Máximo' : 'Retiro Reflexivo ($400 • +50)'}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (!isEnergyFull) {
+                        playSound('click');
+                        handleRunDecision('home_rest');
+                      }
+                    }}
+                    disabled={isEnergyFull}
+                    className="w-full text-center text-2xs text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer py-1"
+                  >
+                    o Descansar en Casa ($0 • +25 Energía)
+                  </button>
+                </>
+              ) : (
+                <button
+                  id="btn-home-rest"
+                  onClick={() => {
+                    if (!isEnergyFull) {
+                      playSound('click');
+                      handleRunDecision('home_rest');
+                    }
+                  }}
+                  disabled={isEnergyFull}
+                  className={`w-full flex items-center justify-center gap-2 font-bold text-xs py-2.5 px-3 rounded-[4px] transition-all ${
+                    !isEnergyFull
+                      ? 'bg-[#1C1C21] hover:bg-[#26262B] text-[#F59E0B] border border-amber-800/60 cursor-pointer'
+                      : 'bg-[#1C1C21]/40 text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50'
+                  }`}
+                  title={isEnergyFull ? 'Energía al máximo' : 'Descansar en casa ($0, +25 energía)'}
+                >
+                  <Coffee className="w-3.5 h-3.5 text-[#F59E0B]" />
+                  <span>{isEnergyFull ? 'Energía al Máximo' : 'Descansar en Casa (Gratis • +25)'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 ml-auto opacity-70" />
+                </button>
+              )}
+            </div>
           </div>
 
         </div>

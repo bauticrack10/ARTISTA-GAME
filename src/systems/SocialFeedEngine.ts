@@ -3,11 +3,11 @@ import { TimeSystem } from './TimeSystem';
 
 export class SocialFeedEngine {
   private static FAN_HANDLES = [
-    { name: 'Matias 808', handle: '@mati_trap', type: 'fan' as const, avatarGradient: 'from-blue-500 to-indigo-600' },
-    { name: 'Camila ⚡', handle: '@cami_musica', type: 'fan' as const, avatarGradient: 'from-pink-500 to-purple-600' },
+    { name: 'Matias 808', handle: '@mati_trap', type: 'fan' as const, avatarGradient: 'from-cyan-600 to-slate-900' },
+    { name: 'Camila R.', handle: '@cami_musica', type: 'fan' as const, avatarGradient: 'from-rose-600 to-red-900' },
     { name: 'Lucas R', handle: '@lucas_vibe', type: 'fan' as const, avatarGradient: 'from-amber-500 to-red-500' },
     { name: 'Sofi ✨', handle: '@sofia_sounds', type: 'fan' as const, avatarGradient: 'from-emerald-400 to-teal-600' },
-    { name: 'Trap Connoisseur', handle: '@trap_connoisseur', type: 'fan' as const, avatarGradient: 'from-violet-600 to-fuchsia-600' },
+    { name: 'Trap Connoisseur', handle: '@trap_connoisseur', type: 'fan' as const, avatarGradient: 'from-amber-600 to-orange-800' },
     { name: 'Franco B', handle: '@francorimas', type: 'fan' as const, avatarGradient: 'from-cyan-500 to-blue-600' },
     { name: 'Agus 🎧', handle: '@agus_on_repeat', type: 'fan' as const, avatarGradient: 'from-rose-500 to-orange-500' },
     { name: 'Valen 🖤', handle: '@valen_music_', type: 'fan' as const, avatarGradient: 'from-stone-700 to-zinc-900' }
@@ -23,15 +23,15 @@ export class SocialFeedEngine {
 
   private static CRITIC_HANDLES = [
     { name: 'Claudio Varela', handle: '@cvarela_critica', type: 'critic' as const, verified: true, avatarGradient: 'from-amber-700 to-stone-800', badge: 'Crítico Musical' },
-    { name: 'Oído Clínico', handle: '@oidoclinicoblog', type: 'critic' as const, verified: true, avatarGradient: 'from-indigo-800 to-slate-900', badge: 'Blog Sonoro' },
+    { name: 'Oído Clínico', handle: '@oidoclinicoblog', type: 'critic' as const, verified: true, avatarGradient: 'from-zinc-800 to-zinc-950', badge: 'Blog Sonoro' },
     { name: 'La Barra Brava Musical', handle: '@labarra_sonora', type: 'critic' as const, verified: false, avatarGradient: 'from-teal-800 to-zinc-900', badge: 'Podcast' }
   ];
 
   private static MEDIA_HANDLES = [
-    { name: 'Trap & Flow Argentina', handle: '@trapflow_arg', type: 'media' as const, verified: true, avatarGradient: 'from-purple-700 to-indigo-900', badge: 'Medio Oficial' },
+    { name: 'Trap & Flow Argentina', handle: '@trapflow_arg', type: 'media' as const, verified: true, avatarGradient: 'from-amber-600 to-orange-800', badge: 'Medio Oficial' },
     { name: 'Billboard Sonoro', handle: '@billboard_radar', type: 'media' as const, verified: true, avatarGradient: 'from-amber-600 to-orange-700', badge: 'Prensa' },
     { name: 'Indie Hoy & Mañana', handle: '@indiehoy_m', type: 'media' as const, verified: true, avatarGradient: 'from-emerald-600 to-cyan-700', badge: 'Cultura' },
-    { name: 'Charts & Streams Live', handle: '@charts_radar_live', type: 'media' as const, verified: true, avatarGradient: 'from-blue-600 to-violet-800', badge: 'Data' }
+    { name: 'Charts & Streams Live', handle: '@charts_radar_live', type: 'media' as const, verified: true, avatarGradient: 'from-emerald-600 to-teal-900', badge: 'Data' }
   ];
 
   /**
@@ -67,8 +67,8 @@ export class SocialFeedEngine {
       year,
       month,
       content: isAlbum
-        ? `🔴 ESTRENO EXCLUSIVO: @${player.name.toLowerCase().replace(/\s+/g, '')} acaba de publicar "${title}" (${(release as Album).songIds.length} tracks). Primeras impresiones marcan una producción de calibre internacional. ¿Qué les pareció el proyecto?`
-        : `🚨 LANZAMIENTO: Ya está disponible "${title}", el nuevo single de @${player.name.toLowerCase().replace(/\s+/g, '')}. Disponible en todas las plataformas de streaming.`,
+        ? `ESTRENOS: @${player.name.toLowerCase().replace(/\s+/g, '')} acaba de subir "${title}" (${(release as Album).songIds.length} cortes). Ya está completo en plataformas; dejaron los créditos de mezcla abiertos desde el minuto uno.`
+        : `NUEVO CORTE: @${player.name.toLowerCase().replace(/\s+/g, '')} soltó "${title}" a medianoche. Tres minutos sin relleno; veremos cómo entra en rotación esta semana.`,
       likes: Math.floor(1200 + player.stats.popularity * 80 + Math.random() * 500),
       retweetsOrShares: Math.floor(250 + player.stats.popularity * 15 + Math.random() * 100),
       commentsCount: Math.floor(180 + player.stats.popularity * 10 + Math.random() * 80),
@@ -82,7 +82,7 @@ export class SocialFeedEngine {
     const fan1 = this.FAN_HANDLES[Math.floor(Math.random() * this.FAN_HANDLES.length)];
     const fanPhrases = isHighQuality
       ? [
-          `DIOS MÍO "${title}" es una obra maestra de principio a fin 😭😭🔥 El beat, las barras, el flow... nadie está jugando a este nivel`,
+          `"${title}" desde las 00:00 en los auriculares. Cuando entra el bajo en el segundo bloque se termina la discusión, @${player.name.toLowerCase().replace(/\s+/g, '')} está en otra liga`,
           `En bucle con "${title}" desde las 00:00. @${player.name.toLowerCase().replace(/\s+/g, '')} nunca falla lpm revivió la música`,
           `No supero el cambio de ritmo en "${title}". Esta canción va a sonar en todos los parlantes del país este verano 🔊🔊`,
           `Lo que acaba de sacar @${player.name.toLowerCase().replace(/\s+/g, '')} es histórico. Tatuándome el estribillo ya mismo`
@@ -146,8 +146,8 @@ export class SocialFeedEngine {
     // 4. Post de Crítico Especializado
     const critic = this.CRITIC_HANDLES[Math.floor(Math.random() * this.CRITIC_HANDLES.length)];
     const criticReview = isHighQuality
-      ? `Review rápida de "${title}": Calidad de mezcla 9/10, consistencia conceptual sólida. @${player.name.toLowerCase().replace(/\s+/g, '')} consolida su madurez sin perder identidad urbana.`
-      : `Análisis de "${title}": Cumple con las demandas del algoritmo comercial pero arriesga poco a nivel sonoro. Buen estribillo, versos algo repetitivos. Puntuación: ${Math.floor(quality / 10)}/10.`;
+      ? `Escucha rápida de "${title}": mezcla seca al frente, voz bien recortada sobre los medios y cero grasa en el arreglo. @${player.name.toLowerCase().replace(/\s+/g, '')} sabe qué recortar en consola.`
+      : `Sobre "${title}": el estribillo funciona para radio, pero la batería repite el mismo patrón de hi-hat que escuchamos todo el semestre. Cumple sin despeinarse (${Math.floor(quality / 10)}/10).`;
 
     posts.push({
       id: `post_crt_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
@@ -213,7 +213,7 @@ export class SocialFeedEngine {
         badge: '🎬 Estreno Visual',
         year,
         month,
-        content: `🎬 ESTRENO VIDEOCLIP: @${player.name.toLowerCase().replace(/\s+/g, '')} acaba de lanzar el video oficial de "${title}" con estética "${mv.concept}" (Dirigido por ${mv.directorTier}). La dirección de arte y la cinematografía son de altísimo nivel. Ya supera miles de reproducciones en YouTube.`,
+        content: `VIDEO OFICIAL: @${player.name.toLowerCase().replace(/\s+/g, '')} estrenó el corte visual de "${title}" rodado bajo el concepto "${mv.concept}" (${mv.directorTier}). Fotografía cruda y buen trabajo de montaje.`,
         likes: Math.floor(2500 + player.stats.popularity * 100 + Math.random() * 1000),
         retweetsOrShares: Math.floor(600 + player.stats.popularity * 25 + Math.random() * 300),
         commentsCount: Math.floor(240 + player.stats.popularity * 15 + Math.random() * 100),
@@ -313,7 +313,7 @@ export class SocialFeedEngine {
         badge: 'Análisis de Negocio',
         year,
         month,
-        content: `Movimiento estratégico clave para la carrera de @${player.name.toLowerCase().replace(/\s+/g, '')}. En este nivel de la industria, las decisiones de catálogo y autonomía definen el legado a 10 años.`,
+        content: `Movimiento de despacho de @${player.name.toLowerCase().replace(/\s+/g, '')}. En esta industria te comen los porcentajes de distribución si no mirás la letra chica a tiempo.`,
         likes: Math.floor(600 + Math.random() * 300),
         retweetsOrShares: Math.floor(120 + Math.random() * 70),
         commentsCount: Math.floor(50 + Math.random() * 30),
@@ -348,7 +348,7 @@ export class SocialFeedEngine {
         authorHandle: '@trapflow_arg',
         authorVerified: true,
         authorType: 'media',
-        authorAvatarGradient: 'from-purple-700 to-indigo-900',
+        authorAvatarGradient: 'from-amber-600 to-orange-800',
         badge: 'En Foco',
         year,
         month,
@@ -367,7 +367,7 @@ export class SocialFeedEngine {
         authorHandle: '@cami_musica',
         authorVerified: false,
         authorType: 'fan',
-        authorAvatarGradient: 'from-pink-500 to-purple-600',
+        authorAvatarGradient: 'from-rose-600 to-red-900',
         year,
         month,
         content: `Lo domó completamente en dos historias 😭 ${pHandle} no tiene rival, ${tHandle} buscaba prensa y se fue con la cola entre las patas`,
@@ -422,7 +422,7 @@ export class SocialFeedEngine {
         authorHandle: '@trap_connoisseur',
         authorVerified: false,
         authorType: 'fan',
-        authorAvatarGradient: 'from-violet-600 to-fuchsia-600',
+        authorAvatarGradient: 'from-amber-600 to-orange-800',
         year,
         month,
         content: `PARÁ UN POCO LO ENTERRÓ EN VIDA ⚰️💀 El segundo verso de la tiradera fue quirúrgico, no se recupera más ${tHandle}`,
@@ -444,7 +444,7 @@ export class SocialFeedEngine {
         badge: 'Opinión',
         year,
         month,
-        content: `Elegante e inteligente la postura de ${pHandle} al no rebajarse al show mediático de ${tHandle}. Cuando los números y la música hablan, las provocaciones caen por su propio peso.`,
+        content: `Silencio de radio de ${pHandle} frente al ruido de ${tHandle}. Cuando tenés el estudio facturando y fechas vendidas, regalar prensa gratis es de principiante.`,
         likes: Math.floor(1450 + Math.random() * 500),
         retweetsOrShares: Math.floor(240 + Math.random() * 100),
         commentsCount: Math.floor(75 + Math.random() * 35),
@@ -477,7 +477,7 @@ export class SocialFeedEngine {
       authorHandle: '@charts_radar_live',
       authorVerified: true,
       authorType: 'media',
-      authorAvatarGradient: 'from-blue-600 to-violet-800',
+      authorAvatarGradient: 'from-emerald-600 to-teal-900',
       badge: 'Stats Semanales',
       year,
       month,
@@ -539,7 +539,7 @@ export class SocialFeedEngine {
         authorHandle: '@trapflow_arg',
         authorVerified: true,
         authorType: 'media',
-        authorAvatarGradient: 'from-purple-700 to-indigo-900',
+        authorAvatarGradient: 'from-amber-600 to-orange-800',
         badge: 'Polémica',
         year,
         month,
@@ -576,7 +576,7 @@ export class SocialFeedEngine {
         authorHandle: '@cami_musica',
         authorVerified: false,
         authorType: 'fan',
-        authorAvatarGradient: 'from-pink-500 to-purple-600',
+        authorAvatarGradient: 'from-rose-600 to-red-900',
         year,
         month,
         content: `No entiendo nada... ${pHandle} elogiando a ${tHandle}?? Quedé en shock total 😭 espero que sea sarcasmo`,
@@ -599,7 +599,7 @@ export class SocialFeedEngine {
         badge: 'Cultura Urbana',
         year,
         month,
-        content: `🤝 RESPETO MUTUO: ${pHandle} reconoció públicamente el trabajo de ${tHandle}. Gestos de grandeza que unen y fortalecen la escena hispana.`,
+        content: `BUENA ONDA: ${pHandle} destacó en vivo el último trabajo de ${tHandle}. Hacía rato que dos cabezas del circuito no se tiraban un centro sin intermediarios.`,
         likes: Math.floor(3400 + Math.random() * 1000),
         retweetsOrShares: Math.floor(720 + Math.random() * 200),
         commentsCount: Math.floor(310 + Math.random() * 100),
@@ -614,7 +614,7 @@ export class SocialFeedEngine {
         authorHandle: '@mati_trap',
         authorVerified: false,
         authorType: 'fan',
-        authorAvatarGradient: 'from-blue-500 to-indigo-600',
+        authorAvatarGradient: 'from-cyan-600 to-slate-900',
         year,
         month,
         content: `Qué humildad la de ${pHandle} bancando a ${tHandle} 👑 Necesitamos ese junte ya en el estudio lpm`,
@@ -673,7 +673,7 @@ export class SocialFeedEngine {
         authorHandle: '@trap_connoisseur',
         authorVerified: false,
         authorType: 'fan',
-        authorAvatarGradient: 'from-violet-600 to-fuchsia-600',
+        authorAvatarGradient: 'from-amber-600 to-orange-800',
         year,
         month,
         content: `PARÁ UN POCO LO ASESINÓ EN VIVO 💀🔥 Las métricas del tercer verso no tienen sentido, ${tHandle} no se levanta más de esta`,
@@ -695,7 +695,7 @@ export class SocialFeedEngine {
         badge: 'Crítica Especializada',
         year,
         month,
-        content: `Análisis técnico: ${pHandle} demostró superioridad absoluta en estructura métrica, rimas asonantes encadenadas y credibilidad de calle frente a ${tHandle}. Victoria lírica rotunda.`,
+        content: `Nota técnica: ${pHandle} le ganó la espalda a ${tHandle} en respiración, acentuación sobre el bombo y remates secos sin apelar al grito fácil.`,
         likes: Math.floor(2100 + Math.random() * 600),
         retweetsOrShares: Math.floor(410 + Math.random() * 120),
         commentsCount: Math.floor(180 + Math.random() * 60),
@@ -710,7 +710,7 @@ export class SocialFeedEngine {
         authorHandle: '@trapflow_arg',
         authorVerified: true,
         authorType: 'media',
-        authorAvatarGradient: 'from-purple-700 to-indigo-900',
+        authorAvatarGradient: 'from-amber-600 to-orange-800',
         badge: 'Fuego Cruzado',
         year,
         month,
@@ -812,7 +812,7 @@ export class SocialFeedEngine {
         authorHandle: '@trapflow_arg',
         authorVerified: true,
         authorType: 'media',
-        authorAvatarGradient: 'from-purple-700 to-indigo-900',
+        authorAvatarGradient: 'from-amber-600 to-orange-800',
         badge: 'Radar de Nuevos Talentos',
         year: world.currentYear,
         month: world.currentMonth,
@@ -830,7 +830,7 @@ export class SocialFeedEngine {
         authorHandle: '@mati_trap',
         authorVerified: false,
         authorType: 'fan',
-        authorAvatarGradient: 'from-blue-500 to-indigo-600',
+        authorAvatarGradient: 'from-cyan-600 to-slate-900',
         year: world.currentYear,
         month: world.currentMonth,
         content: `Escuché las maquetas de @${player.name.toLowerCase().replace(/\s+/g, '')} y tiene un flow zarpado. Guarden este tuit porque en 2 años llena estadios 🔥`,

@@ -270,9 +270,9 @@ export const EventModal: React.FC<EventModalProps> = ({
                       </h4>
                     </div>
 
-                    {/* Risk Warning Badge */}
+                    {/* Risk Warning & Explicit Probabilities Badge */}
                     {hasRisk && riskWarning && isEligible && (
-                      <div className="pt-0.5">
+                      <div className="pt-0.5 flex items-center gap-2 flex-wrap">
                         <span
                           className={`inline-flex items-center gap-1.5 text-2xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border ${
                             riskSeverity === 'danger'
@@ -287,6 +287,12 @@ export const EventModal: React.FC<EventModalProps> = ({
                           )}
                           <span>{riskWarning}</span>
                         </span>
+
+                        {choice.successProbability !== undefined && choice.riskProbability !== undefined && (
+                          <span className="text-2xs font-mono font-bold px-2 py-0.5 rounded-[4px] border bg-[#18181C] text-[#F4F0EA] border-[#26262B] tabular-nums">
+                            <strong className="text-[#10B981]">{choice.successProbability}% Éxito</strong> / <strong className="text-[#EF4444]">{choice.riskProbability}% Riesgo</strong>
+                          </span>
+                        )}
                       </div>
                     )}
 

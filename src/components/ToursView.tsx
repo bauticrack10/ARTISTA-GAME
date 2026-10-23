@@ -54,7 +54,7 @@ const TIER_BORDER_COLORS: Record<TourTier, string> = {
   club: 'border-l-emerald-500',
   theater: 'border-l-cyan-500',
   arena: 'border-l-blue-500',
-  festival_circuit: 'border-l-purple-500',
+  festival_circuit: 'border-l-orange-500',
   stadium: 'border-l-amber-500',
   world_tour: 'border-l-rose-500'
 };
@@ -63,7 +63,7 @@ const TIER_BG_ACCENT: Record<TourTier, string> = {
   club: 'bg-emerald-950/20 border-emerald-500/30',
   theater: 'bg-cyan-950/20 border-cyan-500/30',
   arena: 'bg-blue-950/20 border-blue-500/30',
-  festival_circuit: 'bg-purple-950/20 border-purple-500/30',
+  festival_circuit: 'bg-orange-950/20 border-orange-500/30',
   stadium: 'bg-amber-950/20 border-amber-500/30',
   world_tour: 'bg-rose-950/20 border-rose-500/30'
 };
@@ -72,7 +72,7 @@ const TIER_BADGE_COLORS: Record<TourTier, string> = {
   club: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40',
   theater: 'bg-cyan-950/60 text-cyan-400 border-cyan-500/40',
   arena: 'bg-blue-950/60 text-blue-400 border-blue-500/40',
-  festival_circuit: 'bg-purple-950/60 text-purple-300 border-purple-500/40',
+  festival_circuit: 'bg-orange-950/60 text-orange-300 border-orange-500/40',
   stadium: 'bg-amber-950/60 text-amber-400 border-amber-500/40',
   world_tour: 'bg-rose-950/60 text-rose-400 border-rose-500/40'
 };
@@ -168,7 +168,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
     world_tour: {
       title: 'Gira Mundial Intercontinental',
       minPop: 85,
-      desc: 'Recorrido por capitales de América, Europa y Asia. Logística de clase mundial y estatus de superestrella internacional.',
+      desc: 'Tramos en Norteamérica, Europa, Latinoamérica y Japón con flete aéreo de escenario propio; la recaudación por noche es altísima, pero el desgaste físico no perdona.',
       estRevenue: '$5,000,000 - $15,000,000',
       fatigue: '-50% Energía'
     }
@@ -205,7 +205,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
             Giras & Festivales en Vivo
           </h1>
           <p className="text-xs text-[#8E8E99] mt-1">
-            Conquista escenarios mundiales, encabeza festivales masivos y conecta con multitudes cara a cara.
+            Cerrá contratos de boletería y caché en festivales; la taquilla en vivo deja el margen neto más alto de toda tu carrera si cuidás la garganta.
           </p>
         </div>
 

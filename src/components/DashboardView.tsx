@@ -47,7 +47,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string>(
-    player?.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]'
+    player?.avatarColor || 'from-[#FF4F00] via-[#D97706] to-[#18181C]'
   );
   const [selectedIcon, setSelectedIcon] = useState<string>(player?.avatarIcon || 'mic');
   const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>(
@@ -68,7 +68,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const isTourReady = hasCatalog && hasAudience && hasEnergy;
 
   const handleOpenAvatarModal = () => {
-    setSelectedColor(player?.avatarColor || 'from-[#7C3AED] via-[#8B5CF6] to-[#4F46E5]');
+    setSelectedColor(player?.avatarColor || 'from-[#FF4F00] via-[#D97706] to-[#18181C]');
     setSelectedIcon(player?.avatarIcon || 'mic');
     setAvatarType(player?.avatarIcon ? 'symbol' : 'initials');
     setIsAvatarModalOpen(true);

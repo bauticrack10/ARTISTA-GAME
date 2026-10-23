@@ -41,7 +41,7 @@ export const GLOBAL_FESTIVALS: GlobalFestival[] = [
     capacity: 125000,
     prestige: 98,
     description: 'El epicentro de la cultura pop, moda y tendencias globales en el valle de Coachella.',
-    bannerGradient: 'from-amber-500 via-rose-500 to-indigo-900',
+    bannerGradient: 'from-amber-600 to-orange-800',
     icon: 'palms'
   },
   {
@@ -54,7 +54,7 @@ export const GLOBAL_FESTIVALS: GlobalFestival[] = [
     capacity: 100000,
     prestige: 90,
     description: 'El festival más convocante del cono sur con 5 escenarios en simultáneo y multitudes apasionadas.',
-    bannerGradient: 'from-yellow-400 via-red-500 to-purple-800',
+    bannerGradient: 'from-rose-600 to-red-900',
     icon: 'stage'
   },
   {
@@ -67,7 +67,7 @@ export const GLOBAL_FESTIVALS: GlobalFestival[] = [
     capacity: 85000,
     prestige: 94,
     description: 'Vanguardia artística, curaduría de culto y el mar Mediterráneo de fondo.',
-    bannerGradient: 'from-teal-400 via-indigo-600 to-slate-900',
+    bannerGradient: 'from-emerald-600 to-teal-900',
     icon: 'waves'
   },
   {
@@ -93,7 +93,7 @@ export const GLOBAL_FESTIVALS: GlobalFestival[] = [
     capacity: 200000,
     prestige: 96,
     description: 'Fantasía, pirotecnia colosal y los escenarios temáticos más espectaculares del planeta.',
-    bannerGradient: 'from-violet-600 via-fuchsia-500 to-indigo-950',
+    bannerGradient: 'from-zinc-800 to-zinc-950',
     icon: 'sparkles'
   },
   {

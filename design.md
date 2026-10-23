@@ -1,65 +1,55 @@
-# Design System — El Artista: "Analog Master & Editorial Press"
+# Design System — El Artista: "Analog Studio & Vinyl Press"
 
 ## 1. Dirección Visual y Atmósfera
-La interfaz fusiona dos mundos reales de la industria musical:
-1. **Ingeniería de Estudio y Hardware (Teenage Engineering / SSL / Ableton):** Superficies negro mate y grafito, bordes precisos de `1px`, indicadores tipo LED para estados críticos y lecturas numéricas monoespaciadas.
-2. **Prensa Musical y Plataformas Pro (Pitchfork / Spotify for Artists / Billboard):** Titulares de alto impacto con tracking cerrado, tablas densas para los rankings (sin tarjetas redundantes) y reseñas con diseño editorial.
-
-**Reglas de Oro Anti-IA:**
-- **PROHIBIDO** usar el gradiente genérico violeta-a-rosa (`from-violet-600 to-pink-600`) en botones, fondos de tarjetas o barras de navegación.
-- **PROHIBIDO** usar `rounded-full` (píldoras) para contenedores de métricas o botones rectangulares.
-- **PROHIBIDO** usar sombras de neón difusas (`0 0 20px rgba(...)`). La jerarquía se construye por contraste de superficie y bordes nítidos de `1px`.
-- **MÁXIMO 2 TIPOGRAFÍAS** en toda la aplicación: una Sans-Serif geométrica/humanista para UI y titulares, y una Monospace técnica para todos los datos numéricos.
+Inspirado directamente en:
+* **Consolas de grabación analógicas y hardware de estudio (Teenage Engineering / Dieter Rams / SSL / Neve):** Superficies negro vinilo profundo `#0B0B0C`, módulos de rack de audio `#141417`, bordes precisos de `1px solid #26262B`, acento REC Red `#FF2A4B` e indicadores ámbar tipo VU-Meter `#F59E0B`.
+* **Sellos discográficos icónicos (Def Jam, XL Recordings, Sub Pop, Factory Records):** Tipografía con personalidad cruda, pegatinas "Hype Sticker" en crema editorial `#F4F0EA` sobre negro, y contraste editorial contundente.
+* **Prensa musical especializada (Billboard, Pitchfork, Rolling Stone):** Tablas densas, jerarquía tipográfica sin tarjetas infladas, titulares audaces y lectura técnica fluida.
 
 ---
 
-## 2. Paleta de Colores (Sólida, Mate y de Alto Contraste)
+## 2. Prohibiciones Visuales Estrictas (Cero "AI Slop")
+* **PROHIBIDO** usar tipografías genéricas de IA: Cero Inter, Roboto, Open Sans, Segoe UI, Arial o system-ui como fuentes de titulares o identidad.
+* **PROHIBIDO** usar gradientes de IA: Ningún fondo, botón o texto con degradados violeta/morado/fucsia (`from-purple-500 to-indigo-600`), sombras de neón difusas ni `backdrop-blur` genérico sin justificación física.
+* **PROHIBIDO** usar emojis de sistema como iconos principales (🎵, 🔥, 💰, 📈): Toda la iconografía debe ser vectorial limpia y consistente (`lucide-react` con `strokeWidth={1.75}`).
+* **PROHIBIDO** usar contenedores tipo píldora (`rounded-full`) para bloques de métricas, formularios o botones rectangulares. El radio de control estándar es `rounded-[4px]` y de paneles `rounded-[6px]`.
 
-| Rol | Nombre | Hex | Uso Estricto |
+---
+
+## 3. Sistema Tipográfico con Carácter Real (3 Niveles)
+
+| Nivel | Rol / Uso | Fuente | Propiedades |
 | :--- | :--- | :--- | :--- |
-| **Fondo Base** | Studio Black | `#09090B` | Fondo global de la aplicación. |
-| **Superficie Nivel 1** | Rack Matte | `#111114` | Paneles principales, tablas de charts, contenedores de vista. |
-| **Superficie Nivel 2** | Module Surface | `#18181C` | Filas en hover, inputs, sub-paneles internos, tarjetas de catálogo. |
-| **Borde Pasivo** | Hairline Slate | `#242429` | Divisorias de tablas, bordes de paneles (`1px solid`). |
-| **Borde Activo** | Signal Border | `#3F3F46` | Estado focus/hover de módulos interactivos. |
-| **Texto Primario** | Crisp Chalk | `#F4F4F6` | Titulares, nombres de artistas y canciones. |
-| **Texto Secundario** | Muted Steel | `#8E8E99` | Descripciones, subtítulos, metadatos secundarios. |
-| **Texto Técnico** | Dim Label | `#52525B` | Etiquetas en mayúsculas (ej. `PRESUPUESTO`, `SEMANAS EN CHART`). |
-| **Acento Primario** | Signal Orange | `#FF4F00` | Acción principal ("Publicar Lanzamiento", "Avanzar Ciclo"), REC activo. |
-| **Acento Éxito / $** | LED Emerald | `#00E599` | Fondos positivos, subida en charts (`▲`), energía alta, certificaciones. |
-| **Acento Alerta** | Amber Peak | `#F59E0B` | Récords, premios, advertencias de fatiga media, Metacritic medio. |
-| **Acento Peligro** | Clipping Red | `#EF4444` | Beefs/Tiraderas, caída en charts (`▼`), energía crítica (<15%), deudas. |
+| **`--font-display`** | Titulares, Nombre de Artista, Secciones, Portadas de Discos y Festivales | `'Syne'` (pesos 700 y 800) | `letter-spacing: -0.035em`, fuerza de póster y portada de vinilo. |
+| **`--font-sans`** | Cuerpo de texto, narrativa de eventos, descripciones y navegación | `'Plus Jakarta Sans'` (pesos 400, 500, 600, 700) | Lectura editorial impecable, gran legibilidad en pantallas oscuras. |
+| **`--font-mono`** | Cifras, streams, dinero, puestos de chart, fechas, duraciones y códigos | `'JetBrains Mono'` (pesos 500, 600, 700) | `font-variant-numeric: tabular-nums` obligatorio en todos los números. |
 
 ---
 
-## 3. Sistema Tipográfico ( Regla de 2 Fuentes)
+## 4. Paleta de Colores "Analog Studio & Vinyl Press"
 
-1. **Fuente Principal (UI & Editorial):** `'Inter'` o `'Plus Jakarta Sans'` (con fallback `system-ui, sans-serif`).
-   - **Hero / Nombre del Artista:** `36px` a `52px`, `font-weight: 800`, `letter-spacing: -0.04em`, `line-height: 1.0`.
-   - **Títulos de Sección:** `22px` a `28px`, `font-weight: 700`, `letter-spacing: -0.025em`.
-   - **Cuerpo y Narrativa de Eventos:** `15px`, `font-weight: 400`, `line-height: 1.6`, color `#D4D4D8`.
-2. **Fuente Técnica (Datos, Finanzas, Tiempo y Rankings):** `'JetBrains Mono'` (con fallback `ui-monospace, monospace`).
-   - **Obligatorio:** `font-variant-numeric: tabular-nums` en todas las cifras.
-   - **Uso:** Dinero (`$150.000`), oyentes mensuales, streams, puestos del chart (`#01`), fechas (`2026 // MES 07`), porcentajes de energía y regalías.
+| Rol | Token / Nombre | Hex | Uso Estricto |
+| :--- | :--- | :--- | :--- |
+| **Fondo Principal** | `--bg-studio` | `#0B0B0C` | Negro vinilo profundo, cálido, no azulado. |
+| **Paneles / Módulos** | `--bg-console` | `#141417` | Paneles de control, tablas de rankings, contenedores de vista. |
+| **Superficie Activa** | `--bg-editorial` | `#1C1C21` | Tarjetas activas, filas en hover, inputs técnicos. |
+| **Papel Hype Sticker** | `--bg-editorial-paper` | `#F4F0EA` | Etiquetas de alto contraste con texto oscuro `#0B0B0C`. |
+| **Borde Pasivo Rack** | `--color-line` | `#26262B` | Bordes nítidos de `1px solid` en todos los módulos de hardware. |
+| **Borde Activo** | `--color-line-active`| `#3F3F46` | Estado hover/focus de controles. |
+| **Texto Primario** | Bone White / Crema | `#F4F0EA` | Titulares, nombres de canciones y lectura principal. |
+| **Texto Secundario** | Muted Steel | `#8E8E99` | Descripciones, subtítulos, metadatos. |
+| **Texto Técnico** | Dim Studio Label | `#52525B` | Etiquetas técnicas en mayúsculas (`font-mono text-2xs`). |
+| **Acento Primario (REC)** | REC Red | `#FF2A4B` | Botón de grabación, acción principal, indicador On-Air. |
+| **Acento Secundario** | VU-Meter Amber | `#F59E0B` | Récords, energía media, avisos de producción. |
+| **Éxito / Subida** | Console Green | `#10B981` | Fondos positivos, subida en charts (`▲`), streaming activo. |
+| **Peligro / Clipping** | Clipping Red | `#EF4444` | Tiraderas, feudos, caída en charts (`▼`), agotamiento (<15%). |
+
+### 4.1 Certificaciones Oficiales de la Industria
+* **Disco de Oro:** `#D4AF37`
+* **Disco de Platino:** `#E2E8F0` (con brillo metálico nítido)
+* **Disco de Diamante:** `#38BDF8`
 
 ---
 
-## 4. Arquitectura de Componentes
-
-### 4.1 Navbar (Top Studio Rack)
-- Barra superior fija de `56px` de altura con fondo `#09090B` y borde inferior `1px solid #242429`.
-- **Métricas en Celdas Técnicas (No Píldoras):** Celdas contiguas separadas por `border-r border-[#242429]`, cada una con label superior de `10px uppercase tracking-widest text-[#52525B]` y valor inferior en `font-mono text-sm font-bold`.
-- **Botones de Avance Temporal (`+6M` / `+1Y`):** Estilo interruptor de hardware (`bg-[#FF4F00] text-white font-mono font-bold rounded-[4px] px-3 py-1.5 hover:bg-[#E04500] active:translate-y-[1px]`).
-
-### 4.2 Botones
-- **Primario (Acción Crítica):** Fondo `#F4F4F6`, texto `#09090B`, `font-weight: 600`, `border-radius: 4px`, borde superior sutil. En acciones de grabación/lanzamiento: fondo `#FF4F00`, texto `#FFFFFF`.
-- **Secundario (Técnico):** Fondo `#18181C`, texto `#F4F4F6`, borde `1px solid #2E2E36`, `border-radius: 4px`, hover `#242429`.
-- **Peligro (Tiradera / Rescindir):** Fondo `#1F1215`, texto `#EF4444`, borde `1px solid #451A20`.
-
-### 4.3 Tablas de Charts y Catálogo
-- Cero tarjetas flotantes para listas de canciones.
-- Filas compactas (`h-12`) con `border-b border-[#1C1C21]`, cambio de fondo en hover (`#141418`).
-- Columnas alineadas: `# Posición (w-12 font-mono)` | `Delta (▲/▼ w-10 font-mono)` | ` Mini-Tapa (32x32px) + Título y Créditos` | `Streams Mensuales (font-mono text-right)` | `Peak / Semanas (font-mono text-right)`.
-
-### 4.4 Arte de Tapa Procedural (Discos y Singles)
-- Contenedor cuadrado (`aspect-square`) con `rounded-[4px]`, borde interno `1px solid rgba(255,255,255,0.12)`, textura de grano superpuesta, tipografía del título impresa dentro de la portada y micro-sello discográfico en la esquina inferior.
+## 5. Textura y Físicalidad Analógica
+* **Capa Global de Grano Analógico:** Capa fija de ruido SVG matemático (`opacity: 0.025`, `pointer-events: none`) que elimina la esterilidad digital y otorga tacto físico de vinilo y papel de prensa.

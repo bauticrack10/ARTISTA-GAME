@@ -40,7 +40,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
           particleCount: 100,
           spread: 80,
           origin: { y: 0.5 },
-          colors: ['#8B5CF6', '#EC4899', '#10B981', '#F59E0B', '#38BDF8']
+          colors: ['#FF4F00', '#FF2A4B', '#10B981', '#D4AF37', '#F59E0B']
         });
       } catch (e) {
         // ignore in non-canvas
@@ -71,7 +71,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
   const handleShare = () => {
     playSound('level_up');
     navigator.clipboard?.writeText(
-      `🎧 Mi resumen musical del ${data.year} en El Artista:\n🔥 ${data.totalStreamsYear.toLocaleString('es-AR')} reproducciones totales\n👑 Hit: "${data.topSongTitle}"\n🌍 País Top: ${data.topCountryFlag} ${data.topCountry}\n"${data.quoteShareable}"`
+      `Balance anual ${data.year} en El Artista (${data.artistName}):\n• ${data.totalStreamsYear.toLocaleString('es-AR')} streams acumulados\n• Corte principal: "${data.topSongTitle}"\n• Plaza fuerte: ${data.topCountryFlag} ${data.topCountry}\n"${data.quoteShareable}"`
     );
     setCopiedShare(true);
     setTimeout(() => setCopiedShare(false), 2500);
@@ -132,7 +132,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
                   {data.totalStreamsYear.toLocaleString('es-AR')}
                 </span>
                 <p className="text-2xs text-[#8E8E99]">
-                  Millones de personas sintonizaron tu música en las plataformas globales.
+                  Reproducciones contabilizadas en plataformas digitales y distribuidoras durante los últimos doce meses.
                 </p>
               </div>
 
@@ -202,7 +202,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
                   {data.topCountry}
                 </h3>
                 <p className="text-xs text-[#8E8E99] max-w-[280px] mx-auto">
-                  Fue el territorio donde tu música se escuchó con mayor devoción, liderando las playlists urbanas locales.
+                  La plaza con mayor volumen de escuchas activas, rotación en listas editoriales y demanda de tickets.
                 </p>
               </div>
 
@@ -235,8 +235,8 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
                 </h3>
                 <p className="text-xs text-[#8E8E99]">
                   {data.awardsWonYear && data.awardsWonYear.length > 0
-                    ? 'La Academia y la crítica especializada premiaron tu excelencia artística este año.'
-                    : 'Un año de siembra y consolidación con la mirada puesta en las próximas galas.'}
+                    ? 'Los jurados de la industria y la prensa especializada respaldaron el peso de tu catálogo este año.'
+                    : 'Doce meses de trabajo de estudio, armado de catálogo y rodaje sin estatuillas por ahora.'}
                 </p>
               </div>
 

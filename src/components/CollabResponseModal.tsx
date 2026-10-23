@@ -46,8 +46,8 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
   creditPreview = '',
   totalCost = 0,
   soundSynergy = 75,
-  rejectionReason = 'El artista revisó la propuesta pero decidió no participar en este momento.',
-  rejectionAdvice = 'Incrementa tu afinidad en redes sociales o eleva el presupuesto de marketing.',
+  rejectionReason = 'Su oficina de management escuchó la maqueta, pero tienen el calendario de lanzamientos cerrado este trimestre.',
+  rejectionAdvice = 'Subí tu rotación mensual o mejorá el porcentaje de puntos sobre el máster antes de volver a ofertar.',
   onProceed,
   onAdjustProposal,
   onClose
@@ -67,7 +67,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
           particleCount: 80,
           spread: 80,
           origin: { y: 0.55 },
-          colors: ['#10B981', '#8B5CF6', '#EC4899', '#06B6D4', '#F59E0B', '#F8FAFC']
+          colors: ['#10B981', '#FF4F00', '#FF2A4B', '#D4AF37', '#F59E0B', '#F4F4F6']
         });
       } catch (e) {
         // Fallback for non-canvas environments
@@ -112,7 +112,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
             <div className="flex justify-center">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-xs font-mono font-bold uppercase tracking-wider bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599]">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#00E599]" />
-                ¡Alianza Sellada & Feat Confirmado!
+                Acuerdo Cerrado • Split Sheet Firmado
               </span>
             </div>
 
@@ -122,7 +122,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                 {artist.name} firmó la colaboración
               </h2>
               <p className="text-xs text-[#8E8E99]">
-                Las sesiones de grabación fueron aprobadas y el máster ingresa a post-producción.
+                Se cerraron los puntos de regalía y las tomas vocales ya entraron a mezcla y masterización.
               </p>
             </div>
 
@@ -242,7 +242,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                 El equipo de {artist.name} declinó la sesión
               </h2>
               <p className="text-xs text-[#8E8E99]">
-                En la industria de la música, el timing y el perfil artístico son fundamentales. Esta respuesta no perjudica tu prestigio actual.
+                Los cruces entre sellos dependen de ventanas de lanzamiento, caché y tracción en listas; un no de su oficina hoy no quema el puente ni afecta tu reputación.
               </p>
             </div>
 

@@ -241,7 +241,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             particleCount: 75,
             spread: 60,
             origin: { y: 0.6 },
-            colors: ['#8B5CF6', '#EC4899', '#10B981', '#06B6D4', '#F59E0B']
+            colors: ['#FF4F00', '#FF2A4B', '#10B981', '#D4AF37', '#F59E0B']
           });
         } catch (e) {
           // ignore if canvas unavailable
@@ -329,7 +329,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       case 'critico_hater':
         return { label: 'Crítica / Prensa Hostil', color: 'bg-rose-500/20 text-rose-300 border-rose-500/40' };
       case 'rival_escena':
-        return { label: 'Rival Directo de Escena', color: 'bg-purple-500/20 text-purple-300 border-purple-500/40' };
+        return { label: 'Rival Directo de Escena', color: 'bg-[#FF4F00]/20 text-[#FF4F00] border-[#FF4F00]/40' };
       default:
         return { label: 'Contacto Urbano', color: 'bg-white/[0.06] text-fg border-line' };
     }
@@ -515,7 +515,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               </h1>
             </div>
             <p className="text-xs sm:text-sm text-[#8E8E99] max-w-2xl leading-relaxed">
-              Explorá la escena internacional (+35 países), gestioná alianzas, colaboraciones de estudio y disputas líricas.
+              Red de contactos en más de 35 mercados: pactá sesiones de estudio, negociá puntos de colaboración o respondé tiraderas en cabina.
             </p>
           </div>
 
@@ -869,7 +869,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               </h2>
             </div>
             <span className="text-xs text-[#8E8E99]">
-              Productores de barrio, managers, críticos y contactos clave
+              Productores de consola, representantes, prensa especializada y rivales de circuito
             </span>
           </div>
 
@@ -1025,7 +1025,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               </h2>
             </div>
             <span className="text-xs text-[#8E8E99]">
-              Evaluación en tiempo real de afinidad, respeto y disponibilidad de interacciones
+              Registro de afinidad, respeto de cabina y ventanas abiertas para grabar feats o cruzar barras
             </span>
           </div>
 

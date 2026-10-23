@@ -13,7 +13,9 @@ export type DecisionActionType =
   | 'vocal_training'
   | 'studio_practice'
   | 'reflective_rest'
+  | 'home_rest'
   | 'industry_networking';
+
 
 export interface DecisionActionConfig {
   id: DecisionActionType;
@@ -69,14 +71,14 @@ export class DecisionEngine {
     return {
       vocal_training: {
         id: 'vocal_training',
-        title: 'Clases Vocales & Técnica',
-        subtitle: 'Entrenamiento de respiración, afinación y presencia',
-        description: 'Sesión intensiva con preparador vocal para expandir tu rango, proyección escénica y control de vibrato.',
+        title: 'Rehabilitación y Técnica de Cabina',
+        subtitle: 'Control de aire, desgaste de cuerdas y monitoreo in-ear',
+        description: 'Dos horas de fonoaudiología aplicada al micrófono condensador para sostener finales de frase sin romper la garganta a mitad de gira.',
         category: 'training',
         costFunds: 350,
         costEnergy: 15,
         iconName: 'Mic2',
-        colorAccent: '#8B5CF6',
+        colorAccent: '#FF4F00',
         badgeLabel: '+2 Skill • +1 Carisma',
         statDeltas: {
           skill: 2,
@@ -85,14 +87,14 @@ export class DecisionEngine {
       },
       studio_practice: {
         id: 'studio_practice',
-        title: 'Composición & Práctica en Estudio',
-        subtitle: 'Laboratorio sonoro y búsqueda de nuevos samples',
-        description: 'Encierro creativo de fin de semana explorando estructuras armónicas, métricas avanzadas y melodías.',
+        title: 'Sesión Nocturna de Maquetas',
+        subtitle: 'Corte de samples, programación de baterías y descartes',
+        description: 'Alquilar la sala chica después de medianoche para armar esqueletos rítmicos, limpiar frecuencias graves y tirar veinte tomas hasta que una funcione.',
         category: 'creation',
         costFunds: 200,
         costEnergy: 20,
         iconName: 'Disc3',
-        colorAccent: '#EC4899',
+        colorAccent: '#FF2A4B',
         badgeLabel: '+2 Creatividad • +1 Skill',
         statDeltas: {
           creativity: 2,
@@ -101,9 +103,9 @@ export class DecisionEngine {
       },
       reflective_rest: {
         id: 'reflective_rest',
-        title: 'Descanso Reflexivo & Bienestar',
-        subtitle: 'Desconexión física y meditación artística',
-        description: 'Retiro de relajación y spa para despejar la mente, recargar vitalidad y fortalecer el enfoque mental.',
+        title: 'Aislamiento y Silencio Vocal',
+        subtitle: 'Apagar el teléfono y frenar la agenda de prensa',
+        description: 'Cuarenta y ocho horas fuera del circuito con reposo absoluto de cuerdas vocales para bajar pulsaciones antes de que la distribuidora reclame entregas.',
         category: 'wellness',
         costFunds: 400,
         costEnergy: -50, // Recupera 50 de energía
@@ -118,11 +120,29 @@ export class DecisionEngine {
           energy: 50
         }
       },
+      home_rest: {
+        id: 'home_rest',
+        title: 'Dormir en Casa con Teléfono Apagado',
+        subtitle: 'Persiana baja y cero costos de producción',
+        description: 'Cancelar ensayos por un día, recuperar horas de sueño atrasadas y dejar en visto al mánager sin tocar el presupuesto.',
+        category: 'wellness',
+        costFunds: 0,
+        costEnergy: -25,
+        iconName: 'Coffee',
+        colorAccent: '#10B981',
+        badgeLabel: '+25 Energía • $0',
+        statDeltas: {
+          discipline: 1
+        },
+        artistStatDeltas: {
+          energy: 25
+        }
+      },
       industry_networking: {
         id: 'industry_networking',
-        title: 'Networking & Encuentro en la Escena',
-        subtitle: 'Reunión en eventos y estudios con colegas y productores',
-        description: 'Participar en showcases y eventos clave de la industria musical para afianzar contactos y expandir tu red.',
+        title: 'Ronda de Escucha con Curadores y Prensa',
+        subtitle: 'Tragos en el estudio, cortes adelanto y negociación directa',
+        description: 'Sentarse en la mesa chica con editores de playlists, programadores de radio y directores de A&R para destrabar rotaciones antes del próximo lanzamiento.',
         category: 'industry',
         costFunds: 300,
         costEnergy: 12,
@@ -263,16 +283,19 @@ export class DecisionEngine {
     let narrative = '';
     switch (actionType) {
       case 'vocal_training':
-        narrative = `Completaste una sesión intensiva de colocación vocal y técnica diafragmática. Tu afinación y seguridad en el micrófono subieron de nivel.`;
+        narrative = `Trabajaste respiración baja y ataque glótico frente al micrófono durante tres horas; la voz aguanta las tomas altas sin fatigarse.`;
         break;
       case 'studio_practice':
-        narrative = `Pasaste horas experimentando con progresiones de acordes, arreglos y texturas sonoras. Tu creatividad compositiva se encuentra al máximo.`;
+        narrative = `Te encerraste en la sala B hasta las cuatro de la mañana cortando baterías y descartando compases flojos hasta dar con una estructura firme.`;
         break;
       case 'reflective_rest':
-        narrative = `Te tomaste un tiempo de desconexión reflexiva y relajación integral. Recuperaste vitalidad (+${netEnergyDelta}% Energía) y renovaste tu enfoque disciplinario.`;
+        narrative = `Cortaste el teléfono dos días seguidos y cumpliste reposo vocal estricto (+${netEnergyDelta}% Energía). Volvés al estudio con el oído descansado.`;
+        break;
+      case 'home_rest':
+        narrative = `Dormiste diez horas de corrido sin gastar un peso (+${netEnergyDelta}% Energía) y dejaste que el cuerpo baje la fatiga acumulada.`;
         break;
       case 'industry_networking':
-        narrative = `Asististe a un encuentro de la escena con productores, curadores y colegas. Afianzaste alianzas estratégicas y encendiste el hype de tus futuros lanzamientos.`;
+        narrative = `Mostraste dos maquetas sin mezclar en una escucha cerrada con prensa y distribuidoras; varios editores pidieron el wav final apenas termines el mastering.`;
         break;
     }
 

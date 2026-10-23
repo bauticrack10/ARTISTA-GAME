@@ -69,7 +69,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
         particleCount: 130,
         spread: 85,
         origin: { y: 0.55 },
-        colors: ['#f59e0b', '#ec4899', '#8b5cf6', '#10b981', '#06b6d4', '#f97316', '#ffd700']
+        colors: ['#F59E0B', '#FF4F00', '#FF2A4B', '#10B981', '#D4AF37', '#F97316', '#F4F4F6']
       });
     } catch (e) {}
   }, []);
@@ -89,23 +89,23 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
       case 'sold_out_tour':
         return `SOLD OUT TOTAL: LA GIRA MONUMENTAL DE ${p.name.toUpperCase()}`;
       default:
-        return `${p.name.toUpperCase()}: LA NUEVA FUERZA QUE REVOLUCIONA LA MÚSICA`;
+        return `${p.name.toUpperCase()}: DEL CIRCUITO UNDERGROUND AL CONTROL DE LOS MÁSTERS`;
     }
   }
 
   const headlineSuggestions: string[] = [
     `EL REINADO DE UNA NUEVA ERA: CÓMO ${player.name.toUpperCase()} REESCRIBIÓ LAS REGLAS`,
-    `FENÓMENO IMPARABLE: DE MAQUETAS CASERAS A LOS RANKINGS MUNDIALES`,
-    `LA VOZ DE UNA GENERACIÓN: EL SONIDO INCONFUNDIBLE DE ${player.name.toUpperCase()}`,
-    `EL HIT QUE CAMBIÓ TODO: ANATOMÍA DE UN ÉXITO SUBTERRÁNEO`,
-    `LA REVOLUCIÓN SONORA: ¿EL MEJOR DISCO DE LA DÉCADA?`
+    `DE MAQUETAS CASERAS A ENCABEZAR LOS RANKINGS DE STREAMING`,
+    `CRÓNICA DE ESTUDIO: EL SONIDO CRUDO DETRÁS DE ${player.name.toUpperCase()}`,
+    `EL CORTE QUE CAMBIÓ EL TABLERO: ANATOMÍA DE UN CLÁSICO DE CULTO`,
+    `PRENSA UNÁNIME: ¿ESTAMOS ANTE EL ÁLBUM DEFINITIVO DEL AÑO?`
   ];
 
   // Helper to format social text
   const getSocialShareText = (): string => {
     const genreName = world.genres[player.mainGenreId]?.name || player.mainGenreId;
     const location = formatCityCountry(player.city, player.country);
-    return `🔥 ¡HITO HISTÓRICO EN "EL ARTISTA"! 🏆\n\n📰 Portada de Revista: ${getMagazineName(selectedPreset)}\n🌟 Artista: ${player.name} (${location})\n🎯 Logro: ${milestone.title}\n📊 ${milestone.milestoneLabel || 'Etapa'}: ${milestone.statValue || player.careerStage}\n🎵 Sonido: ${genreName}\n\n"${cleanQuotes(customHeadline)}"\n\n#ElArtista #MusicaIndie #${player.name.replace(/\s+/g, '')} #RollingStone #Billboard`;
+    return `Portada en ${getMagazineName(selectedPreset)} (${milestone.year})\n${player.name} — ${location}\n${milestone.title} (${milestone.milestoneLabel || 'Etapa'}: ${milestone.statValue || player.careerStage} • ${genreName})\n\n"${cleanQuotes(customHeadline)}"\n\n#ElArtista`;
   };
 
   const handleCopyShareText = async () => {
@@ -158,11 +158,11 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
         ctx.fillRect(50, 50, 1100, 1500);
       } else {
         // The FADER / Urban
-        ctx.fillStyle = '#0f172a';
+        ctx.fillStyle = '#09090B';
         ctx.fillRect(0, 0, 1200, 1600);
         const grad = ctx.createLinearGradient(0, 0, 1200, 1600);
-        grad.addColorStop(0, '#1e1b4b');
-        grad.addColorStop(1, '#020617');
+        grad.addColorStop(0, '#18181C');
+        grad.addColorStop(1, '#09090B');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 1200, 1600);
       }
@@ -324,7 +324,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
                   ? 'bg-gradient-to-b from-[#ffffff] via-[#fcfbf8] to-[#f4efe4] text-[#1c1c1c] border-[#e2dec9]'
                   : selectedPreset === 'underground_zine'
                   ? 'bg-[#f7f4ed] text-[#1c1c1c] border-2 border-[#1c1c1c]'
-                  : 'bg-gradient-to-b from-[#1e1b4b] via-[#0f172a] to-[#020617] text-[#fcfbf8] border-indigo-900'
+                  : 'bg-gradient-to-b from-[#18181C] via-[#111114] to-[#09090B] text-[#fcfbf8] border-[#242429]'
               }`}
             >
               {/* Paper / Gloss Sheen Overlay */}

@@ -59,16 +59,16 @@ export class AwardEngine {
   ): CriticReviewSnippet {
     const media = CRITIC_MEDIA_OUTLETS[(seed + Math.floor(score)) % CRITIC_MEDIA_OUTLETS.length];
     const quotesHigh = [
-      `"${itemTitle ? itemTitle : artistName}" representa una cima creativa indiscutible que redefine los límites estéticos del año.`,
-      `Una obra maestra de vanguardia donde ${artistName} demuestra un dominio sonoro y una audacia compositiva sin igual.`,
-      `El pulso definitivo de la temporada. Letra impecable, ejecución arrolladora y resonancia cultural unánime.`,
-      `Fascinante de principio a fin; ${artistName} logra conectar la aclamación crítica con una respuesta masiva del público.`
+      `"${itemTitle ? itemTitle : artistName}" corta con la compresión genérica del ranking y arma espacio propio a fuerza de graves secos y tomas vocales al frente.`,
+      `Pocas veces un disco comercial se anima a dejar tanto aire entre la batería y la voz principal; ${artistName} firma acá su mejor trabajo de estudio.`,
+      `Sin trucos de postproducción ni estribillos diseñados por comité: tres minutos y medio de tensión sostenida que explican por qué el circuito mira hacia ${artistName}.`,
+      `Crudo en los medios y quirúrgico en el corte de frecuencias bajas; ${artistName} consigue que una mezcla arriesgada suene en todos lados.`
     ];
     const quotesMid = [
-      `Una propuesta sumamente sólida y fresca que consolida a ${artistName} entre lo más destacado de la escena actual.`,
-      `Con "${itemTitle ? itemTitle : artistName}", la producción brilla por su solidez, ritmo hipnótico y carisma interpretativo.`,
-      `Un trabajo con identidad marcada que merecidamente entra en la conversación de las grandes obras de este año.`,
-      `Gran ejecución musical y una identidad sonora bien definida que sostiene altas cuotas de originalidad.`
+      `"${itemTitle ? itemTitle : artistName}" sostiene el pulso de principio a fin con percusiones bien plantadas y un fraseo que no necesita sobregrabar coros.`,
+      `Con "${itemTitle ? itemTitle : artistName}", el trabajo de consola prioriza el golpe del bombo y deja que la letra respire sin saturar el bus maestro.`,
+      `Un corte honesto y bien ejecutado que ubica a ${artistName} varios escalones por encima del promedio radial de esta temporada.`,
+      `Buen balance entre ataque rítmico y timbre vocal; ${artistName} entrega una grabación firme que gana peso con cada escucha.`
     ];
 
     const quotes = score >= 85 ? quotesHigh : quotesMid;
@@ -183,7 +183,7 @@ export class AwardEngine {
     if (existingAlbumsCount < NOMINEES_PER_CATEGORY) {
       const needed = NOMINEES_PER_CATEGORY - existingAlbumsCount;
       const gradients = [
-        'from-purple-900 via-indigo-950 to-black',
+        'from-zinc-800 to-zinc-950',
         'from-amber-600 via-rose-900 to-zinc-950',
         'from-emerald-800 via-teal-950 to-black',
         'from-blue-900 via-sky-950 to-neutral-900'
@@ -346,7 +346,7 @@ export class AwardEngine {
           commercialScore: Math.min(100, Math.max(40, Math.floor(npc.personality.commercialAppeal * 0.7 + 20))),
           peakChartPosition: { Global: 14, Argentina: 8, USA: null, LatinAmerica: 11, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
           awards: [],
-          coverGradient: 'from-purple-900 via-indigo-950 to-black'
+          coverGradient: 'from-zinc-800 to-zinc-950'
         };
         world.albums[fallbackAlbumId] = fallbackAlbum;
 
@@ -428,7 +428,7 @@ export class AwardEngine {
       winType: winClsAlbum.winType,
       winTypeLabel: winClsAlbum.winTypeLabel,
       winnerReason: `Por su maestría conceptual, narrativa y solidez musical irreprochable en "${winningAlbum.title}".`,
-      deliberationNotes: 'La academia reconoció la profundidad lírica y la arquitectura sonora del proyecto por sobre los sencillos aislados.',
+      deliberationNotes: 'El comité de ingeniería y crítica valoró la cohesión de las transiciones, el rango dinámico sin sobrecompresión y el arco lírico del tracklist completo.',
       playerWon: isPlayerAlbumWinner,
       playerNominated: isPlayerAlbumNominated,
       playerNominationStatus: playerNomStatusAlbum
@@ -631,7 +631,7 @@ export class AwardEngine {
       winType: winClsRecord.winType,
       winTypeLabel: winClsRecord.winTypeLabel,
       winnerReason: `Por su arrolladora presencia e indiscutible impacto sonoro y masivo con "${winningRecord.title}".`,
-      deliberationNotes: 'Reconocimiento a la ejecución técnica, carisma en la pista y dominio absoluto del streaming.',
+      deliberationNotes: 'Los ingenieros de mezcla y productores votantes destacaron el plano vocal, la pegada en frecuencias subgraves y la permanencia en rotación durante todo el año.',
       playerWon: isPlayerRecordWinner,
       playerNominated: isPlayerRecordNominated,
       playerNominationStatus: playerNomStatusRecord
@@ -828,7 +828,7 @@ export class AwardEngine {
       winType: winClsSong.winType,
       winTypeLabel: winClsSong.winTypeLabel,
       winnerReason: `Por la excelencia de su composición lírica y riqueza armónica en "${winningSong.title}".`,
-      deliberationNotes: 'La academia premió la sensibilidad poética y la estructura melódica sobre el mero rendimiento de mercado.',
+      deliberationNotes: 'La mesa de compositores premió la construcción de los versos, la resolución armónica del puente y una letra escrita sin lugares comunes.',
       playerWon: isPlayerSongWinner,
       playerNominated: isPlayerSongNominated,
       playerNominationStatus: playerNomStatusSong
@@ -1077,7 +1077,7 @@ export class AwardEngine {
       winType: winClsNew.winType,
       winTypeLabel: winClsNew.winTypeLabel,
       winnerReason: `Por su deslumbrante impacto revelación y frescura sonora indiscutible en ${year}.`,
-      deliberationNotes: 'El jurado evaluó la audacia del debut y la capacidad de conectar con una nueva generación de oyentes.',
+      deliberationNotes: 'El jurado destacó un debut con timbre propio, tracción real en salas chicas y un catálogo inicial que no copia moldes ajenos.',
       playerWon: isPlayerNewWinner,
       playerNominated: isPlayerNewNominated,
       playerNominationStatus: playerNomStatusNew
@@ -1239,7 +1239,7 @@ export class AwardEngine {
       winType: 'unanimous',
       winTypeLabel: 'Victoria de Escena',
       winnerReason: `Por la incomparable química y resonancia masiva en "${winningCollab.title}".`,
-      deliberationNotes: 'La unión de estilos creó un momento cultural ineludible en el calendario musical.',
+      deliberationNotes: 'En lugar de pegar dos versos grabados a distancia, ambos artistas trabajaron el arreglo en conjunto e intercambiaron compases sobre la misma consola.',
       playerWon: isPlayerCollabWinner,
       playerNominated: isPlayerCollabNominated,
       playerNominationStatus: {
@@ -1378,7 +1378,7 @@ export class AwardEngine {
       winType: 'unanimous',
       winTypeLabel: 'Victoria de Género',
       winnerReason: `Por consolidar el sonido definitivo del trap con métricas demoledoras en "${winningUrban.title}".`,
-      deliberationNotes: 'El jurado destacó la crudeza lírica y la contundencia de los bajos en la mezcla.',
+      deliberationNotes: 'La mesa de género destacó el golpe seco del 808, los cambios de cadencia a contratiempo y la nitidez de las voces principales.',
       playerWon: isPlayerUrbanWinner,
       playerNominated: isPlayerUrbanNominated,
       playerNominationStatus: {
@@ -1522,7 +1522,7 @@ export class AwardEngine {
       winType: 'unanimous',
       winTypeLabel: 'Impacto Cultural',
       winnerReason: `Por su revolucionaria propuesta visual y fenómeno viral con "${winningVideo.title}".`,
-      deliberationNotes: 'La estética del videoclip estableció tendencia visual en toda la industria audiovisual.',
+      deliberationNotes: 'El jurado audiovisual valoró el trabajo de fotografía en locación, el montaje rítmico al corte del bombo y la dirección de arte sin abuso de pantalla verde.',
       playerWon: isPlayerVideoWinner,
       playerNominated: isPlayerVideoNominated,
       playerNominationStatus: {
@@ -1715,7 +1715,7 @@ export class AwardEngine {
       winType: 'unanimous',
       winTypeLabel: 'Excelencia Técnica',
       winnerReason: `Por el impecable trabajo de audio, vanguardia sonora e ingeniería en "${winningProdCandidate.title}".`,
-      deliberationNotes: 'Elogiada por ingenieros y productores como el estándar de oro en calidad de audio del año.',
+      deliberationNotes: 'Los votantes técnicos subrayaron la separación de planos en estéreo, el tratamiento analógico de las voces y un mastering con margen dinámico real.',
       playerWon: isPlayerProdWinner,
       playerNominated: isPlayerProdNominated,
       playerNominationStatus: {
@@ -1779,7 +1779,7 @@ export class AwardEngine {
     const ceremony: AwardCeremony = {
       year,
       name: `Premios de la Academia Musical ${year}`,
-      theme: 'Celebrando la excelencia, la trascendencia sonora y el talento de la escena',
+      theme: 'Sesión anual del jurado de productores, ingenieros de mezcla y cronistas musicales',
       eligibilityPeriod,
       categories,
       playerNominationsCount: playerTotalNominations,

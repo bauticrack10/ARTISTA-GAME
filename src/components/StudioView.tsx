@@ -307,6 +307,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const singlesThisYear = playerSongs.filter(s => s.releaseYear === world?.currentYear && s.isSingle).length;
   const isSinglesLimitReached = singlesThisYear >= MAX_SINGLES;
 
+  const avgQuality = useMemo(() => {
+    if (playerSongs.length === 0) return 0;
+    const sum = playerSongs.reduce((acc, s) => acc + (s.quality || 0), 0);
+    return Math.round(sum / playerSongs.length);
+  }, [playerSongs]);
+
   // Release confirmation and duplicate click prevention state
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const [confirmedRelease, setConfirmedRelease] = useState<ReleaseConfirmationData | null>(null);
@@ -645,66 +651,125 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   return (
     <div className="space-y-8 pb-16 font-sans text-fg">
-      {/* --- HEADER: STUDIO AFTER DARK HERO CARD --- */}
-      <div className="studio-panel p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-1.5 max-w-2xl">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-mono font-semibold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40">
-              Estudio Creativo & Producción
-            </span>
-            <span className="text-xs text-[#8E8E99] font-mono">
-              Año {world.currentYear} • Mes {world.currentMonth}
-            </span>
+      {/* --- CAPA 1: CONTEXTO INMEDIATO & MÉTRICAS CLAVE DEL ESTUDIO --- */}
+      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-6 sm:p-7 space-y-5">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-[#26262B] pb-5">
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-mono font-bold uppercase tracking-wider bg-[#FF2A4B]/15 text-[#FF2A4B] border border-[#FF2A4B]/30">
+                Módulo de Grabación & Máster
+              </span>
+              <span className="text-xs text-[#8E8E99] font-mono">
+                Año {world.currentYear} • Mes {world.currentMonth}
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-[#F4F0EA]">
+              Estudio de Grabación & Composición
+            </h1>
+            <p className="text-xs sm:text-sm text-[#8E8E99] leading-relaxed">
+              Armá maquetas en cabina, contratá productores por corte, definí el presupuesto de mezcla y masterización y entregá tus álbumes a distribución.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#F4F4F6]">
-            Estudio de Grabación & Composición
-          </h1>
-          <p className="text-sm text-[#8E8E99] leading-relaxed">
-            Graba sencillos promocionales, compone álbumes conceptuales que definan tu Era y configura tus presupuestos de producción y marketing.
-          </p>
+
+          {/* Selector de Pestañas con estilo consola */}
+          <div className="flex items-center gap-1 p-1 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] text-xs font-semibold shrink-0">
+            <button
+              onClick={() => {
+                playSound('click');
+                setActiveTab('single');
+                onTabChange?.('single');
+              }}
+              className={`px-3.5 py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === 'single'
+                  ? 'bg-[#FF2A4B] text-white font-bold'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
+              }`}
+            >
+              <Music2 className="w-3.5 h-3.5" />
+              <span>Grabar Single</span>
+            </button>
+            <button
+              onClick={() => {
+                playSound('click');
+                setActiveTab('album');
+                onTabChange?.('album');
+              }}
+              className={`px-3.5 py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === 'album'
+                  ? 'bg-[#FF2A4B] text-white font-bold'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Grabar Álbum</span>
+            </button>
+            <button
+              onClick={() => {
+                playSound('click');
+                setActiveTab('catalog');
+                onTabChange?.('catalog');
+              }}
+              className={`px-3.5 py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === 'catalog'
+                  ? 'bg-[#FF2A4B] text-white font-bold'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
+              }`}
+            >
+              <Disc3 className="w-3.5 h-3.5" />
+              <span>Catálogo ({playerSongs.length})</span>
+            </button>
+          </div>
         </div>
 
-        {/* Tab Selector Buttons */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#09090B] rounded-[4px] border border-[#242429] text-xs font-semibold">
-          <button
-            onClick={() => {
-              setActiveTab('single');
-              onTabChange?.('single');
-            }}
-            className={`px-3.5 py-2 rounded-[4px] transition-all cursor-pointer ${
-              activeTab === 'single'
-                ? 'bg-[#FF4F00] text-white font-bold'
-                : 'text-[#8E8E99] hover:text-[#F4F4F6] bg-transparent'
-            }`}
-          >
-            Lanzar Single
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab('album');
-              onTabChange?.('album');
-            }}
-            className={`px-3.5 py-2 rounded-[4px] transition-all cursor-pointer ${
-              activeTab === 'album'
-                ? 'bg-[#FF4F00] text-white font-bold'
-                : 'text-[#8E8E99] hover:text-[#F4F4F6] bg-transparent'
-            }`}
-          >
-            Grabar Álbum / EP
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab('catalog');
-              onTabChange?.('catalog');
-            }}
-            className={`px-3.5 py-2 rounded-[4px] transition-all cursor-pointer ${
-              activeTab === 'catalog'
-                ? 'bg-[#FF4F00] text-white font-bold'
-                : 'text-[#8E8E99] hover:text-[#F4F4F6] bg-transparent'
-            }`}
-          >
-            Catálogo ({playerSongs.length})
-          </button>
+        {/* 4 Métricas Clave de Estudio (Rack Analógico) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] block">
+              Canciones en Catálogo
+            </span>
+            <span className="text-lg font-bold font-mono tabular-nums text-[#F4F0EA] mt-1 block">
+              {playerSongs.length} temas
+            </span>
+            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
+              {playerAlbums.length} proyectos LP/EP
+            </span>
+          </div>
+
+          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] block">
+              Calidad Media Máster
+            </span>
+            <span className="text-lg font-bold font-mono tabular-nums text-[#10B981] mt-1 block">
+              {avgQuality}%
+            </span>
+            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
+              Promedio de producción
+            </span>
+          </div>
+
+          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] block">
+              Cupo Anual de Singles
+            </span>
+            <span className={`text-lg font-bold font-mono tabular-nums mt-1 block ${singlesThisYear >= 5 ? 'text-[#EF4444]' : 'text-[#F4F0EA]'}`}>
+              {singlesThisYear} / 5 singles
+            </span>
+            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
+              {5 - singlesThisYear > 0 ? `${5 - singlesThisYear} restantes en ${world.currentYear}` : 'Límite anual alcanzado'}
+            </span>
+          </div>
+
+          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] block">
+              Vitalidad en Sesión
+            </span>
+            <span className={`text-lg font-bold font-mono tabular-nums mt-1 block ${player.stats.energy >= 35 ? 'text-[#10B981]' : player.stats.energy >= 15 ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
+              {player.stats.energy}%
+            </span>
+            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
+              Mín. 15% Single • 35% Álbum
+            </span>
+          </div>
         </div>
       </div>
 
@@ -747,7 +812,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
         <p className="text-xs text-fg-muted leading-relaxed">
           <Info className="w-3.5 h-3.5 inline mr-1 text-primary" />
-          Tu dirección sonora está gobernada por tu Era actual y los atributos de tu artista. Los sub-estilos se desbloquean a medida que desarrollas tu Creatividad, Habilidad, Originalidad y Tolerancia al Riesgo.
+          El timbre de esta etapa depende de tus horas de estudio y del productor en consola. Nuevas vertientes sonoras se habilitan al subir técnica vocal, composición, originalidad y tolerancia al riesgo.
         </p>
       </div>
 
@@ -761,7 +826,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 Componer Nuevo Single
               </h2>
               <p className="text-xs text-fg-muted mt-1">
-                Lanza un sencillo promocional para impactar en playlists y radios.
+                Grabá un corte adelanto para medir rotación en listas editoriales y pauta radial antes de cerrar un LP.
               </p>
             </div>
 
@@ -802,7 +867,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <button
                     type="button"
                     onClick={() => generateRandomTitle(false)}
-                    className="text-xs text-primary-soft hover:text-[#E879F9] underline font-semibold cursor-pointer transition-colors"
+                    className="text-xs text-primary-soft hover:text-[#FF4F00] underline font-semibold cursor-pointer transition-colors"
                   >
                     Sugerir Título
                   </button>
@@ -851,7 +916,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             <span className={`text-2xs font-mono font-bold px-2 py-0.5 rounded-[4px] ${
                               isSelected ? 'bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40' : 'bg-emerald-950/60 border border-emerald-500/40 text-[#00E599]'
                             }`}>
-                              Desbloqueado
+                              Disponible
                             </span>
                           ) : (
                             <span className="text-2xs font-mono font-semibold px-2 py-0.5 rounded-[4px] bg-rose-950/60 border border-rose-500/40 text-rose-300 flex items-center gap-1">
@@ -879,7 +944,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     <button
                       type="button"
                       onClick={() => onOpenCollabModal(singleFeaturedArtist || undefined)}
-                      className="text-xs text-primary-soft hover:text-[#E879F9] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      className="text-xs text-primary-soft hover:text-[#FF4F00] font-bold flex items-center gap-1 cursor-pointer transition-colors"
                       title="Abrir el panel interactivo completo de colaboraciones"
                     >
                       <Sparkles className="w-3 h-3" />
@@ -912,7 +977,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     const lockInfo = getProducerLockStatus(p, player);
                     return (
                       <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-canvas text-fg">
-                        {lockInfo.isUnlocked ? '' : '[Bloqueado] '}{p.name} • +{p.qualityBoost}% Calidad — ${p.costPerTrack.toLocaleString()} {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                        {lockInfo.isUnlocked ? '' : '[Bloqueado] '}{p.name} • +{p.qualityBoost}% Calidad • ${p.costPerTrack.toLocaleString()} {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
                       </option>
                     );
                   })}
@@ -934,7 +999,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-fg-muted leading-snug">
-                  La curva de éxito, viralidad y longevidad en listas se calculará automáticamente según tu calidad de producción, inversión promocional, originalidad y creatividad artística ({player.personality.creativity}/100).
+                  La retención de oyentes y la vida útil del máster en listas dependen de la limpieza de mezcla, el presupuesto de pauta y tu nivel compositivo ({player.personality.creativity}/100).
                 </p>
               </div>
 
@@ -1098,7 +1163,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
                   <p className="text-xs text-[#8E8E99] mt-0.5">
-                    Rueda una pieza audiovisual cinematográfica para disparar el Hype de tu Era, multiplicar el impacto Viral y acelerar el debut en streaming.
+                    Financiá el rodaje de un corte audiovisual para empujar la rotación de salida, sumar reproducciones de catálogo y traccionar prensa.
                   </p>
                 </div>
               </div>
@@ -1196,7 +1261,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           onClick={() => setSelectedDirectorTier(tier.id)}
                           className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 cursor-pointer ${
                             isSelected
-                              ? 'bg-gradient-to-br from-[#16181F] to-[#8B5CF6]/20 border-[#8B5CF6] shadow-[0_0_18px_rgba(139,92,246,0.3)] ring-1 ring-[#8B5CF6]'
+                              ? 'bg-gradient-to-br from-[#18181C] to-[#FF4F00]/20 border-[#FF4F00] ring-1 ring-[#FF4F00]'
                               : 'bg-surface border-line hover:border-primary/40 hover:bg-white/[0.02]'
                           }`}
                         >
@@ -1229,7 +1294,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             </div>
                             <div className="flex items-center justify-between text-fg-muted">
                               <span>Probabilidad Viral:</span>
-                              <strong className="text-pink-400">+{tier.viralBoost}%</strong>
+                              <strong className="text-[#FF2A4B]">+{tier.viralBoost}%</strong>
                             </div>
                           </div>
                         </div>
@@ -1259,9 +1324,9 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       <span className="text-2xs text-emerald-300 uppercase block font-bold">Velocidad Streaming</span>
                       <span className="text-xs sm:text-sm font-bold text-emerald-400">+{currentDirectorTier.velocityBoost}% Inicio</span>
                     </div>
-                    <div className="bg-canvas p-2 rounded-lg border border-pink-500/30">
-                      <span className="text-2xs text-pink-300 uppercase block font-bold">Chance Viral</span>
-                      <span className="text-xs sm:text-sm font-bold text-pink-400">+{currentDirectorTier.viralBoost}% Viral</span>
+                    <div className="bg-canvas p-2 rounded-lg border border-[#FF2A4B]/30">
+                      <span className="text-2xs text-[#FF2A4B] uppercase block font-bold">Chance Viral</span>
+                      <span className="text-xs sm:text-sm font-bold text-[#FF2A4B]">+{currentDirectorTier.viralBoost}% Viral</span>
                     </div>
                     <div className="bg-canvas p-2 rounded-lg border border-cyan-500/30">
                       <span className="text-2xs text-cyan-300 uppercase block font-bold">Alcance Visual</span>
@@ -1279,6 +1344,37 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 <span className="font-mono text-fg-muted font-semibold">$0 Adicional</span>
               </div>
             )}
+          </div>
+
+          {/* CAPA 2: PREVISUALIZACIÓN DE COSTO E IMPACTO ESPERADO */}
+          <div className="p-3.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-mono font-bold text-[#8E8E99] uppercase text-3xs tracking-wider">BALANCE:</span>
+              <span className="font-mono font-semibold text-[#F4F0EA]">
+                Costo: <strong className="text-[#FF2A4B]">-15% Energía</strong> • <strong className="text-[#F59E0B]">${totalSingleCost.toLocaleString('es-AR')}</strong>
+              </span>
+              {isFundsInsufficient && (
+                <span className="text-2xs font-mono font-bold text-[#EF4444] bg-[#EF4444]/15 px-1.5 py-0.5 rounded-[2px] border border-[#EF4444]/30">
+                  Fondos insuficientes
+                </span>
+              )}
+              {player.stats.energy < 15 && (
+                <span className="text-2xs font-mono font-bold text-[#EF4444] bg-[#EF4444]/15 px-1.5 py-0.5 rounded-[2px] border border-[#EF4444]/30">
+                  Energía &lt; 15%
+                </span>
+              )}
+              {isSinglesLimitReached && (
+                <span className="text-2xs font-mono font-bold text-[#EF4444] bg-[#EF4444]/15 px-1.5 py-0.5 rounded-[2px] border border-[#EF4444]/30">
+                  Tope anual de singles alcanzado
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono font-bold text-[#8E8E99] uppercase text-3xs tracking-wider">EFECTO ESPERADO:</span>
+              <span className="font-mono font-semibold text-[#10B981]">
+                +1 Corte en Catálogo • +Rotación en Listas • +Hype según mezcla y masterización
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-line">
@@ -1317,8 +1413,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }
               className={`px-5 py-2.5 rounded-[4px] text-sm font-bold transition-all flex items-center gap-2 ${
                 isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15
-                  ? 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
-                  : 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
+                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50'
+                  : 'bg-[#FF2A4B] hover:bg-[#E11D48] text-white active:translate-y-[1px] cursor-pointer shadow-xs'
               }`}
             >
               <Disc3 className={`w-4 h-4 ${isFundsInsufficient ? 'text-fg-subtle' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
@@ -1345,7 +1441,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               Estudio de Composición de Álbumes & Proyectos
             </h2>
             <p className="text-xs text-fg-muted mt-1">
-              Crea una obra conceptual completa, incluye sencillos previos de tu Era y desafía las críticas de prensa especializada.
+              Reuní cortes adelanto y pistas inéditas en un LP o EP, cerrá el mastering con un productor ejecutivo y someté el disco al puntaje de la prensa especializada.
             </p>
           </div>
 
@@ -1360,7 +1456,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <button
                     type="button"
                     onClick={() => generateRandomTitle(true)}
-                    className="text-xs text-primary-soft hover:text-[#E879F9] underline font-semibold cursor-pointer transition-colors"
+                    className="text-xs text-primary-soft hover:text-[#FF4F00] underline font-semibold cursor-pointer transition-colors"
                   >
                     Sugerir Título Conceptual
                   </button>
@@ -1407,7 +1503,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       const lockInfo = getProducerLockStatus(p, player);
                       return (
                         <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-canvas text-fg">
-                          {lockInfo.isUnlocked ? '' : '[Bloqueado] '}{p.name} • +{p.qualityBoost}% Calidad — ${p.costPerTrack.toLocaleString()}/tema {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                          {lockInfo.isUnlocked ? '' : '[Bloqueado] '}{p.name} • +{p.qualityBoost}% Calidad • ${p.costPerTrack.toLocaleString()}/tema {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
                         </option>
                       );
                     })}
@@ -1426,7 +1522,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     <button
                       type="button"
                       onClick={() => onOpenCollabModal(albumFeaturedArtist || undefined)}
-                      className="text-xs text-primary-soft hover:text-[#E879F9] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      className="text-xs text-primary-soft hover:text-[#FF4F00] font-bold flex items-center gap-1 cursor-pointer transition-colors"
                       title="Abrir el panel para crear un Álbum Colaborativo completo"
                     >
                       <Sparkles className="w-3 h-3" />
@@ -1458,7 +1554,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     .filter(s => s.isUnlocked)
                     .map(s => (
                       <option key={s.id} value={s.id}>
-                        {s.name} — {s.aestheticTone}
+                        {s.name} • {s.aestheticTone}
                       </option>
                     ))}
                 </select>
@@ -1494,7 +1590,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           onClick={() => toggleSingleInclusion(single.id)}
                           className={`p-2.5 rounded-lg border flex items-center justify-between text-xs cursor-pointer transition-all ${
                             isChecked
-                              ? 'bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white border-[#8B5CF6] shadow-xs'
+                              ? 'bg-gradient-to-r from-[#FF4F00] to-[#FF2A4B] text-white border-[#FF4F00] shadow-xs'
                               : 'bg-surface hover:bg-white/[0.04] border-line hover:border-primary/40 text-fg'
                           }`}
                         >
@@ -1532,7 +1628,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setNewTrackTitles([...newTrackTitles, `Pista ${newTrackTitles.length + 1}`])}
-                    className="text-xs font-semibold text-primary-soft hover:text-[#E879F9] flex items-center gap-1 cursor-pointer transition-colors"
+                    className="text-xs font-semibold text-primary-soft hover:text-[#FF4F00] flex items-center gap-1 cursor-pointer transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" /> Agregar Pista
                   </button>
@@ -1552,7 +1648,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             ({singleMonth} {single?.releaseYear})
                           </span>
                         </div>
-                        <span className="text-2xs uppercase font-bold bg-primary/30 text-[#E9D5FF] px-2 py-0.5 rounded-full border border-primary/40 shrink-0">
+                        <span className="text-2xs uppercase font-bold bg-primary/30 text-[#F4F4F6] px-2 py-0.5 rounded-full border border-primary/40 shrink-0">
                           Single Previo
                         </span>
                       </div>
@@ -1703,6 +1799,37 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
           </div>
 
+          {/* CAPA 2: PREVISUALIZACIÓN DE COSTO E IMPACTO ESPERADO (ÁLBUM / EP) */}
+          <div className="p-3.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-mono font-bold text-[#8E8E99] uppercase text-3xs tracking-wider">BALANCE:</span>
+              <span className="font-mono font-semibold text-[#F4F0EA]">
+                Costo: <strong className="text-[#FF2A4B]">-35% Energía</strong> • <strong className="text-[#F59E0B]">${totalAlbumCost.toLocaleString('es-AR')}</strong>
+              </span>
+              {isAlbumFundsInsufficient && (
+                <span className="text-2xs font-mono font-bold text-[#EF4444] bg-[#EF4444]/15 px-1.5 py-0.5 rounded-[2px] border border-[#EF4444]/30">
+                  Fondos insuficientes
+                </span>
+              )}
+              {isAlbumTracksInsufficient && (
+                <span className="text-2xs font-mono font-bold text-[#EF4444] bg-[#EF4444]/15 px-1.5 py-0.5 rounded-[2px] border border-[#EF4444]/30">
+                  Faltan canciones ({totalAlbumTracksCount}/{minTracksRequired})
+                </span>
+              )}
+              {isAlbumEnergyInsufficient && (
+                <span className="text-2xs font-mono font-bold text-[#EF4444] bg-[#EF4444]/15 px-1.5 py-0.5 rounded-[2px] border border-[#EF4444]/30">
+                  Energía &lt; 35%
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono font-bold text-[#8E8E99] uppercase text-3xs tracking-wider">EFECTO ESPERADO:</span>
+              <span className="font-mono font-semibold text-[#10B981]">
+                +Proyecto LP/EP • +Reseña Crítica (Metacritic) • +Ventas y Regalías de Catálogo
+              </span>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-line">
             <div className="text-xs text-fg-muted">
               {isAlbumFundsInsufficient ? (
@@ -1739,8 +1866,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }
               className={`px-6 py-2.5 rounded-[4px] text-sm font-bold transition-all flex items-center gap-2 ${
                 isPublishing || isAlbumDisabled
-                  ? 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
-                  : 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
+                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50'
+                  : 'bg-[#FF2A4B] hover:bg-[#E11D48] text-white active:translate-y-[1px] cursor-pointer shadow-xs'
               }`}
             >
               <Layers className={`w-4 h-4 ${isAlbumDisabled ? 'text-fg-subtle' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
@@ -1759,25 +1886,25 @@ export const StudioView: React.FC<StudioViewProps> = ({
       {/* --- TAB 3: DISCOGRAPHY & CATALOG VIEWER --- */}
       {activeTab === 'catalog' && (
         <div className="studio-panel p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#242429] pb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#26262B] pb-4">
             <div>
-              <h2 className="text-xl font-semibold tracking-tight text-[#F4F4F6] flex items-center gap-2">
-                <Music2 className="w-5 h-5 text-[#FF4F00]" />
+              <h2 className="text-xl font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
+                <Music2 className="w-5 h-5 text-[#FF2A4B]" />
                 Discografía & Catálogo Oficial
               </h2>
               <p className="text-xs text-[#8E8E99] mt-1">
-                Registro histórico de todas tus obras, ventas y valoraciones críticas.
+                Registro técnico de másters publicados, créditos de consola, unidades de primera semana y reseñas de prensa.
               </p>
             </div>
 
             {/* Filter Pills */}
-            <div className="flex items-center gap-1.5 p-1 bg-[#09090B] rounded-[4px] border border-[#242429] text-xs font-semibold">
+            <div className="flex items-center gap-1.5 p-1 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] text-xs font-semibold">
               <button
                 onClick={() => setCatalogFilter('all')}
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
                   catalogFilter === 'all'
-                    ? 'bg-[#FF4F00] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6]'
+                    ? 'bg-[#FF2A4B] text-white font-bold'
+                    : 'text-[#8E8E99] hover:text-[#F4F0EA]'
                 }`}
               >
                 Todos ({playerSongs.length + playerAlbums.length})
@@ -1786,8 +1913,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 onClick={() => setCatalogFilter('albums')}
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
                   catalogFilter === 'albums'
-                    ? 'bg-[#FF4F00] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6]'
+                    ? 'bg-[#FF2A4B] text-white font-bold'
+                    : 'text-[#8E8E99] hover:text-[#F4F0EA]'
                 }`}
               >
                 Álbumes ({playerAlbums.length})
@@ -1796,8 +1923,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 onClick={() => setCatalogFilter('singles')}
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
                   catalogFilter === 'singles'
-                    ? 'bg-[#FF4F00] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6]'
+                    ? 'bg-[#FF2A4B] text-white font-bold'
+                    : 'text-[#8E8E99] hover:text-[#F4F0EA]'
                 }`}
               >
                 Singles ({playerSongs.length})
@@ -1809,7 +1936,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
           {(catalogFilter === 'all' || catalogFilter === 'albums') && (
             <div className="space-y-4">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8E8E99] font-mono flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-[#FF4F00]" />
+                <Layers className="w-4 h-4 text-[#FF2A4B]" />
                 Álbumes & Proyectos de Larga Duración
               </h3>
 
@@ -1938,7 +2065,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                                           {trk.title}
                                         </span>
                                         {trk.isSingle && (
-                                          <span className="text-2xs uppercase font-bold bg-primary/30 text-[#E9D5FF] px-1.5 py-0.2 rounded border border-primary/40">
+                                          <span className="text-2xs uppercase font-bold bg-primary/30 text-[#F4F4F6] px-1.5 py-0.2 rounded border border-primary/40">
                                             Single
                                           </span>
                                         )}
@@ -2010,8 +2137,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                               </span>
                             )}
                             {albumParent ? (
-                              <span className="text-2xs font-mono font-medium bg-indigo-950/60 border border-indigo-800/60 text-indigo-300 px-2 py-0.5 rounded-[4px] flex items-center gap-1" title={`Pertenece al álbum "${albumParent.title}"`}>
-                                <Layers className="w-2.5 h-2.5 text-indigo-400" />
+                              <span className="text-2xs font-mono font-medium bg-[#111114] border border-[#FF4F00]/40 text-[#FF4F00] px-2 py-0.5 rounded-[4px] flex items-center gap-1" title={`Pertenece al álbum "${albumParent.title}"`}>
+                                <Layers className="w-2.5 h-2.5 text-[#FF4F00]" />
                                 Álbum: {albumParent.title}
                               </span>
                             ) : song.isSingle ? (
