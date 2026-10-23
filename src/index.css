@@ -4,7 +4,8 @@
 @theme {
   --font-display: 'Syne', sans-serif;
   --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Sin tipografía monoespaciada: las cifras usan la sans con tabular-nums. */
+  --font-mono: 'Plus Jakarta Sans', sans-serif;
 
   --color-canvas: #0B0B0C;
   --color-studio: #0B0B0C;
@@ -169,7 +170,7 @@
     font-family: var(--font-sans);
   }
 
-  /* Números tabulares obligatorios en elementos monoespaciados: JetBrains Mono */
+  /* Legacy alias: cualquier font-mono residual se renderiza con la sans. */
   .font-mono {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -504,7 +505,7 @@
 /* Tabular figures for flawless numerical alignment in counters & charts */
 .font-tabular,
 .font-mono-numbers {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }

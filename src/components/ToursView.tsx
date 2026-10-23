@@ -82,18 +82,18 @@ const getTicketBadge = (sold: number, capacity: number) => {
   if (ratio >= 0.95) {
     return {
       label: 'SOLD OUT',
-      cls: 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/30 font-mono font-bold'
+      cls: 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/30 font-sans font-bold'
     };
   }
   if (ratio >= 0.60) {
     return {
       label: `${Math.round(ratio * 100)}% vendido`,
-      cls: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 font-mono font-bold'
+      cls: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 font-sans font-bold'
     };
   }
   return {
     label: `${Math.round(ratio * 100)}% vendido`,
-    cls: 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30 font-mono font-bold'
+    cls: 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30 font-sans font-bold'
   };
 };
 
@@ -210,7 +210,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
         </div>
 
         {/* Tab Selector */}
-        <div className="flex items-center gap-1 p-1 bg-[#09090B] rounded-[4px] border border-[#242429] text-xs font-mono font-semibold shrink-0">
+        <div className="flex items-center gap-1 p-1 bg-[#09090B] rounded-[4px] border border-[#242429] text-xs font-sans font-semibold shrink-0">
           <button
             type="button"
             onClick={() => {
@@ -246,7 +246,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
       </div>
 
       {notification && (
-        <div className="p-4 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/40 text-[#00E599] text-xs font-mono font-semibold flex items-center gap-2 animate-fade-in shadow-xs">
+        <div className="p-4 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/40 text-[#00E599] text-xs font-sans font-semibold flex items-center gap-2 animate-fade-in shadow-xs">
           <CheckCircle2 className="w-4 h-4 text-[#00E599] shrink-0" />
           <span>{notification}</span>
         </div>
@@ -262,7 +262,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 <Flame className="w-4 h-4 text-[#FF4F00]" />
                 Ofertas & Invitaciones Oficiales a Festivales ({pendingInvitations.length})
               </h2>
-              <span className="text-xs text-[#8E8E99] font-mono">
+              <span className="text-xs text-[#8E8E99] font-sans">
                 Temporada {world.currentYear}
               </span>
             </div>
@@ -290,10 +290,10 @@ export const ToursView: React.FC<ToursViewProps> = ({
                     >
                       <div className="p-4 bg-[#18181C] border-b border-[#242429] text-[#F4F4F6]">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
+                          <span className="text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
                             {fest.country} • Mes {fest.month}
                           </span>
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/30">
+                          <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/30">
                             {inv.slotTitle}
                           </span>
                         </div>
@@ -306,7 +306,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                       </div>
 
                       <div className="p-4 space-y-3">
-                        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                        <div className="grid grid-cols-2 gap-2 text-xs font-sans">
                           <div className="p-2.5 rounded-[4px] bg-[#111114] border border-[#242429]">
                             <span className="text-[10px] text-[#52525B] block uppercase font-semibold">Caché Ofrecido</span>
                             <span className="text-sm font-bold text-[#00E599] tabular-nums">
@@ -324,7 +324,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                         <button
                           type="button"
                           onClick={() => handleOpenLiveFestivalShow(fest, inv.slot, inv)}
-                          className="w-full py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-2 active:translate-y-[1px]"
+                          className="w-full py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold transition-all cursor-pointer flex items-center justify-center gap-2 active:translate-y-[1px]"
                         >
                           <Mic2 className="w-4 h-4" />
                           <span>Diseñar Show & Actuar en Vivo</span>
@@ -344,7 +344,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 <MapPin className="w-4 h-4 text-[#FF4F00]" />
                 Los 7 Festivales Globales Más Icónicos
               </h2>
-              <span className="text-xs text-[#8E8E99] font-mono">
+              <span className="text-xs text-[#8E8E99] font-sans">
                 Calendario Oficial de Conciertos
               </span>
             </div>
@@ -361,10 +361,10 @@ export const ToursView: React.FC<ToursViewProps> = ({
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
+                        <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
                           {fest.country} • Mes {fest.month}
                         </span>
-                        <span className="text-[10px] font-mono font-bold text-[#F59E0B] flex items-center gap-1">
+                        <span className="text-[10px] font-sans font-bold text-[#F59E0B] flex items-center gap-1">
                           <Star className="w-3 h-3 fill-[#F59E0B]" />
                           Prestigio {fest.prestige}
                         </span>
@@ -376,15 +376,15 @@ export const ToursView: React.FC<ToursViewProps> = ({
                       <p className="text-[11px] text-[#8E8E99] leading-relaxed">
                         {fest.description}
                       </p>
-                      <div className="text-[11px] text-[#D4D4D8] font-mono">
+                      <div className="text-[11px] text-[#D4D4D8] font-sans">
                         Capacidad: <strong className="text-[#F4F4F6] tabular-nums">{fest.capacity.toLocaleString('es-AR')}</strong> espectadores/día
                       </div>
                     </div>
 
                     <div className="pt-2 border-t border-[#242429] flex items-center justify-between">
                       <div>
-                        <span className="text-[10px] text-[#52525B] block uppercase font-mono">Slot Elegible</span>
-                        <span className={`text-xs font-bold font-mono ${eligibleSlot ? 'text-[#00E599]' : 'text-[#52525B]'}`}>
+                        <span className="text-[10px] text-[#52525B] block uppercase font-sans">Slot Elegible</span>
+                        <span className={`text-xs font-bold font-sans ${eligibleSlot ? 'text-[#00E599]' : 'text-[#52525B]'}`}>
                           {eligibleSlot ? FestivalEngine.getSlotTitle(eligibleSlot).split('•')[0].trim() : 'Popularidad Insuficiente'}
                         </span>
                       </div>
@@ -393,7 +393,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                         <button
                           type="button"
                           onClick={() => handleOpenLiveFestivalShow(fest, eligibleSlot)}
-                          className="px-3.5 py-1.5 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-[#F4F4F6] text-xs font-mono font-semibold transition-colors cursor-pointer flex items-center gap-1 active:translate-y-[1px]"
+                          className="px-3.5 py-1.5 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-[#F4F4F6] text-xs font-sans font-semibold transition-colors cursor-pointer flex items-center gap-1 active:translate-y-[1px]"
                         >
                           <span>Tocar</span>
                           <ArrowRight className="w-3 h-3 text-[#FF4F00]" />
@@ -425,21 +425,21 @@ export const ToursView: React.FC<ToursViewProps> = ({
                         <h3 className="text-sm font-bold text-[#F4F4F6]">
                           {show.headline || show.newsHeadline || show.festivalName}
                         </h3>
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
+                        <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
                           {show.slotTitle || show.slot}
                         </span>
                       </div>
                       <p className="text-xs text-[#8E8E99] mt-1 italic">
                         "{show.reviews?.[0]?.quote || show.reviews?.[0]?.snippet || show.pressQuote || show.subheadline || 'Concierto inolvidable.'}" — {show.reviews?.[0]?.outlet || 'Prensa'}
                       </p>
-                      <span className="text-[11px] text-[#52525B] font-mono block mt-1 tabular-nums">
+                      <span className="text-[11px] text-[#52525B] font-sans block mt-1 tabular-nums">
                         Audiencia: {(show.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {show.performanceScore ?? show.crowdRating ?? 75}%
                       </span>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs text-[#8E8E99] block font-mono">Ganancia Neta</span>
-                      <span className="text-sm font-bold text-[#00E599] font-mono tabular-nums">
+                      <span className="text-xs text-[#8E8E99] block font-sans">Ganancia Neta</span>
+                      <span className="text-sm font-bold text-[#00E599] font-sans tabular-nums">
                         +{formatMoney(show.netProfit)}
                       </span>
                     </div>
@@ -472,7 +472,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 />
                 <div>
                   <div className="text-xs font-bold text-[#F4F4F6]">Repertorio Mínimo</div>
-                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-mono">
+                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-sans">
                     {tourGates.hasCatalog ? (
                       <span className="text-[#00E599] font-semibold tabular-nums">
                         Listo: {tourGates.catalogCount} temas en catálogo
@@ -496,7 +496,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 />
                 <div>
                   <div className="text-xs font-bold text-[#F4F4F6]">Base de Oyentes</div>
-                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-mono">
+                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-sans">
                     {tourGates.hasAudience ? (
                       <span className="text-[#00E599] font-semibold tabular-nums">
                         Suficiente: {formatListeners(player.stats.monthlyListeners)}
@@ -520,7 +520,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 />
                 <div>
                   <div className="text-xs font-bold text-[#F4F4F6]">Condición Física & Energía</div>
-                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-mono">
+                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-sans">
                     {tourGates.hasEnergy ? (
                       <span className="text-[#00E599] font-semibold tabular-nums">
                         Óptima: {player.stats.energy}% de energía
@@ -577,12 +577,12 @@ export const ToursView: React.FC<ToursViewProps> = ({
                       >
                         <div className="flex items-center justify-between gap-2">
                           <h3 className="text-xs font-bold text-[#F4F4F6] truncate">{info.title}</h3>
-                          <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-[4px] border ${TIER_BADGE_COLORS[tierKey]}`}>
+                          <span className={`text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] border ${TIER_BADGE_COLORS[tierKey]}`}>
                             {tierKey}
                           </span>
                         </div>
                         <p className="text-[11px] text-[#8E8E99] mt-2 leading-relaxed line-clamp-2">{info.desc}</p>
-                        <div className="mt-3 pt-2 border-t border-[#242429] flex items-center justify-between text-xs font-mono">
+                        <div className="mt-3 pt-2 border-t border-[#242429] flex items-center justify-between text-xs font-sans">
                           <span className="text-[#00E599] font-bold tabular-nums">{info.estRevenue}</span>
                           <span className="text-[#EF4444] tabular-nums">{info.fatigue}</span>
                         </div>
@@ -594,7 +594,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-[#242429] flex items-center justify-between">
-              <div className="text-xs text-[#8E8E99] font-mono">
+              <div className="text-xs text-[#8E8E99] font-sans">
                 {isTourAllowed ? (
                   <span className="text-[#00E599] flex items-center gap-1 font-semibold">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Requisitos aprobados para salir de gira
@@ -610,7 +610,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 type="submit"
                 disabled={!isTourAllowed}
                 title={tourGates.tooltipText}
-                className={`font-mono text-xs px-5 py-2.5 rounded-[4px] transition-all flex items-center gap-2 ${
+                className={`font-sans text-xs px-5 py-2.5 rounded-[4px] transition-all flex items-center gap-2 ${
                   isTourAllowed
                     ? 'bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold cursor-pointer active:translate-y-[1px]'
                     : 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed opacity-60'
@@ -630,7 +630,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
             </h2>
 
             {playerTours.length === 0 ? (
-              <div className="text-center py-8 text-[#8E8E99] font-mono text-xs">No has realizado ninguna gira todavía.</div>
+              <div className="text-center py-8 text-[#8E8E99] font-sans text-xs">No has realizado ninguna gira todavía.</div>
             ) : (
               <div className="space-y-3">
                 {playerTours.map((t) => {
@@ -643,21 +643,21 @@ export const ToursView: React.FC<ToursViewProps> = ({
                       <div>
                         <h3 className="text-sm font-bold text-[#F4F4F6] flex items-center gap-2">
                           {t.name}
-                          <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-mono font-bold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-sans font-bold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
                             {t.tier}
                           </span>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-mono font-bold ${ticketBadge.cls}`}>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-sans font-bold ${ticketBadge.cls}`}>
                             {ticketBadge.label}
                           </span>
                         </h3>
-                        <p className="text-xs text-[#8E8E99] mt-1 font-mono tabular-nums">
+                        <p className="text-xs text-[#8E8E99] mt-1 font-sans tabular-nums">
                           Año {t.year} • {t.stops?.length || 0} Ciudades • {(t.totalTicketsSold || 0).toLocaleString('es-AR')} de {(t.totalCapacity || 0).toLocaleString('es-AR')} Tickets Vendidos
                         </p>
                       </div>
 
                       <div className="text-right">
-                        <span className="text-xs text-[#8E8E99] block font-mono">Ganancia Neta</span>
-                        <span className="text-sm font-bold text-[#00E599] font-mono tabular-nums">
+                        <span className="text-xs text-[#8E8E99] block font-sans">Ganancia Neta</span>
+                        <span className="text-sm font-bold text-[#00E599] font-sans tabular-nums">
                           +{formatMoney(t.netArtistProfit || 0)}
                         </span>
                       </div>

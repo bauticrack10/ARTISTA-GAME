@@ -175,14 +175,14 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
           {/* Artist Stats & Bio */}
           <div className="space-y-2 text-center md:text-left flex-1 min-w-0">
             <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#F4F4F6] bg-[#18181C] border border-[#242429] px-2.5 py-0.5 rounded-[4px]">
+              <span className="inline-flex items-center gap-1 text-[10px] font-sans font-bold text-[#F4F4F6] bg-[#18181C] border border-[#242429] px-2.5 py-0.5 rounded-[4px]">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#00E599]" />
                 Artista Verificado
               </span>
-              <span className="text-xs text-[#8E8E99] font-mono">
+              <span className="text-xs text-[#8E8E99] font-sans">
                 {player.country} • {world.genres[player.mainGenreId]?.name || 'Urbano'}
               </span>
-              <span className="text-[10px] font-mono font-bold text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px]">
+              <span className="text-[10px] font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px]">
                 {player.careerStage}
               </span>
             </div>
@@ -193,22 +193,22 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
             <div className="flex items-center justify-center md:justify-start gap-6 pt-1 text-xs">
               <div>
-                <span className="text-[#52525B] block text-[10px] uppercase font-mono font-semibold">Oyentes Mensuales</span>
-                <span className="text-lg sm:text-xl font-bold font-mono text-[#00E599] tabular-nums">
+                <span className="text-[#52525B] block text-[10px] uppercase font-sans font-semibold">Oyentes Mensuales</span>
+                <span className="text-lg sm:text-xl font-bold font-sans text-[#00E599] tabular-nums">
                   {(player.stats?.monthlyListeners ?? 0).toLocaleString('es-AR')}
                 </span>
               </div>
               <div className="w-px h-8 bg-[#242429]" />
               <div>
-                <span className="text-[#52525B] block text-[10px] uppercase font-mono font-semibold">Streams Totales</span>
-                <span className="text-lg sm:text-xl font-bold font-mono text-[#00E599] tabular-nums">
+                <span className="text-[#52525B] block text-[10px] uppercase font-sans font-semibold">Streams Totales</span>
+                <span className="text-lg sm:text-xl font-bold font-sans text-[#00E599] tabular-nums">
                   {(player.stats.totalStreams / 1000000).toFixed(2)}M
                 </span>
               </div>
               <div className="w-px h-8 bg-[#242429]" />
               <div>
-                <span className="text-[#52525B] block text-[10px] uppercase font-mono font-semibold">Seguidores / Fans</span>
-                <span className="text-lg sm:text-xl font-bold font-mono text-[#F4F4F6] tabular-nums">
+                <span className="text-[#52525B] block text-[10px] uppercase font-sans font-semibold">Seguidores / Fans</span>
+                <span className="text-lg sm:text-xl font-bold font-sans text-[#F4F4F6] tabular-nums">
                   {formatFans(player.stats.fansCount)}
                 </span>
               </div>
@@ -222,7 +222,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 playSound('click');
                 setPitchModalOpen(true);
               }}
-              className="px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-2 active:translate-y-[1px]"
+              className="px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold transition-all cursor-pointer flex items-center gap-2 active:translate-y-[1px]"
             >
               <Sparkles className="w-4 h-4" />
               <span>Pitch a Curadores</span>
@@ -257,7 +257,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   playSound('click');
                   setActiveTab(t.id as any);
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[4px] font-mono text-xs whitespace-nowrap transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-[4px] font-sans text-xs whitespace-nowrap transition-all cursor-pointer ${
                   isActive
                     ? 'bg-[#FF4F00] text-white font-bold'
                     : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
@@ -281,7 +281,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 <Disc3 className="w-4 h-4 text-[#FF4F00]" />
                 Top 5 Canciones Más Populares
               </h2>
-              <span className="text-xs text-[#8E8E99] font-mono">
+              <span className="text-xs text-[#8E8E99] font-sans">
                 Ordenado por reproducciones globales
               </span>
             </div>
@@ -306,7 +306,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="w-5 text-center font-mono font-bold text-xs text-[#8E8E99] tabular-nums">
+                        <span className="w-5 text-center font-sans font-bold text-xs text-[#8E8E99] tabular-nums">
                           {idx + 1}
                         </span>
 
@@ -324,14 +324,14 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                           </h3>
                           <div className="flex items-center gap-1.5 text-[10px] text-[#8E8E99]">
                             <span>{world.genres[song.genreId]?.name || 'Urbano'}</span>
-                            {song.isSingle && <span className="text-[#FF4F00] font-mono">• Single</span>}
-                            {song.musicVideo && <span className="text-[#38BDF8] font-mono">• Videoclip</span>}
-                            {song.wentViral && <span className="text-[#F59E0B] font-mono font-bold">• Viral</span>}
+                            {song.isSingle && <span className="text-[#FF4F00] font-sans">• Single</span>}
+                            {song.musicVideo && <span className="text-[#38BDF8] font-sans">• Videoclip</span>}
+                            {song.wentViral && <span className="text-[#F59E0B] font-sans font-bold">• Viral</span>}
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-6 shrink-0 text-xs font-mono">
+                      <div className="flex items-center gap-6 shrink-0 text-xs font-sans">
                         <div className="w-20 hidden sm:block">
                           <div className="w-full h-1.5 bg-[#242429] rounded-[2px] overflow-hidden">
                             <div
@@ -375,9 +375,9 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     <div key={pl.id} className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429] flex items-center justify-between gap-3">
                       <div>
                         <span className="text-xs font-bold text-[#F4F4F6] block">{pl.name}</span>
-                        <span className="text-[10px] text-[#8E8E99] font-mono tabular-nums">{pl.followers.toLocaleString('es-AR')} seguidores</span>
+                        <span className="text-[10px] text-[#8E8E99] font-sans tabular-nums">{pl.followers.toLocaleString('es-AR')} seguidores</span>
                       </div>
-                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] ${
+                      <span className={`text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] ${
                         playerTracksInPl.length > 0
                           ? 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/30'
                           : 'bg-[#18181C] text-[#8E8E99] border border-[#242429]'
@@ -391,7 +391,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
               <button
                 onClick={() => setActiveTab('playlists')}
-                className="w-full py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-mono font-semibold text-[#F4F4F6] transition-colors cursor-pointer"
+                className="w-full py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-sans font-semibold text-[#F4F4F6] transition-colors cursor-pointer"
               >
                 Ver todas las playlists editoriales →
               </button>
@@ -419,7 +419,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 playSound('click');
                 setPitchModalOpen(true);
               }}
-              className="px-5 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-2 active:translate-y-[1px]"
+              className="px-5 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold transition-all cursor-pointer flex items-center gap-2 active:translate-y-[1px]"
             >
               <Plus className="w-4 h-4" />
               <span>Pitch de Canción</span>
@@ -437,7 +437,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   className="bg-[#111114] border border-[#242429] hover:border-[#3F3F46] rounded-[6px] overflow-hidden flex flex-col justify-between transition-all group shadow-xs"
                 >
                   <div className="p-4 bg-[#18181C] border-b border-[#242429] text-[#F4F4F6] relative">
-                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
+                    <span className="text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
                       {playlist.curator}
                     </span>
                     <h3 className="text-base font-bold tracking-tight mt-2 text-[#F4F4F6]">
@@ -449,7 +449,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   </div>
 
                   <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
-                    <div className="space-y-1 text-xs font-mono">
+                    <div className="space-y-1 text-xs font-sans">
                       <div className="flex justify-between text-[#8E8E99]">
                         <span>Seguidores:</span>
                         <span className="text-[#F4F4F6] font-bold tabular-nums">
@@ -472,7 +472,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
                     {playerTracksInPlaylist.length > 0 ? (
                       <div className="p-2.5 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599] text-xs space-y-1">
-                        <span className="text-[10px] uppercase font-mono font-bold text-[#00E599] block flex items-center gap-1">
+                        <span className="text-[10px] uppercase font-sans font-bold text-[#00E599] block flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           ¡Tu música está dentro!
                         </span>
@@ -483,7 +483,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                         ))}
                       </div>
                     ) : (
-                      <div className="p-2.5 rounded-[4px] bg-[#09090B] border border-[#242429] text-[11px] font-mono text-[#8E8E99] text-center">
+                      <div className="p-2.5 rounded-[4px] bg-[#09090B] border border-[#242429] text-[11px] font-sans text-[#8E8E99] text-center">
                         Ningún tema tuyo en esta lista aún.
                       </div>
                     )}
@@ -530,12 +530,12 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                         {song.title}
                       </span>
                       {song.musicVideo && (
-                        <span className="text-[10px] font-mono font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-1.5 py-0.2 rounded-[4px]">
+                        <span className="text-[10px] font-sans font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-1.5 py-0.2 rounded-[4px]">
                           🎬 4K
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-[#8E8E99] font-mono block mt-0.5 tabular-nums">
+                    <span className="text-[10px] text-[#8E8E99] font-sans block mt-0.5 tabular-nums">
                       {song.musicVideo ? `${(song.musicVideo.views || 0).toLocaleString('es-AR')} vistas` : 'Solo Audio'}
                     </span>
                   </button>
@@ -574,7 +574,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center font-mono font-bold text-[#F4F4F6] text-xs shrink-0">
+                        <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center font-sans font-bold text-[#F4F4F6] text-xs shrink-0">
                           {comment.authorName.charAt(0)}
                         </div>
                         <div>
@@ -582,16 +582,16 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                             <span className="text-xs font-bold text-[#F4F4F6]">
                               {comment.authorName}
                             </span>
-                            <span className="text-[10px] text-[#8E8E99] font-mono">
+                            <span className="text-[10px] text-[#8E8E99] font-sans">
                               {comment.authorHandle}
                             </span>
                             {isPinned && (
-                              <span className="text-[9px] font-mono font-bold text-[#FF4F00] bg-[#FF4F00]/10 px-1.5 py-0.2 rounded-[4px] border border-[#FF4F00]/30 flex items-center gap-0.5">
+                              <span className="text-[9px] font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/10 px-1.5 py-0.2 rounded-[4px] border border-[#FF4F00]/30 flex items-center gap-0.5">
                                 <Pin className="w-2.5 h-2.5" /> Fijado
                               </span>
                             )}
                           </div>
-                          <span className="text-[10px] text-[#52525B] font-mono">
+                          <span className="text-[10px] text-[#52525B] font-sans">
                             {comment.timeAgo}
                           </span>
                         </div>
@@ -631,7 +631,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                       {comment.content}
                     </p>
 
-                    <div className="flex items-center gap-4 mt-2.5 text-[11px] text-[#8E8E99] font-mono">
+                    <div className="flex items-center gap-4 mt-2.5 text-[11px] text-[#8E8E99] font-sans">
                       <span className="flex items-center gap-1 text-[#00E599] tabular-nums">
                         👍 {comment.likes.toLocaleString('es-AR')} likes
                       </span>
@@ -740,7 +740,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-[#D4D4D8] flex justify-between">
                     <span>4. Presupuesto Invertido:</span>
-                    <strong className="text-[#00E599] font-mono tabular-nums">${snippetBudget.toLocaleString('es-AR')}</strong>
+                    <strong className="text-[#00E599] font-sans tabular-nums">${snippetBudget.toLocaleString('es-AR')}</strong>
                   </label>
                   <input
                     type="range"
@@ -751,7 +751,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     onChange={(e) => setSnippetBudget(Number(e.target.value))}
                     className="w-full accent-[#FF4F00] cursor-pointer"
                   />
-                  <span className="text-[10px] text-[#8E8E99] font-mono block tabular-nums">
+                  <span className="text-[10px] text-[#8E8E99] font-sans block tabular-nums">
                     Fondos disponibles: ${player.stats.funds.toLocaleString('es-AR')}
                   </span>
                 </div>
@@ -762,7 +762,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   type="button"
                   onClick={handleExecuteSnippet}
                   disabled={!selectedSnippetSongId || snippetBudget > player.stats.funds}
-                  className={`w-full py-3.5 rounded-[4px] text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full py-3.5 rounded-[4px] text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 ${
                     !selectedSnippetSongId || snippetBudget > player.stats.funds
                       ? 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
                       : 'bg-[#FF4F00] hover:bg-[#E04500] text-white cursor-pointer active:translate-y-[1px]'
@@ -790,7 +790,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               {lastSnippetResult ? (
                 <div className="space-y-4 animate-fade-in">
                   <div className="p-4 rounded-[4px] bg-[#09090B] border border-[#242429] space-y-2">
-                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/30">
+                    <span className="text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/30">
                       Trend {(lastSnippetResult.viralTier || 'viral').toUpperCase()}
                     </span>
                     <h3 className="text-sm font-bold text-[#F4F4F6]">
@@ -801,7 +801,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                  <div className="grid grid-cols-2 gap-3 text-xs font-sans">
                     <div className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429]">
                       <span className="text-[10px] text-[#8E8E99] block uppercase">Vistas TikTok</span>
                       <span className="text-sm font-bold text-[#FF4F00] tabular-nums">
@@ -896,7 +896,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               </div>
 
               {pitchFeedback && (
-                <div className={`p-3.5 rounded-[4px] text-xs font-mono ${
+                <div className={`p-3.5 rounded-[4px] text-xs font-sans ${
                   pitchFeedback.success
                     ? 'bg-[#00E599]/10 border border-[#00E599]/40 text-[#00E599]'
                     : 'bg-[#EF4444]/10 border border-[#EF4444]/40 text-[#EF4444]'
@@ -913,7 +913,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     setPitchModalOpen(false);
                     setPitchFeedback(null);
                   }}
-                  className="px-4 py-2 rounded-[4px] bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] text-xs font-mono font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-[4px] bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] text-xs font-sans font-semibold transition-colors cursor-pointer"
                 >
                   Cerrar
                 </button>
@@ -921,7 +921,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   type="button"
                   onClick={handleExecutePitch}
                   disabled={!selectedPitchSongId}
-                  className="px-5 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-mono font-bold transition-all cursor-pointer disabled:opacity-50 active:translate-y-[1px]"
+                  className="px-5 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold transition-all cursor-pointer disabled:opacity-50 active:translate-y-[1px]"
                 >
                   Enviar a Curadores
                 </button>

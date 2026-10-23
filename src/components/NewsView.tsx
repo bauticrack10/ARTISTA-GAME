@@ -43,7 +43,7 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`px-3 py-1.5 rounded-[4px] font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-[4px] font-sans text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 filter === f.id
                   ? 'bg-[#FF4F00] text-white'
                   : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
@@ -58,7 +58,7 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
       {/* News Feed Cards */}
       <div className="space-y-3">
         {filteredNews.length === 0 ? (
-          <div className="text-center py-12 text-[#8E8E99] text-xs font-mono bg-[#111114] border border-[#242429] rounded-[4px]">
+          <div className="text-center py-12 text-[#8E8E99] text-xs font-sans bg-[#111114] border border-[#242429] rounded-[4px]">
             No hay noticias en esta categoría.
           </div>
         ) : (
@@ -68,11 +68,11 @@ export const NewsView: React.FC<NewsViewProps> = ({ world }) => {
               className="bg-[#111114] border border-[#242429] p-5 rounded-[4px] space-y-2 transition-colors hover:border-[#3F3F46] shadow-xs"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#8E8E99]">
+                <span className="text-[10px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#8E8E99]">
                   {item.category}
                 </span>
                 <span 
-                  className="text-xs font-mono tabular-nums text-[#8E8E99]"
+                  className="text-xs font-sans tabular-nums text-[#8E8E99]"
                   title={TimeSystem.getCalendarLabel(item.month, item.year)}
                 >
                   Año {item.year} • {TimeSystem.getMonthName(item.month)}

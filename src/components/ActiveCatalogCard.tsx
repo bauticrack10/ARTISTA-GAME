@@ -123,7 +123,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
               {/* Center Record Label */}
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#18181C] border border-[#3F3F46] flex flex-col items-center justify-center text-[#F4F4F6] relative z-10">
                 <Disc3 className="w-4 h-4 text-[#FF4F00]" />
-                <span className="text-[9px] font-black tracking-tighter uppercase font-mono mt-[-2px] text-[#8E8E99]">
+                <span className="text-[9px] font-black tracking-tighter uppercase font-sans mt-[-2px] text-[#8E8E99]">
                   33 RPM
                 </span>
                 <div className="w-2 h-2 rounded-full bg-[#09090B] border border-[#242429] absolute" />
@@ -187,7 +187,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                   {/* Top Row: Rank, Title, Genre Badge & Date */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0">
-                      <span className="text-xs font-mono font-bold text-[#8E8E99] w-6 h-6 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center shrink-0">
+                      <span className="text-xs font-sans font-bold text-[#8E8E99] w-6 h-6 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center shrink-0">
                         #{i + 1}
                       </span>
                       <div className="min-w-0 space-y-1">
@@ -204,13 +204,13 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                             {genreName}
                           </span>
                           <span
-                            className="text-2xs text-[#8E8E99] font-mono flex items-center gap-1"
+                            className="text-2xs text-[#8E8E99] font-sans flex items-center gap-1"
                             title={fullDateStr}
                           >
                             <Calendar className="w-2.5 h-2.5 text-[#FF4F00] shrink-0" />
                             <span>{releaseDateStr}</span>
                           </span>
-                          <span className="text-2xs text-[#8E8E99] font-mono">
+                          <span className="text-2xs text-[#8E8E99] font-sans">
                             • Calidad <strong className="text-[#00E599] font-semibold">{song.quality}%</strong>
                           </span>
                         </div>
@@ -240,28 +240,28 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                     )}
 
                     {song.wentViral && (
-                      <span className="text-2xs font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1 font-mono">
+                      <span className="text-2xs font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1 font-sans">
                         <Flame className="w-2.5 h-2.5 fill-current" />
                         Viral
                       </span>
                     )}
 
                     {isHitTop10 && (
-                      <span className="text-2xs font-bold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1 font-mono">
+                      <span className="text-2xs font-bold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1 font-sans">
                         <TrendingUp className="w-2.5 h-2.5" />
                         Hit Top 10
                       </span>
                     )}
 
                     {song.isClassic && (
-                      <span className="text-2xs font-bold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1 font-mono">
+                      <span className="text-2xs font-bold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1 font-sans">
                         <Award className="w-2.5 h-2.5 fill-current" />
                         Clásico
                       </span>
                     )}
 
                     {peakGlobal && (
-                      <span className="text-2xs font-bold bg-[#18181C] text-indigo-400 border border-indigo-800/50 px-2 py-0.5 rounded-[4px] font-mono">
+                      <span className="text-2xs font-bold bg-[#18181C] text-indigo-400 border border-indigo-800/50 px-2 py-0.5 rounded-[4px] font-sans">
                         Peak #{peakGlobal}
                       </span>
                     )}
@@ -273,7 +273,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                       <span className="text-[10px] text-[#52525B] uppercase block font-medium tracking-wider">
                         Mensual
                       </span>
-                      <span className="text-xs font-bold text-[#00E599] font-mono tabular-nums">
+                      <span className="text-xs font-bold text-[#00E599] font-sans tabular-nums">
                         {song.streamsLastMonth.toLocaleString()}{' '}
                         <span className="font-normal text-[10px] text-[#8E8E99]">/mes</span>
                       </span>
@@ -283,7 +283,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                       <span className="text-[10px] text-[#52525B] uppercase block font-medium tracking-wider">
                         Acumulado Total
                       </span>
-                      <span className="text-xs font-bold text-[#F4F4F6] font-mono tabular-nums">
+                      <span className="text-xs font-bold text-[#F4F4F6] font-sans tabular-nums">
                         {formatCompactNumber(song.streamsTotal)}{' '}
                         <span className="font-normal text-[10px] text-[#8E8E99]">tot.</span>
                       </span>

@@ -71,7 +71,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <AlertOctagon className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#EF4444] bg-[#EF4444]/10 border border-[#EF4444]/30 px-2 py-0.5 rounded-[2px] inline-block">
+                <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#EF4444] bg-[#EF4444]/10 border border-[#EF4444]/30 px-2 py-0.5 rounded-[2px] inline-block">
                   Diagnóstico de Fallo en Render
                 </span>
                 <h2 className="text-xl font-extrabold text-[#F4F4F6] tracking-tight">
@@ -84,8 +84,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </div>
 
             {/* Error Message Box */}
-            <div className="bg-[#09090B] border border-[#EF4444]/30 rounded-[4px] p-4 text-xs font-mono text-[#EF4444] space-y-2">
-              <div className="flex items-center gap-1.5 text-[#EF4444] font-bold uppercase text-[10px] tracking-wider font-mono">
+            <div className="bg-[#09090B] border border-[#EF4444]/30 rounded-[4px] p-4 text-xs font-sans text-[#EF4444] space-y-2">
+              <div className="flex items-center gap-1.5 text-[#EF4444] font-bold uppercase text-[10px] tracking-wider font-sans">
                 <Terminal className="w-3.5 h-3.5" />
                 <span>Mensaje de Excepción</span>
               </div>
@@ -97,14 +97,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <button
                 type="button"
                 onClick={() => this.setState(prev => ({ showDetails: !prev.showDetails }))}
-                className="w-full px-4 py-2.5 flex items-center justify-between text-xs font-mono text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer transition-colors"
+                className="w-full px-4 py-2.5 flex items-center justify-between text-xs font-sans text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer transition-colors"
               >
                 <span>Detalles técnicos y traza de componentes</span>
                 {this.state.showDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
 
               {this.state.showDetails && (
-                <div className="p-4 border-t border-[#242429] space-y-3 text-xs font-mono max-h-60 overflow-y-auto">
+                <div className="p-4 border-t border-[#242429] space-y-3 text-xs font-sans max-h-60 overflow-y-auto">
                   {errorStack && (
                     <div className="space-y-1">
                       <span className="text-[#FF4F00] font-bold text-[10px] uppercase">Stack Trace:</span>
@@ -130,7 +130,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="w-full sm:flex-1 py-2.5 px-4 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:translate-y-[1px] cursor-pointer border border-[#FF4F00]"
+                className="w-full sm:flex-1 py-2.5 px-4 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:translate-y-[1px] cursor-pointer border border-[#FF4F00]"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Reintentar Render</span>
@@ -139,7 +139,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <button
                 type="button"
                 onClick={this.handleHardReset}
-                className="w-full sm:w-auto py-2.5 px-4 rounded-[4px] bg-[#18181C] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] font-mono font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                className="w-full sm:w-auto py-2.5 px-4 rounded-[4px] bg-[#18181C] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] hover:border-[#3F3F46] font-sans font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 title="Borrar guardado local y recargar juego desde cero"
               >
                 <Home className="w-3.5 h-3.5" />

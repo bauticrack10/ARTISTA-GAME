@@ -215,7 +215,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {/* Quick Presets */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-mono">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-sans">
                 Presets de Estilo Rápido
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -244,7 +244,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             {/* Vector Icons Selector (Symbol Mode) */}
             {avatarType === 'symbol' && (
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-mono">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-sans">
                   Seleccionar Símbolo Escénico
                 </label>
                 <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
@@ -277,7 +277,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {/* Gradient Palette Selection */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-mono">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-sans">
                 Paleta Cromática
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">

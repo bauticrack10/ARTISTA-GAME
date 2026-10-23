@@ -65,7 +65,7 @@ export function getArtistFeatStatus(
     return {
       status: 'agreed',
       label: 'Acordado',
-      badgeClass: 'bg-[#00E599]/10 text-[#00E599] border-[#00E599]/30 font-mono',
+      badgeClass: 'bg-[#00E599]/10 text-[#00E599] border-[#00E599]/30 font-sans',
       dotClass: 'bg-[#00E599]',
       glowClass: '',
       icon: CheckCircle2,
@@ -81,7 +81,7 @@ export function getArtistFeatStatus(
     return {
       status: 'requires_bond',
       label: 'Requiere Vínculo',
-      badgeClass: 'bg-[#18181C] text-[#8E8E99] border-[#242429] font-mono',
+      badgeClass: 'bg-[#18181C] text-[#8E8E99] border-[#242429] font-sans',
       dotClass: 'bg-[#52525B]',
       glowClass: '',
       icon: Lock,
@@ -100,7 +100,7 @@ export function getArtistFeatStatus(
   return {
     status: 'available',
     label: 'Disponible',
-    badgeClass: 'bg-[#FF4F00]/10 text-[#FF4F00] border-[#FF4F00]/30 font-mono',
+    badgeClass: 'bg-[#FF4F00]/10 text-[#FF4F00] border-[#FF4F00]/30 font-sans',
     dotClass: 'bg-[#FF4F00]',
     glowClass: '',
     icon: Sparkles,
@@ -226,14 +226,14 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
           {selectedArtist ? (
             <>
               {/* Selected Avatar & Name */}
-              <div className="w-6 h-6 rounded-[2px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-2xs font-mono font-bold text-[#F4F4F6] shrink-0">
+              <div className="w-6 h-6 rounded-[2px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-2xs font-sans font-bold text-[#F4F4F6] shrink-0">
                 {selectedArtist.name.charAt(0)}
               </div>
               <div className="flex items-center gap-2 truncate">
                 <span className="font-bold text-[#F4F4F6] truncate">
                   ft. {selectedArtist.name}
                 </span>
-                <span className="text-2xs text-[#8E8E99] font-mono hidden sm:inline">
+                <span className="text-2xs text-[#8E8E99] font-sans hidden sm:inline">
                   ({world.genres[selectedArtist.mainGenreId]?.name || selectedArtist.mainGenreId})
                 </span>
               </div>
@@ -249,7 +249,7 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
         <div className="flex items-center gap-2 shrink-0 ml-2">
           {selectedStatus && (
             <span
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold uppercase tracking-wider border ${selectedStatus.badgeClass}`}
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider border ${selectedStatus.badgeClass}`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${selectedStatus.dotClass} ${selectedStatus.status === 'agreed' ? 'animate-pulse' : ''}`} />
               {selectedStatus.label}
@@ -286,7 +286,7 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
             </div>
 
             {/* Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scroll-fade-x pb-1 text-2xs font-mono font-bold">
+            <div className="flex items-center gap-1.5 overflow-x-auto scroll-fade-x pb-1 text-2xs font-sans font-bold">
               <button
                 type="button"
                 onClick={() => setFilterTab('all')}
@@ -364,7 +364,7 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
                 </div>
               </div>
               {!selectedArtistId && (
-                <span className="text-2xs font-mono font-bold text-[#FF4F00] uppercase tracking-wider">Activo</span>
+                <span className="text-2xs font-sans font-bold text-[#FF4F00] uppercase tracking-wider">Activo</span>
               )}
             </div>
 
@@ -393,7 +393,7 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
                     {/* Left: Avatar & Info */}
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div
-                        className={`w-8 h-8 rounded-[4px] flex items-center justify-center text-xs font-mono font-bold shrink-0 border ${
+                        className={`w-8 h-8 rounded-[4px] flex items-center justify-center text-xs font-sans font-bold shrink-0 border ${
                           statusInfo.status === 'agreed'
                             ? 'bg-[#18181C] text-[#00E599] border-[#00E599]/40'
                             : statusInfo.status === 'available'
@@ -409,12 +409,12 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
                           <span className="font-bold text-xs text-[#F4F4F6] truncate">
                             {artist.name}
                           </span>
-                          <span className="text-2xs uppercase font-mono font-bold text-[#8E8E99] px-1.5 py-0.2 rounded-[2px] bg-[#18181C] border border-[#242429]">
+                          <span className="text-2xs uppercase font-sans font-bold text-[#8E8E99] px-1.5 py-0.2 rounded-[2px] bg-[#18181C] border border-[#242429]">
                             {world.genres[artist.mainGenreId]?.name || artist.mainGenreId}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2.5 text-2xs text-[#8E8E99] font-mono tabular-nums">
+                        <div className="flex items-center gap-2.5 text-2xs text-[#8E8E99] font-sans tabular-nums">
                           <span>{formatCompactNumber(artist.stats.monthlyListeners)} oyentes</span>
                           <span>•</span>
                           <span className={affinity > 0 ? 'text-[#00E599] font-bold' : affinity < 0 ? 'text-[#EF4444] font-bold' : 'text-[#8E8E99]'}>
@@ -427,14 +427,14 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
                     {/* Right: Status Pill Badge */}
                     <div className="flex flex-col items-end gap-1 shrink-0">
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold uppercase tracking-wider border ${statusInfo.badgeClass}`}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider border ${statusInfo.badgeClass}`}
                       >
                         <StatusIcon className="w-2.5 h-2.5" />
                         {statusInfo.label}
                       </span>
 
                       {isLocked && onOpenAdvancedCollab && (
-                        <span className="text-2xs font-mono text-[#FF4F00] group-hover:underline flex items-center gap-0.5">
+                        <span className="text-2xs font-sans text-[#FF4F00] group-hover:underline flex items-center gap-0.5">
                           Negociar <TrendingUp className="w-2.5 h-2.5" />
                         </span>
                       )}
@@ -444,7 +444,7 @@ export const FeatArtistSelector: React.FC<FeatArtistSelectorProps> = ({
                   {/* Contextual description tooltip on hover */}
                   <div className="mt-1.5 pt-1.5 border-t border-[#242429] text-2xs text-[#8E8E99] flex items-center justify-between">
                     <span className="truncate">{statusInfo.description}</span>
-                    <span className="text-2xs font-mono font-semibold text-[#52525B] shrink-0 ml-2">
+                    <span className="text-2xs font-sans font-semibold text-[#52525B] shrink-0 ml-2">
                       {statusInfo.actionHint}
                     </span>
                   </div>

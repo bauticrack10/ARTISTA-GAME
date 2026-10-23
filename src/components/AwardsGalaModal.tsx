@@ -95,11 +95,11 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                <span className="text-2xs uppercase font-mono font-bold tracking-wider text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 px-2 py-0.5 rounded-[4px] inline-flex items-center gap-1">
+                <span className="text-2xs uppercase font-sans font-bold tracking-wider text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 px-2 py-0.5 rounded-[4px] inline-flex items-center gap-1">
                   <Calendar className="w-3 h-3 text-[#F59E0B]" />
                   {temporality.yearEndBadge}
                 </span>
-                <span className="text-xs text-[#8E8E99] font-mono hidden sm:inline">
+                <span className="text-xs text-[#8E8E99] font-sans hidden sm:inline">
                   {temporality.eligibilityPeriod}
                 </span>
               </div>
@@ -114,7 +114,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
 
           <div className="flex items-center gap-2.5 shrink-0">
             {/* Player Nominations / Wins Pill */}
-            <div className="bg-[#09090B] px-3 py-1.5 rounded-[4px] border border-[#242429] text-xs font-mono hidden sm:flex items-center gap-2">
+            <div className="bg-[#09090B] px-3 py-1.5 rounded-[4px] border border-[#242429] text-xs font-sans hidden sm:flex items-center gap-2">
               <span className="text-[#8E8E99]">Nominaciones:</span>
               <strong className="text-[#F4F4F6] font-bold tabular-nums">{playerTotalNominations}</strong>
               <span className="text-[#242429]">|</span>
@@ -194,12 +194,12 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                   <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#F4F4F6]">
                     Cuadro de Honor Oficial • {player.name}
                   </h3>
-                  <p className="text-xs text-[#8E8E99] font-mono mt-0.5">
+                  <p className="text-xs text-[#8E8E99] font-sans mt-0.5">
                     {temporality.yearEndBadge} • {temporality.eligibilityPeriod}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-mono max-w-lg mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-sans max-w-lg mx-auto">
                   <div className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429]">
                     <span className="text-2xs uppercase text-[#8E8E99] font-bold block">Nominaciones</span>
                     <span className="text-xl font-bold tabular-nums text-[#F4F4F6]">
@@ -223,7 +223,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
 
               {/* List of All Winners in this Ceremony */}
               <div className="space-y-2.5">
-                <h4 className="text-xs font-bold uppercase text-[#8E8E99] tracking-wider font-mono">
+                <h4 className="text-xs font-bold uppercase text-[#8E8E99] tracking-wider font-sans">
                   Ganadores Oficiales de la Edición {ceremony.year}
                 </h4>
                 <div className="space-y-2">
@@ -246,7 +246,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                               {cat.name}
                             </span>
                             {cat.winTypeLabel && (
-                              <span className="text-2xs font-mono text-[#F59E0B] bg-[#F59E0B]/10 px-1.5 py-0.2 rounded-[4px] border border-[#F59E0B]/20">
+                              <span className="text-2xs font-sans text-[#F59E0B] bg-[#F59E0B]/10 px-1.5 py-0.2 rounded-[4px] border border-[#F59E0B]/20">
                                 {cat.winTypeLabel}
                               </span>
                             )}
@@ -263,7 +263,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                         </div>
 
                         {isPlayerWinner && (
-                          <div className="shrink-0 bg-[#F59E0B] text-[#09090B] px-2.5 py-1 rounded-[4px] font-mono font-bold text-2xs">
+                          <div className="shrink-0 bg-[#F59E0B] text-[#09090B] px-2.5 py-1 rounded-[4px] font-sans font-bold text-2xs">
                             ¡TU VICTORIA!
                           </div>
                         )}
@@ -281,13 +281,13 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                 <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap border-b border-[#242429] pb-4">
                   <div className="space-y-1.5 min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-2xs uppercase font-mono font-bold tracking-wider text-[#8E8E99]">
+                      <span className="text-2xs uppercase font-sans font-bold tracking-wider text-[#8E8E99]">
                         Categoría {currentCategoryIndex + 1} de {categories.length}
                       </span>
-                      <span className="text-2xs font-bold font-mono border border-[#3F3F46] bg-[#18181C] text-[#F4F4F6] px-2 py-0.5 rounded-[4px]">
+                      <span className="text-2xs font-bold font-sans border border-[#3F3F46] bg-[#18181C] text-[#F4F4F6] px-2 py-0.5 rounded-[4px]">
                         {fieldBadge.label}
                       </span>
-                      <span className="text-2xs text-[#8E8E99] font-mono">
+                      <span className="text-2xs text-[#8E8E99] font-sans">
                         Período: {currentCategory.eligibilityPeriod || temporality.eligibilityPeriod}
                       </span>
                     </div>
@@ -309,10 +309,10 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                     {currentCategory.playerNominated || currentCategory.playerNominationStatus?.isNominated ? (
                       <div className="bg-[#18181C] border border-[#F59E0B]/50 px-3 py-1.5 rounded-[4px] flex items-center gap-1.5">
                         <Star className="w-4 h-4 text-[#F59E0B] fill-[#F59E0B]" />
-                        <span className="text-xs font-bold font-mono text-[#F59E0B]">¡Estás Nominado!</span>
+                        <span className="text-xs font-bold font-sans text-[#F59E0B]">¡Estás Nominado!</span>
                       </div>
                     ) : (
-                      <div className="bg-[#18181C] border border-[#242429] px-3 py-1.5 rounded-[4px] text-xs text-[#8E8E99] font-mono">
+                      <div className="bg-[#18181C] border border-[#242429] px-3 py-1.5 rounded-[4px] text-xs text-[#8E8E99] font-sans">
                         <span>No Nominado</span>
                       </div>
                     )}
@@ -331,7 +331,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                 )}
 
                 {/* Stepper Progress Bar */}
-                <div className="flex items-center justify-between gap-1 text-xs font-mono border-t border-[#242429] pt-3">
+                <div className="flex items-center justify-between gap-1 text-xs font-sans border-t border-[#242429] pt-3">
                   <div className={`flex items-center gap-1.5 ${categoryPhase === 'presentation' ? 'text-[#F59E0B] font-bold' : 'text-[#8E8E99]'}`}>
                     <span className="w-5 h-5 rounded-[4px] border border-current flex items-center justify-center text-2xs tabular-nums">1</span>
                     <span className="hidden xs:inline">Contexto</span>
@@ -373,7 +373,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
 
                   <button
                     onClick={handleAdvancePhase}
-                    className="bg-[#FF4F00] text-white hover:bg-[#E04500] px-6 py-2.5 rounded-[4px] text-xs font-bold font-mono tracking-wide transition-all cursor-pointer inline-flex items-center gap-2"
+                    className="bg-[#FF4F00] text-white hover:bg-[#E04500] px-6 py-2.5 rounded-[4px] text-xs font-bold font-sans tracking-wide transition-all cursor-pointer inline-flex items-center gap-2"
                   >
                     <span>Presentar a los 4 Nominados Oficiales</span>
                     <ChevronRight className="w-4 h-4 text-white" />
@@ -385,14 +385,14 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
               {(categoryPhase === 'nominees' || categoryPhase === 'deliberation' || isCurrentRevealed) && (
                 <div className="space-y-4 animate-fade-in">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] font-mono flex items-center gap-1.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] font-sans flex items-center gap-1.5">
                       <span>Artistas y Obras Nominadas</span>
-                      <span className="text-2xs font-mono tabular-nums px-1.5 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
+                      <span className="text-2xs font-sans tabular-nums px-1.5 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
                         {currentCategory.nominees?.length || 0}
                       </span>
                     </span>
                     {isCurrentRevealed && (
-                      <span className="text-2xs text-[#F59E0B] font-mono font-medium">
+                      <span className="text-2xs text-[#F59E0B] font-sans font-medium">
                         ★ Ganador oficial galardonado
                       </span>
                     )}
@@ -422,7 +422,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-start gap-3 min-w-0 flex-1">
                               <span
-                                className={`w-7 h-7 rounded-[4px] flex items-center justify-center font-mono font-bold text-xs shrink-0 border ${
+                                className={`w-7 h-7 rounded-[4px] flex items-center justify-center font-sans font-bold text-xs shrink-0 border ${
                                   isWinner
                                     ? 'bg-[#F59E0B] text-[#09090B] border-[#F59E0B]'
                                     : isPlayerNominee
@@ -453,12 +453,12 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
 
                             <div className="flex items-center gap-1.5 shrink-0">
                               {isPlayerNominee && (
-                                <span className="text-2xs font-bold font-mono bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40 px-1.5 py-0.5 rounded-[4px]">
+                                <span className="text-2xs font-bold font-sans bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40 px-1.5 py-0.5 rounded-[4px]">
                                   TÚ
                                 </span>
                               )}
                               {isWinner && (
-                                <span className="flex items-center gap-1 bg-[#F59E0B] text-[#09090B] px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold border border-[#F59E0B]">
+                                <span className="flex items-center gap-1 bg-[#F59E0B] text-[#09090B] px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold border border-[#F59E0B]">
                                   <Trophy className="w-3 h-3 text-[#09090B]" />
                                   <span>GANADOR</span>
                                 </span>
@@ -475,7 +475,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
 
                           {/* Stats and Critic Quote */}
                           <div className="pt-2 border-t border-[#242429] space-y-2">
-                            <div className="flex items-center justify-between text-2xs text-[#8E8E99] font-mono">
+                            <div className="flex items-center justify-between text-2xs text-[#8E8E99] font-sans">
                               <span>{nominee.highlightText}</span>
                               {nominee.odds && (
                                 <span className="text-[#F59E0B] font-bold uppercase">
@@ -504,7 +504,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                     <div className="text-center pt-2">
                       <button
                         onClick={handleAdvancePhase}
-                        className="bg-[#FF4F00] text-white hover:bg-[#E04500] px-5 py-2 rounded-[4px] text-xs font-bold font-mono transition-all cursor-pointer inline-flex items-center gap-1.5"
+                        className="bg-[#FF4F00] text-white hover:bg-[#E04500] px-5 py-2 rounded-[4px] text-xs font-bold font-sans transition-all cursor-pointer inline-flex items-center gap-1.5"
                       >
                         <span>Analizar Tensión & Probabilidades del Jurado</span>
                         <ChevronRight className="w-4 h-4 text-white" />
@@ -524,7 +524,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                         Barómetro de Tensión de la Academia
                       </h4>
                     </div>
-                    <span className="text-2xs font-mono text-[#8E8E99]">
+                    <span className="text-2xs font-sans text-[#8E8E99]">
                       Consenso Estimado
                     </span>
                   </div>
@@ -537,7 +537,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                           <span className="font-semibold text-[#F4F4F6] truncate">
                             {nom.itemTitle ? `"${nom.itemTitle}" (${nom.artistName})` : nom.artistName}
                           </span>
-                          <span className="font-mono tabular-nums text-[#F59E0B] font-bold">
+                          <span className="font-sans tabular-nums text-[#F59E0B] font-bold">
                             {nom.expectationPct || 25}%
                           </span>
                         </div>
@@ -572,7 +572,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                   <div className="text-center pt-2">
                     <button
                       onClick={handleAdvancePhase}
-                      className="bg-[#FF4F00] text-white hover:bg-[#E04500] font-bold px-6 py-2.5 rounded-[4px] text-xs font-mono transition-all cursor-pointer inline-flex items-center gap-2"
+                      className="bg-[#FF4F00] text-white hover:bg-[#E04500] font-bold px-6 py-2.5 rounded-[4px] text-xs font-sans transition-all cursor-pointer inline-flex items-center gap-2"
                     >
                       <Sparkles className="w-4 h-4 text-white" />
                       <span>Pasar al Sobre Dorado</span>
@@ -589,7 +589,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                   </div>
 
                   <div className="max-w-md mx-auto space-y-1">
-                    <span className="text-2xs uppercase font-bold tracking-widest text-[#F59E0B] block font-mono">
+                    <span className="text-2xs uppercase font-bold tracking-widest text-[#F59E0B] block font-sans">
                       Sello de Cera Oficial de la Academia
                     </span>
                     <h4 className="text-xl font-bold text-[#F4F4F6] tracking-tight">
@@ -602,7 +602,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
 
                   <button
                     onClick={() => handleOpenEnvelope()}
-                    className="bg-[#F59E0B] text-[#09090B] hover:bg-[#d98b06] px-8 py-3 rounded-[4px] text-sm font-black font-mono tracking-wide transition-all cursor-pointer inline-flex items-center gap-2.5"
+                    className="bg-[#F59E0B] text-[#09090B] hover:bg-[#d98b06] px-8 py-3 rounded-[4px] text-sm font-black font-sans tracking-wide transition-all cursor-pointer inline-flex items-center gap-2.5"
                   >
                     <Sparkles className="w-5 h-5 text-[#09090B]" />
                     <span>ABRIR SOBRE Y REVELAR GANADOR</span>
@@ -620,16 +620,16 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
 
                     <div className="space-y-2 min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-2xs uppercase font-mono font-bold tracking-wider px-2 py-0.5 rounded-[4px] bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
+                        <span className="text-2xs uppercase font-sans font-bold tracking-wider px-2 py-0.5 rounded-[4px] bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
                           Estatuilla Oficial de la Academia
                         </span>
                         {currentCategory.winTypeLabel && (
-                          <span className="text-2xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/20 border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
+                          <span className="text-2xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/20 border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
                             {currentCategory.winTypeLabel}
                           </span>
                         )}
                         {(currentCategory.winnerArtistId === player.id || currentCategory.playerWon) && (
-                          <span className="text-xs font-bold font-mono text-[#F59E0B] bg-[#F59E0B]/20 border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1">
+                          <span className="text-xs font-bold font-sans text-[#F59E0B] bg-[#F59E0B]/20 border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1">
                             <PartyPopper className="w-3.5 h-3.5 text-[#F59E0B]" />
                             ¡HAS GANADO ESTA CATEGORÍA!
                           </span>
@@ -648,7 +648,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                       )}
 
                       {(currentCategory.winnerArtistId === player.id || currentCategory.playerWon) && (
-                        <div className="pt-2 flex items-center gap-2 flex-wrap font-mono text-xs">
+                        <div className="pt-2 flex items-center gap-2 flex-wrap font-sans text-xs">
                           <span className="bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/30 px-2 py-0.5 rounded-[4px] font-bold tabular-nums">
                             +6 Pts de Legado
                           </span>
@@ -671,7 +671,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
             <button
               onClick={handlePrevCategory}
               disabled={!showSummary && currentCategoryIndex === 0}
-              className="px-3.5 py-1.5 rounded-[4px] text-xs font-semibold font-mono bg-[#18181C] text-[#F4F4F6] border border-[#242429] hover:bg-[#242429] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
+              className="px-3.5 py-1.5 rounded-[4px] text-xs font-semibold font-sans bg-[#18181C] text-[#F4F4F6] border border-[#242429] hover:bg-[#242429] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               <span>Anterior</span>
@@ -679,7 +679,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
             <button
               onClick={handleNextCategory}
               disabled={showSummary}
-              className="px-3.5 py-1.5 rounded-[4px] text-xs font-semibold font-mono bg-[#18181C] text-[#F4F4F6] border border-[#242429] hover:bg-[#242429] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
+              className="px-3.5 py-1.5 rounded-[4px] text-xs font-semibold font-sans bg-[#18181C] text-[#F4F4F6] border border-[#242429] hover:bg-[#242429] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1"
             >
               <span>{currentCategoryIndex < categories.length - 1 ? 'Siguiente Categoría' : 'Ver Resumen'}</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -691,7 +691,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
             {!allRevealed && !showSummary && (
               <button
                 onClick={handleRevealAll}
-                className="text-xs text-[#8E8E99] hover:text-[#F4F4F6] underline cursor-pointer font-medium font-mono"
+                className="text-xs text-[#8E8E99] hover:text-[#F4F4F6] underline cursor-pointer font-medium font-sans"
               >
                 Saltar a resultados finales
               </button>

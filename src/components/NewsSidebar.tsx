@@ -208,7 +208,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
               )}
             </div>
             <div>
-              <h3 className="text-xs sm:text-sm font-bold text-[#F4F4F6] uppercase tracking-wider font-mono">
+              <h3 className="text-xs sm:text-sm font-bold text-[#F4F4F6] uppercase tracking-wider font-sans">
                 {activeTab === 'press' ? 'Prensa & Noticias' : 'Feed de Redes'}
               </h3>
               <span className="text-[10px] text-[#8E8E99]">
@@ -217,7 +217,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
             </div>
           </div>
 
-          <span className="text-[10px] text-[#00E599] bg-[#00E599]/10 border border-[#00E599]/30 px-2 py-0.5 rounded-[4px] font-mono font-bold flex items-center gap-1.5">
+          <span className="text-[10px] text-[#00E599] bg-[#00E599]/10 border border-[#00E599]/30 px-2 py-0.5 rounded-[4px] font-sans font-bold flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-[1px] bg-[#00E599]" />
             EN VIVO
           </span>
@@ -227,7 +227,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
         <div className="flex items-center bg-[#09090B] p-1 rounded-[4px] gap-1 text-xs border border-[#242429]">
           <button
             onClick={() => setActiveTab('press')}
-            className={`flex-1 py-1.5 px-3 rounded-[4px] font-mono font-bold text-center transition-all cursor-pointer ${
+            className={`flex-1 py-1.5 px-3 rounded-[4px] font-sans font-bold text-center transition-all cursor-pointer ${
               activeTab === 'press'
                 ? 'bg-[#FF4F00] text-white'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
@@ -237,7 +237,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('social')}
-            className={`flex-1 py-1.5 px-3 rounded-[4px] font-mono font-bold text-center transition-all cursor-pointer ${
+            className={`flex-1 py-1.5 px-3 rounded-[4px] font-sans font-bold text-center transition-all cursor-pointer ${
               activeTab === 'social'
                 ? 'bg-[#FF4F00] text-white'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
@@ -265,7 +265,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
               <button
                 key={f.id}
                 onClick={() => setSelectedNewsCategory(f.id)}
-                className={`min-h-8 shrink-0 px-2.5 py-1 rounded-[4px] font-mono text-xs transition-all cursor-pointer ${
+                className={`min-h-8 shrink-0 px-2.5 py-1 rounded-[4px] font-sans text-xs transition-all cursor-pointer ${
                   selectedNewsCategory === f.id
                     ? 'bg-[#FF4F00] text-white font-bold'
                     : 'bg-[#09090B] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
@@ -279,7 +279,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           {/* Scrollable Live News Items Feed */}
           <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1 flex-1`}>
             {filteredNews.length === 0 ? (
-              <div className="p-6 text-center text-xs text-[#8E8E99] bg-[#09090B] border border-dashed border-[#242429] rounded-[4px] font-mono">
+              <div className="p-6 text-center text-xs text-[#8E8E99] bg-[#09090B] border border-dashed border-[#242429] rounded-[4px] font-sans">
                 No hay noticias registradas en esta categoría.
               </div>
             ) : (
@@ -302,20 +302,20 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span
-                          className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border ${tag.style}`}
+                          className={`text-[10px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border ${tag.style}`}
                         >
                           {tag.label}
                         </span>
 
                         {isPlayerMentioned && (
-                          <span className="text-[10px] font-mono font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-1.5 py-0.5 rounded-[4px] border border-[#FF4F00]/40">
+                          <span className="text-[10px] font-sans font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-1.5 py-0.5 rounded-[4px] border border-[#FF4F00]/40">
                             Tú
                           </span>
                         )}
                       </div>
 
                       <span 
-                        className="text-[10px] text-[#8E8E99] font-mono tabular-nums whitespace-nowrap bg-[#18181C] border border-[#242429] px-1.5 py-0.5 rounded-[4px]"
+                        className="text-[10px] text-[#8E8E99] font-sans tabular-nums whitespace-nowrap bg-[#18181C] border border-[#242429] px-1.5 py-0.5 rounded-[4px]"
                         title={TimeSystem.getCalendarLabel(news.month, news.year)}
                       >
                         Año {news.year} • {TimeSystem.getMonthName(news.month)}
@@ -344,7 +344,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                 <Globe2 className="w-3.5 h-3.5 text-[#FF4F00]" />
                 Pulso de la Escena
               </span>
-              <span className="text-[10px] font-mono tabular-nums text-[#8E8E99] bg-[#18181C] px-1.5 py-0.5 rounded-[4px] border border-[#242429]">
+              <span className="text-[10px] font-sans tabular-nums text-[#8E8E99] bg-[#18181C] px-1.5 py-0.5 rounded-[4px] border border-[#242429]">
                 {monthName} {world.currentYear}
               </span>
             </div>
@@ -358,7 +358,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
             {onNavigate && (
               <button
                 onClick={() => onNavigate('industry')}
-                className="w-full text-center text-xs font-mono font-semibold text-[#FF4F00] hover:text-[#E04500] flex items-center justify-center gap-1 pt-1 cursor-pointer"
+                className="w-full text-center text-xs font-sans font-semibold text-[#FF4F00] hover:text-[#E04500] flex items-center justify-center gap-1 pt-1 cursor-pointer"
               >
                 <span>Explorar Industria & Sellos</span>
                 <ArrowRight className="w-3 h-3" />
@@ -384,7 +384,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
               <button
                 key={f.id}
                 onClick={() => setSelectedSocialFilter(f.id)}
-                className={`min-h-8 shrink-0 px-2.5 py-1 rounded-[4px] font-mono text-xs transition-all cursor-pointer ${
+                className={`min-h-8 shrink-0 px-2.5 py-1 rounded-[4px] font-sans text-xs transition-all cursor-pointer ${
                   selectedSocialFilter === f.id
                     ? 'bg-[#FF4F00] text-white font-bold'
                     : 'bg-[#09090B] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429]'
@@ -398,7 +398,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           {/* Scrollable Social Feed */}
           <div className={`space-y-3 ${maxHeight} overflow-y-auto pr-1 flex-1`}>
             {filteredSocialPosts.length === 0 ? (
-              <div className="p-6 text-center text-xs text-[#8E8E99] bg-[#09090B] border border-dashed border-[#242429] rounded-[4px] font-mono">
+              <div className="p-6 text-center text-xs text-[#8E8E99] bg-[#09090B] border border-dashed border-[#242429] rounded-[4px] font-sans">
                 No hay publicaciones sociales recientes.
               </div>
             ) : (
@@ -414,7 +414,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         {/* Avatar */}
-                        <div className="w-7 h-7 rounded-[4px] bg-[#18181C] text-[#8E8E99] font-mono font-bold text-xs flex items-center justify-center shrink-0 border border-[#242429]">
+                        <div className="w-7 h-7 rounded-[4px] bg-[#18181C] text-[#8E8E99] font-sans font-bold text-xs flex items-center justify-center shrink-0 border border-[#242429]">
                           {post.authorName.charAt(0)}
                         </div>
 
@@ -427,7 +427,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                               <CheckCircle className="w-3 h-3 text-[#00E599] shrink-0 fill-current" />
                             )}
                           </div>
-                          <span className="text-[10px] text-[#8E8E99] font-mono flex items-center gap-0.5">
+                          <span className="text-[10px] text-[#8E8E99] font-sans flex items-center gap-0.5">
                             <AtSign className="w-2.5 h-2.5" />
                             {post.authorHandle}
                           </span>
@@ -435,7 +435,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
                       </div>
 
                       <span
-                        className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] border shrink-0 ${sentimentBadge.class}`}
+                        className={`text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] border shrink-0 ${sentimentBadge.class}`}
                       >
                         {sentimentBadge.label}
                       </span>
@@ -457,7 +457,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
               <Flame className="w-3.5 h-3.5 text-[#FF4F00]" />
               <span>Tendencia #1: #{(player?.name || 'ElArtista').replace(/\s+/g, '')}</span>
             </div>
-            <span className="text-[10px] bg-[#18181C] text-[#8E8E99] px-1.5 py-0.5 rounded-[4px] border border-[#242429] font-mono tabular-nums">
+            <span className="text-[10px] bg-[#18181C] text-[#8E8E99] px-1.5 py-0.5 rounded-[4px] border border-[#242429] font-sans tabular-nums">
               +14.2k posts
             </span>
           </div>

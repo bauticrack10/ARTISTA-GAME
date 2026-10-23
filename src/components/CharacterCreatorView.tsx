@@ -890,11 +890,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-[#F4F4F6] tracking-tight flex flex-wrap items-center gap-x-2.5 gap-y-1">
                 <span>Creación del Artista</span>
-                <span className="whitespace-nowrap text-xs bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-mono font-bold">
+                <span className="whitespace-nowrap text-xs bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-sans font-bold">
                   Año 1 • 2026
                 </span>
               </h1>
-              <p className="text-xs text-[#8E8E99] mt-0.5 font-mono">
+              <p className="text-xs text-[#8E8E99] mt-0.5 font-sans">
                 Definí tu plaza de origen, sonido de cabecera, horas de estudio iniciales y presupuesto de arranque.
               </p>
             </div>
@@ -905,7 +905,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               type="button"
               id="btn-quick-start-top"
               onClick={() => handleSubmit()}
-              className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-mono font-bold text-xs active:translate-y-[1px] transition-all cursor-pointer"
+              className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs active:translate-y-[1px] transition-all cursor-pointer"
               title="Comenzar Carrera Directamente"
             >
               <Sparkles className="w-4 h-4 text-white" />
@@ -924,14 +924,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5 shadow-2xl">
               <div className="flex items-center justify-between border-b border-[#242429] pb-3">
-                <div className="flex items-center gap-2 text-[#F4F4F6] font-mono font-bold text-xs uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <User className="w-4 h-4 text-[#FF4F00]" />
                   <span>1. Identidad & Origen</span>
                 </div>
                 <button
                   type="button"
                   onClick={handleRandomizeName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[#242429] bg-[#09090B] text-[#F4F4F6] text-xs font-mono font-semibold hover:bg-[#18181C] hover:border-[#3F3F46] transition-all cursor-pointer group"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[#242429] bg-[#09090B] text-[#F4F4F6] text-xs font-sans font-semibold hover:bg-[#18181C] hover:border-[#3F3F46] transition-all cursor-pointer group"
                   title="Generar nombre contextualizado para el país seleccionado"
                 >
                   <Shuffle className="w-3.5 h-3.5 text-[#FF4F00] group-hover:rotate-180 transition-transform duration-300" />
@@ -942,7 +942,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Names Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-mono font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
                     Nombre Artístico
                   </label>
                   <input
@@ -954,7 +954,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
                     Nombre Real
                   </label>
                   <input
@@ -968,13 +968,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Age Slider */}
               <div className="space-y-2 pt-1">
-                <div className="flex justify-between items-center text-xs font-mono font-semibold text-[#8E8E99] uppercase tracking-wider">
+                <div className="flex justify-between items-center text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
                   <span>Edad Inicial</span>
                   <div className="flex items-center gap-2">
-                    <span className={`text-2xs font-mono font-bold px-2 py-0.5 rounded-[4px] border ${ageCat.color}`}>
+                    <span className={`text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] border ${ageCat.color}`}>
                       {ageCat.label}
                     </span>
-                    <span className="text-[#F4F4F6] font-mono text-sm font-bold tabular-nums bg-[#09090B] px-2.5 py-0.5 rounded-[4px] border border-[#242429]">
+                    <span className="text-[#F4F4F6] font-sans text-sm font-bold tabular-nums bg-[#09090B] px-2.5 py-0.5 rounded-[4px] border border-[#242429]">
                       {age} Años <span className="text-[#8E8E99] text-xs font-normal">• Nacido en {2026 - age}</span>
                     </span>
                   </div>
@@ -994,7 +994,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     className="w-full h-2 rounded-[2px] border border-[#242429] accent-[#FF4F00] cursor-pointer"
                   />
                   
-                  <div className="relative w-full text-2xs text-fg-muted font-mono select-none mt-1.5 h-4">
+                  <div className="relative w-full text-2xs text-fg-muted font-sans select-none mt-1.5 h-4">
                     <span
                       role="button"
                       tabIndex={0}
@@ -1134,12 +1134,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5 shadow-2xl">
               <div className="border-b border-[#242429] pb-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[#F4F4F6] font-mono font-bold text-xs uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <Disc3 className="w-4 h-4 text-[#FF4F00]" />
                   <span>2. Estilo Musical & Géneros</span>
                 </div>
                 {COUNTRY_GENRE_DEFAULTS[country] && (
-                  <span className="text-2xs text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-mono font-bold">
+                  <span className="text-2xs text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-sans font-bold">
                     Escena {COUNTRY_GENRE_DEFAULTS[country].flag} {country}
                   </span>
                 )}
@@ -1147,7 +1147,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Main Genre Selection Grid */}
               <div className="space-y-2">
-                <label className="block text-xs font-mono font-semibold text-[#8E8E99] uppercase tracking-wider">
+                <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
                   Género Musical Principal *
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -1185,12 +1185,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         </div>
 
                         {isRecommended && (
-                          <span className="text-2xs font-mono font-bold text-[#FF4F00] bg-[#FF4F00]/10 px-1.5 py-0.5 rounded-[2px] border border-[#FF4F00]/30 w-fit mt-1.5">
+                          <span className="text-2xs font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/10 px-1.5 py-0.5 rounded-[2px] border border-[#FF4F00]/30 w-fit mt-1.5">
                            Sugerido para {country}
                           </span>
                         )}
                         {!isRecommended && isCountrySecondary && (
-                          <span className="text-2xs font-mono font-semibold text-[#8E8E99] bg-[#18181C] px-1.5 py-0.5 rounded-[2px] border border-[#242429] w-fit mt-1.5">
+                          <span className="text-2xs font-sans font-semibold text-[#8E8E99] bg-[#18181C] px-1.5 py-0.5 rounded-[2px] border border-[#242429] w-fit mt-1.5">
                             Popular en {country}
                           </span>
                         )}
@@ -1203,10 +1203,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Secondary Subgenres (Chips/Badges) */}
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between items-center">
-                  <label className="block text-xs font-mono font-semibold text-[#8E8E99] uppercase tracking-wider">
+                  <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
                     Influencias & Subgéneros Secundarios
                   </label>
-                  <span className="text-xs font-mono text-[#FF4F00]">
+                  <span className="text-xs font-sans text-[#FF4F00]">
                     {cleanCountTag(secondaryGenres.length, 3, 'seleccionados')}
                   </span>
                 </div>
@@ -1222,7 +1222,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           type="button"
                           key={g.id}
                           onClick={() => toggleSecondaryGenre(g.id)}
-                          className={`px-3 py-1.5 rounded-[4px] text-xs font-mono font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                          className={`px-3 py-1.5 rounded-[4px] text-xs font-sans font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
                             isSelected
                               ? 'bg-[#18181C] border-[#FF4F00] text-white'
                               : isRecommendedSub
@@ -1233,7 +1233,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           <span>{isSelected ? '✓ ' : '+ '}</span>
                           <span>{g.name}</span>
                           {isRecommendedSub && !isSelected && (
-                            <span className="text-2xs text-[#FF4F00] font-mono">★</span>
+                            <span className="text-2xs text-[#FF4F00] font-sans">★</span>
                           )}
                         </button>
                       );
@@ -1247,11 +1247,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5 shadow-2xl">
               <div className="flex items-center justify-between border-b border-[#242429] pb-3">
-                <div className="flex items-center gap-2 text-[#F4F4F6] font-mono font-bold text-xs uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <Brain className="w-4 h-4 text-[#FF4F00]" />
                   <span>3. Arquetipo Artístico & Habilidades Iniciales</span>
                 </div>
-                <span className="text-2xs font-mono text-[#8E8E99] bg-[#18181C] px-2.5 py-0.5 rounded-[4px] border border-[#242429]">
+                <span className="text-2xs font-sans text-[#8E8E99] bg-[#18181C] px-2.5 py-0.5 rounded-[4px] border border-[#242429]">
                   Nivel Amateur • 18 - 35 / 100
                 </span>
               </div>
@@ -1342,7 +1342,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
                 </div>
                 <div className="space-y-1">
-                  <span className="font-bold text-[#F4F4F6] block font-mono">
+                  <span className="font-bold text-[#F4F4F6] block font-sans">
                     Curva de Progresión Realista (Nivel Amateur: 18 - 35 / 100)
                   </span>
                   <p className="leading-relaxed">
@@ -1356,7 +1356,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 <div className="bg-[#09090B] p-4 rounded-[4px] border border-[#242429] space-y-3.5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#242429] pb-3">
                     <div>
-                      <span className="text-xs font-bold text-[#F4F4F6] block uppercase tracking-wider font-mono">
+                      <span className="text-xs font-bold text-[#F4F4F6] block uppercase tracking-wider font-sans">
                         Desglose de Habilidades Iniciales: {ARCHETYPE_PRESETS[archetype]?.name}
                       </span>
                       <p className="text-xs text-[#8E8E99]">
@@ -1364,10 +1364,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#8E8E99]">
+                      <span className="text-xs font-sans text-[#8E8E99]">
                         Promedio Inicial:
                       </span>
-                      <span className="text-xs font-mono font-bold tabular-nums text-[#F4F4F6] bg-[#111114] px-2.5 py-0.5 rounded-[4px] border border-[#242429]">
+                      <span className="text-xs font-sans font-bold tabular-nums text-[#F4F4F6] bg-[#111114] px-2.5 py-0.5 rounded-[4px] border border-[#242429]">
                         {averageSkillRating} / 100
                       </span>
                     </div>
@@ -1394,10 +1394,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               </span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <span className={`text-2xs font-mono font-bold px-2 py-0.5 rounded-[4px] border ${tier.color}`}>
+                              <span className={`text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] border ${tier.color}`}>
                                 {tier.label}
                               </span>
-                              <span className="font-mono font-bold text-xs tabular-nums text-[#F4F4F6]">
+                              <span className="font-sans font-bold text-xs tabular-nums text-[#F4F4F6]">
                                 {val}/100
                               </span>
                             </div>
@@ -1431,18 +1431,18 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <Sliders className="w-4 h-4 text-[#FF4F00]" />
-                        <span className="text-xs font-bold text-[#F4F4F6] uppercase tracking-wider font-mono">
+                        <span className="text-xs font-bold text-[#F4F4F6] uppercase tracking-wider font-sans">
                           Modo Personalizado • Sistema Point-Buy
                         </span>
                       </div>
-                      <p className="text-xs text-[#8E8E99] mt-0.5 font-mono">
+                      <p className="text-xs text-[#8E8E99] mt-0.5 font-sans">
                         Base: {CUSTOM_BASE_STAT} pts por stat • Máximo inicial: {CUSTOM_MAX_STAT} pts • Bolsa de {CUSTOM_POINTS_POOL} pts libres.
                       </p>
                     </div>
 
                     <div className="flex items-center gap-2.5 shrink-0">
                       <div
-                        className={`px-3 py-1.5 rounded-[4px] border text-xs font-bold font-mono flex items-center gap-1.5 ${
+                        className={`px-3 py-1.5 rounded-[4px] border text-xs font-bold font-sans flex items-center gap-1.5 ${
                           remainingCustomPoints === 0
                             ? 'bg-[#00E599]/15 text-[#00E599] border-[#00E599]/40'
                             : remainingCustomPoints > 0
@@ -1456,7 +1456,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         </span>
                       </div>
 
-                      <span className="text-xs font-mono font-bold tabular-nums text-[#F4F4F6] bg-[#111114] px-2.5 py-1.5 rounded-[4px] border border-[#242429]">
+                      <span className="text-xs font-sans font-bold tabular-nums text-[#F4F4F6] bg-[#111114] px-2.5 py-1.5 rounded-[4px] border border-[#242429]">
                         Promedio: {averageSkillRating}/100
                       </span>
                     </div>
@@ -1464,7 +1464,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                   {/* Point Budget Visual Progress Bar */}
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-2xs font-mono text-[#8E8E99]">
+                    <div className="flex justify-between text-2xs font-sans text-[#8E8E99]">
                       <span className="tabular-nums">Puntos Asignados: {spentCustomPoints} pts</span>
                       <span className="tabular-nums">Restantes: {remainingCustomPoints} pts</span>
                     </div>
@@ -1482,7 +1482,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   </div>
 
                   {/* Point Buy Quick Presets Bar */}
-                  <div className="flex items-center gap-2 flex-wrap pt-1 font-mono">
+                  <div className="flex items-center gap-2 flex-wrap pt-1 font-sans">
                     <span className="text-xs font-semibold text-[#8E8E99]">
                       Plantillas Rápidas:
                     </span>
@@ -1542,10 +1542,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                             </div>
 
                             <div className="flex items-center gap-1.5">
-                              <span className={`text-2xs font-mono font-bold px-2 py-0.5 rounded-[4px] border ${tier.color}`}>
+                              <span className={`text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] border ${tier.color}`}>
                                 {tier.label}
                               </span>
-                              <span className="font-mono font-bold text-xs tabular-nums text-[#F4F4F6] bg-[#09090B] px-2 py-0.5 rounded-[2px] border border-[#242429]">
+                              <span className="font-sans font-bold text-xs tabular-nums text-[#F4F4F6] bg-[#09090B] px-2 py-0.5 rounded-[2px] border border-[#242429]">
                                 {val}/100
                               </span>
                             </div>
@@ -1614,7 +1614,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5 shadow-2xl">
               <div className="border-b border-[#242429] pb-3">
-                <div className="flex items-center gap-2 text-[#F4F4F6] font-mono font-bold text-xs uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
                   <span>4. Punto de Partida / Background</span>
                 </div>
@@ -1670,7 +1670,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           {item.desc}
                         </p>
                       </div>
-                      <span className="text-2xs font-mono tabular-nums text-[#00E599] font-semibold bg-[#00E599]/10 px-2.5 py-0.5 rounded-[4px] border border-[#00E599]/30 w-fit">
+                      <span className="text-2xs font-sans tabular-nums text-[#00E599] font-semibold bg-[#00E599]/10 px-2.5 py-0.5 rounded-[4px] border border-[#00E599]/30 w-fit">
                         {item.badge}
                       </span>
                     </button>
@@ -1684,7 +1684,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5">
               <div className="flex items-center justify-between border-b border-[#242429] pb-3 flex-wrap gap-2">
-                <div className="flex items-center gap-2 text-[#F4F4F6] font-mono text-xs uppercase tracking-wider font-bold">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans text-xs uppercase tracking-wider font-bold">
                   <Palette className="w-4 h-4 text-[#FF4F00]" />
                   <span>5. Identidad Visual & Avatar del Artista</span>
                 </div>
@@ -1694,7 +1694,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setAvatarType('symbol')}
-                    className={`px-3 py-1.5 rounded-[4px] font-mono text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-[4px] font-sans text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'symbol'
                         ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
                         : 'text-[#8E8E99] hover:text-[#F4F4F6]'
@@ -1707,7 +1707,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setAvatarType('initials')}
-                    className={`px-3 py-1.5 rounded-[4px] font-mono text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-[4px] font-sans text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'initials'
                         ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
                         : 'text-[#8E8E99] hover:text-[#F4F4F6]'
@@ -1722,10 +1722,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Curated Vector Presets Quick Bar */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[10px] font-mono font-bold text-[#52525B] uppercase tracking-wider">
+                  <label className="block text-[10px] font-sans font-bold text-[#52525B] uppercase tracking-wider">
                     Presets de Identidad Vectorial
                   </label>
-                  <span className="text-xs font-mono text-[#8E8E99]">Paletas & Íconos Curados</span>
+                  <span className="text-xs font-sans text-[#8E8E99]">Paletas & Íconos Curados</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {VECTOR_PRESETS.map((preset) => {
@@ -1752,7 +1752,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           <span className="text-xs font-bold text-[#F4F4F6] block truncate">
                             {preset.name.split('(')[0].trim()}
                           </span>
-                          <span className="text-[10px] font-mono text-[#52525B] block truncate uppercase">
+                          <span className="text-[10px] font-sans text-[#52525B] block truncate uppercase">
                             {preset.category}
                           </span>
                         </div>
@@ -1765,7 +1765,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Vector Symbols Selector (When in Symbol mode) */}
               {avatarType === 'symbol' && (
                 <div className="space-y-2.5 pt-2 border-t border-[#242429]">
-                  <label className="block text-[10px] font-mono font-bold text-[#52525B] uppercase tracking-wider">
+                  <label className="block text-[10px] font-sans font-bold text-[#52525B] uppercase tracking-wider">
                     Símbolo Escénico / Ícono de Marca
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-7 gap-2.5">
@@ -1791,7 +1791,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           >
                             <IconComp className="w-4 h-4" />
                           </div>
-                          <span className="text-[10px] font-mono font-semibold text-[#8E8E99] truncate w-full text-center">
+                          <span className="text-[10px] font-sans font-semibold text-[#8E8E99] truncate w-full text-center">
                             {sym.label.split('/')[0].trim()}
                           </span>
                         </button>
@@ -1820,10 +1820,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Studio Palette Selector */}
               <div className="space-y-2.5 pt-2 border-t border-[#242429]">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[10px] font-mono font-bold text-[#52525B] uppercase tracking-wider">
+                  <label className="block text-[10px] font-sans font-bold text-[#52525B] uppercase tracking-wider">
                     Paleta de Color de Fondo
                   </label>
-                  <span className="text-xs font-mono text-[#8E8E99]">Acabados de Hardware & Estudio</span>
+                  <span className="text-xs font-sans text-[#8E8E99]">Acabados de Hardware & Estudio</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
@@ -1851,7 +1851,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           <span className="text-xs font-semibold text-[#F4F4F6] block truncate">
                             {p.label.split('(')[0].trim()}
                           </span>
-                          <span className="text-[10px] font-mono text-[#8E8E99] block truncate">
+                          <span className="text-[10px] font-sans text-[#8E8E99] block truncate">
                             {p.description}
                           </span>
                         </div>
@@ -1889,7 +1889,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         Bonificación Opcional: Rasgo Promesa / Prodigio
                       </span>
                       <span
-                        className={`text-[10px] px-2 py-0.5 rounded-[2px] font-mono font-bold ${
+                        className={`text-[10px] px-2 py-0.5 rounded-[2px] font-sans font-bold ${
                           isProdigy
                             ? 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30'
                             : 'bg-[#09090B] border border-[#242429] text-[#52525B]'
@@ -1911,13 +1911,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     <button
                       type="button"
                       onClick={handleRollProdigyLuck}
-                      className="px-4 py-2 rounded-[4px] text-xs font-mono font-bold border border-[#242429] bg-[#18181C] hover:bg-[#242429] hover:border-[#3F3F46] text-[#F4F4F6] transition-all cursor-pointer flex items-center gap-2"
+                      className="px-4 py-2 rounded-[4px] text-xs font-sans font-bold border border-[#242429] bg-[#18181C] hover:bg-[#242429] hover:border-[#3F3F46] text-[#F4F4F6] transition-all cursor-pointer flex items-center gap-2"
                     >
                       <Dices className="w-4 h-4 text-[#8E8E99]" />
                       <span>Probar Suerte</span>
                     </button>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-3 py-1.5 rounded-[4px] border border-[#F59E0B]/30">
+                    <div className="flex items-center gap-1.5 text-xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-3 py-1.5 rounded-[4px] border border-[#F59E0B]/30">
                       <ShieldCheck className="w-4 h-4" />
                       <span>PRODIGIO ACTIVO</span>
                     </div>
@@ -1926,7 +1926,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {rollMessage && (
-                <div className="mt-3 pt-3 border-t border-[#242429] text-xs font-mono text-[#F4F4F6] animate-fade-in">
+                <div className="mt-3 pt-3 border-t border-[#242429] text-xs font-sans text-[#F4F4F6] animate-fade-in">
                   {rollMessage}
                 </div>
               )}
@@ -1955,27 +1955,27 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <h2 className="text-xl font-extrabold text-[#F4F4F6] tracking-tight">
                     {name.trim() || 'Tu Nombre Artístico'}
                   </h2>
-                  <p className="text-xs text-[#8E8E99] font-mono">
+                  <p className="text-xs text-[#8E8E99] font-sans">
                     {realName.trim() ? `"${cleanQuotes(realName)}" • ` : ''}{age} Años
                   </p>
-                  <p className="text-xs text-[#8E8E99] font-mono flex items-center justify-center gap-1 mt-0.5">
+                  <p className="text-xs text-[#8E8E99] font-sans flex items-center justify-center gap-1 mt-0.5">
                     <MapPin className="w-3 h-3 text-[#52525B]" />
                     <span>{formatCityCountry(finalResolvedCity, country)}</span>
                   </p>
                 </div>
 
                 {isProdigy && (
-                  <div className="bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 px-3 py-1 rounded-[4px] text-xs font-mono font-bold flex items-center justify-center gap-1.5 mx-auto">
+                  <div className="bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 px-3 py-1 rounded-[4px] text-xs font-sans font-bold flex items-center justify-center gap-1.5 mx-auto">
                     <Crown className="w-3.5 h-3.5 text-[#F59E0B]" />
                     <span>Prodigio Musical • Crecimiento x3</span>
                   </div>
                 )}
 
                 <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-                  <span className="px-2.5 py-0.5 bg-[#09090B] border border-[#242429] text-[#F4F4F6] rounded-[2px] text-xs font-mono font-semibold">
+                  <span className="px-2.5 py-0.5 bg-[#09090B] border border-[#242429] text-[#F4F4F6] rounded-[2px] text-xs font-sans font-semibold">
                     {selectedMainGenre?.name || 'Género'}
                   </span>
-                  <span className="px-2 py-0.5 bg-[#09090B] border border-[#242429] text-[#8E8E99] rounded-[2px] text-xs font-mono tabular-nums">
+                  <span className="px-2 py-0.5 bg-[#09090B] border border-[#242429] text-[#8E8E99] rounded-[2px] text-xs font-sans tabular-nums">
                     {startingLevel.toUpperCase()}
                   </span>
                 </div>
@@ -1984,22 +1984,22 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Skills Profile Section in Preview Card */}
               <div className="border-t border-[#242429] pt-4 space-y-2.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[10px] font-mono font-bold text-[#52525B] uppercase tracking-wider">
+                  <h3 className="text-[10px] font-sans font-bold text-[#52525B] uppercase tracking-wider">
                     Habilidades Iniciales
                   </h3>
-                  <span className="text-xs font-mono text-[#00E599] font-bold tabular-nums">
+                  <span className="text-xs font-sans text-[#00E599] font-bold tabular-nums">
                     {averageSkillRating}/100 Promedio
                   </span>
                 </div>
 
                 <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] space-y-2">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#8E8E99] font-mono">Especialidad Destacada:</span>
+                    <span className="text-[#8E8E99] font-sans">Especialidad Destacada:</span>
                     <div className="flex items-center gap-1.5">
                       {topTwoTraits.map((t, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded-[2px] bg-[#18181C] text-[#F4F4F6] border border-[#242429] font-mono font-bold text-[10px] tabular-nums"
+                          className="px-2 py-0.5 rounded-[2px] bg-[#18181C] text-[#F4F4F6] border border-[#242429] font-sans font-bold text-[10px] tabular-nums"
                         >
                           {t.name}: {t.val}
                         </span>
@@ -2019,7 +2019,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     />
                   </div>
 
-                  <p className="text-[10px] font-mono text-[#52525B] leading-tight">
+                  <p className="text-[10px] font-sans text-[#52525B] leading-tight">
                    Margen de desarrollo: +~75 pts mediante grabaciones, tienda de estudio y eventos.
                   </p>
                 </div>
@@ -2027,46 +2027,46 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Starting Stats Breakdown */}
               <div className="border-t border-[#242429] pt-4 space-y-2 text-xs">
-                <h3 className="text-[10px] font-mono font-bold text-[#52525B] uppercase tracking-wider mb-2">
+                <h3 className="text-[10px] font-sans font-bold text-[#52525B] uppercase tracking-wider mb-2">
                   Condiciones Iniciales
                 </h3>
 
                 <div className="flex justify-between items-center bg-[#09090B] px-3.5 py-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-[#8E8E99] font-mono flex items-center gap-2">
+                  <span className="text-[#8E8E99] font-sans flex items-center gap-2">
                     <DollarSign className="w-3.5 h-3.5 text-[#00E599]" />
                     Fondos Iniciales
                   </span>
-                  <span className="font-bold text-[#00E599] font-mono tabular-nums">
+                  <span className="font-bold text-[#00E599] font-sans tabular-nums">
                     {formatMoney(computedStats.funds)}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center bg-[#09090B] px-3.5 py-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-[#8E8E99] font-mono flex items-center gap-2">
+                  <span className="text-[#8E8E99] font-sans flex items-center gap-2">
                     <Users className="w-3.5 h-3.5 text-[#8E8E99]" />
                     Comunidad de Fans
                   </span>
-                  <span className="font-bold text-[#F4F4F6] font-mono tabular-nums">
+                  <span className="font-bold text-[#F4F4F6] font-sans tabular-nums">
                     {formatFans(computedStats.fansCount)}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center bg-[#09090B] px-3.5 py-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-[#8E8E99] font-mono flex items-center gap-2">
+                  <span className="text-[#8E8E99] font-sans flex items-center gap-2">
                     <TrendingUp className="w-3.5 h-3.5 text-[#8E8E99]" />
                     Popularidad
                   </span>
-                  <span className="font-bold text-[#F4F4F6] font-mono tabular-nums">
+                  <span className="font-bold text-[#F4F4F6] font-sans tabular-nums">
                     {computedStats.popularity}/100
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center bg-[#09090B] px-3.5 py-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-[#8E8E99] font-mono flex items-center gap-2">
+                  <span className="text-[#8E8E99] font-sans flex items-center gap-2">
                     <Flame className="w-3.5 h-3.5 text-[#FF4F00]" />
                     Hype Inicial
                   </span>
-                  <span className="font-bold text-[#FF4F00] font-mono tabular-nums">
+                  <span className="font-bold text-[#FF4F00] font-sans tabular-nums">
                     {computedStats.hype}/100
                   </span>
                 </div>
@@ -2076,7 +2076,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <button
                 type="submit"
                 id="btn-launch-career-bottom"
-                className="w-full py-3.5 px-6 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-mono font-bold text-sm flex items-center justify-center gap-2 active:translate-y-[1px] transition-all cursor-pointer border border-[#FF4F00]"
+                className="w-full py-3.5 px-6 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-sm flex items-center justify-center gap-2 active:translate-y-[1px] transition-all cursor-pointer border border-[#FF4F00]"
               >
                 <Sparkles className="w-4 h-4 text-white" />
                 <span>Comenzar Carrera de Artista</span>

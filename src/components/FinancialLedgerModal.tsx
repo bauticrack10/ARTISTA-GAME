@@ -100,10 +100,10 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-2xs font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
+                <span className="text-2xs font-sans font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
                   Trazabilidad Financiera
                 </span>
-                <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
+                <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
                   {transactions.length} registros
                 </span>
               </div>
@@ -126,10 +126,10 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 relative z-10">
           <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono font-bold text-[#52525B] uppercase tracking-wider block">
+              <span className="text-xs font-sans font-bold text-[#52525B] uppercase tracking-wider block">
                 Total Ingresos Acumulados
               </span>
-              <span className="text-xl font-bold text-[#00E599] font-mono tabular-nums tracking-tight mt-0.5 block">
+              <span className="text-xl font-bold text-[#00E599] font-sans tabular-nums tracking-tight mt-0.5 block">
                 +${totalIncome.toLocaleString()}
               </span>
             </div>
@@ -140,10 +140,10 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
           <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono font-bold text-[#52525B] uppercase tracking-wider block">
+              <span className="text-xs font-sans font-bold text-[#52525B] uppercase tracking-wider block">
                 Total Gastos Acumulados
               </span>
-              <span className="text-xl font-bold text-[#EF4444] font-mono tabular-nums tracking-tight mt-0.5 block">
+              <span className="text-xl font-bold text-[#EF4444] font-sans tabular-nums tracking-tight mt-0.5 block">
                 -${totalExpenses.toLocaleString()}
               </span>
             </div>
@@ -154,10 +154,10 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
           <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono font-bold text-[#52525B] uppercase tracking-wider block">
+              <span className="text-xs font-sans font-bold text-[#52525B] uppercase tracking-wider block">
                 Saldo Actual Disponible
               </span>
-              <span className="text-xl font-bold text-fg font-mono tracking-tight mt-0.5 block whitespace-nowrap">
+              <span className="text-xl font-bold text-fg font-sans tracking-tight mt-0.5 block whitespace-nowrap">
                 {formatMoney(currentFunds)}
               </span>
             </div>
@@ -168,7 +168,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 relative z-10 font-mono text-xs">
+        <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 relative z-10 font-sans text-xs">
           {CATEGORY_TABS.map(tab => (
             <button
               key={tab.id}
@@ -186,7 +186,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
         {/* Transactions Table */}
         <div className="border border-[#242429] rounded-[4px] overflow-hidden bg-[#111114] relative z-10">
-          <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-[#18181C] border-b border-[#242429] text-xs font-mono font-bold text-[#8E8E99] uppercase tracking-wider">
+          <div className="grid grid-cols-12 gap-3 px-4 py-3 bg-[#18181C] border-b border-[#242429] text-xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
             <div className="col-span-3 sm:col-span-2">Período</div>
             <div className="col-span-4 sm:col-span-5">Concepto / Detalle</div>
             <div className="hidden sm:block sm:col-span-2">Categoría</div>
@@ -215,7 +215,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
                     className="grid grid-cols-12 gap-3 px-4 py-3 items-center text-xs hover:bg-[#151519] transition-colors"
                   >
                     {/* Fecha */}
-                    <div className="col-span-3 sm:col-span-2 font-mono text-xs text-[#8E8E99] flex items-center gap-1.5">
+                    <div className="col-span-3 sm:col-span-2 font-sans text-xs text-[#8E8E99] flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-[#52525B] shrink-0" />
                       <span className="tabular-nums">{formatReleaseDate(tx.month, tx.year, 'short')}</span>
                     </div>
@@ -227,21 +227,21 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
                     {/* Categoría Badge */}
                     <div className="hidden sm:flex sm:col-span-2 items-center">
-                      <span className={`px-2 py-0.5 rounded-[4px] font-mono text-2xs font-bold border flex items-center gap-1 ${meta.color}`}>
+                      <span className={`px-2 py-0.5 rounded-[4px] font-sans text-2xs font-bold border flex items-center gap-1 ${meta.color}`}>
                         <CategoryIcon className="w-2.5 h-2.5 shrink-0" />
                         <span>{meta.label}</span>
                       </span>
                     </div>
 
                     {/* Importe */}
-                    <div className={`col-span-3 sm:col-span-2 text-right font-mono tabular-nums font-bold text-xs sm:text-sm ${
+                    <div className={`col-span-3 sm:col-span-2 text-right font-sans tabular-nums font-bold text-xs sm:text-sm ${
                       isIncome ? 'text-[#00E599]' : 'text-[#EF4444]'
                     }`}>
                       {isIncome ? `+$${tx.amount.toLocaleString()}` : `-$${tx.amount.toLocaleString()}`}
                     </div>
 
                     {/* Saldo Resultante */}
-                    <div className="col-span-2 sm:col-span-1 text-right font-mono tabular-nums text-xs text-[#8E8E99]">
+                    <div className="col-span-2 sm:col-span-1 text-right font-sans tabular-nums text-xs text-[#8E8E99]">
                       {tx.resultingBalance !== undefined ? `$${tx.resultingBalance.toLocaleString('es-AR')}` : '-'}
                     </div>
                   </div>
@@ -253,7 +253,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
 
         {/* Footer info note */}
         <div className="text-center pt-2 relative z-10 border-t border-[#242429]">
-          <span className="text-xs text-[#52525B] font-mono">
+          <span className="text-xs text-[#52525B] font-sans">
             Todas las operaciones se auditan automáticamente y se guardan con la partida.
           </span>
         </div>

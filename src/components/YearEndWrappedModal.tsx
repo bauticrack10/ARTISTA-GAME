@@ -113,7 +113,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
           {/* SLIDE 0: INTRO & TOTAL STREAMS */}
           {currentSlide === 0 && (
             <div className="space-y-6 my-auto text-center animate-fade-in">
-              <span className="text-2xs font-mono uppercase tracking-wider text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-3 py-1 rounded-[4px] inline-block">
+              <span className="text-2xs font-sans uppercase tracking-wider text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-3 py-1 rounded-[4px] inline-block">
                 RESUMEN DE TEMPORADA • {data.year}
               </span>
 
@@ -125,10 +125,10 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
               </h2>
 
               <div className="p-6 rounded-[4px] bg-[#09090B] border border-[#242429] space-y-2">
-                <span className="text-xs uppercase text-[#8E8E99] font-mono tracking-wider block">
+                <span className="text-xs uppercase text-[#8E8E99] font-sans tracking-wider block">
                   Reproducciones Totales en el Año
                 </span>
-                <span className="text-3xl sm:text-4xl font-extrabold font-mono tabular-nums text-[#00E599] tracking-tight block">
+                <span className="text-3xl sm:text-4xl font-extrabold font-sans tabular-nums text-[#00E599] tracking-tight block">
                   {data.totalStreamsYear.toLocaleString('es-AR')}
                 </span>
                 <p className="text-2xs text-[#8E8E99]">
@@ -138,15 +138,15 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
 
               <div className="flex items-center justify-around text-xs bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
                 <div>
-                  <span className="text-2xs text-[#8E8E99] block uppercase font-mono">Fans Nuevos</span>
-                  <strong className="text-[#F4F4F6] font-mono tabular-nums">
+                  <span className="text-2xs text-[#8E8E99] block uppercase font-sans">Fans Nuevos</span>
+                  <strong className="text-[#F4F4F6] font-sans tabular-nums">
                     +{data.fansGainedYear.toLocaleString('es-AR')}
                   </strong>
                 </div>
                 <div className="w-px h-6 bg-[#242429]" />
                 <div>
-                  <span className="text-2xs text-[#8E8E99] block uppercase font-mono">Recaudación</span>
-                  <strong className="text-[#00E599] font-mono tabular-nums">
+                  <span className="text-2xs text-[#8E8E99] block uppercase font-sans">Recaudación</span>
+                  <strong className="text-[#00E599] font-sans tabular-nums">
                     {formatMoney(data.fundsEarnedYear)}
                   </strong>
                 </div>
@@ -157,7 +157,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
           {/* SLIDE 1: TOP SONG */}
           {currentSlide === 1 && (
             <div className="space-y-6 my-auto text-center animate-fade-in">
-              <span className="text-2xs font-mono uppercase tracking-wider text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 px-3 py-1 rounded-[4px] inline-block">
+              <span className="text-2xs font-sans uppercase tracking-wider text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 px-3 py-1 rounded-[4px] inline-block">
                 TU MAYOR HIT DEL AÑO
               </span>
 
@@ -170,15 +170,15 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
 
               <div className="space-y-1">
                 <h3 className="text-xl font-bold text-[#F4F4F6]">"{data.topSongTitle}"</h3>
-                <p className="text-xs text-[#8E8E99] font-mono tabular-nums">
+                <p className="text-xs text-[#8E8E99] font-sans tabular-nums">
                   {data.topSongStreams.toLocaleString('es-AR')} reproducciones
                 </p>
               </div>
 
               {typeof data.peakGlobalChartPosition === 'number' && (
                 <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px] text-xs space-y-0.5">
-                  <span className="text-2xs uppercase text-[#8E8E99] block font-mono">Peak en Charts Globales</span>
-                  <span className="text-lg font-bold text-[#F59E0B] font-mono tabular-nums">
+                  <span className="text-2xs uppercase text-[#8E8E99] block font-sans">Peak en Charts Globales</span>
+                  <span className="text-lg font-bold text-[#F59E0B] font-sans tabular-nums">
                     #{data.peakGlobalChartPosition}
                   </span>
                 </div>
@@ -189,7 +189,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
           {/* SLIDE 2: TOP COUNTRY */}
           {currentSlide === 2 && (
             <div className="space-y-6 my-auto text-center animate-fade-in">
-              <span className="text-2xs font-mono uppercase tracking-wider text-[#8E8E99] bg-[#18181C] border border-[#242429] px-3 py-1 rounded-[4px] inline-block">
+              <span className="text-2xs font-sans uppercase tracking-wider text-[#8E8E99] bg-[#18181C] border border-[#242429] px-3 py-1 rounded-[4px] inline-block">
                 TU CUARTEL GENERAL
               </span>
 
@@ -206,7 +206,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
                 </p>
               </div>
 
-              <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px] text-xs flex items-center justify-around font-mono">
+              <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px] text-xs flex items-center justify-around font-sans">
                 <div className="flex items-center gap-1.5 text-[#F4F4F6]">
                   <Globe2 className="w-4 h-4 text-[#FF4F00] shrink-0" />
                   <span className="font-semibold">Impacto Global</span>
@@ -219,7 +219,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
           {/* SLIDE 3: AWARDS & HONORS */}
           {currentSlide === 3 && (
             <div className="space-y-5 my-auto text-center animate-fade-in">
-              <span className="text-2xs font-mono uppercase tracking-wider text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 px-3 py-1 rounded-[4px] inline-block">
+              <span className="text-2xs font-sans uppercase tracking-wider text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 px-3 py-1 rounded-[4px] inline-block">
                 PREMIOS Y RECONOCIMIENTOS
               </span>
 
@@ -245,7 +245,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
                   {data.awardsWonYear.map((award, i) => (
                     <div
                       key={i}
-                      className="bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F59E0B] font-semibold flex items-center gap-2 justify-center font-mono"
+                      className="bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F59E0B] font-semibold flex items-center gap-2 justify-center font-sans"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
                       <span>{award}</span>
@@ -259,7 +259,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
           {/* SLIDE 4: INDUSTRY VERDICT & SHARE */}
           {currentSlide === 4 && (
             <div className="space-y-5 my-auto text-center animate-fade-in">
-              <span className="text-2xs font-mono uppercase tracking-wider text-[#8E8E99] bg-[#18181C] border border-[#242429] px-3 py-1 rounded-[4px] inline-block">
+              <span className="text-2xs font-sans uppercase tracking-wider text-[#8E8E99] bg-[#18181C] border border-[#242429] px-3 py-1 rounded-[4px] inline-block">
                 EL VEREDICTO DE LA INDUSTRIA
               </span>
 
@@ -267,21 +267,21 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
                 <p className="text-sm font-semibold text-[#F4F4F6] italic leading-relaxed">
                   "{data.industryVerdict}"
                 </p>
-                <div className="pt-2 border-t border-[#242429] text-2xs text-[#8E8E99] font-mono">
+                <div className="pt-2 border-t border-[#242429] text-2xs text-[#8E8E99] font-sans">
                   BILLBOARD • ROLLING STONE • SPOTIFY MUSIC
                 </div>
               </div>
 
               <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] text-xs space-y-1 text-[#8E8E99]">
-                <span className="font-bold text-[#8E8E99] block text-2xs uppercase font-mono">Para compartir:</span>
-                <p className="font-mono text-xs text-[#F4F4F6]">
+                <span className="font-bold text-[#8E8E99] block text-2xs uppercase font-sans">Para compartir:</span>
+                <p className="font-sans text-xs text-[#F4F4F6]">
                   "{data.quoteShareable}"
                 </p>
               </div>
 
               <button
                 onClick={handleShare}
-                className="w-full bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-[#F4F4F6] py-2.5 rounded-[4px] text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-[#F4F4F6] py-2.5 rounded-[4px] text-xs font-sans font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 {copiedShare ? (
                   <>
@@ -304,7 +304,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
           <button
             onClick={handlePrev}
             disabled={currentSlide === 0}
-            className={`px-3 py-1.5 rounded-[4px] text-xs font-mono font-semibold flex items-center gap-1 cursor-pointer transition-colors ${
+            className={`px-3 py-1.5 rounded-[4px] text-xs font-sans font-semibold flex items-center gap-1 cursor-pointer transition-colors ${
               currentSlide === 0
                 ? 'opacity-30 pointer-events-none text-[#52525B]'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6] bg-[#18181C] border border-[#242429]'
@@ -314,13 +314,13 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
             <span>Atrás</span>
           </button>
 
-          <span className="text-2xs font-mono tabular-nums text-[#8E8E99]">
+          <span className="text-2xs font-sans tabular-nums text-[#8E8E99]">
             {currentSlide + 1} / {totalSlides}
           </span>
 
           <button
             onClick={handleNext}
-            className="bg-[#FF4F00] hover:bg-[#E04500] text-white px-5 py-1.5 rounded-[4px] text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 active:translate-y-[1px]"
+            className="bg-[#FF4F00] hover:bg-[#E04500] text-white px-5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-all cursor-pointer flex items-center gap-1.5 active:translate-y-[1px]"
           >
             <span>{currentSlide === totalSlides - 1 ? 'Finalizar' : 'Siguiente'}</span>
             <ArrowRight className="w-3.5 h-3.5" />

@@ -84,11 +84,11 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
     ctx.strokeRect(60, 60, canvas.width - 120, 160);
 
     ctx.fillStyle = '#FF4F00';
-    ctx.font = 'bold 24px monospace';
+    ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('HISTORICAL ARCHIVE • VINYL PRESS EPK DOSSIER', 100, 110);
 
     ctx.fillStyle = '#8E8E99';
-    ctx.font = '20px monospace';
+    ctx.font = '20px "Plus Jakarta Sans", sans-serif';
     ctx.fillText(`AÑO DE REGISTRO ${world.currentYear} • ESTADO: ${player.isRetired ? 'RETIRADO / LEYENDA' : 'EN ACTIVO'}`, 100, 150);
 
     // Artist Name
@@ -118,11 +118,11 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
       ctx.strokeRect(x, y, 480, 130);
 
       ctx.fillStyle = '#8E8E99';
-      ctx.font = 'bold 18px monospace';
+      ctx.font = 'bold 18px "Plus Jakarta Sans", sans-serif';
       ctx.fillText(sc.label, x + 30, y + 45);
 
       ctx.fillStyle = '#F4F0EA';
-      ctx.font = 'bold 44px monospace';
+      ctx.font = 'bold 44px "Plus Jakarta Sans", sans-serif';
       ctx.fillText(sc.value, x + 30, y + 100);
     });
 
@@ -133,7 +133,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
     ctx.strokeRect(100, 750, 1000, 360);
 
     ctx.fillStyle = '#FF4F00';
-    ctx.font = 'bold 22px monospace';
+    ctx.font = 'bold 22px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('CATÁLOGO PRINCIPAL (TOP HITS)', 130, 800);
 
     topSongs.forEach((song, idx) => {
@@ -143,13 +143,13 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
       ctx.fillText(`${idx + 1}. ${song.title}`, 130, y);
 
       ctx.fillStyle = '#10B981';
-      ctx.font = 'bold 24px monospace';
+      ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
       ctx.fillText(`${(song.streamsTotal / 1000000).toFixed(2)}M streams`, 780, y);
     });
 
     // Footer
     ctx.fillStyle = '#8E8E99';
-    ctx.font = '18px monospace';
+    ctx.font = '18px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('EL ARTISTA — MUSIC CAREER SIMULATOR • REPRODUCCIÓN OFICIAL DE ARCHIVO', 100, 1500);
 
     // Download link
@@ -169,7 +169,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
               <Disc3 className="w-4 h-4 animate-spin-slow" />
             </div>
             <div>
-              <span className="text-3xs uppercase font-mono font-bold tracking-widest text-[#8E8E99] block">
+              <span className="text-3xs uppercase font-sans font-bold tracking-widest text-[#8E8E99] block">
                 DOSSIER EDITORIAL OFICIAL (EPK)
               </span>
               <h2 className="text-base font-bold text-[#F4F0EA]">
@@ -192,27 +192,27 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
           <div className="p-6 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] relative overflow-hidden space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <span className="text-3xs uppercase font-mono font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#26262B] text-[#FF4F00]">
+                <span className="text-3xs uppercase font-sans font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#26262B] text-[#FF4F00]">
                   {player.careerStage} • {yearsActive} Años de Trayectoria
                 </span>
                 <h1 className="text-2xl sm:text-4xl font-extrabold text-[#F4F0EA] tracking-tight mt-2 font-display">
                   {player.name}
                 </h1>
-                <p className="text-xs text-[#8E8E99] mt-1 font-mono">
+                <p className="text-xs text-[#8E8E99] mt-1 font-sans">
                   {player.country} • {player.city} • Sonido Principal: {world.genres[player.mainGenreId]?.name || 'Urbano'}
                 </p>
               </div>
 
               <div className="text-right shrink-0 bg-[#141417] p-3 rounded-[4px] border border-[#26262B]">
-                <span className="text-3xs font-mono uppercase text-[#8E8E99] block font-bold">Puntaje Legado</span>
-                <span className="text-2xl font-bold font-mono text-[#F59E0B] tabular-nums">
+                <span className="text-3xs font-sans uppercase text-[#8E8E99] block font-bold">Puntaje Legado</span>
+                <span className="text-2xl font-bold font-sans text-[#F59E0B] tabular-nums">
                   {player.legacyScore}/100
                 </span>
               </div>
             </div>
 
             {/* Core Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#26262B] text-xs font-mono tabular-nums">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#26262B] text-xs font-sans tabular-nums">
               <div className="p-2.5 bg-[#141417] rounded-[4px] border border-[#26262B]">
                 <span className="text-3xs text-[#8E8E99] uppercase block font-bold">Streams Totales</span>
                 <span className="text-sm font-bold text-[#10B981]">{(player.stats.totalStreams / 1000000).toFixed(2)}M</span>
@@ -234,7 +234,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
 
           {/* Top Hits Section */}
           <div className="space-y-3">
-            <h3 className="text-xs font-mono uppercase font-bold text-[#8E8E99] flex items-center gap-1.5">
+            <h3 className="text-xs font-sans uppercase font-bold text-[#8E8E99] flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#FF4F00]" />
               Obras Fundamentales del Catálogo
             </h3>
@@ -243,7 +243,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
               {topSongs.map((song, i) => (
                 <div
                   key={song.id}
-                  className="p-3 bg-[#0B0B0C] border border-[#26262B] rounded-[4px] flex items-center justify-between text-xs font-mono"
+                  className="p-3 bg-[#0B0B0C] border border-[#26262B] rounded-[4px] flex items-center justify-between text-xs font-sans"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span className="text-[#8E8E99] font-bold w-4">{i + 1}.</span>
@@ -261,7 +261,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
           <div className="p-4 rounded-[4px] bg-[#111114] border border-[#26262B] space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h4 className="text-xs font-mono font-bold uppercase text-[#F4F0EA]">
+                <h4 className="text-xs font-sans font-bold uppercase text-[#F4F0EA]">
                   Gestión de Retiro Artístico
                 </h4>
                 <p className="text-2xs text-[#8E8E99] mt-0.5 max-w-lg leading-relaxed">
@@ -276,7 +276,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
                   {!retireConfirm ? (
                     <button
                       onClick={() => setRetireConfirm(true)}
-                      className="px-3 py-1.5 rounded-[4px] border border-[#EF4444]/40 bg-[#EF4444]/10 hover:bg-[#EF4444]/20 text-[#EF4444] text-xs font-mono font-bold transition-all cursor-pointer"
+                      className="px-3 py-1.5 rounded-[4px] border border-[#EF4444]/40 bg-[#EF4444]/10 hover:bg-[#EF4444]/20 text-[#EF4444] text-xs font-sans font-bold transition-all cursor-pointer"
                     >
                       Anunciar Retiro
                     </button>
@@ -288,13 +288,13 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
                           onRetire();
                           setRetireConfirm(false);
                         }}
-                        className="px-3 py-1.5 rounded-[4px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-xs font-mono font-bold transition-all cursor-pointer"
+                        className="px-3 py-1.5 rounded-[4px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-xs font-sans font-bold transition-all cursor-pointer"
                       >
                         Confirmar Retiro
                       </button>
                       <button
                         onClick={() => setRetireConfirm(false)}
-                        className="px-2 py-1.5 rounded-[4px] border border-[#26262B] text-xs font-mono text-[#8E8E99]"
+                        className="px-2 py-1.5 rounded-[4px] border border-[#26262B] text-xs font-sans text-[#8E8E99]"
                       >
                         Cancelar
                       </button>
@@ -308,7 +308,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
 
         {/* Footer Actions */}
         <div className="p-4 sm:p-6 border-t border-[#26262B] bg-[#111114] flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-xs font-mono text-[#8E8E99]">
+          <div className="text-xs font-sans text-[#8E8E99]">
             {copied ? (
               <span className="text-[#10B981] flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Ficha copiada al portapapeles
@@ -321,7 +321,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
             <button
               onClick={handleShare}
-              className="flex-1 sm:flex-none px-4 py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#26262B] text-[#F4F0EA] text-xs font-mono font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1 sm:flex-none px-4 py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#26262B] text-[#F4F0EA] text-xs font-sans font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5" />
               <span>Copiar Texto</span>
@@ -329,7 +329,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
 
             <button
               onClick={handleDownloadImage}
-              className="flex-1 sm:flex-none px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:translate-y-[1px]"
+              className="flex-1 sm:flex-none px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:translate-y-[1px]"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Descargar Ficha (PNG)</span>

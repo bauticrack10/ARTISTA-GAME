@@ -76,7 +76,7 @@ export function getSkillTier(val: number): SkillTierInfo {
   }
   return {
     name: 'Maestro / Élite',
-    badge: 'bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/50 font-mono font-bold',
+    badge: 'bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/50 font-sans font-bold',
     rangeLabel: '86 - 100',
     nextTier: null,
     pointsToNext: 0
@@ -321,7 +321,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('main')}
-            className={`min-h-8 px-3.5 py-1.5 text-xs font-mono rounded-[3px] font-bold transition-all cursor-pointer ${
+            className={`min-h-8 px-3.5 py-1.5 text-xs font-sans rounded-[3px] font-bold transition-all cursor-pointer ${
               activeTab === 'main'
                 ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
@@ -332,7 +332,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('personality')}
-            className={`min-h-8 px-3.5 py-1.5 text-xs font-mono rounded-[3px] font-bold transition-all cursor-pointer ${
+            className={`min-h-8 px-3.5 py-1.5 text-xs font-sans rounded-[3px] font-bold transition-all cursor-pointer ${
               activeTab === 'personality'
                 ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
@@ -367,7 +367,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
               >
                 {/* Header de la tarjeta */}
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold font-mono uppercase tracking-wider text-[#F4F4F6]">
+                  <span className="font-bold font-sans uppercase tracking-wider text-[#F4F4F6]">
                     {metric.label}
                   </span>
                   <div className="p-1 rounded-[3px] bg-[#111114] border border-[#242429]">
@@ -377,9 +377,9 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 
                 {/* Valor numérico & Badges de Estado */}
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-2xl font-bold text-[#F4F4F6] tracking-tight font-mono tabular-nums">
+                  <p className="text-2xl font-bold text-[#F4F4F6] tracking-tight font-sans tabular-nums">
                     {metric.value}
-                    <span className="text-xs text-[#52525B] font-normal font-mono"> / 100</span>
+                    <span className="text-xs text-[#52525B] font-normal font-sans"> / 100</span>
                   </p>
 
                   {/* Claridad en Requisitos y Badges para Energía Vital */}
@@ -392,7 +392,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                           ? 'Fatiga leve (<85%). Puedes grabar temas pero requieres ≥85% para armar giras. Descansá para recuperar.'
                           : 'Fatiga alta (<40%). Riesgo de bajo rendimiento y fatiga en conciertos. Tomá un retiro de descanso.'
                       }
-                      className={`text-2xs font-mono font-semibold px-2 py-0.5 rounded-[2px] flex items-center gap-1 border transition-colors ${
+                      className={`text-2xs font-sans font-semibold px-2 py-0.5 rounded-[2px] flex items-center gap-1 border transition-colors ${
                         isEnergyOptimal
                           ? 'bg-[#00E599]/15 text-[#00E599] border-[#00E599]/30'
                           : isEnergyMildFatigue
@@ -454,7 +454,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#F4F4F6]">
+                  <h3 className="text-xs font-sans font-bold uppercase tracking-wider text-[#F4F4F6]">
                     ¿Cómo progresar y entrenar tus Habilidades?
                   </h3>
                   <p className="text-xs text-[#8E8E99]">
@@ -463,11 +463,11 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-2xs font-mono font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
+                <span className="text-2xs font-sans font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
                   Escala 1 - 100
                 </span>
                 {player?.isProdigy && (
-                  <span className="text-2xs font-mono font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
+                  <span className="text-2xs font-sans font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
                     <Crown className="w-3 h-3 text-[#F59E0B]" />
                     Prodigio x3
                   </span>
@@ -478,7 +478,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
             {/* 4 Canales de Entrenamiento & Progresión */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1 hover:border-[#3F3F46] transition-colors">
-                <div className="flex items-center gap-1.5 text-[#FF4F00] font-mono font-bold text-xs">
+                <div className="flex items-center gap-1.5 text-[#FF4F00] font-sans font-bold text-xs">
                   <ShoppingBag className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
                   <span>1. Tienda & Masterclasses</span>
                 </div>
@@ -488,7 +488,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
               </div>
 
               <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1 hover:border-[#3F3F46] transition-colors">
-                <div className="flex items-center gap-1.5 text-[#00E599] font-mono font-bold text-xs">
+                <div className="flex items-center gap-1.5 text-[#00E599] font-sans font-bold text-xs">
                   <Music2 className="w-3.5 h-3.5 text-[#00E599] shrink-0" />
                   <span>2. Grabaciones & Hits</span>
                 </div>
@@ -498,7 +498,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
               </div>
 
               <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1 hover:border-[#3F3F46] transition-colors">
-                <div className="flex items-center gap-1.5 text-[#F59E0B] font-mono font-bold text-xs">
+                <div className="flex items-center gap-1.5 text-[#F59E0B] font-sans font-bold text-xs">
                   <Flame className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
                   <span>3. Decisiones & Prensa</span>
                 </div>
@@ -508,7 +508,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
               </div>
 
               <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1 hover:border-[#3F3F46] transition-colors">
-                <div className="flex items-center gap-1.5 text-[#00E599] font-mono font-bold text-xs">
+                <div className="flex items-center gap-1.5 text-[#00E599] font-sans font-bold text-xs">
                   <Zap className="w-3.5 h-3.5 text-[#00E599] shrink-0" />
                   <span>4. Bienestar & Enfoque</span>
                 </div>
@@ -520,8 +520,8 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 
             {/* Leyenda de Rangos de Nivel */}
             <div className="pt-2 border-t border-[#242429] flex items-center justify-between flex-wrap gap-2 text-2xs text-[#8E8E99]">
-              <span className="font-mono font-semibold text-[#F4F4F6]">Rangos Oficiales de Nivel:</span>
-              <div className="flex items-center gap-2 flex-wrap font-mono">
+              <span className="font-sans font-semibold text-[#F4F4F6]">Rangos Oficiales de Nivel:</span>
+              <div className="flex items-center gap-2 flex-wrap font-sans">
                 <span className="px-2 py-0.5 rounded-[2px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
                   Principiante (1-30)
                 </span>
@@ -564,14 +564,14 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                             <span className="font-bold text-[#F4F4F6] text-sm leading-tight">
                               {trait.label}
                             </span>
-                            <span className={`text-3xs font-mono font-bold px-2 py-0.5 rounded-[2px] border ${tierInfo.badge}`}>
+                            <span className={`text-3xs font-sans font-bold px-2 py-0.5 rounded-[2px] border ${tierInfo.badge}`}>
                               {tierInfo.name}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <span className="font-mono tabular-nums text-[#F4F4F6] font-bold text-xs bg-[#111114] border border-[#242429] px-2.5 py-1 rounded-[3px] shrink-0">
-                        {trait.val}<span className="text-3xs text-[#52525B] font-mono font-normal"> / 100</span>
+                      <span className="font-sans tabular-nums text-[#F4F4F6] font-bold text-xs bg-[#111114] border border-[#242429] px-2.5 py-1 rounded-[3px] shrink-0">
+                        {trait.val}<span className="text-3xs text-[#52525B] font-sans font-normal"> / 100</span>
                       </span>
                     </div>
 
@@ -588,7 +588,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                           style={{ width: `${Math.min(100, Math.max(0, trait.val))}%` }}
                         />
                       </div>
-                      <div className="flex items-center justify-between text-3xs text-[#52525B] font-mono px-0.5">
+                      <div className="flex items-center justify-between text-3xs text-[#52525B] font-sans px-0.5">
                         <span>1</span>
                         <span>30</span>
                         <span>50</span>
@@ -605,7 +605,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                   </div>
 
                   {/* Indicador de Próximo Nivel / Rango */}
-                  <div className="pt-2 border-t border-[#242429] flex items-center justify-between text-2xs font-mono">
+                  <div className="pt-2 border-t border-[#242429] flex items-center justify-between text-2xs font-sans">
                     {tierInfo.nextTier ? (
                       <span className="text-[#8E8E99] flex items-center gap-1 font-medium">
                         <TrendingUp className="w-3 h-3 text-[#FF4F00]" />
@@ -617,7 +617,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                         Máximo Rango Alcanzado
                       </span>
                     )}
-                    <span className="text-2xs font-mono text-[#52525B]">
+                    <span className="text-2xs font-sans text-[#52525B]">
                       {tierInfo.rangeLabel}
                     </span>
                   </div>
@@ -630,7 +630,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 
       {/* Pie del Panel con Micro-leyenda de balance */}
       <div className="pt-3 border-t border-[#242429] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-[#8E8E99]">
-        <div className="flex items-center gap-1.5 font-mono">
+        <div className="flex items-center gap-1.5 font-sans">
           <Info className="w-3.5 h-3.5 text-[#8E8E99]" />
           <span>
             {activeTab === 'main'
@@ -638,7 +638,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
               : 'Las habilidades se mejoran mediante práctica continua, lanzamientos, decisiones de carrera y compras en la tienda.'}
           </span>
         </div>
-        <span className="text-xs font-mono font-bold text-[#F4F4F6]">
+        <span className="text-xs font-sans font-bold text-[#F4F4F6]">
           {player?.name || 'Artista'} • {player?.careerStage || 'Underground'}
         </span>
       </div>

@@ -211,16 +211,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="font-display font-bold text-[#F4F0EA] truncate max-w-[110px]">
                 {playerName}
               </span>
-              <span className="text-3xs font-mono font-semibold px-1.5 py-0.2 rounded-[2px] bg-[#1C1C21] text-[#8E8E99] border border-[#26262B] truncate max-w-[90px]">
+              <span className="text-3xs font-sans font-semibold px-1.5 py-0.2 rounded-[2px] bg-[#1C1C21] text-[#8E8E99] border border-[#26262B] truncate max-w-[90px]">
                 {mainGenreName}
               </span>
               <span
-                className="text-3xs font-mono font-bold px-1.5 py-0.2 rounded-[2px] bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30"
+                className="text-3xs font-sans font-bold px-1.5 py-0.2 rounded-[2px] bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30"
                 title={`Nivel Global (OVR): ${playerOvr}/100 • Reputación: ${player?.stats?.reputation || 0}/100`}
               >
                 OVR {playerOvr}
               </span>
-              <span className="text-3xs font-mono text-[#52525B] hidden md:inline">
+              <span className="text-3xs font-sans text-[#52525B] hidden md:inline">
                 {playerAge}a
               </span>
             </div>
@@ -231,7 +231,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="order-last lg:order-none w-full lg:w-auto flex items-center gap-2 shrink-0 justify-center">
           {/* Fecha en el Juego */}
           <div
-            className="flex items-center gap-2 bg-[#141417] px-3 py-1.5 rounded-[4px] border border-[#26262B] text-xs shadow-xs whitespace-nowrap font-mono tabular-nums"
+            className="flex items-center gap-2 bg-[#141417] px-3 py-1.5 rounded-[4px] border border-[#26262B] text-xs shadow-xs whitespace-nowrap font-sans tabular-nums"
             title={`Fecha actual: ${monthName} ${currentYear} • ${semesterShort}`}
           >
             <span className="w-2 h-2 rounded-[2px] bg-[#10B981] shrink-0" />
@@ -258,7 +258,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setCycleMonths(opt.val);
                 }}
                 aria-pressed={cycleMonths === opt.val}
-                className={`min-h-7 px-2.5 py-0.5 rounded-[3px] font-mono transition-all cursor-pointer text-xs ${
+                className={`min-h-7 px-2.5 py-0.5 rounded-[3px] font-sans transition-all cursor-pointer text-xs ${
                   cycleMonths === opt.val
                     ? 'bg-[#FF2A4B] text-white font-bold'
                     : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
@@ -293,7 +293,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Fondos Disponibles: ${formatMoney(playerFunds)}\nGenerados por streaming, shows, giras y adelantos de discográficas. Se utilizan para producciones y comodidades.`}
           >
             <DollarSign className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-            <span className="font-bold text-[#10B981] font-mono tabular-nums whitespace-nowrap">{formatMoney(playerFunds)}</span>
+            <span className="font-bold text-[#10B981] font-sans tabular-nums whitespace-nowrap">{formatMoney(playerFunds)}</span>
           </div>
 
           {/* 2. Inspiración / Hype Escénico */}
@@ -302,8 +302,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Hype Escénico: ${playerHype}/100\nFervor del momento. Acelera el impacto inicial de lanzamientos y reproducciones. Decae naturalmente sin actividad.`}
           >
             <Flame className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
-            <span className="font-bold font-mono tabular-nums text-[#F4F0EA]">{playerHype}</span>
-            <span className="text-3xs text-[#52525B] font-mono hidden xl:inline">/100</span>
+            <span className="font-bold font-sans tabular-nums text-[#F4F0EA]">{playerHype}</span>
+            <span className="text-3xs text-[#52525B] font-sans hidden xl:inline">/100</span>
           </div>
 
           {/* 3. Oyentes / Fans */}
@@ -312,7 +312,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Fans Fieles: ${playerFans.toLocaleString('es-AR')} seguidores devotos\nOyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')} oyentes activos en streaming.`}
           >
             <Users className="w-3.5 h-3.5 text-[#FF2A4B] shrink-0" />
-            <span className="font-bold font-mono tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
+            <span className="font-bold font-sans tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
           </div>
 
           {/* 4. Energía con Micro-barra */}
@@ -321,7 +321,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Energía Vital: ${playerEnergy}% (100% máx)\nRequerimientos: ≥15% para grabar single, ≥35% para álbum completo, ≥85% para giras. Recupera descansando.`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="font-bold font-mono tabular-nums">{playerEnergy}%</span>
+            <span className="font-bold font-sans tabular-nums">{playerEnergy}%</span>
             <div className="w-6 h-1.5 bg-white/10 rounded-[2px] overflow-hidden shrink-0 hidden sm:block">
               <div
                 className={`h-full rounded-[2px] transition-all duration-300 ${energyStyle.bar}`}
@@ -343,7 +343,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Smartphone className="w-3.5 h-3.5 text-[#8E8E99] group-hover:text-[#FF2A4B] transition-colors shrink-0" />
             <span className="hidden md:inline font-sans text-xs text-[#8E8E99]">Teléfono</span>
             {(world?.unreadPhoneCount ?? 0) > 0 && (
-              <span className="w-4 h-4 rounded-[2px] bg-[#FF2A4B] text-white text-3xs font-mono font-bold flex items-center justify-center shadow-xs">
+              <span className="w-4 h-4 rounded-[2px] bg-[#FF2A4B] text-white text-3xs font-sans font-bold flex items-center justify-center shadow-xs">
                 {world.unreadPhoneCount}
               </span>
             )}
@@ -474,7 +474,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Disc3 className="w-3 h-3 text-[#10B981]" />
                 <span>Mi Catálogo</span>
-                <span className="text-3xs font-mono font-bold px-1.5 py-0.2 rounded-[2px] bg-[#0B0B0C] text-[#8E8E99] border border-[#26262B] tabular-nums">
+                <span className="text-3xs font-sans font-bold px-1.5 py-0.2 rounded-[2px] bg-[#0B0B0C] text-[#8E8E99] border border-[#26262B] tabular-nums">
                   {playerSongs.length}
                 </span>
               </button>

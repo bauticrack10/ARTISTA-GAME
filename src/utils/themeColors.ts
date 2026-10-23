@@ -527,7 +527,7 @@ export const CYBER_STUDIO_THEME = {
   },
   microInteractions: {
     hoverScale: 'hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200 ease-out',
-    fontTabular: 'font-mono tabular-nums tracking-tight',
+    fontTabular: 'font-sans tabular-nums tracking-tight',
     smoothTransition: 'transition-all duration-250 cubic-bezier(0.16, 1, 0.3, 1)'
   }
 };

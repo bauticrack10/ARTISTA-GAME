@@ -110,7 +110,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
           <div className="p-6 sm:p-8 space-y-6 relative z-10 text-center">
             {/* Triumphal Pill Header */}
             <div className="flex justify-center">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-xs font-mono font-bold uppercase tracking-wider bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599]">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-xs font-sans font-bold uppercase tracking-wider bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599]">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#00E599]" />
                 Acuerdo Cerrado • Split Sheet Firmado
               </span>
@@ -148,7 +148,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                     <span className="w-1 bg-[#F59E0B] h-4 rounded-[1px] animate-bounce" style={{ animationDelay: '300ms' }} />
                     <span className="w-1 bg-[#00E599] h-5 rounded-[1px] animate-bounce" style={{ animationDelay: '200ms' }} />
                   </div>
-                  <span className="text-2xs font-mono tabular-nums font-bold uppercase tracking-wider text-[#00E599] bg-[#00E599]/10 px-2 py-0.5 rounded-[4px] border border-[#00E599]/30">
+                  <span className="text-2xs font-sans tabular-nums font-bold uppercase tracking-wider text-[#00E599] bg-[#00E599]/10 px-2 py-0.5 rounded-[4px] border border-[#00E599]/30">
                     {soundSynergy}% Sinergia
                   </span>
                 </div>
@@ -168,7 +168,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
               {/* Official Credit Plaque */}
               <div className="mt-4 pt-3.5 border-t border-[#242429] flex flex-col items-center gap-1">
                 <span className="text-2xs uppercase font-bold text-[#52525B] tracking-wider">Crédito Oficial del Lanzamiento</span>
-                <span className="text-sm font-bold text-[#F4F4F6] font-mono">
+                <span className="text-sm font-bold text-[#F4F4F6] font-sans">
                   "{creditPreview || `${player.name} & ${artist.name}`}"
                 </span>
                 <span className="text-xs text-[#8E8E99]">
@@ -183,14 +183,14 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                 <div className="flex items-center gap-1 text-2xs text-[#8E8E99] uppercase tracking-wider">
                   <Flame className="w-3 h-3 text-[#FF4F00]" /> Hype
                 </div>
-                <div className="text-xs font-bold text-[#FF4F00] font-mono tabular-nums">+18% Exp.</div>
+                <div className="text-xs font-bold text-[#FF4F00] font-sans tabular-nums">+18% Exp.</div>
               </div>
 
               <div className="bg-[#09090B] border border-[#242429] p-2.5 rounded-[4px] space-y-0.5">
                 <div className="flex items-center gap-1 text-2xs text-[#8E8E99] uppercase tracking-wider">
                   <Radio className="w-3 h-3 text-[#F4F4F6]" /> Cruce Fans
                 </div>
-                <div className="text-xs font-bold text-[#F4F4F6] font-mono tabular-nums">
+                <div className="text-xs font-bold text-[#F4F4F6] font-sans tabular-nums">
                   +{formatCompactNumber(Math.floor(artist.stats.monthlyListeners * 0.12))}
                 </div>
               </div>
@@ -199,7 +199,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                 <div className="flex items-center gap-1 text-2xs text-[#8E8E99] uppercase tracking-wider">
                   <Sparkles className="w-3 h-3 text-[#00E599]" /> Alianza
                 </div>
-                <div className="text-xs font-bold text-[#00E599] font-mono tabular-nums">+25 Afinidad</div>
+                <div className="text-xs font-bold text-[#00E599] font-sans tabular-nums">+25 Afinidad</div>
               </div>
             </div>
 
@@ -211,7 +211,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                   playSound('click');
                   onProceed();
                 }}
-                className="w-full py-3 px-6 rounded-[4px] text-xs font-bold font-mono bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 rounded-[4px] text-xs font-bold font-sans bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <span>Continuar a la Sala de Grabación & Mezcla</span>
                 <ArrowRight className="w-4 h-4 text-white" />
@@ -227,11 +227,11 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
           <div className="p-6 sm:p-8 space-y-6 relative z-10 text-left">
             {/* Header Badge */}
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-xs font-mono font-bold uppercase tracking-wider bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444]">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-xs font-sans font-bold uppercase tracking-wider bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444]">
                 <XCircle className="w-3.5 h-3.5 text-[#EF4444]" />
                 Propuesta Declinada Amablemente
               </span>
-              <span className="text-xs text-[#8E8E99] font-mono">
+              <span className="text-xs text-[#8E8E99] font-sans">
                 {artist.name}
               </span>
             </div>
@@ -278,7 +278,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                     playSound('click');
                     onAdjustProposal();
                   }}
-                  className="w-full sm:w-1/2 py-2.5 px-4 rounded-[4px] text-xs font-mono font-semibold bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer text-center"
+                  className="w-full sm:w-1/2 py-2.5 px-4 rounded-[4px] text-xs font-sans font-semibold bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer text-center"
                 >
                   Modificar Términos de la Oferta
                 </button>
@@ -290,7 +290,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
                   playSound('click');
                   onClose();
                 }}
-                className={`w-full ${onAdjustProposal ? 'sm:w-1/2' : ''} py-2.5 px-4 rounded-[4px] text-xs font-mono font-bold bg-[#F4F4F6] text-[#09090B] hover:bg-[#E4E4E7] transition-all cursor-pointer text-center`}
+                className={`w-full ${onAdjustProposal ? 'sm:w-1/2' : ''} py-2.5 px-4 rounded-[4px] text-xs font-sans font-bold bg-[#F4F4F6] text-[#09090B] hover:bg-[#E4E4E7] transition-all cursor-pointer text-center`}
               >
                 Entendido, guardar idea en bocetos
               </button>

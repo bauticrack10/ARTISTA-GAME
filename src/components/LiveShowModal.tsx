@@ -150,13 +150,13 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
         <div className="p-5 sm:p-6 bg-[#18181C] border-b border-[#242429] text-[#F4F4F6] relative flex items-start justify-between shrink-0">
           <div className="space-y-1.5 pr-8">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
+              <span className="text-[10px] font-sans uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
                 🎪 Festival Mundial • {festival.country}
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-[#242429] text-[#F4F4F6]">
+              <span className="text-[10px] font-sans px-2 py-0.5 rounded-[4px] bg-[#242429] text-[#F4F4F6]">
                 {FestivalEngine.getSlotTitle(slot)}
               </span>
-              <span className="text-[10px] font-mono text-[#F59E0B] flex items-center gap-1">
+              <span className="text-[10px] font-sans text-[#F59E0B] flex items-center gap-1">
                 <Star className="w-3 h-3 fill-[#F59E0B]" />
                 Prestigio {festival.prestige}/100
               </span>
@@ -164,7 +164,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#F4F4F6]">
               {festival.name}
             </h2>
-            <p className="text-xs text-[#8E8E99] flex items-center gap-1.5 font-mono">
+            <p className="text-xs text-[#8E8E99] flex items-center gap-1.5 font-sans">
               <MapPin className="w-3.5 h-3.5 shrink-0 text-[#52525B]" />
               {festival.location} • <span className="tabular-nums">{(festival.capacity || 0).toLocaleString('es-AR')}</span> espectadores por día
             </p>
@@ -190,26 +190,26 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               {/* Financial & Energy Status Bar */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-[#52525B] block">Caché Bruto</span>
-                  <span className="text-base font-bold font-mono tabular-nums text-[#00E599]">
+                  <span className="text-[10px] uppercase font-sans tracking-wider text-[#52525B] block">Caché Bruto</span>
+                  <span className="text-base font-bold font-sans tabular-nums text-[#00E599]">
                     +{formatMoney(estimatedPayout)}
                   </span>
                 </div>
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-[#52525B] block">Costo Escénico</span>
-                  <span className="text-base font-bold font-mono tabular-nums text-[#EF4444]">
+                  <span className="text-[10px] uppercase font-sans tracking-wider text-[#52525B] block">Costo Escénico</span>
+                  <span className="text-base font-bold font-sans tabular-nums text-[#EF4444]">
                     -{formatMoney(productionCost)}
                   </span>
                 </div>
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-[#52525B] block">Ganancia Neta Estimada</span>
-                  <span className={`text-base font-bold font-mono tabular-nums ${estimatedPayout - productionCost >= 0 ? 'text-[#F4F4F6]' : 'text-[#EF4444]'}`}>
+                  <span className="text-[10px] uppercase font-sans tracking-wider text-[#52525B] block">Ganancia Neta Estimada</span>
+                  <span className={`text-base font-bold font-sans tabular-nums ${estimatedPayout - productionCost >= 0 ? 'text-[#F4F4F6]' : 'text-[#EF4444]'}`}>
                     {formatMoney(estimatedPayout - productionCost)}
                   </span>
                 </div>
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-[#52525B] block">Consumo de Energía</span>
-                  <span className="text-base font-bold font-mono tabular-nums text-[#F59E0B] flex items-center gap-1">
+                  <span className="text-[10px] uppercase font-sans tracking-wider text-[#52525B] block">Consumo de Energía</span>
+                  <span className="text-base font-bold font-sans tabular-nums text-[#F59E0B] flex items-center gap-1">
                     <Zap className="w-4 h-4 text-[#F59E0B]" />
                     ~25% - 40%
                   </span>
@@ -218,7 +218,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
 
               {/* Stage Production Choices */}
               <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5 font-mono">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5 font-sans">
                   <Tv className="w-4 h-4 text-[#FF4F00]" />
                   1. Producción Escénica & Espectáculo Visual
                 </h3>
@@ -236,7 +236,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                         playSound('click');
                         setVisuals(e.target.value as any);
                       }}
-                      className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden font-mono"
+                      className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden font-sans"
                     >
                       <option value="basic">Visuales Básicos LED ($0)</option>
                       <option value="3d_screens">Pantallas 3D Reactivas ($15.000)</option>
@@ -261,7 +261,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                         playSound('click');
                         setPyro(e.target.value as any);
                       }}
-                      className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden font-mono"
+                      className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden font-sans"
                     >
                       <option value="none">Sin Pirotecnia ($0)</option>
                       <option value="sparks_fog">Chispas Frías & Niebla ($8.000)</option>
@@ -286,7 +286,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                         playSound('click');
                         setCrew(e.target.value as any);
                       }}
-                      className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden font-mono"
+                      className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden font-sans"
                     >
                       <option value="solo_dj">Solo DJ / Pista Base ($0)</option>
                       <option value="live_band">Banda en Vivo Completa ($12.000)</option>
@@ -304,11 +304,11 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               {/* Setlist Selection */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5 font-mono">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5 font-sans">
                     <Mic2 className="w-4 h-4 text-[#FF4F00]" />
                     2. Armado de Setlist ({selectedSongIds.length}/6 temas seleccionados)
                   </h3>
-                  <span className="text-[11px] text-[#52525B] font-mono">
+                  <span className="text-[11px] text-[#52525B] font-sans">
                     Toca para añadir o quitar del repertorio en vivo
                   </span>
                 </div>
@@ -336,7 +336,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                             <span className="text-xs font-semibold block text-[#F4F4F6] truncate">
                               {song.title}
                             </span>
-                            <span className="text-[10px] text-[#8E8E99] font-mono tabular-nums block">
+                            <span className="text-[10px] text-[#8E8E99] font-sans tabular-nums block">
                               Q: {song.quality}% • {(song.streamsTotal / 1000000).toFixed(1)}M streams
                             </span>
                           </div>
@@ -354,13 +354,13 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
 
               {/* Warning guards */}
               {isFundsInsufficient && (
-                <div className="p-3 rounded-[4px] bg-[#1F1215] border border-[#451A20] text-[#EF4444] text-xs flex items-center gap-2 font-mono">
+                <div className="p-3 rounded-[4px] bg-[#1F1215] border border-[#451A20] text-[#EF4444] text-xs flex items-center gap-2 font-sans">
                   <AlertTriangle className="w-4 h-4 text-[#EF4444] shrink-0" />
                   <span>Fondos insuficientes para costear la producción escénica seleccionada (${productionCost.toLocaleString('es-AR')}). Reduce los efectos para continuar.</span>
                 </div>
               )}
               {isEnergyInsufficient && (
-                <div className="p-3 rounded-[4px] bg-[#1F1912] border border-[#45321A] text-[#F59E0B] text-xs flex items-center gap-2 font-mono">
+                <div className="p-3 rounded-[4px] bg-[#1F1912] border border-[#45321A] text-[#F59E0B] text-xs flex items-center gap-2 font-sans">
                   <AlertTriangle className="w-4 h-4 text-[#F59E0B] shrink-0" />
                   <span>Tu energía es demasiado baja ({player.stats.energy}%). Necesitas al menos 20% de energía para subirte al escenario.</span>
                 </div>
@@ -372,7 +372,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
           {step === 'dilemma' && (
             <div className="space-y-6 animate-fade-in">
               <div className="p-4 rounded-[4px] bg-[#111114] border border-[#F59E0B]/50 space-y-2">
-                <div className="flex items-center gap-2 text-[#F59E0B] text-xs font-mono font-bold uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#F59E0B] text-xs font-sans font-bold uppercase tracking-wider">
                   <AlertTriangle className="w-4 h-4" />
                   ¡Suceso Inesperado en Pleno Concierto!
                 </div>
@@ -385,7 +385,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#8E8E99]">
+                <h4 className="text-xs font-sans font-bold uppercase tracking-wider text-[#8E8E99]">
                   ¿Cómo decides reaccionar en el escenario?
                 </h4>
                 <div className="space-y-2.5">
@@ -409,7 +409,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                           <span className="text-sm font-bold text-[#F4F4F6]">
                             {choice.text}
                           </span>
-                          <span className={`text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-[4px] border ${
+                          <span className={`text-[10px] font-sans tabular-nums px-2 py-0.5 rounded-[4px] border ${
                             choice.scoreModifier > 0 ? 'bg-[#111114] text-[#00E599] border-[#00E599]/30' : 'bg-[#1F1215] text-[#EF4444] border-[#451A20]'
                           }`}>
                             {choice.scoreModifier > 0 ? `+${choice.scoreModifier} Euforia` : `${choice.scoreModifier} Euforia`}
@@ -431,7 +431,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
             <div className="space-y-6 animate-fade-in">
               {/* Score Banner */}
               <div className="p-6 rounded-[6px] bg-[#111114] border border-[#242429] text-center space-y-2">
-                <span className="text-[10px] font-mono font-bold uppercase px-3 py-1 rounded-[4px] bg-[#18181C] text-[#F4F4F6] border border-[#242429]">
+                <span className="text-[10px] font-sans font-bold uppercase px-3 py-1 rounded-[4px] bg-[#18181C] text-[#F4F4F6] border border-[#242429]">
                   {showResult.slotTitle || FestivalEngine.getSlotTitle(showResult.slot)}
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-black text-[#F4F4F6]">
@@ -441,23 +441,23 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                   {showResult.subheadline || showResult.newsBody || ''}
                 </p>
 
-                <div className="flex items-center justify-center gap-6 pt-3 font-mono">
+                <div className="flex items-center justify-center gap-6 pt-3 font-sans">
                   <div>
-                    <span className="text-[10px] text-[#52525B] block uppercase font-mono tracking-wider">Calificación Show</span>
+                    <span className="text-[10px] text-[#52525B] block uppercase font-sans tracking-wider">Calificación Show</span>
                     <span className="text-xl font-black text-[#F59E0B] tabular-nums">
                       {showResult.performanceScore ?? showResult.crowdRating ?? 75}%
                     </span>
                   </div>
                   <div className="w-px h-8 bg-[#242429]" />
                   <div>
-                    <span className="text-[10px] text-[#52525B] block uppercase font-mono tracking-wider">Audiencia Real</span>
+                    <span className="text-[10px] text-[#52525B] block uppercase font-sans tracking-wider">Audiencia Real</span>
                     <span className="text-xl font-black text-[#00E599] tabular-nums">
                       {(showResult.attendance || 0).toLocaleString('es-AR')}
                     </span>
                   </div>
                   <div className="w-px h-8 bg-[#242429]" />
                   <div>
-                    <span className="text-[10px] text-[#52525B] block uppercase font-mono tracking-wider">Ganancia Neta</span>
+                    <span className="text-[10px] text-[#52525B] block uppercase font-sans tracking-wider">Ganancia Neta</span>
                     <span className="text-xl font-black text-[#00E599] tabular-nums">
                       +{formatMoney(showResult.netProfit || 0)}
                     </span>
@@ -468,26 +468,26 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               {/* Gains & Metrics */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] text-[#52525B] block uppercase font-mono tracking-wider">Nuevos Fans</span>
-                  <span className="text-sm font-bold text-[#00E599] font-mono tabular-nums">
+                  <span className="text-[10px] text-[#52525B] block uppercase font-sans tracking-wider">Nuevos Fans</span>
+                  <span className="text-sm font-bold text-[#00E599] font-sans tabular-nums">
                     +{(showResult.fansGained || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] text-[#52525B] block uppercase font-mono tracking-wider">Hype Generado</span>
-                  <span className="text-sm font-bold text-[#F59E0B] font-mono tabular-nums">
+                  <span className="text-[10px] text-[#52525B] block uppercase font-sans tracking-wider">Hype Generado</span>
+                  <span className="text-sm font-bold text-[#F59E0B] font-sans tabular-nums">
                     +{showResult.hypeGained || 0} pts
                   </span>
                 </div>
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] text-[#52525B] block uppercase font-mono tracking-wider">Popularidad</span>
-                  <span className="text-sm font-bold text-[#F4F4F6] font-mono tabular-nums">
+                  <span className="text-[10px] text-[#52525B] block uppercase font-sans tracking-wider">Popularidad</span>
+                  <span className="text-sm font-bold text-[#F4F4F6] font-sans tabular-nums">
                     +{showResult.popularityGained ?? 2} pts
                   </span>
                 </div>
                 <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429]">
-                  <span className="text-[10px] text-[#52525B] block uppercase font-mono tracking-wider">Energía Invertida</span>
-                  <span className="text-sm font-bold text-[#EF4444] font-mono tabular-nums">
+                  <span className="text-[10px] text-[#52525B] block uppercase font-sans tracking-wider">Energía Invertida</span>
+                  <span className="text-sm font-bold text-[#EF4444] font-sans tabular-nums">
                     -{(showResult.energyUsed ?? showResult.energySpent ?? 20)}%
                   </span>
                 </div>
@@ -495,7 +495,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
 
               {/* Press Reviews */}
               <div className="space-y-3">
-                <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5">
+                <h4 className="text-xs font-sans font-bold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5">
                   <Star className="w-4 h-4 text-[#F59E0B]" />
                   Veredicto de la Prensa Internacional
                 </h4>
@@ -522,7 +522,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               </div>
 
               {(showResult.viralMomentOccurred || showResult.viralMoment?.occurred) && (
-                <div className="p-3.5 rounded-[4px] bg-[#18181C] border border-[#F59E0B]/50 text-[#F59E0B] text-xs flex items-center gap-2 font-mono">
+                <div className="p-3.5 rounded-[4px] bg-[#18181C] border border-[#F59E0B]/50 text-[#F59E0B] text-xs flex items-center gap-2 font-sans">
                   <Sparkles className="w-4 h-4 text-[#F59E0B] shrink-0" />
                   <span><strong>¡Momento Viral en Vivo!</strong> Videos del concierto alcanzaron millones de visualizaciones en TikTok, multiplicando las reproducciones en streaming.</span>
                 </div>
@@ -533,7 +533,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
 
         {/* Modal Footer Controls */}
         <div className="p-4 sm:p-5 bg-[#18181C] border-t border-[#242429] flex items-center justify-between shrink-0">
-          <div className="text-xs text-[#8E8E99] font-mono">
+          <div className="text-xs text-[#8E8E99] font-sans">
             {step === 'setup' && 'Configura tu show antes de subir al escenario.'}
             {step === 'dilemma' && 'Toma tu decisión para salir a tocar.'}
             {step === 'result' && 'El show ha concluido exitosamente.'}
@@ -545,7 +545,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                 type="button"
                 onClick={handleProceedToDilemma}
                 disabled={isFundsInsufficient || isEnergyInsufficient}
-                className={`px-5 py-2.5 rounded-[4px] text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+                className={`px-5 py-2.5 rounded-[4px] text-xs font-sans font-bold transition-all flex items-center gap-2 ${
                   isFundsInsufficient || isEnergyInsufficient
                     ? 'bg-[#18181C] border border-[#242429] text-[#52525B] cursor-not-allowed'
                     : 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
@@ -560,7 +560,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleResolveAndPerform(selectedChoiceId || currentDilemma.choices[0].id)}
-                className="px-6 py-2.5 rounded-[4px] text-xs font-mono font-bold bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer flex items-center gap-2"
+                className="px-6 py-2.5 rounded-[4px] text-xs font-sans font-bold bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer flex items-center gap-2"
               >
                 <Mic2 className="w-4 h-4" />
                 <span>¡Actuar en Vivo ante la Multitud!</span>
@@ -574,7 +574,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                   playSound('click');
                   onClose();
                 }}
-                className="px-6 py-2.5 rounded-[4px] text-xs font-mono font-bold bg-[#F4F4F6] hover:bg-[#E4E4E7] text-[#09090B] active:translate-y-[1px] cursor-pointer flex items-center gap-2"
+                className="px-6 py-2.5 rounded-[4px] text-xs font-sans font-bold bg-[#F4F4F6] hover:bg-[#E4E4E7] text-[#09090B] active:translate-y-[1px] cursor-pointer flex items-center gap-2"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Finalizar & Celebrar en el Backstage</span>

@@ -151,7 +151,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
                 <Disc3 className="w-3.5 h-3.5 text-[#FF4F00] animate-spin-slow" />
               </div>
               <div className="z-10">
-                <span className="text-[10px] font-mono text-white/70 block tabular-nums">
+                <span className="text-[10px] font-sans text-white/70 block tabular-nums">
                   {data.releaseYear}
                 </span>
                 <h4 className="text-xs font-bold text-white leading-tight line-clamp-2">
@@ -177,7 +177,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
                   {data.title}
                 </h3>
                 <p className="text-xs text-[#8E8E99] mt-0.5">
-                  <span className="font-mono tabular-nums">{data.songCount}</span> {data.songCount === 1 ? 'Pista' : 'Pistas'} • Master Oficial
+                  <span className="font-sans tabular-nums">{data.songCount}</span> {data.songCount === 1 ? 'Pista' : 'Pistas'} • Master Oficial
                 </p>
               </div>
 
@@ -217,7 +217,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
               <span className="text-[10px] uppercase font-sans font-medium text-[#8E8E99] tracking-wider block">
                 Reproducciones Iniciales
               </span>
-              <span className="text-lg sm:text-xl font-bold font-mono text-[#00E599] tabular-nums mt-0.5">
+              <span className="text-lg sm:text-xl font-bold font-sans text-[#00E599] tabular-nums mt-0.5">
                 +{streamTicker.toLocaleString('es-AR')}
               </span>
             </div>
@@ -226,7 +226,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
               <span className="text-[10px] uppercase font-sans font-medium text-[#8E8E99] tracking-wider block">
                 Inversión Total
               </span>
-              <span className="text-lg sm:text-xl font-bold font-mono text-[#F4F4F6] tabular-nums mt-0.5">
+              <span className="text-lg sm:text-xl font-bold font-sans text-[#F4F4F6] tabular-nums mt-0.5">
                 {formatMoney(data.totalBudget)}
               </span>
             </div>

@@ -253,7 +253,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 <div className="p-2.5 bg-[#FF4F00]/15 text-[#FF4F00] rounded-[4px] border border-[#FF4F00]/30 flex items-center justify-center">
                   <Disc3 className="w-5 h-5" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF4F00] bg-[#FF4F00]/15 px-2 py-0.5 rounded-[4px] border border-[#FF4F00]/30 font-mono">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF4F00] bg-[#FF4F00]/15 px-2 py-0.5 rounded-[4px] border border-[#FF4F00]/30 font-sans">
                   Núcleo Musical
                 </span>
               </div>
@@ -269,7 +269,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
 
               <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-2.5 flex items-center justify-between text-xs text-[#8E8E99]">
                 <span>Lanzamientos este año:</span>
-                <span className="font-mono font-bold text-[#F4F4F6] tabular-nums">
+                <span className="font-sans font-bold text-[#F4F4F6] tabular-nums">
                   {singlesThisYear} {singlesThisYear === 1 ? 'Single' : 'Singles'}
                 </span>
               </div>
@@ -296,7 +296,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 <div className="p-2.5 bg-cyan-950/40 text-cyan-400 rounded-[4px] border border-cyan-800/50 flex items-center justify-center">
                   <ShoppingBag className="w-5 h-5" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded-[4px] border border-cyan-800/50 font-mono">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded-[4px] border border-cyan-800/50 font-sans">
                   Mejoras & Confort
                 </span>
               </div>
@@ -313,12 +313,12 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-2.5 space-y-1 text-xs text-[#8E8E99]">
                 <div className="flex items-center justify-between">
                   <span>Items Adquiridos:</span>
-                  <span className="font-mono font-bold text-[#F4F4F6] tabular-nums">
+                  <span className="font-sans font-bold text-[#F4F4F6] tabular-nums">
                     {ownedUpgradesCount} / {totalLifestyleItemsCount}
                   </span>
                 </div>
                 {lifestyleBuffsSummary && (
-                  <div className="text-[11px] text-[#00E599] font-mono font-semibold truncate pt-0.5 border-t border-[#242429]">
+                  <div className="text-[11px] text-[#00E599] font-sans font-semibold truncate pt-0.5 border-t border-[#242429]">
                     {lifestyleBuffsSummary}
                   </div>
                 )}
@@ -355,7 +355,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   <Ticket className="w-5 h-5" />
                 </div>
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border font-mono ${
+                  className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border font-sans ${
                     isTourReady
                       ? 'text-[#F59E0B] bg-amber-950/40 border-amber-800/50'
                       : 'text-[#EF4444] bg-rose-950/40 border-rose-800/50'
@@ -387,7 +387,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     )}
                     Catálogo (≥2 Temas):
                   </span>
-                  <span className={`font-mono font-semibold tabular-nums ${tourGates.hasCatalog ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                  <span className={`font-sans font-semibold tabular-nums ${tourGates.hasCatalog ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                     {tourGates.songsCount} canciones
                   </span>
                 </div>
@@ -401,7 +401,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     )}
                     Oyentes (≥1k):
                   </span>
-                  <span className={`font-mono font-semibold tabular-nums ${tourGates.hasAudience ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                  <span className={`font-sans font-semibold tabular-nums ${tourGates.hasAudience ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                     {(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
@@ -415,7 +415,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     )}
                     Energía (≥85%):
                   </span>
-                  <span className={`font-mono font-semibold tabular-nums ${tourGates.hasEnergy ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                  <span className={`font-sans font-semibold tabular-nums ${tourGates.hasEnergy ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                     {player?.stats?.energy ?? 100} / 100
                   </span>
                 </div>
@@ -464,7 +464,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 }`}>
                   <Coffee className="w-5 h-5" />
                 </div>
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border font-mono ${
+                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border font-sans ${
                   isEnergyFull
                     ? 'text-[#8E8E99] bg-[#1C1C21] border-[#26262B]'
                     : hasFundsForRest
@@ -496,7 +496,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <BatteryCharging className="w-3 h-3 text-[#10B981]" />
                     Recarga Disponible:
                   </span>
-                  <span className="font-bold font-mono text-[#10B981]">
+                  <span className="font-bold font-sans text-[#10B981]">
                     {hasFundsForRest ? '+50 Vitalidad' : '+25 Vitalidad (Gratis)'}
                   </span>
                 </div>
@@ -505,7 +505,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <DollarSign className="w-3 h-3 text-[#10B981]" />
                     Costo:
                   </span>
-                  <span className="font-mono font-semibold tabular-nums text-[#F4F0EA]">
+                  <span className="font-sans font-semibold tabular-nums text-[#F4F0EA]">
                     {hasFundsForRest ? '$400 (Spa) / $0 (Casa)' : '$0 • Descanso Libre'}
                   </span>
                 </div>
@@ -597,7 +597,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </span>
             </div>
             {player.isProdigy && (
-              <span className="bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] font-mono font-bold text-2xs uppercase tracking-wider shrink-0">
+              <span className="bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px] font-sans font-bold text-2xs uppercase tracking-wider shrink-0">
                Prodigio (x3 Ganancia de Skills)
               </span>
             )}
@@ -618,7 +618,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                       <div className="p-2.5 bg-[#FF4F00]/15 text-[#FF4F00] rounded-[4px] border border-[#FF4F00]/30 flex items-center justify-center">
                         <Mic2 className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-[#FF4F00] bg-[#FF4F00]/15 px-2 py-0.5 rounded-[4px] border border-[#FF4F00]/30 font-mono uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-[#FF4F00] bg-[#FF4F00]/15 px-2 py-0.5 rounded-[4px] border border-[#FF4F00]/30 font-sans uppercase tracking-wider">
                         {cfg.badgeLabel}
                       </span>
                     </div>
@@ -635,13 +635,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-2.5 space-y-1 text-xs text-[#8E8E99]">
                       <div className="flex items-center justify-between">
                         <span>Coste en Fondos:</span>
-                        <span className={`font-mono font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                        <span className={`font-sans font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
                       <div className="flex items-center justify-between border-t border-[#242429] pt-1">
                         <span>Gasto de Energía:</span>
-                        <span className={`font-mono font-bold tabular-nums ${hasEnergy ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
+                        <span className={`font-sans font-bold tabular-nums ${hasEnergy ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
                           -{cfg.costEnergy}% Energía
                         </span>
                       </div>
@@ -679,7 +679,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                       <div className="p-2.5 bg-cyan-950/40 text-cyan-400 rounded-[4px] border border-cyan-800/50 flex items-center justify-center">
                         <Disc3 className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded-[4px] border border-cyan-800/50 font-mono uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded-[4px] border border-cyan-800/50 font-sans uppercase tracking-wider">
                         {cfg.badgeLabel}
                       </span>
                     </div>
@@ -696,13 +696,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-2.5 space-y-1 text-xs text-[#8E8E99]">
                       <div className="flex items-center justify-between">
                         <span>Coste en Fondos:</span>
-                        <span className={`font-mono font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                        <span className={`font-sans font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
                       <div className="flex items-center justify-between border-t border-[#242429] pt-1">
                         <span>Gasto de Energía:</span>
-                        <span className={`font-mono font-bold tabular-nums ${hasEnergy ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
+                        <span className={`font-sans font-bold tabular-nums ${hasEnergy ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
                           -{cfg.costEnergy}% Energía
                         </span>
                       </div>
@@ -739,7 +739,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                       <div className="p-2.5 bg-emerald-950/40 text-[#00E599] rounded-[4px] border border-emerald-800/50 flex items-center justify-center">
                         <Coffee className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-[#00E599] bg-emerald-950/40 px-2 py-0.5 rounded-[4px] border border-emerald-800/50 font-mono uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-[#00E599] bg-emerald-950/40 px-2 py-0.5 rounded-[4px] border border-emerald-800/50 font-sans uppercase tracking-wider">
                         {cfg.badgeLabel}
                       </span>
                     </div>
@@ -756,13 +756,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-2.5 space-y-1 text-xs text-[#8E8E99]">
                       <div className="flex items-center justify-between">
                         <span>Coste de Retiro:</span>
-                        <span className={`font-mono font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                        <span className={`font-sans font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
                       <div className="flex items-center justify-between border-t border-[#242429] pt-1">
                         <span>Recarga Vital:</span>
-                        <span className="font-mono font-bold tabular-nums text-[#00E599]">
+                        <span className="font-sans font-bold tabular-nums text-[#00E599]">
                           +50% Energía
                         </span>
                       </div>
@@ -800,7 +800,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                       <div className="p-2.5 bg-amber-950/40 text-[#F59E0B] rounded-[4px] border border-amber-800/50 flex items-center justify-center">
                         <Users className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-[#F59E0B] bg-amber-950/40 px-2 py-0.5 rounded-[4px] border border-amber-800/50 font-mono uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-[#F59E0B] bg-amber-950/40 px-2 py-0.5 rounded-[4px] border border-amber-800/50 font-sans uppercase tracking-wider">
                         {cfg.badgeLabel}
                       </span>
                     </div>
@@ -817,13 +817,13 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-2.5 space-y-1 text-xs text-[#8E8E99]">
                       <div className="flex items-center justify-between">
                         <span>Coste en Fondos:</span>
-                        <span className={`font-mono font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                        <span className={`font-sans font-bold tabular-nums ${hasFunds ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                           ${cfg.costFunds}
                         </span>
                       </div>
                       <div className="flex items-center justify-between border-t border-[#242429] pt-1">
                         <span>Gasto de Energía:</span>
-                        <span className={`font-mono font-bold tabular-nums ${hasEnergy ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
+                        <span className={`font-sans font-bold tabular-nums ${hasEnergy ? 'text-[#F59E0B]' : 'text-[#EF4444]'}`}>
                           -{cfg.costEnergy}% Energía
                         </span>
                       </div>

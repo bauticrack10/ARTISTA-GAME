@@ -274,14 +274,14 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
               {/* Career Stage Pill */}
               <span
-                className={`px-2.5 py-0.5 rounded-[4px] text-xs font-mono font-bold uppercase tracking-wider ${stageBadge.bg} ${stageBadge.text} border ${stageBadge.border}`}
+                className={`px-2.5 py-0.5 rounded-[4px] text-xs font-sans font-bold uppercase tracking-wider ${stageBadge.bg} ${stageBadge.text} border ${stageBadge.border}`}
               >
                 {stageBadge.label}
               </span>
 
               {/* Label Badge */}
               {currentLabel && (
-                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-mono bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
+                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-sans bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
                   <Building2 className="w-3 h-3 text-[#52525B]" />
                   {currentLabel.name}
                 </span>
@@ -289,7 +289,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
               {/* Manager Badge */}
               {currentManager && (
-                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-mono bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
+                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-sans bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
                   <User className="w-3 h-3 text-[#52525B]" />
                   Mgr: {currentManager.name}
                 </span>
@@ -308,11 +308,11 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
                 {formatCityCountry(player?.city, player?.country)}
               </span>
               <span className="text-[#52525B]">•</span>
-              <span className="font-mono tabular-nums text-[#F4F4F6]">
+              <span className="font-sans tabular-nums text-[#F4F4F6]">
                 {TimeSystem.calculateAge(player?.birthYear || 2008, world?.currentYear || 2026)} años
               </span>
               <span className="text-[#52525B]">•</span>
-              <span className="px-2 py-0.5 rounded-[4px] text-xs font-mono font-bold bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30">
+              <span className="px-2 py-0.5 rounded-[4px] text-xs font-sans font-bold bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30">
                 {mainGenreName}
               </span>
             </div>
@@ -321,31 +321,31 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             <div className="flex items-center gap-2 text-xs text-[#8E8E99] flex-wrap pt-0.5">
               <button
                 onClick={handleOpenModal}
-                className="flex items-center gap-1.5 text-[#F4F4F6] bg-[#18181C] hover:bg-[#242429] border border-[#242429] px-3 py-1 rounded-[4px] text-xs font-mono font-medium cursor-pointer transition-colors"
+                className="flex items-center gap-1.5 text-[#F4F4F6] bg-[#18181C] hover:bg-[#242429] border border-[#242429] px-3 py-1 rounded-[4px] text-xs font-sans font-medium cursor-pointer transition-colors"
               >
                 <Edit3 className="w-3.5 h-3.5 text-[#FF4F00]" />
                 <span>Editar Identidad</span>
               </button>
 
               <span
-                className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#F4F4F6] font-mono text-xs"
+                className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#F4F4F6] font-sans text-xs"
                 title={`Comunidad de fans activos: ${(playerStats.fansCount || 0).toLocaleString('es-AR')} fans`}
               >
                 <Users className="w-3.5 h-3.5 text-[#FF4F00]" />
                 <span>{formatFans(playerStats.fansCount)}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-mono text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans text-xs">
                 <Disc3 className="w-3.5 h-3.5 text-[#52525B]" />
                 <span>{computedSongsCount} Singles</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-mono text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans text-xs">
                 <Layers className="w-3.5 h-3.5 text-[#52525B]" />
                 <span>{computedAlbumsCount} Álbumes</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-mono text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans text-xs">
                 <Award className="w-3.5 h-3.5 text-[#00E599]" />
                 <span>
                   Legado: <strong className="font-semibold text-[#F4F4F6]">{player?.legacyScore ?? 0}/100</strong>
@@ -366,20 +366,20 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+              <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
                 <Headphones className="w-3 h-3 text-[#8E8E99]" />
                 OYENTES / MES
               </span>
               {isListenersSurging && (
-                <span className="text-3xs font-mono font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
+                <span className="text-3xs font-sans font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
                   ▲ AUGE
                 </span>
               )}
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.monthlyListeners)}
             </span>
-            <span className={`text-3xs font-mono block mt-0.5 ${listenerGrowth.isPositive ? 'text-[#00E599]' : 'text-[#8E8E99]'}`}>
+            <span className={`text-3xs font-sans block mt-0.5 ${listenerGrowth.isPositive ? 'text-[#00E599]' : 'text-[#8E8E99]'}`}>
               {listenerGrowth.label}
             </span>
           </div>
@@ -393,48 +393,48 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+              <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
                 <Disc3 className="w-3 h-3 text-[#8E8E99]" />
                 STREAMS TOTALES
               </span>
               {isStreamsSurging && (
-                <span className="text-3xs font-mono font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
+                <span className="text-3xs font-sans font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
                   ▲ VIRAL
                 </span>
               )}
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.totalStreams)}
             </span>
-            <span className="text-3xs text-[#52525B] font-mono block mt-0.5">
+            <span className="text-3xs text-[#52525B] font-sans block mt-0.5">
               Catálogo acumulado
             </span>
           </div>
 
           {/* Tile 3: Hype Escénico */}
           <div className="bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-left transition-colors">
-            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+            <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
               <Flame className="w-3 h-3 text-[#F59E0B]" />
               HYPE ESCÉNICO
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
-              {playerStats.hype} <span className="text-xs font-normal text-[#52525B] font-mono">/ 100</span>
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
+              {playerStats.hype} <span className="text-xs font-normal text-[#52525B] font-sans">/ 100</span>
             </span>
-            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
+            <span className="text-3xs text-[#8E8E99] font-sans block mt-0.5">
               {playerStats.hype >= 70 ? 'Rotación Alta en Prensa' : 'Trabajo de Estudio'}
             </span>
           </div>
 
           {/* Tile 4: Popularidad & Fidelidad */}
           <div className="bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-left transition-colors">
-            <span className="text-3xs font-mono font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+            <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
               <Crown className="w-3 h-3 text-[#FF4F00]" />
               POPULARIDAD
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
-              {playerStats.popularity} <span className="text-xs font-normal text-[#52525B] font-mono">/ 100</span>
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
+              {playerStats.popularity} <span className="text-xs font-normal text-[#52525B] font-sans">/ 100</span>
             </span>
-            <span className="text-3xs text-[#8E8E99] font-mono block mt-0.5">
+            <span className="text-3xs text-[#8E8E99] font-sans block mt-0.5">
               Fidelidad: {playerStats.fanbaseLoyalty}%
             </span>
           </div>
@@ -450,7 +450,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#52525B]">
+                <span className="text-xs font-sans font-bold uppercase tracking-wider text-[#52525B]">
                   ERA ACTUAL:
                 </span>
                 <span className="text-xs font-bold text-[#F4F4F6]">
@@ -465,7 +465,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
           <button
             onClick={() => onNavigate('career')}
-            className="text-xs text-[#F4F4F6] hover:text-[#FF4F00] flex items-center gap-1.5 font-mono font-semibold cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-[4px] bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] transition-colors"
+            className="text-xs text-[#F4F4F6] hover:text-[#FF4F00] flex items-center gap-1.5 font-sans font-semibold cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-[4px] bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] transition-colors"
           >
             <span>Ver Trayectoria</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -642,14 +642,14 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <button
                 type="button"
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="px-4 py-2 rounded-[4px] text-xs font-mono font-semibold bg-[#111114] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:bg-[#18181C] cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-[4px] text-xs font-sans font-semibold bg-[#111114] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:bg-[#18181C] cursor-pointer transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveAvatar}
-                className="flex items-center gap-1.5 bg-[#FF4F00] hover:bg-[#E04500] text-white px-5 py-2 rounded-[4px] text-xs font-mono font-bold cursor-pointer active:translate-y-[1px] transition-all"
+                className="flex items-center gap-1.5 bg-[#FF4F00] hover:bg-[#E04500] text-white px-5 py-2 rounded-[4px] text-xs font-sans font-bold cursor-pointer active:translate-y-[1px] transition-all"
               >
                 <Check className="w-4 h-4 text-white" />
                 <span>Guardar Cambios</span>

@@ -22,7 +22,7 @@ Inspirado directamente en:
 | :--- | :--- | :--- | :--- |
 | **`--font-display`** | Titulares, Nombre de Artista, Secciones, Portadas de Discos y Festivales | `'Syne'` (pesos 700 y 800) | `letter-spacing: -0.035em`, fuerza de póster y portada de vinilo. |
 | **`--font-sans`** | Cuerpo de texto, narrativa de eventos, descripciones y navegación | `'Plus Jakarta Sans'` (pesos 400, 500, 600, 700) | Lectura editorial impecable, gran legibilidad en pantallas oscuras. |
-| **`--font-mono`** | Cifras, streams, dinero, puestos de chart, fechas, duraciones y códigos | `'JetBrains Mono'` (pesos 500, 600, 700) | `font-variant-numeric: tabular-nums` obligatorio en todos los números. |
+| **Cifras** | Streams, dinero, puestos de chart, fechas y duraciones | `'Plus Jakarta Sans'` (misma sans del cuerpo) | `tabular-nums` para alinear columnas. **Prohibido usar tipografías monoespaciadas** (JetBrains Mono, Courier, etc.) en cualquier parte de la interfaz. |
 
 ---
 
@@ -38,7 +38,7 @@ Inspirado directamente en:
 | **Borde Activo** | `--color-line-active`| `#3F3F46` | Estado hover/focus de controles. |
 | **Texto Primario** | Bone White / Crema | `#F4F0EA` | Titulares, nombres de canciones y lectura principal. |
 | **Texto Secundario** | Muted Steel | `#8E8E99` | Descripciones, subtítulos, metadatos. |
-| **Texto Técnico** | Dim Studio Label | `#52525B` | Etiquetas técnicas en mayúsculas (`font-mono text-2xs`). |
+| **Texto Técnico** | Dim Studio Label | `#52525B` | Etiquetas técnicas en mayúsculas (`font-sans text-2xs`). |
 | **Acento Primario (REC)** | REC Red | `#FF2A4B` | Botón de grabación, acción principal, indicador On-Air. |
 | **Acento Secundario** | VU-Meter Amber | `#F59E0B` | Récords, energía media, avisos de producción. |
 | **Éxito / Subida** | Console Green | `#10B981` | Fondos positivos, subida en charts (`▲`), streaming activo. |

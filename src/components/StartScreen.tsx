@@ -108,14 +108,14 @@ export const StartScreen: React.FC<StartScreenProps> = ({
                   </span>
                 </div>
                 <span className="text-2xs text-[#8E8E99] font-sans">
-                  {TimeSystem.getMonthName(savedGame.month || 1)} <span className="font-mono tabular-nums">{savedGame.year || 2026}</span> • Año <span className="font-mono tabular-nums">{savedGame.careerYear || 1}</span>
+                  {TimeSystem.getMonthName(savedGame.month || 1)} <span className="font-sans tabular-nums">{savedGame.year || 2026}</span> • Año <span className="font-sans tabular-nums">{savedGame.careerYear || 1}</span>
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs text-[#8E8E99] pl-5.5">
                 <span className="font-medium text-[#F4F0EA] font-sans truncate max-w-[180px]">
                   {savedGame.player.name || 'Artista'}
                 </span>
-                <span className="font-mono font-bold text-[#10B981] tabular-nums">
+                <span className="font-sans font-bold text-[#10B981] tabular-nums">
                   ${(savedGame.player.stats?.funds ?? 0).toLocaleString('es-AR')}
                 </span>
               </div>

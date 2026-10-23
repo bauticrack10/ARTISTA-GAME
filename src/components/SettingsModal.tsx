@@ -66,7 +66,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <Save className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-3xs uppercase font-mono font-bold tracking-widest text-[#8E8E99] block">
+              <span className="text-3xs uppercase font-sans font-bold tracking-widest text-[#8E8E99] block">
                 MEMORIA & GESTIÓN
               </span>
               <h2 className="text-sm font-bold text-[#F4F0EA]">
@@ -86,7 +86,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         {/* Body */}
         <div className="p-5 sm:p-6 space-y-5">
           {/* Status Badge */}
-          <div className="p-3.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex items-center justify-between text-xs font-mono">
+          <div className="p-3.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex items-center justify-between text-xs font-sans">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse shrink-0" />
               <span className="text-[#F4F0EA] font-semibold">Autoguardado Activo</span>
@@ -98,7 +98,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* Export & Import Section */}
           <div className="space-y-3">
-            <h3 className="text-3xs uppercase font-mono font-bold text-[#8E8E99] tracking-wider">
+            <h3 className="text-3xs uppercase font-sans font-bold text-[#8E8E99] tracking-wider">
               Copias de Seguridad (Archivos JSON)
             </h3>
 
@@ -110,7 +110,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }}
                 className="p-3 rounded-[4px] bg-[#18181C] hover:bg-[#1C1C21] border border-[#26262B] hover:border-[#3F3F46] flex flex-col items-start gap-1 transition-all cursor-pointer text-left group"
               >
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#F4F0EA]">
+                <div className="flex items-center gap-2 text-xs font-sans font-bold text-[#F4F0EA]">
                   <Download className="w-3.5 h-3.5 text-[#FF4F00] group-hover:translate-y-0.5 transition-transform" />
                   <span>Exportar Partida</span>
                 </div>
@@ -126,7 +126,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }}
                 className="p-3 rounded-[4px] bg-[#18181C] hover:bg-[#1C1C21] border border-[#26262B] hover:border-[#3F3F46] flex flex-col items-start gap-1 transition-all cursor-pointer text-left group"
               >
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#F4F0EA]">
+                <div className="flex items-center gap-2 text-xs font-sans font-bold text-[#F4F0EA]">
                   <Upload className="w-3.5 h-3.5 text-[#10B981] group-hover:-translate-y-0.5 transition-transform" />
                   <span>Cargar Respaldo</span>
                 </div>
@@ -145,7 +145,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             />
 
             {importStatus && (
-              <div className="p-2.5 rounded-[4px] bg-[#18181C] border border-[#26262B] text-xs font-mono text-[#10B981] flex items-center gap-2">
+              <div className="p-2.5 rounded-[4px] bg-[#18181C] border border-[#26262B] text-xs font-sans text-[#10B981] flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
                 <span>{importStatus}</span>
               </div>
@@ -154,7 +154,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* Danger Zone: Reset Career */}
           <div className="pt-3 border-t border-[#26262B] space-y-3">
-            <h3 className="text-3xs uppercase font-mono font-bold text-[#EF4444] tracking-wider flex items-center gap-1.5">
+            <h3 className="text-3xs uppercase font-sans font-bold text-[#EF4444] tracking-wider flex items-center gap-1.5">
               <AlertTriangle className="w-3 h-3 text-[#EF4444]" />
               Zona Crítica
             </h3>
@@ -169,7 +169,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <button
                   onClick={() => { playSound('click'); setShowResetConfirm(true); }}
-                  className="px-3 py-1.5 rounded-[4px] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/40 text-[#EF4444] text-xs font-mono font-bold transition-all cursor-pointer shrink-0"
+                  className="px-3 py-1.5 rounded-[4px] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/40 text-[#EF4444] text-xs font-sans font-bold transition-all cursor-pointer shrink-0"
                 >
                   Reiniciar Carrera
                 </button>
@@ -189,7 +189,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <button
                     onClick={() => setShowResetConfirm(false)}
-                    className="px-3 py-1.5 rounded-[4px] bg-[#18181C] border border-[#26262B] text-xs font-mono text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
+                    className="px-3 py-1.5 rounded-[4px] bg-[#18181C] border border-[#26262B] text-xs font-sans text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
                   >
                     Cancelar
                   </button>
@@ -198,7 +198,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       playSound('release');
                       onResetCareer();
                     }}
-                    className="px-3.5 py-1.5 rounded-[4px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-xs font-mono font-bold transition-all cursor-pointer shadow-xs"
+                    className="px-3.5 py-1.5 rounded-[4px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-xs font-sans font-bold transition-all cursor-pointer shadow-xs"
                   >
                     Sí, Reiniciar Definitivamente
                   </button>

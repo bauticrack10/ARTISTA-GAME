@@ -256,7 +256,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'neutral',
         label: 'Neutral',
-        className: 'bg-[#18181C] text-[#8E8E99] border border-[#242429] font-mono',
+        className: 'bg-[#18181C] text-[#8E8E99] border border-[#242429] font-sans',
         dotClass: 'bg-[#52525B]'
       };
     }
@@ -266,7 +266,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'feud',
         label: 'Feudo Activo',
-        className: 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/40 font-mono font-bold',
+        className: 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/40 font-sans font-bold',
         dotClass: 'bg-[#EF4444]'
       };
     }
@@ -276,7 +276,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'rival',
         label: 'Rivalidad',
-        className: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/40 font-mono font-bold',
+        className: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/40 font-sans font-bold',
         dotClass: 'bg-[#F59E0B]'
       };
     }
@@ -286,7 +286,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'collaborator',
         label: 'Colaboradores',
-        className: 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/40 font-mono font-bold',
+        className: 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/40 font-sans font-bold',
         dotClass: 'bg-[#00E599]'
       };
     }
@@ -296,7 +296,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'friend',
         label: 'Amistad',
-        className: 'bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/40 font-mono font-bold',
+        className: 'bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/40 font-sans font-bold',
         dotClass: 'bg-[#FF4F00]'
       };
     }
@@ -306,7 +306,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'respect',
         label: 'Respeto Mutuo',
-        className: 'bg-[#F4F4F6]/10 text-[#F4F4F6] border border-[#242429] font-mono font-bold',
+        className: 'bg-[#F4F4F6]/10 text-[#F4F4F6] border border-[#242429] font-sans font-bold',
         dotClass: 'bg-[#F4F4F6]'
       };
     }
@@ -315,7 +315,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     return {
       key: 'neutral',
       label: 'Neutral',
-      className: 'bg-[#18181C] text-[#8E8E99] border border-[#242429] font-mono',
+      className: 'bg-[#18181C] text-[#8E8E99] border border-[#242429] font-sans',
       dotClass: 'bg-[#52525B]'
     };
   };
@@ -527,7 +527,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               placeholder="Buscar por nombre, país o género..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] pl-9 pr-8 py-2 text-xs font-mono text-[#F4F4F6] placeholder-[#52525B] focus:outline-none focus:border-[#FF4F00] transition-all"
+              className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] pl-9 pr-8 py-2 text-xs font-sans text-[#F4F4F6] placeholder-[#52525B] focus:outline-none focus:border-[#FF4F00] transition-all"
             />
             {searchQuery && (
               <button
@@ -542,7 +542,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
         </div>
 
         {/* Advanced Filter Bar: 4 Dropdowns + Reset */}
-        <div className="bg-[#09090B] p-3.5 sm:p-4 rounded-[4px] border border-[#242429] relative z-10 space-y-3 font-mono">
+        <div className="bg-[#09090B] p-3.5 sm:p-4 rounded-[4px] border border-[#242429] relative z-10 space-y-3 font-sans">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 text-xs font-bold text-[#F4F4F6] uppercase tracking-wider">
               <SlidersHorizontal className="w-3.5 h-3.5 text-[#FF4F00]" />
@@ -660,7 +660,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       </div>
 
       {/* Navigation Filter Tabs */}
-      <div className="flex items-center gap-1.5 bg-[#111114] p-1.5 rounded-[4px] border border-[#242429] text-xs font-mono font-bold overflow-x-auto scroll-fade-x">
+      <div className="flex items-center gap-1.5 bg-[#111114] p-1.5 rounded-[4px] border border-[#242429] text-xs font-sans font-bold overflow-x-auto scroll-fade-x">
         <button
           onClick={() => { playSound('click'); setFilter('all'); }}
           className={`px-3.5 py-1.5 rounded-[4px] transition-all cursor-pointer whitespace-nowrap ${
@@ -756,14 +756,14 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-[4px] bg-[#18181C] text-[#EF4444] flex items-center justify-center font-mono font-bold text-xs border border-[#EF4444]/40 shrink-0">
+                      <div className="w-10 h-10 rounded-[4px] bg-[#18181C] text-[#EF4444] flex items-center justify-center font-sans font-bold text-xs border border-[#EF4444]/40 shrink-0">
                         VS
                       </div>
                       <div>
                         <h3 className="font-bold text-sm sm:text-base text-[#F4F4F6] tracking-tight">
                           {beef.targetName}
                         </h3>
-                        <span className="text-xs text-[#8E8E99] flex items-center gap-1 mt-0.5 font-mono tabular-nums">
+                        <span className="text-xs text-[#8E8E99] flex items-center gap-1 mt-0.5 font-sans tabular-nums">
                           <TrendingUp className="w-3 h-3 text-[#FF4F00]" />
                           Hype generado: <strong className="text-[#FF4F00] font-semibold">+{beef.hypeGenerated || 25}</strong>
                         </span>
@@ -779,7 +779,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   <div className="space-y-1.5 bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
                     <div className="flex justify-between text-xs">
                       <span className="text-[#8E8E99]">Nivel de Tensión Bélica</span>
-                      <span className="font-mono tabular-nums font-bold text-[#EF4444]">{beef.tensionLevel || 50}/100</span>
+                      <span className="font-sans tabular-nums font-bold text-[#EF4444]">{beef.tensionLevel || 50}/100</span>
                     </div>
                     <div className="w-full bg-[#18181C] h-1.5 rounded-[2px] overflow-hidden">
                       <div
@@ -886,7 +886,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] text-[#F4F4F6] font-mono font-bold text-sm flex items-center justify-center shrink-0 border border-[#242429]">
+                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] text-[#F4F4F6] font-sans font-bold text-sm flex items-center justify-center shrink-0 border border-[#242429]">
                           {npc.name.charAt(0)}
                         </div>
                         <div className="min-w-0">
@@ -906,7 +906,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   </div>
 
                   {/* Meters: Afinidad, Lealtad, Tensión */}
-                  <div className="space-y-1.5 bg-[#09090B] p-2.5 rounded-[4px] border border-[#242429] text-xs font-mono tabular-nums">
+                  <div className="space-y-1.5 bg-[#09090B] p-2.5 rounded-[4px] border border-[#242429] text-xs font-sans tabular-nums">
                     <div className="flex justify-between">
                       <span className="text-[#8E8E99]">Afinidad / Confianza</span>
                       <span className={`font-semibold ${npc.affinity > 0 ? 'text-[#00E599]' : npc.affinity < 0 ? 'text-[#EF4444]' : 'text-[#F4F4F6]'}`}>
@@ -1062,7 +1062,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-11 h-11 rounded-[4px] bg-[#09090B] border border-[#242429] flex items-center justify-center text-[#F4F4F6] font-mono font-bold text-base shrink-0 group-hover:border-[#3F3F46] transition-colors">
+                          <div className="w-11 h-11 rounded-[4px] bg-[#09090B] border border-[#242429] flex items-center justify-center text-[#F4F4F6] font-sans font-bold text-base shrink-0 group-hover:border-[#3F3F46] transition-colors">
                             {artist.name.charAt(0)}
                           </div>
                           <div className="min-w-0">
@@ -1096,7 +1096,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       </div>
 
                       {/* Stat Metrics Bar */}
-                      <div className="flex items-center justify-between text-xs text-[#8E8E99] font-mono tabular-nums bg-[#09090B] px-3 py-1.5 rounded-[4px] border border-[#242429]">
+                      <div className="flex items-center justify-between text-xs text-[#8E8E99] font-sans tabular-nums bg-[#09090B] px-3 py-1.5 rounded-[4px] border border-[#242429]">
                         <span>Pop: <strong className="text-[#F4F4F6] font-semibold">{artist.stats.popularity}</strong></span>
                         <span>Oyentes: <strong className="text-[#F4F4F6] font-semibold">{formatCompactNumber(artist.stats.monthlyListeners)}</strong></span>
                         <span>Etapa: <strong className="text-[#8E8E99]">{artist.careerStage}</strong></span>
@@ -1104,11 +1104,11 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                     </div>
 
                     {/* Relationship Meters: Afinidad & Respeto */}
-                    <div className="space-y-2.5 bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-xs font-mono tabular-nums">
+                    <div className="space-y-2.5 bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-xs font-sans tabular-nums">
                       <div>
                         <div className="flex justify-between text-xs mb-1">
                           <span className="text-[#8E8E99]">Afinidad Mutua</span>
-                          <span className={`font-semibold font-mono tabular-nums ${rel.affinity > 0 ? 'text-[#00E599]' : rel.affinity < 0 ? 'text-[#EF4444]' : 'text-[#F4F4F6]'}`}>
+                          <span className={`font-semibold font-sans tabular-nums ${rel.affinity > 0 ? 'text-[#00E599]' : rel.affinity < 0 ? 'text-[#EF4444]' : 'text-[#F4F4F6]'}`}>
                             {rel.affinity > 0 ? `+${rel.affinity}` : rel.affinity}
                           </span>
                         </div>
@@ -1128,7 +1128,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       <div>
                         <div className="flex justify-between text-xs mb-1">
                           <span className="text-[#8E8E99]">Respeto Profesional</span>
-                          <span className="font-semibold text-[#00E599] font-mono tabular-nums">{rel.respect}%</span>
+                          <span className="font-semibold text-[#00E599] font-sans tabular-nums">{rel.respect}%</span>
                         </div>
                         <div className="w-full bg-[#18181C] h-1.5 rounded-[2px] overflow-hidden">
                           <div
@@ -1175,7 +1175,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       ) : (
                         <button
                           disabled
-                          className="bg-[#09090B] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-mono tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
+                          className="bg-[#09090B] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-sans tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
                           title={`Disponible en Año ${shoutoutCheck.availableYear} • Mes ${shoutoutCheck.availableMonth}`}
                         >
                           <Clock className="w-3.5 h-3.5 text-[#52525B]" />
@@ -1196,7 +1196,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       ) : (
                         <button
                           disabled
-                          className="bg-[#09090B] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-mono tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
+                          className="bg-[#09090B] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-sans tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
                           title={`Disponible en Año ${dissCheck.availableYear} • Mes ${dissCheck.availableMonth}`}
                         >
                           <Lock className="w-3.5 h-3.5 text-[#52525B]" />
@@ -1234,7 +1234,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 </div>
 
                 <div>
-                  <span className="text-2xs uppercase font-bold tracking-wider text-[#8E8E99] inline-block font-mono">
+                  <span className="text-2xs uppercase font-bold tracking-wider text-[#8E8E99] inline-block font-sans">
                     {activeModalResult.actionType === 'diss' ? 'Tiradera / Guerra Lírica' : 'Mención / Elogio Público'} • Repercusión Escénica
                   </span>
                   <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#F4F4F6]">
@@ -1266,7 +1266,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 </div>
 
                 <span
-                  className={`text-xs font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-[4px] border ${
+                  className={`text-xs font-sans font-bold uppercase tracking-wider px-3 py-1.5 rounded-[4px] border ${
                     activeModalResult.badge.variant === 'danger'
                       ? 'bg-[#18181C] text-[#EF4444] border-[#EF4444]/40'
                       : activeModalResult.badge.variant === 'warning'
@@ -1299,8 +1299,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {activeModalResult.statDeltas.hype !== undefined && (
                     <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
-                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Hype</span>
-                      <span className="font-mono tabular-nums font-bold text-sm text-[#FF4F00]">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Hype</span>
+                      <span className="font-sans tabular-nums font-bold text-sm text-[#FF4F00]">
                         {activeModalResult.statDeltas.hype > 0 ? `+${activeModalResult.statDeltas.hype}` : activeModalResult.statDeltas.hype}
                       </span>
                     </div>
@@ -1308,8 +1308,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {activeModalResult.statDeltas.affinity !== undefined && (
                     <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
-                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Afinidad</span>
-                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.affinity > 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Afinidad</span>
+                      <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.affinity > 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.affinity > 0 ? `+${activeModalResult.statDeltas.affinity}` : activeModalResult.statDeltas.affinity}
                       </span>
                     </div>
@@ -1317,8 +1317,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {activeModalResult.statDeltas.respect !== undefined && (
                     <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
-                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Respeto</span>
-                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.respect > 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Respeto</span>
+                      <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.respect > 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.respect > 0 ? `+${activeModalResult.statDeltas.respect}` : activeModalResult.statDeltas.respect}
                       </span>
                     </div>
@@ -1326,8 +1326,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {activeModalResult.statDeltas.credibility !== undefined && (
                     <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
-                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Credibilidad</span>
-                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.credibility >= 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Credibilidad</span>
+                      <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.credibility >= 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.credibility >= 0 ? `+${activeModalResult.statDeltas.credibility}` : activeModalResult.statDeltas.credibility}
                       </span>
                     </div>
@@ -1335,8 +1335,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {activeModalResult.statDeltas.discipline !== undefined && (
                     <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
-                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Disciplina</span>
-                      <span className={`font-mono tabular-nums font-bold text-sm ${activeModalResult.statDeltas.discipline >= 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Disciplina</span>
+                      <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.discipline >= 0 ? 'text-[#00E599]' : 'text-[#EF4444]'}`}>
                         {activeModalResult.statDeltas.discipline >= 0 ? `+${activeModalResult.statDeltas.discipline}` : activeModalResult.statDeltas.discipline}
                       </span>
                     </div>
@@ -1344,8 +1344,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {activeModalResult.statDeltas.energy !== undefined && (
                     <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
-                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-mono">Energía</span>
-                      <span className="font-mono tabular-nums font-bold text-sm text-[#8E8E99]">
+                      <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Energía</span>
+                      <span className="font-sans tabular-nums font-bold text-sm text-[#8E8E99]">
                         {activeModalResult.statDeltas.energy}
                       </span>
                     </div>
@@ -1360,7 +1360,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   Titular de Prensa Generado
                 </h4>
                 <div className="bg-[#09090B] border border-[#242429] rounded-[6px] p-4 space-y-2 shadow-sm relative overflow-hidden">
-                  <div className="flex items-center justify-between text-2xs text-[#8E8E99] pb-1.5 border-b border-[#242429] font-mono tabular-nums">
+                  <div className="flex items-center justify-between text-2xs text-[#8E8E99] pb-1.5 border-b border-[#242429] font-sans tabular-nums">
                     <span className="font-bold uppercase tracking-wider text-[#00E599]">
                       PRENSA URBANA • RADAR MUSICAL
                     </span>

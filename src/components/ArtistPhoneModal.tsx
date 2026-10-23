@@ -100,10 +100,10 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
         </div>
 
         {/* Top Status Bar */}
-        <div className="h-10 px-6 pt-2 flex items-center justify-between text-2xs font-mono font-bold text-[#8E8E99] shrink-0 z-20">
+        <div className="h-10 px-6 pt-2 flex items-center justify-between text-2xs font-sans font-bold text-[#8E8E99] shrink-0 z-20">
           <span>{world?.currentMonth ? `${world.currentMonth}:00` : '12:00'}</span>
           <div className="flex items-center gap-2">
-            <span className="text-3xs font-mono bg-[#18181C] border border-[#242429] px-1 rounded-[2px] text-[#F4F4F6]">5G</span>
+            <span className="text-3xs font-sans bg-[#18181C] border border-[#242429] px-1 rounded-[2px] text-[#F4F4F6]">5G</span>
             <Wifi className="w-3 h-3 text-[#8E8E99]" />
             <Battery className="w-3.5 h-3.5 text-[#00E599]" />
           </div>
@@ -111,7 +111,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
 
         {/* Floating Effect Toast */}
         {feedbackEffect && (
-          <div className="absolute top-12 left-4 right-4 z-40 bg-[#FF4F00] text-white px-3 py-2 rounded-[4px] text-xs font-mono font-bold text-center shadow-lg border border-[#FF4F00]">
+          <div className="absolute top-12 left-4 right-4 z-40 bg-[#FF4F00] text-white px-3 py-2 rounded-[4px] text-xs font-sans font-bold text-center shadow-lg border border-[#FF4F00]">
             {feedbackEffect}
           </div>
         )}
@@ -121,9 +121,9 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
           {/* Header Title with Close & Mark Read */}
           <div className="flex items-center justify-between py-2 border-b border-[#242429] mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold font-mono text-[#F4F4F6] tracking-tight">iArtist OS</span>
+              <span className="text-sm font-bold font-sans text-[#F4F4F6] tracking-tight">iArtist OS</span>
               {unreadCount > 0 && (
-                <span className="bg-[#FF4F00] text-white text-3xs font-mono font-bold px-1.5 py-0.5 rounded-[4px]">
+                <span className="bg-[#FF4F00] text-white text-3xs font-sans font-bold px-1.5 py-0.5 rounded-[4px]">
                   {unreadCount} nuevo{unreadCount > 1 ? 's' : ''}
                 </span>
               )}
@@ -135,7 +135,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                     playSound('click');
                     onMarkAllAsRead();
                   }}
-                  className="text-3xs font-mono font-medium text-[#8E8E99] hover:text-[#F4F4F6] px-2 py-1 rounded-[4px] bg-[#18181C] border border-[#242429] cursor-pointer"
+                  className="text-3xs font-sans font-medium text-[#8E8E99] hover:text-[#F4F4F6] px-2 py-1 rounded-[4px] bg-[#18181C] border border-[#242429] cursor-pointer"
                   title="Marcar todos como leídos"
                 >
                   Leídos
@@ -173,13 +173,13 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                   <div className="flex items-center justify-between bg-[#111114] border border-[#242429] rounded-[4px] p-2.5 mb-2 shrink-0">
                     <button
                       onClick={() => setSelectedMessageId(null)}
-                      className="text-xs font-mono font-semibold text-[#FF4F00] hover:underline cursor-pointer flex items-center gap-1"
+                      className="text-xs font-sans font-semibold text-[#FF4F00] hover:underline cursor-pointer flex items-center gap-1"
                     >
                       ← Volver
                     </button>
                     <div className="text-right">
                       <span className="text-xs font-bold text-[#F4F4F6] block">{activeMessage.senderName}</span>
-                      <span className={`text-3xs font-mono px-1.5 py-0.5 rounded-[4px] border ${getCategoryBadge(activeMessage.category).bg}`}>
+                      <span className={`text-3xs font-sans px-1.5 py-0.5 rounded-[4px] border ${getCategoryBadge(activeMessage.category).bg}`}>
                         {getCategoryBadge(activeMessage.category).label}
                       </span>
                     </div>
@@ -189,12 +189,12 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                   <div className="flex-1 overflow-y-auto space-y-3 p-1">
                     {/* Incoming Message Bubble */}
                     <div className="flex items-start gap-2 max-w-[90%]">
-                      <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#F4F4F6] text-xs font-mono font-bold shrink-0">
+                      <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#F4F4F6] text-xs font-sans font-bold shrink-0">
                         {activeMessage.senderName.slice(0, 1)}
                       </div>
                       <div className="bg-[#111114] border border-[#242429] p-3 rounded-[4px] text-xs text-[#F4F4F6] leading-relaxed">
                         <p>{activeMessage.text}</p>
-                        <div className="flex items-center justify-end gap-1 mt-1.5 text-2xs font-mono text-[#8E8E99]">
+                        <div className="flex items-center justify-end gap-1 mt-1.5 text-2xs font-sans text-[#8E8E99]">
                           <span>Año {activeMessage.sentYear} • Mes {activeMessage.sentMonth}</span>
                           <CheckCheck className="w-3 h-3 text-[#00E599]" />
                         </div>
@@ -208,7 +208,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                           <p className="font-semibold text-[#FF4F00]">
                             {activeMessage.choices[activeMessage.chosenReplyIndex].replyText}
                           </p>
-                          <div className="flex items-center justify-end gap-1 mt-1 text-2xs font-mono text-[#FF4F00]/80">
+                          <div className="flex items-center justify-end gap-1 mt-1 text-2xs font-sans text-[#FF4F00]/80">
                             <span>Respuesta Enviada</span>
                             <CheckCheck className="w-3 h-3 text-[#FF4F00]" />
                           </div>
@@ -220,7 +220,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                   {/* Reply Choices Section */}
                   {typeof activeMessage.chosenReplyIndex !== 'number' && activeMessage.choices && activeMessage.choices.length > 0 && (
                     <div className="pt-2 border-t border-[#242429] space-y-1.5 shrink-0">
-                      <span className="text-2xs uppercase font-mono font-bold text-[#8E8E99] block px-1">
+                      <span className="text-2xs uppercase font-sans font-bold text-[#8E8E99] block px-1">
                         Elige tu respuesta:
                       </span>
                       {activeMessage.choices.map((choice, idx) => (
@@ -258,7 +258,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                             : 'bg-[#111114] hover:bg-[#18181C] border-[#242429]'
                         }`}
                       >
-                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#F4F4F6] text-xs font-mono font-bold shrink-0 relative">
+                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#F4F4F6] text-xs font-sans font-bold shrink-0 relative">
                           {msg.senderName.slice(0, 1)}
                           {!msg.isRead && (
                             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FF4F00]" />
@@ -269,14 +269,14 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                             <span className={`text-xs font-bold truncate ${!msg.isRead ? 'text-[#FF4F00]' : 'text-[#F4F4F6]'}`}>
                               {msg.senderName}
                             </span>
-                            <span className="text-2xs text-[#8E8E99] font-mono shrink-0">
+                            <span className="text-2xs text-[#8E8E99] font-sans shrink-0">
                               M{msg.sentMonth}
                             </span>
                           </div>
                           <p className="text-2xs text-[#8E8E99] truncate">
                             {msg.text}
                           </p>
-                          <span className={`text-3xs font-mono px-1 rounded-[2px] border inline-block mt-1 ${badge.bg}`}>
+                          <span className={`text-3xs font-sans px-1 rounded-[2px] border inline-block mt-1 ${badge.bg}`}>
                             {badge.label}
                           </span>
                         </div>
@@ -292,11 +292,11 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
           {activeApp === 'feed' && (
             <div className="flex-1 overflow-y-auto space-y-2.5 pr-0.5">
               <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-3">
-                <span className="text-2xs uppercase font-mono font-bold text-[#8E8E99] block tracking-wider">
+                <span className="text-2xs uppercase font-sans font-bold text-[#8E8E99] block tracking-wider">
                   Tendencias Globales
                 </span>
                 <h4 className="text-xs font-bold text-[#F4F4F6] mt-0.5">#{player.name.replace(/\s+/g, '')}</h4>
-                <p className="text-2xs text-[#8E8E99] font-mono tabular-nums">
+                <p className="text-2xs text-[#8E8E99] font-sans tabular-nums">
                   {(player.stats?.monthlyListeners || 50000).toLocaleString('es-AR')} personas hablando de esto en vivo.
                 </p>
               </div>
@@ -328,10 +328,10 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                 <div key={idx} className="bg-[#111114] border border-[#242429] rounded-[4px] p-3 space-y-1.5">
                   <div className="flex items-center justify-between text-2xs">
                     <span className="font-bold text-[#F4F4F6]">{tweet.handle}</span>
-                    <span className="text-[#8E8E99] font-mono">{tweet.user}</span>
+                    <span className="text-[#8E8E99] font-sans">{tweet.user}</span>
                   </div>
                   <p className="text-xs text-[#F4F4F6] leading-relaxed">{tweet.text}</p>
-                  <div className="flex items-center gap-4 text-2xs font-mono text-[#8E8E99] pt-1 border-t border-[#242429]">
+                  <div className="flex items-center gap-4 text-2xs font-sans text-[#8E8E99] pt-1 border-t border-[#242429]">
                     <span className="flex items-center gap-1 hover:text-[#EF4444]">
                       <Heart className="w-3 h-3 text-[#EF4444]" /> {tweet.likes}
                     </span>
@@ -350,18 +350,18 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
               {/* Virtual Black Card */}
               <div className="w-full h-44 rounded-[6px] bg-[#111114] border border-[#242429] p-4 text-[#F4F4F6] flex flex-col justify-between relative overflow-hidden">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold tracking-widest uppercase text-[#8E8E99]">
+                  <span className="text-xs font-sans font-bold tracking-widest uppercase text-[#8E8E99]">
                     ARTIST BLACK CARD
                   </span>
                   <Sparkles className="w-4 h-4 text-[#F59E0B]" />
                 </div>
                 <div>
-                  <span className="text-2xs uppercase font-mono tracking-wider text-[#8E8E99] block">Fondos Disponibles</span>
-                  <span className="text-2xl font-bold font-mono tabular-nums tracking-tight text-[#00E599]">
+                  <span className="text-2xs uppercase font-sans tracking-wider text-[#8E8E99] block">Fondos Disponibles</span>
+                  <span className="text-2xl font-bold font-sans tabular-nums tracking-tight text-[#00E599]">
                     {formatMoney(player.stats?.funds || 0)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-2xs font-mono text-[#8E8E99]">
+                <div className="flex items-center justify-between text-2xs font-sans text-[#8E8E99]">
                   <span>TITULAR: {player.name.toUpperCase()}</span>
                   <span>EXP: 12/32</span>
                 </div>
@@ -370,14 +370,14 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
               {/* Quick Stats Grid */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-[#111114] border border-[#242429] p-2.5 rounded-[4px]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-mono">Comunidad Fiel</span>
-                  <span className="font-bold text-[#F4F4F6] font-mono tabular-nums">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-sans">Comunidad Fiel</span>
+                  <span className="font-bold text-[#F4F4F6] font-sans tabular-nums">
                     {formatFans(player.stats?.fansCount || 0)}
                   </span>
                 </div>
                 <div className="bg-[#111114] border border-[#242429] p-2.5 rounded-[4px]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-mono">Nivel de Hype</span>
-                  <span className="font-bold text-[#F59E0B] font-mono tabular-nums">
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-sans">Nivel de Hype</span>
+                  <span className="font-bold text-[#F59E0B] font-sans tabular-nums">
                     {player.stats?.hype || 0}/100 🔥
                   </span>
                 </div>
@@ -385,7 +385,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
 
               {/* Financial Tip */}
               <div className="bg-[#111114] border border-[#242429] p-3 rounded-[4px] text-xs text-[#8E8E99] space-y-1">
-                <span className="font-bold text-[#F4F4F6] block font-mono">💡 Consejo de Mánager:</span>
+                <span className="font-bold text-[#F4F4F6] block font-sans">💡 Consejo de Mánager:</span>
                 <p>
                   Mantén siempre un colchón de al menos $15.000 para emergencias de giras y producciones de videoclips.
                 </p>
@@ -401,7 +401,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
               playSound('click');
               setActiveApp('messages');
             }}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-mono ${
+            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-sans ${
               activeApp === 'messages' ? 'text-[#FF4F00] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
@@ -419,7 +419,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
               playSound('click');
               setActiveApp('feed');
             }}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-mono ${
+            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-sans ${
               activeApp === 'feed' ? 'text-[#FF4F00] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
@@ -432,7 +432,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
               playSound('click');
               setActiveApp('wallet');
             }}
-            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-mono ${
+            className={`flex flex-col items-center gap-1 cursor-pointer transition-colors font-sans ${
               activeApp === 'wallet' ? 'text-[#FF4F00] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >

@@ -252,10 +252,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       <div className="bg-[#111114] p-6 sm:p-8 rounded-[6px] border border-[#242429] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xs font-bold uppercase tracking-wider bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-mono">
+            <span className="text-2xs font-bold uppercase tracking-wider bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-sans">
               Trayectoria & Legado
             </span>
-            <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
+            <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
               {yearsActive + 1} Años de Actividad • {player.careerStage}
             </span>
           </div>
@@ -294,14 +294,14 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
           <button
             id="btn-open-legacy-card"
             onClick={() => setLegacyModalOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold text-xs px-4 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer shadow-none font-mono"
+            className="flex items-center justify-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold text-xs px-4 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer shadow-none font-sans"
           >
             <Disc3 className="w-4 h-4 text-white" />
             <span>Ficha Oficial EPK</span>
           </button>
 
           {/* Legacy Score Box */}
-          <div className="bg-[#09090B] px-5 py-3 rounded-[6px] border border-[#242429] text-center font-mono tabular-nums shrink-0 shadow-sm">
+          <div className="bg-[#09090B] px-5 py-3 rounded-[6px] border border-[#242429] text-center font-sans tabular-nums shrink-0 shadow-sm">
             <span className="text-2xs text-[#F59E0B] block uppercase tracking-wider font-bold">
               Puntaje de Legado
             </span>
@@ -316,55 +316,55 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
       {/* 2. EXECUTIVE KPI CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
         <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-sans">
             Total Streams
           </span>
-          <p className="text-base sm:text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
+          <p className="text-base sm:text-lg font-bold text-[#F4F4F6] font-sans tabular-nums">
             {(player.stats.totalStreams / 1000000).toFixed(1)}M
           </p>
         </div>
 
         <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-sans">
             Hits Top 10
           </span>
-          <p className="text-base sm:text-lg font-bold text-[#FF4F00] font-mono tabular-nums">
+          <p className="text-base sm:text-lg font-bold text-[#FF4F00] font-sans tabular-nums">
             {totalHits} <span className="text-xs font-normal text-[#8E8E99]">temas</span>
           </p>
         </div>
 
         <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-sans">
             Hits #1 Charts
           </span>
-          <p className="text-base sm:text-lg font-bold text-[#00E599] font-mono tabular-nums">
+          <p className="text-base sm:text-lg font-bold text-[#00E599] font-sans tabular-nums">
             {totalNo1s} <span className="text-xs font-normal text-[#8E8E99]">himnos</span>
           </p>
         </div>
 
         <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-sans">
             Álbumes Lanzados
           </span>
-          <p className="text-base sm:text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
+          <p className="text-base sm:text-lg font-bold text-[#F4F4F6] font-sans tabular-nums">
             {playerAlbums.length} <span className="text-xs font-normal text-[#8E8E99]">LPs</span>
           </p>
         </div>
 
         <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-sans">
             Premios Ganados
           </span>
-          <p className="text-base sm:text-lg font-bold text-[#F59E0B] font-mono tabular-nums">
+          <p className="text-base sm:text-lg font-bold text-[#F59E0B] font-sans tabular-nums">
             {player.awardsWon.length} <span className="text-xs font-normal text-[#8E8E99]">trofeos</span>
           </p>
         </div>
 
         <div className="bg-[#111114] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-mono">
+          <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold font-sans">
             Giras Realizadas
           </span>
-          <p className="text-base sm:text-lg font-bold text-[#00E599] font-mono tabular-nums">
+          <p className="text-base sm:text-lg font-bold text-[#00E599] font-sans tabular-nums">
             {playerTours.length} <span className="text-xs font-normal text-[#8E8E99]">tours</span>
           </p>
         </div>
@@ -381,7 +381,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 Mejor Disco Histórico • Obra Cumbre
               </h2>
             </div>
-            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 px-2.5 py-0.5 rounded-[4px] font-mono">
+            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 px-2.5 py-0.5 rounded-[4px] font-sans">
               Récord de Ventas & Streams
             </span>
           </div>
@@ -394,17 +394,17 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   className={`w-24 h-24 sm:w-28 sm:h-28 rounded-[4px] border border-[#242429] bg-gradient-to-br ${bestAlbum.coverGradient || ARTISTIC_COVER_GRADIENTS[0]} shrink-0 flex flex-col justify-end p-2.5 text-white shadow-sm`}
                 >
                   <Disc3 className="w-5 h-5 opacity-90" />
-                  <span className="text-2xs font-extrabold uppercase truncate mt-auto drop-shadow-sm font-mono">
+                  <span className="text-2xs font-extrabold uppercase truncate mt-auto drop-shadow-sm font-sans">
                     {bestAlbum.type}
                   </span>
                 </div>
 
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-[#8E8E99] tabular-nums">
+                    <span className="text-xs font-sans text-[#8E8E99] tabular-nums">
                       Lanzado en {formatReleaseDate(bestAlbum.releaseMonth, bestAlbum.releaseYear, 'long')}
                     </span>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] text-[#00E599] border border-[#00E599]/30 font-mono tabular-nums">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] text-[#00E599] border border-[#00E599]/30 font-sans tabular-nums">
                       Crítica: {bestAlbum.criticalScore}/100
                     </span>
                   </div>
@@ -414,10 +414,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   </h3>
 
                   <div className="flex items-center gap-2">
-                    <span className={`text-2xs font-bold px-2 py-0.5 rounded-[4px] ${getGenreBadgeClass(bestAlbum.genreId)} font-mono`}>
+                    <span className={`text-2xs font-bold px-2 py-0.5 rounded-[4px] ${getGenreBadgeClass(bestAlbum.genreId)} font-sans`}>
                       {world.genres[bestAlbum.genreId]?.name || bestAlbum.genreId}
                     </span>
-                    <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
+                    <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
                       {bestAlbum.songIds.length} canciones
                     </span>
                   </div>
@@ -431,21 +431,21 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               </div>
 
               {/* Metrics Bar */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center font-mono tabular-nums">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center font-sans tabular-nums">
                 <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Streams Totales</span>
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Streams Totales</span>
                   <span className="text-xs sm:text-sm font-bold text-[#F4F4F6]">
                     {(bestAlbum.totalStreams / 1000000).toFixed(1)}M
                   </span>
                 </div>
                 <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Ventas Debut</span>
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Ventas Debut</span>
                   <span className="text-xs sm:text-sm font-bold text-[#FF4F00]">
                     {(bestAlbum.firstWeekSales || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Score Comercial</span>
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Score Comercial</span>
                   <span className="text-xs sm:text-sm font-bold text-[#00E599]">
                     {bestAlbum.commercialScore}/100
                   </span>
@@ -474,7 +474,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                 Mejor Gira Histórica • Mayor Recaudación
               </h2>
             </div>
-            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#00E599] border border-[#00E599]/40 px-2.5 py-0.5 rounded-[4px] font-mono">
+            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#00E599] border border-[#00E599]/40 px-2.5 py-0.5 rounded-[4px] font-sans">
               Récord de Asistencia & Taquilla
             </span>
           </div>
@@ -483,10 +483,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-5 space-y-4 shadow-sm">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-[#8E8E99] tabular-nums">
+                  <span className="text-xs font-sans text-[#8E8E99] tabular-nums">
                     Año {bestTour.year} • Mes {bestTour.month}
                   </span>
-                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-[4px] bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 font-mono">
+                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-[4px] bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 font-sans">
                     Nivel: {bestTour.tier}
                   </span>
                 </div>
@@ -495,35 +495,35 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   {bestTour.name}
                 </h3>
 
-                <p className="text-xs text-[#8E8E99] flex items-center gap-1.5 font-mono">
+                <p className="text-xs text-[#8E8E99] flex items-center gap-1.5 font-sans">
                   <MapPin className="w-3.5 h-3.5 text-[#EF4444]" />
                   {bestTour.stops.length} ciudades visitadas: {bestTour.stops.slice(0, 4).map(s => s.city).join(', ')}...
                 </p>
               </div>
 
               {/* Tour Numbers */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center font-mono tabular-nums">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center font-sans tabular-nums">
                 <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Recaudación Bruta</span>
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Recaudación Bruta</span>
                   <span className="text-xs sm:text-sm font-bold text-[#00E599]">
                     ${(bestTour.grossRevenue || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Beneficio Neto</span>
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Beneficio Neto</span>
                   <span className="text-xs sm:text-sm font-bold text-[#00E599]">
                     ${(bestTour.netArtistProfit || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
                 <div className="bg-[#18181C] p-2 rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Asistencia</span>
+                  <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Asistencia</span>
                   <span className="text-xs sm:text-sm font-bold text-[#F4F4F6]">
                     {(bestTour.totalTicketsSold || 0).toLocaleString('es-AR')}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-[#111114] p-2.5 rounded-[4px] border border-[#242429] flex items-center justify-between text-xs text-[#8E8E99] font-mono tabular-nums">
+              <div className="bg-[#111114] p-2.5 rounded-[4px] border border-[#242429] flex items-center justify-between text-xs text-[#8E8E99] font-sans tabular-nums">
                 <span>Tasa de Ocupación: <strong className="text-[#00E599]">{Math.round((bestTour.totalTicketsSold / Math.max(1, bestTour.totalCapacity)) * 100)}%</strong></span>
                 <span>Hype Generado: <strong className="text-[#FF4F00]">+{bestTour.hypeGenerated}</strong></span>
               </div>
@@ -554,7 +554,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               Transiciones estéticas, cambios sonoros y madurez cultural del artista
             </p>
           </div>
-          <span className="text-xs font-mono tabular-nums text-[#8E8E99] bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429]">
+          <span className="text-xs font-sans tabular-nums text-[#8E8E99] bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429]">
             Etapa Actual: <strong className="text-[#FF4F00]">{player.careerStage}</strong>
           </span>
         </div>
@@ -583,17 +583,17 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                       <h3 className="text-base font-bold text-[#F4F4F6]">
                         {era.name}
                       </h3>
-                      <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#8E8E99] border border-[#242429] px-2 py-0.5 rounded-[4px] font-mono">
+                      <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#8E8E99] border border-[#242429] px-2 py-0.5 rounded-[4px] font-sans">
                         {era.stage}
                       </span>
                       {isCurrent && (
-                        <span className="text-2xs font-bold font-mono bg-[#FF4F00] text-white px-2 py-0.5 rounded-[4px]">
+                        <span className="text-2xs font-bold font-sans bg-[#FF4F00] text-white px-2 py-0.5 rounded-[4px]">
                           Era Vigente
                         </span>
                       )}
                     </div>
 
-                    <span className="text-xs font-mono text-[#8E8E99] tabular-nums">
+                    <span className="text-xs font-sans text-[#8E8E99] tabular-nums">
                       {TimeSystem.getMonthName(era.startMonth)} {era.startYear} — {era.endYear ? `${TimeSystem.getMonthName(era.endMonth || 12)} ${era.endYear}` : 'Presente'}
                     </span>
                   </div>
@@ -605,12 +605,12 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E99] pt-1">
                     <div className="flex items-center gap-1.5">
                       <span>Enfoque Sonoro:</span>
-                      <span className={`text-2xs font-bold font-mono px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#F4F4F6]`}>
+                      <span className={`text-2xs font-bold font-sans px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#F4F4F6]`}>
                         {world.genres[era.genreFocus]?.name || era.genreFocus}
                       </span>
                     </div>
                     <span>•</span>
-                    <span className="font-mono tabular-nums">
+                    <span className="font-sans tabular-nums">
                       Lanzamientos en esta Era: <strong className="text-[#F4F4F6] font-semibold">{eraAlbums.length} álbumes, {eraSingles.length} singles{eraSingles.filter(s => s.musicVideo).length > 0 ? ` • ${eraSingles.filter(s => s.musicVideo).length} videoclips` : ''}</strong>
                     </span>
                   </div>
@@ -618,13 +618,13 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   {/* Albums released during this era */}
                   {eraAlbums.length > 0 && (
                     <div className="pt-2 border-t border-[#242429] flex items-center gap-2 overflow-x-auto scroll-fade-x">
-                      <span className="text-2xs uppercase text-[#8E8E99] font-mono font-semibold shrink-0">
+                      <span className="text-2xs uppercase text-[#8E8E99] font-sans font-semibold shrink-0">
                         Discos Clave:
                       </span>
                       {eraAlbums.map(alb => (
                         <span
                           key={alb.id}
-                          className="bg-[#18181C] text-[#F4F4F6] text-xs px-2.5 py-1 rounded-[4px] border border-[#242429] whitespace-nowrap font-mono tabular-nums"
+                          className="bg-[#18181C] text-[#F4F4F6] text-xs px-2.5 py-1 rounded-[4px] border border-[#242429] whitespace-nowrap font-sans tabular-nums"
                         >
                          {alb.title} • {alb.criticalScore} pts
                         </span>
@@ -678,10 +678,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
           </div>
 
           <div className="flex items-center gap-1.5 bg-[#09090B] p-1 rounded-[4px] border border-[#242429] text-xs">
-            <span className="text-2xs text-[#8E8E99] uppercase px-2 font-mono">Ordenar:</span>
+            <span className="text-2xs text-[#8E8E99] uppercase px-2 font-sans">Ordenar:</span>
             <button
               onClick={() => setDiscographySort('streams')}
-              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-mono ${
+              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-sans ${
                 discographySort === 'streams' ? 'bg-[#F4F4F6] text-[#09090B] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
               }`}
             >
@@ -689,7 +689,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             </button>
             <button
               onClick={() => setDiscographySort('score')}
-              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-mono ${
+              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-sans ${
                 discographySort === 'score' ? 'bg-[#F4F4F6] text-[#09090B] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
               }`}
             >
@@ -697,7 +697,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
             </button>
             <button
               onClick={() => setDiscographySort('date')}
-              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-mono ${
+              className={`px-2.5 py-1 rounded-[4px] transition-colors cursor-pointer font-sans ${
                 discographySort === 'date' ? 'bg-[#F4F4F6] text-[#09090B] font-bold' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
               }`}
             >
@@ -730,18 +730,18 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
                       <div
-                        className={`w-16 h-16 rounded-[4px] bg-gradient-to-br ${coverGrad} shrink-0 border border-[#242429] shadow-sm flex items-end p-1.5 text-white text-2xs font-bold uppercase font-mono`}
+                        className={`w-16 h-16 rounded-[4px] bg-gradient-to-br ${coverGrad} shrink-0 border border-[#242429] shadow-sm flex items-end p-1.5 text-white text-2xs font-bold uppercase font-sans`}
                       >
                         {album.type}
                       </div>
 
                       <div className="space-y-0.5 flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-2xs font-mono text-[#8E8E99] tabular-nums">
+                          <span className="text-2xs font-sans text-[#8E8E99] tabular-nums">
                             {TimeSystem.getMonthName(album.releaseMonth || 1)} {album.releaseYear}
                           </span>
                           {isBest && (
-                            <span className="bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 text-2xs font-bold px-1.5 py-0.5 rounded-[4px] font-mono">
+                            <span className="bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 text-2xs font-bold px-1.5 py-0.5 rounded-[4px] font-sans">
                               Mejor Disco
                             </span>
                           )}
@@ -752,27 +752,27 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                         </h3>
 
                         <div className="flex items-center gap-1.5 pt-0.5">
-                          <span className={`text-2xs font-bold font-mono px-1.5 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#F4F4F6]`}>
+                          <span className={`text-2xs font-bold font-sans px-1.5 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#F4F4F6]`}>
                             {world.genres[album.genreId]?.name || album.genreId}
                           </span>
-                          <span className="text-2xs text-[#8E8E99] font-mono tabular-nums">
+                          <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
                             {album.songIds.length} tracks
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-1.5 text-center font-mono text-xs tabular-nums">
+                    <div className="grid grid-cols-3 gap-1.5 text-center font-sans text-xs tabular-nums">
                       <div className="bg-[#18181C] p-1.5 rounded-[4px] border border-[#242429]">
-                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Streams</span>
+                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Streams</span>
                         <span className="font-bold text-[#F4F4F6]">{(album.totalStreams / 1000000).toFixed(1)}M</span>
                       </div>
                       <div className="bg-[#18181C] p-1.5 rounded-[4px] border border-[#242429]">
-                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Ventas</span>
+                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Ventas</span>
                         <span className="font-bold text-[#FF4F00]">{(album.firstWeekSales || 0).toLocaleString('es-AR')}</span>
                       </div>
                       <div className="bg-[#18181C] p-1.5 rounded-[4px] border border-[#242429]">
-                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-mono">Crítica</span>
+                        <span className="text-2xs text-[#8E8E99] uppercase block font-semibold font-sans">Crítica</span>
                         <span className="font-bold text-[#00E599]">{album.criticalScore}/100</span>
                       </div>
                     </div>
@@ -815,7 +815,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
               <button
                 key={f.id}
                 onClick={() => setTimelineFilter(f.id as any)}
-                className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer border whitespace-nowrap font-mono ${
+                className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer border whitespace-nowrap font-sans ${
                   timelineFilter === f.id
                     ? 'bg-[#F4F4F6] text-[#09090B] font-bold border-[#F4F4F6]'
                     : 'bg-[#09090B] text-[#8E8E99] border-[#242429] hover:text-[#F4F4F6] hover:bg-[#18181C]'
@@ -828,7 +828,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
         </div>
 
         {filteredTimeline.length === 0 ? (
-          <div className="text-center py-8 text-[#8E8E99] text-xs font-mono">
+          <div className="text-center py-8 text-[#8E8E99] text-xs font-sans">
             No se encontraron eventos para el filtro seleccionado.
           </div>
         ) : (
@@ -851,7 +851,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className={`text-2xs font-bold font-mono uppercase px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#8E8E99]`}>
+                          <span className={`text-2xs font-bold font-sans uppercase px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#18181C] text-[#8E8E99]`}>
                             {item.badge}
                           </span>
                         )}
@@ -862,14 +862,14 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({ player, world, o
                       </p>
 
                       {item.metrics && (
-                        <p className="text-xs font-mono tabular-nums text-[#00E599] font-semibold pt-0.5">
+                        <p className="text-xs font-sans tabular-nums text-[#00E599] font-semibold pt-0.5">
                           {item.metrics}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0 font-mono tabular-nums text-xs text-[#8E8E99]">
+                  <div className="text-right shrink-0 font-sans tabular-nums text-xs text-[#8E8E99]">
                     <span className="block font-bold text-[#F4F4F6]">{item.year}</span>
                     <span className="text-2xs text-[#8E8E99]">Mes {item.month}</span>
                   </div>

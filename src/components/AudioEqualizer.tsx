@@ -40,13 +40,13 @@ export const AudioToggleButton: React.FC<{ className?: string }> = ({ className 
       {muted ? (
         <>
           <VolumeX className="w-3.5 h-3.5 text-[#52525B]" />
-          <span className="text-2xs text-[#52525B] font-mono">SFX OFF</span>
+          <span className="text-2xs text-[#52525B] font-sans">SFX OFF</span>
         </>
       ) : (
         <>
           <Volume2 className="w-3.5 h-3.5 text-[#00E599]" />
           <AudioEqualizer isPlaying={true} />
-          <span className="text-2xs text-[#00E599] font-mono font-bold">SFX ON</span>
+          <span className="text-2xs text-[#00E599] font-sans font-bold">SFX ON</span>
         </>
       )}
     </button>

@@ -274,7 +274,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       {/* Header Banner - Studio Matte Rack Theme */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#242429] pb-6">
         <div>
-          <div className="flex items-center gap-2 mb-1.5 font-mono">
+          <div className="flex items-center gap-2 mb-1.5 font-sans">
             <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-bold bg-[#18181C] text-[#8E8E99] border border-[#242429] tracking-wider uppercase">
               Inversión & Bienestar
             </span>
@@ -302,10 +302,10 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               <DollarSign className="w-6 h-6" />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-2xs text-[#52525B] block font-mono font-semibold uppercase tracking-wider">
+              <span className="text-2xs text-[#52525B] block font-sans font-semibold uppercase tracking-wider">
                 Fondos Disponibles
               </span>
-              <span className="text-2xl font-bold text-emerald-400 font-mono tracking-tight whitespace-nowrap inline-flex items-center">
+              <span className="text-2xl font-bold text-emerald-400 font-sans tracking-tight whitespace-nowrap inline-flex items-center">
                 {formatMoney(player.stats.funds)}
               </span>
             </div>
@@ -322,12 +322,12 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
             <div className="p-3 bg-[#18181C] rounded-[4px] text-[#8E8E99] group-hover:text-[#F4F4F6] border border-[#242429]">
               <Receipt className="w-6 h-6" />
             </div>
-            <div className="text-left font-mono">
+            <div className="text-left font-sans">
               <div className="flex items-center gap-1.5">
                 <span className="text-2xs text-[#52525B] font-bold uppercase tracking-wider">
                   Historial Financiero
                 </span>
-                <span className="px-1.5 py-0.5 rounded-[4px] text-2xs font-mono font-bold bg-[#18181C] text-[#F4F4F6] border border-[#242429] tabular-nums">
+                <span className="px-1.5 py-0.5 rounded-[4px] text-2xs font-sans font-bold bg-[#18181C] text-[#F4F4F6] border border-[#242429] tabular-nums">
                   {player.financialLedger?.length || 0}
                 </span>
               </div>
@@ -370,20 +370,20 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5 font-mono">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5 font-sans">
                   Costos Operativos Semestrales Proyectados
                 </h2>
-                <span className={`px-2 py-0.5 rounded-[4px] font-mono text-2xs font-bold border ${operationalCosts.solvencyBadge}`}>
+                <span className={`px-2 py-0.5 rounded-[4px] font-sans text-2xs font-bold border ${operationalCosts.solvencyBadge}`}>
                   {operationalCosts.solvencyLabel}
                 </span>
               </div>
-              <p className="text-xs text-[#8E8E99] mt-0.5 font-mono">
+              <p className="text-xs text-[#8E8E99] mt-0.5 font-sans">
                 {operationalCosts.solvencyMessage}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 font-mono">
+          <div className="flex items-center gap-3 font-sans">
             <button
               onClick={() => {
                 playSound('click');
@@ -412,35 +412,35 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           {/* Total Semi-Annual Cost */}
           <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
             <div className="flex items-center justify-between text-[#8E8E99]">
-              <span className="text-xs font-mono font-semibold">Costo Semestral Total</span>
-              <span className="text-2xs font-mono text-[#52525B]">Burn Rate</span>
+              <span className="text-xs font-sans font-semibold">Costo Semestral Total</span>
+              <span className="text-2xs font-sans text-[#52525B]">Burn Rate</span>
             </div>
-            <div className="text-lg font-bold text-[#EF4444] font-mono tabular-nums">
+            <div className="text-lg font-bold text-[#EF4444] font-sans tabular-nums">
               {formatMoney(operationalCosts.semiAnnualTotal)}
             </div>
-            <span className="text-2xs text-[#8E8E99] font-mono tabular-nums block">
+            <span className="text-2xs text-[#8E8E99] font-sans tabular-nums block">
               {formatMoney(operationalCosts.monthlyTotalBurn)} / mes promedio
             </span>
           </div>
 
           {/* Living Cost Semi-Annual */}
           <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Costo de Vida Base</span>
-            <div className="text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
+            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Costo de Vida Base</span>
+            <div className="text-lg font-bold text-[#F4F4F6] font-sans tabular-nums">
               {formatMoney(operationalCosts.semiAnnualLiving)}
             </div>
-            <span className="text-2xs text-[#8E8E99] font-mono tabular-nums block">
+            <span className="text-2xs text-[#8E8E99] font-sans tabular-nums block">
               {`${formatMoney(operationalCosts.monthlyBaseLiving)}/mes • Vivienda & Crew`}
             </span>
           </div>
 
           {/* Upkeep Semi-Annual */}
           <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Mantenimiento Equipos</span>
-            <div className="text-lg font-bold text-[#F4F4F6] font-mono tabular-nums">
+            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Mantenimiento Equipos</span>
+            <div className="text-lg font-bold text-[#F4F4F6] font-sans tabular-nums">
               {formatMoney(operationalCosts.semiAnnualUpkeep)}
             </div>
-            <span className="text-2xs text-[#8E8E99] font-mono tabular-nums block">
+            <span className="text-2xs text-[#8E8E99] font-sans tabular-nums block">
               {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes (${ownedUpgrades.length} activos)`}
             </span>
           </div>
@@ -448,13 +448,13 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           {/* Runway Coverage */}
           <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
             <div className="flex items-center justify-between text-[#8E8E99]">
-              <span className="text-xs font-mono font-semibold">Cobertura / Runway</span>
+              <span className="text-xs font-sans font-semibold">Cobertura / Runway</span>
               <Wallet className="w-3.5 h-3.5 text-[#00E599]" />
             </div>
-            <div className="text-lg font-bold text-[#00E599] font-mono tabular-nums">
+            <div className="text-lg font-bold text-[#00E599] font-sans tabular-nums">
               {operationalCosts.runwayMonths >= 99 ? '∞ Meses' : `${operationalCosts.runwayMonths.toFixed(1)} meses`}
             </div>
-            <span className="text-2xs text-[#8E8E99] font-mono block">
+            <span className="text-2xs text-[#8E8E99] font-sans block">
               {`Con saldo actual de ${formatMoney(player.stats.funds)}`}
             </span>
           </div>
@@ -464,41 +464,41 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         {showCostBreakdown && (
           <div className="p-4 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-3 text-xs animate-in fade-in duration-200">
             <div className="flex items-center justify-between border-b border-[#242429] pb-2">
-              <span className="font-bold text-[#F4F4F6] uppercase tracking-wider text-xs font-mono">
+              <span className="font-bold text-[#F4F4F6] uppercase tracking-wider text-xs font-sans">
                 Desglose Fijo Mensual vs. Proyección Semestral
               </span>
-              <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
+              <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
                 Popularidad del Artista: {player.stats.popularity}%
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
-                <div className="text-[#8E8E99] font-semibold text-xs font-mono">1. Gastos de Vida & Equipo Personal</div>
-                <div className="font-mono text-[#F4F4F6] tabular-nums">
+                <div className="text-[#8E8E99] font-semibold text-xs font-sans">1. Gastos de Vida & Equipo Personal</div>
+                <div className="font-sans text-[#F4F4F6] tabular-nums">
                   Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyBaseLiving)}</strong>
                 </div>
-                <div className="font-mono text-[#8E8E99] text-xs tabular-nums">
+                <div className="font-sans text-[#8E8E99] text-xs tabular-nums">
                   Semestral: {formatMoney(operationalCosts.semiAnnualLiving)}
                 </div>
               </div>
 
               <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
-                <div className="text-[#8E8E99] font-semibold text-xs font-mono">2. Mantenimiento de Mejoras & Bienes</div>
-                <div className="font-mono text-[#F4F4F6] tabular-nums">
+                <div className="text-[#8E8E99] font-semibold text-xs font-sans">2. Mantenimiento de Mejoras & Bienes</div>
+                <div className="font-sans text-[#F4F4F6] tabular-nums">
                   Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyUpkeep)}</strong>
                 </div>
-                <div className="font-mono text-[#8E8E99] text-xs tabular-nums">
+                <div className="font-sans text-[#8E8E99] text-xs tabular-nums">
                   Semestral: {formatMoney(operationalCosts.semiAnnualUpkeep)}
                 </div>
               </div>
 
               <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
-                <div className="text-[#8E8E99] font-semibold text-xs font-mono">3. Comisión Estimada de Manager</div>
-                <div className="font-mono text-[#F4F4F6] tabular-nums">
+                <div className="text-[#8E8E99] font-semibold text-xs font-sans">3. Comisión Estimada de Manager</div>
+                <div className="font-sans text-[#F4F4F6] tabular-nums">
                   Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyManagerCommission)}</strong>
                 </div>
-                <div className="font-mono text-[#8E8E99] text-xs tabular-nums">
+                <div className="font-sans text-[#8E8E99] text-xs tabular-nums">
                   Semestral: {formatMoney(operationalCosts.semiAnnualManager)}
                 </div>
               </div>
@@ -519,7 +519,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 Entrenamiento & Potenciadores de Habilidad Permanente
               </h3>
               {player?.isProdigy && (
-                <span className="px-2 py-0.5 rounded-[4px] text-2xs font-mono font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
+                <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
                   <Crown className="w-3 h-3 text-[#F59E0B]" />
                   Bono Prodigio 3x Activo
                 </span>
@@ -532,7 +532,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <span className="text-xs font-mono px-3 py-1.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99] font-semibold">
+          <span className="text-xs font-sans px-3 py-1.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99] font-semibold">
             +Skill • +Creatividad • +Carisma • +Disciplina
           </span>
         </div>
@@ -541,33 +541,33 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       {/* Active Buffs Summary Bar with Rich Palette */}
       <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 space-y-3">
         <div className="flex items-center justify-between border-b border-[#242429] pb-2.5">
-          <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5">
+          <h2 className="text-xs font-sans font-semibold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5">
             <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
             Resumen de Buffs Pasivos Activos • <span className="tabular-nums">{ownedUpgrades.length}</span> Adquiridos
           </h2>
-          <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
+          <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
             Mantenimiento Total: <strong className="text-[#EF4444] font-bold">${activeBuffs.monthlyUpkeep.toLocaleString()}/mes</strong>
           </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 text-xs">
           <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Bono de Calidad</span>
-            <span className="text-base font-bold text-[#00E599] font-mono tabular-nums">
+            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Bono de Calidad</span>
+            <span className="text-base font-bold text-[#00E599] font-sans tabular-nums">
               {`+${activeBuffs.qualityBonus} Calidad`}
             </span>
           </div>
 
           <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Energía Pasiva</span>
-            <span className="text-base font-bold text-[#00E599] font-mono tabular-nums">
+            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Energía Pasiva</span>
+            <span className="text-base font-bold text-[#00E599] font-sans tabular-nums">
               {`+${activeBuffs.passiveEnergy}/mes`}
             </span>
           </div>
 
           <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Mitigación de Gira</span>
-            <span className="text-base font-bold text-[#F59E0B] font-mono tabular-nums">
+            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Mitigación de Gira</span>
+            <span className="text-base font-bold text-[#F59E0B] font-sans tabular-nums">
               {Math.round(activeBuffs.tourFatigueReduction * 100) > 0
                 ? `-${Math.round(activeBuffs.tourFatigueReduction * 100)}% Fatiga`
                 : '0% Fatiga'}
@@ -575,8 +575,8 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           </div>
 
           <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-mono font-semibold">Estabilidad de Hype</span>
-            <span className="text-base font-bold text-[#F4F4F6] font-mono tabular-nums">
+            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Estabilidad de Hype</span>
+            <span className="text-base font-bold text-[#F4F4F6] font-sans tabular-nums">
               {`+${Math.round(activeBuffs.hypeDecayReduction * 100)}% Retención`}
             </span>
           </div>
@@ -584,7 +584,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       </div>
 
       {/* Category Filter Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 font-mono text-xs">
+      <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 font-sans text-xs">
         {CATEGORY_TABS.map(tab => {
           const isActive = activeCategory === tab.id;
           return (
@@ -723,14 +723,14 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                       <h3 className="text-base font-bold text-[#F4F4F6] tracking-tight leading-snug">
                         {item.name}
                       </h3>
-                      <span className={`text-xs font-mono font-semibold block mt-0.5 ${colorClasses.accentText}`}>
+                      <span className={`text-xs font-sans font-semibold block mt-0.5 ${colorClasses.accentText}`}>
                         {getCategoryLabel(item.category)}
                       </span>
                     </div>
                   </div>
 
                   {isOwned && (
-                    <span className="px-2 py-0.5 rounded-[4px] text-xs font-mono font-bold bg-[#18181C] text-[#00E599] border border-[#00E599]/40 flex items-center gap-1 shrink-0">
+                    <span className="px-2 py-0.5 rounded-[4px] text-xs font-sans font-bold bg-[#18181C] text-[#00E599] border border-[#00E599]/40 flex items-center gap-1 shrink-0">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       En Posesión
                     </span>
@@ -743,14 +743,14 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 </p>
 
                 {/* Passive Buff Pill */}
-                <div className={`p-2.5 rounded-[4px] border text-xs font-mono font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
+                <div className={`p-2.5 rounded-[4px] border text-xs font-sans font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
                   <span>{item.buffDescription}</span>
                 </div>
 
                 {/* Explicit Skill & Stat Badges */}
                 {effectBadges.length > 0 && (
-                  <div className="pt-2 border-t border-[#242429] space-y-1.5 font-mono">
+                  <div className="pt-2 border-t border-[#242429] space-y-1.5 font-sans">
                     <span className="text-2xs uppercase font-bold tracking-wider text-[#52525B] block">
                       Potenciadores Aplicados:
                     </span>
@@ -770,12 +770,12 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
               </div>
 
               {/* Card Footer: Cost & Action Button */}
-              <div className="mt-5 pt-4 border-t border-[#242429] flex items-center justify-between gap-3 font-mono">
+              <div className="mt-5 pt-4 border-t border-[#242429] flex items-center justify-between gap-3 font-sans">
                 <div className="min-w-0 flex-1">
-                  <div className="text-lg font-bold text-[#F4F4F6] font-mono tabular-nums tracking-tight whitespace-nowrap">
+                  <div className="text-lg font-bold text-[#F4F4F6] font-sans tabular-nums tracking-tight whitespace-nowrap">
                     {formatMoney(item.price)}
                   </div>
-                  <span className="text-xs text-[#8E8E99] font-mono tabular-nums block truncate">
+                  <span className="text-xs text-[#8E8E99] font-sans tabular-nums block truncate">
                     {item.monthlyUpkeep > 0 ? `+${formatMoney(item.monthlyUpkeep)}/mes` : 'Sin costo mensual'}
                   </span>
                 </div>

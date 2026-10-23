@@ -150,10 +150,10 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
+              <span className="text-xs font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#18181C] text-[#8E8E99] border border-[#242429]">
                 Auditoría Contable
               </span>
-              <span className="text-xs text-[#8E8E99] font-mono tabular-nums">
+              <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
                 {totalFilteredCount} {totalFilteredCount === 1 ? 'movimiento' : 'movimientos'}
               </span>
             </div>
@@ -167,7 +167,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         <div className="flex items-center gap-2 self-end sm:self-center">
           <button
             onClick={handleCopySummary}
-            className="px-3.5 py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] hover:border-[#3F3F46] text-xs font-mono font-semibold text-[#8E8E99] hover:text-[#F4F4F6] flex items-center gap-2 transition-all cursor-pointer"
+            className="px-3.5 py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] hover:border-[#3F3F46] text-xs font-sans font-semibold text-[#8E8E99] hover:text-[#F4F4F6] flex items-center gap-2 transition-all cursor-pointer"
             title="Copiar resumen al portapapeles"
           >
             {copied ? (
@@ -203,15 +203,15 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         {/* Total Income */}
         <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 space-y-1">
           <div className="flex items-center justify-between text-xs text-[#8E8E99]">
-            <span className="font-mono font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Ingresos Totales</span>
+            <span className="font-sans font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Ingresos Totales</span>
             <span className="p-1 rounded-[4px] bg-[#111114] text-[#00E599] border border-[#00E599]/30">
               <ArrowUpRight className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="text-2xl font-bold font-mono tabular-nums text-[#00E599] tracking-tight">
+          <div className="text-2xl font-bold font-sans tabular-nums text-[#00E599] tracking-tight">
             +{formatMoney(metrics.totalIncome)}
           </div>
-          <span className="text-xs text-[#8E8E99] font-mono block">
+          <span className="text-xs text-[#8E8E99] font-sans block">
             Regalías, shows y acuerdos
           </span>
         </div>
@@ -219,15 +219,15 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         {/* Total Expense */}
         <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 space-y-1">
           <div className="flex items-center justify-between text-xs text-[#8E8E99]">
-            <span className="font-mono font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Gastos & Inversiones</span>
+            <span className="font-sans font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Gastos & Inversiones</span>
             <span className="p-1 rounded-[4px] bg-[#1F1215] text-[#EF4444] border border-[#451A20]">
               <ArrowDownRight className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="text-2xl font-bold font-mono tabular-nums text-[#EF4444] tracking-tight">
+          <div className="text-2xl font-bold font-sans tabular-nums text-[#EF4444] tracking-tight">
             -{formatMoney(metrics.totalExpense)}
           </div>
-          <span className="text-xs text-[#8E8E99] font-mono block">
+          <span className="text-xs text-[#8E8E99] font-sans block">
             Estudios, equipo y vida
           </span>
         </div>
@@ -235,17 +235,17 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         {/* Net Balance Flow */}
         <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 space-y-1">
           <div className="flex items-center justify-between text-xs text-[#8E8E99]">
-            <span className="font-mono font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Flujo Neto Acumulado</span>
+            <span className="font-sans font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Flujo Neto Acumulado</span>
             <Wallet className="w-4 h-4 text-[#8E8E99]" />
           </div>
           <div
-            className={`text-2xl font-bold font-mono tabular-nums tracking-tight ${
+            className={`text-2xl font-bold font-sans tabular-nums tracking-tight ${
               metrics.netCashflow >= 0 ? 'text-[#00E599]' : 'text-[#EF4444]'
             }`}
           >
             {metrics.netCashflow >= 0 ? `+${formatMoney(metrics.netCashflow)}` : `-${formatMoney(Math.abs(metrics.netCashflow))}`}
           </div>
-          <div className="flex items-center justify-between text-xs text-[#8E8E99] font-mono">
+          <div className="flex items-center justify-between text-xs text-[#8E8E99] font-sans">
             <span>Saldo en caja:</span>
             <strong className="text-[#00E599] font-bold tabular-nums">{formatMoney(metrics.currentBalance)}</strong>
           </div>
@@ -254,19 +254,19 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         {/* Semi-Annual Operating Cost & Runway */}
         <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 space-y-1">
           <div className="flex items-center justify-between text-xs text-[#8E8E99]">
-            <span className="font-mono font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Costos Semestrales</span>
-            <span className="text-2xs font-mono tabular-nums text-[#8E8E99]">
+            <span className="font-sans font-semibold uppercase tracking-wider text-2xs text-[#52525B]">Costos Semestrales</span>
+            <span className="text-2xs font-sans tabular-nums text-[#8E8E99]">
               {formatMoney(metrics.monthlyTotalBurnRate)}/mes
             </span>
           </div>
-          <div className="text-2xl font-bold font-mono tabular-nums text-[#F4F4F6] tracking-tight">
+          <div className="text-2xl font-bold font-sans tabular-nums text-[#F4F4F6] tracking-tight">
             {formatMoney(metrics.semiAnnualOperatingCost)}
           </div>
           <div className="pt-1 flex items-center justify-between">
-            <span className={`text-2xs px-2 py-0.5 rounded-[4px] border font-mono font-bold ${metrics.solvencyColor}`}>
+            <span className={`text-2xs px-2 py-0.5 rounded-[4px] border font-sans font-bold ${metrics.solvencyColor}`}>
               {metrics.runwayMonths >= 99 ? '∞ Meses' : `${metrics.runwayMonths.toFixed(1)} meses`}
             </span>
-            <span className="text-2xs text-[#8E8E99] font-mono font-semibold">
+            <span className="text-2xs text-[#8E8E99] font-sans font-semibold">
               {metrics.solvencyStatus === 'thriving' ? 'Alta Solvencia' : metrics.solvencyStatus === 'stable' ? 'Solvencia Estable' : 'Atención Requerida'}
             </span>
           </div>
@@ -285,7 +285,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar por concepto, categoría o importe..."
-              className="w-full pl-10 pr-9 py-2 rounded-[4px] bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] focus:outline-hidden text-xs text-[#F4F4F6] placeholder-[#52525B] font-mono transition-all"
+              className="w-full pl-10 pr-9 py-2 rounded-[4px] bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] focus:outline-hidden text-xs text-[#F4F4F6] placeholder-[#52525B] font-sans transition-all"
             />
             {searchQuery && (
               <button
@@ -298,7 +298,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
           </div>
 
           {/* Type Toggle: All / Income / Expense */}
-          <div className="flex items-center bg-[#18181C] p-1 rounded-[4px] border border-[#242429] shrink-0 font-mono">
+          <div className="flex items-center bg-[#18181C] p-1 rounded-[4px] border border-[#242429] shrink-0 font-sans">
             {(['all', 'income', 'expense'] as TransactionFilterType[]).map((t) => {
               const isActive = selectedType === t;
               const labels: Record<TransactionFilterType, string> = {
@@ -337,7 +337,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
                 playSound('click');
                 setSortOption(e.target.value as TransactionSortOption);
               }}
-              className="px-3 py-2 rounded-[4px] bg-[#18181C] border border-[#242429] text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden cursor-pointer font-mono"
+              className="px-3 py-2 rounded-[4px] bg-[#18181C] border border-[#242429] text-xs text-[#F4F4F6] focus:border-[#FF4F00] focus:outline-hidden cursor-pointer font-sans"
             >
               <option value="newest">Más recientes primero</option>
               <option value="oldest">Más antiguos primero</option>
@@ -351,7 +351,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
                   playSound('click');
                   resetFilters();
                 }}
-                className="p-2 rounded-[4px] bg-[#18181C] hover:bg-[#1F1215] border border-[#242429] hover:border-[#451A20] text-[#8E8E99] hover:text-[#EF4444] text-xs transition-all cursor-pointer flex items-center gap-1.5 font-mono"
+                className="p-2 rounded-[4px] bg-[#18181C] hover:bg-[#1F1215] border border-[#242429] hover:border-[#451A20] text-[#8E8E99] hover:text-[#EF4444] text-xs transition-all cursor-pointer flex items-center gap-1.5 font-sans"
                 title="Restablecer todos los filtros"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -362,7 +362,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         </div>
 
         {/* Category Pills Slider */}
-        <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 text-xs font-mono">
+        <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 text-xs font-sans">
           <button
             onClick={() => {
               playSound('click');
@@ -394,7 +394,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
               >
                 {getCategoryIcon(catSum.category)}
                 <span>{catSum.label}</span>
-                <span className="text-2xs opacity-75 font-mono tabular-nums">({catSum.count})</span>
+                <span className="text-2xs opacity-75 font-sans tabular-nums">({catSum.count})</span>
               </button>
             );
           })}
@@ -414,7 +414,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
             </p>
             <button
               onClick={resetFilters}
-              className="mt-2 px-4 py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] text-xs font-mono font-semibold text-[#F4F4F6] border border-[#242429] inline-flex items-center gap-2 cursor-pointer"
+              className="mt-2 px-4 py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] text-xs font-sans font-semibold text-[#F4F4F6] border border-[#242429] inline-flex items-center gap-2 cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Restablecer Filtros
@@ -423,7 +423,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         ) : (
           <div className="divide-y divide-[#1C1C21]">
             {/* Table Header */}
-            <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-3 bg-[#18181C] border-b border-[#242429] text-xs font-mono font-bold text-[#8E8E99] uppercase tracking-wider">
+            <div className="hidden sm:grid grid-cols-12 gap-4 px-5 py-3 bg-[#18181C] border-b border-[#242429] text-xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
               <div className="col-span-2 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Fecha / Período</span>
@@ -444,7 +444,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
                   className="p-4 sm:px-5 sm:py-3.5 hover:bg-[#151519] transition-colors flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-4 items-start sm:items-center text-xs"
                 >
                   {/* Date */}
-                  <div className="sm:col-span-2 flex items-center gap-2 text-[#8E8E99] font-mono">
+                  <div className="sm:col-span-2 flex items-center gap-2 text-[#8E8E99] font-sans">
                     <span className="px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-xs tabular-nums">
                       {tx.dateStr || `M${tx.month}/${tx.year}`}
                     </span>
@@ -452,7 +452,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
 
                   {/* Category Pill */}
                   <div className="sm:col-span-3 flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded-[4px] text-xs font-mono font-semibold border flex items-center gap-1.5 shrink-0 ${badgeClass}`}>
+                    <span className={`px-2 py-0.5 rounded-[4px] text-xs font-sans font-semibold border flex items-center gap-1.5 shrink-0 ${badgeClass}`}>
                       {getCategoryIcon(tx.category)}
                       {CATEGORY_LABELS[tx.category] || tx.category}
                     </span>
@@ -466,7 +466,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
                   {/* Amount & Resulting Balance */}
                   <div className="sm:col-span-3 w-full sm:w-auto flex sm:flex-col justify-between sm:justify-center items-end text-right">
                     <div
-                      className={`text-sm font-bold font-mono tabular-nums tracking-tight flex items-center gap-1 ${
+                      className={`text-sm font-bold font-sans tabular-nums tracking-tight flex items-center gap-1 ${
                         isIncome ? 'text-[#00E599]' : 'text-[#EF4444]'
                       }`}
                     >
@@ -483,7 +483,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
                       )}
                     </div>
                     {tx.resultingBalance !== undefined && (
-                      <span className="text-2xs text-[#8E8E99] font-mono tabular-nums">
+                      <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
                         Saldo: {formatMoney(tx.resultingBalance)}
                       </span>
                     )}
@@ -497,11 +497,11 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
         {/* Pagination Bar */}
         {totalPages > 1 && (
           <div className="px-5 py-3.5 bg-[#18181C] border-t border-[#242429] flex items-center justify-between text-xs text-[#8E8E99]">
-            <span className="font-mono text-xs">
+            <span className="font-sans text-xs">
               Página <strong className="text-[#F4F4F6] tabular-nums">{page}</strong> de <span className="tabular-nums">{totalPages}</span> (<span className="tabular-nums">{totalFilteredCount}</span> registros)
             </span>
 
-            <div className="flex items-center gap-2 font-mono">
+            <div className="flex items-center gap-2 font-sans">
               <button
                 onClick={() => {
                   playSound('click');
@@ -527,7 +527,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
                         playSound('click');
                         setPage(p);
                       }}
-                      className={`w-7 h-7 rounded-[4px] text-xs font-mono font-bold tabular-nums transition-all cursor-pointer ${
+                      className={`w-7 h-7 rounded-[4px] text-xs font-sans font-bold tabular-nums transition-all cursor-pointer ${
                         page === p
                           ? 'bg-[#FF4F00] text-white'
                           : 'bg-[#111114] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6]'
