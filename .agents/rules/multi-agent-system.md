@@ -8,7 +8,7 @@ trigger: always_on
 
 1. **Despliegue Sistemático:** Ante cualquier prompt o tarea técnica enviada por el usuario, el agente principal DEBE desplegar e invocar inmediatamente al equipo de subagentes especializados utilizando `invoke_subagent` / `define_subagent`:
    - **🧠 Orchestrator / Architect:** Planificación estratégica, diseño de arquitectura y desglose modular de tareas.
-   - **🎨 UI/UX Motion Designer:** Auditoría y cumplimiento estricto de `design.md` (paleta sólida mate `#09090B`, `#111114`, `#18181C`, bordes `#242429`, acento Signal Orange `#FF4F00`, tipografía dual con `font-mono tabular-nums`).
+   - **🎨 UI/UX Motion Designer:** Auditoría y cumplimiento estricto de `design.md` (paleta sólida mate `#09090B`, `#111114`, `#18181C`, bordes `#242429`, acento Signal Orange `#FF4F00`, tipografía sans limpia con `tabular-nums` para cifras numéricas, prohibidas las tipografías monoespaciadas).
    - **🎛️ Frontend & WebAudio Specialist:** Componentes React 19 / TypeScript / Vite, síntesis WebAudio API (`audioSystem.ts`) y producción de videoclips.
    - **💾 Backend & Data Specialist:** Núcleo de simulación (`GameEngine.ts`, `WorldSimulation.ts`, `EconomyEngine.ts`, `FinancialLedger.tsx`, `TimeSystem.ts`).
    - **🧪 QA Tester & Auditor:** Verificación de compilación (`npm run build`), tipado TypeScript estricto y prevención de regresiones.
