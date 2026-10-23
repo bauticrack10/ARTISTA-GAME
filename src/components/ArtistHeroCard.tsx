@@ -1,42 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Artist, WorldState, Song, Album, CareerStage } from '../types';
-import {
-  AVATAR_PALETTES,
-  AVATAR_SYMBOLS,
-  VECTOR_PRESETS,
-  AvatarPaletteOption,
-  AvatarSymbolOption,
-  VectorAvatarPreset
-} from '../data/avatarPresets';
 import { ArtistAvatar } from './ArtistAvatar';
 import { TimeSystem } from '../systems/TimeSystem';
 import {
-  Camera,
   Sparkles,
   ArrowUpRight,
   Disc3,
-  Edit3,
-  Check,
-  X,
-  Crown,
   Building2,
   Award,
   Layers,
-  Flame,
-  TrendingUp,
   User,
   Headphones,
-  Users,
-  DollarSign,
-  Zap,
-  Wallet,
   Palette
 } from 'lucide-react';
 import {
-  formatMoney,
-  formatFans,
-  formatListeners,
-  formatStreams,
   formatCompactNumber,
   cleanQuotes,
   formatCityCountry
@@ -59,19 +36,9 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   playerSongsCount,
   playerAlbumsCount,
   onNavigate,
-  onUpdateAvatar,
   onOpenAvatarModal,
   className = ''
 }) => {
-  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>(
-    player?.avatarColor || 'from-[#FF4F00] to-[#D97706]'
-  );
-  const [selectedIcon, setSelectedIcon] = useState<string>(player?.avatarIcon || 'mic');
-  const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>(
-    player?.avatarIcon ? 'symbol' : 'symbol'
-  );
-
   const currentEra = player?.eras && player.eras.length > 0
     ? player.eras[player.eras.length - 1]
     : null;
@@ -106,7 +73,6 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   const currentLabel = player?.labelId && world?.labels ? world.labels[player.labelId] : null;
   const currentManager = player?.managerId && world?.managers ? world.managers[player.managerId] : null;
 
-  // Reactive change detection for live visual feedback on viral surges
   const prevListenersRef = useRef<number>(playerStats.monthlyListeners || 0);
   const prevStreamsRef = useRef<number>(playerStats.totalStreams || 0);
   const [isListenersSurging, setIsListenersSurging] = useState<boolean>(false);
@@ -134,82 +100,14 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
     prevStreamsRef.current = currentStreams;
   }, [player?.stats?.totalStreams]);
 
-  // Dynamic growth percentage calculation for streams/listeners
-  const listenerGrowth = React.useMemo(() => {
-    const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(
-      (s) => s.artistId === playerId
-    );
-    const totalStreams = player?.stats?.totalStreams || 0;
-    if (playerSongs.length === 0 || totalStreams === 0) {
-      return {
-        formatted: '0.0%',
-        label: '0.0% este semestre',
-        isPositive: false,
-        isZero: true
-      };
-    }
-
-    let currentPeriodStreams = 0;
-    let prevPeriodStreams = 0;
-    for (const song of playerSongs) {
-      const history = song.monthlyStreamsHistory || [];
-      if (history.length >= 2) {
-        currentPeriodStreams += history[history.length - 1] || 0;
-        prevPeriodStreams += history[history.length - 2] || 0;
-      } else if (history.length === 1) {
-        currentPeriodStreams += history[0] || 0;
-      }
-    }
-
-    if (prevPeriodStreams === 0) {
-      if (currentPeriodStreams > 0) {
-        return { formatted: '+100%', label: '+100% debut', isPositive: true, isZero: false };
-      }
-      return { formatted: '0.0%', label: '0.0% este semestre', isPositive: false, isZero: true };
-    }
-
-    const pct = ((currentPeriodStreams - prevPeriodStreams) / prevPeriodStreams) * 100;
-    const sign = pct >= 0 ? '+' : '';
-    return {
-      formatted: `${sign}${pct.toFixed(1)}%`,
-      label: `${sign}${pct.toFixed(1)}% este semestre`,
-      isPositive: pct > 0,
-      isZero: pct === 0
-    };
-  }, [world?.songs, playerId, player?.stats?.totalStreams]);
-
-  const handleOpenModal = () => {
-    if (onOpenAvatarModal) {
-      onOpenAvatarModal();
-    } else {
-      setSelectedColor(player?.avatarColor || 'from-[#FF4F00] to-[#D97706]');
-      setSelectedIcon(player?.avatarIcon || 'mic');
-      setAvatarType(player?.avatarIcon ? 'symbol' : 'initials');
-      setIsAvatarModalOpen(true);
-    }
-  };
-
-  const handleSaveAvatar = () => {
-    if (onUpdateAvatar) {
-      onUpdateAvatar(undefined, selectedColor, avatarType === 'symbol' ? selectedIcon : undefined);
-    }
-    setIsAvatarModalOpen(false);
-  };
-
-  const handleApplyPreset = (preset: VectorAvatarPreset) => {
-    setSelectedColor(preset.color);
-    setSelectedIcon(preset.icon);
-    setAvatarType('symbol');
-  };
-
   const getCareerStageBadge = (stage: CareerStage) => {
     switch (stage) {
       case 'Underground':
-        return { bg: 'bg-surface', text: 'text-fg-muted', border: 'border-line', label: 'Underground' };
+        return { bg: 'bg-[#18181C]', text: 'text-[#8E8E99]', border: 'border-[#242429]', label: 'Underground' };
       case 'Emerging':
         return { bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30', label: 'Emergente' };
       case 'Breakout':
-        return { bg: 'bg-cyan-500/15', text: 'text-info', border: 'border-info/30', label: 'En Ascenso' };
+        return { bg: 'bg-cyan-500/15', text: 'text-cyan-400', border: 'border-cyan-500/30', label: 'En Ascenso' };
       case 'Established':
         return { bg: 'bg-blue-500/15', text: 'text-blue-400', border: 'border-blue-500/30', label: 'Consagrado' };
       case 'Mainstream':
@@ -235,15 +133,13 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
   return (
     <div
-      className={`bg-[#111114] border border-[#242429] rounded-[6px] p-6 md:p-8 relative overflow-hidden space-y-6 text-[#F4F4F6] ${className}`}
+      className={`bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 relative overflow-hidden space-y-4 text-[#F4F4F6] ${className}`}
     >
-      {/* Top Main Section: Portrait, Bio & Quick Metrics */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-        {/* Left Side: Avatar / Portrait + Info Hierarchy */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 md:gap-6 w-full lg:w-auto">
-          {/* Professional Vector Avatar Container */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+        {/* Identidad del Artista */}
+        <div className="flex items-center gap-4 sm:gap-5 w-full lg:w-auto">
           <div className="relative shrink-0 group">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[4px] overflow-hidden border border-[#242429] group-hover:border-[#3F3F46] transition-colors bg-[#09090B] flex items-center justify-center">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[4px] overflow-hidden border border-[#242429] group-hover:border-[#3F3F46] transition-colors bg-[#09090B] flex items-center justify-center">
               <ArtistAvatar
                 name={player?.name}
                 avatarColor={player?.avatarColor}
@@ -254,410 +150,133 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               />
             </div>
 
-            {/* Quick Edit Overlay Button */}
-            <button
-              onClick={handleOpenModal}
-              className="absolute bottom-1 right-1 p-1.5 rounded-[4px] bg-[#111114]/90 hover:bg-[#18181C] text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer"
-              title="Personalizar Avatar Vectorial"
-            >
-              <Palette className="w-3.5 h-3.5 text-[#8E8E99]" />
-            </button>
+            {onOpenAvatarModal && (
+              <button
+                onClick={onOpenAvatarModal}
+                className="absolute bottom-1 right-1 p-1.5 rounded-[4px] bg-[#111114]/90 hover:bg-[#18181C] text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer"
+                title="Cambiar Avatar"
+              >
+                <Palette className="w-3.5 h-3.5 text-[#FF4F00]" />
+              </button>
+            )}
           </div>
 
-          {/* Artist Identity & Metadata Details */}
-          <div className="space-y-2.5">
-            {/* Header: Artist Stage Name + Badges */}
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-0.04em] text-[#F4F4F6] leading-none">
+          <div className="space-y-2 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.04em] text-[#F4F4F6] leading-none">
                 {player?.name || 'Artista'}
               </h1>
 
-              {/* Career Stage Pill */}
               <span
-                className={`px-2.5 py-0.5 rounded-[4px] text-xs font-sans font-bold uppercase tracking-wider ${stageBadge.bg} ${stageBadge.text} border ${stageBadge.border}`}
+                className={`px-2 py-0.5 rounded-[4px] text-xs font-sans font-bold uppercase tracking-wider ${stageBadge.bg} ${stageBadge.text} border ${stageBadge.border}`}
               >
                 {stageBadge.label}
               </span>
 
-              {/* Label Badge */}
-              {currentLabel && (
-                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-sans bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
-                  <Building2 className="w-3 h-3 text-[#52525B]" />
-                  {currentLabel.name}
-                </span>
-              )}
-
-              {/* Manager Badge */}
-              {currentManager && (
-                <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-sans bg-[#18181C] text-[#8E8E99] border border-[#242429] flex items-center gap-1.5">
-                  <User className="w-3 h-3 text-[#52525B]" />
-                  Mgr: {currentManager.name}
-                </span>
-              )}
-            </div>
-
-            {/* Subtitle: Real Name, City, Country, Age & Main Genre */}
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-[#8E8E99] font-normal flex-wrap">
-              {player?.realName ? (
-                <>
-                  <span className="text-[#F4F4F6] font-medium">"{cleanQuotes(player.realName)}"</span>
-                  <span className="text-[#52525B]">•</span>
-                </>
-              ) : null}
-              <span>
-                {formatCityCountry(player?.city, player?.country)}
-              </span>
-              <span className="text-[#52525B]">•</span>
-              <span className="font-sans tabular-nums text-[#F4F4F6]">
-                {TimeSystem.calculateAge(player?.birthYear || 2008, world?.currentYear || 2026)} años
-              </span>
-              <span className="text-[#52525B]">•</span>
               <span className="px-2 py-0.5 rounded-[4px] text-xs font-sans font-bold bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30">
                 {mainGenreName}
               </span>
             </div>
 
-            {/* Compact Discography & Legacy Badges */}
-            <div className="flex items-center gap-2 text-xs text-[#8E8E99] flex-wrap pt-0.5">
-              <button
-                onClick={handleOpenModal}
-                className="flex items-center gap-1.5 text-[#F4F4F6] bg-[#18181C] hover:bg-[#242429] border border-[#242429] px-3 py-1 rounded-[4px] text-xs font-sans font-medium cursor-pointer transition-colors"
-              >
-                <Edit3 className="w-3.5 h-3.5 text-[#FF4F00]" />
-                <span>Editar Identidad</span>
-              </button>
-
-              <span
-                className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#F4F4F6] font-sans text-xs"
-                title={`Comunidad de fans activos: ${(playerStats.fansCount || 0).toLocaleString('es-AR')} fans`}
-              >
-                <Users className="w-3.5 h-3.5 text-[#FF4F00]" />
-                <span>{formatFans(playerStats.fansCount)}</span>
+            <div className="flex items-center gap-2 text-xs text-[#8E8E99] flex-wrap">
+              {player?.realName && (
+                <>
+                  <span className="text-[#F4F4F6] font-medium">"{cleanQuotes(player.realName)}"</span>
+                  <span className="text-[#52525B]">•</span>
+                </>
+              )}
+              <span>{formatCityCountry(player?.city, player?.country)}</span>
+              <span className="text-[#52525B]">•</span>
+              <span className="font-sans tabular-nums text-[#F4F4F6]">
+                {TimeSystem.calculateAge(player?.birthYear || 2008, world?.currentYear || 2026)} años
               </span>
+            </div>
 
-              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans text-xs">
+            <div className="flex items-center gap-2 text-xs text-[#8E8E99] flex-wrap">
+              <span className="inline-flex items-center gap-1.5 bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans">
                 <Disc3 className="w-3.5 h-3.5 text-[#52525B]" />
                 <span>{computedSongsCount} Singles</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans">
                 <Layers className="w-3.5 h-3.5 text-[#52525B]" />
                 <span>{computedAlbumsCount} Álbumes</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 bg-[#111114] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans text-xs">
+              <span className="inline-flex items-center gap-1.5 bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans">
                 <Award className="w-3.5 h-3.5 text-[#00E599]" />
-                <span>
-                  Legado: <strong className="font-semibold text-[#F4F4F6]">{player?.legacyScore ?? 0}/100</strong>
-                </span>
+                <span>Legado <strong className="text-[#F4F4F6] tabular-nums">{player?.legacyScore ?? 0}/100</strong></span>
               </span>
+
+              {currentLabel && (
+                <span className="inline-flex items-center gap-1.5 bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans">
+                  <Building2 className="w-3 h-3 text-[#52525B]" />
+                  <span>{currentLabel.name}</span>
+                </span>
+              )}
+
+              {currentManager && (
+                <span className="inline-flex items-center gap-1.5 bg-[#09090B] px-2.5 py-1 rounded-[4px] border border-[#242429] text-[#8E8E99] font-sans">
+                  <User className="w-3 h-3 text-[#52525B]" />
+                  <span>{currentManager.name}</span>
+                </span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Right Side: Quick Metric Tiles (Rack Analógico) */}
-        <div className="grid grid-cols-2 gap-2.5 w-full lg:w-auto shrink-0 min-w-[280px] xl:min-w-[340px]">
-          {/* Tile 1: Oyentes Mensuales */}
+        {/* 2 Métricas Principales de Alcance (sin repetir Hype ni Popularidad que están abajo) */}
+        <div className="grid grid-cols-2 gap-3 w-full lg:w-auto shrink-0 min-w-[260px]">
           <div
-            className={`bg-[#09090B] border rounded-[4px] p-3 text-left transition-all duration-150 ${
-              isListenersSurging
-                ? 'border-[#00E599] bg-[#111114]'
-                : 'border-[#242429] hover:border-[#3F3F46]'
+            className={`bg-[#09090B] border rounded-[4px] p-3.5 text-left transition-all ${
+              isListenersSurging ? 'border-[#00E599]' : 'border-[#242429]'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
-                <Headphones className="w-3 h-3 text-[#8E8E99]" />
-                OYENTES / MES
-              </span>
-              {isListenersSurging && (
-                <span className="text-3xs font-sans font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
-                  ▲ AUGE
-                </span>
-              )}
-            </div>
+            <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+              <Headphones className="w-3 h-3 text-[#8E8E99]" />
+              OYENTES / MES
+            </span>
             <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.monthlyListeners)}
             </span>
-            <span className={`text-3xs font-sans block mt-0.5 ${listenerGrowth.isPositive ? 'text-[#00E599]' : 'text-[#8E8E99]'}`}>
-              {listenerGrowth.label}
-            </span>
           </div>
 
-          {/* Tile 2: Streams Totales */}
           <div
-            className={`bg-[#09090B] border rounded-[4px] p-3 text-left transition-all duration-150 ${
-              isStreamsSurging
-                ? 'border-[#00E599] bg-[#111114]'
-                : 'border-[#242429] hover:border-[#3F3F46]'
+            className={`bg-[#09090B] border rounded-[4px] p-3.5 text-left transition-all ${
+              isStreamsSurging ? 'border-[#00E599]' : 'border-[#242429]'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
-                <Disc3 className="w-3 h-3 text-[#8E8E99]" />
-                STREAMS TOTALES
-              </span>
-              {isStreamsSurging && (
-                <span className="text-3xs font-sans font-bold uppercase px-1.5 py-0.2 rounded-[2px] bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/30">
-                  ▲ VIRAL
-                </span>
-              )}
-            </div>
+            <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
+              <Disc3 className="w-3 h-3 text-[#8E8E99]" />
+              STREAMS TOTALES
+            </span>
             <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.totalStreams)}
-            </span>
-            <span className="text-3xs text-[#52525B] font-sans block mt-0.5">
-              Catálogo acumulado
-            </span>
-          </div>
-
-          {/* Tile 3: Hype Escénico */}
-          <div className="bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-left transition-colors">
-            <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
-              <Flame className="w-3 h-3 text-[#F59E0B]" />
-              HYPE ESCÉNICO
-            </span>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
-              {playerStats.hype} <span className="text-xs font-normal text-[#52525B] font-sans">/ 100</span>
-            </span>
-            <span className="text-3xs text-[#8E8E99] font-sans block mt-0.5">
-              {playerStats.hype >= 70 ? 'Rotación Alta en Prensa' : 'Trabajo de Estudio'}
-            </span>
-          </div>
-
-          {/* Tile 4: Popularidad & Fidelidad */}
-          <div className="bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-left transition-colors">
-            <span className="text-3xs font-sans font-bold uppercase tracking-wider text-[#52525B] flex items-center gap-1.5">
-              <Crown className="w-3 h-3 text-[#FF4F00]" />
-              POPULARIDAD
-            </span>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
-              {playerStats.popularity} <span className="text-xs font-normal text-[#52525B] font-sans">/ 100</span>
-            </span>
-            <span className="text-3xs text-[#8E8E99] font-sans block mt-0.5">
-              Fidelidad: {playerStats.fanbaseLoyalty}%
             </span>
           </div>
         </div>
       </div>
 
-      {/* Bottom Block: Current Era Highlight Box */}
+      {/* Tira compacta de Era Actual */}
       {currentEra && (
-        <div className="pt-4 border-t border-[#242429] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-[#09090B] p-4 rounded-[4px] border border-[#242429]">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#F4F4F6] shrink-0">
-              <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-sans font-bold uppercase tracking-wider text-[#52525B]">
-                  ERA ACTUAL:
-                </span>
-                <span className="text-xs font-bold text-[#F4F4F6]">
-                  {currentEra.name}
-                </span>
-              </div>
-              <p className="text-xs text-[#8E8E99] mt-0.5 leading-relaxed">
-                {currentEra.highlightSummary}
-              </p>
-            </div>
+        <div className="pt-3 border-t border-[#242429] flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <Sparkles className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
+            <span className="text-[#8E8E99] truncate">
+              Era actual: <strong className="text-[#F4F4F6]">{currentEra.name}</strong>
+            </span>
           </div>
-
           <button
             onClick={() => onNavigate('career')}
-            className="text-xs text-[#F4F4F6] hover:text-[#FF4F00] flex items-center gap-1.5 font-sans font-semibold cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-[4px] bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] transition-colors"
+            className="text-xs text-[#8E8E99] hover:text-[#FF4F00] flex items-center gap-1 font-sans font-semibold cursor-pointer shrink-0 transition-colors"
           >
-            <span>Ver Trayectoria</span>
+            <span>Ver Eras</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
-        </div>
-      )}
-
-      {/* Fallback Interactive Avatar Modal */}
-      {isAvatarModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div
-            className="bg-[#111114] border border-[#242429] rounded-[6px] max-w-lg w-full p-6 space-y-5 text-[#F4F4F6] shadow-2xl max-h-[90vh] overflow-y-auto"
-          >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
-              <div className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-[#FF4F00]" />
-                <h3 className="text-lg font-bold tracking-tight text-[#F4F4F6]">
-                  Identidad Visual & Avatar del Artista
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsAvatarModalOpen(false)}
-                className="p-1.5 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer transition-colors"
-                title="Cerrar modal"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Current Preview */}
-            <div className="flex items-center gap-4 bg-[#09090B] p-4 rounded-[4px] border border-[#242429]">
-              <ArtistAvatar
-                name={player?.name}
-                avatarColor={selectedColor}
-                avatarIcon={avatarType === 'symbol' ? selectedIcon : undefined}
-                size="lg"
-                rounded="rounded-[4px]"
-                className="shrink-0 shadow-md"
-              />
-              <div className="space-y-0.5">
-                <h4 className="text-sm font-bold text-[#F4F4F6]">{player.name}</h4>
-                <p className="text-xs text-[#8E8E99]">
-                  Así figura tu sello visual en créditos de catálogo, comunicados de prensa y rankings.
-                </p>
-              </div>
-            </div>
-
-            {/* Mode Switcher */}
-            <div className="flex items-center gap-2 p-1 bg-canvas rounded-lg border border-line">
-              <button
-                type="button"
-                onClick={() => setAvatarType('symbol')}
-                className={`flex-1 py-1.5 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  avatarType === 'symbol'
-                    ? 'bg-primary-strong text-white shadow-xs'
-                    : 'text-fg-muted hover:text-fg'
-                }`}
-              >
-                <Crown className="w-3.5 h-3.5" />
-                <span>Símbolo / Ícono</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setAvatarType('initials')}
-                className={`flex-1 py-1.5 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  avatarType === 'initials'
-                    ? 'bg-primary-strong text-white shadow-xs'
-                    : 'text-fg-muted hover:text-fg'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>Iniciales Limpias</span>
-              </button>
-            </div>
-
-            {/* Quick Presets */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-fg-muted block">
-                Presets de Estilo Rápido
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {VECTOR_PRESETS.slice(0, 4).map((preset) => (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => handleApplyPreset(preset)}
-                    className="p-2 rounded-lg border border-line bg-canvas hover:border-primary-strong/50 hover:bg-surface-raised transition-all flex items-center gap-2 cursor-pointer text-left"
-                  >
-                    <ArtistAvatar
-                      name={preset.name}
-                      avatarColor={preset.color}
-                      avatarIcon={preset.icon}
-                      size="xs"
-                      rounded="rounded-sm"
-                    />
-                    <span className="text-2xs font-bold text-fg truncate">
-                      {preset.name}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Vector Icons Selector */}
-            {avatarType === 'symbol' && (
-              <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-fg-muted block">
-                  Seleccionar Símbolo Escénico
-                </label>
-                <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
-                  {AVATAR_SYMBOLS.map((sym: AvatarSymbolOption) => {
-                    const isSelected = selectedIcon === sym.id;
-                    const IconComp = sym.icon;
-                    return (
-                      <button
-                        type="button"
-                        key={sym.id}
-                        onClick={() => setSelectedIcon(sym.id)}
-                        className={`p-2 rounded-control border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
-                          isSelected
-                            ? 'bg-primary-strong/25 border-primary-strong shadow-xs ring-1 ring-primary-strong'
-                            : 'bg-canvas border-line hover:border-primary-strong/40'
-                        }`}
-                      >
-                        <div className={`p-1.5 rounded-full bg-gradient-to-tr ${selectedColor} text-white shadow-xs`}>
-                          <IconComp className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="text-2xs font-semibold text-fg truncate w-full">
-                          {sym.label.split('/')[0].trim()}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Gradient Options */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-fg-muted block">
-                Paleta Cromática
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
-                  const isSelected = selectedColor === p.val;
-                  return (
-                    <button
-                      type="button"
-                      key={p.id}
-                      onClick={() => setSelectedColor(p.val)}
-                      className={`p-2 rounded-lg border text-left flex items-center gap-2 transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-primary-strong/20 border-primary-strong shadow-xs ring-1 ring-primary-strong'
-                          : 'bg-canvas border-line hover:border-primary-strong/40'
-                      }`}
-                    >
-                      <div
-                        className={`w-5 h-5 rounded-sm bg-gradient-to-tr ${p.val} shrink-0 border border-white/30 flex items-center justify-center`}
-                      >
-                        {isSelected && <Check className="w-3 h-3 text-white" />}
-                      </div>
-                      <span className="text-2xs font-semibold text-fg truncate">
-                        {p.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#242429]">
-              <button
-                type="button"
-                onClick={() => setIsAvatarModalOpen(false)}
-                className="px-4 py-2 rounded-[4px] text-xs font-sans font-semibold bg-[#111114] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:bg-[#18181C] cursor-pointer transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveAvatar}
-                className="flex items-center gap-1.5 bg-[#FF4F00] hover:bg-[#E04500] text-white px-5 py-2 rounded-[4px] text-xs font-sans font-bold cursor-pointer active:translate-y-[1px] transition-all"
-              >
-                <Check className="w-4 h-4 text-white" />
-                <span>Guardar Cambios</span>
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>
   );
 };
+
+export default ArtistHeroCard;

@@ -430,32 +430,27 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 pb-12 text-[#F4F4F6]">
-      {/* Consolidated Header Banner & Navigation */}
-      <div className="bg-[#111114] p-6 sm:p-8 rounded-[6px] border border-[#242429] flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xs uppercase tracking-wider font-sans font-bold text-[#8E8E99] px-2.5 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429]">
-              Industria Musical
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#F4F4F6] tracking-tight mt-1.5">
-            Representación, Sellos & Mercado de Fichajes
+    <div className="space-y-6 pb-12 text-[#F4F0EA]">
+      {/* Consolidated Header Banner & 3 Main Tabs */}
+      <div className="bg-[#141417] p-5 sm:p-6 rounded-[6px] border border-[#26262B] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <span className="text-2xs uppercase tracking-wider font-sans font-bold text-[#8E8E99] px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B]">
+            Industria Musical
+          </span>
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-[#F4F0EA] tracking-tight">
+            Sellos, Distribución & Representación
           </h1>
-          <p className="text-sm text-[#8E8E99] mt-1 max-w-2xl leading-relaxed">
-            Negociá puntos de regalía, cesión o retención de másters, adelantos recuperables (recoupment) con discográficas y comisiones de representación.
-          </p>
         </div>
 
-        {/* Unified Top Tabs Navigation */}
-        <div className="flex flex-wrap gap-1.5 pt-2 xl:pt-0 shrink-0">
+        {/* 3 Main Tabs Navigation */}
+        <div className="flex flex-wrap gap-1.5 bg-[#0B0B0C] p-1 rounded-[4px] border border-[#26262B] shrink-0">
           <button
             id="tab-btn-current"
             onClick={() => handleTabSwitch('current')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-colors cursor-pointer ${
               activeTab === 'current'
-                ? 'bg-[#FF4F00] text-white'
-                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
+                ? 'bg-[#FF2A4B] text-[#F4F0EA]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
             }`}
           >
             Situación Actual
@@ -463,116 +458,93 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           <button
             id="tab-btn-distribution"
             onClick={() => handleTabSwitch('distribution_labels')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-colors cursor-pointer ${
               activeTab === 'distribution_labels'
-                ? 'bg-[#FF4F00] text-white'
-                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
+                ? 'bg-[#FF2A4B] text-[#F4F0EA]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
             }`}
           >
             Distribución & Sellos
           </button>
           <button
-            id="tab-btn-radar"
-            onClick={() => handleTabSwitch('radar')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-all cursor-pointer ${
-              activeTab === 'radar'
-                ? 'bg-[#FF4F00] text-white'
-                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
-            }`}
-          >
-            Radar de A&R
-          </button>
-          <button
             id="tab-btn-managers"
             onClick={() => handleTabSwitch('managers')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-colors cursor-pointer ${
               activeTab === 'managers'
-                ? 'bg-[#FF4F00] text-white'
-                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
+                ? 'bg-[#FF2A4B] text-[#F4F0EA]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
             }`}
           >
             Mercado de Managers
-          </button>
-          <button
-            id="tab-btn-own-label"
-            onClick={() => handleTabSwitch('own_label')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-all cursor-pointer ${
-              activeTab === 'own_label'
-                ? 'bg-[#FF4F00] text-white'
-                : 'bg-[#18181C] text-[#8E8E99] border border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
-            }`}
-          >
-            Sello Propio
           </button>
         </div>
       </div>
 
       {/* Notifications */}
       {notification && (
-        <div className="bg-[#111114] border border-[#FF4F00]/40 text-[#F4F4F6] px-4 py-3 rounded-[4px] flex items-center gap-2 text-xs font-sans font-medium animate-fadeIn">
-          <CheckCircle2 className="w-4 h-4 text-[#00E599] shrink-0" />
+        <div className="bg-[#141417] border border-[#FF2A4B]/40 text-[#F4F0EA] px-4 py-3 rounded-[4px] flex items-center gap-2 text-xs font-sans font-medium">
+          <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" strokeWidth={1.75} />
           <span>{notification}</span>
         </div>
       )}
 
-      {/* TAB 1: SITUACIÓN ACTUAL */}
+      {/* TAB 1: SITUACIÓN ACTUAL (+ SELLO PROPIO INTEGRADO) */}
       {activeTab === 'current' && (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Card 1: Contrato Activo o Estado de Distribución */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-4">
+          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#FF4F00]" />
-                <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
+                <Building2 className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+                <h2 className="font-display text-base font-bold text-[#F4F0EA] tracking-tight">
                   Contrato / Distribución Actual
                 </h2>
               </div>
               {currentLabel && activeContract ? (
-                <span className="text-xs font-sans font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599]">
+                <span className="text-2xs font-sans font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981]">
                   {isCurrentArtistOwned ? 'Sello Propio' : isCurrentDistributor ? 'Distribución Activa' : 'Contrato Vigente'}
                 </span>
               ) : (
-                <span className="text-xs font-sans font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
-                  Agente Libre / Independiente
+                <span className="text-2xs font-sans font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99]">
+                  Independiente
                 </span>
               )}
             </div>
 
             {currentLabel && activeContract ? (
-              <div className="space-y-5">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#09090B] p-5 rounded-[4px] border border-[#242429]">
+              <div className="space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B]">
                   <div>
-                    <div className="flex items-center gap-2.5">
-                      <h3 className="text-xl font-bold text-[#F4F4F6]">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display text-lg font-bold text-[#F4F0EA]">
                         {currentLabel.name}
                       </h3>
-                      <span className="text-xs font-sans uppercase font-bold px-2.5 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
-                        {isCurrentArtistOwned ? 'Sello Propio' : isCurrentDistributor ? 'Distribuidora Digital' : currentLabel.type === 'major' ? 'Major Label' : currentLabel.type === 'indie' ? 'Sello Indie' : 'Sello Local / Boutique'}
+                      <span className="text-2xs font-sans uppercase font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#F4F0EA]">
+                        {isCurrentArtistOwned ? 'Sello Propio' : isCurrentDistributor ? 'Distribuidora' : currentLabel.type === 'major' ? 'Major Label' : currentLabel.type === 'indie' ? 'Indie' : 'Sello Local'}
                       </span>
                     </div>
-                    <p className="text-xs text-[#8E8E99] mt-1.5 font-sans">
-                      {currentLabel.country} • Roster de artistas: {currentLabel.rosterArtistIds.length} integrantes
+                    <p className="text-xs text-[#8E8E99] mt-1 font-sans tabular-nums">
+                      {currentLabel.country} • Roster: {currentLabel.rosterArtistIds.length} artistas
                     </p>
                   </div>
 
-                  <div className="text-left md:text-right text-xs text-[#8E8E99] font-sans shrink-0">
-                    <span className="block font-bold text-[#F4F4F6]">Firmado en {activeContract.signedYear}</span>
+                  <div className="text-left md:text-right text-xs text-[#8E8E99] font-sans tabular-nums shrink-0">
+                    <span className="block font-bold text-[#F4F0EA]">Firmado en {activeContract.signedYear}</span>
                     <span>Duración: {activeContract.durationYears} {activeContract.durationYears === 1 ? 'año' : 'años'}</span>
                   </div>
                 </div>
 
-                {/* Progress bar of Albums (if applicable) */}
                 {activeContract.albumsRequired > 0 && (
-                  <div className="bg-[#09090B] border border-[#242429] p-4 rounded-[4px] space-y-2">
+                  <div className="bg-[#0B0B0C] border border-[#26262B] p-3.5 rounded-[4px] space-y-2">
                     <div className="flex items-center justify-between text-xs font-sans">
-                      <span className="font-bold text-[#F4F4F6]">Compromiso de Álbumes de Estudio:</span>
-                      <span className="font-bold text-[#FF4F00] tabular-nums">
-                        {activeContract.albumsDelivered} de {activeContract.albumsRequired} Entregados • {Math.min(100, Math.floor((activeContract.albumsDelivered / activeContract.albumsRequired) * 100))}%
+                      <span className="font-bold text-[#F4F0EA]">Compromiso de Álbumes:</span>
+                      <span className="font-bold text-[#FF2A4B] tabular-nums">
+                        {activeContract.albumsDelivered} / {activeContract.albumsRequired} entregados ({Math.min(100, Math.floor((activeContract.albumsDelivered / activeContract.albumsRequired) * 100))}%)
                       </span>
                     </div>
-                    <div className="w-full bg-[#18181C] h-2 rounded-[2px] overflow-hidden">
+                    <div className="w-full bg-[#1C1C21] h-1.5 rounded-[2px] overflow-hidden">
                       <div
-                        className="bg-[#FF4F00] h-full rounded-[2px] transition-all duration-300"
+                        className="bg-[#FF2A4B] h-full rounded-[2px] transition-all duration-300"
                         role="progressbar"
                         aria-label="Álbumes entregados del contrato"
                         aria-valuemin={0}
@@ -581,344 +553,372 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                         style={{ width: `${Math.min(100, (activeContract.albumsDelivered / activeContract.albumsRequired) * 100)}%` }}
                       />
                     </div>
-                    <p className="text-xs text-[#8E8E99] leading-relaxed">
-                      Cada LP de estudio entregado descuenta tu compromiso discográfico. Una vez completado el cupo de discos, quedás libre de exclusividad para renegociar puntos o distribuir por tu cuenta.
-                    </p>
                   </div>
                 )}
 
-                {/* Terms Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-sans block">Regalías Artista</span>
-                    <span className="text-lg font-bold font-sans tabular-nums text-[#00E599]">{activeContract.royaltyPercentage}%</span>
-                    <span className="text-2xs text-[#8E8E99] font-sans block">{100 - activeContract.royaltyPercentage}% para la entidad</span>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-sans tabular-nums">
+                  <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] block">Regalías Artista</span>
+                    <span className="text-base font-bold text-[#10B981]">{activeContract.royaltyPercentage}%</span>
                   </div>
 
-                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-sans block">Anticipo Cobrado</span>
-                    <span className="text-lg font-bold font-sans tabular-nums text-[#F4F4F6]">{formatMoney(activeContract.signingBonus)}</span>
-                    <span className="text-2xs text-[#8E8E99] font-sans block">Firma inicial</span>
+                  <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] block">Anticipo Cobrado</span>
+                    <span className="text-base font-bold text-[#F4F0EA]">{formatMoney(activeContract.signingBonus)}</span>
                   </div>
 
-                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-sans block">Músculo Marketing</span>
-                    <span className="text-lg font-bold font-sans tabular-nums text-[#F4F4F6]">{activeContract.marketingPower}%</span>
-                    <span className="text-2xs text-[#8E8E99] font-sans block">Potencia promocional</span>
+                  <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] block">Músculo Marketing</span>
+                    <span className="text-base font-bold text-[#F4F0EA]">{activeContract.marketingPower}%</span>
                   </div>
 
-                  <div className="bg-[#09090B] border border-[#242429] p-3.5 rounded-[4px] space-y-1">
-                    <span className="text-2xs uppercase tracking-wider text-[#52525B] font-sans block">Control Creativo</span>
-                    <span className="text-lg font-bold font-sans tabular-nums text-[#F4F4F6]">{activeContract.creativeControl}%</span>
-                    <span className="text-2xs text-[#8E8E99] font-sans block">Libertad de dirección</span>
+                  <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+                    <span className="text-2xs uppercase tracking-wider text-[#52525B] block">Control Creativo</span>
+                    <span className="text-base font-bold text-[#F4F0EA]">{activeContract.creativeControl}%</span>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
-                <div className="bg-[#09090B] border border-[#242429] p-5 rounded-[4px] space-y-2">
-                  <h3 className="text-base font-bold text-[#F4F4F6]">
+              <div className="bg-[#0B0B0C] border border-[#26262B] p-4 rounded-[4px] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h3 className="text-sm font-bold text-[#F4F0EA]">
                     Artista 100% Independiente
                   </h3>
-                  <p className="text-xs text-[#8E8E99] leading-relaxed">
-                    Retenés el <strong className="text-[#00E599]">100% de tus regalías de reproducción</strong> y la titularidad de tus másters sin adelantos que amortizar (recoupment). Cada sesión de grabación, mezcla, masterización y campaña sale de tu propio bolsillo.
+                  <p className="text-xs text-[#8E8E99]">
+                    Retenés el 100% de tus regalías y másters, financiando cada lanzamiento con fondos propios.
                   </p>
                 </div>
-
-                <div className="p-4 bg-[#09090B] border border-[#242429] rounded-[4px] text-xs text-[#8E8E99] space-y-1">
-                  <span className="font-bold text-[#F4F4F6] block">Opciones en la Industria:</span>
-                  <p>
-                    Podés elegir una distribuidora digital abierta desde la pestaña <strong className="text-[#FF4F00]">Distribución & Sellos</strong> en la barra superior o esperar a recibir ofertas exclusivas mediante el <strong className="text-[#FF4F00]">Radar de A&R</strong> al superar los 100.000 oyentes mensuales.
-                  </p>
-                </div>
+                <button
+                  onClick={() => handleTabSwitch('distribution_labels')}
+                  className="px-3.5 py-2 rounded-[4px] bg-[#1C1C21] hover:bg-[#26262B] border border-[#26262B] text-xs font-sans font-bold text-[#F4F0EA] transition-colors cursor-pointer shrink-0"
+                >
+                  Explorar Distribuidoras & Sellos →
+                </button>
               </div>
             )}
           </div>
 
           {/* Card 2: Representación Oficial (Manager) */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-4">
+          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
               <div className="flex items-center gap-2">
-                <UserCheck className="w-5 h-5 text-[#FF4F00]" />
-                <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
+                <UserCheck className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+                <h2 className="font-display text-base font-bold text-[#F4F0EA] tracking-tight">
                   Representación Oficial (Manager)
                 </h2>
               </div>
               {currentManager && (
-                <span className="text-xs font-sans font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#FF4F00]/10 border border-[#FF4F00]/30 text-[#FF4F00]">
+                <span className="text-2xs font-sans font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-[#FF2A4B]/10 border border-[#FF2A4B]/30 text-[#FF2A4B]">
                   {tierNames[currentManager.tier]}
                 </span>
               )}
             </div>
 
             {currentManager ? (
-              <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1.5">
+              <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-[#F4F4F6]">{currentManager.name}</h3>
-                    <span className="text-2xs font-sans uppercase font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
+                    <h3 className="font-display text-base font-bold text-[#F4F0EA]">{currentManager.name}</h3>
+                    <span className="text-2xs font-sans uppercase font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#10B981] tabular-nums">
                       {currentManager.commissionFeePct}% Comisión
                     </span>
                   </div>
-                  <p className="text-xs text-[#8E8E99] max-w-xl leading-relaxed">
+                  <p className="text-xs text-[#8E8E99] max-w-xl">
                     {currentManager.bio}
                   </p>
-                  <p className="text-xs text-[#8E8E99] pt-1">
-                    <strong className="text-[#F4F4F6]">Especialidades:</strong> {currentManager.specialties.join(' • ')}
+                  <p className="text-xs text-[#8E8E99] font-sans tabular-nums pt-0.5">
+                    Negociación: <strong className="text-[#F4F0EA]">{currentManager.negotiationSkill}%</strong> • Contactos: <strong className="text-[#F4F0EA]">{currentManager.industryNetwork}%</strong> • {currentManager.specialties.join(' • ')}
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 shrink-0">
-                  <div className="text-left md:text-right text-xs font-sans">
-                    <span className="font-bold text-[#00E599] block">{currentManager.commissionFeePct}% Comisión</span>
-                    <span className="text-[#8E8E99]">Negociación: {currentManager.negotiationSkill}% • Contactos: {currentManager.industryNetwork}%</span>
-                  </div>
-                  <button
-                    onClick={handleFireManager}
-                    className="text-xs font-sans text-[#EF4444] hover:text-white font-medium px-3.5 py-2 rounded-[4px] border border-[#EF4444]/30 hover:bg-[#EF4444]/20 transition-colors cursor-pointer flex items-center gap-1.5"
-                  >
-                    <UserMinus className="w-3.5 h-3.5" />
-                    Finalizar Vínculo
-                  </button>
-                </div>
+                <button
+                  onClick={handleFireManager}
+                  className="text-xs font-sans text-[#EF4444] hover:text-[#F4F0EA] font-semibold px-3 py-2 rounded-[4px] border border-[#EF4444]/30 hover:bg-[#EF4444]/20 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                >
+                  <UserMinus className="w-3.5 h-3.5" strokeWidth={1.75} />
+                  <span>Finalizar Vínculo</span>
+                </button>
               </div>
             ) : (
-              <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] text-xs text-[#8E8E99] space-y-1">
-                <p className="font-bold text-[#F4F4F6] text-sm">Sin Representación Oficial</p>
-                <p>
-                  Actualmente gestionás tus propios contactos y fechas sin pagar comisiones de management. Podés contratar un representante calificado desde la pestaña <strong className="text-[#FF4F00]">Mercado de Managers</strong> en la barra superior.
-                </p>
+              <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-0.5">
+                  <p className="font-bold text-[#F4F0EA] text-sm">Sin Representación Oficial</p>
+                  <p className="text-xs text-[#8E8E99]">
+                    Gestionás tus propios contratos y fechas sin pagar comisiones de management.
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleTabSwitch('managers')}
+                  className="px-3.5 py-2 rounded-[4px] bg-[#1C1C21] hover:bg-[#26262B] border border-[#26262B] text-xs font-sans font-bold text-[#F4F0EA] transition-colors cursor-pointer shrink-0"
+                >
+                  Contratar Manager →
+                </button>
               </div>
             )}
+          </div>
+
+          {/* Card 3: Sello Propio (Integrado directamente en Situación Actual) */}
+          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
+              <div className="flex items-center gap-2">
+                <Crown className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
+                <div>
+                  <h2 className="font-display text-base font-bold text-[#F4F0EA] tracking-tight">
+                    Sello Discográfico Propio
+                  </h2>
+                  <p className="text-xs text-[#8E8E99]">
+                    95% de regalías netas y 100% de propiedad de tus másters sin adelantos a recuperar.
+                  </p>
+                </div>
+              </div>
+              {isCurrentArtistOwned && (
+                <span className="text-2xs font-sans font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[4px] bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981]">
+                  Activo
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-sans tabular-nums">
+              <div className="p-2.5 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] flex items-center justify-between">
+                <span className="text-2xs uppercase text-[#52525B]">Capital ($25k):</span>
+                <span className={`font-bold flex items-center gap-1 ${player.stats.funds >= 25000 ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>
+                  {player.stats.funds >= 25000 ? <Check className="w-3 h-3" strokeWidth={1.75} /> : <Lock className="w-3 h-3" strokeWidth={1.75} />}
+                  {formatMoney(player.stats.funds)}
+                </span>
+              </div>
+              <div className="p-2.5 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] flex items-center justify-between">
+                <span className="text-2xs uppercase text-[#52525B]">Popularidad (40+):</span>
+                <span className={`font-bold flex items-center gap-1 ${player.stats.popularity >= 40 ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>
+                  {player.stats.popularity >= 40 ? <Check className="w-3 h-3" strokeWidth={1.75} /> : <Lock className="w-3 h-3" strokeWidth={1.75} />}
+                  {player.stats.popularity}/100
+                </span>
+              </div>
+              <div className="p-2.5 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] flex items-center justify-between">
+                <span className="text-2xs uppercase text-[#52525B]">Reputación (40+):</span>
+                <span className={`font-bold flex items-center gap-1 ${player.stats.reputation >= 40 ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>
+                  {player.stats.reputation >= 40 ? <Check className="w-3 h-3" strokeWidth={1.75} /> : <Lock className="w-3 h-3" strokeWidth={1.75} />}
+                  {player.stats.reputation}/100
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              <input
+                type="text"
+                value={newLabelName}
+                onChange={(e) => setNewLabelName(e.target.value)}
+                placeholder="Nombre de tu sello (ej: Mansión Records)..."
+                className="flex-1 bg-[#0B0B0C] border border-[#26262B] text-[#F4F0EA] placeholder-[#52525B] font-sans text-xs px-3 py-2 rounded-[4px] focus:outline-none focus:border-[#FF2A4B]"
+              />
+              <button
+                onClick={handleCreateOwnLabel}
+                disabled={player.stats.funds < 25000 || player.stats.popularity < 40 || player.stats.reputation < 40}
+                className={`px-4 py-2 rounded-[4px] text-xs font-sans font-bold transition-all shrink-0 ${
+                  player.stats.funds >= 25000 && player.stats.popularity >= 40 && player.stats.reputation >= 40
+                    ? 'bg-[#FF2A4B] hover:bg-[#E01E3D] text-[#F4F0EA] active:translate-y-[1px] cursor-pointer'
+                    : 'bg-[#1C1C21] text-[#52525B] border border-[#26262B] cursor-not-allowed'
+                }`}
+              >
+                Constituir Sello • $25,000
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* TAB 2: DISTRIBUCIÓN & SELLOS (LA ESCALERA COMPLETA) */}
+      {/* TAB 2: DISTRIBUCIÓN & SELLOS (+ RESUMEN COMPACTO DE RADAR A&R) */}
       {activeTab === 'distribution_labels' && (
-        <div className="space-y-6">
-          {/* Market Valuation Summary Card */}
-          {(() => {
-            const valuation = IndustryEngine.calculateArtistValuation(player, world);
-            return (
-              <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <TrendingUp className="w-5 h-5 text-[#00E599]" />
-                    <div>
-                      <h2 className="text-base font-bold text-[#F4F4F6] tracking-tight">
-                        Valoración Comercial & Poder de Fichaje
-                      </h2>
-                      <p className="text-xs text-[#8E8E99]">
-                        Auditoría de catálogo, facturación anual de streaming y venta de tickets que usan los departamentos de A&R para tasar tu adelanto recuperable.
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-sans font-bold px-2.5 py-1 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599] self-start sm:self-auto">
-                    Facturación Anual Proyectada: {formatMoney(valuation.projectedGrossAnnual)}
+        <div className="space-y-5">
+          {/* Compact A&R Radar + Filter Bar */}
+          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+            {/* Compact A&R Radar Summary */}
+            <div className="bg-[#0B0B0C] p-3.5 rounded-[4px] border border-[#26262B] space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-sans">
+                <div className="flex items-center gap-2">
+                  <Radio className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+                  <span className="font-bold text-[#F4F0EA]">
+                    Radar de A&R (Majors: 100k oyentes):
+                  </span>
+                  <span className="text-[#8E8E99] tabular-nums">
+                    {scoutRadar.monthlyListeners.toLocaleString()} / {scoutRadar.thresholdListeners.toLocaleString()} ({scoutRadar.progressPercentage}%)
                   </span>
                 </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-sans tabular-nums">
-                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
-                    <span className="text-2xs uppercase text-[#52525B] block">Run-Rate Streaming:</span>
-                    <span className="font-bold text-[#F4F4F6] text-sm">{formatMoney(valuation.projectedStreamingGross)}/año</span>
-                    <span className="text-2xs text-[#8E8E99] block">~{formatCompactNumber(valuation.projectedAnnualStreams)} streams/año</span>
-                  </div>
-                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
-                    <span className="text-2xs uppercase text-[#52525B] block">Merchandise Anual:</span>
-                    <span className="font-bold text-[#F4F4F6] text-sm">{formatMoney(valuation.projectedMerchGross)}/año</span>
-                    <span className="text-2xs text-[#8E8E99] block">{formatCompactNumber(player.stats.fansCount || 0)} fans fidelizados</span>
-                  </div>
-                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
-                    <span className="text-2xs uppercase text-[#52525B] block">Valor de Catálogo:</span>
-                    <span className="font-bold text-[#F4F4F6] text-sm">{formatMoney(valuation.catalogValuation)}</span>
-                    <span className="text-2xs text-[#8E8E99] block">{valuation.catalogSongCount} temas • {valuation.catalogHitCount} hits</span>
-                  </div>
-                  <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429]">
-                    <span className="text-2xs uppercase text-[#52525B] block">Multiplicador de Firma:</span>
-                    <span className="font-bold text-[#FF4F00] text-sm">
-                      {currentManager ? `Manager: +${Math.round((currentManager.negotiationSkill / 100) * 25)}%` : 'Base • Sin Manager'}
-                    </span>
-                    <span className="text-2xs text-[#8E8E99] block">
-                      {player.isProdigy ? 'Prodigio • +20%' : 'Estándar de Industria'}
-                    </span>
-                  </div>
-                </div>
+                <span className="text-2xs font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#FF2A4B]/10 border border-[#FF2A4B]/30 text-[#FF2A4B] w-fit">
+                  {scoutRadar.scoutInterestLevel === 'bidding_war_target'
+                    ? 'Guerra de Fichajes'
+                    : scoutRadar.scoutInterestLevel === 'high_priority'
+                    ? 'Interés Alto'
+                    : scoutRadar.scoutInterestLevel === 'emerging_scouting'
+                    ? 'En Seguimiento'
+                    : 'En Desarrollo'}
+                </span>
               </div>
-            );
-          })()}
 
-          {/* Filters Bar */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
-            <div>
-              <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
-                Escalera de Distribución & Sellos Discográficos
-              </h2>
-              <p className="text-xs text-[#8E8E99] mt-0.5">
-                Elegí el modelo de distribución adecuado según tu tracción de oyentes mensuales, objetivos de regalías y respaldo promocional.
-              </p>
+              <div className="w-full bg-[#1C1C21] h-1.5 rounded-[2px] overflow-hidden">
+                <div
+                  className="bg-[#FF2A4B] h-full rounded-[2px] transition-all duration-300"
+                  role="progressbar"
+                  aria-label="Progreso hacia el umbral de scouting"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.round(Number(scoutRadar.progressPercentage))}
+                  style={{ width: `${scoutRadar.progressPercentage}%` }}
+                />
+              </div>
             </div>
 
             {/* Filter Pills */}
-            <div className="flex flex-wrap gap-2 pt-1 font-sans">
-              {[
-                { id: 'all', label: 'Todas' },
-                { id: 'distributor', label: 'Distribuidoras' },
-                { id: 'local', label: 'Sellos Locales' },
-                { id: 'indie', label: 'Indies' },
-                { id: 'major', label: 'Majors' }
-              ].map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => {
-                    playSound('click');
-                    setDistFilter(f.id as DistributionFilter);
-                  }}
-                  className={`px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer ${
-                    distFilter === f.id
-                      ? 'bg-[#F4F4F6] text-[#09090B]'
-                      : 'bg-[#09090B] text-[#8E8E99] border border-[#242429] hover:border-[#3F3F46] hover:text-[#F4F4F6]'
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap gap-1.5 font-sans">
+                {[
+                  { id: 'all', label: 'Todas' },
+                  { id: 'distributor', label: 'Distribuidoras' },
+                  { id: 'local', label: 'Sellos Locales' },
+                  { id: 'indie', label: 'Indies' },
+                  { id: 'major', label: 'Majors' }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => {
+                      playSound('click');
+                      setDistFilter(f.id as DistributionFilter);
+                    }}
+                    className={`px-3 py-1.5 rounded-[4px] text-xs font-bold transition-colors cursor-pointer ${
+                      distFilter === f.id
+                        ? 'bg-[#F4F0EA] text-[#0B0B0C]'
+                        : 'bg-[#0B0B0C] text-[#8E8E99] border border-[#26262B] hover:border-[#3F3F46] hover:text-[#F4F0EA]'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
+                Tus oyentes: <strong className="text-[#F4F0EA]">{player.stats.monthlyListeners.toLocaleString()}</strong>/mes
+              </span>
             </div>
           </div>
 
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredDistOptions.map((opt) => {
-                const isUnlocked = player.stats.monthlyListeners >= opt.minListeners;
-                const isCurrent = player.labelId === opt.id;
-                const hasListeners = player.stats.monthlyListeners >= opt.minListeners;
+              const isUnlocked = player.stats.monthlyListeners >= opt.minListeners;
+              const isCurrent = player.labelId === opt.id;
+              const hasListeners = player.stats.monthlyListeners >= opt.minListeners;
 
-                // Calcular oferta dinámica personalizada según las métricas y facturación del artista
-                const targetLabel = world.labels[opt.id] || {
-                  id: opt.id,
-                  name: opt.name,
-                  type: opt.category === 'distributor' ? 'distributor' : (opt.category === 'local' ? 'local_indie' : opt.category === 'indie' ? 'indie' : 'major'),
-                  country: opt.category === 'distributor' ? 'Global' : 'Argentina',
-                  prestige: opt.marketingPower,
-                  budget: opt.advance > 0 ? opt.advance * 4 : 50000,
-                  marketingPower: opt.marketingPower,
-                  creativeFreedomAllowed: opt.creativeControl,
-                  rosterArtistIds: [],
-                  favoredGenreIds: [player.mainGenreId],
-                  annualFee: opt.annualFee,
-                  commissionPct: 100 - opt.royaltyPct,
-                  advancePayment: opt.advance,
-                  minMonthlyListeners: opt.minListeners,
-                  scoutingCriteria: opt.description
-                };
-                const dynamicOffer = IndustryEngine.generateDynamicLabelOffer(player, targetLabel, world.currentYear, world);
-                const displayAdvance = dynamicOffer.signingBonus;
+              const targetLabel = world.labels[opt.id] || {
+                id: opt.id,
+                name: opt.name,
+                type: opt.category === 'distributor' ? 'distributor' : (opt.category === 'local' ? 'local_indie' : opt.category === 'indie' ? 'indie' : 'major'),
+                country: opt.category === 'distributor' ? 'Global' : 'Argentina',
+                prestige: opt.marketingPower,
+                budget: opt.advance > 0 ? opt.advance * 4 : 50000,
+                marketingPower: opt.marketingPower,
+                creativeFreedomAllowed: opt.creativeControl,
+                rosterArtistIds: [],
+                favoredGenreIds: [player.mainGenreId],
+                annualFee: opt.annualFee,
+                commissionPct: 100 - opt.royaltyPct,
+                advancePayment: opt.advance,
+                minMonthlyListeners: opt.minListeners,
+                scoutingCriteria: opt.description
+              };
+              const dynamicOffer = IndustryEngine.generateDynamicLabelOffer(player, targetLabel, world.currentYear, world);
+              const displayAdvance = dynamicOffer.signingBonus;
 
-                return (
-                  <div
-                    key={opt.id}
-                    className={`bg-[#111114] rounded-[6px] p-5 border transition-all space-y-4 flex flex-col justify-between ${
-                      isCurrent
-                        ? 'border-[#00E599]'
-                        : isUnlocked
-                        ? 'border-[#242429] hover:border-[#3F3F46]'
-                        : 'border-[#242429] opacity-75'
-                    }`}
-                  >
-                    <div className="space-y-3.5">
-                      {/* Header */}
-                      <div className="flex items-start justify-between gap-2.5">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#F4F4F6] flex items-center justify-center shrink-0"
-                          >
-                            {renderOptionIcon(opt.iconType)}
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-sm text-[#F4F4F6] leading-snug">
-                              {opt.name}
-                            </h3>
-                            <span className="text-2xs uppercase font-sans font-bold text-[#8E8E99] block">
-                              {opt.typeLabel}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Requirement badge */}
-                        {hasListeners ? (
-                          <span className="flex items-center gap-1 text-xs font-sans font-bold text-[#00E599] bg-[#00E599]/10 px-2 py-0.5 rounded-[4px] border border-[#00E599]/30 shrink-0">
-                            <Check className="w-3 h-3 text-[#00E599]" />
-                            {opt.minListeners === 0 ? 'Abierto' : `${formatCompactNumber(opt.minListeners)}`}
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1 text-xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded-[4px] border border-[#F59E0B]/30 shrink-0">
-                            <Lock className="w-3 h-3 text-[#F59E0B]" />
-                            {formatCompactNumber(opt.minListeners)}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-xs text-[#8E8E99] leading-relaxed min-h-[36px]">
-                        {opt.description}
-                      </p>
-
-                      {/* Key Terms Grid */}
-                      <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] grid grid-cols-2 gap-2 text-xs font-sans tabular-nums">
-                        <div>
-                          <span className="text-2xs uppercase text-[#52525B] block">Regalías Artista:</span>
-                          <span className="font-bold text-[#00E599]">{dynamicOffer.royaltyPercentage}%</span>
+              return (
+                <div
+                  key={opt.id}
+                  className={`bg-[#141417] rounded-[6px] p-4 border transition-all space-y-3.5 flex flex-col justify-between ${
+                    isCurrent
+                      ? 'border-[#10B981]'
+                      : isUnlocked
+                      ? 'border-[#26262B] hover:border-[#3F3F46]'
+                      : 'border-[#26262B] opacity-75'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#F4F0EA] flex items-center justify-center shrink-0">
+                          {renderOptionIcon(opt.iconType)}
                         </div>
                         <div>
-                          <span className="text-2xs uppercase text-[#52525B] block">Anticipo Dinámico:</span>
-                          <span className={`font-bold ${displayAdvance > 0 ? 'text-[#00E599]' : 'text-[#F4F4F6]'}`}>
-                            {displayAdvance > 0 ? formatMoney(displayAdvance) : '$0'}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-2xs uppercase text-[#52525B] block">Presupuesto Mkt:</span>
-                          <span className="font-bold text-[#F4F4F6]">
-                            {dynamicOffer.marketingBudgetPerRelease && dynamicOffer.marketingBudgetPerRelease > 0 ? `${formatMoney(dynamicOffer.marketingBudgetPerRelease)}/lanz.` : (opt.annualFee > 0 ? `$${opt.annualFee}/año` : 'Sin cuota')}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-2xs uppercase text-[#52525B] block">Control Creativo:</span>
-                          <span className="font-bold text-[#F4F4F6]">{dynamicOffer.creativeControl}%</span>
-                        </div>
-                        <div>
-                          <span className="text-2xs uppercase text-[#52525B] block">Marketing Power:</span>
-                          <span className="font-bold text-[#F4F4F6]">{opt.marketingPower}%</span>
-                        </div>
-                        <div>
-                          <span className="text-2xs uppercase text-[#52525B] block">Compromiso:</span>
-                          <span className="font-bold text-[#F4F4F6]">
-                            {dynamicOffer.albumsRequired > 0 ? `${dynamicOffer.albumsRequired} Álbumes` : 'Sin entregas'}
+                          <h3 className="font-display font-bold text-sm text-[#F4F0EA] leading-snug">
+                            {opt.name}
+                          </h3>
+                          <span className="text-2xs uppercase font-sans font-bold text-[#8E8E99] block">
+                            {opt.typeLabel}
                           </span>
                         </div>
                       </div>
+
+                      {hasListeners ? (
+                        <span className="flex items-center gap-1 text-2xs font-sans font-bold text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded-[4px] border border-[#10B981]/30 shrink-0 tabular-nums">
+                          <Check className="w-3 h-3 text-[#10B981]" strokeWidth={1.75} />
+                          {opt.minListeners === 0 ? 'Abierto' : `${formatCompactNumber(opt.minListeners)}`}
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-2xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded-[4px] border border-[#F59E0B]/30 shrink-0 tabular-nums">
+                          <Lock className="w-3 h-3 text-[#F59E0B]" strokeWidth={1.75} />
+                          {formatCompactNumber(opt.minListeners)}
+                        </span>
+                      )}
                     </div>
 
-                  {/* Actions */}
+                    <p className="text-xs text-[#8E8E99] leading-relaxed line-clamp-2">
+                      {opt.description}
+                    </p>
+
+                    <div className="bg-[#0B0B0C] p-2.5 rounded-[4px] border border-[#26262B] grid grid-cols-2 gap-2 text-xs font-sans tabular-nums">
+                      <div>
+                        <span className="text-2xs uppercase text-[#52525B] block">Regalías:</span>
+                        <span className="font-bold text-[#10B981]">{dynamicOffer.royaltyPercentage}%</span>
+                      </div>
+                      <div>
+                        <span className="text-2xs uppercase text-[#52525B] block">Anticipo:</span>
+                        <span className={`font-bold ${displayAdvance > 0 ? 'text-[#10B981]' : 'text-[#F4F0EA]'}`}>
+                          {displayAdvance > 0 ? formatMoney(displayAdvance) : '$0'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-2xs uppercase text-[#52525B] block">Marketing:</span>
+                        <span className="font-bold text-[#F4F0EA]">
+                          {dynamicOffer.marketingBudgetPerRelease && dynamicOffer.marketingBudgetPerRelease > 0
+                            ? `${formatMoney(dynamicOffer.marketingBudgetPerRelease)}/lanz.`
+                            : opt.annualFee > 0
+                            ? `$${opt.annualFee}/año`
+                            : `${opt.marketingPower}%`}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-2xs uppercase text-[#52525B] block">Compromiso:</span>
+                        <span className="font-bold text-[#F4F0EA]">
+                          {dynamicOffer.albumsRequired > 0 ? `${dynamicOffer.albumsRequired} Álbumes` : 'Libre'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     {isCurrent ? (
-                      <div className="w-full text-center py-2.5 bg-[#00E599]/10 text-[#00E599] font-sans font-bold text-xs rounded-[4px] border border-[#00E599]/30">
+                      <div className="w-full text-center py-2 bg-[#10B981]/10 text-[#10B981] font-sans font-bold text-xs rounded-[4px] border border-[#10B981]/30">
                         Contrato Actual
                       </div>
                     ) : isUnlocked ? (
                       <button
                         onClick={() => handleSignOption(opt)}
-                        className="w-full bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
+                        className="w-full bg-[#FF2A4B] hover:bg-[#E01E3D] text-[#F4F0EA] font-sans font-bold text-xs py-2 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
                       >
                         {opt.category === 'distributor' ? 'Distribuir Aquí' : 'Firmar Contrato'}
                       </button>
                     ) : (
                       <button
                         disabled
-                        className="w-full bg-[#09090B] text-[#52525B] font-sans font-medium text-xs py-2.5 rounded-[4px] border border-[#242429] cursor-not-allowed flex items-center justify-center gap-1.5"
+                        className="w-full bg-[#0B0B0C] text-[#52525B] font-sans font-medium text-xs py-2 rounded-[4px] border border-[#26262B] cursor-not-allowed flex items-center justify-center gap-1.5 tabular-nums"
                       >
-                        <Lock className="w-3.5 h-3.5" />
-                        Bloqueado • Faltan {(opt.minListeners - player.stats.monthlyListeners).toLocaleString()} oyentes
+                        <Lock className="w-3.5 h-3.5" strokeWidth={1.75} />
+                        <span>Faltan {(opt.minListeners - player.stats.monthlyListeners).toLocaleString()} oyentes</span>
                       </button>
                     )}
                   </div>
@@ -929,141 +929,24 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
         </div>
       )}
 
-      {/* TAB 3: RADAR DE A&R (CAZATALENTOS) */}
-      {activeTab === 'radar' && (
-        <div className="space-y-6">
-          {/* Scout Radar Progress */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-4">
-              <div className="flex items-center gap-2">
-                <Radio className="w-5 h-5 text-[#FF4F00]" />
-                <div>
-                  <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
-                    Radar de Cazatalentos & Scouting A&R
-                  </h2>
-                  <p className="text-xs text-[#8E8E99]">
-                    Monitoreo en tiempo real del interés de directivos discográficos nacionales e internacionales.
-                  </p>
-                </div>
-              </div>
-
-              <span className="text-xs font-sans font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-[#FF4F00]/10 border border-[#FF4F00]/30 text-[#FF4F00]">
-                {scoutRadar.scoutInterestLevel === 'bidding_war_target'
-                  ? '¡Guerra de Fichajes!'
-                  : scoutRadar.scoutInterestLevel === 'high_priority'
-                  ? 'Interés Alto'
-                  : scoutRadar.scoutInterestLevel === 'emerging_scouting'
-                  ? 'En Seguimiento'
-                  : 'Sin Interés Comercial'}
-              </span>
-            </div>
-
-            {/* Threshold Progress Box */}
-            <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-sans tabular-nums">
-                <span className="font-bold text-[#F4F4F6]">
-                  Umbral de Fichaje Profesional • Mínimo 100.000 Oyentes Mensuales:
-                </span>
-                <span className="font-bold text-[#FF4F00]">
-                  {scoutRadar.monthlyListeners.toLocaleString()} / {scoutRadar.thresholdListeners.toLocaleString()} • {scoutRadar.progressPercentage}%
-                </span>
-              </div>
-
-              <div className="w-full bg-[#18181C] h-2.5 rounded-[2px] overflow-hidden">
-                <div
-                  className="bg-[#FF4F00] h-full rounded-[2px] transition-all duration-300"
-                  role="progressbar"
-                  aria-label="Progreso hacia el umbral de scouting"
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={Math.round(Number(scoutRadar.progressPercentage))}
-                  style={{ width: `${scoutRadar.progressPercentage}%` }}
-                />
-              </div>
-
-              <p className="text-xs text-[#8E8E99] leading-relaxed">
-                {scoutRadar.statusMessage}
-              </p>
-            </div>
-
-            {/* Rules explanation */}
-            <div className="p-4 bg-[#09090B] border border-[#242429] rounded-[4px] text-xs text-[#8E8E99] space-y-1.5">
-              <p className="font-bold text-[#F4F4F6] flex items-center gap-1.5">
-                <AlertCircle className="w-4 h-4 text-[#FF4F00]" /> Dinámica del Mercado de Fichajes
-              </p>
-              <ul className="list-disc list-inside space-y-1 text-xs">
-                <li><strong className="text-[#F4F4F6]">Monitoreo Automático:</strong> Los directivos de A&R evalúan tu crecimiento orgánico y repercusión en charts.</li>
-                <li><strong className="text-[#F4F4F6]">Eventos Emergentes:</strong> Al alcanzar el umbral de oyentes, se dispararán eventos narrativos competitivos con ofertas millonarias contrastadas.</li>
-                <li><strong className="text-[#F4F4F6]">Autonomía:</strong> Siempre podés rechazar ofertas para mantener tu sello independiente o distribución abierta.</li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Active Scouting Labels List */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
-            <h3 className="text-base font-bold text-[#F4F4F6] border-b border-[#242429] pb-3">
-              Sellos Discográficos en Seguimiento • {scoutRadar.scoutingLabels.length}
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {scoutRadar.scoutingLabels.map(label => (
-                <div key={label.id} className="bg-[#09090B] p-4 rounded-[4px] border border-[#242429] space-y-2 flex flex-col justify-between hover:border-[#3F3F46] transition-all">
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-bold text-sm text-[#F4F4F6]">{label.name}</h4>
-                      <span className="text-2xs uppercase font-sans font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
-                        {label.type}
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#8E8E99] mt-1 font-sans">
-                      {label.country} • Prestigio: {label.prestige}% • Músculo Mkt: {label.marketingPower}%
-                    </p>
-                    <p className="text-xs text-[#8E8E99] mt-2 leading-relaxed">
-                      {label.scoutingCriteria || 'Busca talentos con fuerte identidad sonora e impacto en la audiencia.'}
-                    </p>
-                  </div>
-
-                  <div className="pt-2 border-t border-[#242429] flex items-center justify-between text-xs text-[#8E8E99] font-sans">
-                    <span>Libertad Creativa: {label.creativeFreedomAllowed}%</span>
-                    <span className="font-bold text-[#F4F4F6]">
-                      {label.type === 'major' ? 'Requiere 100k+ oyentes' : label.type === 'indie' ? 'Requiere 25k+ oyentes' : 'Enfoque Underground'}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: MERCADO DE MANAGERS */}
+      {/* TAB 3: MERCADO DE MANAGERS */}
       {activeTab === 'managers' && (
-        <div className="space-y-6">
-          {/* Tier Filter Pills */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
-            <div>
-              <h2 className="text-lg font-bold text-[#F4F4F6] tracking-tight">
-                Mercado de Managers & Representación
-              </h2>
-              <p className="text-xs text-[#8E8E99] mt-0.5">
-                Contratá al representante ideal según tu etapa de carrera. Cada nivel exige requisitos previos de audiencia, reputación y capital.
-              </p>
-            </div>
-
-            {/* Filter buttons */}
-            <div className="flex flex-wrap gap-2 pt-1 font-sans">
+        <div className="space-y-5">
+          {/* Compact Tier Filter Bar */}
+          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-1.5 font-sans">
               <button
                 onClick={() => {
                   playSound('click');
                   setManagerTierFilter('all');
                 }}
-                className={`px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-[4px] text-xs font-bold transition-colors cursor-pointer ${
                   managerTierFilter === 'all'
-                    ? 'bg-[#F4F4F6] text-[#09090B]'
-                    : 'bg-[#09090B] text-[#8E8E99] border border-[#242429] hover:border-[#3F3F46] hover:text-[#F4F4F6]'
+                    ? 'bg-[#F4F0EA] text-[#0B0B0C]'
+                    : 'bg-[#0B0B0C] text-[#8E8E99] border border-[#26262B] hover:border-[#3F3F46] hover:text-[#F4F0EA]'
                 }`}
               >
-                Todos los Tiers
+                Todos
               </button>
               {(['underground', 'regional', 'national', 'elite_global'] as ManagerTier[]).map(t => (
                 <button
@@ -1072,10 +955,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
                     playSound('click');
                     setManagerTierFilter(t);
                   }}
-                  className={`px-3.5 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-[4px] text-xs font-bold transition-colors cursor-pointer ${
                     managerTierFilter === t
-                      ? 'bg-[#F4F4F6] text-[#09090B]'
-                      : 'bg-[#09090B] text-[#8E8E99] border border-[#242429] hover:border-[#3F3F46] hover:text-[#F4F4F6]'
+                      ? 'bg-[#F4F0EA] text-[#0B0B0C]'
+                      : 'bg-[#0B0B0C] text-[#8E8E99] border border-[#26262B] hover:border-[#3F3F46] hover:text-[#F4F0EA]'
                   }`}
                 >
                   {tierNames[t]}
@@ -1096,185 +979,101 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
               return (
                 <div
                   key={m.id}
-                  className={`bg-[#111114] rounded-[6px] p-5 border transition-all space-y-4 flex flex-col justify-between ${
+                  className={`bg-[#141417] rounded-[6px] p-4 border transition-all space-y-3.5 flex flex-col justify-between ${
                     isHired
-                      ? 'border-[#00E599]'
+                      ? 'border-[#10B981]'
                       : check.canHire
-                      ? 'border-[#242429] hover:border-[#3F3F46]'
-                      : 'border-[#242429] opacity-75'
+                      ? 'border-[#26262B] hover:border-[#3F3F46]'
+                      : 'border-[#26262B] opacity-75'
                   }`}
                 >
-                  <div className="space-y-3">
-                    {/* Header */}
+                  <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#F4F4F6] font-sans font-bold text-sm flex items-center justify-center">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#F4F0EA] font-sans font-bold text-sm flex items-center justify-center">
                           {m.name.charAt(0)}
                         </div>
                         <div>
-                          <h3 className="font-bold text-sm text-[#F4F4F6]">{m.name}</h3>
+                          <h3 className="font-display font-bold text-sm text-[#F4F0EA]">{m.name}</h3>
                           <span className="text-2xs uppercase font-sans font-bold text-[#8E8E99]">
                             {tierNames[m.tier]}
                           </span>
                         </div>
                       </div>
 
-                      <span className="text-xs font-sans font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#F4F4F6]">
+                      <span className="text-xs font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#F4F0EA] tabular-nums">
                         {m.commissionFeePct}% Comisión
                       </span>
                     </div>
 
-                    {/* Bio */}
-                    <p className="text-xs text-[#8E8E99] leading-relaxed">
+                    <p className="text-xs text-[#8E8E99] leading-relaxed line-clamp-2">
                       {m.bio}
                     </p>
 
-                    {/* Stats & Network */}
-                    <div className="grid grid-cols-3 gap-2 py-2 border-y border-[#242429] text-center text-xs font-sans tabular-nums">
+                    <div className="grid grid-cols-3 gap-2 py-2 border-y border-[#26262B] text-center text-xs font-sans tabular-nums">
                       <div>
                         <span className="text-2xs uppercase text-[#52525B] block">Reputación</span>
-                        <span className="font-bold text-[#F4F4F6]">{m.reputation}%</span>
+                        <span className="font-bold text-[#F4F0EA]">{m.reputation}%</span>
                       </div>
                       <div>
                         <span className="text-2xs uppercase text-[#52525B] block">Negociación</span>
-                        <span className="font-bold text-[#F4F4F6]">{m.negotiationSkill}%</span>
+                        <span className="font-bold text-[#F4F0EA]">{m.negotiationSkill}%</span>
                       </div>
                       <div>
                         <span className="text-2xs uppercase text-[#52525B] block">Contactos</span>
-                        <span className="font-bold text-[#F4F4F6]">{m.industryNetwork}%</span>
+                        <span className="font-bold text-[#F4F0EA]">{m.industryNetwork}%</span>
                       </div>
                     </div>
 
-                    {/* Specialties */}
-                    <div className="text-xs text-[#8E8E99]">
-                      <span className="font-bold text-[#F4F4F6]">Especialidades: </span>
-                      {m.specialties.join(' • ')}
-                    </div>
-
-                    {/* Requirements Checklist */}
-                    <div className="bg-[#09090B] p-3 rounded-[4px] border border-[#242429] space-y-1.5 text-xs font-sans tabular-nums">
-                      <span className="text-2xs uppercase text-[#52525B] font-bold block">Requisitos Previos:</span>
-
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-[#8E8E99]">Oyentes Mensuales:</span>
-                        <span className={`font-bold flex items-center gap-1 ${hasListeners ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
-                          {hasListeners ? <Check className="w-3 h-3 text-[#00E599]" /> : <Lock className="w-3 h-3 text-[#F59E0B]" />}
-                          {m.requirements.minMonthlyListeners.toLocaleString()}
+                    <div className="bg-[#0B0B0C] p-2.5 rounded-[4px] border border-[#26262B] grid grid-cols-3 gap-2 text-xs font-sans tabular-nums">
+                      <div>
+                        <span className="text-2xs uppercase text-[#52525B] block">Oyentes</span>
+                        <span className={`font-bold flex items-center gap-1 ${hasListeners ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>
+                          {hasListeners ? <Check className="w-3 h-3" strokeWidth={1.75} /> : <Lock className="w-3 h-3" strokeWidth={1.75} />}
+                          {formatCompactNumber(m.requirements.minMonthlyListeners)}
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-[#8E8E99]">Reputación Mínima:</span>
-                        <span className={`font-bold flex items-center gap-1 ${hasRep ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
-                          {hasRep ? <Check className="w-3 h-3 text-[#00E599]" /> : <Lock className="w-3 h-3 text-[#F59E0B]" />}
+                      <div>
+                        <span className="text-2xs uppercase text-[#52525B] block">Reputación</span>
+                        <span className={`font-bold flex items-center gap-1 ${hasRep ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>
+                          {hasRep ? <Check className="w-3 h-3" strokeWidth={1.75} /> : <Lock className="w-3 h-3" strokeWidth={1.75} />}
                           {m.requirements.minReputation}%
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-[#8E8E99]">Tarifa Contratación:</span>
-                        <span className={`font-bold flex items-center gap-1 ${hasFunds ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
-                          {hasFunds ? <Check className="w-3 h-3 text-[#00E599]" /> : <Lock className="w-3 h-3 text-[#F59E0B]" />}
+                      <div>
+                        <span className="text-2xs uppercase text-[#52525B] block">Tarifa</span>
+                        <span className={`font-bold flex items-center gap-1 ${hasFunds ? 'text-[#10B981]' : 'text-[#F59E0B]'}`}>
+                          {hasFunds ? <Check className="w-3 h-3" strokeWidth={1.75} /> : <Lock className="w-3 h-3" strokeWidth={1.75} />}
                           {formatMoney(m.requirements.hiringFee)}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Actions */}
                   <div>
                     {isHired ? (
-                      <div className="w-full text-center py-2.5 bg-[#00E599]/10 text-[#00E599] font-sans font-bold text-xs rounded-[4px] border border-[#00E599]/30">
+                      <div className="w-full text-center py-2 bg-[#10B981]/10 text-[#10B981] font-sans font-bold text-xs rounded-[4px] border border-[#10B981]/30">
                         Representante Actual
                       </div>
                     ) : check.canHire ? (
                       <button
                         onClick={() => handleHireManager(m)}
-                        className="w-full bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
+                        className="w-full bg-[#FF2A4B] hover:bg-[#E01E3D] text-[#F4F0EA] font-sans font-bold text-xs py-2 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer tabular-nums"
                       >
-                        Contratar Representante • {formatMoney(m.requirements.hiringFee)}
+                        Contratar • {formatMoney(m.requirements.hiringFee)}
                       </button>
                     ) : (
                       <button
                         disabled
-                        className="w-full bg-[#09090B] text-[#52525B] font-sans font-medium text-xs py-2.5 rounded-[4px] border border-[#242429] cursor-not-allowed flex items-center justify-center gap-1.5"
+                        className="w-full bg-[#0B0B0C] text-[#52525B] font-sans font-medium text-xs py-2 rounded-[4px] border border-[#26262B] cursor-not-allowed flex items-center justify-center gap-1.5"
                       >
-                        <Lock className="w-3.5 h-3.5" /> Requisitos Bloqueados
+                        <Lock className="w-3.5 h-3.5" strokeWidth={1.75} /> Requisitos Bloqueados
                       </button>
                     )}
                   </div>
                 </div>
               );
             })}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 5: SELLO PROPIO */}
-      {activeTab === 'own_label' && (
-        <div className="space-y-6">
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 sm:p-8 space-y-6">
-            <div className="space-y-1">
-              <h2 className="text-xl font-bold text-[#F4F4F6] tracking-tight">
-                Fundar tu Propio Sello Discográfico
-              </h2>
-              <p className="text-xs text-[#8E8E99] leading-relaxed max-w-xl">
-                Constituir tu propia estructura fonográfica exige $25.000 de capital operativo, pero te asegura el 95% de las regalías netas, la titularidad perpetua de los másters y cero deuda por adelantos recuperables.
-              </p>
-            </div>
-
-            <div className="bg-[#09090B] p-5 rounded-[4px] border border-[#242429] space-y-4">
-              <h3 className="text-xs font-sans uppercase font-bold text-[#8E8E99]">Requisitos de Fundación:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-sans tabular-nums">
-                <div className="p-3 bg-[#18181C] rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs uppercase text-[#52525B] block">Inversión Inicial:</span>
-                  <span className={`font-bold text-sm flex items-center gap-1 mt-0.5 ${player.stats.funds >= 25000 ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
-                    {player.stats.funds >= 25000 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    $25,000 • Saldo: {formatMoney(player.stats.funds)}
-                  </span>
-                </div>
-                <div className="p-3 bg-[#18181C] rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs uppercase text-[#52525B] block">Popularidad Mínima:</span>
-                  <span className={`font-bold text-sm flex items-center gap-1 mt-0.5 ${player.stats.popularity >= 40 ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
-                    {player.stats.popularity >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    40/100 • Actual: {player.stats.popularity}/100
-                  </span>
-                </div>
-                <div className="p-3 bg-[#18181C] rounded-[4px] border border-[#242429]">
-                  <span className="text-2xs uppercase text-[#52525B] block">Reputación en Escena:</span>
-                  <span className={`font-bold text-sm flex items-center gap-1 mt-0.5 ${player.stats.reputation >= 40 ? 'text-[#00E599]' : 'text-[#F59E0B]'}`}>
-                    {player.stats.reputation >= 40 ? <Check className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                    40/100 • Actual: {player.stats.reputation}/100
-                  </span>
-                </div>
-              </div>
-
-              {/* Input for name */}
-              <div className="space-y-2 pt-2">
-                <label className="block text-xs font-sans font-bold uppercase text-[#8E8E99]">
-                  Nombre del Sello Discográfico:
-                </label>
-                <input
-                  type="text"
-                  value={newLabelName}
-                  onChange={(e) => setNewLabelName(e.target.value)}
-                  placeholder="Ej: Mansión Records, La Cueva Discos..."
-                  className="w-full max-w-md bg-[#18181C] border border-[#242429] text-[#F4F4F6] placeholder-[#52525B] font-sans text-sm px-3.5 py-2.5 rounded-[4px] focus:outline-none focus:border-[#FF4F00]"
-                />
-              </div>
-
-              <button
-                onClick={handleCreateOwnLabel}
-                disabled={player.stats.funds < 25000 || player.stats.popularity < 40 || player.stats.reputation < 40}
-                className={`px-5 py-2.5 rounded-[4px] text-xs font-sans font-bold transition-all ${
-                  player.stats.funds >= 25000 && player.stats.popularity >= 40 && player.stats.reputation >= 40
-                    ? 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
-                    : 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed'
-                }`}
-              >
-                Constituir Sello Discográfico • $25,000
-              </button>
-            </div>
           </div>
         </div>
       )}

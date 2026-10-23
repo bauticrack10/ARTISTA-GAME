@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Artist, WorldState, Song, Album } from '../types';
-import { Palette, Crown, User, Check, X, Sparkles } from 'lucide-react';
+import { Palette, Crown, User, Check, X } from 'lucide-react';
 import {
   AVATAR_PALETTES,
   AVATAR_SYMBOLS,
@@ -16,7 +16,6 @@ import { ArtistAttributesPanel } from './dashboard/ArtistAttributesPanel';
 import { DecisionHub } from './dashboard/DecisionHub';
 import { ActiveCatalogCard } from './dashboard/ActiveCatalogCard';
 
-// Re-export modular components for flexible consumption
 import { DecisionActionType, DecisionExecutionResult } from '../systems/DecisionEngine';
 export { ArtistHeroCard } from './dashboard/ArtistHeroCard';
 export { NewsSidebar } from './dashboard/NewsSidebar';
@@ -41,9 +40,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigate,
   onRest,
   onExecuteDecision,
-  onUpdateAvatar,
-  onUpdateProfile,
-  onOpenMilestone
+  onUpdateAvatar
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string>(
@@ -88,14 +85,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 pb-8 text-fg">
-      {/* 2-Column Responsive Layout: Main Area (8 cols) vs News Sidebar (4 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* ========================================================================= */}
-        {/* MAIN COLUMN (8 cols): Hero Profile, Stats & Traits, Unified Actions, Top Songs */}
-        {/* ========================================================================= */}
-        <div className="lg:col-span-8 space-y-6">
-          {/* 1. Artist Hero Card */}
+    <div className="space-y-5 pb-8 text-fg">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* COLUMNA PRINCIPAL (8 cols): Perfil, Acciones del Mes, Estadísticas y Catálogo */}
+        <div className="lg:col-span-8 space-y-5">
           <ArtistHeroCard
             player={player}
             world={world}
@@ -106,12 +99,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             onOpenAvatarModal={handleOpenAvatarModal}
           />
 
-          {/* 2. Artist Attributes & Personality Panel */}
-          <ArtistAttributesPanel
-            player={player}
-          />
-
-          {/* 3. Unified Decision Hub */}
           <DecisionHub
             player={player}
             world={world}
@@ -121,7 +108,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             onExecuteDecision={onExecuteDecision}
           />
 
-          {/* 4. Active Catalog Card */}
+          <ArtistAttributesPanel player={player} />
+
           <ActiveCatalogCard
             topSongs={topSongs}
             playerSongsCount={playerSongs.length}
@@ -131,11 +119,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           />
         </div>
 
-        {/* ========================================================================= */}
-        {/* SIDEBAR COLUMN (4 cols): Real-Time Live News Feed & Scene Pulse */}
-        {/* ========================================================================= */}
-        <div className="lg:col-span-4 space-y-6">
-          {/* 5. Real-Time News Sidebar */}
+        {/* COLUMNA LATERAL (4 cols): Noticias & Pulso en Redes */}
+        <div className="lg:col-span-4">
           <NewsSidebar
             world={world}
             player={player}
@@ -144,87 +129,72 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* AVATAR & VECTOR IDENTITY MODAL */}
-      {/* ========================================================================= */}
+      {/* MODAL DE AVATAR */}
       {isAvatarModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs animate-fade-in">
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] max-w-lg w-full p-6 space-y-5 text-[#F4F4F6] shadow-2xl transition-all max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs">
+          <div className="bg-[#111114] border border-[#242429] rounded-[6px] max-w-md w-full p-5 space-y-4 text-[#F4F4F6] shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-[#242429] pb-3">
               <div className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-[#FF4F00]" />
-                <h3 className="text-lg font-bold tracking-tight text-[#F4F4F6]">
-                  Identidad Visual & Avatar del Artista
+                <Palette className="w-4 h-4 text-[#FF4F00]" />
+                <h3 className="text-base font-bold text-[#F4F4F6]">
+                  Personalizar Avatar
                 </h3>
               </div>
               <button
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="p-1 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer transition-colors"
-                title="Cerrar modal"
+                className="p-1 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Current Live Preview */}
-            <div className="flex items-center gap-4 bg-[#09090B] p-4 rounded-[4px] border border-[#242429]">
+            <div className="flex items-center gap-3.5 bg-[#09090B] p-3.5 rounded-[4px] border border-[#242429]">
               <ArtistAvatar
                 name={player?.name}
                 avatarColor={selectedColor}
                 avatarIcon={avatarType === 'symbol' ? selectedIcon : undefined}
-                size="lg"
+                size="md"
                 rounded="rounded-[4px]"
-                className="shrink-0 shadow-md"
+                className="shrink-0"
               />
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <h4 className="text-sm font-bold text-[#F4F4F6] truncate">{player?.name || 'Artista'}</h4>
-                <p className="text-xs text-[#8E8E99] mt-0.5">
-                  {avatarType === 'symbol' ? 'Avatar Vectorial con Símbolo Escénico' : 'Avatar con Iniciales Tipográficas'}
-                </p>
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setAvatarType('symbol')}
+                    className={`px-2.5 py-1 rounded-[3px] text-2xs font-bold flex items-center gap-1 cursor-pointer ${
+                      avatarType === 'symbol' ? 'bg-[#FF4F00] text-white' : 'bg-[#18181C] text-[#8E8E99]'
+                    }`}
+                  >
+                    <Crown className="w-3 h-3" />
+                    <span>Ícono</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAvatarType('initials')}
+                    className={`px-2.5 py-1 rounded-[3px] text-2xs font-bold flex items-center gap-1 cursor-pointer ${
+                      avatarType === 'initials' ? 'bg-[#FF4F00] text-white' : 'bg-[#18181C] text-[#8E8E99]'
+                    }`}
+                  >
+                    <User className="w-3 h-3" />
+                    <span>Iniciales</span>
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Mode Switcher */}
-            <div className="flex items-center gap-2 p-1 bg-[#09090B] rounded-[4px] border border-[#242429]">
-              <button
-                type="button"
-                onClick={() => setAvatarType('symbol')}
-                className={`flex-1 py-1.5 rounded-[4px] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  avatarType === 'symbol'
-                    ? 'bg-[#FF4F00] text-white font-bold shadow-none'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6]'
-                }`}
-              >
-                <Crown className="w-3.5 h-3.5" />
-                <span>Símbolo / Ícono</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setAvatarType('initials')}
-                className={`flex-1 py-1.5 rounded-[4px] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  avatarType === 'initials'
-                    ? 'bg-[#FF4F00] text-white font-bold shadow-none'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6]'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>Iniciales Limpias</span>
-              </button>
-            </div>
-
-            {/* Quick Presets */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-sans">
-                Presets de Estilo Rápido
+            <div className="space-y-1.5">
+              <label className="text-2xs font-bold uppercase tracking-wider text-[#52525B] block">
+                Estilos Rápidos
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {VECTOR_PRESETS.slice(0, 4).map((preset) => (
                   <button
                     key={preset.id}
                     type="button"
                     onClick={() => handleApplyPreset(preset)}
-                    className="p-2 rounded-[4px] border border-[#242429] bg-[#18181C] hover:border-[#3F3F46] hover:bg-[#242429] transition-all flex items-center gap-2 cursor-pointer text-left"
+                    className="p-2 rounded-[4px] border border-[#242429] bg-[#18181C] hover:border-[#3F3F46] flex flex-col items-center gap-1 cursor-pointer"
                   >
                     <ArtistAvatar
                       name={preset.name}
@@ -233,7 +203,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       size="xs"
                       rounded="rounded-[4px]"
                     />
-                    <span className="text-2xs font-bold text-[#F4F4F6] truncate">
+                    <span className="text-[10px] font-semibold text-[#F4F4F6] truncate w-full text-center">
                       {preset.name}
                     </span>
                   </button>
@@ -241,13 +211,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            {/* Vector Icons Selector (Symbol Mode) */}
             {avatarType === 'symbol' && (
-              <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-sans">
-                  Seleccionar Símbolo Escénico
+              <div className="space-y-1.5">
+                <label className="text-2xs font-bold uppercase tracking-wider text-[#52525B] block">
+                  Símbolo
                 </label>
-                <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-1.5">
                   {AVATAR_SYMBOLS.map((sym: AvatarSymbolOption) => {
                     const isSelected = selectedIcon === sym.id;
                     const IconComp = sym.icon;
@@ -256,18 +225,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         type="button"
                         key={sym.id}
                         onClick={() => setSelectedIcon(sym.id)}
-                        className={`p-2 rounded-[4px] border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
+                        className={`p-2 rounded-[4px] border flex items-center justify-center cursor-pointer ${
                           isSelected
-                            ? 'bg-[#FF4F00]/20 border-[#FF4F00] text-white ring-1 ring-[#FF4F00]'
-                            : 'bg-[#18181C] border-[#242429] hover:border-[#3F3F46] text-[#8E8E99]'
+                            ? 'bg-[#FF4F00]/20 border-[#FF4F00] text-white'
+                            : 'bg-[#18181C] border-[#242429] text-[#8E8E99]'
                         }`}
+                        title={sym.label}
                       >
-                        <div className={`p-1.5 rounded-[4px] bg-[#09090B] border border-[#242429] text-white`}>
-                          <IconComp className="w-3.5 h-3.5 text-[#FF4F00]" />
-                        </div>
-                        <span className="text-[10px] font-semibold truncate w-full">
-                          {sym.label.split('/')[0].trim()}
-                        </span>
+                        <IconComp className="w-3.5 h-3.5 text-[#FF4F00]" />
                       </button>
                     );
                   })}
@@ -275,12 +240,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             )}
 
-            {/* Gradient Palette Selection */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#52525B] block font-sans">
-                Paleta Cromática
+            <div className="space-y-1.5">
+              <label className="text-2xs font-bold uppercase tracking-wider text-[#52525B] block">
+                Color
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
                   const isSelected = selectedColor === p.val;
                   return (
@@ -288,18 +252,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       type="button"
                       key={p.id}
                       onClick={() => setSelectedColor(p.val)}
-                      className={`p-2 rounded-[4px] border text-left flex items-center gap-2 transition-all cursor-pointer ${
+                      className={`p-1.5 rounded-[4px] border flex items-center gap-1.5 cursor-pointer ${
                         isSelected
-                          ? 'bg-[#18181C] border-[#FF4F00] ring-1 ring-[#FF4F00]'
-                          : 'bg-[#18181C] border-[#242429] hover:border-[#3F3F46]'
+                          ? 'bg-[#18181C] border-[#FF4F00]'
+                          : 'bg-[#18181C] border-[#242429]'
                       }`}
                     >
-                      <div
-                        className={`w-5 h-5 rounded-[4px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/20 flex items-center justify-center`}
-                      >
-                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                      <div className={`w-4 h-4 rounded-[3px] bg-gradient-to-tr ${p.val} shrink-0 flex items-center justify-center`}>
+                        {isSelected && <Check className="w-2.5 h-2.5 text-white" />}
                       </div>
-                      <span className="text-2xs font-semibold text-[#F4F4F6] truncate">
+                      <span className="text-[10px] font-semibold text-[#F4F4F6] truncate">
                         {p.label}
                       </span>
                     </button>
@@ -308,22 +270,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            {/* Modal Actions */}
             <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#242429]">
               <button
                 type="button"
                 onClick={() => setIsAvatarModalOpen(false)}
-                className="px-4 py-2 rounded-[4px] text-xs font-semibold bg-[#18181C] text-[#8E8E99] border border-[#2E2E36] hover:text-[#F4F4F6] hover:bg-[#242429] cursor-pointer transition-colors"
+                className="px-3.5 py-1.5 rounded-[4px] text-xs font-semibold bg-[#18181C] text-[#8E8E99] border border-[#242429] cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveAvatar}
-                className="flex items-center gap-1.5 bg-[#FF4F00] hover:bg-[#E04500] text-white px-5 py-2 rounded-[4px] text-xs font-bold cursor-pointer active:translate-y-[1px] transition-all"
+                className="flex items-center gap-1.5 bg-[#FF4F00] hover:bg-[#E04500] text-white px-4 py-1.5 rounded-[4px] text-xs font-bold cursor-pointer"
               >
-                <Check className="w-4 h-4 text-white" />
-                <span>Guardar Cambios</span>
+                <Check className="w-3.5 h-3.5" />
+                <span>Guardar</span>
               </button>
             </div>
           </div>

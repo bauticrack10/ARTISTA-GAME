@@ -25,17 +25,11 @@ import {
   TrendingUp,
   Receipt,
   Headphones,
-  Calendar,
-  AlertTriangle,
-  ArrowUpRight,
-  ArrowDownRight,
   Wallet,
-  ShieldAlert,
   ChevronRight,
   Music2,
   Target
 } from 'lucide-react';
-import { LIFESTYLE_THEMES } from '../utils/themeColors';
 import { formatMoney } from '../utils/formatters';
 import { playSound } from '../utils/audioSystem';
 import { FinancialLedger } from './FinancialLedger';
@@ -46,13 +40,13 @@ interface LifestyleShopViewProps {
   onBuyItem: (itemId: string) => { success: boolean; message: string };
 }
 
-const CATEGORY_TABS: Array<{ id: 'all' | LifestyleCategory; label: string; iconColor?: string }> = [
+const CATEGORY_TABS: Array<{ id: 'all' | LifestyleCategory; label: string }> = [
   { id: 'all', label: 'Todas las Mejoras' },
-  { id: 'home_studio', label: 'Home Studio & Básico', iconColor: 'text-amber-400' },
-  { id: 'studio', label: 'Estudio & Micrófonos', iconColor: 'text-cyan-400' },
-  { id: 'real_estate', label: 'Viviendas & Inmuebles', iconColor: 'text-emerald-400' },
-  { id: 'vehicles', label: 'Vehículos & Movilidad', iconColor: 'text-rose-400' },
-  { id: 'coaching', label: 'Coaching & Salud', iconColor: 'text-orange-400' }
+  { id: 'home_studio', label: 'Home Studio & Básico' },
+  { id: 'studio', label: 'Estudio & Micrófonos' },
+  { id: 'real_estate', label: 'Viviendas & Inmuebles' },
+  { id: 'vehicles', label: 'Vehículos & Movilidad' },
+  { id: 'coaching', label: 'Coaching & Salud' }
 ];
 
 export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
@@ -63,11 +57,9 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
   const [activeCategory, setActiveCategory] = useState<'all' | LifestyleCategory>('all');
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [isLedgerOpen, setIsLedgerOpen] = useState<boolean>(false);
-  const [showCostBreakdown, setShowCostBreakdown] = useState<boolean>(false);
 
   const ownedUpgrades = player.lifestyleUpgrades || [];
 
-  // Filter items (treating 'starter' and 'home_studio' interchangeably for backward compatibility)
   const filteredItems = useMemo(() => {
     if (activeCategory === 'all') return LIFESTYLE_ITEMS;
     if (activeCategory === 'home_studio' || activeCategory === ('starter' as any)) {
@@ -78,7 +70,6 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     return LIFESTYLE_ITEMS.filter(item => item.category === activeCategory);
   }, [activeCategory]);
 
-  // Compute active buffs
   const activeBuffs = useMemo(() => {
     const itemMap = new Map(LIFESTYLE_ITEMS.map(i => [i.id, i]));
     const result = {
@@ -116,7 +107,6 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     return result;
   }, [ownedUpgrades]);
 
-  // Semi-annual operational costs calculations
   const operationalCosts = useMemo(() => {
     let monthlyBaseLiving = 35;
     const pop = player?.stats?.popularity || 0;
@@ -138,38 +128,24 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
 
     const monthlyTotalBurn = monthlyBaseLiving + monthlyUpkeep + monthlyManagerCommission;
     const semiAnnualTotal = monthlyTotalBurn * 6;
-    const semiAnnualLiving = monthlyBaseLiving * 6;
-    const semiAnnualUpkeep = monthlyUpkeep * 6;
-    const semiAnnualManager = monthlyManagerCommission * 6;
-
     const funds = Math.max(0, player?.stats?.funds || 0);
     const runwayMonths = monthlyTotalBurn > 0 ? Math.max(0, funds / monthlyTotalBurn) : 99;
 
-    let solvencyLevel: 'thriving' | 'stable' | 'warning' | 'critical' = 'thriving';
-    let solvencyBadge = 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40';
-    let solvencyLabel = 'Solvencia Óptima';
-    let solvencyMessage = 'Tus fondos actuales cubren cómodamente más de 12 meses de costos operativos fijos.';
+    let solvencyBadge = 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30';
+    let solvencyLabel = 'Solvencia Óptima (>12m)';
 
     if (runwayMonths >= 12) {
-      solvencyLevel = 'thriving';
-      solvencyBadge = 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40';
-      solvencyLabel = 'Solvencia Óptima • Más de 12 meses';
-      solvencyMessage = 'Tus fondos actuales cubren cómodamente más de un año de costos operativos fijos.';
+      solvencyBadge = 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30';
+      solvencyLabel = 'Solvencia Óptima (>12m)';
     } else if (runwayMonths >= 6) {
-      solvencyLevel = 'stable';
-      solvencyBadge = 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40';
-      solvencyLabel = 'Solvencia Estable • 6-12 meses';
-      solvencyMessage = 'Cuentas con suficiente colchón para sostener el próximo semestre completo sin urgencias.';
+      solvencyBadge = 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30';
+      solvencyLabel = 'Solvencia Estable (6-12m)';
     } else if (runwayMonths >= 3) {
-      solvencyLevel = 'warning';
-      solvencyBadge = 'bg-amber-950/60 text-amber-300 border-amber-500/40';
-      solvencyLabel = 'Atención Requerida • 3-6 meses';
-      solvencyMessage = 'Tus fondos cubren menos de un semestre de costos fijos. Considera lanzar música o salir de gira.';
+      solvencyBadge = 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30';
+      solvencyLabel = 'Atención (3-6m)';
     } else {
-      solvencyLevel = 'critical';
-      solvencyBadge = 'bg-rose-950/60 text-rose-300 border-rose-500/40';
-      solvencyLabel = 'Riesgo de Insolvencia • Menos de 3 meses';
-      solvencyMessage = '¡Alerta de caja! Los costos operativos amenazan con agotar tus fondos en menos de un trimestre.';
+      solvencyBadge = 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30';
+      solvencyLabel = 'Riesgo (<3m)';
     }
 
     return {
@@ -178,14 +154,9 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       monthlyManagerCommission,
       monthlyTotalBurn,
       semiAnnualTotal,
-      semiAnnualLiving,
-      semiAnnualUpkeep,
-      semiAnnualManager,
       runwayMonths,
-      solvencyLevel,
       solvencyBadge,
-      solvencyLabel,
-      solvencyMessage
+      solvencyLabel
     };
   }, [player?.stats?.popularity, player?.stats?.funds, player?.stats?.monthlyListeners, player?.stats?.fansCount, player?.managerId, world?.managers, activeBuffs.monthlyUpkeep]);
 
@@ -202,26 +173,26 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     }, 4500);
   };
 
-  const getItemIcon = (iconName: string, category: LifestyleCategory) => {
+  const getItemIcon = (iconName: string) => {
     switch (iconName) {
-      case 'Mic': return <Mic className="w-5 h-5 text-info" />;
-      case 'Radio': return <Radio className="w-5 h-5 text-info" />;
-      case 'Sliders': return <Sliders className="w-5 h-5 text-info" />;
-      case 'Disc3': return <Disc3 className="w-5 h-5 text-info" />;
-      case 'Headphones': return <Headphones className="w-5 h-5 text-amber-400" />;
-      case 'Home': return <Home className="w-5 h-5 text-emerald-400" />;
-      case 'Building2': return <Building2 className="w-5 h-5 text-emerald-400" />;
-      case 'Crown': return <Crown className="w-5 h-5 text-emerald-400" />;
-      case 'Sparkles': return <Sparkles className="w-5 h-5 text-amber-400" />;
-      case 'Truck': return <Truck className="w-5 h-5 text-rose-400" />;
-      case 'ShieldCheck': return <ShieldCheck className="w-5 h-5 text-rose-400" />;
-      case 'Flame': return <Flame className="w-5 h-5 text-rose-400" />;
-      case 'Zap': return <Zap className="w-5 h-5 text-rose-400" />;
-      case 'GraduationCap': return <GraduationCap className="w-5 h-5 text-primary-soft" />;
-      case 'Award': return <Award className="w-5 h-5 text-primary-soft" />;
-      case 'Users': return <Users className="w-5 h-5 text-primary-soft" />;
-      case 'Heart': return <Heart className="w-5 h-5 text-primary-soft" />;
-      default: return <ShoppingBag className="w-5 h-5 text-primary" />;
+      case 'Mic': return <Mic className="w-5 h-5 text-[#F4F0EA]" strokeWidth={1.75} />;
+      case 'Radio': return <Radio className="w-5 h-5 text-[#F4F0EA]" strokeWidth={1.75} />;
+      case 'Sliders': return <Sliders className="w-5 h-5 text-[#F4F0EA]" strokeWidth={1.75} />;
+      case 'Disc3': return <Disc3 className="w-5 h-5 text-[#F4F0EA]" strokeWidth={1.75} />;
+      case 'Headphones': return <Headphones className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
+      case 'Home': return <Home className="w-5 h-5 text-[#10B981]" strokeWidth={1.75} />;
+      case 'Building2': return <Building2 className="w-5 h-5 text-[#10B981]" strokeWidth={1.75} />;
+      case 'Crown': return <Crown className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
+      case 'Sparkles': return <Sparkles className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
+      case 'Truck': return <Truck className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
+      case 'ShieldCheck': return <ShieldCheck className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
+      case 'Flame': return <Flame className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
+      case 'Zap': return <Zap className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
+      case 'GraduationCap': return <GraduationCap className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
+      case 'Award': return <Award className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
+      case 'Users': return <Users className="w-5 h-5 text-[#F4F0EA]" strokeWidth={1.75} />;
+      case 'Heart': return <Heart className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
+      default: return <ShoppingBag className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
     }
   };
 
@@ -243,348 +214,148 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       case 'home_studio':
       case 'starter' as any:
         return {
-          accentText: 'text-amber-400',
-          buffBadge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+          accentText: 'text-[#F59E0B]',
+          buffBadge: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30'
         };
       case 'studio':
         return {
-          accentText: 'text-info',
-          buffBadge: 'bg-info/10 text-info border-info/30'
+          accentText: 'text-[#F4F0EA]',
+          buffBadge: 'bg-[#1C1C21] text-[#F4F0EA] border-[#3F3F46]'
         };
       case 'real_estate':
         return {
-          accentText: 'text-emerald-400',
-          buffBadge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+          accentText: 'text-[#10B981]',
+          buffBadge: 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30'
         };
       case 'vehicles':
         return {
-          accentText: 'text-rose-400',
-          buffBadge: 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+          accentText: 'text-[#FF2A4B]',
+          buffBadge: 'bg-[#FF2A4B]/10 text-[#FF2A4B] border-[#FF2A4B]/30'
         };
       case 'coaching':
         return {
-          accentText: 'text-primary-soft',
-          buffBadge: 'bg-purple-500/10 text-primary-soft border-purple-500/30'
+          accentText: 'text-[#F59E0B]',
+          buffBadge: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30'
         };
     }
   };
 
   return (
-    <div className="space-y-8 pb-24 sm:pb-28 lg:pb-32 font-sans text-[#F4F4F6] bg-[#09090B] min-h-screen p-4 sm:p-6 lg:p-8 rounded-[6px] border border-[#242429]">
-      {/* Header Banner - Studio Matte Rack Theme */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#242429] pb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5 font-sans">
-            <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-bold bg-[#18181C] text-[#8E8E99] border border-[#242429] tracking-wider uppercase">
-              Inversión & Bienestar
-            </span>
-            {player.isProdigy && (
-              <span className="px-2.5 py-0.5 rounded-[4px] text-xs font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
-                <Crown className="w-3 h-3 text-[#F59E0B] fill-current" />
-                Prodigio x3
+    <div className="space-y-5 pb-20 font-sans text-[#F4F0EA] bg-[#0B0B0C] min-h-screen p-4 sm:p-6 rounded-[6px] border border-[#26262B]">
+      {/* Header + Unified Compact Financial & Buffs Strip */}
+      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#26262B] pb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold bg-[#1C1C21] text-[#8E8E99] border border-[#26262B] tracking-wider uppercase">
+                Equipamiento & Activos
               </span>
-            )}
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#F4F4F6] flex items-center gap-2.5">
-            <ShoppingBag className="w-7 h-7 text-[#FF4F00]" />
-            Tienda & Estilo de Vida
-          </h1>
-          <p className="text-sm text-[#8E8E99] mt-1.5 max-w-2xl font-normal leading-relaxed">
-            Invertí los fondos generados por tus lanzamientos y giras en mejoras tangibles con beneficios pasivos permanentes: calidad de estudio casero o profesional, recuperación de energía, mitigación de fatiga y prestigio.
-          </p>
-        </div>
-
-        {/* Balance & Financial History Triggers */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-          {/* Balance Card: FONDOS DISPONIBLES */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-4 flex items-center flex-row gap-3.5 shadow-xs">
-            <div className="p-3 bg-[#18181C] rounded-[4px] text-[#00E599] border border-[#242429] shrink-0">
-              <DollarSign className="w-6 h-6" />
-            </div>
-            <div className="flex flex-col justify-center">
-              <span className="text-2xs text-[#52525B] block font-sans font-semibold uppercase tracking-wider">
-                Fondos Disponibles
-              </span>
-              <span className="text-2xl font-bold text-emerald-400 font-sans tracking-tight whitespace-nowrap inline-flex items-center">
-                {formatMoney(player.stats.funds)}
-              </span>
-            </div>
-          </div>
-
-          {/* Financial Ledger Modal Button */}
-          <button
-            onClick={() => {
-              playSound('click');
-              setIsLedgerOpen(true);
-            }}
-            className="bg-[#111114] hover:bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-4 flex items-center gap-3 transition-all cursor-pointer shadow-xs group"
-          >
-            <div className="p-3 bg-[#18181C] rounded-[4px] text-[#8E8E99] group-hover:text-[#F4F4F6] border border-[#242429]">
-              <Receipt className="w-6 h-6" />
-            </div>
-            <div className="text-left font-sans">
-              <div className="flex items-center gap-1.5">
-                <span className="text-2xs text-[#52525B] font-bold uppercase tracking-wider">
-                  Historial Financiero
+              {player.isProdigy && (
+                <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
+                  <Crown className="w-3 h-3 text-[#F59E0B]" strokeWidth={1.75} />
+                  Prodigio x3
                 </span>
-                <span className="px-1.5 py-0.5 rounded-[4px] text-2xs font-sans font-bold bg-[#18181C] text-[#F4F4F6] border border-[#242429] tabular-nums">
-                  {player.financialLedger?.length || 0}
+              )}
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-[#F4F0EA] flex items-center gap-2.5">
+              <ShoppingBag className="w-6 h-6 text-[#FF2A4B]" strokeWidth={1.75} />
+              Tienda & Estilo de Vida
+            </h1>
+          </div>
+
+          {/* Available Funds & Financial Ledger Trigger */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] px-4 py-2.5 flex items-center gap-3">
+              <DollarSign className="w-5 h-5 text-[#10B981]" strokeWidth={1.75} />
+              <div>
+                <span className="text-2xs text-[#52525B] block font-bold uppercase tracking-wider">
+                  Fondos Disponibles
+                </span>
+                <span className="text-lg font-bold text-[#10B981] tabular-nums">
+                  {formatMoney(player.stats.funds)}
                 </span>
               </div>
-              <span className="text-sm font-semibold text-[#F4F4F6] flex items-center gap-1 font-sans">
-                Ver Libro Contable
-                <ChevronRight className="w-3.5 h-3.5 text-[#FF4F00] group-hover:translate-x-0.5 transition-transform" />
-              </span>
             </div>
-          </button>
-        </div>
-      </div>
-
-      {/* Feedback Toast */}
-      {feedback && (
-        <div
-          className={`p-4 rounded-md border text-sm font-semibold flex items-center gap-2.5 transition-all shadow-md ${
-            feedback.isError
-              ? 'bg-rose-950/60 border-rose-500/40 text-rose-200'
-              : 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
-          }`}
-        >
-          {feedback.isError ? (
-            <Info className="w-4 h-4 text-rose-400 shrink-0" />
-          ) : (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          )}
-          <span>{feedback.text}</span>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* TARJETA DE COSTOS OPERATIVOS SEMESTRALES (6-MONTH OPERATING COSTS) */}
-      {/* ========================================================================= */}
-      <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 space-y-4">
-        {/* Card Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
-              <Calendar className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5 font-sans">
-                  Costos Operativos Semestrales Proyectados
-                </h2>
-                <span className={`px-2 py-0.5 rounded-[4px] font-sans text-2xs font-bold border ${operationalCosts.solvencyBadge}`}>
-                  {operationalCosts.solvencyLabel}
-                </span>
-              </div>
-              <p className="text-xs text-[#8E8E99] mt-0.5 font-sans">
-                {operationalCosts.solvencyMessage}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 font-sans">
-            <button
-              onClick={() => {
-                playSound('click');
-                setShowCostBreakdown(!showCostBreakdown);
-              }}
-              className="px-3 py-1.5 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#8E8E99] hover:text-[#F4F4F6] hover:border-[#3F3F46] transition-all cursor-pointer"
-            >
-              {showCostBreakdown ? 'Ocultar Desglose' : 'Ver Desglose Detallado'}
-            </button>
 
             <button
               onClick={() => {
                 playSound('click');
                 setIsLedgerOpen(true);
               }}
-              className="px-3 py-1.5 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#F4F4F6] transition-all cursor-pointer flex items-center gap-1.5"
+              className="bg-[#1C1C21] hover:bg-[#26262B] border border-[#26262B] hover:border-[#3F3F46] rounded-[4px] px-4 py-2.5 flex items-center gap-2.5 transition-colors cursor-pointer"
             >
-              <Receipt className="w-3.5 h-3.5 text-[#FF4F00]" />
-              Auditoría
+              <Receipt className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              <div className="text-left">
+                <span className="text-2xs text-[#8E8E99] block uppercase font-bold tracking-wider">
+                  Libro Contable ({player.financialLedger?.length || 0})
+                </span>
+                <span className="text-xs font-bold text-[#F4F0EA] flex items-center gap-1">
+                  Ver Finanzas <ChevronRight className="w-3.5 h-3.5 text-[#FF2A4B]" strokeWidth={1.75} />
+                </span>
+              </div>
             </button>
           </div>
         </div>
 
-        {/* Metric Breakdown Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          {/* Total Semi-Annual Cost */}
-          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <div className="flex items-center justify-between text-[#8E8E99]">
-              <span className="text-xs font-sans font-semibold">Costo Semestral Total</span>
-              <span className="text-2xs font-sans text-[#52525B]">Burn Rate</span>
+        {/* Compact Unified Bar: Operating Costs + Solvency + Active Buffs */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 text-xs">
+          {/* Costs & Solvency */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] tabular-nums">
+              <Wallet className="w-3.5 h-3.5 text-[#EF4444]" strokeWidth={1.75} />
+              <span className="text-[#8E8E99]">Gasto Fijo:</span>
+              <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyTotalBurn)}/mes</strong>
+              <span className="text-[#52525B]">•</span>
+              <span className="text-[#8E8E99]">{formatMoney(operationalCosts.semiAnnualTotal)}/semestre</span>
             </div>
-            <div className="text-lg font-bold text-[#EF4444] font-sans tabular-nums">
-              {formatMoney(operationalCosts.semiAnnualTotal)}
-            </div>
-            <span className="text-2xs text-[#8E8E99] font-sans tabular-nums block">
-              {formatMoney(operationalCosts.monthlyTotalBurn)} / mes promedio
+
+            <span className={`px-2.5 py-1.5 rounded-[4px] font-bold border tabular-nums ${operationalCosts.solvencyBadge}`}>
+              {operationalCosts.solvencyLabel} • {operationalCosts.runwayMonths >= 99 ? '∞' : `${operationalCosts.runwayMonths.toFixed(1)}m`}
             </span>
           </div>
 
-          {/* Living Cost Semi-Annual */}
-          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Costo de Vida Base</span>
-            <div className="text-lg font-bold text-[#F4F4F6] font-sans tabular-nums">
-              {formatMoney(operationalCosts.semiAnnualLiving)}
-            </div>
-            <span className="text-2xs text-[#8E8E99] font-sans tabular-nums block">
-              {`${formatMoney(operationalCosts.monthlyBaseLiving)}/mes • Vivienda & Crew`}
+          {/* Active Buffs Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-2xs uppercase font-bold tracking-wider text-[#52525B] flex items-center gap-1 mr-1">
+              <TrendingUp className="w-3.5 h-3.5 text-[#FF2A4B]" strokeWidth={1.75} />
+              Buffs ({ownedUpgrades.length}):
             </span>
-          </div>
-
-          {/* Upkeep Semi-Annual */}
-          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Mantenimiento Equipos</span>
-            <div className="text-lg font-bold text-[#F4F4F6] font-sans tabular-nums">
-              {formatMoney(operationalCosts.semiAnnualUpkeep)}
-            </div>
-            <span className="text-2xs text-[#8E8E99] font-sans tabular-nums block">
-              {`${formatMoney(operationalCosts.monthlyUpkeep)}/mes (${ownedUpgrades.length} activos)`}
+            <span className="px-2.5 py-1 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-[#10B981] font-bold tabular-nums">
+              +{activeBuffs.qualityBonus} Calidad
             </span>
-          </div>
-
-          {/* Runway Coverage */}
-          <div className="p-3.5 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <div className="flex items-center justify-between text-[#8E8E99]">
-              <span className="text-xs font-sans font-semibold">Cobertura / Runway</span>
-              <Wallet className="w-3.5 h-3.5 text-[#00E599]" />
-            </div>
-            <div className="text-lg font-bold text-[#00E599] font-sans tabular-nums">
-              {operationalCosts.runwayMonths >= 99 ? '∞ Meses' : `${operationalCosts.runwayMonths.toFixed(1)} meses`}
-            </div>
-            <span className="text-2xs text-[#8E8E99] font-sans block">
-              {`Con saldo actual de ${formatMoney(player.stats.funds)}`}
+            <span className="px-2.5 py-1 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-[#10B981] font-bold tabular-nums">
+              +{activeBuffs.passiveEnergy} Energía/mes
             </span>
-          </div>
-        </div>
-
-        {/* Expandable Detailed Breakdown */}
-        {showCostBreakdown && (
-          <div className="p-4 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-3 text-xs animate-in fade-in duration-200">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-2">
-              <span className="font-bold text-[#F4F4F6] uppercase tracking-wider text-xs font-sans">
-                Desglose Fijo Mensual vs. Proyección Semestral
-              </span>
-              <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
-                Popularidad del Artista: {player.stats.popularity}%
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
-                <div className="text-[#8E8E99] font-semibold text-xs font-sans">1. Gastos de Vida & Equipo Personal</div>
-                <div className="font-sans text-[#F4F4F6] tabular-nums">
-                  Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyBaseLiving)}</strong>
-                </div>
-                <div className="font-sans text-[#8E8E99] text-xs tabular-nums">
-                  Semestral: {formatMoney(operationalCosts.semiAnnualLiving)}
-                </div>
-              </div>
-
-              <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
-                <div className="text-[#8E8E99] font-semibold text-xs font-sans">2. Mantenimiento de Mejoras & Bienes</div>
-                <div className="font-sans text-[#F4F4F6] tabular-nums">
-                  Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyUpkeep)}</strong>
-                </div>
-                <div className="font-sans text-[#8E8E99] text-xs tabular-nums">
-                  Semestral: {formatMoney(operationalCosts.semiAnnualUpkeep)}
-                </div>
-              </div>
-
-              <div className="p-3 rounded-[4px] bg-[#111114] border border-[#242429] space-y-1">
-                <div className="text-[#8E8E99] font-semibold text-xs font-sans">3. Comisión Estimada de Manager</div>
-                <div className="font-sans text-[#F4F4F6] tabular-nums">
-                  Mensual: <strong className="text-[#EF4444]">{formatMoney(operationalCosts.monthlyManagerCommission)}</strong>
-                </div>
-                <div className="font-sans text-[#8E8E99] text-xs tabular-nums">
-                  Semestral: {formatMoney(operationalCosts.semiAnnualManager)}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Banner de Progresión y Entrenamiento de Habilidades */}
-      <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="p-3 bg-[#18181C] rounded-[4px] text-[#FF4F00] border border-[#242429] shrink-0">
-            <Sparkles className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base font-bold text-[#F4F4F6] tracking-tight">
-                Entrenamiento & Potenciadores de Habilidad Permanente
-              </h3>
-              {player?.isProdigy && (
-                <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
-                  <Crown className="w-3 h-3 text-[#F59E0B]" />
-                  Bono Prodigio 3x Activo
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-[#8E8E99] mt-1 leading-relaxed max-w-3xl">
-              Las masterclasses, libros de teoría, coach vocal, equipamiento y herramientas de home studio potencian tus habilidades de forma <strong>permanente e irreversible</strong> para toda tu carrera musical.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <span className="text-xs font-sans px-3 py-1.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99] font-semibold">
-            +Skill • +Creatividad • +Carisma • +Disciplina
-          </span>
-        </div>
-      </div>
-
-      {/* Active Buffs Summary Bar with Rich Palette */}
-      <div className="bg-[#111114] border border-[#242429] rounded-[4px] p-5 space-y-3">
-        <div className="flex items-center justify-between border-b border-[#242429] pb-2.5">
-          <h2 className="text-xs font-sans font-semibold uppercase tracking-wider text-[#F4F4F6] flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
-            Resumen de Buffs Pasivos Activos • <span className="tabular-nums">{ownedUpgrades.length}</span> Adquiridos
-          </h2>
-          <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
-            Mantenimiento Total: <strong className="text-[#EF4444] font-bold">${activeBuffs.monthlyUpkeep.toLocaleString()}/mes</strong>
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 text-xs">
-          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Bono de Calidad</span>
-            <span className="text-base font-bold text-[#00E599] font-sans tabular-nums">
-              {`+${activeBuffs.qualityBonus} Calidad`}
+            <span className="px-2.5 py-1 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-[#F59E0B] font-bold tabular-nums">
+              -{Math.round(activeBuffs.tourFatigueReduction * 100)}% Fatiga
             </span>
-          </div>
-
-          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Energía Pasiva</span>
-            <span className="text-base font-bold text-[#00E599] font-sans tabular-nums">
-              {`+${activeBuffs.passiveEnergy}/mes`}
-            </span>
-          </div>
-
-          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Mitigación de Gira</span>
-            <span className="text-base font-bold text-[#F59E0B] font-sans tabular-nums">
-              {Math.round(activeBuffs.tourFatigueReduction * 100) > 0
-                ? `-${Math.round(activeBuffs.tourFatigueReduction * 100)}% Fatiga`
-                : '0% Fatiga'}
-            </span>
-          </div>
-
-          <div className="p-3 bg-[#18181C] border border-[#242429] rounded-[4px] space-y-1">
-            <span className="text-[#8E8E99] block text-xs font-sans font-semibold">Estabilidad de Hype</span>
-            <span className="text-base font-bold text-[#F4F4F6] font-sans tabular-nums">
-              {`+${Math.round(activeBuffs.hypeDecayReduction * 100)}% Retención`}
+            <span className="px-2.5 py-1 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-[#F4F0EA] font-bold tabular-nums">
+              +{Math.round(activeBuffs.hypeDecayReduction * 100)}% Hype
             </span>
           </div>
         </div>
       </div>
 
-      {/* Category Filter Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 font-sans text-xs">
+      {/* Feedback Toast */}
+      {feedback && (
+        <div
+          className={`p-3.5 rounded-[4px] border text-xs font-semibold flex items-center gap-2.5 transition-all ${
+            feedback.isError
+              ? 'bg-[#EF4444]/10 border-[#EF4444]/40 text-[#EF4444]'
+              : 'bg-[#10B981]/10 border-[#10B981]/40 text-[#10B981]'
+          }`}
+        >
+          {feedback.isError ? (
+            <Info className="w-4 h-4 shrink-0" strokeWidth={1.75} />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 shrink-0" strokeWidth={1.75} />
+          )}
+          <span>{feedback.text}</span>
+        </div>
+      )}
+
+      {/* Category Filter Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto scroll-fade-x pb-1 text-xs">
         {CATEGORY_TABS.map(tab => {
           const isActive = activeCategory === tab.id;
           return (
@@ -594,10 +365,10 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 playSound('click');
                 setActiveCategory(tab.id);
               }}
-              className={`px-4 py-2 rounded-[4px] text-xs transition-all cursor-pointer whitespace-nowrap border ${
+              className={`px-4 py-2 rounded-[4px] text-xs transition-colors cursor-pointer whitespace-nowrap border ${
                 isActive
-                  ? 'bg-[#FF4F00] text-white font-bold border-[#FF4F00]'
-                  : 'bg-[#18181C] text-[#8E8E99] border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
+                  ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold border-[#FF2A4B]'
+                  : 'bg-[#141417] text-[#8E8E99] border-[#26262B] hover:text-[#F4F0EA] hover:border-[#3F3F46]'
               }`}
             >
               {tab.label}
@@ -606,176 +377,145 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
         })}
       </div>
 
-      {/* Items Grid with Categorized Themes & Icons */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-16">
+      {/* Items Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-12">
         {filteredItems.map(item => {
           const isOwned = ownedUpgrades.includes(item.id);
           const canAfford = player.stats.funds >= item.price;
           const colorClasses = getCategoryColorClasses(item.category);
           const multiplier = player?.isProdigy ? 3 : 1;
 
-          const categoryBorderLeft: Record<string, string> = {
-            home_studio: 'border-l-4 border-l-amber-400',
-            starter: 'border-l-4 border-l-amber-400',
-            studio: 'border-l-4 border-l-info',
-            real_estate: 'border-l-4 border-l-emerald-400',
-            vehicles: 'border-l-4 border-l-rose-500',
-            coaching: 'border-l-4 border-l-primary'
-          };
-
-          // Compute specific effect badges for this item
-          const effectBadges: Array<{ label: string; icon: React.ReactNode; badgeClass: string }> = [];
+          const effectBadges: Array<{ label: string; icon: React.ReactNode }> = [];
           if (item.effects.skillBonus) {
             effectBadges.push({
-              label: `+${item.effects.skillBonus * multiplier} Skill Permanente`,
-              icon: <Music2 className="w-3 h-3 text-cyan-400 shrink-0" />,
-              badgeClass: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
+              label: `+${item.effects.skillBonus * multiplier} Skill`,
+              icon: <Music2 className="w-3 h-3 text-[#F4F0EA] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.creativityBonus) {
             effectBadges.push({
-              label: `+${item.effects.creativityBonus * multiplier} Creatividad Permanente`,
-              icon: <Sparkles className="w-3 h-3 text-purple-400 shrink-0" />,
-              badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30'
+              label: `+${item.effects.creativityBonus * multiplier} Creatividad`,
+              icon: <Sparkles className="w-3 h-3 text-[#F59E0B] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.charismaBonus) {
             effectBadges.push({
-              label: `+${item.effects.charismaBonus * multiplier} Carisma Permanente`,
-              icon: <Crown className="w-3 h-3 text-amber-400 shrink-0" />,
-              badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+              label: `+${item.effects.charismaBonus * multiplier} Carisma`,
+              icon: <Crown className="w-3 h-3 text-[#F59E0B] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.disciplineBonus) {
             effectBadges.push({
-              label: `+${item.effects.disciplineBonus * multiplier} Disciplina Permanente`,
-              icon: <ShieldCheck className="w-3 h-3 text-indigo-400 shrink-0" />,
-              badgeClass: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
+              label: `+${item.effects.disciplineBonus * multiplier} Disciplina`,
+              icon: <ShieldCheck className="w-3 h-3 text-[#10B981] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.commercialAppealBonus) {
             effectBadges.push({
-              label: `+${item.effects.commercialAppealBonus * multiplier} Atractivo Comercial`,
-              icon: <DollarSign className="w-3 h-3 text-emerald-400 shrink-0" />,
-              badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+              label: `+${item.effects.commercialAppealBonus * multiplier} Comercial`,
+              icon: <DollarSign className="w-3 h-3 text-[#10B981] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.originalityBonus) {
             effectBadges.push({
-              label: `+${item.effects.originalityBonus * multiplier} Originalidad Permanente`,
-              icon: <Target className="w-3 h-3 text-rose-400 shrink-0" />,
-              badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+              label: `+${item.effects.originalityBonus * multiplier} Originalidad`,
+              icon: <Target className="w-3 h-3 text-[#FF2A4B] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.reputationBonus) {
             effectBadges.push({
-              label: `+${item.effects.reputationBonus * multiplier} Reputación Crítica`,
-              icon: <Award className="w-3 h-3 text-amber-400 shrink-0" />,
-              badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+              label: `+${item.effects.reputationBonus * multiplier} Reputación`,
+              icon: <Award className="w-3 h-3 text-[#F59E0B] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.qualityBonus) {
             effectBadges.push({
-              label: `+${item.effects.qualityBonus} Calidad Grabaciones`,
-              icon: <Disc3 className="w-3 h-3 text-info shrink-0" />,
-              badgeClass: 'bg-cyan-500/15 text-info border-cyan-500/30'
+              label: `+${item.effects.qualityBonus} Calidad`,
+              icon: <Disc3 className="w-3 h-3 text-[#10B981] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.passiveEnergyPerMonth) {
             effectBadges.push({
               label: `+${item.effects.passiveEnergyPerMonth} Energía/mes`,
-              icon: <Zap className="w-3 h-3 text-emerald-400 shrink-0" />,
-              badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+              icon: <Zap className="w-3 h-3 text-[#10B981] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.tourFatigueReduction) {
             effectBadges.push({
-              label: `-${Math.round(item.effects.tourFatigueReduction * 100)}% Fatiga Giras`,
-              icon: <Truck className="w-3 h-3 text-rose-400 shrink-0" />,
-              badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+              label: `-${Math.round(item.effects.tourFatigueReduction * 100)}% Fatiga`,
+              icon: <Truck className="w-3 h-3 text-[#FF2A4B] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.hypeDecayReduction) {
             effectBadges.push({
-              label: `+${Math.round(item.effects.hypeDecayReduction * 100)}% Retención Hype`,
-              icon: <Flame className="w-3 h-3 text-amber-400 shrink-0" />,
-              badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+              label: `+${Math.round(item.effects.hypeDecayReduction * 100)}% Hype`,
+              icon: <Flame className="w-3 h-3 text-[#F59E0B] shrink-0" strokeWidth={1.75} />
             });
           }
 
           return (
             <div
               key={item.id}
-              className={`border rounded-[4px] p-5 flex flex-col justify-between transition-all ${categoryBorderLeft[item.category] || ''} ${
+              className={`border rounded-[6px] p-4 flex flex-col justify-between transition-all ${
                 isOwned
-                  ? 'border-[#00E599]/60 bg-[#111114]'
-                  : 'bg-[#111114] border-[#242429] hover:bg-[#151519] hover:border-[#3F3F46]'
+                  ? 'border-[#10B981]/60 bg-[#141417]'
+                  : 'bg-[#141417] border-[#26262B] hover:bg-[#1C1C21] hover:border-[#3F3F46]'
               }`}
             >
               <div className="space-y-3">
-                {/* Card Top: Icon, Title & Category */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-[4px] shrink-0 bg-[#18181C] border border-[#242429]">
-                      {getItemIcon(item.iconName, item.category)}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-[4px] shrink-0 bg-[#0B0B0C] border border-[#26262B]">
+                      {getItemIcon(item.iconName)}
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#F4F4F6] tracking-tight leading-snug">
+                      <h3 className="text-sm font-bold text-[#F4F0EA] tracking-tight leading-snug">
                         {item.name}
                       </h3>
-                      <span className={`text-xs font-sans font-semibold block mt-0.5 ${colorClasses.accentText}`}>
+                      <span className={`text-2xs font-semibold block mt-0.5 ${colorClasses.accentText}`}>
                         {getCategoryLabel(item.category)}
                       </span>
                     </div>
                   </div>
 
                   {isOwned && (
-                    <span className="px-2 py-0.5 rounded-[4px] text-xs font-sans font-bold bg-[#18181C] text-[#00E599] border border-[#00E599]/40 flex items-center gap-1 shrink-0">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      En Posesión
+                    <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold bg-[#0B0B0C] text-[#10B981] border border-[#10B981]/40 flex items-center gap-1 shrink-0">
+                      <CheckCircle2 className="w-3 h-3" strokeWidth={1.75} />
+                      Activo
                     </span>
                   )}
                 </div>
 
-                {/* Description */}
-                <p className="text-xs text-[#8E8E99] font-normal leading-relaxed">
+                <p className="text-xs text-[#8E8E99] leading-relaxed">
                   {item.description}
                 </p>
 
-                {/* Passive Buff Pill */}
-                <div className={`p-2.5 rounded-[4px] border text-xs font-sans font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
-                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                <div className={`p-2 rounded-[4px] border text-xs font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
+                  <Sparkles className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
                   <span>{item.buffDescription}</span>
                 </div>
 
-                {/* Explicit Skill & Stat Badges */}
                 {effectBadges.length > 0 && (
-                  <div className="pt-2 border-t border-[#242429] space-y-1.5 font-sans">
-                    <span className="text-2xs uppercase font-bold tracking-wider text-[#52525B] block">
-                      Potenciadores Aplicados:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {effectBadges.map((badge, idx) => (
-                        <span
-                          key={idx}
-                          className={`px-2 py-0.5 rounded-[4px] text-2xs font-bold border flex items-center gap-1 ${badge.badgeClass}`}
-                        >
-                          {badge.icon}
-                          <span>{badge.label}</span>
-                        </span>
-                      ))}
-                    </div>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {effectBadges.map((badge, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-0.5 rounded-[4px] text-2xs font-bold border border-[#26262B] bg-[#0B0B0C] text-[#F4F0EA] flex items-center gap-1 tabular-nums"
+                      >
+                        {badge.icon}
+                        <span>{badge.label}</span>
+                      </span>
+                    ))}
                   </div>
                 )}
               </div>
 
-              {/* Card Footer: Cost & Action Button */}
-              <div className="mt-5 pt-4 border-t border-[#242429] flex items-center justify-between gap-3 font-sans">
+              <div className="mt-4 pt-3 border-t border-[#26262B] flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="text-lg font-bold text-[#F4F4F6] font-sans tabular-nums tracking-tight whitespace-nowrap">
+                  <div className="text-base font-bold text-[#F4F0EA] tabular-nums tracking-tight whitespace-nowrap">
                     {formatMoney(item.price)}
                   </div>
-                  <span className="text-xs text-[#8E8E99] font-sans tabular-nums block truncate">
+                  <span className="text-2xs text-[#8E8E99] tabular-nums block truncate">
                     {item.monthlyUpkeep > 0 ? `+${formatMoney(item.monthlyUpkeep)}/mes` : 'Sin costo mensual'}
                   </span>
                 </div>
@@ -784,7 +524,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                   {isOwned ? (
                     <button
                       disabled
-                      className="h-10 min-h-[40px] px-4 rounded-md bg-emerald-950/40 text-emerald-400 border border-emerald-500/40 text-xs font-bold cursor-not-allowed flex items-center justify-center whitespace-nowrap shrink-0"
+                      className="h-9 px-3.5 rounded-[4px] bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/40 text-xs font-bold cursor-not-allowed flex items-center justify-center whitespace-nowrap"
                     >
                       Adquirido ✓
                     </button>
@@ -792,10 +532,10 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                     <button
                       onClick={() => handlePurchase(item)}
                       disabled={!canAfford}
-                      className={`h-10 min-h-[40px] px-4 text-xs font-bold rounded-md transition-all flex items-center justify-center whitespace-nowrap shrink-0 ${
+                      className={`h-9 px-3.5 text-xs font-bold rounded-[4px] transition-all flex items-center justify-center whitespace-nowrap ${
                         canAfford
-                          ? 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
-                          : 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed opacity-60'
+                          ? 'bg-[#FF2A4B] hover:bg-[#E02040] text-[#F4F0EA] active:translate-y-[1px] cursor-pointer'
+                          : 'bg-[#1C1C21] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-60'
                       }`}
                     >
                       {canAfford ? 'Comprar Mejora' : 'Fondos Insuficientes'}

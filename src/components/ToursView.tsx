@@ -18,14 +18,11 @@ import {
   Zap,
   Disc3,
   Headphones,
-  Info,
-  Calendar,
   Flame,
   Star,
-  Users,
   Mic2,
-  Tv,
-  ArrowRight
+  ArrowRight,
+  Trophy
 } from 'lucide-react';
 import { TourEngine, MIN_TOUR_ENERGY, MIN_TOUR_LISTENERS, MIN_TOUR_SONGS } from '../systems/TourEngine';
 import { GLOBAL_FESTIVALS, FestivalEngine } from '../systems/FestivalEngine';
@@ -49,32 +46,22 @@ interface ToursViewProps {
   }) => LiveShowResult;
 }
 
-// Color mapping for venue tiers — matches the accent palette from design.md
 const TIER_BORDER_COLORS: Record<TourTier, string> = {
-  club: 'border-l-emerald-500',
-  theater: 'border-l-cyan-500',
-  arena: 'border-l-blue-500',
-  festival_circuit: 'border-l-orange-500',
-  stadium: 'border-l-amber-500',
-  world_tour: 'border-l-rose-500'
-};
-
-const TIER_BG_ACCENT: Record<TourTier, string> = {
-  club: 'bg-emerald-950/20 border-emerald-500/30',
-  theater: 'bg-cyan-950/20 border-cyan-500/30',
-  arena: 'bg-blue-950/20 border-blue-500/30',
-  festival_circuit: 'bg-orange-950/20 border-orange-500/30',
-  stadium: 'bg-amber-950/20 border-amber-500/30',
-  world_tour: 'bg-rose-950/20 border-rose-500/30'
+  club: 'border-l-[#10B981]',
+  theater: 'border-l-[#F4F0EA]',
+  arena: 'border-l-[#F59E0B]',
+  festival_circuit: 'border-l-[#FF2A4B]',
+  stadium: 'border-l-[#F59E0B]',
+  world_tour: 'border-l-[#FF2A4B]'
 };
 
 const TIER_BADGE_COLORS: Record<TourTier, string> = {
-  club: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40',
-  theater: 'bg-cyan-950/60 text-cyan-400 border-cyan-500/40',
-  arena: 'bg-blue-950/60 text-blue-400 border-blue-500/40',
-  festival_circuit: 'bg-orange-950/60 text-orange-300 border-orange-500/40',
-  stadium: 'bg-amber-950/60 text-amber-400 border-amber-500/40',
-  world_tour: 'bg-rose-950/60 text-rose-400 border-rose-500/40'
+  club: 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30',
+  theater: 'bg-[#1C1C21] text-[#F4F0EA] border-[#3F3F46]',
+  arena: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30',
+  festival_circuit: 'bg-[#FF2A4B]/10 text-[#FF2A4B] border-[#FF2A4B]/30',
+  stadium: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/40',
+  world_tour: 'bg-[#FF2A4B]/15 text-[#FF2A4B] border-[#FF2A4B]/40'
 };
 
 const getTicketBadge = (sold: number, capacity: number) => {
@@ -82,7 +69,7 @@ const getTicketBadge = (sold: number, capacity: number) => {
   if (ratio >= 0.95) {
     return {
       label: 'SOLD OUT',
-      cls: 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/30 font-sans font-bold'
+      cls: 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30 font-sans font-bold'
     };
   }
   if (ratio >= 0.60) {
@@ -108,7 +95,6 @@ export const ToursView: React.FC<ToursViewProps> = ({
   const [selectedTier, setSelectedTier] = useState<TourTier>('club');
   const [notification, setNotification] = useState<string | null>(null);
 
-  // Live Show Modal state
   const [activeFestivalShow, setActiveFestivalShow] = useState<{
     festival: GlobalFestival;
     slot: FestivalSlot;
@@ -120,7 +106,6 @@ export const ToursView: React.FC<ToursViewProps> = ({
   const availableTiers = TourEngine.getAvailableTiersForArtist(player);
   const playerTours = world?.tours ? world.tours.filter((t) => t.artistId === player?.id) : [];
 
-  // Festival Invitations
   const pendingInvitations = (world.festivalInvitations || []).filter(
     (inv) => inv.status === 'pending'
   );
@@ -131,44 +116,44 @@ export const ToursView: React.FC<ToursViewProps> = ({
     { title: string; minPop: number; desc: string; estRevenue: string; fatigue: string }
   > = {
     club: {
-      title: 'Gira por Clubes & Boliches Underground',
+      title: 'Gira por Clubes Underground',
       minPop: 0,
-      desc: 'Fechas íntimas en recintos de 500 a 1.000 personas. Ideal para forjar los primeros seguidores fieles.',
+      desc: 'Fechas en recintos de 500 a 1.000 personas.',
       estRevenue: '$20,000 - $60,000',
       fatigue: '-15% Energía'
     },
     theater: {
       title: 'Circuito de Teatros Históricos',
       minPop: 25,
-      desc: 'Salas emblemáticas de 2.000 a 4.000 butacas con sonido de alta fidelidad y público melómano.',
+      desc: 'Salas de 2.000 a 4.000 butacas con acústica dedicada.',
       estRevenue: '$80,000 - $250,000',
       fatigue: '-22% Energía'
     },
     arena: {
       title: 'Gira Nacional de Arenas',
       minPop: 50,
-      desc: 'Movistar Arenas, WiZink Center y recintos cerrados de 12.000 a 18.000 personas con gran producción visual.',
+      desc: 'Recintos cerrados de 12.000 a 18.000 personas.',
       estRevenue: '$350,000 - $1,200,000',
       fatigue: '-30% Energía'
     },
     festival_circuit: {
-      title: 'Headliner en Festivales Internacionales',
+      title: 'Headliner en Festivales',
       minPop: 70,
-      desc: 'Escenarios principales en festivales masivos ante multitudes de más de 40.000 personas.',
+      desc: 'Escenarios principales ante más de 40.000 personas.',
       estRevenue: '$600,000 - $2,000,000',
       fatigue: '-35% Energía'
     },
     stadium: {
       title: 'Gira Monumental de Estadios',
       minPop: 75,
-      desc: 'River Plate, Santiago Bernabéu y arenas abiertas de 40.000 a 80.000 espectadores con pirotecnia y pantallas gigantes.',
+      desc: 'Estadios abiertos de 40.000 a 80.000 espectadores.',
       estRevenue: '$1,500,000 - $4,500,000',
       fatigue: '-40% Energía'
     },
     world_tour: {
       title: 'Gira Mundial Intercontinental',
       minPop: 85,
-      desc: 'Tramos en Norteamérica, Europa, Latinoamérica y Japón con flete aéreo de escenario propio; la recaudación por noche es altísima, pero el desgaste físico no perdona.',
+      desc: 'Tramos en América, Europa y Asia con producción propia.',
       estRevenue: '$5,000,000 - $15,000,000',
       fatigue: '-50% Energía'
     }
@@ -196,34 +181,34 @@ export const ToursView: React.FC<ToursViewProps> = ({
   };
 
   return (
-    <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-fade-in">
+    <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5 font-sans text-[#F4F0EA]">
       {/* View Header with Sub-tabs Switcher */}
-      <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F4F4F6] flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-[#FF4F00]" />
+          <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />
             Giras & Festivales en Vivo
           </h1>
-          <p className="text-xs text-[#8E8E99] mt-1">
-            Cerrá contratos de boletería y caché en festivales; la taquilla en vivo deja el margen neto más alto de toda tu carrera si cuidás la garganta.
+          <p className="text-xs text-[#8E8E99] mt-0.5">
+            Contratos de boletería y caché en festivales internacionales.
           </p>
         </div>
 
         {/* Tab Selector */}
-        <div className="flex items-center gap-1 p-1 bg-[#09090B] rounded-[4px] border border-[#242429] text-xs font-sans font-semibold shrink-0">
+        <div className="flex items-center gap-1 p-1 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] text-xs font-semibold shrink-0">
           <button
             type="button"
             onClick={() => {
               playSound('click');
               setSubTab('festivals');
             }}
-            className={`px-4 py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-[4px] transition-colors cursor-pointer flex items-center gap-2 ${
               subTab === 'festivals'
-                ? 'bg-[#FF4F00] text-white font-bold'
-                : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
+                ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
             }`}
           >
-            <Flame className="w-4 h-4" />
+            <Flame className="w-4 h-4" strokeWidth={1.75} />
             <span>Circuito de Festivales ({pendingInvitations.length})</span>
           </button>
 
@@ -233,213 +218,183 @@ export const ToursView: React.FC<ToursViewProps> = ({
               playSound('click');
               setSubTab('tours');
             }}
-            className={`px-4 py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-[4px] transition-colors cursor-pointer flex items-center gap-2 ${
               subTab === 'tours'
-                ? 'bg-[#FF4F00] text-white font-bold'
-                : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
+                ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
             }`}
           >
-            <Ticket className="w-4 h-4" />
-            <span>Giras Mundiales & Salas ({playerTours.length})</span>
+            <Ticket className="w-4 h-4" strokeWidth={1.75} />
+            <span>Giras & Salas ({playerTours.length})</span>
           </button>
         </div>
       </div>
 
       {notification && (
-        <div className="p-4 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/40 text-[#00E599] text-xs font-sans font-semibold flex items-center gap-2 animate-fade-in shadow-xs">
-          <CheckCircle2 className="w-4 h-4 text-[#00E599] shrink-0" />
+        <div className="p-3.5 rounded-[4px] bg-[#10B981]/10 border border-[#10B981]/40 text-[#10B981] text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" strokeWidth={1.75} />
           <span>{notification}</span>
         </div>
       )}
 
-      {/* --- SUBTAB 1: FESTIVAL CIRCUIT --- */}
+      {/* --- SUBTAB 1: UNIFIED FESTIVAL CIRCUIT --- */}
       {subTab === 'festivals' && (
-        <div className="space-y-6">
-          {/* Pending Invitations Section */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
-              <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
-                <Flame className="w-4 h-4 text-[#FF4F00]" />
-                Ofertas & Invitaciones Oficiales a Festivales ({pendingInvitations.length})
-              </h2>
-              <span className="text-xs text-[#8E8E99] font-sans">
-                Temporada {world.currentYear}
-              </span>
-            </div>
+        <div className="space-y-5">
+          {/* Unified Festivals Panel: Pending Invitations (if any) + 7 Global Festivals Grid */}
+          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-5">
+            {/* Highlight Pending Invitations only when present, otherwise compact status strip */}
+            {pendingInvitations.length > 0 ? (
+              <div className="space-y-3 pb-5 border-b border-[#26262B]">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
+                    <Flame className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+                    Invitaciones Oficiales Pendientes ({pendingInvitations.length})
+                  </h2>
+                  <span className="text-xs text-[#8E8E99] tabular-nums">Temporada {world.currentYear}</span>
+                </div>
 
-            {pendingInvitations.length === 0 ? (
-              <div className="p-8 rounded-[4px] bg-[#09090B] border border-[#242429] text-center space-y-2">
-                <Flame className="w-8 h-8 text-[#52525B] mx-auto opacity-40" />
-                <p className="text-xs text-[#8E8E99]">
-                  No tienes invitaciones de festivales pendientes en este momento.
-                </p>
-                <p className="text-[11px] text-[#52525B]">
-                  Las organizaciones envían ofertas a medida que aumenta tu popularidad y se aproximan los meses del festival (Febrero a Julio).
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {pendingInvitations.map((inv) => {
-                  const fest = GLOBAL_FESTIVALS.find((f) => f.id === inv.festivalId);
-                  if (!fest) return null;
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  {pendingInvitations.map((inv) => {
+                    const fest = GLOBAL_FESTIVALS.find((f) => f.id === inv.festivalId);
+                    if (!fest) return null;
 
-                  return (
-                    <div
-                      key={inv.id}
-                      className="rounded-[6px] border border-[#242429] hover:border-[#3F3F46] bg-[#09090B] overflow-hidden flex flex-col justify-between shadow-xs transition-all group"
-                    >
-                      <div className="p-4 bg-[#18181C] border-b border-[#242429] text-[#F4F4F6]">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
-                            {fest.country} • Mes {fest.month}
-                          </span>
-                          <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/30">
-                            {inv.slotTitle}
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-bold tracking-tight mt-2 text-[#F4F4F6]">
-                          {inv.festivalName}
-                        </h3>
-                        <p className="text-xs text-[#8E8E99] flex items-center gap-1 mt-0.5">
-                          <MapPin className="w-3 h-3 text-[#FF4F00]" /> {inv.location}
-                        </p>
-                      </div>
-
-                      <div className="p-4 space-y-3">
-                        <div className="grid grid-cols-2 gap-2 text-xs font-sans">
-                          <div className="p-2.5 rounded-[4px] bg-[#111114] border border-[#242429]">
-                            <span className="text-[10px] text-[#52525B] block uppercase font-semibold">Caché Ofrecido</span>
-                            <span className="text-sm font-bold text-[#00E599] tabular-nums">
-                              {formatMoney(inv.payout)}
+                    return (
+                      <div
+                        key={inv.id}
+                        className="rounded-[6px] border border-[#FF2A4B]/40 bg-[#0B0B0C] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99] tabular-nums">
+                              {fest.country} • Mes {fest.month}
+                            </span>
+                            <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#FF2A4B]/10 text-[#FF2A4B] border border-[#FF2A4B]/30">
+                              {inv.slotTitle}
                             </span>
                           </div>
-                          <div className="p-2.5 rounded-[4px] bg-[#111114] border border-[#242429]">
-                            <span className="text-[10px] text-[#52525B] block uppercase font-semibold">Audiencia Esperada</span>
-                            <span className="text-sm font-bold text-[#F4F4F6] tabular-nums">
-                              {(inv.audienceExpected || 0).toLocaleString('es-AR')} personas
-                            </span>
+                          <h3 className="text-base font-bold text-[#F4F0EA]">{inv.festivalName}</h3>
+                          <div className="flex items-center gap-3 text-xs text-[#8E8E99] tabular-nums">
+                            <span>Caché: <strong className="text-[#10B981]">{formatMoney(inv.payout)}</strong></span>
+                            <span>•</span>
+                            <span>{(inv.audienceExpected || 0).toLocaleString('es-AR')} esp.</span>
                           </div>
                         </div>
 
                         <button
                           type="button"
                           onClick={() => handleOpenLiveFestivalShow(fest, inv.slot, inv)}
-                          className="w-full py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold transition-all cursor-pointer flex items-center justify-center gap-2 active:translate-y-[1px]"
+                          className="px-4 py-2.5 rounded-[4px] bg-[#FF2A4B] hover:bg-[#E02040] text-[#F4F0EA] text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 active:translate-y-[1px]"
                         >
-                          <Mic2 className="w-4 h-4" />
-                          <span>Diseñar Show & Actuar en Vivo</span>
+                          <Mic2 className="w-4 h-4" strokeWidth={1.75} />
+                          <span>Actuar en Vivo</span>
                         </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between px-3.5 py-2.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-xs text-[#8E8E99]">
+                <span className="flex items-center gap-2">
+                  <Flame className="w-4 h-4 text-[#52525B]" strokeWidth={1.75} />
+                  Sin ofertas pendientes en este momento. Podés postular directamente en los festivales habilitados según tu popularidad.
+                </span>
+                <span className="text-2xs text-[#52525B] uppercase font-bold tabular-nums shrink-0 ml-2">
+                  Temporada {world.currentYear}
+                </span>
+              </div>
+            )}
+
+            {/* Global Festivals Clean Grid */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+                  Cartelera Global de Festivales ({GLOBAL_FESTIVALS.length})
+                </h2>
+                <span className="text-xs text-[#8E8E99]">Calendario Oficial</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+                {GLOBAL_FESTIVALS.map((fest) => {
+                  const eligibleSlot = FestivalEngine.getEligibleSlot(player, fest);
+
+                  return (
+                    <div
+                      key={fest.id}
+                      className="p-4 rounded-[6px] bg-[#0B0B0C] border border-[#26262B] hover:border-[#3F3F46] flex flex-col justify-between space-y-3 transition-all"
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99] tabular-nums">
+                            {fest.country} • Mes {fest.month}
+                          </span>
+                          <span className="text-2xs font-bold text-[#F59E0B] flex items-center gap-1 tabular-nums">
+                            <Star className="w-3 h-3 fill-[#F59E0B]" strokeWidth={1.75} />
+                            {fest.prestige}
+                          </span>
+                        </div>
+
+                        <h3 className="text-sm font-bold text-[#F4F0EA]">{fest.name}</h3>
+                        <div className="text-xs text-[#8E8E99] tabular-nums">
+                          Capacidad: <strong className="text-[#F4F0EA]">{fest.capacity.toLocaleString('es-AR')}</strong>/día
+                        </div>
+                      </div>
+
+                      <div className="pt-2.5 border-t border-[#26262B] flex items-center justify-between gap-2">
+                        <span className={`text-xs font-bold truncate ${eligibleSlot ? 'text-[#10B981]' : 'text-[#52525B]'}`}>
+                          {eligibleSlot ? FestivalEngine.getSlotTitle(eligibleSlot).split('•')[0].trim() : 'Pop. Insuficiente'}
+                        </span>
+
+                        {eligibleSlot && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenLiveFestivalShow(fest, eligibleSlot)}
+                            className="px-3 py-1.5 rounded-[4px] bg-[#1C1C21] hover:bg-[#26262B] border border-[#26262B] text-[#F4F0EA] text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 shrink-0 active:translate-y-[1px]"
+                          >
+                            <span>Tocar</span>
+                            <ArrowRight className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   );
                 })}
               </div>
-            )}
-          </div>
-
-          {/* Global Festivals Catalog */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
-              <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#FF4F00]" />
-                Los 7 Festivales Globales Más Icónicos
-              </h2>
-              <span className="text-xs text-[#8E8E99] font-sans">
-                Calendario Oficial de Conciertos
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {GLOBAL_FESTIVALS.map((fest) => {
-                const eligibleSlot = FestivalEngine.getEligibleSlot(player, fest);
-                const isSeasonActive = Math.abs(fest.month - world.currentMonth) <= 1;
-
-                return (
-                  <div
-                    key={fest.id}
-                    className="p-5 rounded-[6px] bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] flex flex-col justify-between space-y-4 shadow-xs transition-all"
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
-                          {fest.country} • Mes {fest.month}
-                        </span>
-                        <span className="text-[10px] font-sans font-bold text-[#F59E0B] flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-[#F59E0B]" />
-                          Prestigio {fest.prestige}
-                        </span>
-                      </div>
-
-                      <h3 className="text-base font-bold text-[#F4F4F6]">
-                        {fest.name}
-                      </h3>
-                      <p className="text-[11px] text-[#8E8E99] leading-relaxed">
-                        {fest.description}
-                      </p>
-                      <div className="text-[11px] text-[#D4D4D8] font-sans">
-                        Capacidad: <strong className="text-[#F4F4F6] tabular-nums">{fest.capacity.toLocaleString('es-AR')}</strong> espectadores/día
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-[#242429] flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] text-[#52525B] block uppercase font-sans">Slot Elegible</span>
-                        <span className={`text-xs font-bold font-sans ${eligibleSlot ? 'text-[#00E599]' : 'text-[#52525B]'}`}>
-                          {eligibleSlot ? FestivalEngine.getSlotTitle(eligibleSlot).split('•')[0].trim() : 'Popularidad Insuficiente'}
-                        </span>
-                      </div>
-
-                      {eligibleSlot && (
-                        <button
-                          type="button"
-                          onClick={() => handleOpenLiveFestivalShow(fest, eligibleSlot)}
-                          className="px-3.5 py-1.5 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-[#F4F4F6] text-xs font-sans font-semibold transition-colors cursor-pointer flex items-center gap-1 active:translate-y-[1px]"
-                        >
-                          <span>Tocar</span>
-                          <ArrowRight className="w-3 h-3 text-[#FF4F00]" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </div>
 
           {/* History of Festival Shows */}
           {festivalHistory.length > 0 && (
-            <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4 shadow-xs">
-              <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2 border-b border-[#242429] pb-3">
-                <Trophy className="w-4 h-4 text-[#F59E0B]" />
-                Historial de Conciertos en Festivales • {festivalHistory.length} shows
+            <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-3">
+              <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 border-b border-[#26262B] pb-2.5">
+                <Trophy className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
+                Historial de Festivales • <span className="tabular-nums">{festivalHistory.length}</span> shows
               </h2>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {festivalHistory.map((show, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-[4px] bg-[#09090B] border border-[#242429] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    className="p-3.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex flex-col md:flex-row md:items-center justify-between gap-3"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-bold text-[#F4F4F6]">
+                        <h3 className="text-xs font-bold text-[#F4F0EA]">
                           {show.headline || show.newsHeadline || show.festivalName}
                         </h3>
-                        <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#8E8E99]">
+                        <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99]">
                           {show.slotTitle || show.slot}
                         </span>
                       </div>
-                      <p className="text-xs text-[#8E8E99] mt-1 italic">
-                        "{show.reviews?.[0]?.quote || show.reviews?.[0]?.snippet || show.pressQuote || show.subheadline || 'Concierto inolvidable.'}" — {show.reviews?.[0]?.outlet || 'Prensa'}
-                      </p>
-                      <span className="text-[11px] text-[#52525B] font-sans block mt-1 tabular-nums">
+                      <span className="text-2xs text-[#8E8E99] block mt-1 tabular-nums">
                         Audiencia: {(show.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {show.performanceScore ?? show.crowdRating ?? 75}%
                       </span>
                     </div>
 
-                    <div className="text-right shrink-0">
-                      <span className="text-xs text-[#8E8E99] block font-sans">Ganancia Neta</span>
-                      <span className="text-sm font-bold text-[#00E599] font-sans tabular-nums">
+                    <div className="text-right shrink-0 tabular-nums">
+                      <span className="text-2xs text-[#8E8E99] block">Ganancia Neta</span>
+                      <span className="text-sm font-bold text-[#10B981]">
                         +{formatMoney(show.netProfit)}
                       </span>
                     </div>
@@ -453,110 +408,66 @@ export const ToursView: React.FC<ToursViewProps> = ({
 
       {/* --- SUBTAB 2: TRADITIONAL TOURS --- */}
       {subTab === 'tours' && (
-        <div className="space-y-6">
-          {/* Active Requirements Bar */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4 shadow-xs">
-            <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2 border-b border-[#242429] pb-3">
-              <Sparkles className="w-4 h-4 text-[#FF4F00]" />
-              Requisitos de Producción & Convocatoria
-            </h2>
+        <div className="space-y-5">
+          {/* Tour Booking Form with Integrated Compact Requirements Strip */}
+          <form onSubmit={handleStartTour} className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-5">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#26262B] pb-3.5">
+              <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
+                <Ticket className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+                Planificar Nueva Gira
+              </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div
-                className={`p-4 rounded-[4px] border flex items-start gap-3 transition-colors ${
-                  tourGates.hasCatalog ? 'bg-[#09090B] border-[#242429]' : 'bg-[#EF4444]/10 border-[#EF4444]/30'
-                }`}
-              >
-                <Disc3
-                  className={`w-5 h-5 mt-0.5 shrink-0 ${tourGates.hasCatalog ? 'text-[#00E599]' : 'text-[#EF4444]'}`}
-                />
-                <div>
-                  <div className="text-xs font-bold text-[#F4F4F6]">Repertorio Mínimo</div>
-                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-sans">
-                    {tourGates.hasCatalog ? (
-                      <span className="text-[#00E599] font-semibold tabular-nums">
-                        Listo: {tourGates.catalogCount} temas en catálogo
-                      </span>
-                    ) : (
-                      <span className="text-[#EF4444] font-semibold tabular-nums">
-                        Insuficiente: Requiere al menos {MIN_TOUR_SONGS} temas o 1 EP
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
+              {/* Compact 3-Indicator Requirements Strip */}
+              <div className="flex flex-wrap items-center gap-2 text-xs tabular-nums">
+                <span
+                  className={`px-2.5 py-1 rounded-[4px] border flex items-center gap-1.5 font-semibold ${
+                    tourGates.hasCatalog
+                      ? 'bg-[#0B0B0C] border-[#26262B] text-[#10B981]'
+                      : 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]'
+                  }`}
+                >
+                  <Disc3 className="w-3.5 h-3.5" strokeWidth={1.75} />
+                  Catálogo ≥{MIN_TOUR_SONGS} ({tourGates.catalogCount})
+                </span>
 
-              <div
-                className={`p-4 rounded-[4px] border flex items-start gap-3 transition-colors ${
-                  tourGates.hasAudience ? 'bg-[#09090B] border-[#242429]' : 'bg-[#EF4444]/10 border-[#EF4444]/30'
-                }`}
-              >
-                <Headphones
-                  className={`w-5 h-5 mt-0.5 shrink-0 ${tourGates.hasAudience ? 'text-[#00E599]' : 'text-[#EF4444]'}`}
-                />
-                <div>
-                  <div className="text-xs font-bold text-[#F4F4F6]">Base de Oyentes</div>
-                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-sans">
-                    {tourGates.hasAudience ? (
-                      <span className="text-[#00E599] font-semibold tabular-nums">
-                        Suficiente: {formatListeners(player.stats.monthlyListeners)}
-                      </span>
-                    ) : (
-                      <span className="text-[#EF4444] font-semibold tabular-nums">
-                        Insuficiente: Requiere ≥{MIN_TOUR_LISTENERS.toLocaleString()} oyentes
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
+                <span
+                  className={`px-2.5 py-1 rounded-[4px] border flex items-center gap-1.5 font-semibold ${
+                    tourGates.hasAudience
+                      ? 'bg-[#0B0B0C] border-[#26262B] text-[#10B981]'
+                      : 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]'
+                  }`}
+                >
+                  <Headphones className="w-3.5 h-3.5" strokeWidth={1.75} />
+                  Oyentes ≥1k ({formatListeners(player.stats.monthlyListeners)})
+                </span>
 
-              <div
-                className={`p-4 rounded-[4px] border flex items-start gap-3 transition-colors ${
-                  tourGates.hasEnergy ? 'bg-[#09090B] border-[#242429]' : 'bg-[#EF4444]/10 border-[#EF4444]/30'
-                }`}
-              >
-                <Zap
-                  className={`w-5 h-5 mt-0.5 shrink-0 ${tourGates.hasEnergy ? 'text-[#00E599]' : 'text-[#EF4444]'}`}
-                />
-                <div>
-                  <div className="text-xs font-bold text-[#F4F4F6]">Condición Física & Energía</div>
-                  <div className="text-[10px] text-[#8E8E99] mt-0.5 font-sans">
-                    {tourGates.hasEnergy ? (
-                      <span className="text-[#00E599] font-semibold tabular-nums">
-                        Óptima: {player.stats.energy}% de energía
-                      </span>
-                    ) : (
-                      <span className="text-[#EF4444] font-semibold tabular-nums">
-                        Agotado: Requiere ≥{MIN_TOUR_ENERGY}% para salir a la ruta
-                      </span>
-                    )}
-                  </div>
-                </div>
+                <span
+                  className={`px-2.5 py-1 rounded-[4px] border flex items-center gap-1.5 font-semibold ${
+                    tourGates.hasEnergy
+                      ? 'bg-[#0B0B0C] border-[#26262B] text-[#10B981]'
+                      : 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]'
+                  }`}
+                >
+                  <Zap className="w-3.5 h-3.5" strokeWidth={1.75} />
+                  Energía ≥{MIN_TOUR_ENERGY}% ({player.stats.energy}%)
+                </span>
               </div>
             </div>
-          </div>
-
-          {/* Tour Booking Form */}
-          <form onSubmit={handleStartTour} className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6 shadow-xs">
-            <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2 border-b border-[#242429] pb-3">
-              <Ticket className="w-4 h-4 text-[#FF4F00]" />
-              Planificar Nueva Gira
-            </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#D4D4D8] block mb-1">Nombre Oficial del Tour</label>
+                <label className="text-xs font-semibold text-[#8E8E99] block mb-1.5">Nombre Oficial del Tour</label>
                 <input
                   type="text"
                   value={tourName}
                   onChange={(e) => setTourName(e.target.value)}
                   placeholder={`Ej: ${player.name} — El Retorno Tour ${world?.currentYear || 2026}`}
-                  className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] px-3.5 py-2 text-xs text-[#F4F4F6] focus:border-[#3F3F46] focus:outline-hidden"
+                  className="w-full bg-[#0B0B0C] border border-[#26262B] rounded-[4px] px-3.5 py-2 text-xs text-[#F4F0EA] focus:border-[#3F3F46] focus:outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#D4D4D8] block mb-2">Escala de los Recintos (Tier)</label>
+                <label className="text-xs font-semibold text-[#8E8E99] block mb-2">Escala de los Recintos (Tier)</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {(Object.keys(tierDetails) as TourTier[]).map((tierKey) => {
                     const info = tierDetails[tierKey];
@@ -567,24 +478,24 @@ export const ToursView: React.FC<ToursViewProps> = ({
                       <div
                         key={tierKey}
                         onClick={() => isAvailable && setSelectedTier(tierKey)}
-                        className={`p-4 rounded-[4px] border text-left transition-all relative ${
+                        className={`p-3.5 rounded-[4px] border text-left transition-all relative ${
                           !isAvailable
-                            ? 'opacity-40 bg-[#09090B] border-[#242429] cursor-not-allowed'
+                            ? 'opacity-40 bg-[#0B0B0C] border-[#26262B] cursor-not-allowed'
                             : isSelected
-                            ? `border-[#FF4F00] bg-[#FF4F00]/10 shadow-xs cursor-pointer`
-                            : 'bg-[#09090B] border-[#242429] hover:border-[#3F3F46] cursor-pointer'
+                            ? 'border-[#FF2A4B] bg-[#1C1C21] cursor-pointer'
+                            : 'bg-[#0B0B0C] border-[#26262B] hover:border-[#3F3F46] cursor-pointer'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <h3 className="text-xs font-bold text-[#F4F4F6] truncate">{info.title}</h3>
-                          <span className={`text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] border ${TIER_BADGE_COLORS[tierKey]}`}>
+                          <h3 className="text-xs font-bold text-[#F4F0EA] truncate">{info.title}</h3>
+                          <span className={`text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] border ${TIER_BADGE_COLORS[tierKey]}`}>
                             {tierKey}
                           </span>
                         </div>
-                        <p className="text-[11px] text-[#8E8E99] mt-2 leading-relaxed line-clamp-2">{info.desc}</p>
-                        <div className="mt-3 pt-2 border-t border-[#242429] flex items-center justify-between text-xs font-sans">
-                          <span className="text-[#00E599] font-bold tabular-nums">{info.estRevenue}</span>
-                          <span className="text-[#EF4444] tabular-nums">{info.fatigue}</span>
+                        <p className="text-2xs text-[#8E8E99] mt-1.5 leading-relaxed line-clamp-2">{info.desc}</p>
+                        <div className="mt-2.5 pt-2 border-t border-[#26262B] flex items-center justify-between text-xs tabular-nums">
+                          <span className="text-[#10B981] font-bold">{info.estRevenue}</span>
+                          <span className="text-[#EF4444]">{info.fatigue}</span>
                         </div>
                       </div>
                     );
@@ -593,15 +504,15 @@ export const ToursView: React.FC<ToursViewProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[#242429] flex items-center justify-between">
-              <div className="text-xs text-[#8E8E99] font-sans">
+            <div className="pt-2 border-t border-[#26262B] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="text-xs text-[#8E8E99]">
                 {isTourAllowed ? (
-                  <span className="text-[#00E599] flex items-center gap-1 font-semibold">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Requisitos aprobados para salir de gira
+                  <span className="text-[#10B981] flex items-center gap-1.5 font-semibold">
+                    <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.75} /> Requisitos listos para reservar fechas
                   </span>
                 ) : (
-                  <span className="text-[#EF4444] flex items-center gap-1 font-semibold">
-                    <AlertTriangle className="w-3.5 h-3.5" /> {tourGates.tooltipText}
+                  <span className="text-[#EF4444] flex items-center gap-1.5 font-semibold">
+                    <AlertTriangle className="w-3.5 h-3.5" strokeWidth={1.75} /> {tourGates.tooltipText}
                   </span>
                 )}
               </div>
@@ -610,54 +521,54 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 type="submit"
                 disabled={!isTourAllowed}
                 title={tourGates.tooltipText}
-                className={`font-sans text-xs px-5 py-2.5 rounded-[4px] transition-all flex items-center gap-2 ${
+                className={`text-xs px-5 py-2.5 rounded-[4px] transition-all flex items-center justify-center gap-2 ${
                   isTourAllowed
-                    ? 'bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold cursor-pointer active:translate-y-[1px]'
-                    : 'bg-[#18181C] text-[#52525B] border border-[#242429] cursor-not-allowed opacity-60'
+                    ? 'bg-[#FF2A4B] hover:bg-[#E02040] text-[#F4F0EA] font-bold cursor-pointer active:translate-y-[1px]'
+                    : 'bg-[#1C1C21] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-60'
                 }`}
               >
-                <Sparkles className="w-4 h-4" />
-                <span>{isTourAllowed ? 'Iniciar Gira & Vender Entradas' : 'Requisitos Insuficientes para Gira'}</span>
+                <Sparkles className="w-4 h-4" strokeWidth={1.75} />
+                <span>{isTourAllowed ? 'Iniciar Gira & Vender Entradas' : 'Requisitos Insuficientes'}</span>
               </button>
             </div>
           </form>
 
           {/* History of Tours */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4 shadow-xs">
-            <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2 border-b border-[#242429] pb-3">
-              <MapPin className="w-4 h-4 text-[#FF4F00]" />
-              Historial de Giras Realizadas • {playerTours.length}
+          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-3">
+            <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 border-b border-[#26262B] pb-2.5">
+              <MapPin className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              Historial de Giras Realizadas • <span className="tabular-nums">{playerTours.length}</span>
             </h2>
 
             {playerTours.length === 0 ? (
-              <div className="text-center py-8 text-[#8E8E99] font-sans text-xs">No has realizado ninguna gira todavía.</div>
+              <div className="text-center py-6 text-[#8E8E99] text-xs">No has realizado ninguna gira todavía.</div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {playerTours.map((t) => {
                   const ticketBadge = getTicketBadge(t.totalTicketsSold, t.totalCapacity);
                   return (
                     <div
                       key={t.id}
-                      className={`bg-[#09090B] p-4 rounded-[4px] border border-[#242429] flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 ${TIER_BORDER_COLORS[t.tier]} hover:border-[#3F3F46] hover:bg-[#18181C] transition-all`}
+                      className={`bg-[#0B0B0C] p-3.5 rounded-[4px] border border-[#26262B] flex flex-col md:flex-row md:items-center justify-between gap-3 border-l-4 ${TIER_BORDER_COLORS[t.tier]} hover:border-[#3F3F46] hover:bg-[#1C1C21] transition-all`}
                     >
                       <div>
-                        <h3 className="text-sm font-bold text-[#F4F4F6] flex items-center gap-2">
+                        <h3 className="text-xs font-bold text-[#F4F0EA] flex items-center gap-2 flex-wrap">
                           {t.name}
-                          <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-sans font-bold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
+                          <span className={`text-2xs px-2 py-0.5 rounded-[4px] font-bold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
                             {t.tier}
                           </span>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-[4px] font-sans font-bold ${ticketBadge.cls}`}>
+                          <span className={`text-2xs px-2 py-0.5 rounded-[4px] font-bold ${ticketBadge.cls}`}>
                             {ticketBadge.label}
                           </span>
                         </h3>
-                        <p className="text-xs text-[#8E8E99] mt-1 font-sans tabular-nums">
-                          Año {t.year} • {t.stops?.length || 0} Ciudades • {(t.totalTicketsSold || 0).toLocaleString('es-AR')} de {(t.totalCapacity || 0).toLocaleString('es-AR')} Tickets Vendidos
+                        <p className="text-2xs text-[#8E8E99] mt-1 tabular-nums">
+                          Año {t.year} • {t.stops?.length || 0} Ciudades • {(t.totalTicketsSold || 0).toLocaleString('es-AR')} / {(t.totalCapacity || 0).toLocaleString('es-AR')} Tickets
                         </p>
                       </div>
 
-                      <div className="text-right">
-                        <span className="text-xs text-[#8E8E99] block font-sans">Ganancia Neta</span>
-                        <span className="text-sm font-bold text-[#00E599] font-sans tabular-nums">
+                      <div className="text-right tabular-nums shrink-0">
+                        <span className="text-2xs text-[#8E8E99] block">Ganancia Neta</span>
+                        <span className="text-sm font-bold text-[#10B981]">
                           +{formatMoney(t.netArtistProfit || 0)}
                         </span>
                       </div>
