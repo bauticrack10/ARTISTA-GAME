@@ -152,15 +152,17 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
 
   // Tours
   playerTours.forEach(tour => {
+    const tourStops = Array.isArray(tour?.stops) ? tour.stops : [];
+    const tourTier = tour?.tier || 'club';
     timelineItems.push({
-      id: `traj_tour_${tour.id}`,
-      year: tour.year,
-      month: tour.month,
+      id: `traj_tour_${tour?.id || Math.random()}`,
+      year: tour?.year || 2026,
+      month: tour?.month || 1,
       type: 'tour',
-      title: `Gira: "${cleanQuotes(tour.name)}" • ${tour.tier.toUpperCase()}`,
-      description: `${tour.stops.length} fechas (${tour.stops.map(s => s.city).slice(0, 3).join(', ')}...)`,
-      metrics: `${formatMoney(tour.grossRevenue || 0)} recaudación • ${(tour.totalTicketsSold || 0).toLocaleString('es-AR')} tickets`,
-      badge: tour.id === bestTour?.id ? 'Mejor Gira' : 'Tour',
+      title: `Gira: "${cleanQuotes(tour?.name || 'Gira')}" • ${tourTier.toUpperCase()}`,
+      description: `${tourStops.length} fechas (${tourStops.map(s => s?.city || 'Ciudad').slice(0, 3).join(', ')}...)`,
+      metrics: `${formatMoney(tour?.grossRevenue || 0)} recaudación • ${(tour?.totalTicketsSold || 0).toLocaleString('es-AR')} tickets`,
+      badge: tour?.id === bestTour?.id ? 'Mejor Gira' : 'Tour',
       icon: MapPin
     });
   });
@@ -370,12 +372,12 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <span className="text-2xs text-[#8E8E99] tabular-nums block">
-                    Año {bestTour.year}, Mes {bestTour.month} • {bestTour.stops.length} ciudades
+                    Año {bestTour.year}, Mes {bestTour.month} • {(bestTour.stops || []).length} ciudades
                   </span>
                   <h3 className="text-base font-bold text-[#F4F0EA] mt-0.5">{bestTour.name}</h3>
                 </div>
                 <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/40">
-                  {bestTour.tier}
+                  {bestTour.tier || 'club'}
                 </span>
               </div>
 

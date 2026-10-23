@@ -76,7 +76,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
   const [crew, setCrew] = useState<'solo_dj' | 'live_band' | 'elite_dancers_choir'>('solo_dj');
 
   // Setlist Selection (up to 5 songs)
-  const playerSongs = Object.values(world.songs || {}).filter(s => s.artistId === player.id);
+  const playerSongs = Object.values(world?.songs || {}).filter(s => s && s.artistId === player?.id);
   const [selectedSongIds, setSelectedSongIds] = useState<string[]>(() => {
     // Default: top songs by popularity/streams
     return [...playerSongs]
@@ -87,8 +87,28 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
 
   // Pick a random dilemma for this show
   const [currentDilemma] = useState<LiveShowDilemma>(() => {
-    const randomIndex = Math.floor(Math.random() * LIVE_SHOW_DILEMMAS.length);
-    return LIVE_SHOW_DILEMMAS[randomIndex];
+    const list = Array.isArray(LIVE_SHOW_DILEMMAS) && LIVE_SHOW_DILEMMAS.length > 0
+      ? LIVE_SHOW_DILEMMAS
+      : [];
+    const randomIndex = Math.floor(Math.random() * list.length);
+    return list[randomIndex] || {
+      id: 'sound_check',
+      title: 'Monitoreo de Sonido en Vivo',
+      contextDescription: 'El show comienza y sientes la vibración del público. ¿Cómo arrancas la presentación?',
+      choices: [
+        {
+          id: 'hit_opener',
+          text: 'Abrir con el drop más explosivo de tu repertorio',
+          description: 'Haces estallar los parlantes desde el primer compás.',
+          scoreModifier: 8,
+          hypeModifier: 10,
+          energyModifier: -10,
+          reputationModifier: 5,
+          credibilityModifier: 5,
+          fansMultiplier: 1.15
+        }
+      ]
+    };
   });
   const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
 
@@ -104,8 +124,8 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
   };
   const productionCost = FestivalEngine.calculateProductionCost(currentProductionConfig);
   const estimatedPayout = invitation ? invitation.payout : 35000;
-  const isFundsInsufficient = productionCost > player.stats.funds;
-  const isEnergyInsufficient = player.stats.energy < 20;
+  const isFundsInsufficient = productionCost > (player?.stats?.funds || 0);
+  const isEnergyInsufficient = (player?.stats?.energy || 0) < 20;
 
   const handleToggleSong = (songId: string) => {
     playSound('click');
@@ -337,7 +357,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                               {song.title}
                             </span>
                             <span className="text-[10px] text-[#8E8E99] font-sans tabular-nums block">
-                              Q: {song.quality}% • {(song.streamsTotal / 1000000).toFixed(1)}M streams
+                              Q: {Number.isFinite(song.quality) ? song.quality : 70}% • {(((song.streamsTotal || 0) / 1000000)).toFixed(1)}M streams
                             </span>
                           </div>
                           <div className={`w-5 h-5 rounded-[4px] flex items-center justify-center shrink-0 border ${
@@ -362,7 +382,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               {isEnergyInsufficient && (
                 <div className="p-3 rounded-[4px] bg-[#1F1912] border border-[#45321A] text-[#F59E0B] text-xs flex items-center gap-2 font-sans">
                   <AlertTriangle className="w-4 h-4 text-[#F59E0B] shrink-0" />
-                  <span>Tu energía es demasiado baja ({player.stats.energy}%). Necesitas al menos 20% de energía para subirte al escenario.</span>
+                  <span>Tu energía es demasiado baja ({player?.stats?.energy || 0}%). Necesitas al menos 20% de energía para subirte al escenario.</span>
                 </div>
               )}
             </div>
@@ -501,23 +521,29 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {(showResult.reviews || showResult.pressReviews || []).map((rev, idx) => (
-                    <div key={idx} className="p-4 rounded-[4px] bg-[#111114] border border-[#242429] space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-[#F4F4F6]">
-                          {rev.outlet}
-                        </span>
-                        <div className="flex items-center gap-1 text-[#F59E0B]">
-                          {Array.from({ length: Math.min(5, Math.max(1, Math.round(rev.rating > 5 ? rev.rating / 2 : (rev.rating || 4)))) }).map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-[#F59E0B]" />
-                          ))}
+                  {(showResult.reviews || showResult.pressReviews || []).map((rev, idx) => {
+                    if (!rev) return null;
+                    const ratingVal = Number.isFinite(rev.rating) ? (rev.rating > 5 ? rev.rating / 2 : rev.rating) : 4;
+                    const starCount = Math.min(5, Math.max(1, Math.round(ratingVal)));
+
+                    return (
+                      <div key={idx} className="p-4 rounded-[4px] bg-[#111114] border border-[#242429] space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-[#F4F4F6]">
+                            {rev.outlet}
+                          </span>
+                          <div className="flex items-center gap-1 text-[#F59E0B]">
+                            {Array.from({ length: starCount }).map((_, i) => (
+                              <Star key={i} className="w-3.5 h-3.5 fill-[#F59E0B]" />
+                            ))}
+                          </div>
                         </div>
+                        <p className="text-xs text-[#8E8E99] italic">
+                          "{rev.quote || rev.snippet || 'Concierto inolvidable.'}"
+                        </p>
                       </div>
-                      <p className="text-xs text-[#8E8E99] italic">
-                        "{rev.quote || rev.snippet || 'Concierto inolvidable.'}"
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

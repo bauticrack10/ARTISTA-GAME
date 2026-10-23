@@ -104,12 +104,14 @@ export const ToursView: React.FC<ToursViewProps> = ({
   const tourGates = useTourRequirements(player, world);
   const isTourAllowed = tourGates.canTour;
   const availableTiers = TourEngine.getAvailableTiersForArtist(player);
-  const playerTours = world?.tours ? world.tours.filter((t) => t.artistId === player?.id) : [];
+  const playerTours = Array.isArray(world?.tours) ? world.tours.filter((t) => t && t.artistId === player?.id) : [];
 
-  const pendingInvitations = (world.festivalInvitations || []).filter(
-    (inv) => inv.status === 'pending'
-  );
-  const festivalHistory = player.livePerformanceHistory || world.festivalHistory || [];
+  const pendingInvitations = Array.isArray(world?.festivalInvitations)
+    ? world.festivalInvitations.filter((inv) => inv && inv.status === 'pending')
+    : [];
+  const festivalHistory = Array.isArray(player?.livePerformanceHistory)
+    ? player.livePerformanceHistory
+    : (Array.isArray(world?.festivalHistory) ? world.festivalHistory : []);
 
   const tierDetails: Record<
     TourTier,
@@ -163,12 +165,17 @@ export const ToursView: React.FC<ToursViewProps> = ({
     e.preventDefault();
     if (!isTourAllowed) return;
 
-    const finalName = tourName.trim() || `Gira ${player.name} ${world?.currentYear || 2026}`;
-    onBookTour(selectedTier, finalName);
-    playSound('chart_no1');
-    setNotification(`¡La gira "${finalName}" fue programada con éxito!`);
-    setTourName('');
-    setTimeout(() => setNotification(null), 5000);
+    try {
+      const finalName = tourName.trim() || `Gira ${player?.name || 'Artista'} ${world?.currentYear || 2026}`;
+      onBookTour(selectedTier, finalName);
+      playSound('chart_no1');
+      setNotification(`¡La gira "${finalName}" fue programada con éxito!`);
+      setTourName('');
+      setTimeout(() => setNotification(null), 5000);
+    } catch (err: any) {
+      setNotification(err.message || 'Error al programar la gira.');
+      setTimeout(() => setNotification(null), 6000);
+    }
   };
 
   const handleOpenLiveFestivalShow = (fest: GlobalFestival, slot: FestivalSlot, inv?: FestivalInvitation) => {
@@ -381,21 +388,21 @@ export const ToursView: React.FC<ToursViewProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="text-xs font-bold text-[#F4F0EA]">
-                          {show.headline || show.newsHeadline || show.festivalName}
+                          {show?.headline || show?.newsHeadline || show?.festivalName || 'Show en Vivo'}
                         </h3>
                         <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99]">
-                          {show.slotTitle || show.slot}
+                          {show?.slotTitle || show?.slot || 'Actuación'}
                         </span>
                       </div>
                       <span className="text-2xs text-[#8E8E99] block mt-1 tabular-nums">
-                        Audiencia: {(show.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {show.performanceScore ?? show.crowdRating ?? 75}%
+                        Audiencia: {(show?.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {Number.isFinite(show?.performanceScore) ? show.performanceScore : (Number.isFinite(show?.crowdRating) ? show.crowdRating : 75)}%
                       </span>
                     </div>
 
                     <div className="text-right shrink-0 tabular-nums">
                       <span className="text-2xs text-[#8E8E99] block">Ganancia Neta</span>
-                      <span className="text-sm font-bold text-[#10B981]">
-                        +{formatMoney(show.netProfit)}
+                      <span className={`text-sm font-bold ${(show?.netProfit ?? 0) >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+                        {(show?.netProfit ?? 0) >= 0 ? `+${formatMoney(show?.netProfit || 0)}` : `-${formatMoney(Math.abs(show?.netProfit || 0))}`}
                       </span>
                     </div>
                   </div>
@@ -427,7 +434,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                   }`}
                 >
                   <Disc3 className="w-3.5 h-3.5" strokeWidth={1.75} />
-                  Catálogo ≥{MIN_TOUR_SONGS} ({tourGates.catalogCount})
+                  Catálogo ≥{MIN_TOUR_SONGS} ({tourGates.songsCount} singles{tourGates.albumsCount > 0 ? `, ${tourGates.albumsCount} EPs` : ''})
                 </span>
 
                 <span
@@ -438,7 +445,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                   }`}
                 >
                   <Headphones className="w-3.5 h-3.5" strokeWidth={1.75} />
-                  Oyentes ≥1k ({formatListeners(player.stats.monthlyListeners)})
+                  Oyentes ≥1k ({formatListeners(player?.stats?.monthlyListeners || 0)})
                 </span>
 
                 <span
@@ -449,7 +456,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                   }`}
                 >
                   <Zap className="w-3.5 h-3.5" strokeWidth={1.75} />
-                  Energía ≥{MIN_TOUR_ENERGY}% ({player.stats.energy}%)
+                  Energía ≥{MIN_TOUR_ENERGY}% ({player?.stats?.energy || 0}%)
                 </span>
               </div>
             </div>
@@ -545,24 +552,28 @@ export const ToursView: React.FC<ToursViewProps> = ({
             ) : (
               <div className="space-y-2.5">
                 {playerTours.map((t) => {
-                  const ticketBadge = getTicketBadge(t.totalTicketsSold, t.totalCapacity);
+                  const ticketBadge = getTicketBadge(t?.totalTicketsSold || 0, t?.totalCapacity || 0);
+                  const safeTier = (t?.tier || 'club') as TourTier;
+                  const borderCls = TIER_BORDER_COLORS[safeTier] || 'border-l-[#10B981]';
+                  const badgeCls = TIER_BADGE_COLORS[safeTier] || 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30';
+
                   return (
                     <div
-                      key={t.id}
-                      className={`bg-[#0B0B0C] p-3.5 rounded-[4px] border border-[#26262B] flex flex-col md:flex-row md:items-center justify-between gap-3 border-l-4 ${TIER_BORDER_COLORS[t.tier]} hover:border-[#3F3F46] hover:bg-[#1C1C21] transition-all`}
+                      key={t?.id || `tour_${Math.random()}`}
+                      className={`bg-[#0B0B0C] p-3.5 rounded-[4px] border border-[#26262B] flex flex-col md:flex-row md:items-center justify-between gap-3 border-l-4 ${borderCls} hover:border-[#3F3F46] hover:bg-[#1C1C21] transition-all`}
                     >
                       <div>
                         <h3 className="text-xs font-bold text-[#F4F0EA] flex items-center gap-2 flex-wrap">
-                          {t.name}
-                          <span className={`text-2xs px-2 py-0.5 rounded-[4px] font-bold uppercase border ${TIER_BADGE_COLORS[t.tier]}`}>
-                            {t.tier}
+                          {t?.name || 'Gira'}
+                          <span className={`text-2xs px-2 py-0.5 rounded-[4px] font-bold uppercase border ${badgeCls}`}>
+                            {safeTier}
                           </span>
                           <span className={`text-2xs px-2 py-0.5 rounded-[4px] font-bold ${ticketBadge.cls}`}>
                             {ticketBadge.label}
                           </span>
                         </h3>
                         <p className="text-2xs text-[#8E8E99] mt-1 tabular-nums">
-                          Año {t.year} • {t.stops?.length || 0} Ciudades • {(t.totalTicketsSold || 0).toLocaleString('es-AR')} / {(t.totalCapacity || 0).toLocaleString('es-AR')} Tickets
+                          Año {t?.year || 2026} • {t?.stops?.length || 0} Ciudades • {(t?.totalTicketsSold || 0).toLocaleString('es-AR')} / {(t?.totalCapacity || 0).toLocaleString('es-AR')} Tickets
                         </p>
                       </div>
 

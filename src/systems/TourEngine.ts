@@ -16,16 +16,16 @@ export class TourEngine {
 
     if (typeof songsOrWorld === 'object' && songsOrWorld !== null && 'songs' in songsOrWorld) {
       const world = songsOrWorld as WorldState;
-      songs = Object.values(world.songs || {}).filter(s => s.artistId === artist.id).length;
-      albums = Object.values(world.albums || {}).filter(a => a.artistId === artist.id).length;
+      songs = Object.values(world.songs || {}).filter(s => s && s.artistId === artist?.id).length;
+      albums = Object.values(world.albums || {}).filter(a => a && a.artistId === artist?.id).length;
     } else if (typeof songsOrWorld === 'number') {
       songs = songsOrWorld;
       albums = albumsCount;
     }
 
     const hasCatalog = songs >= MIN_TOUR_SONGS || albums >= 1;
-    const hasAudience = artist.stats.monthlyListeners >= MIN_TOUR_LISTENERS;
-    const hasEnergy = artist.stats.energy >= MIN_TOUR_ENERGY;
+    const hasAudience = (artist?.stats?.monthlyListeners || 0) >= MIN_TOUR_LISTENERS;
+    const hasEnergy = (artist?.stats?.energy || 0) >= MIN_TOUR_ENERGY;
 
     if (!hasCatalog || !hasAudience || !hasEnergy) {
       return {
@@ -38,8 +38,8 @@ export class TourEngine {
   }
 
   static getAvailableTiersForArtist(artist: Artist): TourTier[] {
-    const pop = artist.stats.popularity;
-    const listeners = artist.stats.monthlyListeners;
+    const pop = artist?.stats?.popularity || 0;
+    const listeners = artist?.stats?.monthlyListeners || 0;
     const tiers: TourTier[] = ['club'];
 
     if (pop >= 35 && listeners >= 20000) tiers.push('theater');
@@ -103,7 +103,7 @@ export class TourEngine {
     }
 
     // Pick cities based on tier
-    const allCitiesList = Object.values(CITIES_BY_REGION).flat();
+    const allCitiesList = Object.values(CITIES_BY_REGION || {}).flat();
     const shuffled = [...allCitiesList].sort(() => 0.5 - Math.random());
     const selectedCities = shuffled.slice(0, stopCount);
 
@@ -113,23 +113,23 @@ export class TourEngine {
 
     // Demanda real de audiencia: las ventas están ancladas a fans y oyentes mensuales reales
     const activeAudienceDemand = Math.floor(
-      (artist.stats.fansCount || 500) * 0.20 + (artist.stats.monthlyListeners || 500) * 0.05
+      (artist?.stats?.fansCount || 500) * 0.20 + (artist?.stats?.monthlyListeners || 500) * 0.05
     );
     const maxTicketsPerStop = Math.max(25, Math.floor(activeAudienceDemand / Math.max(1, stopCount * 0.65)));
 
     for (const city of selectedCities) {
-      const cap = Math.min(city.venueCapacity, targetCapacityBase);
+      const cap = Math.min(city?.venueCapacity || targetCapacityBase, targetCapacityBase);
       // Sold percentage based on popularity, charisma and local fan penetration
-      const popRatio = Math.max(0.05, artist.stats.popularity / 100);
+      const popRatio = Math.max(0.05, (artist?.stats?.popularity || 0) / 100);
       const selloutRatio = Math.min(1.0, (popRatio * 1.1) * (0.8 + Math.random() * 0.3));
       const demandSold = Math.min(cap, maxTicketsPerStop);
       const ticketsSold = Math.max(10, Math.min(cap, Math.floor(demandSold * selloutRatio)));
       const rev = ticketsSold * ticketPrice;
-      const successRating = Math.floor(Math.min(100, (ticketsSold / cap) * 100));
+      const successRating = cap > 0 ? Math.floor(Math.min(100, (ticketsSold / cap) * 100)) : 75;
 
       stops.push({
-        city: city.name,
-        country: city.country,
+        city: city?.name || 'Ciudad Global',
+        country: city?.country || 'Internacional',
         capacity: cap,
         ticketsSold,
         ticketPrice,
@@ -143,13 +143,15 @@ export class TourEngine {
     }
 
     // Artist net profit: gross minus production, venue rent, crew
-    const netArtistProfit = Math.floor(grossRevenue * profitMargin);
-    const energyFatigue = Math.min(50, Math.floor(stopCount * 4.5));
-    const hypeGenerated = Math.floor(Math.min(30, (totalTicketsSold / 4000) * 8 + 4));
-    const fanbaseGained = Math.floor(totalTicketsSold * 0.25);
+    const netArtistProfit = Math.max(0, Math.floor(grossRevenue * profitMargin));
+    const energyFatigue = Math.min(50, Math.max(5, Math.floor(stopCount * 4.5)));
+    const hypeGenerated = Math.floor(Math.min(30, Math.max(2, (totalTicketsSold / 4000) * 8 + 4)));
+    const fanbaseGained = Math.max(10, Math.floor(totalTicketsSold * 0.25));
+
+    const uniqueTourId = `tour_${artist?.id || 'player'}_${currentYear}_${currentMonth}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
     const tour: Tour = {
-      id: `tour_${artist.id}_${currentYear}_${currentMonth}`,
+      id: uniqueTourId,
       name: tourName,
       artistId: artist.id,
       tier,

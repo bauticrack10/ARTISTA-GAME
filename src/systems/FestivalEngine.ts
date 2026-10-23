@@ -382,8 +382,8 @@ export class FestivalEngine {
    * trayectoria y relevancia en la industria.
    */
   static getEligibleSlot(artist: Artist, festival?: GlobalFestival): FestivalSlot | null {
-    const pop = artist.stats.popularity;
-    const stage = artist.careerStage;
+    const pop = artist?.stats?.popularity || 0;
+    const stage = artist?.careerStage || 'Underground';
     const rank = CAREER_STAGE_RANK[stage] || 1;
 
     // Headliner: Popularidad >= 85 y Superstar/Veteran/Legend (o >= 90)
@@ -527,31 +527,33 @@ export class FestivalEngine {
     let baseAudienceRatio = 0.22;
     let baseEnergyCost = 22;
 
+    const artistPop = artist?.stats?.popularity || 0;
     if (slot === 'opening_act') {
-      basePayout = 9000 + artist.stats.popularity * 280;
+      basePayout = 9000 + artistPop * 280;
       baseAudienceRatio = 0.22;
       baseEnergyCost = 20;
     } else if (slot === 'sunset_slot') {
-      basePayout = 38000 + artist.stats.popularity * 800;
+      basePayout = 38000 + artistPop * 800;
       baseAudienceRatio = 0.52;
       baseEnergyCost = 28;
     } else if (slot === 'sub_headliner') {
-      basePayout = 120000 + artist.stats.popularity * 1700;
+      basePayout = 120000 + artistPop * 1700;
       baseAudienceRatio = 0.78;
       baseEnergyCost = 36;
     } else if (slot === 'headliner') {
-      basePayout = 350000 + artist.stats.popularity * 4500;
+      basePayout = 350000 + artistPop * 4500;
       baseAudienceRatio = 0.96;
       baseEnergyCost = 45;
     }
 
-    const payoutGross = Math.floor(basePayout * (festival.prestige / 85));
+    const festPrestige = festival?.prestige || 85;
+    const payoutGross = Math.max(0, Math.floor(basePayout * (festPrestige / 85)));
     const netProfit = payoutGross - productionCost;
-    const attendance = Math.floor(festival.capacity * baseAudienceRatio);
+    const attendance = Math.max(100, Math.floor((festival?.capacity || 20000) * baseAudienceRatio));
 
     // 3. Evaluación de Setlist
-    let setlistQualityAvg = artist.personality.skill;
-    let setlistAppealAvg = artist.personality.commercialAppeal;
+    let setlistQualityAvg = artist?.personality?.skill || 70;
+    let setlistAppealAvg = artist?.personality?.commercialAppeal || 70;
     let songsCount = 0;
 
     if (setlistSongIds && setlistSongIds.length > 0 && world?.songs) {
@@ -560,8 +562,10 @@ export class FestivalEngine {
       for (const sId of setlistSongIds) {
         const s = world.songs[sId];
         if (s) {
-          sumQ += s.quality;
-          sumA += s.commercialAppeal;
+          const q = Number.isFinite(s.quality) ? s.quality : (artist?.personality?.skill || 70);
+          const a = Number.isFinite(s.commercialAppeal) ? s.commercialAppeal : (artist?.personality?.commercialAppeal || 70);
+          sumQ += q;
+          sumA += a;
           songsCount++;
         }
       }
@@ -571,23 +575,26 @@ export class FestivalEngine {
       }
     }
 
+    if (!Number.isFinite(setlistQualityAvg)) setlistQualityAvg = artist?.personality?.skill || 70;
+    if (!Number.isFinite(setlistAppealAvg)) setlistAppealAvg = artist?.personality?.commercialAppeal || 70;
+
     // 4. Bonificaciones de Escenario
     let visualBonus = 0;
     let visualHype = 0;
-    if (production.visuals === '3d_screens') {
+    if (production?.visuals === '3d_screens') {
       visualBonus = 6;
       visualHype = 6;
-    } else if (production.visuals === 'monumental_mapping') {
+    } else if (production?.visuals === 'monumental_mapping') {
       visualBonus = 14;
       visualHype = 14;
     }
 
     let pyroBonus = 0;
     let pyroHype = 0;
-    if (production.pyro === 'sparks_fog') {
+    if (production?.pyro === 'sparks_fog') {
       pyroBonus = 4;
       pyroHype = 7;
-    } else if (production.pyro === 'flamethrowers_lasers') {
+    } else if (production?.pyro === 'flamethrowers_lasers') {
       pyroBonus = 10;
       pyroHype = 15;
     }
@@ -595,25 +602,26 @@ export class FestivalEngine {
     let crewBonus = 0;
     let crewHype = 0;
     let crewCred = 0;
-    if (production.crew === 'live_band') {
+    if (production?.crew === 'live_band') {
       crewBonus = 8;
       crewHype = 5;
       crewCred = 10;
-    } else if (production.crew === 'elite_dancers_choir') {
+    } else if (production?.crew === 'elite_dancers_choir') {
       crewBonus = 12;
       crewHype = 12;
       crewCred = 4;
     }
 
     // 5. Puntuación de Performance Base (0 - 100)
-    const skillScore = (artist.personality.skill || 70) * 0.28;
-    const charismaScore = (artist.personality.charisma || 70) * 0.25;
-    const energyScore = (artist.stats.energy || 80) * 0.15;
+    const skillScore = (artist?.personality?.skill || 70) * 0.28;
+    const charismaScore = (artist?.personality?.charisma || 70) * 0.25;
+    const energyScore = (artist?.stats?.energy || 80) * 0.15;
     const musicScore = (setlistQualityAvg * 0.6 + setlistAppealAvg * 0.4) * 0.20;
     const stageProdScore = (visualBonus + pyroBonus + crewBonus) * 0.4;
     const variance = Math.floor(Math.random() * 9 - 4); // -4 a +4
 
     let rawScore = Math.floor(skillScore + charismaScore + energyScore + musicScore + stageProdScore + variance);
+    if (!Number.isFinite(rawScore)) rawScore = 75;
     let performanceScore = Math.min(99, Math.max(25, rawScore));
 
     // 6. Procesamiento de Dilema
@@ -627,24 +635,25 @@ export class FestivalEngine {
     if (dilemmaChoice && dilemmaChoice.choiceId) {
       const dilemma = (dilemmaChoice.dilemmaId && LIVE_SHOW_DILEMMAS.find(d => d.id === dilemmaChoice.dilemmaId))
         || LIVE_SHOW_DILEMMAS.find(d => d.choices.some(c => c.id === dilemmaChoice.choiceId));
-      const option = dilemma?.choices.find(c => c.id === dilemmaChoice.choiceId);
+      const option = dilemma?.choices?.find(c => c.id === dilemmaChoice.choiceId);
 
       if (dilemma && option) {
         // Verificar stat check si existe
         let statPassed = true;
         if (option.statCheck) {
-          const artistStatVal = (artist.personality[option.statCheck.stat as keyof typeof artist.personality] ??
-            artist.stats[option.statCheck.stat as keyof typeof artist.stats] ?? 50) as number;
+          const artistStatVal = (artist?.personality?.[option.statCheck.stat as keyof typeof artist.personality] ??
+            artist?.stats?.[option.statCheck.stat as keyof typeof artist.stats] ?? 50) as number;
           statPassed = artistStatVal >= option.statCheck.min;
         }
 
         const modifierFactor = statPassed ? 1.0 : 0.5;
-        performanceScore = Math.min(100, Math.max(15, performanceScore + Math.floor(option.scoreModifier * modifierFactor)));
-        dilemmaHypeDelta = Math.floor(option.hypeModifier * modifierFactor);
-        dilemmaRepDelta = Math.floor(option.reputationModifier * modifierFactor);
-        dilemmaCredDelta = Math.floor(option.credibilityModifier * modifierFactor);
-        dilemmaEnergyDelta = option.energyModifier;
-        fansMultiplier = statPassed ? option.fansMultiplier : 1.0;
+        const addScore = Math.floor((option.scoreModifier || 0) * modifierFactor);
+        performanceScore = Math.min(100, Math.max(15, performanceScore + addScore));
+        dilemmaHypeDelta = Math.floor((option.hypeModifier || 0) * modifierFactor);
+        dilemmaRepDelta = Math.floor((option.reputationModifier || 0) * modifierFactor);
+        dilemmaCredDelta = Math.floor((option.credibilityModifier || 0) * modifierFactor);
+        dilemmaEnergyDelta = option.energyModifier || 0;
+        fansMultiplier = statPassed ? (option.fansMultiplier || 1.0) : 1.0;
 
         dilemmaResultInfo = {
           dilemmaTitle: dilemma.title,
@@ -656,24 +665,26 @@ export class FestivalEngine {
       }
     }
 
+    if (!Number.isFinite(performanceScore)) performanceScore = 75;
+
     // 7. Impactos Generados
     const baseHypeGained = Math.floor(
       (performanceScore / 100) * (slot === 'headliner' ? 24 : slot === 'sub_headliner' ? 18 : slot === 'sunset_slot' ? 12 : 7) +
       visualHype + pyroHype + crewHype + dilemmaHypeDelta
     );
-    const hypeGained = Math.min(45, Math.max(2, baseHypeGained));
+    const hypeGained = Math.min(45, Math.max(2, Number.isFinite(baseHypeGained) ? baseHypeGained : 10));
 
     const baseFansGained = Math.floor((attendance * 0.08) * (performanceScore / 100) * fansMultiplier);
-    const fansGained = Math.max(50, baseFansGained);
+    const fansGained = Math.max(50, Number.isFinite(baseFansGained) ? baseFansGained : 250);
 
     const baseRepGained = Math.floor(
       (performanceScore >= 80 ? 6 : performanceScore >= 60 ? 3 : 1) + (slot === 'headliner' ? 4 : 2) + dilemmaRepDelta
     );
-    const reputationGained = Math.max(-5, baseRepGained);
+    const reputationGained = Math.max(-5, Number.isFinite(baseRepGained) ? baseRepGained : 2);
 
     const credibilityGained = Math.max(-2, Math.floor(crewCred + (performanceScore >= 85 ? 5 : 2) + dilemmaCredDelta));
 
-    const disciplineMitigation = Math.floor((artist.personality.discipline || 50) * 0.1);
+    const disciplineMitigation = Math.floor((artist?.personality?.discipline || 50) * 0.1);
     const energySpent = Math.max(8, baseEnergyCost - disciplineMitigation - dilemmaEnergyDelta);
 
     // 8. Momento Viral
@@ -767,48 +778,53 @@ export class FestivalEngine {
     }
 
     // 10. Titular Global de Noticias
-    const newsHeadline = performanceScore >= 85
-      ? `${artist.name} firma el show más impactante de ${festival.name}`
-      : performanceScore >= 68
-      ? `${artist.name} enciende a ${attendance.toLocaleString()} personas en ${festival.name}`
-      : `${artist.name} completa su paso por el escenario de ${festival.name}`;
+    const safeScore = Number.isFinite(performanceScore) ? performanceScore : 75;
+    const safeAttendance = Number.isFinite(attendance) ? attendance : 15000;
+    const safeNetProfit = Number.isFinite(netProfit) ? netProfit : 10000;
 
-    const newsBody = `En el marco de ${festival.name} (${festival.location}), ${artist.name} se presentó como ${this.getSlotTitle(slot)} ante una multitud estimada en ${attendance.toLocaleString()} espectadores. El show dejó una recaudación neta de $${netProfit.toLocaleString()} y cosechó una calificación de ${performanceScore}/100 por parte de los cronistas especializados.`;
+    const newsHeadline = safeScore >= 85
+      ? `${artist?.name || 'El artista'} firma el show más impactante de ${festival?.name || 'el festival'}`
+      : safeScore >= 68
+      ? `${artist?.name || 'El artista'} enciende a ${safeAttendance.toLocaleString('es-AR')} personas en ${festival?.name || 'el festival'}`
+      : `${artist?.name || 'El artista'} completa su paso por el escenario de ${festival?.name || 'el festival'}`;
+
+    const newsBody = `En el marco de ${festival?.name || 'el festival'} (${festival?.location || 'Mundial'}), ${artist?.name || 'El artista'} se presentó como ${this.getSlotTitle(slot)} ante una multitud estimada en ${safeAttendance.toLocaleString('es-AR')} espectadores. El show dejó una recaudación neta de $${safeNetProfit.toLocaleString('es-AR')} y cosechó una calificación de ${safeScore}/100 por parte de los cronistas especializados.`;
 
     const slotTitle = this.getSlotTitle(slot);
-    const popularityGained = Math.max(1, Math.floor((performanceScore / 100) * (slot === 'headliner' ? 6 : slot === 'sub_headliner' ? 4 : slot === 'sunset_slot' ? 3 : 2)));
+    const popRatio = (safeScore / 100) * (slot === 'headliner' ? 6 : slot === 'sub_headliner' ? 4 : slot === 'sunset_slot' ? 3 : 2);
+    const popularityGained = Math.max(1, Math.floor(Number.isFinite(popRatio) ? popRatio : 2));
     const firstReview = pressReviews[0];
     const headline = newsHeadline;
-    const subheadline = `${festival.name} • ${slotTitle} • ${attendance.toLocaleString('es-AR')} espectadores`;
+    const subheadline = `${festival?.name || 'Festival'} • ${slotTitle} • ${safeAttendance.toLocaleString('es-AR')} espectadores`;
 
     return {
-      festivalId: festival.id,
-      festivalName: festival.name,
+      festivalId: festival?.id || 'festival',
+      festivalName: festival?.name || 'Festival Global',
       year: world?.currentYear || 2026,
-      month: festival.month,
+      month: festival?.month || 1,
       slot,
       slotTitle,
       headline,
       subheadline,
-      performanceScore,
-      crowdRating: performanceScore,
-      attendance,
-      payoutGross,
-      grossRevenue: payoutGross,
-      productionCost,
-      netProfit,
-      hypeGained,
-      fansGained,
+      performanceScore: safeScore,
+      crowdRating: safeScore,
+      attendance: safeAttendance,
+      payoutGross: Number.isFinite(payoutGross) ? payoutGross : 12000,
+      grossRevenue: Number.isFinite(payoutGross) ? payoutGross : 12000,
+      productionCost: Number.isFinite(productionCost) ? productionCost : 0,
+      netProfit: safeNetProfit,
+      hypeGained: Number.isFinite(hypeGained) ? hypeGained : 10,
+      fansGained: Number.isFinite(fansGained) ? fansGained : 200,
       popularityGained,
-      reputationGained,
-      credibilityGained,
-      energyUsed: energySpent,
-      energySpent,
+      reputationGained: Number.isFinite(reputationGained) ? reputationGained : 2,
+      credibilityGained: Number.isFinite(credibilityGained) ? credibilityGained : 2,
+      energyUsed: Number.isFinite(energySpent) ? energySpent : 20,
+      energySpent: Number.isFinite(energySpent) ? energySpent : 20,
       reviews: pressReviews,
       pressReviews,
       pressHeadline: firstReview?.headline || headline,
       pressQuote: firstReview?.quote || firstReview?.snippet || '',
-      pressRating: firstReview?.rating || 4,
+      pressRating: Number.isFinite(firstReview?.rating) ? firstReview.rating : 4,
       viralMomentOccurred: isViral,
       viralMoment,
       newsHeadline,

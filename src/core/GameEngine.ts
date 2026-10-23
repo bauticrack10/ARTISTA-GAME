@@ -845,45 +845,42 @@ export class GameEngine {
     // Organic Performance and Longevity Curve Derivation via IndustryEngine:
     // performanceScore = (Calidad de Producción * 0.4) + (Inversión Marketing * 0.3) + (Creatividad/Skills * 0.2) + (Random Factor * 0.1)
     const lifestyleBuffs = this.getPlayerLifestyleBuffs();
+    const safeBudgetProd = Number.isFinite(params.budgetProduction) ? params.budgetProduction : 0;
+    const safeBudgetMktg = Number.isFinite(params.budgetMarketing) ? params.budgetMarketing : 0;
+
     const perfEval = IndustryEngine.deriveTrackPerformanceAndLongevity({
       artist: player,
-      productionBudget: params.budgetProduction,
-      marketingBudget: params.budgetMarketing,
+      productionBudget: safeBudgetProd,
+      marketingBudget: safeBudgetMktg,
       producer: prod,
       subGenreId: params.subGenreIds && params.subGenreIds.length > 0 ? params.subGenreIds[0] : undefined,
       musicVideo: params.musicVideo,
-      qualityBonus: lifestyleBuffs.qualityBonus
+      qualityBonus: lifestyleBuffs?.qualityBonus || 0
     });
 
     const chosenLongevity = params.longevityCurve || perfEval.longevityCurve;
 
     // Fórmula de Calidad y Éxito Transparente (Skills + Estudio + Estado/Forma + Sinergia Género & Hype)
-    const skillsComponent = (player.personality.skill * 0.35 + player.personality.creativity * 0.35 + player.personality.charisma * 0.15 + player.personality.originality * 0.15);
-    const studioComponent = perfEval.productionQuality;
-    const formFactor = player.stats.energy >= 70 ? 4 : (player.stats.energy < 30 ? -Math.floor((30 - player.stats.energy) * 0.35) : 0);
+    const rawSkills = (player.personality?.skill || 50) * 0.35 + (player.personality?.creativity || 50) * 0.35 + (player.personality?.charisma || 50) * 0.15 + (player.personality?.originality || 50) * 0.15;
+    const skillsComponent = Number.isFinite(rawSkills) ? rawSkills : 50;
+    const studioComponent = Number.isFinite(perfEval.productionQuality) ? perfEval.productionQuality : 40;
+    const playerEnergy = player.stats?.energy || 100;
+    const formFactor = playerEnergy >= 70 ? 4 : (playerEnergy < 30 ? -Math.floor((30 - playerEnergy) * 0.35) : 0);
     
     let genreSynergy = 0;
-    const activeTrends = Object.values(this.world.trends || {}).filter(t => t.stage !== 'exhausted');
+    const activeTrends = Object.values(this.world.trends || {}).filter(t => t && t.stage !== 'exhausted');
     for (const tr of activeTrends) {
       if (tr.genreId === params.genreId || (params.subGenreIds && params.subGenreIds.includes(tr.genreId))) {
-        genreSynergy += Math.floor(tr.impactMultiplier * 3);
+        genreSynergy += Math.floor((tr.impactMultiplier || 1) * 3);
       }
     }
-    const hypeFactor = Math.floor(player.stats.hype * 0.10);
+    const hypeFactor = Math.floor((player.stats?.hype || 0) * 0.10);
 
-    const baseQuality = Math.min(100, Math.max(12, Math.floor(
-      (skillsComponent * 0.40) +
-      (studioComponent * 0.35) +
-      (genreSynergy * 0.10) +
-      (hypeFactor * 0.10) +
-      formFactor
-    )));
+    const calcQuality = (skillsComponent * 0.40) + (studioComponent * 0.35) + (genreSynergy * 0.10) + (hypeFactor * 0.10) + formFactor;
+    const baseQuality = Math.min(100, Math.max(12, Math.floor(Number.isFinite(calcQuality) ? calcQuality : 50)));
 
-
-    const commercialAppeal = Math.min(100, Math.max(10, Math.floor(
-      player.personality.commercialAppeal * 0.45 +
-      perfEval.marketingInvestment * 0.55
-    )));
+    const rawAppeal = (player.personality?.commercialAppeal || 50) * 0.45 + (Number.isFinite(perfEval.marketingInvestment) ? perfEval.marketingInvestment : 40) * 0.55;
+    const commercialAppeal = Math.min(100, Math.max(10, Math.floor(Number.isFinite(rawAppeal) ? rawAppeal : 50)));
 
     const originality = Math.min(100, player.personality.originality + subOrigBonus);
 
@@ -1802,6 +1799,8 @@ export class GameEngine {
 
   public bookTour(tier: TourTier, name: string): Tour {
     const player = this.getPlayer();
+    if (!player) throw new Error('Artista no encontrado.');
+
     const tourValidation = TourEngine.canStartTour(player, this.world);
     if (!tourValidation.allowed) {
       throw new Error(tourValidation.reason || 'Necesitas catálogo y fans para vender entradas (mín. 2 temas o 1 EP, ≥1.000 oyentes y ≥85% energía).');
@@ -1816,25 +1815,34 @@ export class GameEngine {
       this.world
     );
     const lifestyleBuffs = this.getPlayerLifestyleBuffs();
-    const reducedFatigue = Math.max(5, Math.floor(tour.energyFatigue * (1 - lifestyleBuffs.tourFatigueReduction)));
+    const reducedFatigue = Math.max(5, Math.floor((tour.energyFatigue || 20) * (1 - (lifestyleBuffs?.tourFatigueReduction || 0))));
 
+    if (!Array.isArray(this.world.tours)) {
+      this.world.tours = [];
+    }
     this.world.tours.push(tour);
-    player.stats.funds += tour.netArtistProfit;
-    player.stats.energy = Math.max(5, player.stats.energy - reducedFatigue);
-    player.stats.hype = Math.min(100, player.stats.hype + tour.hypeGenerated);
-    player.stats.fansCount += tour.fanbaseGained;
+
+    const safeNetProfit = Number.isFinite(tour.netArtistProfit) ? tour.netArtistProfit : 0;
+    const safeFatigue = Number.isFinite(reducedFatigue) ? reducedFatigue : 20;
+    const safeHype = Number.isFinite(tour.hypeGenerated) ? tour.hypeGenerated : 5;
+    const safeFans = Number.isFinite(tour.fanbaseGained) ? tour.fanbaseGained : 50;
+
+    player.stats.funds = Math.max(0, (player.stats.funds || 0) + safeNetProfit);
+    player.stats.energy = Math.max(5, Math.min(100, (player.stats.energy || 100) - safeFatigue));
+    player.stats.hype = Math.min(100, Math.max(0, (player.stats.hype || 0) + safeHype));
+    player.stats.fansCount = Math.max(0, (player.stats.fansCount || 0) + safeFans);
 
     this.recordFinancialTransaction({
       type: 'income',
       category: 'tour',
-      amount: tour.netArtistProfit,
+      amount: safeNetProfit,
       description: `Ganancia neta por gira "${tour.name}"`
     });
 
     this.world.news.unshift({
       id: `news_tour_${tour.id}`,
-      headline: `Gira Consagratoria: ${tour.name} culmina con ${tour.totalTicketsSold.toLocaleString()} tickets vendidos`,
-      body: `${player.name} brilló en cada una de sus fechas, generando una ganancia neta de ${formatMoney(tour.netArtistProfit)}.`,
+      headline: `Gira Consagratoria: ${tour.name} culmina con ${(tour.totalTicketsSold || 0).toLocaleString('es-AR')} tickets vendidos`,
+      body: `${player.name} brilló en cada una de sus fechas, generando una ganancia neta de ${formatMoney(safeNetProfit)}.`,
       year: this.world.currentYear,
       month: this.world.currentMonth,
       category: 'tour',
@@ -1843,7 +1851,7 @@ export class GameEngine {
       importance: 4
     });
 
-    this.syncPlayerAudienceMetrics(tour.fanbaseGained, false);
+    this.syncPlayerAudienceMetrics(safeFans, false);
     this.notify();
     return tour;
   }
@@ -3553,23 +3561,28 @@ export class GameEngine {
     }
 
     // Consumo de energía
-    const energyUsed = result.energyUsed ?? result.energySpent ?? 20;
-    player.stats.energy = Math.max(5, player.stats.energy - energyUsed);
+    const rawEnergyUsed = result.energyUsed ?? result.energySpent ?? 20;
+    const safeEnergyUsed = Number.isFinite(rawEnergyUsed) ? rawEnergyUsed : 20;
+    player.stats.energy = Math.max(5, Math.min(100, (player.stats.energy || 100) - safeEnergyUsed));
 
-    // Fans y Hype
-    player.stats.fansCount += (result.fansGained || 0);
-    player.stats.hype = Math.min(100, player.stats.hype + (result.hypeGained || 0));
-    player.stats.popularity = Math.min(100, player.stats.popularity + (result.popularityGained || 2));
+    // Fans, Hype y Popularidad
+    const safeFansGained = Number.isFinite(result.fansGained) ? result.fansGained : 150;
+    const safeHypeGained = Number.isFinite(result.hypeGained) ? result.hypeGained : 5;
+    const safePopGained = Number.isFinite(result.popularityGained) ? result.popularityGained : 2;
+
+    player.stats.fansCount = Math.max(0, (player.stats.fansCount || 0) + safeFansGained);
+    player.stats.hype = Math.min(100, Math.max(0, (player.stats.hype || 0) + safeHypeGained));
+    player.stats.popularity = Math.min(100, Math.max(0, (player.stats.popularity || 0) + safePopGained));
 
     // Registrar en histórico del artista y del mundo
-    if (!player.livePerformanceHistory) player.livePerformanceHistory = [];
+    if (!Array.isArray(player.livePerformanceHistory)) player.livePerformanceHistory = [];
     player.livePerformanceHistory.unshift(result);
 
-    if (!this.world.festivalHistory) this.world.festivalHistory = [];
+    if (!Array.isArray(this.world.festivalHistory)) this.world.festivalHistory = [];
     this.world.festivalHistory.unshift(result);
 
     // Actualizar estado de invitación
-    if (this.world.festivalInvitations) {
+    if (Array.isArray(this.world.festivalInvitations)) {
       const inv = this.world.festivalInvitations.find(i => i.id === params.invitationId || (i.festivalId === params.festivalId && i.year === this.world.currentYear));
       if (inv) {
         inv.status = 'accepted';
