@@ -104,7 +104,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
   return (
     <aside
-      className={`liquid-glass-card p-5 space-y-3.5 sticky top-20 flex flex-col text-[#F4F4F6] ${className}`}
+      className={`liquid-glass-card p-5 space-y-3.5 flex flex-col h-full text-[#F4F4F6] ${className}`}
     >
       {/* Header con Selector Directo */}
       <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3 relative z-10">
@@ -145,7 +145,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
       {/* TAB 1: PRENSA */}
       {activeTab === 'press' && (
-        <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1 relative z-10`}>
+        <div className="space-y-2.5 flex-1 overflow-y-auto pr-1 relative z-10 min-h-[280px]">
           {newsList.length === 0 ? (
             <div className="liquid-glass-subcard p-6 text-center text-xs text-[#8E8E99] border-dashed">
               No hay noticias recientes.
@@ -198,7 +198,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
       {/* TAB 2: REDES */}
       {activeTab === 'social' && (
-        <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1 relative z-10`}>
+        <div className="space-y-2.5 flex-1 overflow-y-auto pr-1 relative z-10 min-h-[280px]">
           {socialPosts.map((post) => (
             <div
               key={post.id}
@@ -235,6 +235,21 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           ))}
         </div>
       )}
+
+      {/* Radar de la Escena al pie para balance de altura completa */}
+      <div className="liquid-glass-subcard p-3 text-xs space-y-1.5 relative z-10 mt-auto shrink-0 border-t border-white/10">
+        <div className="flex items-center justify-between text-[11px] font-bold text-[#8E8E99]">
+          <span className="flex items-center gap-1.5">
+            <Radio className="w-3.5 h-3.5 text-[#00E599]" />
+            Radar de la Escena
+          </span>
+          <span className="text-[#00E599] font-sans text-2xs uppercase tracking-wider">Activo</span>
+        </div>
+        <div className="flex items-center justify-between text-[11px] text-[#8E8E99]">
+          <span>Temporada: <strong className="text-[#F4F4F6] font-sans">{TimeSystem.getMonthName(world?.currentMonth || 1)} {world?.currentYear || 2026}</strong></span>
+          <span>Hype global: <strong className="text-[#FF4F00] font-sans">{player?.stats?.hype || 0}/100</strong></span>
+        </div>
+      </div>
     </aside>
   );
 };

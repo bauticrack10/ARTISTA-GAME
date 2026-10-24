@@ -86,7 +86,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="space-y-5 pb-8 text-fg">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* COLUMNA PRINCIPAL (8 cols): Perfil, Acciones del Mes, Estadísticas y Catálogo */}
         <div className="lg:col-span-8 space-y-5">
           <ArtistHeroCard
@@ -120,11 +120,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* COLUMNA LATERAL (4 cols): Noticias & Pulso en Redes */}
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-4 flex flex-col h-full">
           <NewsSidebar
             world={world}
             player={player}
             onNavigate={onNavigate}
+            className="h-full flex-1"
           />
         </div>
       </div>
