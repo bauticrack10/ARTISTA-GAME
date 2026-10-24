@@ -873,24 +873,31 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
   return (
     <div
-      className="min-h-screen bg-[#09090B] text-[#F4F4F6] p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#FF4F00]/30 selection:text-white"
+      className="min-h-screen bg-[#0B0C10] text-[#F4F4F6] p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#FF4F00]/30 selection:text-white relative overflow-x-hidden"
     >
-      <div className="max-w-6xl mx-auto space-y-6">
+      {/* Ambient Studio Lighting Mesh */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-white/[0.015] blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-white/[0.01] blur-3xl" />
+        <div className="absolute inset-0 analog-grain opacity-20" />
+      </div>
+
+      <div className="max-w-6xl mx-auto space-y-6 relative z-10">
         {/* Top Navigation Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#242429] pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
           <div className="flex items-start sm:items-center gap-3.5 min-w-0">
             <button
               onClick={onBackToMenu}
-              className="shrink-0 p-2.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#F4F4F6] hover:bg-[#18181C] hover:border-[#3F3F46] transition-all cursor-pointer"
+              className="shrink-0 p-2.5 rounded-[10px] liquid-glass-pill text-[#F4F4F6] hover:bg-white/10 hover:border-white/30 transition-all cursor-pointer"
               title="Volver al Menú Principal"
               aria-label="Volver al Menú Principal"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#F4F4F6] tracking-tight flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F4F6] tracking-tight flex flex-wrap items-center gap-x-2.5 gap-y-1">
                 <span>Creación del Artista</span>
-                <span className="whitespace-nowrap text-xs bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-sans font-bold">
+                <span className="whitespace-nowrap text-xs liquid-glass-pill text-[#FF4F00] border border-[#FF4F00]/30 px-3 py-0.5 rounded-[8px] font-sans font-bold">
                   Año 1 • 2026
                 </span>
               </h1>
@@ -905,7 +912,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               type="button"
               id="btn-quick-start-top"
               onClick={() => handleSubmit()}
-              className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs active:translate-y-[1px] transition-all cursor-pointer"
+              className="w-full sm:w-auto justify-center flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs shadow-lg shadow-[#FF4F00]/25 active:translate-y-[1px] transition-all cursor-pointer"
               title="Comenzar Carrera Directamente"
             >
               <Sparkles className="w-4 h-4 text-white" />
@@ -922,8 +929,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 1: Identidad & Origen */}
             {/* ========================================================================= */}
-            <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-[#242429] pb-3">
+            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <User className="w-4 h-4 text-[#FF4F00]" />
                   <span>1. Identidad & Origen</span>
@@ -931,7 +938,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 <button
                   type="button"
                   onClick={handleRandomizeName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[#242429] bg-[#09090B] text-[#F4F4F6] text-xs font-sans font-semibold hover:bg-[#18181C] hover:border-[#3F3F46] transition-all cursor-pointer group"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] liquid-glass-pill text-[#F4F4F6] text-xs font-sans font-semibold hover:bg-white/10 hover:border-white/30 transition-all cursor-pointer group"
                   title="Generar nombre contextualizado para el país seleccionado"
                 >
                   <Shuffle className="w-3.5 h-3.5 text-[#FF4F00] group-hover:rotate-180 transition-transform duration-300" />
@@ -949,7 +956,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     type="text"
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    className="w-full bg-[#09090B] border border-[#242429] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2 text-sm text-[#F4F4F6] focus:outline-none transition-colors font-medium"
+                    className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-sm text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none transition-all font-medium"
                   />
                 </div>
 
@@ -961,7 +968,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     type="text"
                     value={realName}
                     onChange={e => setRealName(e.target.value)}
-                    className="w-full bg-[#09090B] border border-[#242429] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2 text-sm text-[#F4F4F6] focus:outline-none transition-colors font-medium"
+                    className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-sm text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none transition-all font-medium"
                   />
                 </div>
               </div>
@@ -971,10 +978,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 <div className="flex justify-between items-center text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
                   <span>Edad Inicial</span>
                   <div className="flex items-center gap-2">
-                    <span className={`text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] border ${ageCat.color}`}>
+                    <span className={`text-2xs font-sans font-bold px-2.5 py-0.5 rounded-[8px] liquid-glass-pill border ${ageCat.color}`}>
                       {ageCat.label}
                     </span>
-                    <span className="text-[#F4F4F6] font-sans text-sm font-bold tabular-nums bg-[#09090B] px-2.5 py-0.5 rounded-[4px] border border-[#242429]">
+                    <span className="text-[#F4F4F6] font-sans text-sm font-bold tabular-nums liquid-glass-pill px-3 py-0.5 rounded-[8px]">
                       {age} Años <span className="text-[#8E8E99] text-xs font-normal">• Nacido en {2026 - age}</span>
                     </span>
                   </div>
@@ -989,9 +996,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     value={age}
                     onChange={e => setAge(Number(e.target.value))}
                     style={{
-                      background: `linear-gradient(to right, #FF4F00 0%, #FF4F00 ${agePercentage}%, #18181C ${agePercentage}%, #18181C 100%)`
+                      background: `linear-gradient(to right, #FF4F00 0%, #FF4F00 ${agePercentage}%, rgba(255,255,255,0.1) ${agePercentage}%, rgba(255,255,255,0.1) 100%)`
                     }}
-                    className="w-full h-2 rounded-[2px] border border-[#242429] accent-[#FF4F00] cursor-pointer"
+                    className="w-full h-2 rounded-[4px] border border-white/15 accent-[#FF4F00] cursor-pointer"
                   />
                   
                   <div className="relative w-full text-2xs text-fg-muted font-sans select-none mt-1.5 h-4">
@@ -1033,19 +1040,19 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Country & Hometown Selector */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
                     País de Origen
                   </label>
                   <select
                     value={country}
                     onChange={e => handleCountryChange(e.target.value)}
-                    className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-xs text-fg focus:outline-none cursor-pointer font-medium"
+                    className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-xs text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none cursor-pointer font-medium transition-all"
                   >
                     {Object.keys(COUNTRY_CITIES).map(c => {
                       const meta = COUNTRY_GENRE_DEFAULTS[c];
                       const flag = meta?.flag || '🌍';
                       return (
-                        <option key={c} value={c} className="bg-canvas text-fg">
+                        <option key={c} value={c} className="bg-[#111114] text-[#F4F4F6]">
                           {flag} {c}
                         </option>
                       );
@@ -1055,7 +1062,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-fg-muted uppercase tracking-wider">
+                    <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
                       Ciudad Natal
                     </label>
                     <button
@@ -1066,7 +1073,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           setCustomCityText('');
                         }
                       }}
-                      className="text-xs text-info hover:text-[#38BDF8] flex items-center gap-1 cursor-pointer font-semibold transition-colors"
+                      className="text-xs text-[#38BDF8] hover:text-[#7DD3FC] flex items-center gap-1 cursor-pointer font-semibold transition-colors"
                     >
                       {isCustomCity ? (
                         <>
@@ -1088,17 +1095,17 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           value={customCityText}
                           onChange={e => setCustomCityText(e.target.value)}
                           placeholder="Escribe tu ciudad o barrio (mín. 3 letras)..."
-                          className={`w-full bg-canvas border rounded-lg px-3.5 py-2 text-xs text-fg placeholder:text-fg-subtle focus:outline-none transition-colors ${
+                          className={`w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-xs text-[#F4F4F6] placeholder:text-[#52525B] outline-none transition-colors border ${
                             customCityText.trim().length > 0 && !isCustomCityValid
                               ? 'border-amber-500/60 focus:border-amber-500'
                               : isCustomCityValid
                               ? 'border-emerald-500/60 focus:border-emerald-500'
-                              : 'border-info/60 focus:border-info'
+                              : 'border-white/15 focus:border-[#FF4F00]/60'
                           }`}
                         />
                         {isCustomCityValid && (
                           <span
-                            className="p-2 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0"
+                            className="p-2 rounded-[8px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0"
                             title="Ciudad válida"
                           >
                             <Check className="w-3.5 h-3.5" />
@@ -1116,10 +1123,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     <select
                       value={city}
                       onChange={e => setCity(e.target.value)}
-                      className="w-full bg-canvas border border-line focus:border-primary-strong rounded-lg px-3.5 py-2 text-xs text-fg focus:outline-none cursor-pointer"
+                      className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-xs text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none cursor-pointer font-medium transition-all"
                     >
                       {(COUNTRY_CITIES[country] || []).map(ci => (
-                        <option key={ci} value={ci} className="bg-canvas text-fg">
+                        <option key={ci} value={ci} className="bg-[#111114] text-[#F4F4F6]">
                           {ci}
                         </option>
                       ))}
@@ -1132,14 +1139,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 2: Estilo Musical & Géneros */}
             {/* ========================================================================= */}
-            <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5 shadow-2xl">
-              <div className="border-b border-[#242429] pb-3 flex items-center justify-between">
+            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+              <div className="border-b border-white/10 pb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <Disc3 className="w-4 h-4 text-[#FF4F00]" />
                   <span>2. Estilo Musical & Géneros</span>
                 </div>
                 {COUNTRY_GENRE_DEFAULTS[country] && (
-                  <span className="text-2xs text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-sans font-bold">
+                  <span className="text-2xs text-[#FF4F00] liquid-glass-pill border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[8px] font-sans font-bold">
                     Escena {COUNTRY_GENRE_DEFAULTS[country].flag} {country}
                   </span>
                 )}
@@ -1164,12 +1171,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           setMainGenreId(g.id);
                           setSecondaryGenres(secondaryGenres.filter(sg => sg !== g.id));
                         }}
-                        className={`p-3 rounded-[4px] border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                        className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden group ${
                           isSelected
-                            ? 'bg-[#18181C] border-[#FF4F00] text-white'
+                            ? 'liquid-glass-subcard border-[#FF4F00] shadow-[0_0_18px_rgba(255,79,0,0.25)] text-white'
                             : isRecommended
-                            ? 'bg-[#09090B] border-[#FF4F00]/30 hover:border-[#FF4F00] hover:bg-[#18181C]'
-                            : 'bg-[#09090B] border-[#242429] hover:border-[#3F3F46] hover:bg-[#18181C]'
+                            ? 'liquid-glass-subcard border-[#FF4F00]/30 hover:border-[#FF4F00]'
+                            : 'liquid-glass-subcard border-white/10 hover:border-white/25'
                         }`}
                       >
                         <div>
@@ -1185,12 +1192,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         </div>
 
                         {isRecommended && (
-                          <span className="text-2xs font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/10 px-1.5 py-0.5 rounded-[2px] border border-[#FF4F00]/30 w-fit mt-1.5">
+                          <span className="text-2xs font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/15 px-2 py-0.5 rounded-[6px] border border-[#FF4F00]/35 w-fit mt-2">
                            Sugerido para {country}
                           </span>
                         )}
                         {!isRecommended && isCountrySecondary && (
-                          <span className="text-2xs font-sans font-semibold text-[#8E8E99] bg-[#18181C] px-1.5 py-0.5 rounded-[2px] border border-[#242429] w-fit mt-1.5">
+                          <span className="text-2xs font-sans font-semibold text-[#8E8E99] liquid-glass-pill px-2 py-0.5 rounded-[6px] w-fit mt-2">
                             Popular en {country}
                           </span>
                         )}
@@ -1206,7 +1213,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
                     Influencias & Subgéneros Secundarios
                   </label>
-                  <span className="text-xs font-sans text-[#FF4F00]">
+                  <span className="text-xs font-sans text-[#FF4F00] font-bold">
                     {cleanCountTag(secondaryGenres.length, 3, 'seleccionados')}
                   </span>
                 </div>
@@ -1222,12 +1229,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                           type="button"
                           key={g.id}
                           onClick={() => toggleSecondaryGenre(g.id)}
-                          className={`px-3 py-1.5 rounded-[4px] text-xs font-sans font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                          className={`px-3 py-1.5 rounded-[8px] text-xs font-sans font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
                             isSelected
-                              ? 'bg-[#18181C] border-[#FF4F00] text-white'
+                              ? 'liquid-glass-pill border-[#FF4F00] text-white bg-[#FF4F00]/20 shadow-[0_0_12px_rgba(255,79,0,0.2)]'
                               : isRecommendedSub
-                              ? 'bg-[#09090B] border-[#FF4F00]/30 text-[#FF4F00] hover:text-[#F4F4F6] hover:border-[#FF4F00]'
-                              : 'bg-[#09090B] border-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
+                              ? 'liquid-glass-pill border-[#FF4F00]/35 text-[#FF4F00] hover:text-[#F4F4F6] hover:border-[#FF4F00]'
+                              : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6] hover:border-white/25'
                           }`}
                         >
                           <span>{isSelected ? '✓ ' : '+ '}</span>
@@ -1245,14 +1252,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 3: Arquetipo & Filosofía Creativa (Rango Underground: 18 - 35) */}
             {/* ========================================================================= */}
-            <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 sm:p-6 space-y-4">
-              <div className="flex items-center justify-between border-b border-[#26262B] pb-3 flex-wrap gap-2">
-                <div className="flex items-center gap-2 text-[#F4F0EA] font-sans font-bold text-xs uppercase tracking-wider">
-                  <Brain className="w-4 h-4 text-[#FF2A4B]" />
+            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
+                  <Brain className="w-4 h-4 text-[#FF4F00]" />
                   <span>3. Arquetipo Artístico & Habilidades Iniciales</span>
                 </div>
-                <span className="text-2xs font-sans tabular-nums text-[#8E8E99] bg-[#1C1C21] px-2.5 py-0.5 rounded-[4px] border border-[#26262B]">
-                  Base Amateur: 18–35 pts • Promedio: <strong className="text-[#F4F0EA]">{averageSkillRating}/100</strong>
+                <span className="text-2xs font-sans tabular-nums text-[#8E8E99] liquid-glass-pill px-3 py-1 rounded-[8px]">
+                  Base Amateur: 18–35 pts • Promedio: <strong className="text-[#F4F4F6] font-sans">{averageSkillRating}/100</strong>
                 </span>
               </div>
 
@@ -1308,20 +1315,20 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       type="button"
                       key={item.id}
                       onClick={() => setArchetype(item.id as any)}
-                      className={`p-3.5 rounded-[4px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-4 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between group ${
                         isSelected
-                          ? 'bg-[#1C1C21] border-[#FF2A4B]'
-                          : 'bg-[#0B0B0C] border-[#26262B] hover:border-[#3F3F46] hover:bg-[#1C1C21]'
+                          ? 'liquid-glass-subcard border-[#FF4F00] shadow-[0_0_18px_rgba(255,79,0,0.25)] text-white'
+                          : 'liquid-glass-subcard border-white/10 hover:border-white/25'
                       }`}
                     >
                       <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#F4F0EA]">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs font-bold text-[#F4F4F6]">
                             {item.label}
                           </span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF2A4B]" />}
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />}
                         </div>
-                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-2.5">
+                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-3">
                           {item.desc}
                         </p>
                       </div>
@@ -1338,11 +1345,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Mostrar los 10 controles punto por punto ÚNICAMENTE en modo Personalizado */}
               {archetype === 'custom' && (
-                <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#26262B] pb-3">
+                <div className="liquid-glass-subcard p-4 rounded-[12px] border border-white/15 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <Sliders className="w-4 h-4 text-[#FF2A4B]" />
-                      <span className="text-xs font-bold text-[#F4F0EA] uppercase tracking-wider font-sans">
+                      <Sliders className="w-4 h-4 text-[#FF4F00]" />
+                      <span className="text-xs font-bold text-[#F4F4F6] uppercase tracking-wider font-sans">
                         Reparto Manual de Habilidades
                       </span>
                       <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
@@ -1352,12 +1359,12 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
-                        className={`px-2.5 py-1 rounded-[4px] border text-xs font-bold font-sans tabular-nums ${
+                        className={`px-3 py-1 rounded-[8px] border text-xs font-bold font-sans tabular-nums ${
                           remainingCustomPoints === 0
-                            ? 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/40'
+                            ? 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40'
                             : remainingCustomPoints > 0
-                            ? 'bg-[#1C1C21] text-[#FF2A4B] border-[#FF2A4B]/50'
-                            : 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/40'
+                            ? 'liquid-glass-pill text-[#FF4F00] border-[#FF4F00]/50'
+                            : 'bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/40'
                         }`}
                       >
                         Libres: {remainingCustomPoints}/{CUSTOM_POINTS_POOL} pts
@@ -1365,14 +1372,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       <button
                         type="button"
                         onClick={() => handleApplyCustomPreset('balanced')}
-                        className="px-2 py-1 rounded-[4px] text-2xs font-semibold bg-[#141417] hover:bg-[#1C1C21] border border-[#26262B] text-[#F4F0EA] cursor-pointer"
+                        className="px-2.5 py-1 rounded-[6px] text-2xs font-semibold liquid-glass-pill text-[#F4F4F6] hover:bg-white/10 cursor-pointer"
                       >
                         Equilibrar
                       </button>
                       <button
                         type="button"
                         onClick={() => handleApplyCustomPreset('reset')}
-                        className="px-2 py-1 rounded-[4px] text-2xs font-semibold bg-[#141417] hover:bg-[#1C1C21] border border-[#26262B] text-[#EF4444] cursor-pointer flex items-center gap-1"
+                        className="px-2.5 py-1 rounded-[6px] text-2xs font-semibold liquid-glass-pill text-[#EF4444] hover:bg-red-500/10 cursor-pointer flex items-center gap-1"
                       >
                         <RotateCcw className="w-3 h-3" />
                         <span>Reiniciar</span>
@@ -1391,11 +1398,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       return (
                         <div
                           key={meta.key}
-                          className="bg-[#141417] p-2.5 rounded-[4px] border border-[#26262B] flex items-center justify-between gap-3"
+                          className="liquid-glass-pill p-2.5 rounded-[10px] flex items-center justify-between gap-3"
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <IconComp className="w-3.5 h-3.5 text-[#FF2A4B] shrink-0" />
-                            <span className="text-xs font-semibold text-[#F4F0EA] truncate" title={meta.desc}>
+                            <IconComp className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
+                            <span className="text-xs font-semibold text-[#F4F4F6] truncate" title={meta.desc}>
                               {meta.shortLabel}
                             </span>
                           </div>
@@ -1405,10 +1412,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               type="button"
                               onClick={() => handleStepTrait(meta.key, -1)}
                               disabled={!canDecrement}
-                              className={`p-1 rounded-[4px] border transition-colors cursor-pointer ${
+                              className={`p-1 rounded-[6px] border transition-colors cursor-pointer ${
                                 canDecrement
-                                  ? 'bg-[#0B0B0C] border-[#26262B] text-[#F4F0EA] hover:border-[#EF4444]'
-                                  : 'bg-[#0B0B0C]/40 border-[#26262B]/40 text-[#52525B] cursor-not-allowed opacity-50'
+                                  ? 'liquid-glass-pill text-[#F4F4F6] hover:border-[#EF4444]'
+                                  : 'opacity-40 text-[#52525B] cursor-not-allowed'
                               }`}
                               title="Disminuir -1 punto"
                             >
@@ -1422,24 +1429,24 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               step={1}
                               value={val}
                               onChange={e => handleCustomTraitChange(meta.key, Number(e.target.value))}
-                              className="w-20 sm:w-24 h-1.5 rounded-[2px] bg-[#0B0B0C] border border-[#26262B] accent-[#FF2A4B] cursor-pointer"
+                              className="w-20 sm:w-24 h-1.5 rounded-[4px] border border-white/15 accent-[#FF4F00] cursor-pointer"
                             />
 
                             <button
                               type="button"
                               onClick={() => handleStepTrait(meta.key, 1)}
                               disabled={!canIncrement}
-                              className={`p-1 rounded-[4px] border transition-colors cursor-pointer ${
+                              className={`p-1 rounded-[6px] border transition-colors cursor-pointer ${
                                 canIncrement
-                                  ? 'bg-[#0B0B0C] border-[#26262B] text-[#F4F0EA] hover:border-[#FF2A4B]'
-                                  : 'bg-[#0B0B0C]/40 border-[#26262B]/40 text-[#52525B] cursor-not-allowed opacity-50'
+                                  ? 'liquid-glass-pill text-[#F4F4F6] hover:border-[#FF4F00]'
+                                  : 'opacity-40 text-[#52525B] cursor-not-allowed'
                               }`}
                               title="Aumentar +1 punto"
                             >
                               <Plus className="w-3 h-3" />
                             </button>
 
-                            <span className="font-sans font-bold text-xs tabular-nums text-[#F4F0EA] w-7 text-right">
+                            <span className="font-sans font-bold text-xs tabular-nums text-[#F4F4F6] w-7 text-right">
                               {val}
                             </span>
                           </div>
@@ -1454,10 +1461,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 4: Punto de Partida / Background */}
             {/* ========================================================================= */}
-            <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 sm:p-6 space-y-4">
-              <div className="border-b border-[#26262B] pb-3">
-                <div className="flex items-center gap-2 text-[#F4F0EA] font-sans font-bold text-xs uppercase tracking-wider">
-                  <TrendingUp className="w-4 h-4 text-[#FF2A4B]" />
+            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+              <div className="border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
+                  <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
                   <span>4. Punto de Partida / Background</span>
                 </div>
               </div>
@@ -1495,24 +1502,24 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       type="button"
                       key={item.id}
                       onClick={() => setStartingLevel(item.id as any)}
-                      className={`p-3.5 rounded-[4px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-4 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between group ${
                         isSelected
-                          ? 'bg-[#1C1C21] border-[#FF2A4B]'
-                          : 'bg-[#0B0B0C] border-[#26262B] hover:border-[#3F3F46] hover:bg-[#1C1C21]'
+                          ? 'liquid-glass-subcard border-[#FF4F00] shadow-[0_0_18px_rgba(255,79,0,0.25)] text-white'
+                          : 'liquid-glass-subcard border-white/10 hover:border-white/25'
                       }`}
                     >
                       <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#F4F0EA]">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs font-bold text-[#F4F4F6]">
                             {item.label}
                           </span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF2A4B]" />}
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />}
                         </div>
-                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-2">
+                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-3">
                           {item.desc}
                         </p>
                       </div>
-                      <span className="text-2xs font-sans tabular-nums text-[#10B981] font-semibold bg-[#10B981]/10 px-2.5 py-0.5 rounded-[4px] border border-[#10B981]/30 w-fit">
+                      <span className="text-2xs font-sans tabular-nums text-[#10B981] font-bold bg-[#10B981]/15 px-2.5 py-0.5 rounded-[6px] border border-[#10B981]/30 w-fit">
                         {item.badge}
                       </span>
                     </button>
@@ -1524,37 +1531,37 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* ========================================================================= */}
             {/* PASO 5: Identidad Visual & Avatar (Bloque Compacto) */}
             {/* ========================================================================= */}
-            <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 sm:p-6 space-y-4">
-              <div className="flex items-center justify-between border-b border-[#26262B] pb-3 flex-wrap gap-2">
-                <div className="flex items-center gap-2 text-[#F4F0EA] font-sans text-xs uppercase tracking-wider font-bold">
-                  <Palette className="w-4 h-4 text-[#FF2A4B]" />
+            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans text-xs uppercase tracking-wider font-bold">
+                  <Palette className="w-4 h-4 text-[#FF4F00]" />
                   <span>5. Identidad Visual & Avatar</span>
                 </div>
 
-                <div className="flex items-center gap-1 bg-[#0B0B0C] p-1 rounded-[4px] border border-[#26262B]">
+                <div className="flex items-center gap-1 liquid-glass-pill p-1 rounded-[8px]">
                   <button
                     type="button"
                     onClick={() => setAvatarType('symbol')}
-                    className={`px-2.5 py-1 rounded-[4px] font-sans text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1 rounded-[6px] font-sans text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'symbol'
-                        ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                        : 'text-[#8E8E99] hover:text-[#F4F0EA]'
+                        ? 'bg-[#FF4F00] text-white shadow-sm'
+                        : 'text-[#8E8E99] hover:text-[#F4F4F6]'
                     }`}
                   >
-                    <Crown className="w-3.5 h-3.5 text-[#FF2A4B]" />
+                    <Crown className="w-3.5 h-3.5" />
                     <span>Símbolo</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setAvatarType('initials')}
-                    className={`px-2.5 py-1 rounded-[4px] font-sans text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3 py-1 rounded-[6px] font-sans text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                       avatarType === 'initials'
-                        ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                        : 'text-[#8E8E99] hover:text-[#F4F0EA]'
+                        ? 'bg-[#FF4F00] text-white shadow-sm'
+                        : 'text-[#8E8E99] hover:text-[#F4F4F6]'
                     }`}
                   >
-                    <User className="w-3.5 h-3.5 text-[#8E8E99]" />
+                    <User className="w-3.5 h-3.5" />
                     <span>Iniciales</span>
                   </button>
                 </div>
@@ -1573,13 +1580,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         type="button"
                         key={preset.id}
                         onClick={() => handleApplyPreset(preset)}
-                        className={`px-2.5 py-1.5 rounded-[4px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-2 ${
+                        className={`px-2.5 py-1.5 rounded-[8px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-2 ${
                           isSelected
-                            ? 'bg-[#1C1C21] border-[#FF2A4B] text-[#F4F0EA]'
-                            : 'bg-[#0B0B0C] border-[#26262B] hover:border-[#3F3F46] text-[#8E8E99] hover:text-[#F4F0EA]'
+                            ? 'liquid-glass-pill border-[#FF4F00] text-white bg-[#FF4F00]/20 shadow-[0_0_12px_rgba(255,79,0,0.2)]'
+                            : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6]'
                         }`}
                       >
-                        <span className={`w-3 h-3 rounded-[2px] bg-gradient-to-tr ${preset.color} shrink-0 border border-white/20`} />
+                        <span className={`w-3.5 h-3.5 rounded-[4px] bg-gradient-to-tr ${preset.color} shrink-0 border border-white/20`} />
                         <span>{preset.name.split('(')[0].trim()}</span>
                       </button>
                     );
@@ -1588,7 +1595,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {/* Selector compacto de Símbolo y Paleta */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#26262B]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/10">
                 {avatarType === 'symbol' ? (
                   <div className="space-y-1.5">
                     <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
@@ -1607,10 +1614,10 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                               setSelectedPresetId(null);
                             }}
                             title={sym.label}
-                            className={`px-2.5 py-1.5 rounded-[4px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                            className={`px-2.5 py-1.5 rounded-[8px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                               isSelected
-                                ? 'bg-[#1C1C21] border-[#FF2A4B] text-[#FF2A4B]'
-                                : 'bg-[#0B0B0C] border-[#26262B] hover:border-[#3F3F46] text-[#8E8E99] hover:text-[#F4F0EA]'
+                                ? 'liquid-glass-pill border-[#FF4F00] text-[#FF4F00] bg-[#FF4F00]/15'
+                                : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6]'
                             }`}
                           >
                             <IconComp className="w-3.5 h-3.5" />
@@ -1647,13 +1654,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                             setSelectedPresetId(null);
                           }}
                           title={p.description}
-                          className={`px-2.5 py-1.5 rounded-[4px] border text-xs font-sans font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                          className={`px-2.5 py-1.5 rounded-[8px] border text-xs font-sans font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#1C1C21] border-[#FF2A4B] text-[#F4F0EA]'
-                              : 'bg-[#0B0B0C] border-[#26262B] hover:border-[#3F3F46] text-[#8E8E99] hover:text-[#F4F0EA]'
+                              ? 'liquid-glass-pill border-[#FF4F00] text-white bg-[#FF4F00]/15'
+                              : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6]'
                           }`}
                         >
-                          <span className={`w-3.5 h-3.5 rounded-[2px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/20`} />
+                          <span className={`w-3.5 h-3.5 rounded-[4px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/20`} />
                           <span>{p.label.split('(')[0].trim()}</span>
                         </button>
                       );
@@ -1667,33 +1674,33 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* RASGO ULTRA-RARO: Promesa / Prodigio */}
             {/* ========================================================================= */}
             <div
-              className={`p-4 rounded-[6px] border transition-all ${
+              className={`p-5 rounded-[18px] border transition-all ${
                 isProdigy
-                  ? 'bg-[#1C1C21] border-[#F59E0B]'
-                  : 'bg-[#141417] border-[#26262B]'
+                  ? 'liquid-glass-card border-[#F59E0B] shadow-[0_0_24px_rgba(245,158,11,0.25)]'
+                  : 'liquid-glass-card border-white/15'
               }`}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5">
                   <div
-                    className={`p-2.5 rounded-[4px] ${
+                    className={`p-2.5 rounded-[10px] ${
                       isProdigy
                         ? 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40'
-                        : 'bg-[#0B0B0C] border border-[#26262B] text-[#8E8E99]'
+                        : 'liquid-glass-pill text-[#8E8E99]'
                     }`}
                   >
                     {isProdigy ? <Crown className="w-4 h-4 text-[#F59E0B]" /> : <Sparkles className="w-4 h-4" />}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA]">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#F4F4F6]">
                         Rasgo Opcional: Promesa / Prodigio
                       </span>
-                      <span className="text-2xs px-2 py-0.5 rounded-[4px] font-sans tabular-nums font-bold bg-[#0B0B0C] border border-[#26262B] text-[#8E8E99]">
+                      <span className="text-2xs px-2.5 py-0.5 rounded-[6px] font-sans tabular-nums font-bold liquid-glass-pill text-[#8E8E99]">
                         1 en 100.000
                       </span>
                     </div>
-                    <p className={`text-xs mt-0.5 ${isProdigy ? 'text-[#F59E0B]' : 'text-[#8E8E99]'}`}>
+                    <p className={`text-xs mt-0.5 ${isProdigy ? 'text-[#F59E0B] font-semibold' : 'text-[#8E8E99]'}`}>
                       {isProdigy
                         ? '¡ACTIVADO! Atributos de élite y multiplicador x3 permanente.'
                         : 'Tienta a la suerte antes de debutar para buscar el bono de oído absoluto.'}
@@ -1706,13 +1713,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     <button
                       type="button"
                       onClick={handleRollProdigyLuck}
-                      className="px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold border border-[#26262B] bg-[#0B0B0C] hover:bg-[#1C1C21] hover:border-[#3F3F46] text-[#F4F0EA] transition-all cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-2 rounded-[8px] text-xs font-sans font-bold liquid-glass-pill hover:bg-white/10 text-[#F4F4F6] transition-all cursor-pointer flex items-center gap-1.5"
                     >
-                      <Dices className="w-3.5 h-3.5 text-[#8E8E99]" />
+                      <Dices className="w-3.5 h-3.5 text-[#FF4F00]" />
                       <span>Probar Suerte</span>
                     </button>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-3 py-1.5 rounded-[4px] border border-[#F59E0B]/30">
+                    <div className="flex items-center gap-1.5 text-xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/15 px-3.5 py-1.5 rounded-[8px] border border-[#F59E0B]/30 shadow-md">
                       <ShieldCheck className="w-4 h-4" />
                       <span>PRODIGIO ACTIVO</span>
                     </div>
@@ -1721,7 +1728,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {rollMessage && (
-                <div className="mt-2.5 pt-2.5 border-t border-[#26262B] text-xs font-sans text-[#F4F0EA]">
+                <div className="mt-3 pt-3 border-t border-white/10 text-xs font-sans text-[#F4F4F6]">
                   {rollMessage}
                 </div>
               )}
@@ -1730,81 +1737,110 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
           {/* Right Column: Credencial Compacta en Vivo & CTA */}
           <div className="lg:sticky lg:top-6">
-            <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-5">
+            <div className="liquid-glass-card rounded-[18px] p-5 sm:p-6 space-y-5 shadow-2xl relative">
+              {/* Header Badge */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="text-2xs font-sans font-bold uppercase tracking-wider text-[#FF4F00] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#FF4F00]" />
+                  Credencial de Estudio
+                </span>
+                <span className="text-3xs font-sans font-bold tracking-widest uppercase text-[#8E8E99] liquid-glass-pill px-2 py-0.5 rounded-[6px]">
+                  PASS #001
+                </span>
+              </div>
+
               {/* Avatar + Datos Principales */}
-              <div className="flex items-center gap-4">
-                <div className="p-1 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] shrink-0">
+              <div className="flex items-start gap-4">
+                <div className="p-1.5 rounded-[14px] bg-[#09090B]/60 border border-white/20 shadow-lg shrink-0 flex items-center justify-center">
                   <ArtistAvatar
                     name={name.trim() || 'Artista'}
                     avatarColor={avatarColor}
                     avatarIcon={avatarType === 'symbol' ? avatarIcon : undefined}
                     size="lg"
-                    rounded="rounded-[4px]"
+                    rounded="rounded-[12px]"
                   />
                 </div>
 
-                <div className="min-w-0 flex-1 space-y-0.5">
-                  <span className="text-2xs font-sans font-bold uppercase tracking-wider text-[#FF2A4B] block">
-                    Credencial de Estudio
-                  </span>
-                  <h2 className="text-lg font-display font-extrabold text-[#F4F0EA] tracking-tight truncate">
+                <div className="min-w-0 flex-1 space-y-1">
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F6] tracking-tight leading-snug break-words">
                     {name.trim() || 'Tu Nombre Artístico'}
                   </h2>
-                  <p className="text-xs text-[#8E8E99] font-sans truncate">
-                    {realName.trim() ? `${cleanQuotes(realName)} • ` : ''}{age} Años
+                  <p className="text-xs text-[#8E8E99] font-sans">
+                    {realName.trim() ? `"${cleanQuotes(realName)}" • ` : ''}{age} Años
                   </p>
-                  <p className="text-xs text-[#8E8E99] font-sans flex items-center gap-1 truncate">
-                    <MapPin className="w-3 h-3 text-[#52525B] shrink-0" />
+                  <p className="text-xs text-[#8E8E99] font-sans flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-[#FF4F00] shrink-0" />
                     <span className="truncate">{formatCityCountry(finalResolvedCity, country)}</span>
                   </p>
                 </div>
               </div>
 
               {isProdigy && (
-                <div className="bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 px-3 py-1.5 rounded-[4px] text-xs font-sans font-bold flex items-center justify-center gap-1.5">
-                  <Crown className="w-3.5 h-3.5 text-[#F59E0B]" />
+                <div className="bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/35 px-3 py-2 rounded-[10px] text-xs font-sans font-bold flex items-center justify-center gap-2 shadow-md">
+                  <Crown className="w-4 h-4 text-[#F59E0B] shrink-0" />
                   <span>Prodigio Musical • Multiplicador x3</span>
                 </div>
               )}
 
               {/* Etiquetas de Estilo y Arquetipo */}
-              <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[#26262B]">
-                <span className="px-2.5 py-1 bg-[#0B0B0C] border border-[#26262B] text-[#F4F0EA] rounded-[4px] text-xs font-sans font-semibold">
+              <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/10">
+                <span className="px-2.5 py-1 liquid-glass-pill text-[#F4F4F6] rounded-[8px] text-xs font-sans font-semibold">
                   {selectedMainGenre?.name || 'Género'}
                 </span>
-                <span className="px-2.5 py-1 bg-[#0B0B0C] border border-[#26262B] text-[#8E8E99] rounded-[4px] text-xs font-sans">
+                <span className="px-2.5 py-1 liquid-glass-pill text-[#8E8E99] rounded-[8px] text-xs font-sans">
                   {archetype === 'custom' ? 'Personalizado' : ARCHETYPE_PRESETS[archetype]?.name}
                 </span>
-                <span className="px-2.5 py-1 bg-[#0B0B0C] border border-[#26262B] text-[#10B981] rounded-[4px] text-xs font-sans tabular-nums font-semibold">
+                <span className="px-2.5 py-1 liquid-glass-pill text-[#10B981] rounded-[8px] text-xs font-sans tabular-nums font-semibold">
                   Hab. {averageSkillRating}/100
                 </span>
               </div>
 
               {/* Grilla 2x2 de Condiciones Iniciales */}
-              <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-[#26262B] font-sans tabular-nums">
-                <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block">Fondos</span>
+              <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-white/10 font-sans tabular-nums">
+                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                  <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Fondos</span>
                   <span className="text-sm font-bold text-[#10B981] mt-0.5 block">
                     {formatMoney(computedStats.funds)}
                   </span>
                 </div>
-                <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block">Comunidad</span>
-                  <span className="text-sm font-bold text-[#F4F0EA] mt-0.5 block">
+                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                  <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Comunidad</span>
+                  <span className="text-sm font-bold text-[#F4F4F6] mt-0.5 block">
                     {formatFans(computedStats.fansCount)}
                   </span>
                 </div>
-                <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block">Popularidad</span>
-                  <span className="text-sm font-bold text-[#F4F0EA] mt-0.5 block">
+                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                  <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Popularidad</span>
+                  <span className="text-sm font-bold text-[#F4F4F6] mt-0.5 block">
                     {computedStats.popularity}/100
                   </span>
                 </div>
-                <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B]">
-                  <span className="text-2xs text-[#8E8E99] uppercase block">Hype Inicial</span>
-                  <span className="text-sm font-bold text-[#FF2A4B] mt-0.5 block">
+                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                  <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Hype Inicial</span>
+                  <span className="text-sm font-bold text-[#FF4F00] mt-0.5 block">
                     {computedStats.hype}/100
                   </span>
+                </div>
+              </div>
+
+              {/* Resumen de Habilidades Principales del Artista */}
+              <div className="liquid-glass-subcard p-3.5 rounded-[12px] space-y-2 border-t border-white/10">
+                <span className="text-3xs font-bold uppercase tracking-wider text-[#8E8E99] block">
+                  Perfil de Talentos
+                </span>
+                <div className="space-y-1.5 text-xs font-sans">
+                  {topTwoTraits.map(trait => (
+                    <div key={trait.key} className="flex items-center justify-between text-2xs">
+                      <span className="text-[#8E8E99] font-medium">{trait.name}</span>
+                      <span className="text-[#F4F4F6] font-bold tabular-nums">{trait.value} pts</span>
+                    </div>
+                  ))}
+                  <div className="w-full h-1.5 bg-white/10 rounded-[2px] overflow-hidden mt-1">
+                    <div
+                      className="h-full bg-[#FF4F00] rounded-[2px] transition-all"
+                      style={{ width: `${Math.min(100, Math.max(0, Number(averageSkillRating)))}%` }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -1812,7 +1848,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <button
                 type="submit"
                 id="btn-launch-career-bottom"
-                className="w-full py-3 px-5 rounded-[4px] bg-[#FF2A4B] hover:bg-[#E11D48] text-white font-sans font-bold text-sm flex items-center justify-center gap-2 active:translate-y-[1px] transition-all cursor-pointer"
+                className="w-full py-3.5 px-5 rounded-[12px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-sm flex items-center justify-center gap-2 shadow-xl shadow-[#FF4F00]/30 active:scale-[0.99] transition-all cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-white" />
                 <span>Comenzar Carrera de Artista</span>
