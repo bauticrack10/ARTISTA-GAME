@@ -104,10 +104,10 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
   return (
     <aside
-      className={`bg-[#111114] border border-[#242429] rounded-[6px] p-5 space-y-3.5 sticky top-20 flex flex-col text-[#F4F4F6] ${className}`}
+      className={`liquid-glass-card p-5 space-y-3.5 sticky top-20 flex flex-col text-[#F4F4F6] ${className}`}
     >
       {/* Header con Selector Directo */}
-      <div className="flex items-center justify-between gap-2 border-b border-[#242429] pb-3">
+      <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3 relative z-10">
         <div className="flex items-center gap-2">
           {activeTab === 'press' ? (
             <Radio className="w-4 h-4 text-[#00E599]" />
@@ -119,12 +119,12 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           </h3>
         </div>
 
-        <div className="flex items-center bg-[#09090B] p-0.5 rounded-[4px] border border-[#242429] text-xs">
+        <div className="flex items-center liquid-glass-pill p-0.5 text-xs">
           <button
             onClick={() => setActiveTab('press')}
-            className={`py-1 px-2.5 rounded-[3px] font-sans font-bold transition-all cursor-pointer ${
+            className={`py-1 px-2.5 rounded-[6px] font-sans font-bold transition-all cursor-pointer ${
               activeTab === 'press'
-                ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                ? 'bg-white/15 text-[#F4F4F6] border border-white/20 shadow-xs'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
@@ -132,9 +132,9 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('social')}
-            className={`py-1 px-2.5 rounded-[3px] font-sans font-bold transition-all cursor-pointer ${
+            className={`py-1 px-2.5 rounded-[6px] font-sans font-bold transition-all cursor-pointer ${
               activeTab === 'social'
-                ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                ? 'bg-white/15 text-[#F4F4F6] border border-white/20 shadow-xs'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
@@ -145,9 +145,9 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
       {/* TAB 1: PRENSA */}
       {activeTab === 'press' && (
-        <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1`}>
+        <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1 relative z-10`}>
           {newsList.length === 0 ? (
-            <div className="p-6 text-center text-xs text-[#8E8E99] bg-[#09090B] border border-dashed border-[#242429] rounded-[4px]">
+            <div className="liquid-glass-subcard p-6 text-center text-xs text-[#8E8E99] border-dashed">
               No hay noticias recientes.
             </div>
           ) : (
@@ -160,19 +160,19 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
               return (
                 <article
                   key={news.id}
-                  className={`p-3 rounded-[4px] bg-[#09090B] border text-xs space-y-1.5 ${
+                  className={`liquid-glass-subcard p-3 text-xs space-y-1.5 group hover:border-white/28 transition-all ${
                     isPlayerMentioned
-                      ? 'border-l-4 border-l-[#FF4F00] border-[#242429]'
-                      : 'border-[#242429]'
+                      ? 'border-l-4 border-l-[#FF4F00]'
+                      : ''
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5">
-                      <span className={`text-[10px] font-sans font-bold uppercase px-1.5 py-0.2 rounded-[2px] border ${tag.style}`}>
+                      <span className={`text-[10px] font-sans font-bold uppercase px-1.5 py-0.2 rounded-[4px] border ${tag.style}`}>
                         {tag.label}
                       </span>
                       {isPlayerMentioned && (
-                        <span className="text-[10px] font-sans font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-1.5 py-0.2 rounded-[2px]">
+                        <span className="text-[10px] font-sans font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-1.5 py-0.2 rounded-[4px]">
                           Tú
                         </span>
                       )}
@@ -198,26 +198,26 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
       {/* TAB 2: REDES */}
       {activeTab === 'social' && (
-        <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1`}>
+        <div className={`space-y-2.5 ${maxHeight} overflow-y-auto pr-1 relative z-10`}>
           {socialPosts.map((post) => (
             <div
               key={post.id}
-              className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429] text-xs space-y-2"
+              className="liquid-glass-subcard p-3 text-xs space-y-2 group hover:border-white/28 transition-all"
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="font-bold text-[#F4F4F6] truncate">{post.authorName}</span>
                   {post.authorVerified && <CheckCircle className="w-3 h-3 text-cyan-400 shrink-0" />}
-                  <span className="text-[11px] text-[#52525B] truncate">@{post.authorHandle}</span>
+                  <span className="text-[11px] text-[#8E8E99] truncate">@{post.authorHandle}</span>
                 </div>
-                <span className="text-[10px] text-[#52525B] font-sans tabular-nums shrink-0">
+                <span className="text-[10px] text-[#8E8E99] font-sans tabular-nums shrink-0">
                   M{post.month}
                 </span>
               </div>
 
               <p className="text-xs text-[#F4F4F6] leading-relaxed">{post.content}</p>
 
-              <div className="flex items-center gap-4 text-[11px] text-[#8E8E99] font-sans tabular-nums pt-1">
+              <div className="flex items-center gap-4 text-[11px] text-[#8E8E99] font-sans tabular-nums pt-1 border-t border-white/5">
                 <span className="flex items-center gap-1">
                   <Heart className="w-3 h-3 text-[#FF2A4B]" />
                   {(post.likes || 0).toLocaleString('es-AR')}

@@ -173,8 +173,8 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
   ];
 
   return (
-    <div className={`bg-[#111114] border border-[#242429] rounded-[6px] p-5 space-y-4 text-[#F4F4F6] ${className}`}>
-      <div className="flex items-center justify-between gap-3 border-b border-[#242429] pb-3">
+    <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3 relative z-10">
         <div className="flex items-center gap-2">
           <Sliders className="w-4 h-4 text-[#FF4F00]" />
           <h2 className="text-sm font-bold text-[#F4F4F6] tracking-tight">
@@ -182,13 +182,13 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
           </h2>
         </div>
 
-        <div className="flex items-center gap-1 bg-[#09090B] p-0.5 rounded-[4px] border border-[#242429]">
+        <div className="flex items-center gap-1 liquid-glass-pill p-0.5">
           <button
             type="button"
             onClick={() => setActiveTab('main')}
-            className={`px-3 py-1 text-xs font-sans rounded-[3px] font-bold transition-all cursor-pointer ${
+            className={`px-3 py-1 text-xs font-sans rounded-[6px] font-bold transition-all cursor-pointer ${
               activeTab === 'main'
-                ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                ? 'bg-white/15 text-[#F4F4F6] border border-white/20 shadow-xs'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
@@ -197,9 +197,9 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('personality')}
-            className={`px-3 py-1 text-xs font-sans rounded-[3px] font-bold transition-all cursor-pointer ${
+            className={`px-3 py-1 text-xs font-sans rounded-[6px] font-bold transition-all cursor-pointer ${
               activeTab === 'personality'
-                ? 'bg-[#18181C] text-[#F4F4F6] border border-[#3F3F46]'
+                ? 'bg-white/15 text-[#F4F4F6] border border-white/20 shadow-xs'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
@@ -209,13 +209,13 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
       </div>
 
       {activeTab === 'main' && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 relative z-10">
           {keyMetrics.map((metric) => {
             const Icon = metric.icon;
             return (
               <div
                 key={metric.id}
-                className="bg-[#09090B] rounded-[4px] p-3 space-y-2 border border-[#242429]"
+                className="liquid-glass-subcard p-3 space-y-2 group hover:border-white/28 transition-all"
               >
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[11px] font-semibold text-[#8E8E99] truncate">
@@ -226,12 +226,12 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
 
                 <div className="text-lg font-bold text-[#F4F4F6] font-sans tabular-nums">
                   {metric.value}
-                  <span className="text-2xs text-[#52525B] font-normal">/100</span>
+                  <span className="text-2xs text-[#8E8E99]/60 font-normal">/100</span>
                 </div>
 
-                <div className="w-full h-1.5 bg-[#18181C] rounded-[2px] overflow-hidden">
+                <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
                   <div
-                    className={`h-full rounded-[2px] transition-all duration-300 ${metric.barColor}`}
+                    className={`h-full rounded-full transition-all duration-300 ${metric.barColor}`}
                     style={{ width: `${Math.min(100, Math.max(0, metric.value))}%` }}
                   />
                 </div>
@@ -242,14 +242,14 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
       )}
 
       {activeTab === 'personality' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 relative z-10">
           {personalitySkills.map((skill) => {
             const Icon = skill.icon;
             const tier = getSkillTier(skill.val);
             return (
               <div
                 key={skill.id}
-                className="bg-[#09090B] border border-[#242429] rounded-[4px] p-3 flex items-center justify-between gap-3"
+                className="liquid-glass-subcard p-3 flex items-center justify-between gap-3 group hover:border-white/28 transition-all"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <Icon className="w-3.5 h-3.5 text-[#8E8E99] shrink-0" />
@@ -257,7 +257,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <span className="text-xs font-semibold text-[#F4F4F6] truncate">{skill.label}</span>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className={`text-[10px] px-1.5 py-0.2 rounded-[2px] border font-sans ${tier.badge}`}>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-[4px] border font-sans ${tier.badge}`}>
                           {tier.name}
                         </span>
                         <span className="text-xs font-bold text-[#F4F4F6] font-sans tabular-nums">
@@ -265,9 +265,9 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                         </span>
                       </div>
                     </div>
-                    <div className="w-full h-1.5 bg-[#18181C] rounded-[2px] overflow-hidden">
+                    <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
                       <div
-                        className="h-full bg-[#FF4F00] rounded-[2px] transition-all duration-300"
+                        className="h-full bg-[#FF4F00] rounded-full transition-all duration-300"
                         style={{ width: `${Math.min(100, Math.max(0, skill.val))}%` }}
                       />
                     </div>

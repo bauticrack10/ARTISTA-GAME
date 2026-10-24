@@ -96,9 +96,9 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   };
 
   return (
-    <div className={`bg-[#111114] border border-[#242429] rounded-[6px] p-5 space-y-4 ${className}`}>
+    <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
       {/* Header + Accesos Directos */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#242429] pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3 relative z-10">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-[#FF4F00]" />
           <h3 className="text-sm font-bold text-[#F4F4F6]">
@@ -113,7 +113,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               playSound('click');
               onNavigate('studio');
             }}
-            className="px-2.5 py-1 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#F4F4F6] flex items-center gap-1.5 cursor-pointer transition-colors"
+            className="liquid-glass-pill px-2.5 py-1 text-xs font-semibold text-[#F4F4F6] flex items-center gap-1.5 cursor-pointer hover:border-white/30 transition-colors"
           >
             <Disc3 className="w-3.5 h-3.5 text-[#FF4F00]" />
             <span>Ir al Estudio</span>
@@ -125,7 +125,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               playSound('click');
               onNavigate('tours');
             }}
-            className="px-2.5 py-1 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#F4F4F6] flex items-center gap-1.5 cursor-pointer transition-colors"
+            className="liquid-glass-pill px-2.5 py-1 text-xs font-semibold text-[#F4F4F6] flex items-center gap-1.5 cursor-pointer hover:border-white/30 transition-colors"
             title={tourGates.tooltipText}
           >
             <Ticket className={`w-3.5 h-3.5 ${isTourReady ? 'text-[#00E599]' : 'text-[#8E8E99]'}`} />
@@ -138,7 +138,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               playSound('click');
               onNavigate('lifestyle');
             }}
-            className="px-2.5 py-1 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#F4F4F6] flex items-center gap-1.5 cursor-pointer transition-colors"
+            className="liquid-glass-pill px-2.5 py-1 text-xs font-semibold text-[#F4F4F6] flex items-center gap-1.5 cursor-pointer hover:border-white/30 transition-colors"
           >
             <ShoppingBag className="w-3.5 h-3.5 text-cyan-400" />
             <span>Tienda</span>
@@ -149,10 +149,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       {/* Aviso de resultado */}
       {feedbackMessage && (
         <div
-          className={`p-3 rounded-[4px] border flex items-start justify-between gap-3 text-xs ${
+          className={`liquid-glass-subcard p-3 border flex items-start justify-between gap-3 text-xs relative z-10 ${
             feedbackMessage.success
-              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-              : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+              ? 'border-emerald-500/40 text-emerald-300'
+              : 'border-rose-500/40 text-rose-300'
           }`}
         >
           <div className="flex items-start gap-2">
@@ -168,7 +168,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           </div>
           <button
             onClick={() => setFeedbackMessage(null)}
-            className="p-1 text-[#8E8E99] hover:text-white rounded-[3px] cursor-pointer"
+            className="p-1 text-[#8E8E99] hover:text-white rounded-[4px] cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -176,16 +176,16 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       )}
 
       {/* 4 Acciones Directas (Sin pestañas duplicadas) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 relative z-10">
         {/* 1. DESCANSO & ENERGÍA */}
-        <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-4 flex flex-col justify-between gap-3">
+        <div className="liquid-glass-subcard p-4 flex flex-col justify-between gap-3 group hover:border-white/28 transition-all">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#F4F4F6] flex items-center gap-1.5">
                 <Coffee className="w-3.5 h-3.5 text-[#10B981]" />
                 Descanso
               </span>
-              <span className="text-[10px] font-sans font-bold text-[#10B981] bg-[#10B981]/10 px-1.5 py-0.5 rounded-[2px] border border-[#10B981]/30 tabular-nums">
+              <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#10B981] px-1.5 py-0.5 border border-[#10B981]/30 tabular-nums">
                 {hasFundsForRest ? '+50% Energía' : '+25% Gratis'}
               </span>
             </div>
@@ -206,10 +206,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     }
                   }}
                   disabled={isEnergyFull}
-                  className={`w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 px-2.5 rounded-[4px] transition-all ${
+                  className={`w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                     !isEnergyFull
-                      ? 'bg-[#18181C] hover:bg-[#242429] text-[#10B981] border border-emerald-800/60 cursor-pointer'
-                      : 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
+                      ? 'liquid-glass-pill text-[#10B981] border-emerald-500/40 hover:bg-emerald-500/15 cursor-pointer'
+                      : 'liquid-glass-pill text-[#52525B] opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <Zap className="w-3.5 h-3.5" />
@@ -238,10 +238,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   }
                 }}
                 disabled={isEnergyFull}
-                className={`w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 px-2.5 rounded-[4px] transition-all ${
+                className={`w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   !isEnergyFull
-                    ? 'bg-[#18181C] hover:bg-[#242429] text-[#F59E0B] border border-amber-800/60 cursor-pointer'
-                    : 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
+                    ? 'liquid-glass-pill text-[#F59E0B] border-amber-500/40 hover:bg-amber-500/15 cursor-pointer'
+                    : 'liquid-glass-pill text-[#52525B] opacity-50 cursor-not-allowed'
                 }`}
               >
                 <Coffee className="w-3.5 h-3.5" />
@@ -256,14 +256,14 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           const cfg = decisionsConfig.vocal_training;
           const canExecute = currentFunds >= cfg.costFunds && currentEnergy >= cfg.costEnergy;
           return (
-            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-4 flex flex-col justify-between gap-3">
+            <div className="liquid-glass-subcard p-4 flex flex-col justify-between gap-3 group hover:border-white/28 transition-all">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#F4F4F6] flex items-center gap-1.5">
                     <Mic2 className="w-3.5 h-3.5 text-[#FF4F00]" />
                      Técnica Vocal
                   </span>
-                  <span className="text-[10px] font-sans font-bold text-[#8E8E99] tabular-nums">
+                  <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#8E8E99] px-1.5 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>
@@ -275,10 +275,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               <button
                 onClick={() => handleRunDecision('vocal_training')}
                 disabled={!canExecute}
-                className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[4px] transition-all ${
+                className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   canExecute
-                    ? 'bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#2E2E36] cursor-pointer'
-                    : 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
+                    ? 'liquid-glass-pill text-[#F4F4F6] hover:border-white/30 hover:bg-white/10 cursor-pointer'
+                    : 'liquid-glass-pill text-[#52525B] opacity-50 cursor-not-allowed'
                 }`}
               >
                 <Mic2 className="w-3.5 h-3.5 text-[#FF4F00]" />
@@ -293,14 +293,14 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           const cfg = decisionsConfig.studio_practice;
           const canExecute = currentFunds >= cfg.costFunds && currentEnergy >= cfg.costEnergy;
           return (
-            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-4 flex flex-col justify-between gap-3">
+            <div className="liquid-glass-subcard p-4 flex flex-col justify-between gap-3 group hover:border-white/28 transition-all">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#F4F4F6] flex items-center gap-1.5">
                     <Music2 className="w-3.5 h-3.5 text-cyan-400" />
                     Composición
                   </span>
-                  <span className="text-[10px] font-sans font-bold text-[#8E8E99] tabular-nums">
+                  <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#8E8E99] px-1.5 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>
@@ -312,10 +312,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               <button
                 onClick={() => handleRunDecision('studio_practice')}
                 disabled={!canExecute}
-                className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[4px] transition-all ${
+                className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   canExecute
-                    ? 'bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#2E2E36] cursor-pointer'
-                    : 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
+                    ? 'liquid-glass-pill text-[#F4F4F6] hover:border-white/30 hover:bg-white/10 cursor-pointer'
+                    : 'liquid-glass-pill text-[#52525B] opacity-50 cursor-not-allowed'
                 }`}
               >
                 <Music2 className="w-3.5 h-3.5 text-cyan-400" />
@@ -330,14 +330,14 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           const cfg = decisionsConfig.industry_networking;
           const canExecute = currentFunds >= cfg.costFunds && currentEnergy >= cfg.costEnergy;
           return (
-            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-4 flex flex-col justify-between gap-3">
+            <div className="liquid-glass-subcard p-4 flex flex-col justify-between gap-3 group hover:border-white/28 transition-all">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#F4F4F6] flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5 text-[#F59E0B]" />
                     Networking
                   </span>
-                  <span className="text-[10px] font-sans font-bold text-[#8E8E99] tabular-nums">
+                  <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#8E8E99] px-1.5 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>
@@ -349,10 +349,10 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               <button
                 onClick={() => handleRunDecision('industry_networking')}
                 disabled={!canExecute}
-                className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[4px] transition-all ${
+                className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   canExecute
-                    ? 'bg-[#18181C] hover:bg-[#242429] text-[#F4F4F6] border border-[#2E2E36] cursor-pointer'
-                    : 'bg-[#18181C]/40 text-[#52525B] border border-[#242429] cursor-not-allowed opacity-50'
+                    ? 'liquid-glass-pill text-[#F4F4F6] hover:border-white/30 hover:bg-white/10 cursor-pointer'
+                    : 'liquid-glass-pill text-[#52525B] opacity-50 cursor-not-allowed'
                 }`}
               >
                 <Users className="w-3.5 h-3.5 text-[#F59E0B]" />

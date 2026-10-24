@@ -66,8 +66,8 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
   const genreDict: Record<string, Genre> = genres || world?.genres || {};
 
   return (
-    <div className={`bg-[#111114] border border-[#242429] rounded-[6px] p-5 space-y-4 text-[#F4F4F6] ${className}`}>
-      <div className="flex items-center justify-between border-b border-[#242429] pb-3">
+    <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
+      <div className="flex items-center justify-between border-b border-white/10 pb-3 relative z-10">
         <div className="flex items-center gap-2">
           <Music2 className="w-4 h-4 text-[#FF4F00]" />
           <h2 className="text-sm font-bold text-[#F4F4F6]">
@@ -78,7 +78,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
         {totalCount > 0 && (
           <button
             onClick={() => onNavigate?.('catalog')}
-            className="text-xs text-[#8E8E99] hover:text-[#FF4F00] cursor-pointer flex items-center gap-1 font-semibold transition-colors"
+            className="liquid-glass-pill px-2.5 py-1 text-xs text-[#8E8E99] hover:text-[#FF4F00] cursor-pointer flex items-center gap-1 font-semibold transition-colors"
           >
             <span>Ver Catálogo Completo ({totalCount})</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -87,8 +87,8 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
       </div>
 
       {totalCount === 0 ? (
-        <div className="bg-[#09090B] border border-[#242429] rounded-[6px] p-6 text-center flex flex-col items-center justify-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-[#111114] border border-[#242429] flex items-center justify-center">
+        <div className="liquid-glass-subcard p-6 text-center flex flex-col items-center justify-center space-y-3 relative z-10">
+          <div className="w-12 h-12 rounded-full liquid-glass-pill flex items-center justify-center">
             <Disc3 className="w-5 h-5 text-[#FF4F00]" />
           </div>
           <div className="space-y-1 max-w-md">
@@ -108,7 +108,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                 onRecordFirstSingle();
               }
             }}
-            className="inline-flex items-center gap-2 bg-[#FF4F00] text-white hover:bg-[#E04500] text-xs font-bold px-4 py-2 rounded-[4px] transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-bold px-4 py-2 rounded-[6px] shadow-md transition-all cursor-pointer"
           >
             <Mic2 className="w-3.5 h-3.5 text-white" />
             <span>Grabar mi primer single</span>
@@ -116,7 +116,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
           {displaySongs.map((song, i) => {
             const genreName = genreDict[song.genreId]?.name || song.genreId;
             const genreTheme = getGenreTheme(song.genreId);
@@ -126,11 +126,11 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
             return (
               <div
                 key={song.id}
-                className="p-3.5 rounded-[4px] bg-[#09090B] border border-[#242429] hover:border-[#3F3F46] transition-colors flex flex-col justify-between gap-2.5"
+                className="liquid-glass-subcard p-3.5 flex flex-col justify-between gap-2.5 group hover:border-white/28 transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="text-xs font-sans font-bold text-[#8E8E99] w-6 h-6 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center shrink-0 tabular-nums">
+                    <span className="liquid-glass-pill w-6 h-6 rounded-[6px] text-xs font-sans font-bold text-[#F4F4F6] flex items-center justify-center shrink-0 tabular-nums">
                       #{i + 1}
                     </span>
                     <div className="min-w-0">
@@ -138,7 +138,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                         {song.title}
                       </h4>
                       <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
-                        <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-[2px] border ${genreTheme.badgeBg} ${genreTheme.badgeText} ${genreTheme.badgeBorder}`}>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-[4px] border ${genreTheme.badgeBg} ${genreTheme.badgeText} ${genreTheme.badgeBorder}`}>
                           {genreName}
                         </span>
                         <span className="text-[11px] text-[#8E8E99] font-sans">
@@ -150,26 +150,26 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
 
                   <div className="flex items-center gap-1 shrink-0">
                     {song.musicVideo && (
-                      <span className="text-[10px] font-bold bg-[#18181C] text-cyan-400 border border-cyan-800/60 px-1.5 py-0.5 rounded-[2px] flex items-center gap-1">
+                      <span className="text-[10px] font-bold bg-[#18181C] text-cyan-400 border border-cyan-800/60 px-1.5 py-0.5 rounded-[4px] flex items-center gap-1">
                         <Video className="w-2.5 h-2.5" />
                         MV
                       </span>
                     )}
                     {song.wentViral && (
-                      <span className="text-[10px] font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40 px-1.5 py-0.5 rounded-[2px] flex items-center gap-0.5">
+                      <span className="text-[10px] font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40 px-1.5 py-0.5 rounded-[4px] flex items-center gap-0.5">
                         <Flame className="w-2.5 h-2.5 fill-current" />
                         Viral
                       </span>
                     )}
                     {peakGlobal && (
-                      <span className="text-[10px] font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded-[2px] font-sans tabular-nums">
+                      <span className="text-[10px] font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded-[4px] font-sans tabular-nums">
                         #{peakGlobal}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#242429] text-xs font-sans tabular-nums">
+                <div className="flex items-center justify-between pt-2 border-t border-white/10 text-xs font-sans tabular-nums">
                   <span className="text-[#8E8E99]">
                     Mes: <strong className="text-[#00E599]">{song.streamsLastMonth.toLocaleString('es-AR')}</strong>
                   </span>
