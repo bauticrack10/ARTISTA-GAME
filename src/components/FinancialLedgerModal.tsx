@@ -11,7 +11,6 @@ import {
   Music,
   Home,
   Sliders,
-  Sparkles,
   Radio,
   FileText,
   Calendar,
@@ -52,7 +51,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
       case 'streaming':
         return { label: 'Streaming', color: 'bg-info/15 text-info border-info/30', icon: Radio };
       case 'merch':
-        return { label: 'Merch', color: 'bg-purple-500/15 text-primary-soft border-purple-500/30', icon: Sparkles };
+        return { label: 'Merch', color: 'bg-purple-500/15 text-primary-soft border-purple-500/30', icon: ShoppingBag };
       case 'production':
         return { label: 'Producción', color: 'bg-amber-500/15 text-amber-300 border-amber-500/30', icon: Music };
       case 'marketing':

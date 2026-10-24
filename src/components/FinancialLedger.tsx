@@ -19,7 +19,8 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
-  Sparkles,
+  Radio,
+  Ticket,
   ShoppingBag,
   Music,
   Disc3,
@@ -95,7 +96,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
       case 'production':
         return <Disc3 className="w-4 h-4 text-purple-400" />;
       case 'marketing':
-        return <Sparkles className="w-4 h-4 text-pink-400" />;
+        return <Radio className="w-4 h-4 text-pink-400" />;
       case 'store':
         return <ShoppingBag className="w-4 h-4 text-indigo-400" />;
       case 'living_cost':
@@ -105,7 +106,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
       case 'tour':
         return <TrendingUp className="w-4 h-4 text-emerald-400" />;
       case 'event':
-        return <Sparkles className="w-4 h-4 text-yellow-400" />;
+        return <Ticket className="w-4 h-4 text-yellow-400" />;
       case 'contract':
         return <HeartHandshake className="w-4 h-4 text-blue-400" />;
       default:

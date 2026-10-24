@@ -8,7 +8,7 @@ import {
   Heart,
   Flame,
   Zap,
-  Sparkles,
+  Palette,
   Music2,
   Crown,
   DollarSign,
@@ -160,7 +160,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
   ];
 
   const personalitySkills = [
-    { id: 'creativity', label: 'Creatividad', val: personality.creativity ?? 26, icon: Sparkles },
+    { id: 'creativity', label: 'Creatividad', val: personality.creativity ?? 26, icon: Palette },
     { id: 'skill', label: 'Técnica & Skill', val: personality.skill ?? 26, icon: Music2 },
     { id: 'charisma', label: 'Carisma Escénico', val: personality.charisma ?? 24, icon: Crown },
     { id: 'commercialAppeal', label: 'Atractivo Comercial', val: personality.commercialAppeal ?? 22, icon: DollarSign },

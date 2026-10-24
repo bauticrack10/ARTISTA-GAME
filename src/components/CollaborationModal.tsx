@@ -16,7 +16,8 @@ import { CollabResponseModal } from './CollabResponseModal';
 import { FeatArtistSelector } from './FeatArtistSelector';
 import {
   X,
-  Sparkles,
+  Crown,
+  Send,
   Users,
   Disc3,
   Layers,
@@ -118,7 +119,7 @@ const COLLAB_FORMATS: FormatOption[] = [
     tracksCount: 6,
     energyCost: 35,
     minBudgetSuggested: 14000,
-    icon: Sparkles,
+    icon: Disc3,
     tag: 'LP Conjunto • 6 Tracks',
     gradient: 'from-[#18181C] to-[#111114]',
     badgeClass: 'bg-[#18181C] border-[#FF4F00]/50 text-[#FF4F00]'
@@ -178,7 +179,7 @@ const LONGEVITY_OPTIONS: LongevityOption[] = [
     id: 'instant_classic',
     label: 'Clásico Instantáneo',
     description: 'Aclamación crítica legendaria y reproducciones infinitas a lo largo de los años.',
-    icon: Sparkles,
+    icon: Disc3,
     badge: 'Legado'
   }
 ];
@@ -717,7 +718,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                   <div>
                     <div className="flex justify-between text-xs mb-1">
                       <span className="text-[#8E8E99] flex items-center gap-1 font-sans">
-                        <Sparkles className="w-3 h-3 text-[#FF4F00]" />
+                        <Zap className="w-3 h-3 text-[#FF4F00]" />
                         Sinergia Sonora Estimada
                       </span>
                       <span className="font-sans font-bold text-[#FF4F00] tabular-nums">{soundSynergy}%</span>
@@ -1190,7 +1191,7 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 text-white" />
+                  <Send className="w-4 h-4 text-white" />
                   <span>Enviar Propuesta & Grabar Colaboración</span>
                 </>
               )}
@@ -1234,3 +1235,4 @@ export const CollaborationModal: React.FC<CollaborationModalProps> = ({
     </div>
   );
 };
+

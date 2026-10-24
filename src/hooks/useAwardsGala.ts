@@ -4,7 +4,8 @@ import { playSound } from '../utils/audioSystem';
 import {
   Trophy,
   Crown,
-  Sparkles,
+  Music2,
+  Star,
   Disc3,
   Sliders,
   Award,
@@ -97,8 +98,8 @@ export function useAwardsGala({
   const getCategoryIcon = useCallback((name: string): LucideIcon => {
     if (name.includes('Álbum')) return Trophy;
     if (name.includes('Grabación')) return Disc3;
-    if (name.includes('Canción')) return Sparkles;
-    if (name.includes('Nuevo') || name.includes('Revelación')) return Sparkles;
+    if (name.includes('Canción')) return Music2;
+    if (name.includes('Nuevo') || name.includes('Revelación')) return Star;
     if (name.includes('Colaboración')) return Crown;
     if (name.includes('Video') || name.includes('Visual')) return Play;
     if (name.includes('Producción') || name.includes('Urbana')) return Sliders;

@@ -7,7 +7,6 @@ import {
   Flame,
   MessageSquare,
   Swords,
-  Sparkles,
   UserCheck,
   ShieldCheck,
   User,
@@ -548,7 +547,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <Disc3 className="w-3.5 h-3.5" strokeWidth={1.75} />
               <span>Colabs</span>
             </button>
             <button
@@ -1060,7 +1059,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         className="bg-[#FF2A4B] hover:bg-[#E01E3D] text-[#F4F0EA] py-2 px-2 text-xs font-bold rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Proponer Colaboración Musical (Single, EP o Álbum)"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-[#F4F0EA]" strokeWidth={1.75} />
+                        <Disc3 className="w-3.5 h-3.5 text-[#F4F0EA]" strokeWidth={1.75} />
                         <span>Colab</span>
                       </button>
 

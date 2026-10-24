@@ -10,7 +10,7 @@ import {
   Home,
   Building2,
   Crown,
-  Sparkles,
+  Palette,
   Truck,
   ShieldCheck,
   Flame,
@@ -183,7 +183,6 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
       case 'Home': return <Home className="w-5 h-5 text-[#10B981]" strokeWidth={1.75} />;
       case 'Building2': return <Building2 className="w-5 h-5 text-[#10B981]" strokeWidth={1.75} />;
       case 'Crown': return <Crown className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
-      case 'Sparkles': return <Sparkles className="w-5 h-5 text-[#F59E0B]" strokeWidth={1.75} />;
       case 'Truck': return <Truck className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
       case 'ShieldCheck': return <ShieldCheck className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
       case 'Flame': return <Flame className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />;
@@ -395,7 +394,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           if (item.effects.creativityBonus) {
             effectBadges.push({
               label: `+${item.effects.creativityBonus * multiplier} Creatividad`,
-              icon: <Sparkles className="w-3 h-3 text-[#F59E0B] shrink-0" strokeWidth={1.75} />
+              icon: <Palette className="w-3 h-3 text-[#F59E0B] shrink-0" strokeWidth={1.75} />
             });
           }
           if (item.effects.charismaBonus) {
@@ -491,7 +490,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 </p>
 
                 <div className={`p-2 rounded-[4px] border text-xs font-semibold flex items-center gap-2 ${colorClasses.buffBadge}`}>
-                  <Sparkles className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
+                  <Zap className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
                   <span>{item.buffDescription}</span>
                 </div>
 

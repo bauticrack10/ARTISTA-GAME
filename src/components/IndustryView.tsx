@@ -7,7 +7,7 @@ import {
   Award,
   CheckCircle2,
   Lock,
-  Sparkles,
+  Zap,
   UserCheck,
   Radio,
   FileText,
@@ -418,7 +418,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       case 'flame':
         return <Flame className="w-5 h-5" />;
       case 'sparkles':
-        return <Sparkles className="w-5 h-5" />;
+        return <Zap className="w-5 h-5" />;
       case 'award':
         return <Award className="w-5 h-5" />;
       case 'crown':

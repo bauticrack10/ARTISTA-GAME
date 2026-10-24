@@ -18,7 +18,6 @@ import {
 import { playSound } from '../utils/audioSystem';
 import { formatMoney } from '../utils/formatters';
 import {
-  Sparkles,
   Flame,
   Tv,
   Users,
@@ -549,7 +548,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
 
               {(showResult.viralMomentOccurred || showResult.viralMoment?.occurred) && (
                 <div className="p-3.5 rounded-[4px] bg-[#18181C] border border-[#F59E0B]/50 text-[#F59E0B] text-xs flex items-center gap-2 font-sans">
-                  <Sparkles className="w-4 h-4 text-[#F59E0B] shrink-0" />
+                  <Flame className="w-4 h-4 text-[#F59E0B] shrink-0" />
                   <span><strong>¡Momento Viral en Vivo!</strong> Videos del concierto alcanzaron millones de visualizaciones en TikTok, multiplicando las reproducciones en streaming.</span>
                 </div>
               )}

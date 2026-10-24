@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { WorldState, NewsItem } from '../types';
-import { Newspaper, Radio, Flame, Sparkles, TrendingUp, Award, Swords } from 'lucide-react';
+import { Newspaper, Radio, Flame, TrendingUp, Award, Swords } from 'lucide-react';
 import { TimeSystem } from '../systems/TimeSystem';
 
 interface NewsViewProps {

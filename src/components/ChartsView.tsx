@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { WorldState, MusicRegion, Artist, ChartEntry } from '../types';
-import { BarChart3, Trophy, Flame, TrendingUp, TrendingDown, Minus, Sparkles, Disc3, Crown, Play } from 'lucide-react';
+import { BarChart3, Trophy, Flame, TrendingUp, TrendingDown, Minus, Disc3, Crown, Play } from 'lucide-react';
 import { RELEASE_BADGES } from '../utils/themeColors';
 import { MUSIC_REGION_CONFIG, formatMusicRegion, formatMusicRegionLabel } from '../utils/formatters';
 

@@ -9,7 +9,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     price: 90,
     monthlyUpkeep: 0,
     description: 'Accesorio de acero y doble malla que elimina plosivas al cantar cerca del micrófono.',
-    iconName: 'Sparkles',
+    iconName: 'Mic',
     buffDescription: '+1 Calidad vocal limpia en grabaciones caseras.',
     effects: {
       qualityBonus: 1
@@ -134,7 +134,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     price: 260,
     monthlyUpkeep: 0,
     description: 'Pauta publicitaria focalizada en tu ciudad y afiches para dar a conocer tus primeros lanzamientos.',
-    iconName: 'Sparkles',
+    iconName: 'Mic',
     buffDescription: '+4 Hype basal, +2 Atractivo Comercial, -2% decaimiento de hype.',
     effects: {
       commercialAppealBonus: 2,
@@ -298,7 +298,7 @@ export const LIFESTYLE_ITEMS: LifestyleItem[] = [
     price: 2200000,
     monthlyUpkeep: 20000,
     description: 'La máxima expresión del estrellato: finca privada protegida, spa, cine propio y espacio para fiestas memorables.',
-    iconName: 'Sparkles',
+    iconName: 'Mic',
     buffDescription: '+28 Energía pasiva/mes, +25 Reputación, +10 Hype basal sostenido.',
     effects: {
       passiveEnergyPerMonth: 28,

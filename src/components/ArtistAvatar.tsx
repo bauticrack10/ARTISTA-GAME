@@ -4,7 +4,8 @@ import {
   Crown,
   Flame,
   Disc3,
-  Sparkles,
+  Gem,
+  Moon,
   Zap,
   Music2,
   Radio,
@@ -22,7 +23,7 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   crown: Crown,
   flame: Flame,
   disc: Disc3,
-  sparkles: Sparkles,
+  sparkles: Gem,
   zap: Zap,
   music: Music2,
   radio: Radio,
@@ -32,9 +33,9 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   waves: Waves,
   activity: Activity,
   user: User,
-  gem: Sparkles,
+  gem: Gem,
   sun: Star,
-  moon: Sparkles,
+  moon: Moon,
   shield: Trophy
 };
 

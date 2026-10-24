@@ -20,7 +20,6 @@ import { GameEngine } from '../core/GameEngine';
 import { IndustryEngine } from '../systems/IndustryEngine';
 import {
   Disc3,
-  Sparkles,
   Users,
   Mic,
   Sliders,
@@ -880,7 +879,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       className="text-xs text-[#FF2A4B] hover:underline font-bold flex items-center gap-1 cursor-pointer transition-colors"
                       title="Abrir el panel interactivo completo de colaboraciones"
                     >
-                      <Sparkles className="w-3 h-3" />
+                      <Users className="w-3 h-3" />
                       Estudio de Colaboración Avanzada
                     </button>
                   )}
@@ -1296,7 +1295,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       className="text-xs text-[#FF2A4B] hover:underline font-bold flex items-center gap-1 cursor-pointer transition-colors"
                       title="Abrir el panel para crear un Álbum Colaborativo completo"
                     >
-                      <Sparkles className="w-3 h-3" />
+                      <Disc3 className="w-3 h-3" />
                       Álbum Colaborativo ("Oasis")
                     </button>
                   )}

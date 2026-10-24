@@ -12,7 +12,7 @@ import {
 import { ArtistAvatar } from './ArtistAvatar';
 import { StreamingEngine } from '../systems/StreamingEngine';
 import {
-  Sparkles,
+  ArrowRight,
   User,
   MapPin,
   Disc3,
@@ -323,7 +323,7 @@ export const TRAIT_METADATA_LIST: TraitMeta[] = [
     key: 'creativity',
     label: 'Creatividad & Vanguardia',
     shortLabel: 'Creatividad',
-    icon: Sparkles,
+    icon: Palette,
     iconColor: 'text-[#FF4F00]',
     gradient: 'from-[#FF4F00] to-[#D97706]',
     bgTrack: 'bg-[#18181C]',
@@ -915,8 +915,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               className="w-full sm:w-auto justify-center flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs shadow-lg shadow-[#FF4F00]/25 active:translate-y-[1px] transition-all cursor-pointer"
               title="Comenzar Carrera Directamente"
             >
-              <Sparkles className="w-4 h-4 text-white" />
               <span>Comenzar Carrera</span>
+              <ArrowRight className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
@@ -1689,7 +1689,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                         : 'liquid-glass-pill text-[#8E8E99]'
                     }`}
                   >
-                    {isProdigy ? <Crown className="w-4 h-4 text-[#F59E0B]" /> : <Sparkles className="w-4 h-4" />}
+                    {isProdigy ? <Crown className="w-4 h-4 text-[#F59E0B]" /> : <Star className="w-4 h-4 text-[#8E8E99]" />}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -1741,7 +1741,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Header Badge */}
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <span className="text-2xs font-sans font-bold uppercase tracking-wider text-[#FF4F00] flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FF4F00]" />
+                  <Disc3 className="w-3.5 h-3.5 text-[#FF4F00]" />
                   Credencial de Estudio
                 </span>
                 <span className="text-3xs font-sans font-bold tracking-widest uppercase text-[#8E8E99] liquid-glass-pill px-2 py-0.5 rounded-[6px]">
@@ -1850,8 +1850,8 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 id="btn-launch-career-bottom"
                 className="w-full py-3.5 px-5 rounded-[12px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-sm flex items-center justify-center gap-2 shadow-xl shadow-[#FF4F00]/30 active:scale-[0.99] transition-all cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-white" />
                 <span>Comenzar Carrera de Artista</span>
+                <ArrowRight className="w-4 h-4 text-white" />
               </button>
             </div>
           </div>

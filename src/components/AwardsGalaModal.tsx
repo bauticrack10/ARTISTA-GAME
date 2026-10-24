@@ -3,7 +3,6 @@ import { activateOnKey } from '../utils/a11y';
 import { AwardCeremony, Artist, AwardNominee } from '../types';
 import {
   Trophy,
-  Sparkles,
   ChevronRight,
   ChevronLeft,
   CheckCircle2,
@@ -574,7 +573,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                       onClick={handleAdvancePhase}
                       className="bg-[#FF4F00] text-white hover:bg-[#E04500] font-bold px-6 py-2.5 rounded-[4px] text-xs font-sans transition-all cursor-pointer inline-flex items-center gap-2"
                     >
-                      <Sparkles className="w-4 h-4 text-white" />
+                      <ChevronRight className="w-4 h-4 text-white" />
                       <span>Pasar al Sobre Dorado</span>
                     </button>
                   </div>
@@ -604,7 +603,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
                     onClick={() => handleOpenEnvelope()}
                     className="bg-[#F59E0B] text-[#09090B] hover:bg-[#d98b06] px-8 py-3 rounded-[4px] text-sm font-black font-sans tracking-wide transition-all cursor-pointer inline-flex items-center gap-2.5"
                   >
-                    <Sparkles className="w-5 h-5 text-[#09090B]" />
+                    <Award className="w-5 h-5 text-[#09090B]" />
                     <span>ABRIR SOBRE Y REVELAR GANADOR</span>
                   </button>
                 </div>

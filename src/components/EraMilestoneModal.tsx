@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Artist, WorldState, CareerEra } from '../types';
 import {
-  Sparkles,
   Download,
   Share2,
   Check,
@@ -484,7 +483,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
             {/* 2. Headline Editor & Presets */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-[#8E8E99] uppercase tracking-wider font-sans flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#FF4F00]" />
+                <Newspaper className="w-3.5 h-3.5 text-[#FF4F00]" />
                 Titular Principal de la Portada
               </label>
 

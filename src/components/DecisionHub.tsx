@@ -4,7 +4,6 @@ import { DecisionEngine, DecisionActionType, DecisionExecutionResult } from '../
 import {
   Disc3,
   ShoppingBag,
-  Sparkles,
   Coffee,
   Zap,
   Mic2,
@@ -100,7 +99,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       {/* Header + Accesos Directos */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3 relative z-10">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#FF4F00]" />
+          <Zap className="w-4 h-4 text-[#FF4F00]" />
           <h3 className="text-sm font-bold text-[#F4F4F6]">
             Acciones del Mes & Entrenamiento
           </h3>

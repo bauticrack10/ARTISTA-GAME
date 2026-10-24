@@ -17,7 +17,6 @@ import {
   Play,
   Pause,
   Headphones,
-  Sparkles,
   TrendingUp,
   Flame,
   CheckCircle2,
@@ -224,7 +223,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               }}
               className="px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold transition-all cursor-pointer flex items-center gap-2 active:translate-y-[1px]"
             >
-              <Sparkles className="w-4 h-4" />
+              <Send className="w-4 h-4" />
               <span>Pitch a Curadores</span>
             </button>
             <button
@@ -844,7 +843,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
           <div className="w-full max-w-lg liquid-glass-card p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-[#242429] pb-3">
               <h3 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#FF4F00]" />
+                <Send className="w-4 h-4 text-[#FF4F00]" />
                 Pitch Editorial de Canción
               </h3>
               <button

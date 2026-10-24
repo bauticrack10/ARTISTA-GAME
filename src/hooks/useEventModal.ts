@@ -11,7 +11,7 @@ import {
   Radio,
   Volume2,
   Award,
-  Sparkles,
+  Crown,
   DollarSign,
   Zap,
   Flame,
@@ -169,13 +169,13 @@ export const SYSTEM_DEFINITIONS: Record<string, { icon: LucideIcon; badgeClass: 
     name: 'Fans'
   },
   'Reputación': {
-    icon: Sparkles,
+    icon: Star,
     badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
     iconColor: 'text-amber-400',
     name: 'Reputación'
   },
   'reputation': {
-    icon: Sparkles,
+    icon: Star,
     badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
     iconColor: 'text-amber-400',
     name: 'Reputación'
@@ -322,7 +322,7 @@ function parseConsequences(desc: string): { chips: ParsedImpactChip[]; cleanedNa
   rawParts.forEach((part, index) => {
     if (isStatToken(part)) {
       let type: ImpactChipType = 'neutral';
-      let icon: LucideIcon = Sparkles;
+      let icon: LucideIcon = Zap;
       const lower = part.toLowerCase();
 
       if (part.includes('+') || lower.includes('aumenta') || lower.includes('éxito') || lower.includes('gana') || lower.includes('auge') || lower.includes('inmediato')) {
@@ -842,7 +842,7 @@ export function useEventModal({
       default:
         return {
           label: 'Dilema Personal',
-          icon: Sparkles,
+          icon: Star,
           badgeColor: 'bg-zinc-500/20 text-zinc-300 border-zinc-500/40',
           glow: 'from-zinc-500/20 via-transparent to-transparent'
         };

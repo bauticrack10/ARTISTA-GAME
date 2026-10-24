@@ -3,7 +3,7 @@ import { Artist, ReleaseConfirmationData } from '../types';
 import confetti from 'canvas-confetti';
 import { playSound } from '../utils/audioSystem';
 import {
-  Sparkles,
+  Handshake,
   CheckCircle2,
   XCircle,
   HelpCircle,
@@ -197,7 +197,7 @@ export const CollabResponseModal: React.FC<CollabResponseModalProps> = ({
 
               <div className="bg-[#09090B] border border-[#242429] p-2.5 rounded-[4px] space-y-0.5">
                 <div className="flex items-center gap-1 text-2xs text-[#8E8E99] uppercase tracking-wider">
-                  <Sparkles className="w-3 h-3 text-[#00E599]" /> Alianza
+                  <Handshake className="w-3 h-3 text-[#00E599]" /> Alianza
                 </div>
                 <div className="text-xs font-bold text-[#00E599] font-sans tabular-nums">+25 Afinidad</div>
               </div>

@@ -5,7 +5,6 @@ import { formatMoney, formatCompactNumber } from '../utils/formatters';
 import {
   Mic2,
   Sliders,
-  Sparkles,
   Clock,
   DollarSign,
   Zap,

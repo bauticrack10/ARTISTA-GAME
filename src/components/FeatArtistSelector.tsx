@@ -6,7 +6,7 @@ import { playSound } from '../utils/audioSystem';
 import {
   Users,
   CheckCircle2,
-  Sparkles,
+  Disc3,
   Lock,
   ChevronDown,
   Search,
@@ -103,7 +103,7 @@ export function getArtistFeatStatus(
     badgeClass: 'bg-[#FF4F00]/10 text-[#FF4F00] border-[#FF4F00]/30 font-sans',
     dotClass: 'bg-[#FF4F00]',
     glowClass: '',
-    icon: Sparkles,
+    icon: Disc3,
     description: 'Abierto a propuestas de estudio con presupuesto estándar.',
     canDirectlySelect: true,
     actionHint: 'Listo para negociar feat'

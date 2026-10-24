@@ -5,7 +5,8 @@ import { CertificationEngine } from '../systems/CertificationEngine';
 import {
   Award,
   Trophy,
-  Sparkles,
+  Music2,
+  Star,
   Crown,
   Play,
   ChevronDown,
@@ -37,8 +38,8 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
   const getCategoryIcon = (name: string) => {
     if (name.includes('Álbum')) return Trophy;
     if (name.includes('Grabación')) return Disc3;
-    if (name.includes('Canción')) return Sparkles;
-    if (name.includes('Nuevo') || name.includes('Revelación')) return Sparkles;
+    if (name.includes('Canción')) return Music2;
+    if (name.includes('Nuevo') || name.includes('Revelación')) return Star;
     if (name.includes('Colaboración')) return Crown;
     if (name.includes('Video') || name.includes('Visual')) return Play;
     if (name.includes('Producción') || name.includes('Urbana')) return Sliders;
@@ -272,7 +273,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#26262B] pb-3">
           <div>
             <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              <Trophy className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
               <span>Historial de Galas Anuales</span>
               <span className="text-xs px-2 py-0.5 rounded-[4px] bg-[#1C1C21] text-[#FF2A4B] tabular-nums font-semibold border border-[#26262B]">
                 {ceremonies.length}

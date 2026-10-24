@@ -10,7 +10,7 @@ import {
   LiveShowResult
 } from '../types';
 import {
-  Sparkles,
+  Plane,
   MapPin,
   Ticket,
   AlertTriangle,
@@ -193,7 +193,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
       <div className="liquid-glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#FF4F00]" strokeWidth={1.75} />
+            <Plane className="w-5 h-5 text-[#FF4F00]" strokeWidth={1.75} />
             Giras & Festivales en Vivo
           </h1>
           <p className="text-xs text-[#8E8E99] mt-0.5">
@@ -534,7 +534,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                     : 'bg-[#1C1C21] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-60'
                 }`}
               >
-                <Sparkles className="w-4 h-4" strokeWidth={1.75} />
+                <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
                 <span>{isTourAllowed ? 'Iniciar Gira & Vender Entradas' : 'Requisitos Insuficientes'}</span>
               </button>
             </div>

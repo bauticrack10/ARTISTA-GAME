@@ -6,7 +6,6 @@ import {
   CreditCard,
   Battery,
   Wifi,
-  Sparkles,
   CheckCheck,
   Send,
   Flame,
@@ -353,7 +352,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                   <span className="text-xs font-sans font-bold tracking-widest uppercase text-[#8E8E99]">
                     ARTIST BLACK CARD
                   </span>
-                  <Sparkles className="w-4 h-4 text-[#F59E0B]" />
+                  <CreditCard className="w-4 h-4 text-[#F59E0B]" />
                 </div>
                 <div>
                   <span className="text-2xs uppercase font-sans tracking-wider text-[#8E8E99] block">Fondos Disponibles</span>

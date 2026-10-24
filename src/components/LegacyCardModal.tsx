@@ -6,7 +6,6 @@ import {
   Disc3,
   Trophy,
   Crown,
-  Sparkles,
   MapPin,
   Calendar,
   DollarSign,
@@ -235,7 +234,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
           {/* Top Hits Section */}
           <div className="space-y-3">
             <h3 className="text-xs font-sans uppercase font-bold text-[#8E8E99] flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#FF4F00]" />
+              <Disc3 className="w-3.5 h-3.5 text-[#FF4F00]" />
               Obras Fundamentales del Catálogo
             </h3>
 

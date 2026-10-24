@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Sparkles,
   Trophy,
   Globe2,
   Disc3,
@@ -247,7 +246,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
                       key={i}
                       className="bg-[#18181C] border border-[#242429] rounded-[4px] p-2 text-xs text-[#F59E0B] font-semibold flex items-center gap-2 justify-center font-sans"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
+                      <Trophy className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
                       <span>{award}</span>
                     </div>
                   ))}

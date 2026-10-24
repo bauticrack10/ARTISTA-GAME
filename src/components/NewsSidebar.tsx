@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { WorldState, Artist, NewsItem, SocialPost } from '../types';
 import {
   Radio,
-  Sparkles,
+  TrendingUp,
   MessageCircle,
   Heart,
   Repeat,
@@ -112,7 +112,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           {activeTab === 'press' ? (
             <Radio className="w-4 h-4 text-[#00E599]" />
           ) : (
-            <Sparkles className="w-4 h-4 text-[#FF4F00]" />
+            <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
           )}
           <h3 className="text-sm font-bold text-[#F4F4F6]">
             {activeTab === 'press' ? 'Noticias de la Escena' : 'Pulso en Redes'}

@@ -3,7 +3,6 @@ import { Artist, WorldState, Song, Album, CareerStage } from '../types';
 import { ArtistAvatar } from './ArtistAvatar';
 import { TimeSystem } from '../systems/TimeSystem';
 import {
-  Sparkles,
   ArrowUpRight,
   Disc3,
   Building2,
@@ -261,7 +260,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
       {currentEra && (
         <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-3 text-xs relative z-10">
           <div className="flex items-center gap-2 min-w-0">
-            <Sparkles className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
+            <Disc3 className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
             <span className="text-[#8E8E99] truncate">
               Era actual: <strong className="text-[#F4F4F6]">{currentEra.name}</strong>
             </span>

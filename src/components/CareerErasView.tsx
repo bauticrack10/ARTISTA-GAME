@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Artist, WorldState, Song, Album, Tour } from '../types';
 import {
   TrendingUp,
-  Sparkles,
+  Ticket,
   Calendar,
   History,
   Trophy,
@@ -86,7 +86,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
     title: 'Debut Artístico en la Escena',
     description: `Comienzo formal en ${formatCityCountry(player.city, player.country)} • Género base: ${world.genres[player.mainGenreId]?.name || player.mainGenreId}.`,
     badge: 'Inicio de Carrera',
-    icon: Sparkles
+    icon: Disc3
   });
 
   // Eras
@@ -359,7 +359,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
         <div className="liquid-glass-card p-5 space-y-3">
           <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              <Ticket className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
               Mejor Gira Histórica
             </h2>
             <span className="text-2xs uppercase font-bold bg-[#1C1C21] text-[#10B981] border border-[#10B981]/40 px-2 py-0.5 rounded-[4px]">

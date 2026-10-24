@@ -15,7 +15,8 @@ import {
   Building2,
   Network,
   ShoppingBag,
-  Sparkles,
+  Briefcase,
+  Plane,
   TrendingUp,
   Volume2,
   VolumeX,
@@ -344,7 +345,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
             }`}
           >
-            <Sparkles className={`w-3.5 h-3.5 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <Briefcase className={`w-3.5 h-3.5 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Carrera & Negocios</span>
             {(isTourReady || hasActiveGala) && (
               <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] shrink-0" />
@@ -433,7 +434,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
-                  <Sparkles className="w-3 h-3 text-[#10B981]" />
+                  <Plane className="w-3 h-3 text-[#10B981]" />
                   <span>Giras</span>
                 </button>
                 <button
