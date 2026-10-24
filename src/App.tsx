@@ -355,9 +355,12 @@ export default function App() {
       <div
         className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-primary/30 selection:text-white relative overflow-x-clip font-sans"
       >
-      {/* Subtle Studio Backdrop Vignette */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#0B0C10]">
-        <div className="absolute inset-0 analog-grain opacity-25" />
+      {/* Ambient Studio Lighting Backdrop for Liquid Glass Refraction */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#09090C]">
+        <div className="absolute -top-[15%] -left-[10%] w-[600px] h-[600px] rounded-full bg-[#FF4F00]/[0.035] blur-[140px]" />
+        <div className="absolute top-[25%] -right-[15%] w-[700px] h-[700px] rounded-full bg-[#10B981]/[0.025] blur-[150px]" />
+        <div className="absolute -bottom-[20%] left-[25%] w-[800px] h-[800px] rounded-full bg-[#FF2A4B]/[0.03] blur-[160px]" />
+        <div className="absolute inset-0 analog-grain opacity-20" />
       </div>
 
       {/* Top App Bar & Navigation */}

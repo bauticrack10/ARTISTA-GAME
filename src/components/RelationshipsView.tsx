@@ -502,11 +502,11 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   return (
     <div className="space-y-6 pb-16 text-[#F4F0EA]">
       {/* Unified Compact Control Bar */}
-      <div className="bg-[#141417] p-4 rounded-[6px] border border-[#26262B] space-y-3">
+      <div className="liquid-glass-card p-5 space-y-4">
         {/* Row 1: Title & View Filter Pills */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#FF2A4B]">
+            <div className="p-1.5 rounded-[4px] liquid-glass-pill text-[#FF4F00]">
               <Network className="w-4 h-4" strokeWidth={1.75} />
             </div>
             <h1 className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#F4F0EA]">
@@ -518,13 +518,13 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
           </div>
 
           {/* View Pills */}
-          <div className="flex items-center gap-1 bg-[#0B0B0C] p-1 rounded-[4px] border border-[#26262B] text-xs font-sans font-bold overflow-x-auto">
+          <div className="flex items-center gap-1 liquid-glass-pill p-1 text-xs font-sans font-bold overflow-x-auto">
             <button
               onClick={() => { playSound('click'); setFilter('all'); }}
               className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer whitespace-nowrap tabular-nums ${
                 filter === 'all'
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                  ? 'bg-[#FF4F00] text-[#F4F0EA] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
               }`}
             >
               Todos ({otherArtists.length})
@@ -691,7 +691,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={beef.id}
-                  className="bg-[#141417] border border-[#EF4444]/40 rounded-[6px] p-4 space-y-3.5 relative overflow-hidden"
+                  className="liquid-glass-subcard border-[#EF4444]/40 rounded-[12px] p-4 space-y-3.5 relative overflow-hidden"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
@@ -813,7 +813,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={npc.id}
-                  className="bg-[#141417] border border-[#26262B] rounded-[6px] p-4 space-y-3 flex flex-col justify-between hover:border-[#3F3F46] transition-all group"
+                  className="liquid-glass-subcard rounded-[12px] p-4 space-y-3 flex flex-col justify-between hover:border-white/28 transition-all group"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center gap-2.5">
@@ -968,7 +968,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 return (
                   <div
                     key={artist.id}
-                    className="bg-[#141417] border border-[#26262B] rounded-[6px] p-4 space-y-3.5 flex flex-col justify-between hover:border-[#3F3F46] transition-all group"
+                    className="liquid-glass-subcard rounded-[12px] p-4 space-y-3.5 flex flex-col justify-between hover:border-white/28 transition-all group"
                   >
                     {/* Header Info & State Badge */}
                     <div className="space-y-2.5">

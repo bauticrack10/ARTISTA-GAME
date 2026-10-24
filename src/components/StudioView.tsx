@@ -652,11 +652,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
   return (
     <div className="space-y-6 pb-16 font-sans text-[#F4F0EA]">
       {/* --- ENCABEZADO DEL ESTUDIO: COMPACTO Y UNIFICADO --- */}
-      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+      <div className="liquid-glass-card p-5 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider bg-[#FF2A4B]/15 text-[#FF2A4B] border border-[#FF2A4B]/30">
+              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider liquid-glass-pill text-[#FF4F00] border border-[#FF4F00]/30">
                 Estudio & Máster
               </span>
               <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
@@ -673,7 +673,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
           </div>
 
           {/* Selector de Pestañas con estilo consola */}
-          <div className="flex items-center gap-1 p-1 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] text-xs font-semibold shrink-0 self-start md:self-auto">
+          <div className="flex items-center gap-1 p-1 liquid-glass-pill text-xs font-semibold shrink-0 self-start md:self-auto">
             <button
               onClick={() => {
                 playSound('click');
@@ -682,7 +682,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }}
               className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'single'
-                  ? 'bg-[#FF2A4B] text-white font-bold'
+                  ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
                   : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
               }`}
             >
@@ -697,7 +697,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }}
               className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'album'
-                  ? 'bg-[#FF2A4B] text-white font-bold'
+                  ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
                   : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
               }`}
             >
@@ -712,7 +712,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }}
               className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'catalog'
-                  ? 'bg-[#FF2A4B] text-white font-bold'
+                  ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
                   : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
               }`}
             >
@@ -723,7 +723,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         </div>
 
         {/* Fila única compacta de indicadores de sesión */}
-        <div className="flex items-center gap-4 sm:gap-6 flex-wrap pt-3 border-t border-[#26262B] text-xs font-sans tabular-nums">
+        <div className="flex items-center gap-4 sm:gap-6 flex-wrap pt-3 border-t border-white/10 text-xs font-sans tabular-nums">
           <div className="flex items-center gap-1.5">
             <span className="text-[#8E8E99]">Catálogo:</span>
             <strong className="text-[#F4F0EA]">{playerSongs.length} temas</strong>
@@ -761,7 +761,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       {/* --- TAB 1: SINGLE CREATION --- */}
       {activeTab === 'single' && (
-        <form onSubmit={handleCreateSingle} className="bg-[#141417] border border-[#26262B] rounded-[6px] p-6 space-y-6">
+        <form onSubmit={handleCreateSingle} className="liquid-glass-card p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#26262B] pb-4">
             <div>
               <h2 className="text-lg font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
@@ -1205,7 +1205,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       {/* --- TAB 2: ALBUM & EP CREATION STUDIO --- */}
       {activeTab === 'album' && (
-        <form onSubmit={handleCreateAlbum} className="bg-[#141417] border border-[#26262B] rounded-[6px] p-6 space-y-6">
+        <form onSubmit={handleCreateAlbum} className="liquid-glass-card p-6 space-y-6">
           <div className="border-b border-[#26262B] pb-4">
             <h2 className="text-lg font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
               <Layers className="w-5 h-5 text-[#FF2A4B]" />
@@ -1604,7 +1604,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       {/* --- TAB 3: DISCOGRAPHY & CATALOG VIEWER --- */}
       {activeTab === 'catalog' && (
-        <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-6 space-y-6">
+        <div className="liquid-glass-card p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#26262B] pb-4">
             <div>
               <h2 className="text-xl font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
@@ -1617,7 +1617,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
 
             {/* Filter Pills */}
-            <div className="flex items-center gap-1.5 p-1 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] text-xs font-semibold">
+            <div className="flex items-center gap-1.5 p-1 liquid-glass-pill text-xs font-semibold">
               <button
                 onClick={() => setCatalogFilter('all')}
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${

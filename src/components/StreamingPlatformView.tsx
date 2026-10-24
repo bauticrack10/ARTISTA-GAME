@@ -153,7 +153,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
   return (
     <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 text-[#F4F4F6]">
       {/* --- PLATFORM ARTIST BANNER (ANALOG STUDIO / PRO CONSOLE STYLE) --- */}
-      <div className="relative rounded-[6px] overflow-hidden bg-[#111114] border border-[#242429] p-6 sm:p-8 shadow-xs">
+      <div className="relative rounded-[16px] overflow-hidden liquid-glass-card p-6 sm:p-8">
         <div className="flex flex-col md:flex-row items-center md:items-end gap-6 relative z-10">
           {/* Avatar with Sound Reactive Ring */}
           <div className="relative group shrink-0">
@@ -163,7 +163,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               avatarIcon={player.avatarIcon}
               size="2xl"
               rounded="rounded-[4px]"
-              className="border border-[#242429]"
+              className="border border-white/20"
             />
             {playingSongId && (
               <div className="absolute inset-0 bg-black/60 rounded-[4px] flex items-center justify-center">
@@ -175,14 +175,14 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
           {/* Artist Stats & Bio */}
           <div className="space-y-2 text-center md:text-left flex-1 min-w-0">
             <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1 text-[10px] font-sans font-bold text-[#F4F4F6] bg-[#18181C] border border-[#242429] px-2.5 py-0.5 rounded-[4px]">
+              <span className="inline-flex items-center gap-1 text-[10px] font-sans font-bold text-[#F4F4F6] liquid-glass-pill px-2.5 py-0.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#00E599]" />
                 Artista Verificado
               </span>
               <span className="text-xs text-[#8E8E99] font-sans">
                 {player.country} • {world.genres[player.mainGenreId]?.name || 'Urbano'}
               </span>
-              <span className="text-[10px] font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/10 border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px]">
+              <span className="text-[10px] font-sans font-bold text-[#FF4F00] liquid-glass-pill border-[#FF4F00]/30 px-2.5 py-0.5">
                 {player.careerStage}
               </span>
             </div>
@@ -241,7 +241,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
         </div>
 
         {/* Sub Navigation Bar */}
-        <div className="flex items-center gap-2 mt-6 pt-4 border-t border-[#242429] overflow-x-auto scrollbar-none text-xs font-semibold">
+        <div className="flex items-center gap-2 mt-6 pt-4 border-t border-white/10 overflow-x-auto scrollbar-none text-xs font-semibold">
           {[
             { id: 'profile', label: 'Top Canciones & Métricas', icon: BarChart3 },
             { id: 'playlists', label: 'Playlists Editoriales Activas', icon: Radio },
@@ -257,10 +257,10 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   playSound('click');
                   setActiveTab(t.id as any);
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[4px] font-sans text-xs whitespace-nowrap transition-all cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-[6px] font-sans text-xs whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#FF4F00] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
+                    ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                    : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F4F6]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -275,7 +275,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {activeTab === 'profile' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Top 5 Songs */}
-          <div className="lg:col-span-2 bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+          <div className="lg:col-span-2 liquid-glass-card p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-[#242429] pb-3">
               <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                 <Disc3 className="w-4 h-4 text-[#FF4F00]" />
@@ -359,7 +359,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
           {/* Quick Metrics & Curators Snapshot */}
           <div className="space-y-6">
-            <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+            <div className="liquid-glass-card p-6 space-y-4">
               <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                 <Radio className="w-4 h-4 text-[#00E599]" />
                 Presencia Editorial
@@ -403,7 +403,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {/* --- TAB 2: EDITORIAL PLAYLISTS --- */}
       {activeTab === 'playlists' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#111114] border border-[#242429] rounded-[6px] p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 liquid-glass-card p-6">
             <div>
               <h2 className="text-lg font-bold text-[#F4F4F6] flex items-center gap-2">
                 <Radio className="w-5 h-5 text-[#FF4F00]" />
@@ -499,7 +499,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {activeTab === 'youtube' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Song Video Selector */}
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+          <div className="liquid-glass-card p-6 space-y-4">
             <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
               <Video className="w-4 h-4 text-[#38BDF8]" />
               Seleccionar Lanzamiento
@@ -545,7 +545,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
           </div>
 
           {/* Comments Stream */}
-          <div className="lg:col-span-2 bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+          <div className="lg:col-span-2 liquid-glass-card p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-[#242429] pb-3">
               <div>
                 <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
@@ -653,7 +653,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {activeTab === 'tiktok' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Campaign Form */}
-          <div className="lg:col-span-2 bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6">
+          <div className="lg:col-span-2 liquid-glass-card p-6 space-y-6">
             <div>
               <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                 <Flame className="w-5 h-5 text-[#FF4F00]" />
@@ -781,7 +781,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
           {/* Results Card */}
           <div className="space-y-6">
-            <div className="bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-4">
+            <div className="liquid-glass-card p-6 space-y-4">
               <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#00E599]" />
                 Impacto de la Última Campaña
@@ -841,7 +841,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {/* --- PITCH MODAL --- */}
       {pitchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-fade-in">
-          <div className="w-full max-w-lg bg-[#111114] border border-[#242429] rounded-[6px] p-6 shadow-2xl space-y-5">
+          <div className="w-full max-w-lg liquid-glass-card p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-[#242429] pb-3">
               <h3 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#FF4F00]" />

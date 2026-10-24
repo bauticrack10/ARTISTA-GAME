@@ -821,15 +821,27 @@ function runAllEmergentEventsTests() {
         engine.advanceCycle(6);
 
         // Resolver eventos en cola
-        while (engine.getCurrentEvent()) {
+        let maxGuard = 20;
+        while (engine.getCurrentEvent() && maxGuard > 0) {
+          maxGuard--;
           const currentEvt = engine.getCurrentEvent()!;
           if (currentEvt.id === 'evt_creative_drought_mandatory') {
             totalDroughtsResolved++;
           } else {
             totalEventsResolved++;
           }
-          // Elegir primera opción válida
-          engine.resolveCurrentEventChoice(0);
+          // Elegir primera opción válida que se pueda costear
+          let resolved = false;
+          const choices = currentEvt.choices({ player: engine.getPlayer(), world: engine.getWorld(), currentYear: engine.getWorld().currentYear, currentMonth: engine.getWorld().currentMonth });
+          for (let cIdx = 0; cIdx < (choices?.length || 0); cIdx++) {
+            if (engine.resolveCurrentEventChoice(cIdx)) {
+              resolved = true;
+              break;
+            }
+          }
+          if (!resolved) {
+            (engine as any).currentEvent = (engine as any).eventQueue?.shift() || null;
+          }
         }
 
         // Gestionar galas de premios

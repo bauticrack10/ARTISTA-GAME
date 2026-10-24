@@ -42,10 +42,10 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
   return (
     <div className="space-y-6 pb-12 text-[#F4F4F6]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#111114] p-6 rounded-[6px] border border-[#242429] shadow-xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 liquid-glass-card p-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] uppercase font-sans font-bold tracking-widest bg-[#18181C] text-[#8E8E99] border border-[#242429] px-2.5 py-0.5 rounded-[4px]">
+            <span className="text-[10px] uppercase font-sans font-bold tracking-widest liquid-glass-pill text-[#8E8E99] px-2.5 py-0.5">
               Rankings Oficiales
             </span>
             <span className="text-xs font-sans text-[#8E8E99]">
@@ -62,7 +62,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
         </div>
 
         {/* Region Selector */}
-        <div role="tablist" aria-label="Región del ranking" className="flex items-center gap-1 overflow-x-auto scroll-fade-x bg-[#09090B] p-1.5 rounded-[4px] border border-[#242429] max-w-full sm:max-w-[60%] text-xs shadow-xs">
+        <div role="tablist" aria-label="Región del ranking" className="flex items-center gap-1 overflow-x-auto scroll-fade-x liquid-glass-pill p-1.5 max-w-full sm:max-w-[60%] text-xs">
           {regions.map(r => {
             const isActive = selectedRegion === r.id;
             return (
@@ -73,8 +73,8 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 onClick={() => setSelectedRegion(r.id)}
                 className={`tap shrink-0 px-3 py-1.5 rounded-[4px] font-sans text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#FF4F00] text-white'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-[#18181C]'
+                    ? 'bg-[#FF4F00] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                    : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-white/5'
                 }`}
               >
                 {r.label}
@@ -85,8 +85,8 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
       </div>
 
       {/* Chart List Table */}
-      <div role="table" aria-label={`Ranking ${formatMusicRegionLabel(selectedRegion)}`} className="bg-[#111114] border border-[#242429] rounded-[6px] overflow-hidden shadow-xs">
-        <div role="row" className={`${CHART_GRID} px-4 py-3 border-b border-[#242429] text-[10px] text-[#52525B] font-sans font-bold uppercase tracking-widest bg-[#111114]`}>
+      <div role="table" aria-label={`Ranking ${formatMusicRegionLabel(selectedRegion)}`} className="liquid-glass-card overflow-hidden">
+        <div role="row" className={`${CHART_GRID} px-4 py-3 border-b border-white/10 text-[10px] text-[#8E8E99] font-sans font-bold uppercase tracking-widest bg-white/[0.02]`}>
           <span role="columnheader" className="text-center">Pos.</span>
           <span role="columnheader">Canción & Artista</span>
           <span role="columnheader" className="hidden sm:block text-right">Streams / sem.</span>
@@ -114,7 +114,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
             )}
           </div>
         ) : (
-          <div role="rowgroup" className="divide-y divide-[#1C1C21]">
+          <div role="rowgroup" className="divide-y divide-white/5">
             {currentChart.entries.map((entry, idx) => {
               const isPlayerSong = entry.artistId === player?.id;
               let movement = <Minus className="w-3.5 h-3.5 text-[#52525B]" />;
@@ -149,14 +149,14 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 <div
                   key={entry.songId}
                   role="row"
-                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-[#18181C] border-b border-[#1C1C21] ${
+                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-white/[0.04] border-b border-white/5 ${
                     isPlayerSong
                       ? 'bg-[#FF4F00]/10 border-l-4 border-l-[#FF4F00]'
                       : isNo1
                       ? 'bg-[#F59E0B]/5'
                       : idx % 2 === 0
-                      ? 'bg-[#111114]'
-                      : 'bg-[#0D0D10]'
+                      ? 'bg-transparent'
+                      : 'bg-white/[0.015]'
                   }`}
                 >
                     {/* Position */}

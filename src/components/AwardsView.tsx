@@ -98,10 +98,10 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
   return (
     <div className="space-y-5 pb-12 font-sans text-[#F4F0EA]">
       {/* Compact Header */}
-      <div className="bg-[#141417] p-5 rounded-[6px] border border-[#26262B] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="liquid-glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xs uppercase font-bold tracking-wider bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
+            <span className="text-2xs uppercase font-bold tracking-wider liquid-glass-pill text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
               Academia Musical
             </span>
             <span className="text-xs text-[#8E8E99]">Galas Anuales • Diciembre</span>
@@ -113,15 +113,15 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 tabular-nums">
-          <div className="bg-[#0B0B0C] px-3.5 py-2 rounded-[4px] border border-[#26262B] text-center">
+          <div className="liquid-glass-pill px-3.5 py-2 text-center">
             <span className="text-2xs text-[#F59E0B] block uppercase tracking-wider font-bold">Estatuillas</span>
             <span className="text-xl font-bold text-[#F59E0B]">{player.awardsWon.length}</span>
           </div>
-          <div className="bg-[#0B0B0C] px-3.5 py-2 rounded-[4px] border border-[#26262B] text-center">
+          <div className="liquid-glass-pill px-3.5 py-2 text-center">
             <span className="text-2xs text-[#8E8E99] block uppercase tracking-wider font-bold">Discos Oro/Plat.</span>
             <span className="text-xl font-bold text-[#F4F0EA]">{playerCerts.length}</span>
           </div>
-          <div className="bg-[#0B0B0C] px-3.5 py-2 rounded-[4px] border border-[#26262B] text-center">
+          <div className="liquid-glass-pill px-3.5 py-2 text-center">
             <span className="text-2xs text-[#8E8E99] block uppercase tracking-wider font-bold">Legado</span>
             <span className="text-xl font-bold text-[#F4F0EA]">{player.legacyScore}/100</span>
           </div>
@@ -131,7 +131,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       {/* Compact Top Showcase: Player Trophies + Certifications + Hall of Fame */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* 1. Vitrina de Trofeos de la Academia */}
-        <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-4 space-y-3">
+        <div className="liquid-glass-card p-4 space-y-3">
           <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Trophy className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
@@ -181,7 +181,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         </div>
 
         {/* 2. Certificaciones Oficiales (Oro / Platino / Diamante) */}
-        <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-4 space-y-3">
+        <div className="liquid-glass-card p-4 space-y-3">
           <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Medal className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
@@ -230,7 +230,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
       {/* Compact Hall of Fame Bar */}
       {hallOfFame.length > 0 && (
-        <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-4 space-y-3">
+        <div className="liquid-glass-card p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Crown className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
@@ -268,7 +268,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       )}
 
       {/* History of Past Ceremonies (Intact) */}
-      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+      <div className="liquid-glass-card p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#26262B] pb-3">
           <div>
             <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">

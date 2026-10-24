@@ -241,34 +241,34 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
   };
 
   return (
-    <div className="space-y-5 pb-20 font-sans text-[#F4F0EA] bg-[#0B0B0C] min-h-screen p-4 sm:p-6 rounded-[6px] border border-[#26262B]">
+    <div className="space-y-5 pb-20 font-sans text-[#F4F0EA] min-h-screen">
       {/* Header + Unified Compact Financial & Buffs Strip */}
-      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#26262B] pb-4">
+      <div className="liquid-glass-card p-5 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold bg-[#1C1C21] text-[#8E8E99] border border-[#26262B] tracking-wider uppercase">
+              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold liquid-glass-pill text-[#8E8E99] tracking-wider uppercase">
                 Equipamiento & Activos
               </span>
               {player.isProdigy && (
-                <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
+                <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold liquid-glass-pill text-[#F59E0B] border border-[#F59E0B]/40 flex items-center gap-1">
                   <Crown className="w-3 h-3 text-[#F59E0B]" strokeWidth={1.75} />
                   Prodigio x3
                 </span>
               )}
             </div>
             <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-[#F4F0EA] flex items-center gap-2.5">
-              <ShoppingBag className="w-6 h-6 text-[#FF2A4B]" strokeWidth={1.75} />
+              <ShoppingBag className="w-6 h-6 text-[#FF4F00]" strokeWidth={1.75} />
               Tienda & Estilo de Vida
             </h1>
           </div>
 
           {/* Available Funds & Financial Ledger Trigger */}
           <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] px-4 py-2.5 flex items-center gap-3">
+            <div className="liquid-glass-subcard px-4 py-2.5 flex items-center gap-3">
               <DollarSign className="w-5 h-5 text-[#10B981]" strokeWidth={1.75} />
               <div>
-                <span className="text-2xs text-[#52525B] block font-bold uppercase tracking-wider">
+                <span className="text-2xs text-[#8E8E99] block font-bold uppercase tracking-wider">
                   Fondos Disponibles
                 </span>
                 <span className="text-lg font-bold text-[#10B981] tabular-nums">
@@ -365,10 +365,10 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
                 playSound('click');
                 setActiveCategory(tab.id);
               }}
-              className={`px-4 py-2 rounded-[4px] text-xs transition-colors cursor-pointer whitespace-nowrap border ${
+              className={`px-4 py-2 rounded-[6px] text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 isActive
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold border-[#FF2A4B]'
-                  : 'bg-[#141417] text-[#8E8E99] border-[#26262B] hover:text-[#F4F0EA] hover:border-[#3F3F46]'
+                  ? 'bg-[#FF4F00] text-[#F4F0EA] font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                  : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
               }`}
             >
               {tab.label}
@@ -456,10 +456,10 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
           return (
             <div
               key={item.id}
-              className={`border rounded-[6px] p-4 flex flex-col justify-between transition-all ${
+              className={`rounded-[12px] p-4 flex flex-col justify-between transition-all ${
                 isOwned
-                  ? 'border-[#10B981]/60 bg-[#141417]'
-                  : 'bg-[#141417] border-[#26262B] hover:bg-[#1C1C21] hover:border-[#3F3F46]'
+                  ? 'liquid-glass-subcard border-[#10B981]/60'
+                  : 'liquid-glass-subcard hover:border-white/28'
               }`}
             >
               <div className="space-y-3">

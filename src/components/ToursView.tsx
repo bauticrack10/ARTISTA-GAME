@@ -190,10 +190,10 @@ export const ToursView: React.FC<ToursViewProps> = ({
   return (
     <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5 font-sans text-[#F4F0EA]">
       {/* View Header with Sub-tabs Switcher */}
-      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="liquid-glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#FF2A4B]" strokeWidth={1.75} />
+            <Sparkles className="w-5 h-5 text-[#FF4F00]" strokeWidth={1.75} />
             Giras & Festivales en Vivo
           </h1>
           <p className="text-xs text-[#8E8E99] mt-0.5">
@@ -202,7 +202,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
         </div>
 
         {/* Tab Selector */}
-        <div className="flex items-center gap-1 p-1 bg-[#0B0B0C] rounded-[4px] border border-[#26262B] text-xs font-semibold shrink-0">
+        <div className="flex items-center gap-1 p-1 liquid-glass-pill text-xs font-semibold shrink-0">
           <button
             type="button"
             onClick={() => {
@@ -211,8 +211,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
             }}
             className={`px-4 py-2 rounded-[4px] transition-colors cursor-pointer flex items-center gap-2 ${
               subTab === 'festivals'
-                ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                ? 'bg-[#FF4F00] text-[#F4F0EA] font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
             }`}
           >
             <Flame className="w-4 h-4" strokeWidth={1.75} />
@@ -227,8 +227,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
             }}
             className={`px-4 py-2 rounded-[4px] transition-colors cursor-pointer flex items-center gap-2 ${
               subTab === 'tours'
-                ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                ? 'bg-[#FF4F00] text-[#F4F0EA] font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
             }`}
           >
             <Ticket className="w-4 h-4" strokeWidth={1.75} />
@@ -248,7 +248,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
       {subTab === 'festivals' && (
         <div className="space-y-5">
           {/* Unified Festivals Panel: Pending Invitations (if any) + 7 Global Festivals Grid */}
-          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-5">
+          <div className="liquid-glass-card p-5 space-y-5">
             {/* Highlight Pending Invitations only when present, otherwise compact status strip */}
             {pendingInvitations.length > 0 ? (
               <div className="space-y-3 pb-5 border-b border-[#26262B]">
@@ -373,7 +373,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
 
           {/* History of Festival Shows */}
           {festivalHistory.length > 0 && (
-            <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-3">
+            <div className="liquid-glass-card p-5 space-y-3">
               <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 border-b border-[#26262B] pb-2.5">
                 <Trophy className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
                 Historial de Festivales • <span className="tabular-nums">{festivalHistory.length}</span> shows
@@ -417,7 +417,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
       {subTab === 'tours' && (
         <div className="space-y-5">
           {/* Tour Booking Form with Integrated Compact Requirements Strip */}
-          <form onSubmit={handleStartTour} className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-5">
+          <form onSubmit={handleStartTour} className="liquid-glass-card p-5 space-y-5">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#26262B] pb-3.5">
               <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
                 <Ticket className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
@@ -541,7 +541,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
           </form>
 
           {/* History of Tours */}
-          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-3">
+          <div className="liquid-glass-card p-5 space-y-3">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 border-b border-[#26262B] pb-2.5">
               <MapPin className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
               Historial de Giras Realizadas • <span className="tabular-nums">{playerTours.length}</span>

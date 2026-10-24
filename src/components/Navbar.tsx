@@ -134,9 +134,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const energyStyle = getEnergyBadge();
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0B0B0C]/95 backdrop-blur-md border-b border-[#26262B] text-[#F4F0EA] select-none">
+    <header className="sticky top-0 z-40 liquid-glass-header text-[#F4F0EA] select-none">
       {/* FILA 1: Marca, Control de Tiempo y Recursos Esenciales */}
-      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3 border-b border-[#26262B]">
+      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3 border-b border-white/10">
         {/* Izquierda: Logo + Fecha Actual */}
         <div className="flex items-center gap-3 shrink-0">
           <button
@@ -147,7 +147,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="tap flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer text-left"
             title="Volver al Menú Principal"
           >
-            <div className="w-7 h-7 rounded-[4px] bg-[#FF2A4B] text-white flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-[4px] bg-[#FF4F00] text-white flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
               <Disc3 className="w-4 h-4 text-white" />
             </div>
             <span className="font-display font-extrabold tracking-tight text-[#F4F0EA] text-xs leading-none">
@@ -155,10 +155,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
           </button>
 
-          <div className="h-4 w-px bg-[#26262B] hidden sm:block" />
+          <div className="h-4 w-px bg-white/15 hidden sm:block" />
 
           <div
-            className="flex items-center gap-2 bg-[#141417] px-2.5 py-1 rounded-[4px] border border-[#26262B] text-xs whitespace-nowrap font-sans tabular-nums"
+            className="flex items-center gap-2 liquid-glass-pill px-3 py-1 text-xs whitespace-nowrap font-sans tabular-nums"
             title={`Fecha actual: ${monthName} ${currentYear}`}
           >
             <span className="w-2 h-2 rounded-[2px] bg-[#10B981] shrink-0" />
@@ -170,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Centro: Avance de Tiempo Directo */}
         <div className="order-last lg:order-none w-full lg:w-auto flex items-center gap-2 shrink-0 justify-center">
-          <div className="flex items-center bg-[#141417] p-0.5 rounded-[4px] text-xs font-semibold border border-[#26262B]">
+          <div className="flex items-center liquid-glass-pill p-0.5 text-xs font-semibold">
             {([
               { val: 1, label: '1M', title: 'Avanzar 1 Mes' },
               { val: 3, label: '3M', title: 'Avanzar 3 Meses' },
@@ -184,10 +184,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setCycleMonths(opt.val);
                 }}
                 aria-pressed={cycleMonths === opt.val}
-                className={`min-h-7 px-2.5 py-0.5 rounded-[3px] font-sans transition-all cursor-pointer text-xs ${
+                className={`min-h-7 px-2.5 py-0.5 rounded-[4px] font-sans transition-all cursor-pointer text-xs ${
                   cycleMonths === opt.val
-                    ? 'bg-[#FF2A4B] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                    ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                    : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
                 }`}
                 title={opt.title}
               >
@@ -202,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onAdvanceCycle(cycleMonths);
             }}
-            className="tap flex items-center gap-2 bg-[#FF2A4B] hover:bg-[#E11D48] text-white px-3.5 py-1.5 rounded-[4px] font-sans text-xs font-semibold cursor-pointer active:translate-y-[1px] transition-all border border-[#FF4A67]/30 whitespace-nowrap"
+            className="tap flex items-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white px-3.5 py-1.5 rounded-[6px] font-sans text-xs font-semibold cursor-pointer active:translate-y-[1px] transition-all border border-white/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_4px_12px_rgba(255,79,0,0.35)] whitespace-nowrap"
             title="Procesar el período seleccionado"
           >
             <Play className="w-3.5 h-3.5 fill-white text-white shrink-0" />
@@ -213,7 +213,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Derecha: 3 Recursos Esenciales (Fondos, Fans, Energía) + Teléfono + Utilidades */}
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto lg:ml-0 flex-wrap sm:flex-nowrap">
           <div
-            className="flex items-center gap-1 bg-[#141417] border border-[#26262B] px-2.5 py-1 rounded-[4px]"
+            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1"
             title={`Fondos Disponibles: ${formatMoney(playerFunds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
@@ -221,15 +221,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div
-            className="flex items-center gap-1.5 bg-[#141417] border border-[#26262B] px-2.5 py-1 rounded-[4px]"
+            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1"
             title={`Fans: ${playerFans.toLocaleString('es-AR')} • Oyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}`}
           >
-            <Users className="w-3.5 h-3.5 text-[#FF2A4B] shrink-0" />
+            <Users className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
             <span className="font-bold font-sans tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
           </div>
 
           <div
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] border text-xs ${energyStyle.bg}`}
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs liquid-glass-pill ${energyStyle.bg}`}
             title={`Energía Vital: ${playerEnergy}%`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
@@ -248,19 +248,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onOpenPhone?.();
             }}
-            className="tap relative flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-[#141417] hover:bg-[#1C1C21] border border-[#26262B] hover:border-[#3F3F46] text-xs transition-colors cursor-pointer shrink-0 text-[#F4F0EA]"
+            className="tap relative flex items-center gap-1.5 px-3 py-1 rounded-[6px] liquid-glass-pill hover:border-white/30 text-xs transition-colors cursor-pointer shrink-0 text-[#F4F0EA]"
             title="Abrir Smartphone (DMs, TrendX y Banco)"
           >
             <Smartphone className="w-3.5 h-3.5 text-[#8E8E99] shrink-0" />
             <span className="hidden xl:inline font-sans text-xs text-[#8E8E99]">Teléfono</span>
             {(world?.unreadPhoneCount ?? 0) > 0 && (
-              <span className="w-4 h-4 rounded-[2px] bg-[#FF2A4B] text-white text-3xs font-sans font-bold flex items-center justify-center">
+              <span className="w-4 h-4 rounded-[2px] bg-[#FF4F00] text-white text-3xs font-sans font-bold flex items-center justify-center">
                 {world.unreadPhoneCount}
               </span>
             )}
           </button>
 
-          <div className="flex items-center gap-1 bg-[#141417] border border-[#26262B] p-0.5 rounded-[4px]">
+          <div className="flex items-center gap-1 liquid-glass-pill p-0.5">
             <button
               id="btn-toggle-audio-sfx"
               onClick={handleToggleSound}
@@ -278,7 +278,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 playSound('click');
                 setIsSettingsOpen(true);
               }}
-              className="p-1 rounded-[3px] text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21] transition-colors cursor-pointer"
+              className="p-1 rounded-[3px] text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/10 transition-colors cursor-pointer"
               title="Ajustes y Guardado"
             >
               <Settings className="w-3.5 h-3.5" />
@@ -293,26 +293,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-tab-dashboard"
             onClick={() => handleTabClick('dashboard')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3 py-1.5 rounded-[6px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               currentTab === 'dashboard'
-                ? 'bg-[#1C1C21] border border-[#FF2A4B] text-[#F4F0EA]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#141417] border border-transparent'
+                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
             }`}
           >
-            <Compass className={`w-3.5 h-3.5 ${currentTab === 'dashboard' ? 'text-[#FF2A4B]' : 'text-[#8E8E99]'}`} />
+            <Compass className={`w-3.5 h-3.5 ${currentTab === 'dashboard' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Inicio</span>
           </button>
 
           <button
             id="nav-tab-studio"
             onClick={() => handleTabClick('studio')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3 py-1.5 rounded-[6px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeHub === 'music'
-                ? 'bg-[#1C1C21] border border-[#FF2A4B] text-[#F4F0EA]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#141417] border border-transparent'
+                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
             }`}
           >
-            <Disc3 className={`w-3.5 h-3.5 ${activeHub === 'music' ? 'text-[#FF2A4B]' : 'text-[#8E8E99]'}`} />
+            <Disc3 className={`w-3.5 h-3.5 ${activeHub === 'music' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Estudio & Música</span>
             {hasStudioAction && (
               <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shrink-0" title="Listo para grabar" />
@@ -322,29 +322,29 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             id="nav-hub-world"
             onClick={() => handleTabClick('streaming')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3 py-1.5 rounded-[6px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeHub === 'world'
-                ? 'bg-[#1C1C21] border border-[#FF2A4B] text-[#F4F0EA]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#141417] border border-transparent'
+                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
             }`}
           >
-            <Radio className={`w-3.5 h-3.5 ${activeHub === 'world' ? 'text-[#FF2A4B]' : 'text-[#8E8E99]'}`} />
+            <Radio className={`w-3.5 h-3.5 ${activeHub === 'world' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Escena & Charts</span>
             {hasActiveBeef && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF2A4B] shrink-0" title="Feudo activo" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF4F00] shrink-0" title="Feudo activo" />
             )}
           </button>
 
           <button
             id="nav-hub-career"
             onClick={() => handleTabClick('tours')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3 py-1.5 rounded-[6px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeHub === 'career'
-                ? 'bg-[#1C1C21] border border-[#FF2A4B] text-[#F4F0EA]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#141417] border border-transparent'
+                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
             }`}
           >
-            <Sparkles className={`w-3.5 h-3.5 ${activeHub === 'career' ? 'text-[#FF2A4B]' : 'text-[#8E8E99]'}`} />
+            <Sparkles className={`w-3.5 h-3.5 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Carrera & Negocios</span>
             {(isTourReady || hasActiveGala) && (
               <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] shrink-0" />
@@ -359,21 +359,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               <>
                 <button
                   onClick={() => handleTabClick('studio_single')}
-                  className="px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                  className="px-2.5 py-1 rounded-[6px] text-xs font-medium liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
-                  <Music2 className="w-3 h-3 text-[#FF2A4B]" />
+                  <Music2 className="w-3 h-3 text-[#FF4F00]" />
                   <span>Single</span>
                 </button>
                 <button
                   onClick={() => handleTabClick('studio_album')}
-                  className="px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                  className="px-2.5 py-1 rounded-[6px] text-xs font-medium liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
-                  <Layers className="w-3 h-3 text-[#FF2A4B]" />
+                  <Layers className="w-3 h-3 text-[#FF4F00]" />
                   <span>Álbum / EP</span>
                 </button>
                 <button
                   onClick={() => handleTabClick('catalog')}
-                  className="px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                  className="px-2.5 py-1 rounded-[6px] text-xs font-medium liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
                   <Disc3 className="w-3 h-3 text-[#10B981]" />
                   <span>Catálogo ({playerSongs.length})</span>
@@ -386,22 +386,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="nav-tab-streaming"
                   onClick={() => handleTabClick('streaming')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'streaming'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
-                  <Radio className="w-3 h-3 text-[#FF2A4B]" />
+                  <Radio className="w-3 h-3 text-[#FF4F00]" />
                   <span>Streaming</span>
                 </button>
                 <button
                   id="nav-tab-charts"
                   onClick={() => handleTabClick('charts')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'charts'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
                   <BarChart3 className="w-3 h-3 text-[#10B981]" />
@@ -410,10 +410,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="nav-tab-relations"
                   onClick={() => handleTabClick('relations')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'relations'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
                   <Network className="w-3 h-3 text-[#8E8E99]" />
@@ -427,10 +427,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="nav-tab-tours"
                   onClick={() => handleTabClick('tours')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'tours'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
                   <Sparkles className="w-3 h-3 text-[#10B981]" />
@@ -439,10 +439,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="nav-tab-industry"
                   onClick={() => handleTabClick('industry')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'industry'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
                   <Building2 className="w-3 h-3 text-[#8E8E99]" />
@@ -451,22 +451,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="nav-tab-lifestyle"
                   onClick={() => handleTabClick('lifestyle')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'lifestyle'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
-                  <ShoppingBag className="w-3 h-3 text-[#FF2A4B]" />
+                  <ShoppingBag className="w-3 h-3 text-[#FF4F00]" />
                   <span>Tienda</span>
                 </button>
                 <button
                   id="nav-tab-awards"
                   onClick={() => handleTabClick('awards')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'awards'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
                   <Award className="w-3 h-3 text-[#F59E0B]" />
@@ -475,10 +475,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="nav-tab-career"
                   onClick={() => handleTabClick('career')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-2.5 py-1 rounded-[6px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     currentTab === 'career'
-                      ? 'bg-[#1C1C21] text-[#F4F0EA] border border-[#3F3F46]'
-                      : 'bg-[#141417] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B]'
+                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
+                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
                   }`}
                 >
                   <TrendingUp className="w-3 h-3 text-[#F59E0B]" />

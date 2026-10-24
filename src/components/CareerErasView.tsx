@@ -215,11 +215,11 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
   return (
     <div className="space-y-6 pb-16 font-sans text-[#F4F0EA]">
       {/* 1. COMPACT HEADER + KPIs */}
-      <div className="bg-[#141417] p-5 sm:p-6 rounded-[6px] border border-[#26262B] space-y-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#26262B] pb-4">
+      <div className="liquid-glass-card p-5 sm:p-6 space-y-5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-2xs font-bold uppercase tracking-wider bg-[#1C1C21] text-[#FF2A4B] border border-[#FF2A4B]/30 px-2 py-0.5 rounded-[4px]">
+              <span className="text-2xs font-bold uppercase tracking-wider liquid-glass-pill text-[#FF4F00] px-2 py-0.5 rounded-[4px]">
                 Trayectoria & Legado
               </span>
               <span className="text-xs text-[#8E8E99] tabular-nums">
@@ -227,7 +227,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#F4F0EA] tracking-tight mt-1 flex items-center gap-2.5">
-              <TrendingUp className="w-6 h-6 text-[#FF2A4B]" strokeWidth={1.75} />
+              <TrendingUp className="w-6 h-6 text-[#FF4F00]" strokeWidth={1.75} />
               Carrera & Eras de {player.name}
             </h1>
           </div>
@@ -308,7 +308,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
       {/* 2. HITOS DESTACADOS: MEJOR DISCO & MEJOR GIRA (COMPACT) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Mejor Disco */}
-        <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-3">
+        <div className="liquid-glass-card p-5 space-y-3">
           <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
               <Disc3 className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
@@ -356,7 +356,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
         </div>
 
         {/* Mejor Gira */}
-        <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-3">
+        <div className="liquid-glass-card p-5 space-y-3">
           <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
@@ -405,7 +405,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
       </div>
 
       {/* 3. LÍNEA DE TIEMPO UNIFICADA DE ERAS & TRAYECTORIA */}
-      <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+      <div className="liquid-glass-card p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#26262B] pb-3">
           <div>
             <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">

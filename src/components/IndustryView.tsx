@@ -432,9 +432,9 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
   return (
     <div className="space-y-6 pb-12 text-[#F4F0EA]">
       {/* Consolidated Header Banner & 3 Main Tabs */}
-      <div className="bg-[#141417] p-5 sm:p-6 rounded-[6px] border border-[#26262B] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div className="liquid-glass-card p-5 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div className="space-y-1">
-          <span className="text-2xs uppercase tracking-wider font-sans font-bold text-[#8E8E99] px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B]">
+          <span className="text-2xs uppercase tracking-wider font-sans font-bold text-[#8E8E99] px-2 py-0.5 rounded-[4px] liquid-glass-pill">
             Industria Musical
           </span>
           <h1 className="font-display text-xl sm:text-2xl font-bold text-[#F4F0EA] tracking-tight">
@@ -443,14 +443,14 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
         </div>
 
         {/* 3 Main Tabs Navigation */}
-        <div className="flex flex-wrap gap-1.5 bg-[#0B0B0C] p-1 rounded-[4px] border border-[#26262B] shrink-0">
+        <div className="flex flex-wrap gap-1.5 liquid-glass-pill p-1 shrink-0">
           <button
             id="tab-btn-current"
             onClick={() => handleTabSwitch('current')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-colors cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[6px] text-xs font-sans font-bold transition-colors cursor-pointer ${
               activeTab === 'current'
-                ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                ? 'bg-[#FF4F00] text-[#F4F0EA] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
             }`}
           >
             Situación Actual
@@ -458,10 +458,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           <button
             id="tab-btn-distribution"
             onClick={() => handleTabSwitch('distribution_labels')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-colors cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[6px] text-xs font-sans font-bold transition-colors cursor-pointer ${
               activeTab === 'distribution_labels'
-                ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                ? 'bg-[#FF4F00] text-[#F4F0EA] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
             }`}
           >
             Distribución & Sellos
@@ -469,10 +469,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           <button
             id="tab-btn-managers"
             onClick={() => handleTabSwitch('managers')}
-            className={`px-3.5 py-1.5 rounded-[4px] text-xs font-sans font-bold transition-colors cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-[6px] text-xs font-sans font-bold transition-colors cursor-pointer ${
               activeTab === 'managers'
-                ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                ? 'bg-[#FF4F00] text-[#F4F0EA] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
             }`}
           >
             Mercado de Managers
@@ -492,7 +492,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {activeTab === 'current' && (
         <div className="space-y-5">
           {/* Card 1: Contrato Activo o Estado de Distribución */}
-          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+          <div className="liquid-glass-card p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
               <div className="flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
@@ -599,7 +599,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           </div>
 
           {/* Card 2: Representación Oficial (Manager) */}
-          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+          <div className="liquid-glass-card p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
               <div className="flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
@@ -658,7 +658,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
           </div>
 
           {/* Card 3: Sello Propio (Integrado directamente en Situación Actual) */}
-          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+          <div className="liquid-glass-card p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
               <div className="flex items-center gap-2">
                 <Crown className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
@@ -730,7 +730,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {activeTab === 'distribution_labels' && (
         <div className="space-y-5">
           {/* Compact A&R Radar + Filter Bar */}
-          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-5 space-y-4">
+          <div className="liquid-glass-card p-5 space-y-4">
             {/* Compact A&R Radar Summary */}
             <div className="bg-[#0B0B0C] p-3.5 rounded-[4px] border border-[#26262B] space-y-2">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-sans">
@@ -829,7 +829,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
               return (
                 <div
                   key={opt.id}
-                  className={`bg-[#141417] rounded-[6px] p-4 border transition-all space-y-3.5 flex flex-col justify-between ${
+                  className={`liquid-glass-subcard rounded-[10px] p-4 border transition-all space-y-3.5 flex flex-col justify-between ${
                     isCurrent
                       ? 'border-[#10B981]'
                       : isUnlocked
@@ -933,7 +933,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
       {activeTab === 'managers' && (
         <div className="space-y-5">
           {/* Compact Tier Filter Bar */}
-          <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="liquid-glass-card p-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-1.5 font-sans">
               <button
                 onClick={() => {
@@ -979,7 +979,7 @@ export const IndustryView: React.FC<IndustryViewProps> = ({
               return (
                 <div
                   key={m.id}
-                  className={`bg-[#141417] rounded-[6px] p-4 border transition-all space-y-3.5 flex flex-col justify-between ${
+                  className={`liquid-glass-subcard rounded-[10px] p-4 border transition-all space-y-3.5 flex flex-col justify-between ${
                     isHired
                       ? 'border-[#10B981]'
                       : check.canHire
