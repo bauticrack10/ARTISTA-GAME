@@ -216,7 +216,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
     <div className="space-y-6 pb-16 font-sans text-[#F4F0EA]">
       {/* 1. COMPACT HEADER + KPIs */}
       <div className="liquid-glass-card p-5 sm:p-6 space-y-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-2xs font-bold uppercase tracking-wider liquid-glass-pill text-[#FF4F00] px-2 py-0.5 rounded-[4px]">
@@ -309,7 +309,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Mejor Disco */}
         <div className="liquid-glass-card p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
+          <div className="flex items-center justify-between pb-1">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
               <Disc3 className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
               Mejor Disco Histórico
@@ -357,7 +357,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
 
         {/* Mejor Gira */}
         <div className="liquid-glass-card p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
+          <div className="flex items-center justify-between pb-1">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
               <Ticket className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
               Mejor Gira Histórica
@@ -406,7 +406,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
 
       {/* 3. LÍNEA DE TIEMPO UNIFICADA DE ERAS & TRAYECTORIA */}
       <div className="liquid-glass-card p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#26262B] pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
           <div>
             <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
               <Calendar className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />

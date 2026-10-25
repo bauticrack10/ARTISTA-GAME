@@ -107,7 +107,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
       className={`liquid-glass-card p-5 space-y-3.5 flex flex-col h-full text-[#F4F4F6] ${className}`}
     >
       {/* Header con Selector Directo */}
-      <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3 relative z-10">
+      <div className="flex items-center justify-between gap-2 pb-1 relative z-10">
         <div className="flex items-center gap-2">
           {activeTab === 'press' ? (
             <Radio className="w-4 h-4 text-[#00E599]" />
@@ -217,7 +217,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
               <p className="text-xs text-[#F4F4F6] leading-relaxed">{post.content}</p>
 
-              <div className="flex items-center gap-4 text-[11px] text-[#8E8E99] font-sans tabular-nums pt-1 border-t border-white/5">
+              <div className="flex items-center gap-4 text-[11px] text-[#8E8E99] font-sans tabular-nums pt-1">
                 <span className="flex items-center gap-1">
                   <Heart className="w-3 h-3 text-[#FF2A4B]" />
                   {(post.likes || 0).toLocaleString('es-AR')}
@@ -237,7 +237,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
       )}
 
       {/* Radar de la Escena al pie para balance de altura completa */}
-      <div className="liquid-glass-subcard p-3 text-xs space-y-1.5 relative z-10 mt-auto shrink-0 border-t border-white/10">
+      <div className="liquid-glass-subcard p-3 text-xs space-y-1.5 relative z-10 mt-auto shrink-0">
         <div className="flex items-center justify-between text-[11px] font-bold text-[#8E8E99]">
           <span className="flex items-center gap-1.5">
             <Radio className="w-3.5 h-3.5 text-[#00E599]" />

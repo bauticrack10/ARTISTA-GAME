@@ -134,7 +134,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {isAvatarModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs">
           <div className="bg-[#111114] border border-[#242429] rounded-[6px] max-w-md w-full p-5 space-y-4 text-[#F4F4F6] shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
+            <div className="flex items-center justify-between pb-1">
               <div className="flex items-center gap-2">
                 <Palette className="w-4 h-4 text-[#FF4F00]" />
                 <h3 className="text-base font-bold text-[#F4F4F6]">
@@ -271,7 +271,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#242429]">
+            <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setIsAvatarModalOpen(false)}

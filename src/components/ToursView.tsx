@@ -251,7 +251,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
           <div className="liquid-glass-card p-5 space-y-5">
             {/* Highlight Pending Invitations only when present, otherwise compact status strip */}
             {pendingInvitations.length > 0 ? (
-              <div className="space-y-3 pb-5 border-b border-[#26262B]">
+              <div className="space-y-3 pb-2">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
                     <Flame className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
@@ -374,7 +374,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
           {/* History of Festival Shows */}
           {festivalHistory.length > 0 && (
             <div className="liquid-glass-card p-5 space-y-3">
-              <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 border-b border-[#26262B] pb-2.5">
+              <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 pb-1">
                 <Trophy className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
                 Historial de Festivales • <span className="tabular-nums">{festivalHistory.length}</span> shows
               </h2>
@@ -418,7 +418,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
         <div className="space-y-5">
           {/* Tour Booking Form with Integrated Compact Requirements Strip */}
           <form onSubmit={handleStartTour} className="liquid-glass-card p-5 space-y-5">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#26262B] pb-3.5">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-2">
               <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
                 <Ticket className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
                 Planificar Nueva Gira
@@ -542,7 +542,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
 
           {/* History of Tours */}
           <div className="liquid-glass-card p-5 space-y-3">
-            <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 border-b border-[#26262B] pb-2.5">
+            <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2 pb-1">
               <MapPin className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
               Historial de Giras Realizadas • <span className="tabular-nums">{playerTours.length}</span>
             </h2>

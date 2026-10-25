@@ -240,7 +240,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
         </div>
 
         {/* Sub Navigation Bar */}
-        <div className="flex items-center gap-2 mt-6 pt-4 border-t border-white/10 overflow-x-auto scrollbar-none text-xs font-semibold">
+        <div className="flex items-center gap-2 mt-4 pt-1 overflow-x-auto scrollbar-none text-xs font-semibold">
           {[
             { id: 'profile', label: 'Top Canciones & Métricas', icon: BarChart3 },
             { id: 'playlists', label: 'Playlists Editoriales Activas', icon: Radio },
@@ -275,7 +275,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Top 5 Songs */}
           <div className="lg:col-span-2 liquid-glass-card p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
+            <div className="flex items-center justify-between pb-1">
               <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                 <Disc3 className="w-4 h-4 text-[#FF4F00]" />
                 Top 5 Canciones Más Populares
@@ -545,7 +545,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
           {/* Comments Stream */}
           <div className="lg:col-span-2 liquid-glass-card p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
+            <div className="flex items-center justify-between pb-1">
               <div>
                 <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-[#FF4F00]" />
@@ -841,7 +841,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {pitchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-fade-in">
           <div className="w-full max-w-lg liquid-glass-card p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-[#242429] pb-3">
+            <div className="flex items-center justify-between pb-1">
               <h3 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
                 <Send className="w-4 h-4 text-[#FF4F00]" />
                 Pitch Editorial de Canción

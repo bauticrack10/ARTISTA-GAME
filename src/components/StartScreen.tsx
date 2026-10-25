@@ -51,7 +51,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       <div className="absolute inset-0 analog-grain pointer-events-none opacity-30 z-0" />
 
       {/* Top Bar / Brand */}
-      <header className="max-w-5xl w-full mx-auto px-6 py-6 flex items-center justify-between z-10 border-b border-[#26262B]">
+      <header className="max-w-5xl w-full mx-auto px-6 py-6 flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-[4px] bg-[#141417] border border-[#26262B] text-[#FF2A4B] flex items-center justify-center">
             <Disc3 className="w-5 h-5 animate-spin-slow" />
@@ -125,7 +125,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       </main>
 
       {/* Clean Minimal Footer */}
-      <footer className="max-w-5xl w-full mx-auto px-6 py-6 border-t border-[#26262B] text-xs text-[#8E8E99] flex items-center justify-between z-10 font-sans">
+      <footer className="max-w-5xl w-full mx-auto px-6 py-6 text-xs text-[#8E8E99] flex items-center justify-between z-10 font-sans">
         <div className="flex items-center gap-4 text-xs text-[#52525B]">
           <span>40 mercados musicales activos</span>
           <span>•</span>

@@ -884,7 +884,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
       <div className="max-w-6xl mx-auto space-y-6 relative z-10">
         {/* Top Navigation Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
           <div className="flex items-start sm:items-center gap-3.5 min-w-0">
             <button
               onClick={onBackToMenu}
@@ -930,7 +930,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* PASO 1: Identidad & Origen */}
             {/* ========================================================================= */}
             <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center justify-between pb-1">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <User className="w-4 h-4 text-[#FF4F00]" />
                   <span>1. Identidad & Origen</span>
@@ -1140,7 +1140,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* PASO 2: Estilo Musical & Géneros */}
             {/* ========================================================================= */}
             <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
-              <div className="border-b border-white/10 pb-3 flex items-center justify-between">
+              <div className="pb-1 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <Disc3 className="w-4 h-4 text-[#FF4F00]" />
                   <span>2. Estilo Musical & Géneros</span>
@@ -1253,7 +1253,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* PASO 3: Arquetipo & Filosofía Creativa (Rango Underground: 18 - 35) */}
             {/* ========================================================================= */}
             <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
+              <div className="flex items-center justify-between pb-1 flex-wrap gap-2">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <Brain className="w-4 h-4 text-[#FF4F00]" />
                   <span>3. Arquetipo Artístico & Habilidades Iniciales</span>
@@ -1346,7 +1346,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               {/* Mostrar los 10 controles punto por punto ÚNICAMENTE en modo Personalizado */}
               {archetype === 'custom' && (
                 <div className="liquid-glass-subcard p-4 rounded-[12px] border border-white/15 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Sliders className="w-4 h-4 text-[#FF4F00]" />
                       <span className="text-xs font-bold text-[#F4F4F6] uppercase tracking-wider font-sans">
@@ -1462,7 +1462,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* PASO 4: Punto de Partida / Background */}
             {/* ========================================================================= */}
             <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
-              <div className="border-b border-white/10 pb-3">
+              <div className="pb-1">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
                   <span>4. Punto de Partida / Background</span>
@@ -1532,7 +1532,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             {/* PASO 5: Identidad Visual & Avatar (Bloque Compacto) */}
             {/* ========================================================================= */}
             <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
+              <div className="flex items-center justify-between pb-1 flex-wrap gap-2">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans text-xs uppercase tracking-wider font-bold">
                   <Palette className="w-4 h-4 text-[#FF4F00]" />
                   <span>5. Identidad Visual & Avatar</span>
@@ -1595,7 +1595,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {/* Selector compacto de Símbolo y Paleta */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 {avatarType === 'symbol' ? (
                   <div className="space-y-1.5">
                     <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
@@ -1728,7 +1728,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {rollMessage && (
-                <div className="mt-3 pt-3 border-t border-white/10 text-xs font-sans text-[#F4F4F6]">
+                <div className="mt-2 text-xs font-sans text-[#F4F4F6]">
                   {rollMessage}
                 </div>
               )}
@@ -1739,7 +1739,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           <div className="lg:sticky lg:top-6">
             <div className="liquid-glass-card rounded-[18px] p-5 sm:p-6 space-y-5 shadow-2xl relative">
               {/* Header Badge */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center justify-between pb-1">
                 <span className="text-2xs font-sans font-bold uppercase tracking-wider text-[#FF4F00] flex items-center gap-1.5">
                   <Disc3 className="w-3.5 h-3.5 text-[#FF4F00]" />
                   Credencial de Estudio
@@ -1783,7 +1783,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               )}
 
               {/* Etiquetas de Estilo y Arquetipo */}
-              <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/10">
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 <span className="px-2.5 py-1 liquid-glass-pill text-[#F4F4F6] rounded-[8px] text-xs font-sans font-semibold">
                   {selectedMainGenre?.name || 'Género'}
                 </span>
@@ -1796,7 +1796,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {/* Grilla 2x2 de Condiciones Iniciales */}
-              <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-white/10 font-sans tabular-nums">
+              <div className="grid grid-cols-2 gap-2.5 pt-1 font-sans tabular-nums">
                 <div className="liquid-glass-subcard p-3 rounded-[12px]">
                   <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Fondos</span>
                   <span className="text-sm font-bold text-[#10B981] mt-0.5 block">
@@ -1824,7 +1824,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {/* Resumen de Habilidades Principales del Artista */}
-              <div className="liquid-glass-subcard p-3.5 rounded-[12px] space-y-2 border-t border-white/10">
+              <div className="liquid-glass-subcard p-3.5 rounded-[12px] space-y-2">
                 <span className="text-3xs font-bold uppercase tracking-wider text-[#8E8E99] block">
                   Perfil de Talentos
                 </span>

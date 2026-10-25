@@ -722,7 +722,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         </div>
 
         {/* Fila única compacta de indicadores de sesión */}
-        <div className="flex items-center gap-4 sm:gap-6 flex-wrap pt-3 border-t border-white/10 text-xs font-sans tabular-nums">
+        <div className="flex items-center gap-4 sm:gap-6 flex-wrap pt-2 text-xs font-sans tabular-nums">
           <div className="flex items-center gap-1.5">
             <span className="text-[#8E8E99]">Catálogo:</span>
             <strong className="text-[#F4F0EA]">{playerSongs.length} temas</strong>
@@ -761,7 +761,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       {/* --- TAB 1: SINGLE CREATION --- */}
       {activeTab === 'single' && (
         <form onSubmit={handleCreateSingle} className="liquid-glass-card p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#26262B] pb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2">
             <div>
               <h2 className="text-lg font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
                 <Mic className="w-5 h-5 text-[#FF2A4B]" />
@@ -1205,7 +1205,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       {/* --- TAB 2: ALBUM & EP CREATION STUDIO --- */}
       {activeTab === 'album' && (
         <form onSubmit={handleCreateAlbum} className="liquid-glass-card p-6 space-y-6">
-          <div className="border-b border-[#26262B] pb-4">
+          <div className="pb-2">
             <h2 className="text-lg font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
               <Layers className="w-5 h-5 text-[#FF2A4B]" />
               Estudio de Composición de Álbumes & Proyectos
@@ -1604,7 +1604,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       {/* --- TAB 3: DISCOGRAPHY & CATALOG VIEWER --- */}
       {activeTab === 'catalog' && (
         <div className="liquid-glass-card p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#26262B] pb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
             <div>
               <h2 className="text-xl font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
                 <Music2 className="w-5 h-5 text-[#FF2A4B]" />

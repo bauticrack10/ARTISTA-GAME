@@ -97,7 +97,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   return (
     <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
       {/* Header + Accesos Directos */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3 relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 relative z-10">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-[#FF4F00]" />
           <h3 className="text-sm font-bold text-[#F4F4F6]">

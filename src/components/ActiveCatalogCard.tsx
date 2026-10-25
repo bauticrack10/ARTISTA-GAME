@@ -67,7 +67,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
 
   return (
     <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
-      <div className="flex items-center justify-between border-b border-white/10 pb-3 relative z-10">
+      <div className="flex items-center justify-between pb-1 relative z-10">
         <div className="flex items-center gap-2">
           <Music2 className="w-4 h-4 text-[#FF4F00]" />
           <h2 className="text-sm font-bold text-[#F4F4F6]">
@@ -169,7 +169,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-white/10 text-xs font-sans tabular-nums">
+                <div className="flex items-center justify-between pt-1.5 text-xs font-sans tabular-nums">
                   <span className="text-[#8E8E99]">
                     Mes: <strong className="text-[#00E599]">{song.streamsLastMonth.toLocaleString('es-AR')}</strong>
                   </span>

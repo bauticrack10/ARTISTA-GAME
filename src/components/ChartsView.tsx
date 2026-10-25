@@ -86,7 +86,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
 
       {/* Chart List Table */}
       <div role="table" aria-label={`Ranking ${formatMusicRegionLabel(selectedRegion)}`} className="liquid-glass-card overflow-hidden">
-        <div role="row" className={`${CHART_GRID} px-4 py-3 border-b border-white/10 text-[10px] text-[#8E8E99] font-sans font-bold uppercase tracking-widest bg-white/[0.02]`}>
+        <div role="row" className={`${CHART_GRID} px-4 py-3 text-[10px] text-[#8E8E99] font-sans font-bold uppercase tracking-widest bg-white/[0.04]`}>
           <span role="columnheader" className="text-center">Pos.</span>
           <span role="columnheader">Canción & Artista</span>
           <span role="columnheader" className="hidden sm:block text-right">Streams / sem.</span>
@@ -149,7 +149,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 <div
                   key={entry.songId}
                   role="row"
-                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-white/[0.04] border-b border-white/5 ${
+                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-white/[0.04] ${
                     isPlayerSong
                       ? 'bg-[#FF4F00]/10 border-l-4 border-l-[#FF4F00]'
                       : isNo1

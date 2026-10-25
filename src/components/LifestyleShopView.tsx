@@ -243,7 +243,7 @@ export const LifestyleShopView: React.FC<LifestyleShopViewProps> = ({
     <div className="space-y-5 pb-20 font-sans text-[#F4F0EA] min-h-screen">
       {/* Header + Unified Compact Financial & Buffs Strip */}
       <div className="liquid-glass-card p-5 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="px-2 py-0.5 rounded-[4px] text-2xs font-bold liquid-glass-pill text-[#8E8E99] tracking-wider uppercase">

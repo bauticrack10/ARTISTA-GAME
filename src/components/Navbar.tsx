@@ -137,7 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-40 liquid-glass-header text-[#F4F0EA] select-none">
       {/* FILA 1: Marca, Control de Tiempo y Recursos Esenciales */}
-      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3 border-b border-white/10">
+      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3">
         {/* Izquierda: Logo + Fecha Actual */}
         <div className="flex items-center gap-3 shrink-0">
           <button

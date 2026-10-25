@@ -258,7 +258,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
       {/* Tira compacta de Era Actual */}
       {currentEra && (
-        <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-3 text-xs relative z-10">
+        <div className="pt-2 flex items-center justify-between gap-3 text-xs relative z-10">
           <div className="flex items-center gap-2 min-w-0">
             <Disc3 className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
             <span className="text-[#8E8E99] truncate">

@@ -133,7 +133,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* 1. Vitrina de Trofeos de la Academia */}
         <div className="liquid-glass-card p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
+          <div className="flex items-center justify-between pb-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Trophy className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
               <span>Trofeos de {player.name} ({player.awardsWon.length})</span>
@@ -183,7 +183,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
         {/* 2. Certificaciones Oficiales (Oro / Platino / Diamante) */}
         <div className="liquid-glass-card p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#26262B] pb-2.5">
+          <div className="flex items-center justify-between pb-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Medal className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
               <span>Certificaciones Oficiales ({playerCerts.length})</span>
@@ -270,7 +270,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
       {/* History of Past Ceremonies (Intact) */}
       <div className="liquid-glass-card p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#26262B] pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
           <div>
             <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
               <Trophy className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
