@@ -75,7 +75,7 @@ export const KitProgress: React.FC<KitProgressProps> = ({
         aria-valuemin={min}
         aria-valuemax={max}
         aria-label={ariaLabel || (typeof label === 'string' ? label : 'Progreso')}
-        className={`w-full kit-progress ${compact ? 'kit-progress-compact h-2 sm:h-2.5' : 'h-2.5 sm:h-3'} rounded-full bg-white/10 border border-white/10 relative overflow-hidden`}
+        className={`w-full kit-progress ${compact ? 'kit-progress-compact h-2.5' : 'h-2.5 sm:h-3'} rounded-full bg-white/10 border border-white/10 relative overflow-hidden`}
       >
         <div
           className={`kit-progress-fill h-full rounded-full transition-all duration-300 relative ${variantClass} ${barClassName}`}
@@ -83,9 +83,9 @@ export const KitProgress: React.FC<KitProgressProps> = ({
         >
           {/* Brillo especular superior */}
           <div className="absolute inset-x-0 top-0 h-1/2 bg-white/20 rounded-t-full pointer-events-none" />
-          {/* Punto brillante en la punta de avance */}
+          {/* Punto brillante (sparkle dot) en la punta de avance */}
           {percentage > 2 && (
-            <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#ffffff,0_0_12px_var(--kit-progress-color,#00E599)] pointer-events-none" />
+            <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#00E599] pointer-events-none" />
           )}
         </div>
       </div>

@@ -31,6 +31,7 @@ import {
   formatFans
 } from '../utils/formatters';
 import { gameJuice, HudTarget } from '../utils/gameJuice';
+import { MagneticPrimaryButton } from './ui';
 
 interface NavbarProps {
   player: Artist;
@@ -208,8 +209,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
-          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Acabado luminoso esmeralda/cian con resplandor exterior suave y haz shimmer */}
-          <button
+          {/* BOTÓN PRIMARIO DE ACCIÓN MAGNÉTICO (Avanzar Turno / Semestre) */}
+          <MagneticPrimaryButton
             id="btn-advance-cycle"
             onClick={(e) => {
               playSound('click');
@@ -221,21 +222,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               });
               onAdvanceCycle(cycleMonths);
             }}
-            className="game-btn-primary px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold tracking-tight uppercase whitespace-nowrap shrink-0"
+            className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold tracking-tight uppercase whitespace-nowrap shrink-0"
             title="Procesar el ciclo seleccionado y simular el mundo"
-          >
-            <Play className="w-4 h-4 fill-[#032115] text-[#032115] shrink-0" />
-            <span>
-              Avanzar ({cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})
-            </span>
-          </button>
+            icon={<Play className="w-4 h-4 fill-[#032115] text-[#032115] shrink-0" />}
+            label={`Avanzar (${cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})`}
+          />
         </div>
 
         {/* Derecha: HUD de Recursos (Fondos, Fans, Medidor HP de Energía) + Utilidades */}
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto lg:ml-0 flex-wrap sm:flex-nowrap">
           <div
             id="hud-money"
-            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-emerald-500/25 bg-[#00E599]/10 transition-transform duration-200 ${
+            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-emerald-500/25 bg-[#00E599]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
               poppingHud.money ? 'scale-125 ring-2 ring-[#00E599] shadow-[0_0_16px_rgba(0,229,153,0.8)] z-20' : ''
             }`}
             title={`Fondos Disponibles: ${formatMoney(playerFunds)}`}
@@ -246,7 +244,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div
             id="hud-fans"
-            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10 transition-transform duration-200 ${
+            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
               poppingHud.fans ? 'scale-125 ring-2 ring-[#FF4F00] shadow-[0_0_16px_rgba(255,79,0,0.8)] z-20' : ''
             }`}
             title={`Fans: ${playerFans.toLocaleString('es-AR')} • Oyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}`}
@@ -258,7 +256,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Medidor HP de Energía Cilíndrico con Brillo Especular */}
           <div
             id="hud-energy"
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs liquid-glass-pill ${energyStyle.bg} bg-black/40 transition-transform duration-200 ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs liquid-glass-pill ${energyStyle.bg} bg-black/40 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
               poppingHud.energy ? 'scale-125 ring-2 ring-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.8)] z-20' : ''
             }`}
             title={`Energía Vital: ${playerEnergy}%`}

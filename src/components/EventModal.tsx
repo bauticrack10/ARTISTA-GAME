@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useEventModal } from '../hooks/useEventModal';
 import { ArtistAvatar } from './ArtistAvatar';
+import { MagneticPrimaryButton } from './ui';
 
 export interface EventModalProps {
   event: EventDefinition;
@@ -235,12 +236,39 @@ export const EventModal: React.FC<EventModalProps> = ({
                 cardClass = 'bg-[#09090B] hover:bg-[#18181C] border-[#242429] hover:border-[#3F3F46] cursor-pointer';
               }
 
+              if (choices.length === 1 && isEligible) {
+                return (
+                  <div key={choice.id || idx} className="space-y-3">
+                    <div className="p-4 rounded-[10px] bg-white/[0.04] backdrop-blur-md border border-white/10 text-white space-y-2">
+                      <h4 className="text-sm sm:text-base font-semibold leading-snug text-[#F4F4F6]">
+                        {choice.cleanText}
+                      </h4>
+                      {cleanedNarrative && (
+                        <p className="text-xs text-[#8E8E99] leading-relaxed font-normal">
+                          {cleanedNarrative}
+                        </p>
+                      )}
+                    </div>
+                    <MagneticPrimaryButton
+                      id={`event-choice-option-${idx}`}
+                      onClick={() => handleSelectChoice(idx)}
+                      fullWidth
+                      className="py-3 px-6 text-sm tracking-wide"
+                      icon={<ArrowRight className="w-4 h-4 text-[#032115]" />}
+                      iconPosition="right"
+                      label="Confirmar"
+                    />
+                  </div>
+                );
+              }
+
               return (
                 <button
                   key={choice.id || idx}
+                  id={`event-choice-option-${idx}`}
                   disabled={!isEligible}
                   onClick={() => handleSelectChoice(idx)}
-                  className={`w-full text-left p-4 rounded-[4px] border transition-all flex items-start justify-between gap-4 group relative overflow-hidden ${cardClass}`}
+                  className={`w-full text-left p-4 rounded-[10px] border transition-all flex items-start justify-between gap-4 group relative overflow-hidden backdrop-blur-md ${cardClass}`}
                 >
                   {/* Left Indicator Accent on Hover */}
                   {isEligible && (

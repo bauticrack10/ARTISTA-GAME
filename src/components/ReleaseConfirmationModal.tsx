@@ -13,6 +13,7 @@ import { ReleaseConfirmationData } from '../types';
 import { formatMoney, formatReleaseDate } from '../utils/formatters';
 import { playSound } from '../utils/audioSystem';
 import { KitButton } from './ui/KitButton';
+import { MagneticPrimaryButton } from './ui/MagneticPrimaryButton';
 
 export interface ReleaseConfirmationModalProps {
   data: ReleaseConfirmationData;
@@ -244,12 +245,12 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
             label="Cerrar"
             onClick={onClose}
           />
-          <KitButton
-            variant="emerald"
-            size="md"
-            label="Ir al Catálogo"
-            icon={<ArrowRight className="w-4 h-4" />}
+          <MagneticPrimaryButton
+            id="btn-confirm-release"
+            label="Confirmar e Ir al Catálogo"
+            icon={<ArrowRight className="w-4 h-4 text-[#032115]" />}
             iconPosition="right"
+            className="py-2.5 px-5 text-sm"
             onClick={handleClose}
           />
         </div>

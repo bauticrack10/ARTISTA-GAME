@@ -17,6 +17,7 @@ import {
 import { playSound } from '../utils/audioSystem';
 import { useTourRequirements } from '../hooks/useTourRequirements';
 import { gameJuice } from '../utils/gameJuice';
+import { GlassCard, MagneticPrimaryButton } from './ui';
 
 export interface DecisionHubProps {
   player: Artist;
@@ -194,7 +195,11 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   };
 
   return (
-    <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
+    <GlassCard
+      id="decision-hub-card"
+      status={feedbackMessage ? (feedbackMessage.success ? 'success' : 'error') : 'idle'}
+      className={`p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}
+    >
       {/* Header + Accesos Directos */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 relative z-10">
         <div className="flex items-center gap-2">
@@ -247,29 +252,31 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       {/* Aviso de resultado */}
       {feedbackMessage && (
         <div
-          className={`liquid-glass-subcard p-3 border flex items-start justify-between gap-3 text-xs relative z-10 ${
+          className={`liquid-glass-subcard p-3.5 border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs relative z-10 ${
             feedbackMessage.success
               ? 'border-emerald-500/40 text-emerald-300'
               : 'border-rose-500/40 text-rose-300'
           }`}
         >
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2.5">
             {feedbackMessage.success ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-[#00E599] shrink-0 mt-0.5" />
             ) : (
-              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
             )}
             <div>
-              <p className="font-bold text-[#F4F4F6]">{feedbackMessage.title}</p>
-              <p className="text-xs mt-0.5 text-[#8E8E99]">{feedbackMessage.text}</p>
+              <p className="font-bold text-[#F4F4F6] text-sm">{feedbackMessage.title}</p>
+              <p className="text-xs mt-0.5 text-[#8E8E99] leading-relaxed">{feedbackMessage.text}</p>
             </div>
           </div>
-          <button
-            onClick={() => setFeedbackMessage(null)}
-            className="p-1 text-[#8E8E99] hover:text-white rounded-[4px] cursor-pointer"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+            <MagneticPrimaryButton
+              id="btn-confirm-decision"
+              onClick={() => setFeedbackMessage(null)}
+              label="Confirmar"
+              className="py-1.5 px-4 text-xs font-bold"
+            />
+          </div>
         </div>
       )}
 
@@ -485,7 +492,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           );
         })()}
       </div>
-    </div>
+    </GlassCard>
   );
 };
 

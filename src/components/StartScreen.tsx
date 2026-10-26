@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Play, Disc3, UserPlus } from 'lucide-react';
 import { GameSaveState, Artist } from '../types';
 import { TimeSystem } from '../systems/TimeSystem';
+import { MagneticPrimaryButton } from './ui';
 
 interface StartScreenProps {
   onNewCareer: () => void;
@@ -80,15 +81,15 @@ export const StartScreen: React.FC<StartScreenProps> = ({
 
         {/* Grouped Action Buttons */}
         <div className="w-full max-w-md space-y-4 pt-2">
-          {/* NUEVA CARRERA (Primary Action - Large Vibrant Emerald Green Game CTA) */}
-          <button
+          {/* NUEVA CARRERA (Primary Action - Magnetic Luminous Emerald Game CTA) */}
+          <MagneticPrimaryButton
             id="btn-start-new-career"
             onClick={onNewCareer}
-            className="game-btn-primary w-full py-4 px-8 text-base tracking-wider"
-          >
-            <UserPlus className="w-5 h-5 text-[#032115] stroke-[2.5]" />
-            <span>Iniciar Nueva Carrera</span>
-          </button>
+            fullWidth
+            className="py-4 px-8 text-base tracking-wider"
+            icon={<UserPlus className="w-5 h-5 text-[#032115] stroke-[2.5]" />}
+            label="Iniciar Nueva Carrera"
+          />
 
           {/* CONTINUAR PARTIDA (Save Slot Card) */}
           {savedGame && (
