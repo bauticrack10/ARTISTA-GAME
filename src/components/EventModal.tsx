@@ -124,20 +124,20 @@ export const EventModal: React.FC<EventModalProps> = ({
             </div>
 
             {/* Artist Mini Status Pill */}
-            <div className="flex items-center gap-3 bg-[#09090B] px-3 py-1 rounded-[4px] border border-[#242429] text-xs font-sans text-[#F4F4F6]">
+            <div className="flex items-center gap-3 bg-[#09090B] px-3 py-1 rounded-[4px] border border-[#242429] text-xs font-mono tabular-nums text-[#F4F4F6]">
               <span className="flex items-center gap-1 text-[#00E599]">
                 <DollarSign className="w-3.5 h-3.5" />
-                <span className="tabular-nums font-bold">${player?.stats?.funds != null ? player.stats.funds.toLocaleString() : '0'}</span>
+                <span className="font-bold">${player?.stats?.funds != null ? player.stats.funds.toLocaleString() : '0'}</span>
               </span>
               <span className="text-[#242429]">|</span>
               <span className="flex items-center gap-1 text-[#F59E0B]">
                 <Zap className="w-3.5 h-3.5" />
-                <span className="tabular-nums font-bold">{player?.stats?.energy ?? 100}%</span>
+                <span className="font-bold">{player?.stats?.energy ?? 100}%</span>
               </span>
               <span className="text-[#242429]">|</span>
               <span className="flex items-center gap-1 text-[#FF4F00]">
                 <Flame className="w-3.5 h-3.5" />
-                <span className="tabular-nums font-bold">{player?.stats?.hype ?? 0}</span>
+                <span className="font-bold">{player?.stats?.hype ?? 0}</span>
               </span>
             </div>
           </div>
@@ -162,7 +162,7 @@ export const EventModal: React.FC<EventModalProps> = ({
               <span className="text-xs text-[#8E8E99] uppercase font-sans tracking-wider block">
                 {player?.name || 'Artista'} • {temporality.badge}
               </span>
-              <h2 id="event-dialog-title" className="kit-text-header font-game text-xl sm:text-2xl tracking-wide leading-tight pt-0.5">
+              <h2 id="event-dialog-title" className="kit-text-header font-display text-xl sm:text-2xl tracking-tight leading-tight pt-0.5">
                 {event?.title || 'Evento'}
               </h2>
             </div>

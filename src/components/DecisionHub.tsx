@@ -198,7 +198,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 relative z-10">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-[#FF4F00]" />
-          <h3 className="kit-text-header font-game text-sm tracking-wide">
+          <h3 className="kit-text-header font-display text-sm tracking-tight">
             Acciones del Mes & Entrenamiento
           </h3>
         </div>
@@ -364,7 +364,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <Mic2 className="w-3.5 h-3.5 text-[#FF4F00]" />
                      Técnica Vocal
                   </span>
-                  <span className="liquid-glass-pill text-xs font-sans font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
+                  <span className="liquid-glass-pill text-xs font-mono font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>
@@ -408,7 +408,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <Music2 className="w-3.5 h-3.5 text-cyan-400" />
                     Composición
                   </span>
-                  <span className="liquid-glass-pill text-xs font-sans font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
+                  <span className="liquid-glass-pill text-xs font-mono font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>
@@ -452,7 +452,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <Users className="w-3.5 h-3.5 text-[#F59E0B]" />
                     Networking
                   </span>
-                  <span className="liquid-glass-pill text-xs font-sans font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
+                  <span className="liquid-glass-pill text-xs font-mono font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>

@@ -2,16 +2,16 @@
 
 /* Design tokens: single source for Game UI & Cyber Stage palette, type scale and radii. */
 @theme {
-  --font-game-display: 'Russo One', sans-serif;
-  --font-display: 'Russo One', sans-serif;
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  /* Sin tipografía monoespaciada: las cifras usan la sans con tabular-nums. */
-  --font-mono: 'Plus Jakarta Sans', sans-serif;
+  --font-game-display: 'Geist', 'Inter', 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Geist', 'Inter', 'Plus Jakarta Sans', sans-serif;
+  --font-sans: 'Geist', 'Inter', 'Plus Jakarta Sans', sans-serif;
+  /* Tipografía técnica para datos numéricos y métricas */
+  --font-mono: 'JetBrains Mono', 'Geist Mono', monospace;
 
-  --color-surface-game: #0A0A0F;
-  --color-surface-game-card: #13141F;
-  --color-surface-game-elevated: #1B1D2C;
-  --color-hud-bg: rgba(10, 10, 15, 0.90);
+  --color-surface-game: #090A0F;
+  --color-surface-game-card: rgba(14, 15, 23, 0.75);
+  --color-surface-game-elevated: rgba(22, 23, 34, 0.85);
+  --color-hud-bg: rgba(9, 10, 15, 0.85);
 
   /* Acento Primario de Acción: Verde Esmeralda Vibrante */
   --color-accent-primary: #00E599;
@@ -22,8 +22,8 @@
   --color-accent-danger: #EF4444;
   --color-accent-danger-hover: #DC2626;
 
-  --color-canvas: #0A0A0F;
-  --color-studio: #0A0A0F;
+  --color-canvas: #090A0F;
+  --color-studio: #090A0F;
   --color-surface: #13141F;
   --color-console: #13141F;
   --color-surface-raised: #1B1D2C;
@@ -49,6 +49,8 @@
   --color-diamond: #38BDF8;
 
   /* Type floor: ningún texto de cuerpo menor a 14px (0.875rem) */
+  --text-3xs: 0.875rem;
+  --text-3xs--line-height: 1.25rem;
   --text-2xs: 0.875rem;
   --text-2xs--line-height: 1.25rem;
   --text-xs: 0.875rem;
@@ -68,20 +70,23 @@
    GAME UI TYPOGRAPHY & BUTTON UTILITIES
    ========================================================================== */
 
-/* Cabecera Display de Videojuego: Blanco Heavy, Contorno Sólido en 4 direcciones y Sombra */
+/* Cabecera Display Minimalista: Extrabold, tracking refinado, sin contornos negros caricaturescos */
 @utility kit-text-header {
-  font-family: var(--font-game-display);
-  font-weight: 900;
+  font-family: var(--font-display);
+  font-weight: 800;
   color: #FFFFFF;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  text-shadow:
-    -2px -2px 0 #000000,
-     2px -2px 0 #000000,
-    -2px  2px 0 #000000,
-     2px  2px 0 #000000,
-     0px  4px 14px rgba(0, 0, 0, 0.90);
-  -webkit-text-stroke: 1.25px #000000;
+  letter-spacing: -0.025em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.kit-text-header {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
 /* Botón Primario de Videojuego: Gran tamaño, Verde Esmeralda Vibrante y Relieve Táctil 3D */
@@ -191,7 +196,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-game-display, 'Russo One', sans-serif);
+  font-family: var(--font-game-display, 'Geist', 'Inter', sans-serif);
   font-weight: 800;
   font-size: 0.9375rem;
   letter-spacing: 0.03em;
@@ -246,19 +251,12 @@
 @utility kit-btn-label {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-game-display, 'Russo One', sans-serif);
-  font-weight: 800;
-  letter-spacing: 0.03em;
+  font-family: var(--font-display, 'Geist', 'Inter', sans-serif);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
   color: #FFFFFF;
-  /* Texto blanco con contorno oscuro complementario al color del botón (nunca negro puro) */
-  text-shadow:
-    -1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
-     1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
-    -1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
-     1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
-     0px     2px    4px rgba(0, 0, 0, 0.45);
-  -webkit-text-stroke: 1px var(--kit-btn-contour, #064E3B);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Variantes de Color con Sombra Sólida 5px y Contorno Complementario (Nunca Negro Puro) */
@@ -525,14 +523,15 @@
 
 @utility kit-modal {
   position: relative;
-  background-color: #111114;
-  /* Bordes redondeados gruesos */
-  border-radius: 20px;
-  border: 2px solid #242429;
-  /* Sombras profundas */
+  background-color: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85),
               0 12px 28px -5px rgba(0, 0, 0, 0.65),
-              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+              inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.22);
   overflow: hidden;
   max-width: 100%;
 }
@@ -749,7 +748,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-game-display, 'Russo One', sans-serif);
+  font-family: var(--font-game-display, 'Geist', 'Inter', sans-serif);
   font-weight: 800;
   font-size: 0.9375rem;
   letter-spacing: 0.03em;
@@ -804,19 +803,12 @@
 .kit-btn-label {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-game-display, 'Russo One', sans-serif);
-  font-weight: 800;
-  letter-spacing: 0.03em;
+  font-family: var(--font-display, 'Geist', 'Inter', sans-serif);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
   color: #FFFFFF;
-  /* Texto blanco con contorno oscuro complementario al color del botón (nunca negro puro) */
-  text-shadow:
-    -1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
-     1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
-    -1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
-     1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
-     0px     2px    4px rgba(0, 0, 0, 0.45);
-  -webkit-text-stroke: 1px var(--kit-btn-contour, #064E3B);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .kit-btn-primary, .kit-btn-emerald {
@@ -895,14 +887,15 @@
 /* Modales */
 .kit-modal {
   position: relative;
-  background-color: #111114;
-  /* Bordes redondeados gruesos */
-  border-radius: 20px;
-  border: 2px solid #242429;
-  /* Sombras profundas */
+  background-color: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85),
               0 12px 28px -5px rgba(0, 0, 0, 0.65),
-              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+              inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.22);
   overflow: hidden;
   max-width: 100%;
 }
@@ -2016,30 +2009,86 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ==========================================================================
-   LIQUID GLASSMORPHISM STYLING (Glossy Refraction & Specular Bevel)
-   Cristal líquido puro translúcido uniforme SIN gradientes diagonales ni lavados
+   MINIMALIST DOPAMINE GLASSMORPHISM HIERARCHY (3 NIVELES DE PROFUNDIDAD)
+   ========================================================================== */
+
+/* Nivel 1: HUD superior y paneles secundarios */
+@utility glass-level-1 {
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-level-1 {
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Nivel 2: Tarjeta / Lienzo central de juego */
+@utility glass-level-2 {
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 8px 32px rgba(0, 0, 0, 0.40);
+}
+
+.glass-level-2 {
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 8px 32px rgba(0, 0, 0, 0.40);
+}
+
+/* Nivel 3: Modales y Tooltips flotantes (WCAG AA Garantizado) */
+@utility glass-level-3 {
+  background-color: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 24px 64px -12px rgba(0, 0, 0, 0.85);
+}
+
+.glass-level-3 {
+  background-color: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 24px 64px -12px rgba(0, 0, 0, 0.85);
+}
+
+/* ==========================================================================
+   RETROCOMPATIBILIDAD CON COMPONENTES EXISTENTES (.liquid-glass-*)
    ========================================================================== */
 
 .liquid-glass-card {
   position: relative;
-  /* Cristal líquido puro translúcido uniforme: sin degradados diagonales ni superposiciones */
-  background-color: rgba(18, 18, 22, 0.75);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  /* Bisel especular superior de rim light y bordes finos de refracción */
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-top: 1px solid rgba(255, 255, 255, 0.32);
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -1.5px 1px 0 rgba(0, 0, 0, 0.5),
-    0 16px 40px -10px rgba(0, 0, 0, 0.65),
-    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 8px 32px rgba(0, 0, 0, 0.40);
   border-radius: 14px;
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Desactivar cualquier pseudo-elemento de brillo en gradiente */
 .liquid-glass-card::before {
   content: none;
   display: none;
@@ -2047,61 +2096,96 @@ input[type="range"]::-moz-range-thumb {
 
 .liquid-glass-card:hover {
   border-color: rgba(255, 255, 255, 0.22);
-  border-top-color: rgba(255, 255, 255, 0.45);
   box-shadow:
-    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.48),
-    inset 0 -1.5px 1px 0 rgba(0, 0, 0, 0.5),
-    0 20px 48px -10px rgba(0, 0, 0, 0.75),
-    0 6px 16px 0 rgba(0, 0, 0, 0.45);
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 12px 38px rgba(0, 0, 0, 0.50);
 }
 
 .liquid-glass-subcard {
   position: relative;
-  /* Sub-tarjeta de cristal líquido uniforme sin degradado */
-  background-color: rgba(24, 24, 30, 0.65);
+  background-color: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4),
-    0 6px 18px -4px rgba(0, 0, 0, 0.45);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .liquid-glass-subcard:hover {
-  border-color: rgba(255, 255, 255, 0.22);
-  border-top-color: rgba(255, 255, 255, 0.38);
+  border-color: rgba(255, 255, 255, 0.16);
   box-shadow:
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.38),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4),
-    0 8px 24px -4px rgba(0, 0, 0, 0.55);
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 .liquid-glass-pill {
   position: relative;
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-top: 1px solid rgba(255, 255, 255, 0.26);
-  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.22);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 .liquid-glass-pill:hover {
-  background-color: rgba(255, 255, 255, 0.10);
-  border-color: rgba(255, 255, 255, 0.22);
-  border-top-color: rgba(255, 255, 255, 0.36);
+  background-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .liquid-glass-header {
-  background-color: rgba(14, 14, 18, 0.78);
+  background-color: rgba(9, 10, 15, 0.82);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
 }
+
+/* ==========================================================================
+   ANIMACIONES FLOTANTES PARA ORBES DE LUZ AMBIENTAL
+   ========================================================================== */
+
+@keyframes float-slow-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(40px, -30px, 0) scale(1.08);
+  }
+}
+
+@keyframes float-slow-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-35px, 40px, 0) scale(0.94);
+  }
+}
+
+@keyframes float-slow-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(30px, 35px, 0) scale(1.05);
+  }
+}
+
+.animate-float-1 {
+  animation: float-slow-1 22s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: float-slow-2 28s ease-in-out infinite;
+}
+
+.animate-float-3 {
+  animation: float-slow-3 24s ease-in-out infinite;
+}
+
 

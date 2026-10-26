@@ -61,7 +61,7 @@ export const KitModal: React.FC<KitModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in"
       onClick={() => {
         playSound('click');
         onClose();
@@ -92,7 +92,7 @@ export const KitModal: React.FC<KitModalProps> = ({
               <div className="flex flex-col items-center justify-center text-center">
                 <div className="flex items-center gap-2">
                   {icon && <span className="shrink-0">{icon}</span>}
-                  <h2 className="kit-text-header text-lg sm:text-xl tracking-wide uppercase">
+                  <h2 className="kit-text-header font-display text-lg sm:text-xl tracking-tight uppercase">
                     {title}
                   </h2>
                 </div>

@@ -60,7 +60,7 @@ export const QuickOnboardingTooltip: React.FC<QuickOnboardingTooltipProps> = ({
 
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-wider text-[#FF4F00] font-game">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#FF4F00] font-sans">
                 Primer Paso Recomendado
               </span>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/30 animate-pulse">

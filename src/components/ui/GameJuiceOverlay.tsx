@@ -55,7 +55,7 @@ export const GameJuiceOverlay: React.FC = () => {
             }}
           >
             <div
-              className={`px-3 py-1 rounded-[8px] border text-xs sm:text-sm font-black font-game uppercase tracking-wider backdrop-blur-md shadow-lg flex items-center gap-1.5 ${badgeStyle}`}
+              className={`px-3 py-1 rounded-[8px] border text-xs sm:text-sm font-bold font-mono tabular-nums uppercase tracking-wide backdrop-blur-md shadow-lg flex items-center gap-1.5 ${badgeStyle}`}
             >
               <span>{item.text}</span>
             </div>

@@ -130,10 +130,10 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="kit-text-header font-game text-xs sm:text-sm tracking-wide text-white uppercase">
+              <h4 className="kit-text-header font-display text-xs sm:text-sm tracking-tight text-white uppercase">
                 Primeros Pasos
               </h4>
-              <span className="liquid-glass-pill px-2.5 py-0.5 text-xs font-sans font-bold text-[#00E599] border border-[#00E599]/30 tabular-nums">
+              <span className="liquid-glass-pill px-2.5 py-0.5 text-xs font-mono font-bold text-[#00E599] border border-[#00E599]/30 tabular-nums">
                 {completedCount} de {steps.length} ({progressPercent}%)
               </span>
             </div>

@@ -763,7 +763,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         <form onSubmit={handleCreateSingle} className="liquid-glass-card p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2">
             <div>
-              <h2 className="kit-text-header font-game text-lg tracking-wide text-[#F4F0EA] flex items-center gap-2">
+              <h2 className="kit-text-header font-display text-lg tracking-tight text-[#F4F0EA] flex items-center gap-2">
                 <Mic className="w-5 h-5 text-[#00E599]" />
                 Componer Nuevo Single
               </h2>
@@ -1204,7 +1204,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       {activeTab === 'album' && (
         <form onSubmit={handleCreateAlbum} className="liquid-glass-card p-6 space-y-6">
           <div className="pb-2">
-            <h2 className="kit-text-header font-game text-lg tracking-wide text-[#F4F0EA] flex items-center gap-2">
+            <h2 className="kit-text-header font-display text-lg tracking-tight text-[#F4F0EA] flex items-center gap-2">
               <Layers className="w-5 h-5 text-[#00E599]" />
               Estudio de Composición de Álbumes & Proyectos
             </h2>
@@ -1602,7 +1602,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         <div className="liquid-glass-card p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
             <div>
-              <h2 className="kit-text-header font-game text-xl tracking-wide text-[#F4F0EA] flex items-center gap-2">
+              <h2 className="kit-text-header font-display text-xl tracking-tight text-[#F4F0EA] flex items-center gap-2">
                 <Music2 className="w-5 h-5 text-[#00E599]" />
                 Discografía & Catálogo Oficial
               </h2>

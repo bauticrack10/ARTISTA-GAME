@@ -176,7 +176,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
               </div>
 
               <div>
-                <h3 className="kit-text-header font-game text-xl sm:text-2xl tracking-wide truncate">
+                <h3 className="kit-text-header font-display text-xl sm:text-2xl tracking-tight truncate">
                   {data.title}
                 </h3>
                 <p className="text-xs text-[#8E8E99] mt-0.5">

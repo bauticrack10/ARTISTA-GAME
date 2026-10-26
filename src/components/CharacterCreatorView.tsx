@@ -895,9 +895,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="kit-text-header text-2xl sm:text-3xl flex flex-wrap items-center gap-x-3 gap-y-1">
+              <h1 className="kit-text-header font-display text-2xl sm:text-3xl flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span>Creación del Artista</span>
-                <span className="whitespace-nowrap text-xs liquid-glass-pill text-[#00E599] border border-[#00E599]/35 px-3 py-1 rounded-[8px] font-sans font-bold">
+                <span className="whitespace-nowrap text-xs liquid-glass-pill text-[#00E599] border border-[#00E599]/35 px-3 py-1 rounded-[8px] font-mono tabular-nums font-bold">
                   Año 1 • 2026
                 </span>
               </h1>

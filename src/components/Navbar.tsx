@@ -162,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="w-8 h-8 rounded-[8px] bg-gradient-to-b from-[#FF5F1A] to-[#FF3B00] text-white flex items-center justify-center shrink-0 shadow-[0_2px_0_#992500] group-hover:scale-105 transition-transform">
               <Disc3 className="w-4 h-4 text-white animate-spin-slow" />
             </div>
-            <span className="kit-text-header font-game text-sm tracking-wider">
+            <span className="kit-text-header font-display text-sm tracking-tight">
               EL ARTISTA
             </span>
           </button>
@@ -170,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="h-5 w-px bg-white/15 hidden sm:block" />
 
           <div
-            className="flex items-center gap-2 liquid-glass-pill px-3 py-1.5 text-xs whitespace-nowrap font-sans tabular-nums border border-white/10"
+            className="flex items-center gap-2 liquid-glass-pill px-3 py-1.5 text-xs whitespace-nowrap font-mono tabular-nums border border-white/10"
             title={`Fecha actual: ${monthName} ${currentYear}`}
           >
             <span className="w-2.5 h-2.5 rounded-full bg-[#00E599] shrink-0 shadow-[0_0_8px_rgba(0,229,153,0.8)]" />
@@ -243,7 +243,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Fondos Disponibles: ${formatMoney(playerFunds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-[#00E599] shrink-0" />
-            <span className="font-extrabold text-[#00E599] font-sans tabular-nums whitespace-nowrap">{formatMoney(playerFunds)}</span>
+            <span className="font-extrabold text-[#00E599] font-mono tabular-nums whitespace-nowrap">{formatMoney(playerFunds)}</span>
           </div>
 
           <div
@@ -254,7 +254,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Fans: ${playerFans.toLocaleString('es-AR')} • Oyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}`}
           >
             <Users className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
-            <span className="font-extrabold font-sans tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
+            <span className="font-extrabold font-mono tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
           </div>
 
           {/* Medidor HP de Energía Cilíndrico con Brillo Especular */}
@@ -266,7 +266,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Energía Vital: ${playerEnergy}%`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="font-extrabold font-sans tabular-nums">{playerEnergy}%</span>
+            <span className="font-extrabold font-mono tabular-nums">{playerEnergy}%</span>
             <div className="w-12 h-3.5 bg-[#0A0A0F] rounded-full border border-white/20 overflow-hidden shrink-0 hidden sm:block relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.85)]">
               <div
                 className={`h-full rounded-full transition-all duration-300 relative overflow-hidden shadow-[inset_0_-2px_0_rgba(0,0,0,0.4)] ${energyStyle.bar}`}

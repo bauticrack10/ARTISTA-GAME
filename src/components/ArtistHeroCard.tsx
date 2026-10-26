@@ -162,7 +162,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
           <div className="space-y-2 min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="kit-text-header font-game text-2xl sm:text-3xl tracking-wide leading-none">
+              <h1 className="kit-text-header font-display text-2xl sm:text-3xl tracking-tight leading-none">
                 {player?.name || 'Artista'}
               </h1>
 
@@ -186,7 +186,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               )}
               <span>{formatCityCountry(player?.city, player?.country)}</span>
               <span className="text-white/20">•</span>
-              <span className="font-sans tabular-nums text-[#F4F4F6]">
+              <span className="font-mono tabular-nums text-[#F4F4F6]">
                 {TimeSystem.calculateAge(player?.birthYear || 2008, world?.currentYear || 2026)} años
               </span>
             </div>
@@ -204,7 +204,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
 
               <span className="liquid-glass-pill inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#8E8E99] font-sans">
                 <Award className="w-3.5 h-3.5 text-[#00E599]" />
-                <span>Legado <strong className="text-[#F4F4F6] tabular-nums">{player?.legacyScore ?? 0}/100</strong></span>
+                <span>Legado <strong className="text-[#F4F4F6] font-mono tabular-nums">{player?.legacyScore ?? 0}/100</strong></span>
               </span>
 
               {currentLabel && (
@@ -235,7 +235,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <Headphones className="w-3 h-3 text-[#8E8E99]" />
               OYENTES / MES
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.monthlyListeners)}
             </span>
           </div>
@@ -249,7 +249,7 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
               <Disc3 className="w-3 h-3 text-[#8E8E99]" />
               STREAMS TOTALES
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-sans tabular-nums block mt-1 tracking-tight">
+            <span className="text-xl sm:text-2xl font-bold text-[#F4F4F6] font-mono tabular-nums block mt-1 tracking-tight">
               {formatCompactNumber(playerStats.totalStreams)}
             </span>
           </div>

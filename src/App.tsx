@@ -26,6 +26,7 @@ import { playSound } from './utils/audioSystem';
 import { GameJuiceOverlay } from './components/ui/GameJuiceOverlay';
 import { CollabOfferNotification, SpontaneousCollabOffer } from './components/CollabOfferNotification';
 import { IncomingCollabOffer } from './types';
+import { AtmosphericBackground } from './components/ui/AtmosphericBackground';
 
 
 type AppMode = 'start_screen' | 'character_creator' | 'game';
@@ -323,7 +324,8 @@ export default function App() {
   if (appMode === 'start_screen') {
     return (
       <ErrorBoundary>
-        <div className="min-h-screen bg-canvas text-fg">
+        <div className="min-h-screen bg-[#090A0F] text-fg relative isolate">
+          <AtmosphericBackground />
           <StartScreen
             onNewCareer={handleStartNewCareer}
             onContinue={handleContinueSavedGame}
@@ -339,7 +341,8 @@ export default function App() {
   if (appMode === 'character_creator') {
     return (
       <ErrorBoundary>
-        <div className="min-h-screen bg-canvas text-fg">
+        <div className="min-h-screen bg-[#090A0F] text-fg relative isolate">
+          <AtmosphericBackground />
           <CharacterCreatorView
             world={world}
             onBackToMenu={() => setAppMode('start_screen')}
@@ -354,18 +357,13 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div
-        className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-primary/30 selection:text-white relative overflow-x-clip font-sans"
+        className="min-h-screen bg-[#090A0F] text-fg flex flex-col selection:bg-[#00E599]/30 selection:text-white relative overflow-x-clip font-sans"
       >
       {/* Game Juice Floating Numbers & Arcade FX Overlay */}
       <GameJuiceOverlay />
 
-      {/* Ambient Studio Lighting Backdrop for Liquid Glass Refraction */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#09090C]">
-        <div className="absolute -top-[15%] -left-[10%] w-[600px] h-[600px] rounded-full bg-[#FF4F00]/[0.035] blur-[140px]" />
-        <div className="absolute top-[25%] -right-[15%] w-[700px] h-[700px] rounded-full bg-[#10B981]/[0.025] blur-[150px]" />
-        <div className="absolute -bottom-[20%] left-[25%] w-[800px] h-[800px] rounded-full bg-[#FF2A4B]/[0.03] blur-[160px]" />
-        <div className="absolute inset-0 analog-grain opacity-20" />
-      </div>
+      {/* Atmospheric Background with Floating Depth Orbs & Analog Grain */}
+      <AtmosphericBackground />
 
       {/* Top App Bar & Navigation */}
       <Navbar
