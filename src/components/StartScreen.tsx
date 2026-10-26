@@ -51,7 +51,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       <div className="absolute inset-0 analog-grain pointer-events-none opacity-30 z-0" />
 
       {/* Top Bar / Brand */}
-      <header className="max-w-5xl w-full mx-auto px-6 py-6 flex items-center justify-between z-10">
+      <header className="w-full px-6 sm:px-10 lg:px-16 py-6 flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-[4px] bg-[#141417] border border-[#26262B] text-[#FF2A4B] flex items-center justify-center">
             <Disc3 className="w-5 h-5 animate-spin-slow" />
@@ -68,21 +68,21 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       </header>
 
       {/* Main Hero & Menu */}
-      <main className="max-w-2xl w-full mx-auto px-6 py-12 flex flex-col items-center text-center my-auto space-y-8 z-10">
+      <main className="max-w-4xl w-full mx-auto px-6 py-12 flex flex-col items-center text-center my-auto space-y-8 z-10">
         <div className="space-y-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold tracking-tight text-[#F4F0EA] leading-[1.05]">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold tracking-tight text-[#F4F0EA] leading-[1.05]">
             Construí tu Legado{' '}
             <span className="text-[#FF2A4B]">
               Musical
             </span>
           </h1>
-          <p className="text-[#8E8E99] font-sans text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+          <p className="text-[#8E8E99] font-sans text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Arrancás grabando maquetas con lo justo y negociando cada punto de regalía. Vos decidís si retenés tus másters de forma independiente o firmás con una multinacional para financiar giras de estadio y pelear el #1 global.
           </p>
         </div>
 
         {/* Grouped Action Buttons */}
-        <div className="w-full max-w-sm space-y-3 pt-2">
+        <div className="w-full max-w-md space-y-3 pt-2">
           {/* NUEVA CARRERA (Primary Action - REC Red) */}
           <button
             id="btn-start-new-career"
@@ -125,7 +125,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       </main>
 
       {/* Clean Minimal Footer */}
-      <footer className="max-w-5xl w-full mx-auto px-6 py-6 text-xs text-[#8E8E99] flex items-center justify-between z-10 font-sans">
+      <footer className="w-full px-6 sm:px-10 lg:px-16 py-6 text-xs text-[#8E8E99] flex items-center justify-between z-10 font-sans">
         <div className="flex items-center gap-4 text-xs text-[#52525B]">
           <span>40 mercados musicales activos</span>
           <span>•</span>

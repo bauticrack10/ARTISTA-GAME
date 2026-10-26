@@ -390,7 +390,7 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 transition-all">
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 xl:px-14 pt-6 pb-12 transition-all">
         {currentTab === 'dashboard' && (
           <DashboardView
             player={player}

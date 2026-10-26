@@ -188,7 +188,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
   };
 
   return (
-    <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5 font-sans text-[#F4F0EA]">
+    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-6 space-y-5 font-sans text-[#F4F0EA]">
       {/* View Header with Sub-tabs Switcher */}
       <div className="liquid-glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>

@@ -150,7 +150,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
     : [];
 
   return (
-    <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 text-[#F4F4F6]">
+    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-6 space-y-6 text-[#F4F4F6]">
       {/* --- PLATFORM ARTIST BANNER (ANALOG STUDIO / PRO CONSOLE STYLE) --- */}
       <div className="relative rounded-[16px] overflow-hidden liquid-glass-card p-6 sm:p-8">
         <div className="flex flex-col md:flex-row items-center md:items-end gap-6 relative z-10">

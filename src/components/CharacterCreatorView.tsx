@@ -882,7 +882,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
         <div className="absolute inset-0 analog-grain opacity-20" />
       </div>
 
-      <div className="max-w-6xl mx-auto space-y-6 relative z-10">
+      <div className="w-full space-y-6 relative z-10">
         {/* Top Navigation Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
           <div className="flex items-start sm:items-center gap-3.5 min-w-0">
