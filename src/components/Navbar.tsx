@@ -253,6 +253,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="font-extrabold font-mono tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
           </div>
 
+          {/* Marcador de Puntos / Legacy Score */}
+          <div
+            id="hud-points"
+            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-cyan-500/25 bg-[#00D2FF]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+              poppingHud.points ? 'scale-110 ring-2 ring-[#00D2FF] shadow-[0_0_16px_rgba(0,210,255,0.8)] z-20' : ''
+            }`}
+            title={`Puntos de Carrera (Legacy Score): ${(player?.legacyScore ?? 0).toLocaleString('es-AR')}`}
+          >
+            <Award className="w-3.5 h-3.5 text-[#00D2FF] shrink-0" />
+            <span className="font-extrabold text-[#00D2FF] font-mono tabular-nums whitespace-nowrap">
+              {(player?.legacyScore ?? 0).toLocaleString('es-AR')} <span className="text-[10px] sm:text-xs text-[#00D2FF]/70 font-sans">PTS</span>
+            </span>
+          </div>
+
           {/* Medidor HP de Energía Cilíndrico con Brillo Especular */}
           <div
             id="hud-energy"

@@ -37,6 +37,9 @@ export const GameJuiceOverlay: React.FC = () => {
           case 'skill':
             badgeStyle = 'bg-cyan-950/90 text-cyan-300 border-cyan-500/50 shadow-cyan-950/80';
             break;
+          case 'points':
+            badgeStyle = 'bg-cyan-950/95 text-[#00D2FF] border-[#00D2FF]/60 shadow-[0_0_16px_rgba(0,210,255,0.4)]';
+            break;
           case 'negative':
             badgeStyle = 'bg-rose-950/90 text-rose-300 border-rose-500/50 shadow-rose-950/80';
             break;

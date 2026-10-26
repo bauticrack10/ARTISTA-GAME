@@ -11,6 +11,7 @@ import {
 } from '../data/avatarPresets';
 import { ArtistAvatar } from './ArtistAvatar';
 import { StreamingEngine } from '../systems/StreamingEngine';
+import { MagneticPrimaryButton } from './ui';
 import {
   ArrowRight,
   User,
@@ -908,16 +909,15 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
           </div>
 
           <div className="flex items-center gap-2.5">
-            <button
-              type="button"
+            <MagneticPrimaryButton
               id="btn-quick-start-top"
               onClick={() => handleSubmit()}
-              className="game-btn-primary py-3 px-6 text-sm sm:text-base"
+              className="py-3 px-6 text-sm sm:text-base"
               title="Comenzar Carrera Directamente"
-            >
-              <span>Comenzar Carrera</span>
-              <ArrowRight className="w-4 h-4 text-[#032115] stroke-[2.5]" />
-            </button>
+              icon={<ArrowRight className="w-4 h-4 text-[#032115] stroke-[2.5]" />}
+              iconPosition="right"
+              label="Comenzar Carrera"
+            />
           </div>
         </div>
 
@@ -1845,14 +1845,15 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {/* Action Button - Primary Game CTA */}
-              <button
+              <MagneticPrimaryButton
                 type="submit"
                 id="btn-launch-career-bottom"
-                className="game-btn-primary w-full py-4 px-6 text-base tracking-wide"
-              >
-                <span>Comenzar Carrera de Artista</span>
-                <ArrowRight className="w-5 h-5 text-[#032115] stroke-[2.5]" />
-              </button>
+                fullWidth
+                className="py-4 px-6 text-base tracking-wide"
+                icon={<ArrowRight className="w-5 h-5 text-[#032115] stroke-[2.5]" />}
+                iconPosition="right"
+                label="Comenzar Carrera de Artista"
+              />
             </div>
           </div>
         </form>

@@ -1,13 +1,13 @@
 import confetti from 'canvas-confetti';
 
-export type HudTarget = 'money' | 'energy' | 'fans';
+export type HudTarget = 'money' | 'energy' | 'fans' | 'points';
 
 export interface FloatingItem {
   id: string;
   text: string;
   x: number;
   y: number;
-  type: 'money' | 'energy' | 'fans' | 'skill' | 'negative' | 'neutral';
+  type: 'money' | 'energy' | 'fans' | 'skill' | 'negative' | 'neutral' | 'points';
   targetHud?: HudTarget;
 }
 
@@ -146,9 +146,16 @@ class GameJuiceManager {
   }
 
   /**
-   * Pulso verde esmeralda / dorado en el borde de la tarjeta con partículas suaves luminosas
+   * Pulso verde esmeralda / dorado en el borde de la tarjeta con partículas suaves luminosas,
+   * y texto flotante "+Puntos" en fuente JetBrains Mono que viaja hacia el HUD superior con pop de escala.
    */
-  public triggerSuccess(elementOrId?: HTMLElement | string | null): void {
+  public triggerSuccess(
+    elementOrId?: HTMLElement | string | null,
+    options?: {
+      pointsText?: string;
+      targetHud?: HudTarget;
+    }
+  ): void {
     let el: HTMLElement | null = null;
     if (typeof elementOrId === 'string') {
       el = document.getElementById(elementOrId) || document.querySelector(elementOrId);
@@ -166,6 +173,17 @@ class GameJuiceManager {
     }
 
     this.triggerConfetti(el);
+
+    // Texto flotante hacia el HUD ("+Puntos" en JetBrains Mono por defecto)
+    const pointsText = options?.pointsText || '+Puntos';
+    const targetHud = options?.targetHud || 'points';
+
+    this.triggerFloatingNumber({
+      text: pointsText,
+      origin: el,
+      type: 'points',
+      targetHud
+    });
   }
 
   /**
