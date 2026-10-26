@@ -1181,21 +1181,19 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   ? `Energía insuficiente (${player.stats.energy}% / 15% requerida)`
                   : 'Grabar y publicar sencillo'
               }
-              className={`px-7 py-3 rounded-xl font-game text-sm font-black tracking-wide uppercase transition-all flex items-center justify-center gap-2.5 shrink-0 ${
-                isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15
-                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50 shadow-none'
-                  : 'bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] shadow-[0_4px_0_#009E65,0_8px_20px_rgba(0,229,153,0.35)] active:translate-y-1 active:shadow-[0_1px_0_#009E65] border border-emerald-300/60 cursor-pointer'
-              }`}
+              className="kit-btn kit-btn-emerald py-3 px-8 text-sm shrink-0"
             >
-              <Disc3 className={`w-4 h-4 ${isFundsInsufficient ? 'text-[#52525B]' : 'text-[#032115]'} ${isPublishing ? 'animate-spin' : ''}`} />
-              <span>
-                {isPublishing
-                  ? 'Publicando y Masterizando...'
-                  : isFundsInsufficient
-                  ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalSingleCost.toLocaleString('es-AR')})`
-                  : hasMusicVideo
-                  ? 'Grabar Single & Estrenar Videoclip'
-                  : 'Grabar & Publicar Single'}
+              <span className="kit-btn-content">
+                <Disc3 className={`w-4 h-4 ${isFundsInsufficient ? 'text-white/40' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
+                <span className="kit-btn-label">
+                  {isPublishing
+                    ? 'Publicando y Masterizando...'
+                    : isFundsInsufficient
+                    ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalSingleCost.toLocaleString('es-AR')})`
+                    : hasMusicVideo
+                    ? 'Grabar Single & Estrenar Videoclip'
+                    : 'Grabar & Publicar Single'}
+                </span>
               </span>
             </button>
           </div>
@@ -1582,19 +1580,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   ? 'Energía insuficiente (mín. 35%)'
                   : 'Publicar proyecto completo'
               }
-              className={`px-7 py-3 rounded-xl font-game text-sm font-black tracking-wide uppercase transition-all flex items-center justify-center gap-2.5 shrink-0 ${
-                isPublishing || isAlbumDisabled
-                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50 shadow-none'
-                  : 'bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] shadow-[0_4px_0_#009E65,0_8px_20px_rgba(0,229,153,0.35)] active:translate-y-1 active:shadow-[0_1px_0_#009E65] border border-emerald-300/60 cursor-pointer'
-              }`}
+              className="kit-btn kit-btn-emerald py-3 px-8 text-sm shrink-0"
             >
-              <Layers className={`w-4 h-4 ${isAlbumDisabled ? 'text-[#52525B]' : 'text-[#032115]'} ${isPublishing ? 'animate-spin' : ''}`} />
-              <span>
-                {isPublishing
-                  ? 'Publicando y Masterizando...'
-                  : isAlbumFundsInsufficient
-                  ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalAlbumCost.toLocaleString('es-AR')})`
-                  : 'Publicar Proyecto Completo'}
+              <span className="kit-btn-content">
+                <Layers className={`w-4 h-4 ${isAlbumDisabled ? 'text-white/40' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
+                <span className="kit-btn-label">
+                  {isPublishing
+                    ? 'Publicando y Masterizando...'
+                    : isAlbumFundsInsufficient
+                    ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalAlbumCost.toLocaleString('es-AR')})`
+                    : 'Publicar Proyecto Completo'}
+                </span>
               </span>
             </button>
           </div>

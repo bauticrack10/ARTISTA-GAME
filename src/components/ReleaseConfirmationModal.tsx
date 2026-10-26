@@ -12,6 +12,7 @@ import confetti from 'canvas-confetti';
 import { ReleaseConfirmationData } from '../types';
 import { formatMoney, formatReleaseDate } from '../utils/formatters';
 import { playSound } from '../utils/audioSystem';
+import { KitButton } from './ui/KitButton';
 
 export interface ReleaseConfirmationModalProps {
   data: ReleaseConfirmationData;
@@ -115,29 +116,31 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-fade-in font-sans">
-      <div className="bg-[#111114] border border-[#242429] max-w-lg w-full rounded-[6px] flex flex-col overflow-hidden text-[#F4F4F6] shadow-2xl relative my-auto">
-        {/* Modal Top Header Bar */}
-        <div className="px-5 py-3.5 border-b border-[#242429] bg-[#111114] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-[4px] bg-[#09090B] border border-emerald-500/40 text-[#00E599] flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-4 h-4 text-[#00E599]" />
-            </div>
-            <h2 className="text-sm font-bold text-[#F4F4F6] tracking-tight">
-              Lanzamiento Publicado
-            </h2>
-          </div>
+      <div className="kit-modal max-w-xl w-full flex flex-col text-[#F4F4F6] relative my-auto">
+        {/* Botón de cerrar .kit-close anclado absoluto en esquina superior derecha */}
+        <button
+          onClick={onClose}
+          className="kit-close"
+          aria-label="Cerrar confirmación"
+          title="Cerrar confirmación"
+        >
+          <X className="w-5 h-5 text-[#F4F0EA]" />
+        </button>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] transition-colors cursor-pointer"
-            title="Cerrar confirmación"
-          >
-            <X className="w-4 h-4" />
-          </button>
+        {/* Contenedor .kit-modal-header con reservas laterales simétricas de 72px a izquierda y derecha (px-[72px]) para centrado óptico sin colisionar con el botón de cierre */}
+        <div className="kit-modal-header px-[72px]">
+          <div className="kit-header-band kit-header-band-emerald text-[#032115]">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-[#032115]" />
+              <h2 className="kit-text-header text-base sm:text-lg tracking-wide uppercase">
+                ¡Lanzamiento Publicado!
+              </h2>
+            </div>
+          </div>
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 space-y-4">
+        <div className="p-5 sm:p-6 space-y-4">
           {/* Main Release Card (Cover + Metadata) */}
           <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-4 flex flex-col sm:flex-row items-center sm:items-start gap-4">
             {/* Thematic Cover Art Box */}
@@ -234,20 +237,21 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
         </div>
 
         {/* Modal Footer */}
-        <div className="px-5 py-3 border-t border-[#242429] bg-[#111114] flex items-center justify-end gap-3">
-          <button
+        <div className="px-6 py-4 border-t border-[#242429] bg-[#0E0F14] flex items-center justify-end gap-3">
+          <KitButton
+            variant="secondary"
+            size="md"
+            label="Cerrar"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-[#242429] bg-[#18181C] hover:bg-[#242429] text-xs font-sans font-medium text-[#8E8E99] hover:text-[#F4F4F6] transition-colors cursor-pointer"
-          >
-            Cerrar
-          </button>
-          <button
+          />
+          <KitButton
+            variant="emerald"
+            size="md"
+            label="Ir al Catálogo"
+            icon={<ArrowRight className="w-4 h-4" />}
+            iconPosition="right"
             onClick={handleClose}
-            className="bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-game font-black uppercase tracking-wider shadow-[0_3px_0_#009E65] active:translate-y-0.5 active:shadow-[0_1px_0_#009E65] border border-emerald-300/40 transition-all cursor-pointer flex items-center gap-2"
-          >
-            <span>Ir al Catálogo</span>
-            <ArrowRight className="w-4 h-4 text-[#032115]" />
-          </button>
+          />
         </div>
       </div>
     </div>

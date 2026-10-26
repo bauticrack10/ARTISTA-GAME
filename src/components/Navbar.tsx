@@ -197,18 +197,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
-          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Notablemente más grande, Verde Esmeralda */}
+          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Notablemente más grande, Verde Esmeralda con Física 3D */}
           <button
             id="btn-advance-cycle"
             onClick={() => {
               playSound('click');
               onAdvanceCycle(cycleMonths);
             }}
-            className="tap flex items-center gap-2.5 bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] px-5 sm:px-6 py-2.5 rounded-xl font-game text-xs sm:text-sm font-black tracking-wide uppercase cursor-pointer active:translate-y-1 active:shadow-[0_1px_0_#009E65] transition-all border border-emerald-300/60 shadow-[0_4px_0_#009E65,0_8px_20px_rgba(0,229,153,0.35)] whitespace-nowrap"
+            className="kit-btn kit-btn-emerald px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-black tracking-wide uppercase whitespace-nowrap"
             title="Procesar el ciclo seleccionado y simular el mundo"
           >
-            <Play className="w-4 h-4 fill-[#032115] text-[#032115] shrink-0" />
-            <span>Avanzar ({cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})</span>
+            <span className="kit-btn-content">
+              <Play className="w-4 h-4 fill-white text-white shrink-0" />
+              <span className="kit-btn-label">
+                Avanzar ({cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})
+              </span>
+            </span>
           </button>
         </div>
 
@@ -230,18 +234,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="font-extrabold font-sans tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
           </div>
 
-          {/* Medidor HP de Energía */}
+          {/* Medidor HP de Energía Cilíndrico con Brillo Especular */}
           <div
             className={`flex items-center gap-2 px-3 py-1.5 text-xs liquid-glass-pill ${energyStyle.bg} bg-black/40`}
             title={`Energía Vital: ${playerEnergy}%`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span className="font-extrabold font-sans tabular-nums">{playerEnergy}%</span>
-            <div className="w-8 h-2 bg-black/80 rounded-full border border-white/15 overflow-hidden shrink-0 hidden sm:block p-[1px]">
+            <div className="w-12 h-3.5 bg-[#0A0A0F] rounded-full border border-white/20 overflow-hidden shrink-0 hidden sm:block relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.85)]">
               <div
-                className={`h-full rounded-full transition-all duration-300 ${energyStyle.bar}`}
+                className={`h-full rounded-full transition-all duration-300 relative overflow-hidden shadow-[inset_0_-2px_0_rgba(0,0,0,0.4)] ${energyStyle.bar}`}
                 style={{ width: `${Math.min(100, Math.max(0, playerEnergy))}%` }}
-              />
+              >
+                {/* Brillo especular superior blanco al 20% */}
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/20 pointer-events-none" />
+              </div>
             </div>
           </div>
 

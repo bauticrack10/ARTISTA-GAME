@@ -58,13 +58,13 @@ export const EventModal: React.FC<EventModalProps> = ({
       className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-5 py-6 sm:py-10 overflow-y-auto animate-fade-in"
     >
       <div
-        className={`bg-[#111114] border ${
+        className={`kit-modal max-w-2xl w-full p-5 sm:p-8 space-y-6 text-[#F4F4F6] relative overflow-hidden my-auto ${
           importanceLevel === 5 || isCrisis
-            ? 'border-[#EF4444]'
+            ? 'border-2 border-[#EF4444]'
             : isBloqueoCreativo
-            ? 'border-[#F59E0B]'
-            : 'border-[#242429]'
-        } max-w-2xl w-full rounded-[6px] p-5 sm:p-8 space-y-6 text-[#F4F4F6] relative overflow-hidden my-auto shadow-2xl`}
+            ? 'border-2 border-[#F59E0B]'
+            : 'border-2 border-[#242429]'
+        }`}
       >
         {/* Top Header: Category, Rarity, Badges & Contextual Temporality */}
         <div className="space-y-4 relative z-10 border-b border-[#242429] pb-5">

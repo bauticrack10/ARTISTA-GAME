@@ -255,7 +255,8 @@ function runAllTests(): boolean {
       budgetProduction: 1000,
       budgetMarketing: 1000
     });
-    single1.streamsTotal = 250000; // Simulamos streams acumulados del lead single
+    single1.streamsTotal = 250000;
+    engine.getWorld().currentMonth = 2; // Simulamos streams acumulados del lead single
 
     const single2 = engine.releaseSong({
       title: 'Lead Single 2',
@@ -346,6 +347,7 @@ function runAllTests(): boolean {
 
     // 3.1 Publicar singles hasta alcanzar el límite anual (MAX_SINGLES_PER_YEAR = 5)
     for (let i = 1; i <= GameEngine.MAX_SINGLES_PER_YEAR; i++) {
+      engine.getWorld().currentMonth = i;
       const quotaBefore = engine.getSinglesQuotaInfo();
       assert(quotaBefore.releasedCount === i - 1, `Lanzamiento ${i}: Cupo utilizado antes de lanzar es ${i - 1}`);
       assert(quotaBefore.remainingQuota === GameEngine.MAX_SINGLES_PER_YEAR - (i - 1), `Lanzamiento ${i}: Cupo restante es ${GameEngine.MAX_SINGLES_PER_YEAR - (i - 1)}`);
@@ -373,6 +375,7 @@ function runAllTests(): boolean {
     let sixthSingleBlocked = false;
     let sixthSingleErrorMsg = '';
     try {
+      engine.getWorld().currentMonth = 6;
       engine.releaseSong({
         title: 'Single Excedente Prohibido',
         genreId: 'trap_latino',
