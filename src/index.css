@@ -178,6 +178,761 @@
   }
 }
 
+/* ==========================================================================
+   TACTILE GAME UI SYSTEM: 3D RELIEF BUTTONS, MODALS & CYLINDRICAL PROGRESS
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. BOTONES TÁCTILES 3D (.kit-btn, .kit-btn-label, .kit-btn-content)
+   -------------------------------------------------------------------------- */
+
+@utility kit-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-game-display, 'Russo One', sans-serif);
+  font-weight: 800;
+  font-size: 0.9375rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  /* Sombra sólida inferior de 5px */
+  box-shadow: 0 5px 0 var(--kit-btn-shadow, #009E65);
+  background-color: var(--kit-btn-bg, #00E599);
+  color: #FFFFFF;
+  transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1),
+              filter 0.12s ease;
+
+  &:hover {
+    filter: brightness(1.06);
+  }
+
+  /* Al presionarse (:active): desplazamiento translateY(5px) y reducción de sombra vertical a cero */
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(0.6);
+    transform: none;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Desplazamiento óptico de línea base de 5px al contenido del botón (.kit-btn-content: icono + texto juntos) */
+@utility kit-btn-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* Desplazamiento óptico de línea base de 5px para centrado sobre el relieve 3D */
+  transform: translateY(-2.5px);
+  margin-top: -2.5px;
+  pointer-events: none;
+  width: 100%;
+}
+
+/* Etiquetas de texto claras (.kit-btn-label) junto a los iconos */
+@utility kit-btn-label {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-game-display, 'Russo One', sans-serif);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  /* Texto blanco con contorno oscuro complementario al color del botón (nunca negro puro) */
+  text-shadow:
+    -1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
+     1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
+    -1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
+     1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
+     0px     2px    4px rgba(0, 0, 0, 0.45);
+  -webkit-text-stroke: 1px var(--kit-btn-contour, #064E3B);
+}
+
+/* Variantes de Color con Sombra Sólida 5px y Contorno Complementario (Nunca Negro Puro) */
+@utility kit-btn-primary {
+  --kit-btn-bg: #00E599;
+  --kit-btn-shadow: #009E65;
+  --kit-btn-contour: #064E3B; /* Verde esmeralda profundo complementario (nunca negro puro) */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-emerald {
+  --kit-btn-bg: #00E599;
+  --kit-btn-shadow: #009E65;
+  --kit-btn-contour: #064E3B;
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-danger {
+  --kit-btn-bg: #EF4444;
+  --kit-btn-shadow: #991B1B;
+  --kit-btn-contour: #7F1D1D; /* Rojo carmesí profundo complementario (nunca negro puro) */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-red {
+  --kit-btn-bg: #EF4444;
+  --kit-btn-shadow: #991B1B;
+  --kit-btn-contour: #7F1D1D;
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-warning {
+  --kit-btn-bg: #F59E0B;
+  --kit-btn-shadow: #B45309;
+  --kit-btn-contour: #78350F; /* Ámbar tostado complementario (nunca negro puro) */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-amber {
+  --kit-btn-bg: #F59E0B;
+  --kit-btn-shadow: #B45309;
+  --kit-btn-contour: #78350F;
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-info {
+  --kit-btn-bg: #00D2FF;
+  --kit-btn-shadow: #0284C7;
+  --kit-btn-contour: #0C4A6E; /* Azul cian marino oscuro complementario (nunca negro puro) */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-cyan {
+  --kit-btn-bg: #00D2FF;
+  --kit-btn-shadow: #0284C7;
+  --kit-btn-contour: #0C4A6E;
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-orange {
+  --kit-btn-bg: #FF4F00;
+  --kit-btn-shadow: #B33600;
+  --kit-btn-contour: #7A2200; /* Terracota oscuro complementario (nunca negro puro) */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-secondary {
+  --kit-btn-bg: #222330;
+  --kit-btn-shadow: #14141E;
+  --kit-btn-contour: #12131A; /* Pizarra carbón complementaria (nunca negro puro) */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  border-color: rgba(255, 255, 255, 0.16);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+@utility kit-btn-slate {
+  --kit-btn-bg: #222330;
+  --kit-btn-shadow: #14141E;
+  --kit-btn-contour: #12131A;
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  border-color: rgba(255, 255, 255, 0.16);
+  &:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. MODALES DE JUEGO (.kit-modal, .kit-modal-header, .kit-header-band, .kit-close)
+   -------------------------------------------------------------------------- */
+
+@utility kit-modal {
+  position: relative;
+  background-color: #111114;
+  /* Bordes redondeados gruesos */
+  border-radius: 20px;
+  border: 2px solid #242429;
+  /* Sombras profundas */
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85),
+              0 12px 28px -5px rgba(0, 0, 0, 0.65),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  max-width: 100%;
+}
+
+@utility kit-modal-header {
+  position: relative;
+  width: 100%;
+  /* Contenedor .kit-modal-header con reservas laterales simétricas de 72px a izquierda y derecha (px-[72px]) para centrado óptico sin colisionar con el botón de cierre */
+  padding-left: 72px;
+  padding-right: 72px;
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+@utility kit-header-band {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Banda saturada para el título (.kit-header-band) */
+  background-color: #1A1B28;
+  border-radius: 10px;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22),
+              0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+@utility kit-header-band-emerald {
+  background: linear-gradient(180deg, #00FFAC 0%, #00E599 40%, #00B373 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+              0 4px 14px rgba(0, 229, 153, 0.35);
+}
+
+@utility kit-header-band-rec {
+  background: linear-gradient(180deg, #F87171 0%, #EF4444 40%, #DC2626 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+              0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+@utility kit-header-band-amber {
+  background: linear-gradient(180deg, #FCD34D 0%, #F59E0B 40%, #D97706 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+              0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+@utility kit-header-band-cyan {
+  background: linear-gradient(180deg, #38BDF8 0%, #00D2FF 40%, #0284C7 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+              0 4px 14px rgba(0, 210, 255, 0.35);
+}
+
+@utility kit-close {
+  /* Botón de cerrar .kit-close anclado absoluto en esquina superior derecha */
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #1E1F2C;
+  border: 1.5px solid rgba(255, 255, 255, 0.20);
+  box-shadow: 0 3px 0 #12131C, 0 4px 10px rgba(0, 0, 0, 0.5);
+  color: #F4F0EA;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease;
+
+  &:hover {
+    background-color: #292B3C;
+    color: #FFFFFF;
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 #12131C;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. BARRAS DE PROGRESO Y TEMPORIZADORES (.kit-progress)
+   -------------------------------------------------------------------------- */
+
+@utility kit-progress {
+  position: relative;
+  width: 100%;
+  /* Grosor fijo de 40px con flex-shrink: 0 en el carril */
+  height: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background-color: #0A0A0F;
+  border: 1.5px solid #242436;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* Variante compacta de 30px con flex-shrink: 0 en el carril */
+@utility kit-progress-compact {
+  height: 30px;
+  min-height: 30px;
+  flex-shrink: 0;
+}
+
+@utility kit-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--kit-progress-color, #00E599);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  /* Bisel oscuro inferior para dar volumen cilíndrico */
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.40);
+
+  /* Brillo especular superior: blanco al 20% de opacidad en la mitad superior del relleno */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: rgba(255, 255, 255, 0.20);
+    border-radius: inherit;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    pointer-events: none;
+  }
+
+  /* Bisel oscuro inferior para dar volumen cilíndrico */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.45));
+    border-radius: inherit;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    pointer-events: none;
+  }
+}
+
+@utility kit-progress-fill-emerald {
+  --kit-progress-color: #00E599;
+  background-color: var(--kit-progress-color);
+}
+
+@utility kit-progress-fill-rec {
+  --kit-progress-color: #EF4444;
+  background-color: var(--kit-progress-color);
+}
+
+@utility kit-progress-fill-amber {
+  --kit-progress-color: #F59E0B;
+  background-color: var(--kit-progress-color);
+}
+
+@utility kit-progress-fill-cyan {
+  --kit-progress-color: #00D2FF;
+  background-color: var(--kit-progress-color);
+}
+
+@utility kit-progress-fill-orange {
+  --kit-progress-color: #FF4F00;
+  background-color: var(--kit-progress-color);
+}
+
+@utility kit-progress-label {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   DIRECT CLASS FALLBACKS (Garantiza interoperabilidad completa con CSS vanilla)
+   ========================================================================== */
+.kit-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-game-display, 'Russo One', sans-serif);
+  font-weight: 800;
+  font-size: 0.9375rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  /* Sombra sólida inferior de 5px */
+  box-shadow: 0 5px 0 var(--kit-btn-shadow, #009E65);
+  background-color: var(--kit-btn-bg, #00E599);
+  color: #FFFFFF;
+  transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1),
+              filter 0.12s ease;
+}
+
+.kit-btn:hover {
+  filter: brightness(1.06);
+}
+
+/* Al presionarse (:active): desplazamiento translateY(5px) y reducción de sombra vertical a cero */
+.kit-btn:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.kit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  transform: none;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Desplazamiento óptico de línea base de 5px al contenido del botón (.kit-btn-content: icono + texto juntos) */
+.kit-btn-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* Desplazamiento óptico de línea base de 5px para centrado sobre el relieve 3D */
+  transform: translateY(-2.5px);
+  margin-top: -2.5px;
+  pointer-events: none;
+  width: 100%;
+}
+
+/* Etiquetas de texto claras (.kit-btn-label) junto a los iconos */
+.kit-btn-label {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-game-display, 'Russo One', sans-serif);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  /* Texto blanco con contorno oscuro complementario al color del botón (nunca negro puro) */
+  text-shadow:
+    -1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
+     1.25px -1.25px 0 var(--kit-btn-contour, #064E3B),
+    -1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
+     1.25px  1.25px 0 var(--kit-btn-contour, #064E3B),
+     0px     2px    4px rgba(0, 0, 0, 0.45);
+  -webkit-text-stroke: 1px var(--kit-btn-contour, #064E3B);
+}
+
+.kit-btn-primary, .kit-btn-emerald {
+  --kit-btn-bg: #00E599;
+  --kit-btn-shadow: #009E65;
+  --kit-btn-contour: #064E3B; /* Verde esmeralda profundo complementario */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+}
+.kit-btn-primary:active, .kit-btn-emerald:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.kit-btn-danger, .kit-btn-red {
+  --kit-btn-bg: #EF4444;
+  --kit-btn-shadow: #991B1B;
+  --kit-btn-contour: #7F1D1D; /* Rojo carmesí profundo complementario */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+}
+.kit-btn-danger:active, .kit-btn-red:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.kit-btn-warning, .kit-btn-amber {
+  --kit-btn-bg: #F59E0B;
+  --kit-btn-shadow: #B45309;
+  --kit-btn-contour: #78350F; /* Ámbar tostado complementario */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+}
+.kit-btn-warning:active, .kit-btn-amber:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.kit-btn-info, .kit-btn-cyan {
+  --kit-btn-bg: #00D2FF;
+  --kit-btn-shadow: #0284C7;
+  --kit-btn-contour: #0C4A6E; /* Azul cian marino complementario */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+}
+.kit-btn-info:active, .kit-btn-cyan:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.kit-btn-orange {
+  --kit-btn-bg: #FF4F00;
+  --kit-btn-shadow: #B33600;
+  --kit-btn-contour: #7A2200; /* Terracota oscuro complementario */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+}
+.kit-btn-orange:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.kit-btn-secondary, .kit-btn-slate {
+  --kit-btn-bg: #222330;
+  --kit-btn-shadow: #14141E;
+  --kit-btn-contour: #12131A; /* Pizarra carbón complementaria */
+  background-color: var(--kit-btn-bg);
+  box-shadow: 0 5px 0 var(--kit-btn-shadow);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.kit-btn-secondary:active, .kit-btn-slate:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 transparent;
+}
+
+/* Modales */
+.kit-modal {
+  position: relative;
+  background-color: #111114;
+  /* Bordes redondeados gruesos */
+  border-radius: 20px;
+  border: 2px solid #242429;
+  /* Sombras profundas */
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85),
+              0 12px 28px -5px rgba(0, 0, 0, 0.65),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.kit-modal-header {
+  position: relative;
+  width: 100%;
+  /* Contenedor .kit-modal-header con reservas laterales simétricas de 72px a izquierda y derecha (px-[72px]) para centrado óptico sin colisionar con el botón de cierre */
+  padding-left: 72px;
+  padding-right: 72px;
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.kit-header-band {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Banda saturada para el título (.kit-header-band) */
+  background-color: #1A1B28;
+  border-radius: 10px;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22),
+              0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.kit-close {
+  /* Botón de cerrar .kit-close anclado absoluto en esquina superior derecha */
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #1E1F2C;
+  border: 1.5px solid rgba(255, 255, 255, 0.20);
+  box-shadow: 0 3px 0 #12131C, 0 4px 10px rgba(0, 0, 0, 0.5);
+  color: #F4F0EA;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease;
+}
+
+.kit-close:hover {
+  background-color: #292B3C;
+  color: #FFFFFF;
+}
+
+.kit-close:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 #12131C;
+}
+
+/* Barras de Progreso */
+.kit-progress {
+  position: relative;
+  width: 100%;
+  /* Grosor fijo de 40px con flex-shrink: 0 en el carril */
+  height: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background-color: #0A0A0F;
+  border: 1.5px solid #242436;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* Variante compacta de 30px con flex-shrink: 0 en el carril */
+.kit-progress.kit-progress-compact,
+.kit-progress-compact {
+  height: 30px;
+  min-height: 30px;
+  flex-shrink: 0;
+}
+
+.kit-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--kit-progress-color, #00E599);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  /* Bisel oscuro inferior para dar volumen cilíndrico */
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.40);
+}
+
+/* Brillo especular superior: blanco al 20% de opacidad en la mitad superior del relleno */
+.kit-progress-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: rgba(255, 255, 255, 0.20);
+  border-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  pointer-events: none;
+}
+
+/* Bisel oscuro inferior para dar volumen cilíndrico */
+.kit-progress-fill::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.45));
+  border-radius: inherit;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  pointer-events: none;
+}
+
+.kit-progress-label {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
 /* Edge fade that only appears on the side where a horizontal strip has hidden content. */
 @property --fade-l {
   syntax: '<length>';
