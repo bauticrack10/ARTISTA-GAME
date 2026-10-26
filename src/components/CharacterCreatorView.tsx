@@ -895,13 +895,13 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F4F4F6] tracking-tight flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <h1 className="kit-text-header text-2xl sm:text-3xl flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span>Creación del Artista</span>
-                <span className="whitespace-nowrap text-xs liquid-glass-pill text-[#FF4F00] border border-[#FF4F00]/30 px-3 py-0.5 rounded-[8px] font-sans font-bold">
+                <span className="whitespace-nowrap text-xs liquid-glass-pill text-[#00E599] border border-[#00E599]/35 px-3 py-1 rounded-[8px] font-sans font-bold">
                   Año 1 • 2026
                 </span>
               </h1>
-              <p className="text-xs text-[#8E8E99] mt-0.5 font-sans">
+              <p className="text-sm text-[#8E8E99] mt-1 font-sans">
                 Definí tu plaza de origen, sonido de cabecera, horas de estudio iniciales y presupuesto de arranque.
               </p>
             </div>
@@ -912,11 +912,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               type="button"
               id="btn-quick-start-top"
               onClick={() => handleSubmit()}
-              className="w-full sm:w-auto justify-center flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-xs shadow-lg shadow-[#FF4F00]/25 active:translate-y-[1px] transition-all cursor-pointer"
+              className="game-btn-primary py-3 px-6 text-sm sm:text-base"
               title="Comenzar Carrera Directamente"
             >
               <span>Comenzar Carrera</span>
-              <ArrowRight className="w-4 h-4 text-white" />
+              <ArrowRight className="w-4 h-4 text-[#032115] stroke-[2.5]" />
             </button>
           </div>
         </div>
@@ -1844,14 +1844,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
               </div>
 
-              {/* Action Button - Primary CTA */}
+              {/* Action Button - Primary Game CTA */}
               <button
                 type="submit"
                 id="btn-launch-career-bottom"
-                className="w-full py-3.5 px-5 rounded-[12px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-sans font-bold text-sm flex items-center justify-center gap-2 shadow-xl shadow-[#FF4F00]/30 active:scale-[0.99] transition-all cursor-pointer"
+                className="game-btn-primary w-full py-4 px-6 text-base tracking-wide"
               >
                 <span>Comenzar Carrera de Artista</span>
-                <ArrowRight className="w-4 h-4 text-white" />
+                <ArrowRight className="w-5 h-5 text-[#032115] stroke-[2.5]" />
               </button>
             </div>
           </div>

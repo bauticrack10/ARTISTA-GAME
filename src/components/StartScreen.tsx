@@ -53,14 +53,14 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       {/* Top Bar / Brand */}
       <header className="w-full px-6 sm:px-10 lg:px-16 py-6 flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-[4px] bg-[#141417] border border-[#26262B] text-[#FF2A4B] flex items-center justify-center">
-            <Disc3 className="w-5 h-5 animate-spin-slow" />
+          <div className="w-10 h-10 rounded-[8px] bg-[#14141F] border border-white/20 text-[#00E599] flex items-center justify-center shadow-lg">
+            <Disc3 className="w-6 h-6 animate-spin-slow text-[#00E599]" />
           </div>
           <div>
-            <span className="text-base font-display font-extrabold tracking-tight text-[#F4F0EA] block leading-tight">
+            <span className="kit-text-header text-lg sm:text-xl block leading-tight">
               EL ARTISTA
             </span>
-            <span className="text-xs text-[#8E8E99] font-sans font-medium tracking-normal">
+            <span className="text-xs text-[#8E8E99] font-sans font-semibold tracking-wider uppercase">
               Simulador de Carrera Musical
             </span>
           </div>
@@ -70,26 +70,26 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       {/* Main Hero & Menu */}
       <main className="max-w-4xl w-full mx-auto px-6 py-12 flex flex-col items-center text-center my-auto space-y-8 z-10">
         <div className="space-y-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold tracking-tight text-[#F4F0EA] leading-[1.05]">
+          <h1 className="kit-text-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight">
             Construí tu Legado{' '}
-            <span className="text-[#FF2A4B]">
+            <span className="text-[#00E599] text-shadow-[0_4px_24px_rgba(0,229,153,0.6)]">
               Musical
             </span>
           </h1>
-          <p className="text-[#8E8E99] font-sans text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-[#A1A1AA] font-sans text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Arrancás grabando maquetas con lo justo y negociando cada punto de regalía. Vos decidís si retenés tus másters de forma independiente o firmás con una multinacional para financiar giras de estadio y pelear el #1 global.
           </p>
         </div>
 
         {/* Grouped Action Buttons */}
-        <div className="w-full max-w-md space-y-3 pt-2">
-          {/* NUEVA CARRERA (Primary Action - REC Red) */}
+        <div className="w-full max-w-md space-y-4 pt-2">
+          {/* NUEVA CARRERA (Primary Action - Large Vibrant Emerald Green Game CTA) */}
           <button
             id="btn-start-new-career"
             onClick={onNewCareer}
-            className="w-full py-3.5 px-6 rounded-[4px] bg-[#FF2A4B] hover:bg-[#E11D48] text-white font-sans font-semibold text-sm flex items-center justify-center gap-2.5 transition-colors active:translate-y-[1px] cursor-pointer shadow-sm border border-[#FF4A67]/30"
+            className="game-btn-primary w-full py-4 px-8 text-base tracking-wider"
           >
-            <UserPlus className="w-4 h-4 text-white" />
+            <UserPlus className="w-5 h-5 text-[#032115] stroke-[2.5]" />
             <span>Iniciar Nueva Carrera</span>
           </button>
 
@@ -98,24 +98,24 @@ export const StartScreen: React.FC<StartScreenProps> = ({
             <button
               id="btn-continue-career"
               onClick={onContinue}
-              className="w-full p-3.5 rounded-[4px] bg-[#141417] hover:bg-[#1C1C21] border border-[#26262B] hover:border-[#3F3F46] text-left transition-colors cursor-pointer group"
+              className="w-full p-4 rounded-[10px] bg-[#141522]/90 hover:bg-[#1C1E30] border border-white/15 hover:border-[#00E599]/50 text-left transition-all cursor-pointer group shadow-lg shadow-black/40"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
-                  <Play className="w-3.5 h-3.5 text-[#10B981] fill-current" />
-                  <span className="font-semibold text-[#F4F0EA] text-xs font-sans">
+                  <Play className="w-4 h-4 text-[#00E599] fill-current" />
+                  <span className="font-bold text-[#F4F0EA] text-sm font-sans tracking-wide">
                     Continuar Partida
                   </span>
                 </div>
-                <span className="text-2xs text-[#8E8E99] font-sans">
-                  {TimeSystem.getMonthName(savedGame.month || 1)} <span className="font-sans tabular-nums">{savedGame.year || 2026}</span> • Año <span className="font-sans tabular-nums">{savedGame.careerYear || 1}</span>
+                <span className="text-xs text-[#8E8E99] font-sans">
+                  {TimeSystem.getMonthName(savedGame.month || 1)} <span className="font-sans tabular-nums font-semibold">{savedGame.year || 2026}</span> • Año <span className="font-sans tabular-nums font-semibold">{savedGame.careerYear || 1}</span>
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs text-[#8E8E99] pl-5.5">
-                <span className="font-medium text-[#F4F0EA] font-sans truncate max-w-[180px]">
+              <div className="flex items-center justify-between text-xs text-[#8E8E99] pl-6">
+                <span className="font-semibold text-[#F4F0EA] font-sans truncate max-w-[180px]">
                   {savedGame.player.name || 'Artista'}
                 </span>
-                <span className="font-sans font-bold text-[#10B981] tabular-nums">
+                <span className="font-sans font-bold text-[#00E599] tabular-nums text-sm">
                   ${(savedGame.player.stats?.funds ?? 0).toLocaleString('es-AR')}
                 </span>
               </div>

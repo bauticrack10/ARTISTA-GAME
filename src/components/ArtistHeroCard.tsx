@@ -161,8 +161,8 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
           </div>
 
           <div className="space-y-2 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-[-0.04em] text-[#F4F4F6] leading-none">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="kit-text-header font-game text-2xl sm:text-3xl tracking-wide leading-none">
                 {player?.name || 'Artista'}
               </h1>
 

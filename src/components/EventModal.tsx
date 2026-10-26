@@ -162,7 +162,7 @@ export const EventModal: React.FC<EventModalProps> = ({
               <span className="text-xs text-[#8E8E99] uppercase font-sans tracking-wider block">
                 {player?.name || 'Artista'} • {temporality.badge}
               </span>
-              <h2 id="event-dialog-title" className="text-xl sm:text-2xl font-bold tracking-tight text-[#F4F4F6] leading-tight pt-0.5">
+              <h2 id="event-dialog-title" className="kit-text-header font-game text-xl sm:text-2xl tracking-wide leading-tight pt-0.5">
                 {event?.title || 'Evento'}
               </h2>
             </div>

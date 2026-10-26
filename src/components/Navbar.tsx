@@ -117,61 +117,61 @@ export const Navbar: React.FC<NavbarProps> = ({
   const getEnergyBadge = () => {
     if (playerEnergy >= 75) {
       return {
-        bg: 'bg-[#141417] border-[#26262B] text-[#F4F0EA]',
-        bar: 'bg-[#10B981]'
+        bg: 'border-emerald-500/30 text-emerald-300',
+        bar: 'bg-gradient-to-r from-emerald-500 to-[#00E599]'
       };
     } else if (playerEnergy >= 35) {
       return {
-        bg: 'bg-amber-500/10 border-amber-500/30 text-amber-300',
-        bar: 'bg-amber-400'
+        bg: 'border-amber-500/30 text-amber-300',
+        bar: 'bg-gradient-to-r from-amber-500 to-amber-300'
       };
     }
     return {
-      bg: 'bg-rose-500/15 border-rose-500/40 text-rose-300',
-      bar: 'bg-rose-500'
+      bg: 'border-rose-500/40 text-rose-300',
+      bar: 'bg-gradient-to-r from-rose-600 to-rose-400'
     };
   };
 
   const energyStyle = getEnergyBadge();
 
   return (
-    <header className="sticky top-0 z-40 liquid-glass-header text-[#F4F0EA] select-none">
-      {/* FILA 1: Marca, Control de Tiempo y Recursos Esenciales */}
-      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-2 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3">
-        {/* Izquierda: Logo + Fecha Actual */}
+    <header className="sticky top-0 z-40 liquid-glass-header text-[#F4F0EA] select-none border-b border-white/10 shadow-lg">
+      {/* FILA 1: HUD de Videojuego - Marca, Control de Turno Primario y Recursos */}
+      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-2.5 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3">
+        {/* Izquierda: Logo + Indicador de Ciclo Actual */}
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => {
               playSound('click');
               onReturnToTitle();
             }}
-            className="tap flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer text-left"
+            className="tap flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer text-left group"
             title="Volver al Menú Principal"
           >
-            <div className="w-7 h-7 rounded-[4px] bg-[#FF4F00] text-white flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-              <Disc3 className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-[8px] bg-gradient-to-b from-[#FF5F1A] to-[#FF3B00] text-white flex items-center justify-center shrink-0 shadow-[0_2px_0_#992500] group-hover:scale-105 transition-transform">
+              <Disc3 className="w-4 h-4 text-white animate-spin-slow" />
             </div>
-            <span className="font-display font-extrabold tracking-tight text-[#F4F0EA] text-xs leading-none">
+            <span className="kit-text-header font-game text-sm tracking-wider">
               EL ARTISTA
             </span>
           </button>
 
-          <div className="h-4 w-px bg-white/15 hidden sm:block" />
+          <div className="h-5 w-px bg-white/15 hidden sm:block" />
 
           <div
-            className="flex items-center gap-2 liquid-glass-pill px-3 py-1 text-xs whitespace-nowrap font-sans tabular-nums"
+            className="flex items-center gap-2 liquid-glass-pill px-3 py-1.5 text-xs whitespace-nowrap font-sans tabular-nums border border-white/10"
             title={`Fecha actual: ${monthName} ${currentYear}`}
           >
-            <span className="w-2 h-2 rounded-[2px] bg-[#10B981] shrink-0" />
-            <span className="font-bold text-[#F4F0EA]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E599] shrink-0 shadow-[0_0_8px_rgba(0,229,153,0.8)]" />
+            <span className="font-extrabold text-[#F4F0EA]">
               {monthName} {currentYear}
             </span>
           </div>
         </div>
 
-        {/* Centro: Avance de Tiempo Directo */}
-        <div className="order-last lg:order-none w-full lg:w-auto flex items-center gap-2 shrink-0 justify-center">
-          <div className="flex items-center liquid-glass-pill p-0.5 text-xs font-semibold">
+        {/* Centro: Selector de Período y Botón de Acción Primaria de Videojuego */}
+        <div className="order-last lg:order-none w-full lg:w-auto flex items-center gap-2.5 shrink-0 justify-center">
+          <div className="flex items-center liquid-glass-pill p-1 text-xs font-semibold border border-white/10 bg-black/40">
             {([
               { val: 1, label: '1M', title: 'Avanzar 1 Mes' },
               { val: 3, label: '3M', title: 'Avanzar 3 Meses' },
@@ -185,9 +185,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setCycleMonths(opt.val);
                 }}
                 aria-pressed={cycleMonths === opt.val}
-                className={`min-h-7 px-2.5 py-0.5 rounded-[4px] font-sans transition-all cursor-pointer text-xs ${
+                className={`min-h-7 px-2.5 py-0.5 rounded-[6px] font-sans transition-all cursor-pointer text-xs ${
                   cycleMonths === opt.val
-                    ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                    ? 'bg-white/20 text-[#00E599] font-black border border-[#00E599]/40 shadow-sm'
                     : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
                 }`}
                 title={opt.title}
@@ -197,47 +197,49 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
+          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Notablemente más grande, Verde Esmeralda */}
           <button
             id="btn-advance-cycle"
             onClick={() => {
               playSound('click');
               onAdvanceCycle(cycleMonths);
             }}
-            className="tap flex items-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white px-3.5 py-1.5 rounded-[6px] font-sans text-xs font-semibold cursor-pointer active:translate-y-[1px] transition-all border border-white/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_4px_12px_rgba(255,79,0,0.35)] whitespace-nowrap"
-            title="Procesar el período seleccionado"
+            className="tap flex items-center gap-2.5 bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] px-5 sm:px-6 py-2.5 rounded-xl font-game text-xs sm:text-sm font-black tracking-wide uppercase cursor-pointer active:translate-y-1 active:shadow-[0_1px_0_#009E65] transition-all border border-emerald-300/60 shadow-[0_4px_0_#009E65,0_8px_20px_rgba(0,229,153,0.35)] whitespace-nowrap"
+            title="Procesar el ciclo seleccionado y simular el mundo"
           >
-            <Play className="w-3.5 h-3.5 fill-white text-white shrink-0" />
+            <Play className="w-4 h-4 fill-[#032115] text-[#032115] shrink-0" />
             <span>Avanzar ({cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})</span>
           </button>
         </div>
 
-        {/* Derecha: 3 Recursos Esenciales (Fondos, Fans, Energía) + Teléfono + Utilidades */}
+        {/* Derecha: HUD de Recursos (Fondos, Fans, Medidor HP de Energía) + Utilidades */}
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto lg:ml-0 flex-wrap sm:flex-nowrap">
           <div
-            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1"
+            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-emerald-500/25 bg-[#00E599]/10"
             title={`Fondos Disponibles: ${formatMoney(playerFunds)}`}
           >
-            <DollarSign className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-            <span className="font-bold text-[#10B981] font-sans tabular-nums whitespace-nowrap">{formatMoney(playerFunds)}</span>
+            <DollarSign className="w-3.5 h-3.5 text-[#00E599] shrink-0" />
+            <span className="font-extrabold text-[#00E599] font-sans tabular-nums whitespace-nowrap">{formatMoney(playerFunds)}</span>
           </div>
 
           <div
-            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1"
+            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10"
             title={`Fans: ${playerFans.toLocaleString('es-AR')} • Oyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}`}
           >
             <Users className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
-            <span className="font-bold font-sans tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
+            <span className="font-extrabold font-sans tabular-nums text-[#F4F0EA]">{formatFans(playerFans)}</span>
           </div>
 
+          {/* Medidor HP de Energía */}
           <div
-            className={`flex items-center gap-1.5 px-3 py-1 text-xs liquid-glass-pill ${energyStyle.bg}`}
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs liquid-glass-pill ${energyStyle.bg} bg-black/40`}
             title={`Energía Vital: ${playerEnergy}%`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="font-bold font-sans tabular-nums">{playerEnergy}%</span>
-            <div className="w-5 h-1.5 bg-white/10 rounded-[2px] overflow-hidden shrink-0 hidden sm:block">
+            <span className="font-extrabold font-sans tabular-nums">{playerEnergy}%</span>
+            <div className="w-8 h-2 bg-black/80 rounded-full border border-white/15 overflow-hidden shrink-0 hidden sm:block p-[1px]">
               <div
-                className={`h-full rounded-[2px] transition-all duration-300 ${energyStyle.bar}`}
+                className={`h-full rounded-full transition-all duration-300 ${energyStyle.bar}`}
                 style={{ width: `${Math.min(100, Math.max(0, playerEnergy))}%` }}
               />
             </div>
@@ -249,24 +251,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onOpenPhone?.();
             }}
-            className="tap relative flex items-center gap-1.5 px-3 py-1 rounded-[6px] liquid-glass-pill hover:border-white/30 text-xs transition-colors cursor-pointer shrink-0 text-[#F4F0EA]"
+            className="tap relative flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] liquid-glass-pill hover:border-white/30 text-xs transition-colors cursor-pointer shrink-0 text-[#F4F0EA]"
             title="Abrir Smartphone (DMs, TrendX y Banco)"
           >
             <Smartphone className="w-3.5 h-3.5 text-[#8E8E99] shrink-0" />
             <span className="hidden xl:inline font-sans text-xs text-[#8E8E99]">Teléfono</span>
             {(world?.unreadPhoneCount ?? 0) > 0 && (
-              <span className="w-4 h-4 rounded-[2px] bg-[#FF4F00] text-white text-3xs font-sans font-bold flex items-center justify-center">
+              <span className="w-4 h-4 rounded-[3px] bg-[#FF4F00] text-white text-3xs font-sans font-black flex items-center justify-center">
                 {world.unreadPhoneCount}
               </span>
             )}
           </button>
 
-          <div className="flex items-center gap-1 liquid-glass-pill p-0.5">
+          <div className="flex items-center gap-1 liquid-glass-pill p-1">
             <button
               id="btn-toggle-audio-sfx"
               onClick={handleToggleSound}
               aria-pressed={soundEnabled}
-              className={`p-1 rounded-[3px] transition-all cursor-pointer ${
+              className={`p-1.5 rounded-[4px] transition-all cursor-pointer ${
                 soundEnabled ? 'text-emerald-400 bg-emerald-500/10' : 'text-[#52525B] hover:text-[#8E8E99]'
               }`}
               title={soundEnabled ? 'Silenciar Audio' : 'Activar Audio'}
@@ -279,7 +281,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 playSound('click');
                 setIsSettingsOpen(true);
               }}
-              className="p-1 rounded-[3px] text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-1.5 rounded-[4px] text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/10 transition-colors cursor-pointer"
               title="Ajustes y Guardado"
             >
               <Settings className="w-3.5 h-3.5" />

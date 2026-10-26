@@ -763,8 +763,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
         <form onSubmit={handleCreateSingle} className="liquid-glass-card p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2">
             <div>
-              <h2 className="text-lg font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
-                <Mic className="w-5 h-5 text-[#FF2A4B]" />
+              <h2 className="kit-text-header font-game text-lg tracking-wide text-[#F4F0EA] flex items-center gap-2">
+                <Mic className="w-5 h-5 text-[#00E599]" />
                 Componer Nuevo Single
               </h2>
               <p className="text-xs text-[#8E8E99] mt-0.5">
@@ -1181,13 +1181,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   ? `Energía insuficiente (${player.stats.energy}% / 15% requerida)`
                   : 'Grabar y publicar sencillo'
               }
-              className={`px-5 py-2.5 rounded-[4px] text-sm font-bold transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-7 py-3 rounded-xl font-game text-sm font-black tracking-wide uppercase transition-all flex items-center justify-center gap-2.5 shrink-0 ${
                 isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15
-                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50'
-                  : 'bg-[#FF2A4B] hover:bg-[#E11D48] text-white active:translate-y-[1px] cursor-pointer'
+                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50 shadow-none'
+                  : 'bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] shadow-[0_4px_0_#009E65,0_8px_20px_rgba(0,229,153,0.35)] active:translate-y-1 active:shadow-[0_1px_0_#009E65] border border-emerald-300/60 cursor-pointer'
               }`}
             >
-              <Disc3 className={`w-4 h-4 ${isFundsInsufficient ? 'text-[#52525B]' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
+              <Disc3 className={`w-4 h-4 ${isFundsInsufficient ? 'text-[#52525B]' : 'text-[#032115]'} ${isPublishing ? 'animate-spin' : ''}`} />
               <span>
                 {isPublishing
                   ? 'Publicando y Masterizando...'
@@ -1206,8 +1206,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
       {activeTab === 'album' && (
         <form onSubmit={handleCreateAlbum} className="liquid-glass-card p-6 space-y-6">
           <div className="pb-2">
-            <h2 className="text-lg font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
-              <Layers className="w-5 h-5 text-[#FF2A4B]" />
+            <h2 className="kit-text-header font-game text-lg tracking-wide text-[#F4F0EA] flex items-center gap-2">
+              <Layers className="w-5 h-5 text-[#00E599]" />
               Estudio de Composición de Álbumes & Proyectos
             </h2>
             <p className="text-xs text-[#8E8E99] mt-0.5">
@@ -1582,13 +1582,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   ? 'Energía insuficiente (mín. 35%)'
                   : 'Publicar proyecto completo'
               }
-              className={`px-6 py-2.5 rounded-[4px] text-sm font-bold transition-all flex items-center justify-center gap-2 shrink-0 ${
+              className={`px-7 py-3 rounded-xl font-game text-sm font-black tracking-wide uppercase transition-all flex items-center justify-center gap-2.5 shrink-0 ${
                 isPublishing || isAlbumDisabled
-                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50'
-                  : 'bg-[#FF2A4B] hover:bg-[#E11D48] text-white active:translate-y-[1px] cursor-pointer'
+                  ? 'bg-[#141417] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-50 shadow-none'
+                  : 'bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] shadow-[0_4px_0_#009E65,0_8px_20px_rgba(0,229,153,0.35)] active:translate-y-1 active:shadow-[0_1px_0_#009E65] border border-emerald-300/60 cursor-pointer'
               }`}
             >
-              <Layers className={`w-4 h-4 ${isAlbumDisabled ? 'text-[#52525B]' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
+              <Layers className={`w-4 h-4 ${isAlbumDisabled ? 'text-[#52525B]' : 'text-[#032115]'} ${isPublishing ? 'animate-spin' : ''}`} />
               <span>
                 {isPublishing
                   ? 'Publicando y Masterizando...'
@@ -1606,8 +1606,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
         <div className="liquid-glass-card p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
             <div>
-              <h2 className="text-xl font-display font-bold tracking-tight text-[#F4F0EA] flex items-center gap-2">
-                <Music2 className="w-5 h-5 text-[#FF2A4B]" />
+              <h2 className="kit-text-header font-game text-xl tracking-wide text-[#F4F0EA] flex items-center gap-2">
+                <Music2 className="w-5 h-5 text-[#00E599]" />
                 Discografía & Catálogo Oficial
               </h2>
               <p className="text-xs text-[#8E8E99] mt-1">

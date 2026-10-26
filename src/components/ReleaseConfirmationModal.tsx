@@ -173,7 +173,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
               </div>
 
               <div>
-                <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#F4F4F6] truncate">
+                <h3 className="kit-text-header font-game text-xl sm:text-2xl tracking-wide truncate">
                   {data.title}
                 </h3>
                 <p className="text-xs text-[#8E8E99] mt-0.5">
@@ -234,19 +234,19 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
         </div>
 
         {/* Modal Footer */}
-        <div className="px-5 py-3 border-t border-[#242429] bg-[#111114] flex items-center justify-end gap-2.5">
+        <div className="px-5 py-3 border-t border-[#242429] bg-[#111114] flex items-center justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-3.5 py-2 rounded-[4px] border border-[#242429] bg-[#18181C] hover:bg-[#242429] text-xs font-sans font-medium text-[#8E8E99] hover:text-[#F4F4F6] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg border border-[#242429] bg-[#18181C] hover:bg-[#242429] text-xs font-sans font-medium text-[#8E8E99] hover:text-[#F4F4F6] transition-colors cursor-pointer"
           >
             Cerrar
           </button>
           <button
             onClick={handleClose}
-            className="bg-[#FF4F00] hover:bg-[#E04500] text-white px-4 py-2 rounded-[4px] text-xs font-sans font-semibold active:translate-y-[1px] transition-all cursor-pointer flex items-center gap-1.5"
+            className="bg-[#00E599] hover:bg-[#00FFAC] text-[#032115] px-6 py-2.5 rounded-xl text-xs sm:text-sm font-game font-black uppercase tracking-wider shadow-[0_3px_0_#009E65] active:translate-y-0.5 active:shadow-[0_1px_0_#009E65] border border-emerald-300/40 transition-all cursor-pointer flex items-center gap-2"
           >
             <span>Ir al Catálogo</span>
-            <ArrowRight className="w-3.5 h-3.5 text-white" />
+            <ArrowRight className="w-4 h-4 text-[#032115]" />
           </button>
         </div>
       </div>

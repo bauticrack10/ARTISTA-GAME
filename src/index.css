@@ -1,52 +1,181 @@
 @import "tailwindcss";
 
-/* Design tokens: single source for Analog Studio & Vinyl Press palette, 3-tier type scale and radii. */
+/* Design tokens: single source for Game UI & Cyber Stage palette, type scale and radii. */
 @theme {
-  --font-display: 'Syne', sans-serif;
+  --font-game-display: 'Russo One', sans-serif;
+  --font-display: 'Russo One', sans-serif;
   --font-sans: 'Plus Jakarta Sans', sans-serif;
   /* Sin tipografía monoespaciada: las cifras usan la sans con tabular-nums. */
   --font-mono: 'Plus Jakarta Sans', sans-serif;
 
-  --color-canvas: #0B0B0C;
-  --color-studio: #0B0B0C;
-  --color-surface: #141417;
-  --color-console: #141417;
-  --color-surface-raised: #1C1C21;
-  --color-editorial: #1C1C21;
+  --color-surface-game: #0A0A0F;
+  --color-surface-game-card: #13141F;
+  --color-surface-game-elevated: #1B1D2C;
+  --color-hud-bg: rgba(10, 10, 15, 0.90);
+
+  /* Acento Primario de Acción: Verde Esmeralda Vibrante */
+  --color-accent-primary: #00E599;
+  --color-accent-primary-hover: #00FFAC;
+  --color-accent-secondary: #00D2FF;
+  --color-accent-warning: #F59E0B;
+  /* Acento de Peligro / Cancelar: Rojo Puro */
+  --color-accent-danger: #EF4444;
+  --color-accent-danger-hover: #DC2626;
+
+  --color-canvas: #0A0A0F;
+  --color-studio: #0A0A0F;
+  --color-surface: #13141F;
+  --color-console: #13141F;
+  --color-surface-raised: #1B1D2C;
+  --color-editorial: #1B1D2C;
   --color-editorial-paper: #F4F0EA;
-  --color-line: #26262B;
-  --color-line-active: #3F3F46;
+  --color-line: #242436;
+  --color-line-active: #3F3F5A;
   --color-fg: #F4F0EA;
   --color-fg-muted: #8E8E99;
   --color-fg-subtle: #52525B;
-  --color-primary: #FF2A4B;
-  --color-primary-strong: #E11D48;
-  --color-primary-soft: #FF4A67;
-  --color-accent: #FF2A4B;
-  --color-rec: #FF2A4B;
+  --color-primary: #00E599;
+  --color-primary-strong: #00C882;
+  --color-primary-soft: #00FFAC;
+  --color-accent: #00E599;
+  --color-rec: #EF4444;
   --color-vu: #F59E0B;
-  --color-info: #06B6D4;
-  --color-success: #10B981;
+  --color-info: #00D2FF;
+  --color-success: #00E599;
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
-  --color-gold: #D4AF37;
+  --color-gold: #F59E0B;
   --color-platinum: #E2E8F0;
   --color-diamond: #38BDF8;
 
-  /* Type floor: nothing below 12px. */
-  --text-2xs: 0.75rem;
-  --text-2xs--line-height: 1rem;
-  --text-xs: 0.8125rem;
-  --text-xs--line-height: 1.125rem;
+  /* Type floor: ningún texto de cuerpo menor a 14px (0.875rem) */
+  --text-2xs: 0.875rem;
+  --text-2xs--line-height: 1.25rem;
+  --text-xs: 0.875rem;
+  --text-xs--line-height: 1.25rem;
 
-  --radius-control: 4px;
-  --radius-card: 6px;
-  --radius-panel: 6px;
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-panel: 14px;
 }
 
 /* Minimum pointer target for compact desktop controls. */
 @utility tap {
   min-height: 2.25rem;
+}
+
+/* ==========================================================================
+   GAME UI TYPOGRAPHY & BUTTON UTILITIES
+   ========================================================================== */
+
+/* Cabecera Display de Videojuego: Blanco Heavy, Contorno Sólido en 4 direcciones y Sombra */
+@utility kit-text-header {
+  font-family: var(--font-game-display);
+  font-weight: 900;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-shadow:
+    -2px -2px 0 #000000,
+     2px -2px 0 #000000,
+    -2px  2px 0 #000000,
+     2px  2px 0 #000000,
+     0px  4px 14px rgba(0, 0, 0, 0.90);
+  -webkit-text-stroke: 1.25px #000000;
+}
+
+/* Botón Primario de Videojuego: Gran tamaño, Verde Esmeralda Vibrante y Relieve Táctil 3D */
+@utility game-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2.25rem;
+  font-family: var(--font-game-display);
+  font-size: 1.0625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #032115;
+  background-color: #00E599;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 6px 0 #009E65, 0 12px 28px rgba(0, 229, 153, 0.40);
+  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background-color: #00FFAC;
+    box-shadow: 0 7px 0 #00B373, 0 16px 36px rgba(0, 255, 172, 0.50);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(4px);
+    box-shadow: 0 1.5px 0 #009E65, 0 4px 12px rgba(0, 229, 153, 0.30);
+  }
+}
+
+/* Botón Secundario de Juego: Tono de superficie oscura con micro-elevación */
+@utility game-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #F4F4F6;
+  background-color: rgba(26, 27, 40, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.6);
+  transition: all 0.12s ease-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(36, 38, 56, 0.95);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Botón de Cancelar / Alerta: Reservado exclusivamente para rojo */
+@utility game-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  background-color: #EF4444;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 0 #991B1B, 0 8px 18px rgba(239, 68, 68, 0.40);
+  transition: all 0.12s ease-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #DC2626;
+    box-shadow: 0 5px 0 #7F1D1D, 0 10px 22px rgba(220, 38, 38, 0.50);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #7F1D1D;
+  }
 }
 
 /* Edge fade that only appears on the side where a horizontal strip has hidden content. */
@@ -114,23 +243,32 @@
 
 @layer base {
   :root {
-    --bg-base: #0B0B0C;
-    --bg-studio: #0B0B0C;
-    --bg-surface: #141417;
-    --bg-console: #141417;
-    --bg-elevated: #1C1C21;
-    --bg-editorial: #1C1C21;
+    --surface-game: #0A0A0F;
+    --surface-game-card: #13141F;
+    --surface-game-elevated: #1B1D2C;
+    --hud-bg: rgba(10, 10, 15, 0.90);
+    --accent-primary: #00E599;
+    --accent-primary-hover: #00FFAC;
+    --accent-secondary: #00D2FF;
+    --accent-danger: #EF4444;
+    --accent-warning: #F59E0B;
+
+    --bg-base: #0A0A0F;
+    --bg-studio: #0A0A0F;
+    --bg-surface: #13141F;
+    --bg-console: #13141F;
+    --bg-elevated: #1B1D2C;
+    --bg-editorial: #1B1D2C;
     --bg-editorial-paper: #F4F0EA;
-    --border-subtle: #26262B;
-    --border-strong: #3F3F46;
+    --border-subtle: #242436;
+    --border-strong: #3F3F5A;
     --text-primary: #F4F0EA;
     --text-secondary: #8E8E99;
     --text-muted: #52525B;
-    --accent-primary: #FF2A4B;
-    --accent-rec: #FF2A4B;
+    --accent-rec: #EF4444;
     --accent-vu: #F59E0B;
-    --accent-emerald: #10B981;
-    --cert-gold: #D4AF37;
+    --accent-emerald: #00E599;
+    --cert-gold: #F59E0B;
     --cert-platinum: #E2E8F0;
     --cert-diamond: #38BDF8;
 
@@ -142,21 +280,23 @@
   }
 
   body {
-    background-color: var(--bg-studio);
+    background-color: var(--surface-game);
     color: var(--text-primary);
     font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    selection-background-color: #FF2A4B;
-    selection-color: #FFFFFF;
+    selection-background-color: #00E599;
+    selection-color: #032115;
     margin: 0;
     padding: 0;
     min-height: 100vh;
   }
 
   ::selection {
-    background-color: #FF2A4B;
-    color: #FFFFFF;
+    background-color: #00E599;
+    color: #032115;
   }
 
   /* Display Font: Syne para títulos de alto impacto y portadas */
