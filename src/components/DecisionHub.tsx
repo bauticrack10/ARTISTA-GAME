@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { playSound } from '../utils/audioSystem';
 import { useTourRequirements } from '../hooks/useTourRequirements';
+import { gameJuice } from '../utils/gameJuice';
 
 export interface DecisionHubProps {
   player: Artist;
@@ -48,9 +49,26 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
   const hasFundsForRest = currentFunds >= REST_COST;
   const isEnergyFull = currentEnergy >= 100;
 
-  const handleRunDecision = (actionKey: DecisionActionType) => {
+  const handleRunDecision = (actionKey: DecisionActionType, targetEl?: HTMLElement | null) => {
     if (actionKey === 'reflective_rest') {
+      if (isEnergyFull || !hasFundsForRest) {
+        gameJuice.triggerShake(targetEl || '#btn-take-vacation');
+        return;
+      }
       onRest();
+      gameJuice.triggerConfetti(targetEl || '#btn-take-vacation');
+      gameJuice.triggerFloatingNumber({
+        text: '+50% Energía',
+        origin: targetEl || '#btn-take-vacation',
+        type: 'energy',
+        targetHud: 'energy'
+      });
+      gameJuice.triggerFloatingNumber({
+        text: '-$400',
+        origin: targetEl || '#btn-take-vacation',
+        type: 'money',
+        targetHud: 'money'
+      });
       setFeedbackMessage({
         title: 'Descanso Reflexivo Completado',
         text: 'Recuperaste +50% de energía física, +2 Disciplina y +1 Creatividad.',
@@ -60,24 +78,103 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
     }
 
     if (actionKey === 'home_rest') {
+      if (isEnergyFull) {
+        gameJuice.triggerShake(targetEl || '#btn-home-rest');
+        return;
+      }
       if (onExecuteDecision) {
         const res = onExecuteDecision('home_rest');
         if (res && res.success) {
           playSound('click');
+          gameJuice.triggerConfetti(targetEl || '#btn-home-rest');
+          gameJuice.triggerFloatingNumber({
+            text: '+25% Energía',
+            origin: targetEl || '#btn-home-rest',
+            type: 'energy',
+            targetHud: 'energy'
+          });
           setFeedbackMessage({
             title: res.title,
             text: res.narrativeText,
             success: true
           });
+        } else {
+          gameJuice.triggerShake(targetEl || '#btn-home-rest');
         }
       }
       return;
     }
 
     if (onExecuteDecision) {
+      const cfg = decisionsConfig[actionKey];
+      const canExec = currentFunds >= cfg.costFunds && currentEnergy >= cfg.costEnergy;
+      if (!canExec) {
+        gameJuice.triggerShake(targetEl);
+        return;
+      }
+
       const res = onExecuteDecision(actionKey);
       if (res && res.success) {
         playSound('level_up');
+        gameJuice.triggerConfetti(targetEl);
+
+        if (actionKey === 'vocal_training') {
+          gameJuice.triggerFloatingNumber({
+            text: '+2 Skill Vocal',
+            origin: targetEl,
+            type: 'skill'
+          });
+          gameJuice.triggerFloatingNumber({
+            text: `-$${cfg.costFunds}`,
+            origin: targetEl,
+            type: 'money',
+            targetHud: 'money'
+          });
+          gameJuice.triggerFloatingNumber({
+            text: `-${cfg.costEnergy}% En.`,
+            origin: targetEl,
+            type: 'energy',
+            targetHud: 'energy'
+          });
+        } else if (actionKey === 'studio_practice') {
+          gameJuice.triggerFloatingNumber({
+            text: '+2 Creatividad',
+            origin: targetEl,
+            type: 'skill'
+          });
+          gameJuice.triggerFloatingNumber({
+            text: `-$${cfg.costFunds}`,
+            origin: targetEl,
+            type: 'money',
+            targetHud: 'money'
+          });
+          gameJuice.triggerFloatingNumber({
+            text: `-${cfg.costEnergy}% En.`,
+            origin: targetEl,
+            type: 'energy',
+            targetHud: 'energy'
+          });
+        } else if (actionKey === 'industry_networking') {
+          gameJuice.triggerFloatingNumber({
+            text: '+10 Fans',
+            origin: targetEl,
+            type: 'fans',
+            targetHud: 'fans'
+          });
+          gameJuice.triggerFloatingNumber({
+            text: `-$${cfg.costFunds}`,
+            origin: targetEl,
+            type: 'money',
+            targetHud: 'money'
+          });
+          gameJuice.triggerFloatingNumber({
+            text: `-${cfg.costEnergy}% En.`,
+            origin: targetEl,
+            type: 'energy',
+            targetHud: 'energy'
+          });
+        }
+
         setFeedbackMessage({
           title: res.title,
           text: `${res.narrativeText} ${res.gainsSummary}`,
@@ -85,6 +182,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         });
       } else if (res && !res.success) {
         playSound('click');
+        gameJuice.triggerShake(targetEl);
         setFeedbackMessage({
           title: res.title,
           text: res.narrativeText || res.error || 'No se pudo realizar la acción.',
@@ -198,13 +296,15 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               <>
                 <button
                   id="btn-take-vacation"
-                  onClick={() => {
-                    if (!isEnergyFull) {
+                  onClick={(e) => {
+                    if (isEnergyFull) {
+                      gameJuice.triggerShake(e.currentTarget);
                       playSound('click');
-                      handleRunDecision('reflective_rest');
+                    } else {
+                      playSound('click');
+                      handleRunDecision('reflective_rest', e.currentTarget);
                     }
                   }}
-                  disabled={isEnergyFull}
                   className={`w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                     !isEnergyFull
                       ? 'liquid-glass-pill text-[#10B981] border-emerald-500/40 hover:bg-emerald-500/15 cursor-pointer'
@@ -217,9 +317,9 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 {!isEnergyFull && (
                   <button
                     id="btn-home-rest"
-                    onClick={() => {
+                    onClick={(e) => {
                       playSound('click');
-                      handleRunDecision('home_rest');
+                      handleRunDecision('home_rest', e.currentTarget);
                     }}
                     className="w-full text-center text-[11px] text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer py-0.5"
                   >
@@ -230,13 +330,15 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
             ) : (
               <button
                 id="btn-home-rest"
-                onClick={() => {
-                  if (!isEnergyFull) {
+                onClick={(e) => {
+                  if (isEnergyFull) {
+                    gameJuice.triggerShake(e.currentTarget);
                     playSound('click');
-                    handleRunDecision('home_rest');
+                  } else {
+                    playSound('click');
+                    handleRunDecision('home_rest', e.currentTarget);
                   }
                 }}
-                disabled={isEnergyFull}
                 className={`w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   !isEnergyFull
                     ? 'liquid-glass-pill text-[#F59E0B] border-amber-500/40 hover:bg-amber-500/15 cursor-pointer'
@@ -272,8 +374,15 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </div>
 
               <button
-                onClick={() => handleRunDecision('vocal_training')}
-                disabled={!canExecute}
+                id="btn-vocal-training"
+                onClick={(e) => {
+                  if (!canExecute) {
+                    gameJuice.triggerShake(e.currentTarget);
+                    playSound('click');
+                  } else {
+                    handleRunDecision('vocal_training', e.currentTarget);
+                  }
+                }}
                 className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   canExecute
                     ? 'liquid-glass-pill text-[#F4F4F6] hover:border-white/30 hover:bg-white/10 cursor-pointer'
@@ -309,8 +418,15 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </div>
 
               <button
-                onClick={() => handleRunDecision('studio_practice')}
-                disabled={!canExecute}
+                id="btn-studio-practice"
+                onClick={(e) => {
+                  if (!canExecute) {
+                    gameJuice.triggerShake(e.currentTarget);
+                    playSound('click');
+                  } else {
+                    handleRunDecision('studio_practice', e.currentTarget);
+                  }
+                }}
                 className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   canExecute
                     ? 'liquid-glass-pill text-[#F4F4F6] hover:border-white/30 hover:bg-white/10 cursor-pointer'
@@ -346,8 +462,15 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </div>
 
               <button
-                onClick={() => handleRunDecision('industry_networking')}
-                disabled={!canExecute}
+                id="btn-industry-networking"
+                onClick={(e) => {
+                  if (!canExecute) {
+                    gameJuice.triggerShake(e.currentTarget);
+                    playSound('click');
+                  } else {
+                    handleRunDecision('industry_networking', e.currentTarget);
+                  }
+                }}
                 className={`w-full flex items-center justify-center gap-1.5 font-semibold text-xs py-2 px-2.5 rounded-[8px] transition-all ${
                   canExecute
                     ? 'liquid-glass-pill text-[#F4F4F6] hover:border-white/30 hover:bg-white/10 cursor-pointer'

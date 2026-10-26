@@ -23,6 +23,7 @@ import { ArtistPhoneModal } from './components/ArtistPhoneModal';
 import { YearEndWrappedModal } from './components/YearEndWrappedModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { playSound } from './utils/audioSystem';
+import { GameJuiceOverlay } from './components/ui/GameJuiceOverlay';
 import { CollabOfferNotification, SpontaneousCollabOffer } from './components/CollabOfferNotification';
 import { IncomingCollabOffer } from './types';
 
@@ -355,6 +356,9 @@ export default function App() {
       <div
         className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-primary/30 selection:text-white relative overflow-x-clip font-sans"
       >
+      {/* Game Juice Floating Numbers & Arcade FX Overlay */}
+      <GameJuiceOverlay />
+
       {/* Ambient Studio Lighting Backdrop for Liquid Glass Refraction */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#09090C]">
         <div className="absolute -top-[15%] -left-[10%] w-[600px] h-[600px] rounded-full bg-[#FF4F00]/[0.035] blur-[140px]" />

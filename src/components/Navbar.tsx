@@ -30,6 +30,7 @@ import {
   formatMoney,
   formatFans
 } from '../utils/formatters';
+import { gameJuice, HudTarget } from '../utils/gameJuice';
 
 interface NavbarProps {
   player: Artist;
@@ -61,6 +62,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [cycleMonths, setCycleMonths] = useState<1 | 3 | 6 | 12>(1);
   const [soundEnabled, setSoundEnabled] = useState(() => audioSystem.isSoundEnabled());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [poppingHud, setPoppingHud] = useState<Partial<Record<HudTarget, boolean>>>({});
+
+  useEffect(() => {
+    return gameJuice.subscribeHudImpact((target) => {
+      setPoppingHud((prev) => ({ ...prev, [target]: true }));
+      setTimeout(() => {
+        setPoppingHud((prev) => ({ ...prev, [target]: false }));
+      }, 350);
+    });
+  }, []);
 
   useEffect(() => {
     return audioSystem.subscribeSoundState((enabled) => {
@@ -197,14 +208,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
-          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Notablemente más grande, Verde Esmeralda con Física 3D */}
+          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Notablemente más grande, Verde Esmeralda con Física 3D y Atracción en Reposo */}
           <button
             id="btn-advance-cycle"
-            onClick={() => {
+            onClick={(e) => {
               playSound('click');
+              gameJuice.triggerConfetti(e.currentTarget);
+              gameJuice.triggerFloatingNumber({
+                text: cycleMonths === 1 ? '+1 Mes' : cycleMonths === 3 ? '+3 Meses' : cycleMonths === 6 ? '+6 Meses' : '+1 Año',
+                origin: e.currentTarget,
+                type: 'neutral'
+              });
               onAdvanceCycle(cycleMonths);
             }}
-            className="kit-btn kit-btn-emerald px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-black tracking-wide uppercase whitespace-nowrap"
+            className="kit-btn kit-btn-emerald kit-glow-pulse kit-wiggle px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-black tracking-wide uppercase whitespace-nowrap"
             title="Procesar el ciclo seleccionado y simular el mundo"
           >
             <span className="kit-btn-content">
@@ -219,7 +236,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Derecha: HUD de Recursos (Fondos, Fans, Medidor HP de Energía) + Utilidades */}
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto lg:ml-0 flex-wrap sm:flex-nowrap">
           <div
-            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-emerald-500/25 bg-[#00E599]/10"
+            id="hud-money"
+            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-emerald-500/25 bg-[#00E599]/10 transition-transform duration-200 ${
+              poppingHud.money ? 'scale-125 ring-2 ring-[#00E599] shadow-[0_0_16px_rgba(0,229,153,0.8)] z-20' : ''
+            }`}
             title={`Fondos Disponibles: ${formatMoney(playerFunds)}`}
           >
             <DollarSign className="w-3.5 h-3.5 text-[#00E599] shrink-0" />
@@ -227,7 +247,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div
-            className="flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10"
+            id="hud-fans"
+            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10 transition-transform duration-200 ${
+              poppingHud.fans ? 'scale-125 ring-2 ring-[#FF4F00] shadow-[0_0_16px_rgba(255,79,0,0.8)] z-20' : ''
+            }`}
             title={`Fans: ${playerFans.toLocaleString('es-AR')} • Oyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}`}
           >
             <Users className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
@@ -236,7 +259,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Medidor HP de Energía Cilíndrico con Brillo Especular */}
           <div
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs liquid-glass-pill ${energyStyle.bg} bg-black/40`}
+            id="hud-energy"
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs liquid-glass-pill ${energyStyle.bg} bg-black/40 transition-transform duration-200 ${
+              poppingHud.energy ? 'scale-125 ring-2 ring-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.8)] z-20' : ''
+            }`}
             title={`Energía Vital: ${playerEnergy}%`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />

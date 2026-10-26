@@ -15,6 +15,8 @@ import { NewsSidebar } from './dashboard/NewsSidebar';
 import { ArtistAttributesPanel } from './dashboard/ArtistAttributesPanel';
 import { DecisionHub } from './dashboard/DecisionHub';
 import { ActiveCatalogCard } from './dashboard/ActiveCatalogCard';
+import { FirstStepsProgress } from './ui/FirstStepsProgress';
+import { QuickOnboardingTooltip } from './ui/QuickOnboardingTooltip';
 
 import { DecisionActionType, DecisionExecutionResult } from '../systems/DecisionEngine';
 export { ArtistHeroCard } from './dashboard/ArtistHeroCard';
@@ -89,6 +91,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* COLUMNA PRINCIPAL (8 cols): Perfil, Acciones del Mes, Estadísticas y Catálogo */}
         <div className="lg:col-span-8 space-y-5">
+          {/* Barra de Primeros Pasos con Progreso Dotado (Paso 1 completado por defecto) */}
+          <FirstStepsProgress
+            player={player}
+            world={world}
+            playerSongsCount={playerSongs.length}
+            onNavigate={onNavigate}
+          />
+
+          {/* Tooltip flotante no modal para el primer paso recomendado */}
+          <QuickOnboardingTooltip
+            playerSongsCount={playerSongs.length}
+            onNavigate={onNavigate}
+          />
+
           <ArtistHeroCard
             player={player}
             world={world}
