@@ -175,6 +175,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           });
         }
 
+        gameJuice.triggerSuccess(targetEl);
         setFeedbackMessage({
           title: res.title,
           text: `${res.narrativeText} ${res.gainsSummary}`,
@@ -182,7 +183,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         });
       } else if (res && !res.success) {
         playSound('click');
-        gameJuice.triggerShake(targetEl);
+        gameJuice.triggerError(targetEl);
         setFeedbackMessage({
           title: res.title,
           text: res.narrativeText || res.error || 'No se pudo realizar la acción.',

@@ -52,27 +52,15 @@ export const KitProgress: React.FC<KitProgressProps> = ({
   const variantClass = `kit-progress-fill-${variant}`;
 
   return (
-    <div
-      id={id}
-      role="progressbar"
-      aria-valuenow={clampedValue}
-      aria-valuemin={min}
-      aria-valuemax={max}
-      aria-label={ariaLabel || (typeof label === 'string' ? label : 'Progreso')}
-      className={`kit-progress ${compact ? 'kit-progress-compact' : ''} ${className}`}
-    >
-      <div
-        className={`kit-progress-fill ${variantClass} ${barClassName}`}
-        style={{ width: `${percentage}%` }}
-      />
+    <div className={`w-full space-y-1.5 ${className}`}>
       {(label || showValue || icon) && (
-        <div className="kit-progress-label">
-          <span className="flex items-center gap-1.5 font-bold tracking-wide truncate">
+        <div className="flex items-center justify-between text-xs text-[#8E8E99] font-sans">
+          <span className="flex items-center gap-1.5 font-medium tracking-wide truncate">
             {icon && <span className="shrink-0 flex items-center justify-center">{icon}</span>}
-            {label && <span className="truncate">{label}</span>}
+            {label && <span className="truncate text-[#F4F0EA]">{label}</span>}
           </span>
           {showValue && (
-            <span className="font-sans font-bold tabular-nums shrink-0 ml-2">
+            <span className="font-mono font-bold tabular-nums shrink-0 ml-2 text-[#F4F0EA]">
               {valueFormatter
                 ? valueFormatter(clampedValue, max, percentage)
                 : `${Math.round(percentage)}%`}
@@ -80,6 +68,27 @@ export const KitProgress: React.FC<KitProgressProps> = ({
           )}
         </div>
       )}
+      <div
+        id={id}
+        role="progressbar"
+        aria-valuenow={clampedValue}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-label={ariaLabel || (typeof label === 'string' ? label : 'Progreso')}
+        className={`w-full kit-progress ${compact ? 'kit-progress-compact h-2 sm:h-2.5' : 'h-2.5 sm:h-3'} rounded-full bg-white/10 border border-white/10 relative overflow-hidden`}
+      >
+        <div
+          className={`kit-progress-fill h-full rounded-full transition-all duration-300 relative ${variantClass} ${barClassName}`}
+          style={{ width: `${percentage}%` }}
+        >
+          {/* Brillo especular superior */}
+          <div className="absolute inset-x-0 top-0 h-1/2 bg-white/20 rounded-t-full pointer-events-none" />
+          {/* Punto brillante en la punta de avance */}
+          {percentage > 2 && (
+            <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#ffffff,0_0_12px_var(--kit-progress-color,#00E599)] pointer-events-none" />
+          )}
+        </div>
+      </div>
     </div>
   );
 };

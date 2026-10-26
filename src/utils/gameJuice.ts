@@ -146,9 +146,32 @@ class GameJuiceManager {
   }
 
   /**
-   * Aplica la animación .kit-shake rápidamente cuando una acción falla o faltan fondos/energía
+   * Pulso verde esmeralda / dorado en el borde de la tarjeta con partículas suaves luminosas
    */
-  public triggerShake(elementOrId?: HTMLElement | string | null): void {
+  public triggerSuccess(elementOrId?: HTMLElement | string | null): void {
+    let el: HTMLElement | null = null;
+    if (typeof elementOrId === 'string') {
+      el = document.getElementById(elementOrId) || document.querySelector(elementOrId);
+    } else if (elementOrId) {
+      el = elementOrId;
+    }
+
+    if (el) {
+      el.classList.remove('card-success-pulse');
+      void el.offsetWidth;
+      el.classList.add('card-success-pulse');
+      setTimeout(() => {
+        el?.classList.remove('card-success-pulse');
+      }, 1200);
+    }
+
+    this.triggerConfetti(el);
+  }
+
+  /**
+   * Vibración horizontal corta y elegante (shake) acompañada de destello rojo translúcido
+   */
+  public triggerError(elementOrId?: HTMLElement | string | null): void {
     let el: HTMLElement | null = null;
     if (typeof elementOrId === 'string') {
       el = document.getElementById(elementOrId) || document.querySelector(elementOrId);
@@ -158,14 +181,21 @@ class GameJuiceManager {
 
     if (!el) return;
 
+    el.classList.remove('card-error-shake');
     el.classList.remove('kit-shake');
-    // Forzar reflow para reiniciar la animación
     void el.offsetWidth;
-    el.classList.add('kit-shake');
+    el.classList.add('card-error-shake');
 
     setTimeout(() => {
-      el?.classList.remove('kit-shake');
+      el?.classList.remove('card-error-shake');
     }, 450);
+  }
+
+  /**
+   * Aplica la animación .kit-shake rápidamente cuando una acción falla o faltan fondos/energía
+   */
+  public triggerShake(elementOrId?: HTMLElement | string | null): void {
+    this.triggerError(elementOrId);
   }
 
   private notifyFloating(): void {

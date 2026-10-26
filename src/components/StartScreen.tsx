@@ -122,10 +122,10 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       </main>
 
       {/* Clean Minimal Footer */}
-      <footer className="w-full px-6 sm:px-10 lg:px-16 py-6 text-xs text-[#8E8E99] flex items-center justify-between z-10 font-sans">
-        <div className="flex items-center gap-4 text-xs text-[#52525B]">
+      <footer className="w-full px-6 sm:px-10 lg:px-16 py-6 text-xs text-[#8E8E99] flex flex-col sm:flex-row items-center justify-between gap-2 z-10 font-sans text-center sm:text-left">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4 text-xs text-[#52525B]">
           <span>40 mercados musicales activos</span>
-          <span>•</span>
+          <span className="hidden sm:inline">•</span>
           <span>Regalías, contratos y catálogo propio</span>
         </div>
         <div className="text-xs text-[#52525B]">

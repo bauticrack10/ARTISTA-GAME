@@ -208,7 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
-          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Notablemente más grande, Verde Esmeralda con Física 3D y Atracción en Reposo */}
+          {/* BOTÓN PRIMARIO DE ACCIÓN (Jugar / Avanzar Turno) - Acabado luminoso esmeralda/cian con resplandor exterior suave y haz shimmer */}
           <button
             id="btn-advance-cycle"
             onClick={(e) => {
@@ -221,14 +221,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               });
               onAdvanceCycle(cycleMonths);
             }}
-            className="kit-btn kit-btn-emerald kit-glow-pulse kit-wiggle px-5 sm:px-6 py-2.5 text-xs sm:text-sm font-black tracking-wide uppercase whitespace-nowrap"
+            className="game-btn-primary px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold tracking-tight uppercase whitespace-nowrap shrink-0"
             title="Procesar el ciclo seleccionado y simular el mundo"
           >
-            <span className="kit-btn-content">
-              <Play className="w-4 h-4 fill-white text-white shrink-0" />
-              <span className="kit-btn-label">
-                Avanzar ({cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})
-              </span>
+            <Play className="w-4 h-4 fill-[#032115] text-[#032115] shrink-0" />
+            <span>
+              Avanzar ({cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})
             </span>
           </button>
         </div>

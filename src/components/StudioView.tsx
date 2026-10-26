@@ -806,7 +806,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   placeholder="Ej: Medianoche en Tokio, Barrio Fino..."
                   value={singleTitle}
                   onChange={e => setSingleTitle(e.target.value)}
-                  className="w-full bg-[#0B0B0C] border border-[#26262B] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#52525B] focus:outline-none transition-colors"
+                  className="w-full glass-input px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#8E8E99] transition-all"
                 />
               </div>
 
@@ -1234,7 +1234,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   placeholder="Ej: Crónicas de una Noche, Génesis..."
                   value={albumTitle}
                   onChange={e => setAlbumTitle(e.target.value)}
-                  className="w-full bg-[#0B0B0C] border border-[#26262B] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#52525B] focus:outline-none transition-colors"
+                  className="w-full glass-input px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#8E8E99] transition-all"
                 />
               </div>
 

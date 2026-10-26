@@ -66,6 +66,21 @@
   min-height: 2.25rem;
 }
 
+/* Type floor accesible: ningún texto menor a 14px en pantallas móviles */
+@media (max-width: 640px) {
+  [class*="text-[10px]"],
+  [class*="text-[9px]"],
+  [class*="text-[11px]"],
+  [class*="text-[12px]"],
+  [class*="text-[13px]"],
+  [class*="text-3xs"],
+  [class*="text-2xs"],
+  [class*="text-xs"] {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+}
+
 /* ==========================================================================
    GAME UI TYPOGRAPHY & BUTTON UTILITIES
    ========================================================================== */
@@ -89,37 +104,139 @@
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
-/* Botón Primario de Videojuego: Gran tamaño, Verde Esmeralda Vibrante y Relieve Táctil 3D */
+/* Botón de Acción Primaria Magnético: Acabado luminoso esmeralda/cian, haz shimmer y elástico */
 @utility game-btn-primary {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  padding: 1rem 2.25rem;
-  font-family: var(--font-game-display);
-  font-size: 1.0625rem;
-  font-weight: 900;
+  padding: 0.875rem 2rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.01em;
   color: #032115;
-  background-color: #00E599;
-  border-radius: 10px;
-  border: 1.5px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 6px 0 #009E65, 0 12px 28px rgba(0, 229, 153, 0.40);
-  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.60),
+    0 0 25px rgba(16, 185, 129, 0.35),
+    0 8px 24px -4px rgba(0, 0, 0, 0.50);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.2s ease;
   cursor: pointer;
   user-select: none;
+  overflow: hidden;
 
   &:hover {
-    background-color: #00FFAC;
-    box-shadow: 0 7px 0 #00B373, 0 16px 36px rgba(0, 255, 172, 0.50);
-    transform: translateY(-2px);
+    transform: scale(1.02);
+    box-shadow:
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.75),
+      0 0 32px rgba(0, 229, 153, 0.50),
+      0 12px 30px -4px rgba(0, 0, 0, 0.60);
+    filter: brightness(1.05);
   }
 
   &:active {
-    transform: translateY(4px);
-    box-shadow: 0 1.5px 0 #009E65, 0 4px 12px rgba(0, 229, 153, 0.30);
+    transform: scale(0.98);
+    box-shadow:
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.30),
+      0 0 16px rgba(16, 185, 129, 0.30),
+      0 4px 10px rgba(0, 0, 0, 0.40);
   }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -150%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 100%
+    );
+    transform: rotate(25deg);
+    animation: btn-shimmer 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+  }
+}
+
+.game-btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 2rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: #032115;
+  background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.60),
+    0 0 25px rgba(16, 185, 129, 0.35),
+    0 8px 24px -4px rgba(0, 0, 0, 0.50);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+}
+
+.game-btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow:
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.75),
+    0 0 32px rgba(0, 229, 153, 0.50),
+    0 12px 30px -4px rgba(0, 0, 0, 0.60);
+  filter: brightness(1.05);
+}
+
+.game-btn-primary:active {
+  transform: scale(0.98);
+  box-shadow:
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.30),
+    0 0 16px rgba(16, 185, 129, 0.30),
+    0 4px 10px rgba(0, 0, 0, 0.40);
+}
+
+.game-btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -150%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  animation: btn-shimmer 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes btn-shimmer {
+  0% { left: -150%; }
+  35% { left: 200%; }
+  100% { left: 200%; }
 }
 
 /* Botón Secundario de Juego: Tono de superficie oscura con micro-elevación */
@@ -256,7 +373,7 @@
   letter-spacing: -0.01em;
   text-transform: uppercase;
   color: #FFFFFF;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 3px var(--kit-btn-contour, rgba(0, 0, 0, 0.5));
 }
 
 /* Variantes de Color con Sombra Sólida 5px y Contorno Complementario (Nunca Negro Puro) */
@@ -808,7 +925,7 @@
   letter-spacing: -0.01em;
   text-transform: uppercase;
   color: #FFFFFF;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 3px var(--kit-btn-contour, rgba(0, 0, 0, 0.5));
 }
 
 .kit-btn-primary, .kit-btn-emerald {
@@ -2187,5 +2304,155 @@ input[type="range"]::-moz-range-thumb {
 .animate-float-3 {
   animation: float-slow-3 24s ease-in-out infinite;
 }
+
+/* ==========================================================================
+   INPUTS, OPCIONES Y TARJETAS REACTIVAS (CÁPSULAS DE CRISTAL ESMERILADO)
+   ========================================================================== */
+
+@utility glass-input {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #F4F0EA;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.24);
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus, &:focus-within {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.35);
+    background-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 20px rgba(0, 229, 153, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+.glass-input {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #F4F0EA;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-input:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.glass-input:focus, .glass-input:focus-within {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.35);
+  background-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 20px rgba(0, 229, 153, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+@utility glass-option {
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.30);
+    background-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 18px rgba(0, 229, 153, 0.20);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.glass-option {
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-option:hover {
+  border-color: rgba(255, 255, 255, 0.30);
+  background-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 18px rgba(0, 229, 153, 0.20);
+  transform: translateY(-1px);
+}
+.glass-option:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   DOPAMINA VISUAL EN ACIERTOS Y ERRORES
+   ========================================================================== */
+
+/* Acierto: Pulso esmeralda / dorado en el borde de la tarjeta central */
+@keyframes card-success-pulse-anim {
+  0% {
+    border-color: rgba(0, 229, 153, 0.9);
+    box-shadow: 0 0 0 0 rgba(0, 229, 153, 0.6), inset 0 0 0 0 rgba(0, 229, 153, 0.4);
+  }
+  40% {
+    border-color: rgba(0, 229, 153, 1);
+    box-shadow: 0 0 35px 6px rgba(0, 229, 153, 0.45), inset 0 0 20px rgba(0, 229, 153, 0.25);
+  }
+  100% {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.card-success-pulse {
+  animation: card-success-pulse-anim 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Error: Vibración horizontal corta y elegante (shake) con destello rojo translúcido */
+@keyframes card-error-shake-anim {
+  0%, 100% {
+    transform: translateX(0);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  15%, 45%, 75% {
+    transform: translateX(-5px);
+    border-color: rgba(239, 68, 68, 0.9);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.45), inset 0 0 10px rgba(239, 68, 68, 0.2);
+  }
+  30%, 60%, 90% {
+    transform: translateX(5px);
+    border-color: rgba(239, 68, 68, 0.9);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.45), inset 0 0 10px rgba(239, 68, 68, 0.2);
+  }
+}
+
+.card-error-shake {
+  animation: card-error-shake-anim 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* ==========================================================================
+   ACCESIBILIDAD: REDUCED MOTION DIRECTIVE
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .game-btn-primary::after,
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3,
+  .card-success-pulse,
+  .card-error-shake,
+  .kit-shake,
+  .kit-float-num {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 
 
