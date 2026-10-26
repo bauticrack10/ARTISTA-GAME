@@ -60,19 +60,19 @@ export const QuickOnboardingTooltip: React.FC<QuickOnboardingTooltipProps> = ({
 
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#FF4F00] font-game">
+              <span className="text-xs font-black uppercase tracking-wider text-[#FF4F00] font-game">
                 Primer Paso Recomendado
               </span>
-              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/30 animate-pulse">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/30 animate-pulse">
                 Acción Activa
               </span>
             </div>
 
-            <h4 className="text-xs sm:text-sm font-extrabold text-white leading-tight font-sans">
+            <h4 className="text-sm font-extrabold text-white leading-tight font-sans">
               ¡Graba tu primer single o realiza una acción del mes!
             </h4>
 
-            <p className="text-[11px] text-[#8E8E99] leading-snug">
+            <p className="text-xs text-[#8E8E99] leading-snug">
               Ingresa al Estudio para componer tu tema debut o utiliza las acciones del mes abajo para entrenar voz y ganar vitalidad.
             </p>
 

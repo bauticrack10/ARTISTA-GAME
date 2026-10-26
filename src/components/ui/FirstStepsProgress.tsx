@@ -133,11 +133,11 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
               <h4 className="kit-text-header font-game text-xs sm:text-sm tracking-wide text-white uppercase">
                 Primeros Pasos
               </h4>
-              <span className="liquid-glass-pill px-2 py-0.5 text-[10px] font-sans font-bold text-[#00E599] border border-[#00E599]/30 tabular-nums">
+              <span className="liquid-glass-pill px-2.5 py-0.5 text-xs font-sans font-bold text-[#00E599] border border-[#00E599]/30 tabular-nums">
                 {completedCount} de {steps.length} ({progressPercent}%)
               </span>
             </div>
-            <p className="text-[11px] text-[#8E8E99] leading-tight">
+            <p className="text-xs text-[#8E8E99] leading-tight">
               {progressPercent === 100
                 ? '¡Completaste todos los primeros pasos de tu carrera!'
                 : nextActiveStep
@@ -198,7 +198,7 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
                 }`}
               >
                 <div className="flex items-center justify-between gap-1.5">
-                  <span className="text-[10px] font-sans font-extrabold uppercase tracking-wider tabular-nums opacity-60">
+                  <span className="text-xs font-sans font-extrabold uppercase tracking-wider tabular-nums opacity-60">
                     0{idx + 1}
                   </span>
                   {step.isCompleted ? (
@@ -214,7 +214,7 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
                   <p className="text-xs font-bold leading-tight font-sans text-white">
                     {step.label}
                   </p>
-                  <p className="text-[10px] text-[#8E8E99] leading-tight line-clamp-2 mt-0.5">
+                  <p className="text-xs text-[#8E8E99] leading-tight line-clamp-2 mt-0.5">
                     {step.hint}
                   </p>
                 </div>
@@ -226,7 +226,7 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
                       playSound('click');
                       onNavigate(step.actionTab!);
                     }}
-                    className="mt-1 w-full kit-btn kit-btn-orange py-1 px-2 text-[10px] font-bold tracking-wider uppercase flex items-center justify-center gap-1 cursor-pointer"
+                    className="mt-1 w-full kit-btn kit-btn-orange py-1 px-2 text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <span>{step.actionLabel || 'Ir ahora'}</span>
                     <ChevronRight className="w-3 h-3 shrink-0" />

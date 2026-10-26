@@ -218,7 +218,7 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
                 className="liquid-glass-subcard p-3 space-y-2 group hover:border-white/28 transition-all"
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-[11px] font-semibold text-[#8E8E99] truncate">
+                  <span className="text-xs font-semibold text-[#8E8E99] truncate">
                     {metric.label}
                   </span>
                   <Icon className={`w-3.5 h-3.5 shrink-0 ${metric.iconColor}`} />

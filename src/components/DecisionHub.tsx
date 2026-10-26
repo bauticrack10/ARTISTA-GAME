@@ -282,7 +282,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 <Coffee className="w-3.5 h-3.5 text-[#10B981]" />
                 Descanso
               </span>
-              <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#10B981] px-1.5 py-0.5 border border-[#10B981]/30 tabular-nums">
+              <span className="liquid-glass-pill text-xs font-sans font-bold text-[#10B981] px-2 py-0.5 border border-[#10B981]/30 tabular-nums">
                 {hasFundsForRest ? '+50% Energía' : '+25% Gratis'}
               </span>
             </div>
@@ -321,7 +321,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                       playSound('click');
                       handleRunDecision('home_rest', e.currentTarget);
                     }}
-                    className="w-full text-center text-[11px] text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer py-0.5"
+                    className="w-full text-center text-xs text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer py-0.5"
                   >
                     Casa ($0 • +25% Energía)
                   </button>
@@ -364,7 +364,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <Mic2 className="w-3.5 h-3.5 text-[#FF4F00]" />
                      Técnica Vocal
                   </span>
-                  <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#8E8E99] px-1.5 py-0.5 tabular-nums">
+                  <span className="liquid-glass-pill text-xs font-sans font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>
@@ -408,7 +408,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <Music2 className="w-3.5 h-3.5 text-cyan-400" />
                     Composición
                   </span>
-                  <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#8E8E99] px-1.5 py-0.5 tabular-nums">
+                  <span className="liquid-glass-pill text-xs font-sans font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>
@@ -452,7 +452,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     <Users className="w-3.5 h-3.5 text-[#F59E0B]" />
                     Networking
                   </span>
-                  <span className="liquid-glass-pill text-[10px] font-sans font-bold text-[#8E8E99] px-1.5 py-0.5 tabular-nums">
+                  <span className="liquid-glass-pill text-xs font-sans font-bold text-[#8E8E99] px-2 py-0.5 tabular-nums">
                     ${cfg.costFunds} • -{cfg.costEnergy}% En.
                   </span>
                 </div>

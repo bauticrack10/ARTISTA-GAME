@@ -141,7 +141,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
                         <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-[4px] border ${genreTheme.badgeBg} ${genreTheme.badgeText} ${genreTheme.badgeBorder}`}>
                           {genreName}
                         </span>
-                        <span className="text-[11px] text-[#8E8E99] font-sans">
+                        <span className="text-xs text-[#8E8E99] font-sans">
                           {releaseDateStr} • Calidad <strong className="text-[#00E599]">{song.quality}%</strong>
                         </span>
                       </div>
