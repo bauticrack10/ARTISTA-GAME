@@ -366,33 +366,35 @@ export default function App() {
       <AtmosphericBackground />
 
       {/* Top App Bar & Navigation */}
-      <Navbar
-        player={player}
-        world={world}
-        currentTab={currentTab}
-        onTabChange={handleNavigate}
-        onAdvanceCycle={handleAdvanceCycle}
-        onReturnToTitle={() => setAppMode('start_screen')}
-        onOpenPhone={() => setIsPhoneOpen(true)}
-        onExportSave={() => {
-          const json = getEngine().exportSaveState();
-          const blob = new Blob([json], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `el-artista-${(player?.name || 'carrera').toLowerCase().replace(/\s+/g, '-')}-${world?.currentYear || 2026}.json`;
-          a.click();
-          URL.revokeObjectURL(url);
-        }}
-        onImportSave={handleImportSaveState}
-        onResetCareer={() => {
-          try { localStorage.removeItem('el_artista_save'); } catch (e) {}
-          setAppMode('start_screen');
-        }}
-      />
+      <div className="relative z-20">
+        <Navbar
+          player={player}
+          world={world}
+          currentTab={currentTab}
+          onTabChange={handleNavigate}
+          onAdvanceCycle={handleAdvanceCycle}
+          onReturnToTitle={() => setAppMode('start_screen')}
+          onOpenPhone={() => setIsPhoneOpen(true)}
+          onExportSave={() => {
+            const json = getEngine().exportSaveState();
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `el-artista-${(player?.name || 'carrera').toLowerCase().replace(/\s+/g, '-')}-${world?.currentYear || 2026}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+          onImportSave={handleImportSaveState}
+          onResetCareer={() => {
+            try { localStorage.removeItem('el_artista_save'); } catch (e) {}
+            setAppMode('start_screen');
+          }}
+        />
+      </div>
 
       {/* Main Container */}
-      <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 xl:px-14 pt-6 pb-12 transition-all">
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 xl:px-14 pt-6 pb-12 transition-all relative z-10">
         {currentTab === 'dashboard' && (
           <DashboardView
             player={player}
