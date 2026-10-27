@@ -3,6 +3,7 @@ import { Play, Disc3, UserPlus } from 'lucide-react';
 import { GameSaveState, Artist } from '../types';
 import { TimeSystem } from '../systems/TimeSystem';
 import { MagneticPrimaryButton } from './ui';
+import { ArtistaLogo } from './ArtistaLogo';
 
 interface StartScreenProps {
   onNewCareer: () => void;
@@ -50,19 +51,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
     <div className="min-h-screen bg-transparent text-[#F4F0EA] flex flex-col justify-between relative overflow-hidden isolate selection:bg-[#00E599]/30 selection:text-white font-sans">
       {/* Top Bar / Brand */}
       <header className="w-full px-6 sm:px-10 lg:px-16 py-6 flex items-center justify-between z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-[8px] bg-white/[0.06] border border-white/20 text-[#00E599] flex items-center justify-center shadow-lg backdrop-blur-md">
-            <Disc3 className="w-6 h-6 animate-spin-slow text-[#00E599]" />
-          </div>
-          <div>
-            <span className="kit-text-header font-display text-lg sm:text-xl block leading-tight">
-              EL ARTISTA
-            </span>
-            <span className="text-xs text-[#8E8E99] font-sans font-semibold tracking-wider uppercase">
-              Simulador de Carrera Musical
-            </span>
-          </div>
-        </div>
+        <ArtistaLogo subtitle="Simulador de Carrera Musical" />
       </header>
 
       {/* Main Hero & Menu */}

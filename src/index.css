@@ -97,6 +97,19 @@
   border-radius: 4px !important;
 }
 
+/* Excepciones de isotipo squircle para ArtistaLogo Liquid Glass */
+.artista-logo-squircle {
+  border-radius: 16px !important;
+}
+
+.artista-logo-squircle-compact {
+  border-radius: 12px !important;
+}
+
+.artista-logo-badge {
+  border-radius: 9999px !important;
+}
+
 /* ==========================================================================
    GAME UI TYPOGRAPHY & BUTTON UTILITIES
    ========================================================================== */

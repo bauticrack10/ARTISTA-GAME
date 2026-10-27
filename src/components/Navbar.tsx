@@ -30,6 +30,7 @@ import {
 } from '../utils/formatters';
 import { gameJuice, HudTarget } from '../utils/gameJuice';
 import { MagneticPrimaryButton } from './ui';
+import { ArtistaLogo } from './ArtistaLogo';
 
 interface NavbarProps {
   player: Artist;
@@ -160,15 +161,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onReturnToTitle();
             }}
-            className="tap flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer text-left group"
+            className="tap flex items-center hover:opacity-95 transition-opacity cursor-pointer text-left group"
             title="Volver al Menú Principal"
           >
-            <div className="w-8 h-8 rounded-[4px] bg-gradient-to-b from-[#FF5F1A] to-[#FF3B00] text-white flex items-center justify-center shrink-0 shadow-[0_2px_0_#992500] group-hover:scale-105 transition-transform">
-              <Disc3 className="w-4 h-4 text-white animate-spin-slow" />
-            </div>
-            <span className="kit-text-header font-display text-sm tracking-tight">
-              EL ARTISTA
-            </span>
+            <ArtistaLogo compact />
           </button>
 
           <div className="h-5 w-px bg-white/15 hidden sm:block" />
