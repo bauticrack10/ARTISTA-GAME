@@ -1,4 +1,5 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
+import { useSpotlight } from '../../hooks/useSpotlight';
 
 export interface GlassCardHandle {
   triggerSuccess: () => void;
@@ -13,6 +14,7 @@ export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 /**
  * Contenedor Reactivo de Cristal (GlassCard)
  * - Tarjeta central con soporte reactivo para 'card-success-pulse' y 'card-error-shake'
+ * - Iluminación reactiva al cursor (Spotlight Glass Borders con variables --mouse-x y --mouse-y)
  * - Pulso esmeralda/dorado en aciertos
  * - Vibración horizontal corta y destello rojo translúcido en errores
  * - Accesibilidad: respeta estrictamente prefers-reduced-motion
@@ -25,12 +27,15 @@ export const GlassCard = forwardRef<GlassCardHandle, GlassCardProps>(
       children,
       className = '',
       id,
+      onMouseMove: onMouseMoveProp,
+      onMouseLeave: onMouseLeaveProp,
       ...rest
     },
     ref
   ) => {
     const [reactiveClass, setReactiveClass] = useState<string>('');
     const cardRef = useRef<HTMLDivElement | null>(null);
+    const { onMouseMove: spotlightMouseMove, onMouseLeave: spotlightMouseLeave } = useSpotlight<HTMLDivElement>();
 
     useImperativeHandle(ref, () => ({
       triggerSuccess: () => {
@@ -70,11 +75,25 @@ export const GlassCard = forwardRef<GlassCardHandle, GlassCardProps>(
         ? 'glass-level-3'
         : 'glass-level-2';
 
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      spotlightMouseMove(e);
+      onMouseMoveProp?.(e);
+    };
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+      spotlightMouseLeave(e);
+      onMouseLeaveProp?.(e);
+    };
+
     return (
       <div
         id={id}
-        ref={cardRef}
-        className={`relative rounded-[14px] border border-white/10 bg-[#0E0F17]/80 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 ${variantStyles} ${reactiveClass} ${className}`}
+        ref={(el) => {
+          cardRef.current = el;
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className={`relative rounded-[14px] border border-white/10 bg-[#0E0F17]/80 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 spotlight-border ${variantStyles} ${reactiveClass} ${className}`}
         {...rest}
       >
         {/* Sutil haz especular en el borde superior */}

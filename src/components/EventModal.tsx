@@ -59,7 +59,7 @@ export const EventModal: React.FC<EventModalProps> = ({
       className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-5 py-6 sm:py-10 overflow-y-auto animate-fade-in"
     >
       <div
-        className={`kit-modal max-w-2xl w-full p-5 sm:p-8 space-y-6 text-[#F4F4F6] relative overflow-hidden my-auto ${
+        className={`kit-modal animate-stagger-in max-w-2xl w-full p-5 sm:p-8 space-y-6 text-[#F4F4F6] relative overflow-hidden my-auto ${
           importanceLevel === 5 || isCrisis
             ? 'border-2 border-[#EF4444]'
             : isBloqueoCreativo
@@ -214,9 +214,10 @@ export const EventModal: React.FC<EventModalProps> = ({
             </span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 exclusion-group">
             {choices.map((choice, idx) => {
               const { isEligible, unmetReasons, chips, cleanedNarrative, hasRisk, riskWarning, riskSeverity } = choice;
+              const staggerClass = idx === 0 ? 'stagger-1' : idx === 1 ? 'stagger-2' : idx === 2 ? 'stagger-3' : 'stagger-4';
 
               // Border and styling depending on eligibility and detected risk
               let cardClass = '';

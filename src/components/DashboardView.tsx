@@ -87,10 +87,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   };
 
   return (
-    <div className="space-y-5 pb-8 text-fg">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+    <div className="max-w-7xl mx-auto space-y-8 pb-20 text-fg">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
         {/* COLUMNA PRINCIPAL (8 cols): Perfil, Acciones del Mes, Estadísticas y Catálogo */}
-        <div className="lg:col-span-8 space-y-5">
+        <div className="lg:col-span-8 space-y-8">
           {/* Barra de Primeros Pasos con Progreso Dotado (Paso 1 completado por defecto) */}
           <FirstStepsProgress
             player={player}

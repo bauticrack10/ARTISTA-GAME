@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Artist } from '../types';
+import { useSpotlight } from '../hooks/useSpotlight';
 import {
   Sliders,
   TrendingUp,
@@ -172,8 +173,14 @@ export const ArtistAttributesPanel: React.FC<ArtistAttributesPanelProps> = ({
     { id: 'independence', label: 'Visión Indie', val: personality.independence ?? 24, icon: Compass }
   ];
 
+  const { onMouseMove: handleSpotlightMove, onMouseLeave: handleSpotlightLeave } = useSpotlight<HTMLDivElement>();
+
   return (
-    <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
+    <div
+      onMouseMove={handleSpotlightMove}
+      onMouseLeave={handleSpotlightLeave}
+      className={`liquid-glass-card spotlight-border animate-stagger-in stagger-3 p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}
+    >
       <div className="flex items-center justify-between gap-3 pb-1 relative z-10">
         <div className="flex items-center gap-2">
           <Sliders className="w-4 h-4 text-[#FF4F00]" />

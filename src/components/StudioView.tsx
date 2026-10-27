@@ -815,7 +815,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA] mb-2">
                   Dirección Sónica de la Era • {styleDerivation.primaryGenreName?.trim() || ''}
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-2 exclusion-group">
                   {styleDerivation.availableStyles.map(style => {
                     const isSelected = selectedSubgenreId === style.id;
                     return (
@@ -1029,7 +1029,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 exclusion-group">
                     {VIDEO_CONCEPTS.map(concept => {
                       const isSelected = selectedVideoConcept === concept.id;
                       const ConceptIcon = concept.icon;
@@ -1073,7 +1073,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 exclusion-group">
                     {DIRECTOR_TIERS.map(tier => {
                       const isSelected = selectedDirectorTier === tier.id;
                       const TierIcon = tier.icon;

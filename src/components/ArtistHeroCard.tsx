@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Artist, WorldState, Song, Album, CareerStage } from '../types';
 import { ArtistAvatar } from './ArtistAvatar';
 import { TimeSystem } from '../systems/TimeSystem';
+import { useSpotlight } from '../hooks/useSpotlight';
 import {
   ArrowUpRight,
   Disc3,
@@ -129,10 +130,13 @@ export const ArtistHeroCard: React.FC<ArtistHeroCardProps> = ({
   };
 
   const stageBadge = getCareerStageBadge(player.careerStage);
+  const { onMouseMove: handleSpotlightMove, onMouseLeave: handleSpotlightLeave } = useSpotlight<HTMLDivElement>();
 
   return (
     <div
-      className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}
+      onMouseMove={handleSpotlightMove}
+      onMouseLeave={handleSpotlightLeave}
+      className={`liquid-glass-card spotlight-border animate-stagger-in stagger-1 p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}
     >
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 relative z-10">
         {/* Identidad del Artista */}

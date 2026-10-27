@@ -1,5 +1,6 @@
 import React from 'react';
 import { playSound } from '../../utils/audioSystem';
+import { useSpotlight } from '../../hooks/useSpotlight';
 
 export interface GlassOptionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean;
@@ -13,6 +14,7 @@ export interface GlassOptionButtonProps extends React.ButtonHTMLAttributes<HTMLB
 /**
  * Opción Interactiva 'Liquid Glass Lens' (GlassOptionButton)
  * - Ficha tipo lente (.liquid-option): bisel especular superior, sombra cáustica en la base y halo exterior difuso.
+ * - Iluminación reactiva al cursor (Spotlight Glass Borders con variables --mouse-x y --mouse-y).
  * - Estados ópticos: hover con elevación (-1.5px) y dispersión cromática; active con compresión física elástica a scale(0.98).
  * - Selección: brillo esmeralda reforzado con halo difuso y bisel reflectante de alta fidelidad.
  * - Accesibilidad y rendimiento optimizado para 60fps con desenfoque nativo para elementos interactivos.
@@ -31,10 +33,14 @@ export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOption
       onClick,
       disabled,
       type = 'button',
+      onMouseMove: onMouseMoveProp,
+      onMouseLeave: onMouseLeaveProp,
       ...rest
     },
     ref
   ) => {
+    const { onMouseMove: spotlightMouseMove, onMouseLeave: spotlightMouseLeave } = useSpotlight<HTMLButtonElement>();
+
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled) return;
       if (soundEffect) {
@@ -47,6 +53,16 @@ export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOption
       onClick?.(e);
     };
 
+    const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+      spotlightMouseMove(e);
+      onMouseMoveProp?.(e);
+    };
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+      spotlightMouseLeave(e);
+      onMouseLeaveProp?.(e);
+    };
+
     return (
       <button
         ref={ref}
@@ -55,7 +71,9 @@ export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOption
         aria-selected={selected}
         data-selected={selected ? 'true' : undefined}
         onClick={handleClick}
-        className={`liquid-option glass-option w-full text-left p-4 rounded-[14px] text-white select-none transition-all duration-200 cursor-pointer relative overflow-hidden group ${
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className={`liquid-option glass-option spotlight-border w-full text-left p-4 rounded-[14px] text-white select-none transition-all duration-200 cursor-pointer relative overflow-hidden group ${
           selected ? 'selected' : ''
         } ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${className}`}
         {...rest}

@@ -28,6 +28,24 @@ export const AtmosphericBackground: React.FC = () => {
 
       {/* Textura de Grano Analógico para eliminar banding de degradados y dar tacto físico */}
       <div className="absolute inset-0 analog-grain opacity-20 pointer-events-none" />
+
+      {/* Capa global de ruido SVG ultrafino para eliminar cualquier banding y dar tacto físico analógico */}
+      <svg
+        className="opacity-[0.025] pointer-events-none mix-blend-overlay fixed inset-0 z-10 w-full h-full"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <filter id="ultra-fine-noise">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.8"
+            numOctaves={3}
+            stitchTiles="stitch"
+          />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#ultra-fine-noise)" />
+      </svg>
     </div>
   );
 };

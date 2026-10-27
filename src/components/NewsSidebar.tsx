@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { WorldState, Artist, NewsItem, SocialPost } from '../types';
+import { useSpotlight } from '../hooks/useSpotlight';
 import {
   Radio,
   TrendingUp,
@@ -102,9 +103,13 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
     }
   };
 
+  const { onMouseMove: handleSpotlightMove, onMouseLeave: handleSpotlightLeave } = useSpotlight<HTMLElement>();
+
   return (
     <aside
-      className={`liquid-glass-card p-5 space-y-3.5 flex flex-col h-full text-[#F4F4F6] ${className}`}
+      onMouseMove={handleSpotlightMove}
+      onMouseLeave={handleSpotlightLeave}
+      className={`liquid-glass-card spotlight-border animate-stagger-in stagger-4 p-5 space-y-3.5 flex flex-col h-full text-[#F4F4F6] ${className}`}
     >
       {/* Header con Selector Directo */}
       <div className="flex items-center justify-between gap-2 pb-1 relative z-10">

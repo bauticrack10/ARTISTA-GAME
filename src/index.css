@@ -2997,6 +2997,162 @@ textarea.bg-\[\#09090B\] {
 }
 
 /* ==========================================================================
+   STUDIO DESIGN POLISH (SPOTLIGHT, EXCLUSION, STAGGER, SHIMMER & HUD POP)
+   ========================================================================== */
+
+/* 1. SPOTLIGHT GLASS BORDERS (Iluminación Reactiva al Cursor) */
+.spotlight-border,
+.liquid-card,
+.liquid-glass-card,
+.liquid-option,
+.glass-option,
+.glass-level-2 {
+  position: relative;
+}
+
+.spotlight-border::before,
+.liquid-card::before,
+.liquid-glass-card::before,
+.liquid-option::before,
+.glass-option::before,
+.glass-level-2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 50%) var(--mouse-y, 0px),
+    rgba(255, 255, 255, 0.45),
+    rgba(255, 255, 255, 0.12) 40%,
+    transparent 75%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: var(--spotlight-opacity, 0);
+  transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 2;
+}
+
+.spotlight-border:hover::before,
+.liquid-card:hover::before,
+.liquid-glass-card:hover::before,
+.liquid-option:hover::before,
+.glass-option:hover::before,
+.glass-level-2:hover::before {
+  opacity: var(--spotlight-opacity, 1);
+}
+
+/* 2. FOCO POR EXCLUSIÓN Y CONEXIONES CINÉTICAS (Focus by Exclusion) */
+.exclusion-group {
+  position: relative;
+}
+
+.exclusion-group > * {
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity, filter;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .exclusion-group:hover > * {
+    opacity: 0.65;
+    transform: scale(0.99);
+    filter: blur(0.5px);
+  }
+
+  .exclusion-group > *:hover {
+    opacity: 1 !important;
+    transform: scale(1.02) translateY(-2px) !important;
+    filter: blur(0px) !important;
+    z-index: 10;
+    position: relative;
+  }
+}
+
+/* 3. COREOGRAFÍA DE TRANSICIONES ENTRE RONDAS (Staggered Motion) */
+@keyframes staggerIn {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger-in {
+  animation: staggerIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stagger-1 {
+  animation-delay: 40ms;
+}
+
+.stagger-2 {
+  animation-delay: 80ms;
+}
+
+.stagger-3 {
+  animation-delay: 120ms;
+}
+
+.stagger-4 {
+  animation-delay: 160ms;
+}
+
+/* 4. HAZ DE LUZ LÍQUIDO CONTINUO (Progress Shimmer) */
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-progress-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 25%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.08) 75%,
+    transparent 100%
+  );
+  animation: progressShimmer 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* 5. HUD ELASTIC POP */
+@keyframes hudElasticPop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.18);
+  }
+  70% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-hud-pop {
+  animation: hudElasticPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ==========================================================================
    ACCESIBILIDAD: REDUCED MOTION DIRECTIVE
    ========================================================================== */
 
@@ -3008,9 +3164,34 @@ textarea.bg-\[\#09090B\] {
   .card-success-pulse,
   .card-error-shake,
   .kit-shake,
-  .kit-float-num {
+  .kit-float-num,
+  .animate-stagger-in,
+  .animate-progress-shimmer,
+  .animate-hud-pop {
     animation: none !important;
     transition: none !important;
+  }
+
+  .animate-stagger-in {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .exclusion-group > * {
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .exclusion-group:hover > * {
+    transform: none !important;
+    filter: none !important;
+    opacity: 0.8 !important;
+  }
+  .exclusion-group > *:hover {
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
   }
 }
 

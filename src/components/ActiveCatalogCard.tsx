@@ -1,5 +1,6 @@
 import React from 'react';
 import { Song, Genre, WorldState } from '../types';
+import { useSpotlight } from '../hooks/useSpotlight';
 import {
   Music2,
   Disc3,
@@ -64,9 +65,14 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
     : (songs ? songs.length : activeSongsList.length);
 
   const genreDict: Record<string, Genre> = genres || world?.genres || {};
+  const { onMouseMove: handleSpotlightMove, onMouseLeave: handleSpotlightLeave } = useSpotlight<HTMLDivElement>();
 
   return (
-    <div className={`liquid-glass-card p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}>
+    <div
+      onMouseMove={handleSpotlightMove}
+      onMouseLeave={handleSpotlightLeave}
+      className={`liquid-glass-card spotlight-border animate-stagger-in stagger-3 p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}
+    >
       <div className="flex items-center justify-between pb-1 relative z-10">
         <div className="flex items-center gap-2">
           <Music2 className="w-4 h-4 text-[#FF4F00]" />
@@ -116,7 +122,7 @@ export const ActiveCatalogCard: React.FC<ActiveCatalogCardProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10 exclusion-group">
           {displaySongs.map((song, i) => {
             const genreName = genreDict[song.genreId]?.name || song.genreId;
             const genreTheme = getGenreTheme(song.genreId);

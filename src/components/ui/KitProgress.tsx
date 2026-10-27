@@ -78,14 +78,16 @@ export const KitProgress: React.FC<KitProgressProps> = ({
         className={`w-full kit-progress ${compact ? 'kit-progress-compact h-2.5' : 'h-2.5 sm:h-3'} rounded-full bg-white/10 border border-white/10 relative overflow-hidden`}
       >
         <div
-          className={`kit-progress-fill h-full rounded-full transition-all duration-300 relative ${variantClass} ${barClassName}`}
+          className={`kit-progress-fill h-full rounded-full transition-all duration-300 relative overflow-hidden ${variantClass} ${barClassName}`}
           style={{ width: `${percentage}%` }}
         >
           {/* Brillo especular superior */}
           <div className="absolute inset-x-0 top-0 h-1/2 bg-white/20 rounded-t-full pointer-events-none" />
-          {/* Punto brillante (sparkle dot) en la punta de avance */}
-          {percentage > 2 && (
-            <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#00E599] pointer-events-none" />
+          {/* Haz de luz líquido continuo en movimiento diagonal */}
+          <div className="animate-progress-shimmer" />
+          {/* Resplandor concentrado en la punta de avance */}
+          {percentage > 1 && (
+            <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_12px_2px_#00E599] pointer-events-none z-10" />
           )}
         </div>
       </div>

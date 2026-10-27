@@ -397,8 +397,8 @@ export default function App() {
         />
       </div>
 
-      {/* Main Container */}
-      <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 xl:px-14 pt-6 pb-12 transition-all relative z-10">
+      {/* Main Container con Respiro Vertical Ampliado (Playfield Breathing Room) */}
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 xl:px-14 pt-8 sm:pt-10 pb-20 max-w-7xl mx-auto space-y-8 transition-all relative z-10">
         {currentTab === 'dashboard' && (
           <DashboardView
             player={player}

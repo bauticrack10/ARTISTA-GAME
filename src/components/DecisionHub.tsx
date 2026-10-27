@@ -198,7 +198,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
     <GlassCard
       id="decision-hub-card"
       status={feedbackMessage ? (feedbackMessage.success ? 'success' : 'error') : 'idle'}
-      className={`p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] ${className}`}
+      className={`p-5 sm:p-6 relative space-y-4 text-[#F4F4F6] animate-stagger-in stagger-2 ${className}`}
     >
       {/* Header + Accesos Directos */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 relative z-10">
@@ -280,8 +280,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         </div>
       )}
 
-      {/* 4 Acciones Directas (Sin pestañas duplicadas) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 relative z-10">
+      {/* 4 Acciones Directas (Sin pestañas duplicadas) con Foco por Exclusión */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 relative z-10 exclusion-group">
         {/* 1. DESCANSO & ENERGÍA */}
         <div className="liquid-glass-subcard p-4 flex flex-col justify-between gap-3 group hover:border-white/28 transition-all">
           <div className="space-y-1.5">
