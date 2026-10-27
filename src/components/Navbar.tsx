@@ -171,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="h-5 w-px bg-white/15 hidden sm:block" />
 
           <div
-            className="flex items-center gap-2 liquid-glass-pill px-3 py-1.5 text-xs whitespace-nowrap font-mono tabular-nums border border-white/10"
+            className="flex items-center gap-2 liquid-hud px-3.5 py-1.5 text-xs whitespace-nowrap font-mono tabular-nums"
             title={`Fecha actual: ${monthName} ${currentYear}`}
           >
             <span className="w-2.5 h-2.5 rounded-full bg-[#00E599] shrink-0 shadow-[0_0_8px_rgba(0,229,153,0.8)]" />
@@ -183,7 +183,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Centro: Selector de Período y Botón de Acción Primaria de Videojuego */}
         <div className="order-last lg:order-none w-full lg:w-auto flex items-center gap-2.5 shrink-0 justify-center">
-          <div className="flex items-center liquid-glass-pill p-1 text-xs font-semibold border border-white/10 bg-black/40">
+          <div className="flex items-center liquid-hud p-1 text-xs font-semibold bg-black/40">
             {([
               { val: 1, label: '1M', title: 'Avanzar 1 Mes' },
               { val: 3, label: '3M', title: 'Avanzar 3 Meses' },
@@ -233,7 +233,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto lg:ml-0 flex-wrap sm:flex-nowrap">
           <div
             id="hud-money"
-            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-emerald-500/25 bg-[#00E599]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+            className={`flex items-center gap-1.5 liquid-hud px-3.5 py-1.5 border border-emerald-500/25 bg-[#00E599]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
               poppingHud.money ? 'scale-125 ring-2 ring-[#00E599] shadow-[0_0_16px_rgba(0,229,153,0.8)] z-20' : ''
             }`}
             title={`Fondos Disponibles: ${formatMoney(playerFunds)}`}
@@ -244,7 +244,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div
             id="hud-fans"
-            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+            className={`flex items-center gap-1.5 liquid-hud px-3.5 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
               poppingHud.fans ? 'scale-125 ring-2 ring-[#FF4F00] shadow-[0_0_16px_rgba(255,79,0,0.8)] z-20' : ''
             }`}
             title={`Fans: ${playerFans.toLocaleString('es-AR')} • Oyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}`}
@@ -256,7 +256,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Marcador de Puntos / Legacy Score */}
           <div
             id="hud-points"
-            className={`flex items-center gap-1.5 liquid-glass-pill px-3 py-1.5 border border-cyan-500/25 bg-[#00D2FF]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+            className={`flex items-center gap-1.5 liquid-hud px-3.5 py-1.5 border border-cyan-500/25 bg-[#00D2FF]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
               poppingHud.points ? 'scale-110 ring-2 ring-[#00D2FF] shadow-[0_0_16px_rgba(0,210,255,0.8)] z-20' : ''
             }`}
             title={`Puntos de Carrera (Legacy Score): ${(player?.legacyScore ?? 0).toLocaleString('es-AR')}`}
@@ -270,7 +270,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Medidor HP de Energía Cilíndrico con Brillo Especular */}
           <div
             id="hud-energy"
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs liquid-glass-pill ${energyStyle.bg} bg-black/40 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs liquid-hud ${energyStyle.bg} bg-black/40 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
               poppingHud.energy ? 'scale-125 ring-2 ring-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.8)] z-20' : ''
             }`}
             title={`Energía Vital: ${playerEnergy}%`}

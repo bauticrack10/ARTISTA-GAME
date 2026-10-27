@@ -27,6 +27,7 @@ import { GameJuiceOverlay } from './components/ui/GameJuiceOverlay';
 import { CollabOfferNotification, SpontaneousCollabOffer } from './components/CollabOfferNotification';
 import { IncomingCollabOffer } from './types';
 import { AtmosphericBackground } from './components/ui/AtmosphericBackground';
+import { LiquidGlassFilters } from './components/ui';
 
 
 type AppMode = 'start_screen' | 'character_creator' | 'game';
@@ -324,6 +325,7 @@ export default function App() {
   if (appMode === 'start_screen') {
     return (
       <ErrorBoundary>
+        <LiquidGlassFilters />
         <div className="min-h-screen bg-[#090A0F] text-fg relative isolate">
           <AtmosphericBackground />
           <StartScreen
@@ -341,6 +343,7 @@ export default function App() {
   if (appMode === 'character_creator') {
     return (
       <ErrorBoundary>
+        <LiquidGlassFilters />
         <div className="min-h-screen bg-[#090A0F] text-fg relative isolate">
           <AtmosphericBackground />
           <CharacterCreatorView
@@ -356,6 +359,7 @@ export default function App() {
   // 3. ACTIVE GAME DASHBOARD & SYSTEMS
   return (
     <ErrorBoundary>
+      <LiquidGlassFilters />
       <div
         className="min-h-screen bg-[#090A0F] text-fg flex flex-col selection:bg-[#00E599]/30 selection:text-white relative overflow-x-clip font-sans"
       >
