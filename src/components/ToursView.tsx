@@ -24,7 +24,7 @@ import {
   ArrowRight,
   Trophy
 } from 'lucide-react';
-import { TourEngine, MIN_TOUR_ENERGY, MIN_TOUR_LISTENERS, MIN_TOUR_SONGS } from '../systems/TourEngine';
+import { TourEngine, MIN_TOUR_ENERGY, MIN_TOUR_SONGS } from '../systems/TourEngine';
 import { GLOBAL_FESTIVALS, FestivalEngine } from '../systems/FestivalEngine';
 import { playSound } from '../utils/audioSystem';
 import { useTourRequirements } from '../hooks/useTourRequirements';
@@ -56,12 +56,12 @@ const TIER_BORDER_COLORS: Record<TourTier, string> = {
 };
 
 const TIER_BADGE_COLORS: Record<TourTier, string> = {
-  club: 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30',
-  theater: 'bg-[#1C1C21] text-[#F4F0EA] border-[#3F3F46]',
-  arena: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30',
-  festival_circuit: 'bg-[#FF2A4B]/10 text-[#FF2A4B] border-[#FF2A4B]/30',
-  stadium: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/40',
-  world_tour: 'bg-[#FF2A4B]/15 text-[#FF2A4B] border-[#FF2A4B]/40'
+  club: 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/35',
+  theater: 'bg-[#0F131D]/85 text-[#F4F0EA] border-white/20',
+  arena: 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/35',
+  festival_circuit: 'bg-[#FF2A4B]/15 text-[#FF2A4B] border-[#FF2A4B]/35',
+  stadium: 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/45',
+  world_tour: 'bg-[#FF2A4B]/20 text-[#FF2A4B] border-[#FF2A4B]/45'
 };
 
 const getTicketBadge = (sold: number, capacity: number) => {
@@ -69,18 +69,18 @@ const getTicketBadge = (sold: number, capacity: number) => {
   if (ratio >= 0.95) {
     return {
       label: 'SOLD OUT',
-      cls: 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30 font-sans font-bold'
+      cls: 'bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/35 font-sans font-bold'
     };
   }
   if (ratio >= 0.60) {
     return {
       label: `${Math.round(ratio * 100)}% vendido`,
-      cls: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 font-sans font-bold'
+      cls: 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/35 font-sans font-bold'
     };
   }
   return {
     label: `${Math.round(ratio * 100)}% vendido`,
-    cls: 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30 font-sans font-bold'
+    cls: 'bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/35 font-sans font-bold'
   };
 };
 
@@ -196,7 +196,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
             <Plane className="w-5 h-5 text-[#FF4F00]" strokeWidth={1.75} />
             Giras & Festivales en Vivo
           </h1>
-          <p className="text-xs text-[#8E8E99] mt-0.5">
+          <p className="text-xs text-[#D8DEE9] mt-0.5">
             Contratos de boletería y caché en festivales internacionales.
           </p>
         </div>
@@ -211,8 +211,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
             }}
             className={`px-4 py-2 rounded-[4px] transition-colors cursor-pointer flex items-center gap-2 ${
               subTab === 'festivals'
-                ? 'bg-[#FF4F00] text-[#F4F0EA] font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
+                ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10'
             }`}
           >
             <Flame className="w-4 h-4" strokeWidth={1.75} />
@@ -227,8 +227,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
             }}
             className={`px-4 py-2 rounded-[4px] transition-colors cursor-pointer flex items-center gap-2 ${
               subTab === 'tours'
-                ? 'bg-[#FF4F00] text-[#F4F0EA] font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
+                ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
+                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10'
             }`}
           >
             <Ticket className="w-4 h-4" strokeWidth={1.75} />
@@ -238,7 +238,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
       </div>
 
       {notification && (
-        <div className="p-3.5 rounded-[4px] bg-[#10B981]/10 border border-[#10B981]/40 text-[#10B981] text-xs font-semibold flex items-center gap-2">
+        <div className="p-3.5 rounded-[4px] bg-[#10B981]/15 border border-[#10B981]/40 text-[#10B981] text-xs font-semibold flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" strokeWidth={1.75} />
           <span>{notification}</span>
         </div>
@@ -257,7 +257,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                     <Flame className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
                     Invitaciones Oficiales Pendientes ({pendingInvitations.length})
                   </h2>
-                  <span className="text-xs text-[#8E8E99] tabular-nums">Temporada {world.currentYear}</span>
+                  <span className="text-xs text-[#E2E8F0] font-semibold tabular-nums">Temporada {world.currentYear}</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -268,19 +268,19 @@ export const ToursView: React.FC<ToursViewProps> = ({
                     return (
                       <div
                         key={inv.id}
-                        className="rounded-[6px] border border-[#FF2A4B]/40 bg-[#0B0B0C] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        className="rounded-[6px] border border-[#FF2A4B]/45 bg-[#0B0B0C] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                       >
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99] tabular-nums">
+                            <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#0F131D]/85 border border-white/15 text-[#E2E8F0] tabular-nums">
                               {fest.country} • Mes {fest.month}
                             </span>
-                            <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#FF2A4B]/10 text-[#FF2A4B] border border-[#FF2A4B]/30">
+                            <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#FF2A4B]/15 text-[#FF2A4B] border border-[#FF2A4B]/35">
                               {inv.slotTitle}
                             </span>
                           </div>
                           <h3 className="text-base font-bold text-[#F4F0EA]">{inv.festivalName}</h3>
-                          <div className="flex items-center gap-3 text-xs text-[#8E8E99] tabular-nums">
+                          <div className="flex items-center gap-3 text-xs text-[#D8DEE9] tabular-nums">
                             <span>Caché: <strong className="text-[#10B981]">{formatMoney(inv.payout)}</strong></span>
                             <span>•</span>
                             <span>{(inv.audienceExpected || 0).toLocaleString('es-AR')} esp.</span>
@@ -290,7 +290,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                         <button
                           type="button"
                           onClick={() => handleOpenLiveFestivalShow(fest, inv.slot, inv)}
-                          className="px-4 py-2.5 rounded-[4px] bg-[#FF2A4B] hover:bg-[#E02040] text-[#F4F0EA] text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 active:translate-y-[1px]"
+                          className="px-4 py-2.5 rounded-[4px] bg-[#FF2A4B] hover:bg-[#E02040] text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 active:translate-y-[1px]"
                         >
                           <Mic2 className="w-4 h-4" strokeWidth={1.75} />
                           <span>Actuar en Vivo</span>
@@ -301,12 +301,12 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between px-3.5 py-2.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-xs text-[#8E8E99]">
+              <div className="flex items-center justify-between px-3.5 py-2.5 rounded-[4px] bg-[#0F131D]/80 border border-white/15 text-xs text-[#D8DEE9]">
                 <span className="flex items-center gap-2">
-                  <Flame className="w-4 h-4 text-[#52525B]" strokeWidth={1.75} />
+                  <Flame className="w-4 h-4 text-[#FF4F00] shrink-0" strokeWidth={1.75} />
                   Sin ofertas pendientes en este momento. Podés postular directamente en los festivales habilitados según tu popularidad.
                 </span>
-                <span className="text-2xs text-[#52525B] uppercase font-bold tabular-nums shrink-0 ml-2">
+                <span className="text-2xs text-[#E2E8F0] uppercase font-bold tabular-nums shrink-0 ml-2">
                   Temporada {world.currentYear}
                 </span>
               </div>
@@ -319,7 +319,7 @@ export const ToursView: React.FC<ToursViewProps> = ({
                   <MapPin className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
                   Cartelera Global de Festivales ({GLOBAL_FESTIVALS.length})
                 </h2>
-                <span className="text-xs text-[#8E8E99]">Calendario Oficial</span>
+                <span className="text-xs text-[#E2E8F0] font-medium">Calendario Oficial</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
@@ -329,11 +329,11 @@ export const ToursView: React.FC<ToursViewProps> = ({
                   return (
                     <div
                       key={fest.id}
-                      className="p-4 rounded-[6px] bg-[#0B0B0C] border border-[#26262B] hover:border-[#3F3F46] flex flex-col justify-between space-y-3 transition-all"
+                      className="p-4 rounded-[6px] bg-[#0B0B0C] border border-white/15 hover:border-white/25 flex flex-col justify-between space-y-3 transition-all"
                     >
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99] tabular-nums">
+                          <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#0F131D]/85 border border-white/15 text-[#E2E8F0] tabular-nums">
                             {fest.country} • Mes {fest.month}
                           </span>
                           <span className="text-2xs font-bold text-[#F59E0B] flex items-center gap-1 tabular-nums">
@@ -343,25 +343,31 @@ export const ToursView: React.FC<ToursViewProps> = ({
                         </div>
 
                         <h3 className="text-sm font-bold text-[#F4F0EA]">{fest.name}</h3>
-                        <div className="text-xs text-[#8E8E99] tabular-nums">
+                        <div className="text-xs text-[#D8DEE9] tabular-nums">
                           Capacidad: <strong className="text-[#F4F0EA]">{fest.capacity.toLocaleString('es-AR')}</strong>/día
                         </div>
                       </div>
 
-                      <div className="pt-2.5 border-t border-[#26262B] flex items-center justify-between gap-2">
-                        <span className={`text-xs font-bold truncate ${eligibleSlot ? 'text-[#10B981]' : 'text-[#52525B]'}`}>
-                          {eligibleSlot ? FestivalEngine.getSlotTitle(eligibleSlot).split('•')[0].trim() : 'Pop. Insuficiente'}
-                        </span>
+                      <div className="pt-2.5 border-t border-white/15 flex items-center justify-between gap-2">
+                        {eligibleSlot ? (
+                          <>
+                            <span className="text-xs font-bold truncate text-[#10B981]">
+                              {FestivalEngine.getSlotTitle(eligibleSlot).split('•')[0].trim()}
+                            </span>
 
-                        {eligibleSlot && (
-                          <button
-                            type="button"
-                            onClick={() => handleOpenLiveFestivalShow(fest, eligibleSlot)}
-                            className="px-3 py-1.5 rounded-[4px] bg-[#1C1C21] hover:bg-[#26262B] border border-[#26262B] text-[#F4F0EA] text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 shrink-0 active:translate-y-[1px]"
-                          >
-                            <span>Tocar</span>
-                            <ArrowRight className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenLiveFestivalShow(fest, eligibleSlot)}
+                              className="px-3 py-1.5 rounded-[4px] bg-[#0F131D]/90 hover:bg-[#192133] border border-white/20 text-[#F4F0EA] text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 shrink-0 active:translate-y-[1px]"
+                            >
+                              <span>Tocar</span>
+                              <ArrowRight className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
+                            </button>
+                          </>
+                        ) : (
+                          <span className="w-full text-center px-3 py-1.5 rounded-[4px] bg-[#0F131D]/85 border border-white/15 text-[#E2E8F0] text-xs font-semibold truncate">
+                            Pop. Insuficiente
+                          </span>
                         )}
                       </div>
                     </div>
@@ -383,24 +389,24 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 {festivalHistory.map((show, idx) => (
                   <div
                     key={idx}
-                    className="p-3.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex flex-col md:flex-row md:items-center justify-between gap-3"
+                    className="p-3.5 rounded-[4px] bg-[#0B0B0C] border border-white/15 flex flex-col md:flex-row md:items-center justify-between gap-3"
                   >
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="text-xs font-bold text-[#F4F0EA]">
                           {show?.headline || show?.newsHeadline || show?.festivalName || 'Show en Vivo'}
                         </h3>
-                        <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#1C1C21] border border-[#26262B] text-[#8E8E99]">
+                        <span className="text-2xs font-bold px-2 py-0.5 rounded-[4px] bg-[#0F131D]/85 border border-white/15 text-[#E2E8F0]">
                           {show?.slotTitle || show?.slot || 'Actuación'}
                         </span>
                       </div>
-                      <span className="text-2xs text-[#8E8E99] block mt-1 tabular-nums">
+                      <span className="text-2xs text-[#D8DEE9] block mt-1 tabular-nums">
                         Audiencia: {(show?.attendance || 0).toLocaleString('es-AR')} personas • Calificación: {Number.isFinite(show?.performanceScore) ? show.performanceScore : (Number.isFinite(show?.crowdRating) ? show.crowdRating : 75)}%
                       </span>
                     </div>
 
                     <div className="text-right shrink-0 tabular-nums">
-                      <span className="text-2xs text-[#8E8E99] block">Ganancia Neta</span>
+                      <span className="text-2xs text-[#D8DEE9] block">Ganancia Neta</span>
                       <span className={`text-sm font-bold ${(show?.netProfit ?? 0) >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
                         {(show?.netProfit ?? 0) >= 0 ? `+${formatMoney(show?.netProfit || 0)}` : `-${formatMoney(Math.abs(show?.netProfit || 0))}`}
                       </span>
@@ -429,8 +435,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 <span
                   className={`px-2.5 py-1 rounded-[4px] border flex items-center gap-1.5 font-semibold ${
                     tourGates.hasCatalog
-                      ? 'bg-[#0B0B0C] border-[#26262B] text-[#10B981]'
-                      : 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]'
+                      ? 'bg-[#0F131D]/85 border-white/15 text-[#10B981]'
+                      : 'bg-[#EF4444]/15 border-[#EF4444]/35 text-[#EF4444]'
                   }`}
                 >
                   <Disc3 className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -440,8 +446,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 <span
                   className={`px-2.5 py-1 rounded-[4px] border flex items-center gap-1.5 font-semibold ${
                     tourGates.hasAudience
-                      ? 'bg-[#0B0B0C] border-[#26262B] text-[#10B981]'
-                      : 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]'
+                      ? 'bg-[#0F131D]/85 border-white/15 text-[#10B981]'
+                      : 'bg-[#EF4444]/15 border-[#EF4444]/35 text-[#EF4444]'
                   }`}
                 >
                   <Headphones className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -451,8 +457,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 <span
                   className={`px-2.5 py-1 rounded-[4px] border flex items-center gap-1.5 font-semibold ${
                     tourGates.hasEnergy
-                      ? 'bg-[#0B0B0C] border-[#26262B] text-[#10B981]'
-                      : 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]'
+                      ? 'bg-[#0F131D]/85 border-white/15 text-[#10B981]'
+                      : 'bg-[#EF4444]/15 border-[#EF4444]/35 text-[#EF4444]'
                   }`}
                 >
                   <Zap className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -463,18 +469,18 @@ export const ToursView: React.FC<ToursViewProps> = ({
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#8E8E99] block mb-1.5">Nombre Oficial del Tour</label>
+                <label className="text-xs font-semibold text-[#E2E8F0] block mb-1.5">Nombre Oficial del Tour</label>
                 <input
                   type="text"
                   value={tourName}
                   onChange={(e) => setTourName(e.target.value)}
                   placeholder={`Ej: ${player.name} — El Retorno Tour ${world?.currentYear || 2026}`}
-                  className="w-full bg-[#0B0B0C] border border-[#26262B] rounded-[4px] px-3.5 py-2 text-xs text-[#F4F0EA] focus:border-[#3F3F46] focus:outline-hidden"
+                  className="w-full bg-[#0B0B0C] border border-white/15 rounded-[4px] px-3.5 py-2 text-xs text-[#F4F0EA] focus:border-white/35 focus:outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#8E8E99] block mb-2">Escala de los Recintos (Tier)</label>
+                <label className="text-xs font-semibold text-[#E2E8F0] block mb-2">Escala de los Recintos (Tier)</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {(Object.keys(tierDetails) as TourTier[]).map((tierKey) => {
                     const info = tierDetails[tierKey];
@@ -487,10 +493,10 @@ export const ToursView: React.FC<ToursViewProps> = ({
                         onClick={() => isAvailable && setSelectedTier(tierKey)}
                         className={`p-3.5 rounded-[4px] border text-left transition-all relative ${
                           !isAvailable
-                            ? 'opacity-40 bg-[#0B0B0C] border-[#26262B] cursor-not-allowed'
+                            ? 'opacity-75 bg-[#0F131D]/80 border-white/12 cursor-not-allowed'
                             : isSelected
-                            ? 'border-[#FF2A4B] bg-[#1C1C21] cursor-pointer'
-                            : 'bg-[#0B0B0C] border-[#26262B] hover:border-[#3F3F46] cursor-pointer'
+                            ? 'border-[#FF2A4B] bg-[#161D2E]/90 cursor-pointer shadow-[0_0_16px_rgba(255,42,75,0.18)]'
+                            : 'bg-[#0B0B0C] border-white/15 hover:border-white/30 cursor-pointer'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
@@ -499,10 +505,10 @@ export const ToursView: React.FC<ToursViewProps> = ({
                             {tierKey}
                           </span>
                         </div>
-                        <p className="text-2xs text-[#8E8E99] mt-1.5 leading-relaxed line-clamp-2">{info.desc}</p>
-                        <div className="mt-2.5 pt-2 border-t border-[#26262B] flex items-center justify-between text-xs tabular-nums">
+                        <p className="text-2xs text-[#D8DEE9] mt-1.5 leading-relaxed line-clamp-2">{info.desc}</p>
+                        <div className="mt-2.5 pt-2 border-t border-white/15 flex items-center justify-between text-xs tabular-nums">
                           <span className="text-[#10B981] font-bold">{info.estRevenue}</span>
-                          <span className="text-[#EF4444]">{info.fatigue}</span>
+                          <span className="text-[#EF4444] font-medium">{info.fatigue}</span>
                         </div>
                       </div>
                     );
@@ -511,8 +517,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[#26262B] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="text-xs text-[#8E8E99]">
+            <div className="pt-2 border-t border-white/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="text-xs text-[#D8DEE9]">
                 {isTourAllowed ? (
                   <span className="text-[#10B981] flex items-center gap-1.5 font-semibold">
                     <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.75} /> Requisitos listos para reservar fechas
@@ -530,8 +536,8 @@ export const ToursView: React.FC<ToursViewProps> = ({
                 title={tourGates.tooltipText}
                 className={`text-xs px-5 py-2.5 rounded-[4px] transition-all flex items-center justify-center gap-2 ${
                   isTourAllowed
-                    ? 'bg-[#FF2A4B] hover:bg-[#E02040] text-[#F4F0EA] font-bold cursor-pointer active:translate-y-[1px]'
-                    : 'bg-[#1C1C21] text-[#52525B] border border-[#26262B] cursor-not-allowed opacity-60'
+                    ? 'bg-[#FF2A4B] hover:bg-[#E02040] text-white font-bold cursor-pointer active:translate-y-[1px]'
+                    : 'bg-[#0F131D]/85 text-[#E2E8F0] border border-white/15 font-semibold cursor-not-allowed'
                 }`}
               >
                 <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
@@ -548,19 +554,19 @@ export const ToursView: React.FC<ToursViewProps> = ({
             </h2>
 
             {playerTours.length === 0 ? (
-              <div className="text-center py-6 text-[#8E8E99] text-xs">No has realizado ninguna gira todavía.</div>
+              <div className="text-center py-6 text-[#D8DEE9] text-xs">No has realizado ninguna gira todavía.</div>
             ) : (
               <div className="space-y-2.5">
                 {playerTours.map((t) => {
                   const ticketBadge = getTicketBadge(t?.totalTicketsSold || 0, t?.totalCapacity || 0);
                   const safeTier = (t?.tier || 'club') as TourTier;
                   const borderCls = TIER_BORDER_COLORS[safeTier] || 'border-l-[#10B981]';
-                  const badgeCls = TIER_BADGE_COLORS[safeTier] || 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30';
+                  const badgeCls = TIER_BADGE_COLORS[safeTier] || 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/35';
 
                   return (
                     <div
                       key={t?.id || `tour_${Math.random()}`}
-                      className={`bg-[#0B0B0C] p-3.5 rounded-[4px] border border-[#26262B] flex flex-col md:flex-row md:items-center justify-between gap-3 border-l-4 ${borderCls} hover:border-[#3F3F46] hover:bg-[#1C1C21] transition-all`}
+                      className={`bg-[#0B0B0C] p-3.5 rounded-[4px] border border-white/15 flex flex-col md:flex-row md:items-center justify-between gap-3 border-l-4 ${borderCls} hover:border-white/30 hover:bg-[#1C1C21] transition-all`}
                     >
                       <div>
                         <h3 className="text-xs font-bold text-[#F4F0EA] flex items-center gap-2 flex-wrap">
@@ -572,13 +578,13 @@ export const ToursView: React.FC<ToursViewProps> = ({
                             {ticketBadge.label}
                           </span>
                         </h3>
-                        <p className="text-2xs text-[#8E8E99] mt-1 tabular-nums">
+                        <p className="text-2xs text-[#D8DEE9] mt-1 tabular-nums">
                           Año {t?.year || 2026} • {t?.stops?.length || 0} Ciudades • {(t?.totalTicketsSold || 0).toLocaleString('es-AR')} / {(t?.totalCapacity || 0).toLocaleString('es-AR')} Tickets
                         </p>
                       </div>
 
                       <div className="text-right tabular-nums shrink-0">
-                        <span className="text-2xs text-[#8E8E99] block">Ganancia Neta</span>
+                        <span className="text-2xs text-[#D8DEE9] block">Ganancia Neta</span>
                         <span className="text-sm font-bold text-[#10B981]">
                           +{formatMoney(t.netArtistProfit || 0)}
                         </span>

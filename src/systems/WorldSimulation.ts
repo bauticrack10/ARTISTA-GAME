@@ -1,4 +1,4 @@
-import { WorldState, Artist, Song, Album, CareerStage } from '../types';
+import { WorldState, Artist, Song, Album } from '../types';
 import {
   generateRandomArtistName,
   generateSongTitle,
@@ -6,13 +6,16 @@ import {
   generateUniqueSongTitle,
   generateUniqueAlbumTitle,
   GLOBAL_COUNTRY_DATABASE,
-  generateUniqueProceduralArtistName
+  generateUniqueProceduralArtistName,
+  resolveArtistLanguage
 } from '../data/proceduralNames';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { StreamingEngine } from './StreamingEngine';
 import { LegacyEngine } from './LegacyEngine';
 import { TimeSystem } from './TimeSystem';
 import { IndustryEngine } from './IndustryEngine';
+
+export { generateRandomArtistName, generateSongTitle, generateAlbumTitle };
 
 export class WorldSimulation {
   static simulateMonth(world: WorldState): {
@@ -37,11 +40,11 @@ export class WorldSimulation {
     if (activeProceduralArtists.length < 150 && (world.currentMonth === 1 || world.currentMonth === 7)) {
       const activeArtists = Object.values(world.artists).filter(a => !a.isRetired);
       const seedIdx = (world.currentYear * 12 + world.currentMonth + activeArtists.length) * 17;
-      
+
       // Seleccionar país global de la base de 35+ países
       const countryData = GLOBAL_COUNTRY_DATABASE[seedIdx % GLOBAL_COUNTRY_DATABASE.length];
       const city = countryData.cities[(seedIdx * 7) % countryData.cities.length];
-      
+
       // Asignar género acorde al país natal del artista procedural
       const mainGenreId = countryData.typicalGenres[(seedIdx * 3) % countryData.typicalGenres.length] || Object.keys(world.genres)[0];
       const genreObj = world.genres[mainGenreId];
@@ -168,11 +171,7 @@ export class WorldSimulation {
 
     // 2. Simulate active NPC artists
     // Index songs by artist ONCE per month instead of re-scanning the whole (ever-growing) world.songs
-    // dictionary inside the per-artist loop below. With 270+ active NPCs each releasing music over
-    // years of simulated time, world.songs keeps growing every month -- re-filtering it per artist per
-    // month turns a single month's work into O(artists x totalSongsEver), which compounds into a
-    // severe, worsening slowdown the longer a save has been played (confirmed: each additional decade
-    // of simulated time took measurably longer than the last).
+    // dictionary inside the per-artist loop below.
     const songsByArtistId = new Map<string, Song[]>();
     let totalSongsCounter = Object.keys(world.songs).length;
     let totalAlbumsCounter = Object.keys(world.albums).length;
@@ -181,6 +180,69 @@ export class WorldSimulation {
       if (list) list.push(song);
       else songsByArtistId.set(song.artistId, [song]);
     }
+
+    // Pre-index active NPCs by language and genre once per month for O(1) organic collab matching
+    const activeNPCList = Object.values(world.artists).filter(a => !a.isPlayer && !a.isRetired);
+    const npcByLang = new Map<string, Artist[]>();
+    const npcByGenre = new Map<string, Artist[]>();
+    for (const npc of activeNPCList) {
+      const lang = resolveArtistLanguage(npc.language, npc.country, npc.countryCode);
+      const langBucket = npcByLang.get(lang);
+      if (langBucket) langBucket.push(npc);
+      else npcByLang.set(lang, [npc]);
+
+      const genreBucket = npcByGenre.get(npc.mainGenreId);
+      if (genreBucket) genreBucket.push(npc);
+      else npcByGenre.set(npc.mainGenreId, [npc]);
+    }
+    const allProducersList = Object.values(world.producers || {});
+
+    const pickCompatibleCollabPartner = (lead: Artist): Artist | null => {
+      const leadLang = resolveArtistLanguage(lead.language, lead.country, lead.countryCode);
+      const langPeers = npcByLang.get(leadLang) || [];
+      const genrePeers = npcByGenre.get(lead.mainGenreId) || [];
+
+      const isEligiblePeer = (cand: Artist, maxPopDelta: number) => {
+        if (cand.id === lead.id || cand.isRetired || cand.isPlayer) return false;
+        const rel = lead.relationships?.[cand.id];
+        if (rel?.relationType === 'feud' || rel?.activeRivalry) return false;
+        return Math.abs(cand.stats.popularity - lead.stats.popularity) <= maxPopDelta;
+      };
+
+      // Priority 1: Same language AND same genre/scene with close popularity
+      const idealPool = langPeers.filter(c => c.mainGenreId === lead.mainGenreId && isEligiblePeer(c, 22));
+      if (idealPool.length > 0) {
+        return idealPool[Math.floor(Math.random() * idealPool.length)];
+      }
+
+      // Priority 2: Same language with compatible popularity
+      const sameLangPool = langPeers.filter(c => isEligiblePeer(c, 20));
+      if (sameLangPool.length > 0) {
+        return sameLangPool[Math.floor(Math.random() * sameLangPool.length)];
+      }
+
+      // Priority 3: Cross-cultural same genre collab with close popularity
+      const sameGenrePool = genrePeers.filter(c => isEligiblePeer(c, 18));
+      if (sameGenrePool.length > 0) {
+        return sameGenrePool[Math.floor(Math.random() * sameGenrePool.length)];
+      }
+
+      return null;
+    };
+
+    const pickCoherentProducerId = (lead: Artist): string | undefined => {
+      if (allProducersList.length === 0 || Math.random() > 0.35) return undefined;
+      const leadLang = resolveArtistLanguage(lead.language, lead.country, lead.countryCode);
+      const matching = allProducersList.filter(p => {
+        const minPop = p.requirements?.minPopularity ?? 0;
+        if (lead.stats.popularity + 10 < minPop) return false;
+        const genreMatch = p.genreSpecialties?.includes(lead.mainGenreId);
+        const langMatch = p.country ? resolveArtistLanguage(undefined, p.country) === leadLang : false;
+        return genreMatch || langMatch;
+      });
+      if (matching.length === 0) return undefined;
+      return matching[Math.floor(Math.random() * matching.length)].id;
+    };
 
     for (const artist of Object.values(world.artists)) {
       if (artist.isPlayer || artist.isRetired) continue;
@@ -229,20 +291,28 @@ export class WorldSimulation {
             existingTitles: world.albums,
             artistName: artist.name,
             genreId: artist.mainGenreId,
-            seedIndex: ++totalAlbumsCounter
+            seedIndex: ++totalAlbumsCounter,
+            language: artist.language,
+            country: artist.country,
+            countryCode: artist.countryCode
           });
           const albumId = `album_${artist.id}_${world.currentYear}_${world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
           const songCount = 8 + Math.floor(Math.random() * 6);
           const albumSongIds: string[] = [];
+          const albumProducerId = pickCoherentProducerId(artist);
 
           for (let i = 0; i < songCount; i++) {
             const sTitle = generateUniqueSongTitle({
               existingTitles: world.songs,
               artistName: artist.name,
               genreId: artist.mainGenreId,
-              seedIndex: ++totalSongsCounter
+              seedIndex: ++totalSongsCounter,
+              language: artist.language,
+              country: artist.country,
+              countryCode: artist.countryCode
             });
             const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${i}_${Math.floor(Math.random() * 1000)}`;
+            const trackCollabPartner = (i === 0 || i === 3) && Math.random() < 0.22 ? pickCompatibleCollabPartner(artist) : null;
 
             const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
               artist,
@@ -255,13 +325,14 @@ export class WorldSimulation {
               id: songId,
               title: sTitle,
               artistId: artist.id,
-              featuredArtistIds: [],
+              featuredArtistIds: trackCollabPartner ? [trackCollabPartner.id] : [],
+              producerId: albumProducerId,
               genreId: artist.mainGenreId,
               subGenreIds: artist.subGenreIds,
               releaseYear: world.currentYear,
               releaseMonth: world.currentMonth,
               quality: Math.min(100, Math.max(20, Math.floor(trackPerf.productionQuality * 0.5 + artist.personality.skill * 0.5 + Math.floor(Math.random() * 8 - 4)))),
-              commercialAppeal: Math.min(100, Math.max(20, Math.floor(trackPerf.marketingInvestment * 0.5 + artist.personality.commercialAppeal * 0.5))),
+              commercialAppeal: Math.min(100, Math.max(20, Math.floor(trackPerf.marketingInvestment * 0.5 + artist.personality.commercialAppeal * 0.5 + (trackCollabPartner ? 3 : 0)))),
               originality: Math.min(100, artist.personality.originality),
               hypeAtRelease: artist.stats.hype,
               streamsTotal: 0,
@@ -294,6 +365,7 @@ export class WorldSimulation {
             id: albumId,
             title: albumTitle,
             artistId: artist.id,
+            producerId: albumProducerId,
             type: 'album',
             songIds: albumSongIds,
             genreId: artist.mainGenreId,
@@ -312,14 +384,19 @@ export class WorldSimulation {
           world.albums[albumId] = newAlbum;
           newAlbumsGenerated.push(newAlbum);
         } else {
-          // Drop Single
+          // Drop Single (~25% organic probability of real NPC-to-NPC collaboration)
           const sTitle = generateUniqueSongTitle({
             existingTitles: world.songs,
             artistName: artist.name,
             genreId: artist.mainGenreId,
-            seedIndex: ++totalSongsCounter
+            seedIndex: ++totalSongsCounter,
+            language: artist.language,
+            country: artist.country,
+            countryCode: artist.countryCode
           });
           const songId = `song_${artist.id}_${world.currentYear}_${world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
+          const collabPartner = Math.random() < 0.25 ? pickCompatibleCollabPartner(artist) : null;
+          const singleProducerId = pickCoherentProducerId(artist);
 
           const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
             artist,
@@ -332,15 +409,16 @@ export class WorldSimulation {
             id: songId,
             title: sTitle,
             artistId: artist.id,
-            featuredArtistIds: [],
+            featuredArtistIds: collabPartner ? [collabPartner.id] : [],
+            producerId: singleProducerId,
             genreId: artist.mainGenreId,
             subGenreIds: artist.subGenreIds,
             releaseYear: world.currentYear,
             releaseMonth: world.currentMonth,
             quality: Math.min(100, Math.max(20, Math.floor(trackPerf.productionQuality * 0.5 + artist.personality.skill * 0.5))),
-            commercialAppeal: Math.min(100, Math.max(20, Math.floor(trackPerf.marketingInvestment * 0.5 + artist.personality.commercialAppeal * 0.5))),
+            commercialAppeal: Math.min(100, Math.max(20, Math.floor(trackPerf.marketingInvestment * 0.5 + artist.personality.commercialAppeal * 0.5 + (collabPartner ? 4 : 0)))),
             originality: Math.min(100, artist.personality.originality),
-            hypeAtRelease: artist.stats.hype,
+            hypeAtRelease: Math.min(100, artist.stats.hype + (collabPartner ? 6 : 0)),
             streamsTotal: 0,
             streamsLastMonth: 0,
             monthlyStreamsHistory: [],

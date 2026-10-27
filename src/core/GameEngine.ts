@@ -45,6 +45,7 @@ import {
   SimulationStepMonths
 } from '../types';
 import { PhoneMessageEngine } from '../systems/PhoneMessageEngine';
+import { generateUniqueSongTitle, resolveArtistLanguage } from '../data/proceduralNames';
 import { INITIAL_ARTISTS } from '../data/initialArtists';
 import { INITIAL_GENRES, SUBGENRE_DETAILS } from '../data/genres';
 import { INITIAL_LABELS } from '../data/labels';
@@ -105,6 +106,10 @@ export class GameEngine {
         avatarIcon: customPlayer.avatarIcon,
         country: customPlayer.country || 'Argentina',
         city: customPlayer.city || 'Buenos Aires',
+        countryCode: customPlayer.countryCode,
+        language: customPlayer.language || resolveArtistLanguage(customPlayer.language, customPlayer.country || 'Argentina', customPlayer.countryCode),
+        influenceRegions: customPlayer.influenceRegions,
+        primaryMarkets: customPlayer.primaryMarkets,
         birthYear: customPlayer.birthYear !== undefined ? customPlayer.birthYear : ((customPlayer.careerStartYear || 2026) - 18),
         careerStartYear: customPlayer.careerStartYear || 2026,
         mainGenreId: customPlayer.mainGenreId || 'trap_latino',
@@ -178,6 +183,8 @@ export class GameEngine {
         avatarIcon: 'mic',
         country: 'Argentina',
         city: 'Buenos Aires',
+        countryCode: 'AR',
+        language: 'es',
         birthYear: 2008,
         careerStartYear: 2026,
         mainGenreId: 'trap_latino',
@@ -2171,14 +2178,17 @@ export class GameEngine {
       const discountPct = isDiscount ? 50 : 100;
       const fee = isDiscount ? Math.floor(prod.costPerTrack * 0.5) : 0;
 
-      const offerTitles = [
-        'Beat Tape Session',
-        'Noche de Búnker',
-        'Instrumental Élite',
-        'Fórmula Sonora',
-        'Ritmo Pesado'
-      ];
-      const title = offerTitles[Math.floor(Math.random() * offerTitles.length)];
+      const prodLang = prod.country ? resolveArtistLanguage(undefined, prod.country) : 'es';
+      const playerLang = resolveArtistLanguage(player.language, player.country, player.countryCode);
+      const effectiveLang = prodLang !== 'es' ? prodLang : playerLang;
+      const title = generateUniqueSongTitle({
+        existingTitles: this.world.songs,
+        genreId: prod.genreSpecialties?.[0] || player.mainGenreId,
+        artistName: player.name,
+        language: effectiveLang,
+        country: prodLang !== 'es' ? prod.country : player.country,
+        countryCode: prodLang !== 'es' ? undefined : player.countryCode
+      });
 
       return {
         id: `offer_prod_${prod.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`,
@@ -2192,8 +2202,8 @@ export class GameEngine {
         budgetOffered: fee,
         royaltySplitPct: 50,
         pitchMessage: isDiscount
-          ? `${prod.name} escuchó tu sonido y te ofrece producir tu próximo tema con 50% de descuento en honorarios ($${fee.toLocaleString()}) para crear un palo radial.`
-          : `${prod.name} quedó fascinado con tus barras y te propone una sesión de producción 100% gratuita para tu próximo single.`,
+          ? `${prod.name} escuchó tu catálogo reciente y te ofrece producir "${title}" con ${discountPct}% de descuento en honorarios ($${fee.toLocaleString()}).`
+          : `${prod.name} conectó con tu identidad sonora y te propone una sesión de estudio 100% bonificada para grabar "${title}".`,
         createdAtYear: this.world.currentYear,
         createdAtMonth: this.world.currentMonth,
         expiresYear: this.world.currentYear + (this.world.currentMonth >= 7 ? 1 : 0),
@@ -2212,24 +2222,36 @@ export class GameEngine {
 
       if (candidateArtists.length === 0) return null;
       const sender = candidateArtists[Math.floor(Math.random() * candidateArtists.length)];
+      const senderLang = resolveArtistLanguage(sender.language, sender.country, sender.countryCode);
 
-      const songTitles = [
-        'Conexión Urbana',
-        'Fuego en la Cabina',
-        'Barras & Melodías',
-        'Alianza Callejera',
-        'Sin Filtro',
-        'Códigos de Oro',
-        'Noche Inolvidable'
-      ];
-      const proposedTitle = songTitles[Math.floor(Math.random() * songTitles.length)];
+      const proposedTitle = generateUniqueSongTitle({
+        existingTitles: this.world.songs,
+        genreId: sender.mainGenreId || player.mainGenreId,
+        artistName: sender.name,
+        language: sender.language,
+        country: sender.country,
+        countryCode: sender.countryCode
+      });
       const budgetOffered = Math.floor(2000 + Math.random() * 5000 + sender.stats.popularity * 40);
 
-      const pitches = [
-        `"Che ${player.name}, tengo una maqueta que explota y tu flow le calza perfecto. ¿Nos juntamos a grabar este tema?"`,
-        `"Hermano, vengo siguiendo lo que estás sacando. Te tengo un espacio reservado para sumarte a mi próximo track."`,
-        `"La escena está pidiendo este junte. Te mando la maqueta de '${proposedTitle}', armamos las barras y salimos a romper."`
-      ];
+      const isRioplatense = sender.country === 'Argentina' || sender.country === 'Uruguay';
+      const pitches = isRioplatense
+        ? [
+            `"Che ${player.name}, tengo la maqueta de '${proposedTitle}' lista en el estudio y tu voz calza perfecto. ¿Nos juntamos a grabarla?"`,
+            `"Vengo siguiendo lo que estás sacando. Tengo un verso abierto en '${proposedTitle}' pensado para vos."`,
+            `"La escena está esperando este cruce. Te mando la sesión de '${proposedTitle}' para que sumes tus barras."`
+          ]
+        : senderLang === 'es'
+        ? [
+            `"${player.name}, tengo el demo de '${proposedTitle}' abierto en consola y tu estilo encaja exacto con el corte. ¿Entramos al estudio?"`,
+            `"Llevo meses escuchando tu proyecto. Reservé el segundo verso de '${proposedTitle}' para grabarlo juntos."`,
+            `"Tengo listo el arreglo principal de '${proposedTitle}'. Súmate al track y salimos con lanzamiento conjunto."`
+          ]
+        : [
+            `El equipo de ${sender.name} envió la sesión abierta de "${proposedTitle}" desde ${sender.city || sender.country}: quieren sumar tu voz como invitado principal del single.`,
+            `${sender.name} compartió el demo privado de "${proposedTitle}" y propone grabar una colaboración internacional a regalías compartidas.`,
+            `Desde el estudio de ${sender.name} (${sender.country}) llegó una invitación formal para co-protagonizar el lanzamiento de "${proposedTitle}".`
+          ];
       const pitch = pitches[Math.floor(Math.random() * pitches.length)];
 
       return {

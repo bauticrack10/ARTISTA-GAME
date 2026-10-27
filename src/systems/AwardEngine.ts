@@ -14,8 +14,12 @@ import {
   generateAlbumTitle,
   generateUniqueSongTitle,
   generateUniqueAlbumTitle,
+  GLOBAL_COUNTRY_DATABASE,
+  generateUniqueProceduralArtistName,
+  resolveArtistLanguage,
   normalizeTitle
 } from '../data/proceduralNames';
+import { INITIAL_ARTISTS } from '../data/initialArtists';
 
 /**
  * Constant: Exactly 4 nominees per category across all award categories
@@ -46,6 +50,78 @@ export class AwardEngine {
    */
   public static normalizeTitle(title: string): string {
     return normalizeTitle(title);
+  }
+
+  /**
+   * Generates a unique song title in the artist's authentic language that also avoids
+   * any title already nominated in the current gala or category.
+   */
+  private static generateGalaUniqueSongTitle(
+    world: WorldState,
+    artist: Artist,
+    seedIndex: number,
+    excludedNormalizedTitles?: Set<string>,
+    overrideGenreId?: string
+  ): string {
+    for (let attempt = 0; attempt < 60; attempt++) {
+      const candidate = generateUniqueSongTitle({
+        existingTitles: world.songs,
+        artistName: artist.name,
+        genreId: overrideGenreId || artist.mainGenreId,
+        seedIndex: seedIndex + attempt * 97,
+        language: artist.language,
+        country: artist.country,
+        countryCode: artist.countryCode
+      });
+      const norm = AwardEngine.normalizeTitle(candidate);
+      if (!excludedNormalizedTitles || !excludedNormalizedTitles.has(norm)) {
+        return candidate;
+      }
+    }
+    return generateUniqueSongTitle({
+      existingTitles: world.songs,
+      artistName: artist.name,
+      genreId: overrideGenreId || artist.mainGenreId,
+      seedIndex: seedIndex + 9973,
+      language: artist.language,
+      country: artist.country,
+      countryCode: artist.countryCode
+    });
+  }
+
+  /**
+   * Generates a unique album title in the artist's authentic language avoiding category collisions.
+   */
+  private static generateGalaUniqueAlbumTitle(
+    world: WorldState,
+    artist: Artist,
+    seedIndex: number,
+    excludedNormalizedTitles?: Set<string>
+  ): string {
+    for (let attempt = 0; attempt < 60; attempt++) {
+      const candidate = generateUniqueAlbumTitle({
+        existingTitles: world.albums,
+        artistName: artist.name,
+        genreId: artist.mainGenreId,
+        seedIndex: seedIndex + attempt * 89,
+        language: artist.language,
+        country: artist.country,
+        countryCode: artist.countryCode
+      });
+      const norm = AwardEngine.normalizeTitle(candidate);
+      if (!excludedNormalizedTitles || !excludedNormalizedTitles.has(norm)) {
+        return candidate;
+      }
+    }
+    return generateUniqueAlbumTitle({
+      existingTitles: world.albums,
+      artistName: artist.name,
+      genreId: artist.mainGenreId,
+      seedIndex: seedIndex + 8861,
+      language: artist.language,
+      country: artist.country,
+      countryCode: artist.countryCode
+    });
   }
 
   /**
@@ -136,13 +212,17 @@ export class AwardEngine {
           existingTitles: world.songs,
           artistName: artist.name,
           genreId: artist.mainGenreId,
-          seedIndex: existingSongsCount + i + 10
+          seedIndex: existingSongsCount + i + 10,
+          language: artist.language,
+          country: artist.country,
+          countryCode: artist.countryCode
         });
+        const partnerCandidate = activeNPCs.length > 1 ? activeNPCs[(i + 1) % activeNPCs.length] : undefined;
         const song: Song = {
           id: songId,
           title,
           artistId: artist.id,
-          featuredArtistIds: i % 3 === 0 ? [activeNPCs[(i + 1) % activeNPCs.length].id] : [],
+          featuredArtistIds: i % 3 === 0 && partnerCandidate && partnerCandidate.id !== artist.id ? [partnerCandidate.id] : [],
           genreId: artist.mainGenreId,
           subGenreIds: artist.subGenreIds || [],
           releaseYear: year,
@@ -195,7 +275,10 @@ export class AwardEngine {
           existingTitles: world.albums,
           artistName: artist.name,
           genreId: artist.mainGenreId,
-          seedIndex: existingAlbumsCount + i + 10
+          seedIndex: existingAlbumsCount + i + 10,
+          language: artist.language,
+          country: artist.country,
+          countryCode: artist.countryCode
         });
         const album: Album = {
           id: albumId,
@@ -323,12 +406,13 @@ export class AwardEngine {
       const availableNPCs = activeNPCs.filter(a => !albumNominatedArtists.has(a.id));
       for (let i = 0; i < availableNPCs.length && selectedAlbumCandidates.length < NOMINEES_PER_CATEGORY; i++) {
         const npc = availableNPCs[i];
-        let fallbackTitle = generateAlbumTitle(selectedAlbumCandidates.length + i + 60);
-        let norm = AwardEngine.normalizeTitle(fallbackTitle);
-        while (albumCategoryTitles.has(norm)) {
-          fallbackTitle = `${fallbackTitle} Deluxe`;
-          norm = AwardEngine.normalizeTitle(fallbackTitle);
-        }
+        const fallbackTitle = AwardEngine.generateGalaUniqueAlbumTitle(
+          world,
+          npc,
+          year * 110 + selectedAlbumCandidates.length + i + 60,
+          albumCategoryTitles
+        );
+        const norm = AwardEngine.normalizeTitle(fallbackTitle);
         const fallbackAlbumId = `album_award_fill_${year}_${npc.id}_${selectedAlbumCandidates.length}`;
         const fallbackAlbum: Album = {
           id: fallbackAlbumId,
@@ -521,12 +605,14 @@ export class AwardEngine {
       const availableNPCs = activeNPCs.filter(a => !recordNominatedArtists.has(a.id));
       for (let i = 0; i < availableNPCs.length && selectedRecordCandidates.length < NOMINEES_PER_CATEGORY; i++) {
         const npc = availableNPCs[i];
-        let fallbackTitle = `Master Hit - ${npc.name}`;
-        let norm = AwardEngine.normalizeTitle(fallbackTitle);
-        while (recordCategoryTitles.has(norm) || galaNominatedSongTitles.has(norm)) {
-          fallbackTitle = `${fallbackTitle} Special`;
-          norm = AwardEngine.normalizeTitle(fallbackTitle);
-        }
+        const combinedExcluded = new Set<string>([...recordCategoryTitles, ...galaNominatedSongTitles]);
+        const fallbackTitle = AwardEngine.generateGalaUniqueSongTitle(
+          world,
+          npc,
+          year * 130 + selectedRecordCandidates.length + i + 70,
+          combinedExcluded
+        );
+        const norm = AwardEngine.normalizeTitle(fallbackTitle);
         const fallbackSongId = `song_record_fallback_${year}_${npc.id}_${selectedRecordCandidates.length}`;
         const fallbackSong: Song = {
           id: fallbackSongId,
@@ -718,12 +804,14 @@ export class AwardEngine {
       const availableNPCs = activeNPCs.filter(a => !songNominatedArtists.has(a.id));
       for (let i = 0; i < availableNPCs.length && selectedSongCandidates.length < NOMINEES_PER_CATEGORY; i++) {
         const npc = availableNPCs[i];
-        let fallbackTitle = generateSongTitle(selectedSongCandidates.length + i + 80, npc.mainGenreId);
-        let norm = AwardEngine.normalizeTitle(fallbackTitle);
-        while (songCategoryTitles.has(norm) || galaNominatedSongTitles.has(norm)) {
-          fallbackTitle = `${fallbackTitle} Acústico`;
-          norm = AwardEngine.normalizeTitle(fallbackTitle);
-        }
+        const combinedExcluded = new Set<string>([...songCategoryTitles, ...galaNominatedSongTitles]);
+        const fallbackTitle = AwardEngine.generateGalaUniqueSongTitle(
+          world,
+          npc,
+          year * 150 + selectedSongCandidates.length + i + 80,
+          combinedExcluded
+        );
+        const norm = AwardEngine.normalizeTitle(fallbackTitle);
         const fallbackSongId = `song_song_fallback_${year}_${npc.id}_${selectedSongCandidates.length}`;
         const fallbackSong: Song = {
           id: fallbackSongId,
@@ -945,60 +1033,222 @@ export class AwardEngine {
       selectedNewCandidates.push(cand);
     }
 
-    // Safety fallback: if fewer than 4 genuine newcomers, dynamically generate genuine fresh indie NPCs
-    // NEVER fall back to Duki, Nicki Nicole or established stars!
+    // Safety fallback:
+    // Step 1: Search world.artists for other genuine young/emerging/recent artists not yet selected
+    //         (strictly Underground/Emerging/Breakout, <= 3 years active, never won BNA, not retired, not player).
+    if (selectedNewCandidates.length < NOMINEES_PER_CATEGORY) {
+      const alreadySelectedIds = new Set(selectedNewCandidates.map(c => c.artist.id));
+      const allowedRookieStages = new Set(['Underground', 'Emerging', 'Breakout']);
+
+      const worldEmergingPool = Object.values(world.artists)
+        .filter(a => {
+          if (a.isRetired || a.isPlayer || a.id === playerId) return false;
+          if (alreadySelectedIds.has(a.id)) return false;
+          if (a.hasWonBestNewArtist) return false;
+          const wonBefore = (a.awardsWon || []).some(w =>
+            w.toLowerCase().includes('mejor nuevo artista') ||
+            w.toLowerCase().includes('mejor artista nuevo') ||
+            w.toLowerCase().includes('revelación') ||
+            w.toLowerCase().includes('best new artist')
+          );
+          if (wonBefore) return false;
+          if (!allowedRookieStages.has(a.careerStage)) return false;
+          const careerAge = year - a.careerStartYear;
+          if (careerAge > 3 || careerAge < 0) return false;
+          if ((a.stats.totalStreams || 0) > 100000000) return false;
+          return true;
+        })
+        .sort((a, b) => (b.careerStartYear - a.careerStartYear) || (b.stats.popularity - a.stats.popularity));
+
+      for (const emergingArt of worldEmergingPool) {
+        if (selectedNewCandidates.length >= NOMINEES_PER_CATEGORY) break;
+        const hasAnySong = Object.values(world.songs).some(s => s.artistId === emergingArt.id);
+        if (!hasAnySong) {
+          const debutTitle = AwardEngine.generateGalaUniqueSongTitle(
+            world,
+            emergingArt,
+            year * 190 + selectedNewCandidates.length * 37,
+            galaNominatedSongTitles
+          );
+          const debutSongId = `song_debut_${emergingArt.id}_${year}`;
+          const streamsBase = Math.max(28000, emergingArt.stats.totalStreams || 42000);
+          world.songs[debutSongId] = {
+            id: debutSongId,
+            title: debutTitle,
+            artistId: emergingArt.id,
+            featuredArtistIds: [],
+            genreId: emergingArt.mainGenreId,
+            subGenreIds: emergingArt.subGenreIds || [],
+            releaseYear: year,
+            releaseMonth: ((year + selectedNewCandidates.length * 2) % 9) + 1,
+            quality: Math.min(95, Math.max(72, emergingArt.personality?.skill || 80)),
+            commercialAppeal: Math.min(92, Math.max(68, emergingArt.personality?.commercialAppeal || 76)),
+            originality: Math.min(96, Math.max(74, emergingArt.personality?.originality || 82)),
+            hypeAtRelease: Math.max(50, emergingArt.stats.hype || 60),
+            streamsTotal: streamsBase,
+            streamsLastMonth: Math.max(9000, Math.floor(streamsBase * 0.3)),
+            monthlyStreamsHistory: [],
+            peakPosition: { Global: null, Argentina: 18, USA: null, LatinAmerica: 24, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+            weeksOnChart: { Global: 0, Argentina: 4, USA: 0, LatinAmerica: 3, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
+            longevityCurve: 'steady',
+            isSingle: true,
+            receptionRating: 4,
+            isClassic: false,
+            wentViral: false
+          };
+          if ((emergingArt.stats.totalStreams || 0) < streamsBase) {
+            emergingArt.stats.totalStreams = streamsBase;
+          }
+          if ((emergingArt.stats.monthlyListeners || 0) < 15000) {
+            emergingArt.stats.monthlyListeners = 18500 + selectedNewCandidates.length * 3200;
+          }
+        }
+
+        selectedNewCandidates.push({
+          artist: emergingArt,
+          score: 64 - selectedNewCandidates.length * 3,
+          highlightText: `Debut ${emergingArt.careerStartYear} • Pop ${emergingArt.stats.popularity} • ${Math.max(12, Math.round((emergingArt.stats.monthlyListeners || 18000) / 1000))}k oyentes`,
+          nominationReason: `Por su irrupción genuina desde ${emergingArt.city || emergingArt.country} y frescura creativa en la escena.`
+        });
+        alreadySelectedIds.add(emergingArt.id);
+      }
+    }
+
+    // Step 2: If still fewer than 4 nominees, spawn realistic procedural emerging artists
+    //         coherent with regional/global scenes, unique non-numeric stage names, and debut singles in their language.
     if (selectedNewCandidates.length < NOMINEES_PER_CATEGORY) {
       const needed = NOMINEES_PER_CATEGORY - selectedNewCandidates.length;
+      const rookieColors = [
+        'from-amber-600 to-orange-800',
+        'from-rose-600 to-red-900',
+        'from-cyan-600 to-slate-900',
+        'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
+        'from-[#FF4F00] via-[#FF2A4B] to-[#18181C]',
+        'from-zinc-800 to-zinc-950'
+      ];
+      const rookieIcons = ['mic', 'sparkles', 'flame', 'disc', 'headphones', 'star'];
+
+      // Build a coherent country rotation prioritizing player's scene + major global scenes
+      const playerRegions = player?.influenceRegions || ['Argentina', 'LatinAmerica'];
+      const regionalCountries = GLOBAL_COUNTRY_DATABASE.filter(c =>
+        c.country === player?.country || c.influenceRegions.some(r => playerRegions.includes(r))
+      );
+      const countryPool = regionalCountries.length >= 2
+        ? [...regionalCountries, ...GLOBAL_COUNTRY_DATABASE]
+        : GLOBAL_COUNTRY_DATABASE;
+
       for (let i = 0; i < needed; i++) {
-        const fallbackNewId = `artist_emerging_rookie_${year}_${i + 1}`;
-        const rookieName = `Revelación Indie ${i + 1}`;
+        const seedVal = year * 173 + i * 59 + Object.keys(world.artists).length * 7;
+        const countryData = countryPool[(year + i * 3) % countryPool.length];
+        const city = countryData.cities[(seedVal * 5) % countryData.cities.length];
+        const mainGenreId = countryData.typicalGenres[(seedVal * 3) % countryData.typicalGenres.length] || 'pop_moderno';
+        const genreObj = world.genres[mainGenreId];
+        const subGenreIds = genreObj?.subGenres?.length
+          ? [genreObj.subGenres[seedVal % genreObj.subGenres.length]]
+          : [];
+
+        const existingMap = { ...INITIAL_ARTISTS, ...world.artists };
+        const { stageName, realName } = generateUniqueProceduralArtistName({
+          country: countryData.country,
+          seed: seedVal,
+          existingArtists: existingMap
+        });
+
+        const fallbackNewId = `artist_gen_rookie_${year}_${seedVal}_${i}`;
+        const listeners = 22000 + ((seedVal % 7) + i) * 4500;
+        const streams = 52000 + ((seedVal % 9) + i) * 16000;
+        const popVal = 24 + ((seedVal + i * 3) % 12);
+
         const fallbackArtist: Artist = {
           id: fallbackNewId,
-          name: rookieName,
+          name: stageName,
+          realName,
           isPlayer: false,
-          country: 'Argentina',
-          city: 'Buenos Aires',
-          birthYear: year - 19,
+          avatarColor: rookieColors[(seedVal + i) % rookieColors.length],
+          avatarIcon: rookieIcons[(seedVal + i * 2) % rookieIcons.length],
+          country: countryData.country,
+          city,
+          countryCode: countryData.countryCode,
+          language: countryData.language,
+          influenceRegions: countryData.influenceRegions,
+          birthYear: year - (19 + ((seedVal + i) % 5)),
           careerStartYear: year,
-          mainGenreId: 'trap_latino',
-          subGenreIds: [],
-          personality: { creativity: 82, ambition: 85, discipline: 80, charisma: 84, skill: 85, commercialAppeal: 82, originality: 86, riskTolerance: 80, sociability: 75, independence: 80 },
-          stats: { popularity: 25 + i * 5, reputation: 20 + i * 5, artisticCredibility: 30 + i * 5, energy: 100, monthlyListeners: 18000 + i * 4000, totalStreams: 35000 + i * 15000, funds: 4000, fansCount: 9000, fanbaseLoyalty: 80, hype: 65 },
+          mainGenreId,
+          subGenreIds,
+          personality: {
+            creativity: 78 + (seedVal % 16),
+            ambition: 80 + ((seedVal * 3) % 15),
+            discipline: 76 + ((seedVal * 5) % 16),
+            charisma: 79 + ((seedVal * 7) % 16),
+            skill: 80 + ((seedVal * 11) % 15),
+            commercialAppeal: 76 + ((seedVal * 13) % 16),
+            originality: 82 + ((seedVal * 17) % 14),
+            riskTolerance: 75 + (seedVal % 18),
+            sociability: 74 + ((seedVal * 2) % 18),
+            independence: 78 + ((seedVal * 9) % 16)
+          },
+          stats: {
+            popularity: popVal,
+            reputation: 28 + i * 4,
+            artisticCredibility: 42 + i * 4,
+            energy: 96,
+            monthlyListeners: listeners,
+            totalStreams: streams,
+            funds: 6500 + i * 1500,
+            fansCount: Math.floor(listeners * 0.48),
+            fanbaseLoyalty: 78,
+            hype: 64 + ((seedVal + i * 5) % 14)
+          },
           careerStage: 'Emerging',
           labelId: null,
           managerId: null,
           relationships: {},
-          eras: [],
+          eras: [
+            {
+              id: `era_${fallbackNewId}_debut`,
+              name: 'Debut en la Escena',
+              startYear: year,
+              startMonth: ((seedVal + i) % 8) + 1,
+              genreFocus: mainGenreId,
+              stage: 'Emerging',
+              highlightSummary: `Irrupción revelación desde ${city}, ${countryData.country} en ${year}.`
+            }
+          ],
           awardsWon: [],
           hasWonBestNewArtist: false,
-          legacyScore: 10,
+          legacyScore: 12,
           isRetired: false,
-          historicalNotes: [`Debutó en la escena en ${year}.`],
-          generationIndex: 1,
+          historicalNotes: [`Debutó en ${year} desde ${city}, ${countryData.country}, captando la atención del jurado académico.`],
+          generationIndex: Math.max(1, Math.floor((year - 2026) / 10) + 1),
           influences: []
         };
         world.artists[fallbackNewId] = fallbackArtist;
 
-        // Give them a track
-        const rSongId = `song_rookie_${year}_${i + 1}`;
+        const debutSongTitle = AwardEngine.generateGalaUniqueSongTitle(
+          world,
+          fallbackArtist,
+          year * 230 + seedVal + i * 31,
+          galaNominatedSongTitles
+        );
+        const rSongId = `song_debut_${fallbackNewId}`;
         world.songs[rSongId] = {
           id: rSongId,
-          title: `El Debut de ${rookieName}`,
+          title: debutSongTitle,
           artistId: fallbackNewId,
           featuredArtistIds: [],
-          genreId: 'trap_latino',
-          subGenreIds: [],
+          genreId: mainGenreId,
+          subGenreIds,
           releaseYear: year,
-          releaseMonth: 2,
-          quality: 80,
-          commercialAppeal: 78,
-          originality: 82,
-          hypeAtRelease: 60,
-          streamsTotal: 35000 + i * 15000,
-          streamsLastMonth: 12000,
+          releaseMonth: ((seedVal + i) % 8) + 2,
+          quality: Math.min(94, fallbackArtist.personality.skill + 3),
+          commercialAppeal: Math.min(90, fallbackArtist.personality.commercialAppeal + 2),
+          originality: Math.min(95, fallbackArtist.personality.originality + 2),
+          hypeAtRelease: fallbackArtist.stats.hype,
+          streamsTotal: streams,
+          streamsLastMonth: Math.floor(streams * 0.32),
           monthlyStreamsHistory: [],
-          peakPosition: { Global: null, Argentina: 15, USA: null, LatinAmerica: 25, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
-          weeksOnChart: { Global: 0, Argentina: 4, USA: 0, LatinAmerica: 2, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
+          peakPosition: { Global: null, Argentina: 14 + i * 2, USA: null, LatinAmerica: 20 + i * 3, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+          weeksOnChart: { Global: 0, Argentina: 5, USA: 0, LatinAmerica: 3, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
           longevityCurve: 'steady',
           isSingle: true,
           receptionRating: 4,
@@ -1008,9 +1258,9 @@ export class AwardEngine {
 
         selectedNewCandidates.push({
           artist: fallbackArtist,
-          score: 65 - i * 4,
+          score: 63 - selectedNewCandidates.length * 3,
           highlightText: `Debut ${year} • Pop ${fallbackArtist.stats.popularity} • ${(fallbackArtist.stats.monthlyListeners / 1000).toFixed(0)}k oyentes`,
-          nominationReason: `Por su vertiginosa irrupción y aporte de aire fresco al panorama musical.`
+          nominationReason: `Por el impacto revelación de "${debutSongTitle}" desde la escena de ${city}.`
         });
       }
     }
@@ -1156,28 +1406,63 @@ export class AwardEngine {
     // Safety fallback if world lacks collabs
     if (selectedCollabCandidates.length < NOMINEES_PER_CATEGORY) {
       const availableNPCs = activeNPCs.filter(a => !collabNominatedArtists.has(a.id));
-      for (let i = 0; i < availableNPCs.length && selectedCollabCandidates.length < NOMINEES_PER_CATEGORY; i++) {
-        const mainArtist = availableNPCs[i];
-        const featArtist = activeNPCs[(i + 1) % activeNPCs.length];
-        const cSongId = `song_collab_fallback_${year}_${i}`;
-        const cTitle = `Junte Histórico Vol. ${i + 1}`;
+      const usedFeatIds = new Set<string>(
+        selectedCollabCandidates.flatMap(c => c.song.featuredArtistIds || [])
+      );
+      const collabTitlesUsed = new Set<string>([
+        ...galaNominatedSongTitles,
+        ...selectedCollabCandidates.map(c => AwardEngine.normalizeTitle(c.song.title))
+      ]);
+
+      for (let slot = 0; slot < availableNPCs.length && selectedCollabCandidates.length < NOMINEES_PER_CATEGORY; slot++) {
+        const mainIdx = (year * 7 + slot) % availableNPCs.length;
+        const mainArtist = availableNPCs[mainIdx];
+        if (!mainArtist || collabNominatedArtists.has(mainArtist.id)) continue;
+
+        const mainLang = resolveArtistLanguage(mainArtist.language, mainArtist.country, mainArtist.countryCode);
+        const compatiblePartners = activeNPCs.filter(p =>
+          p.id !== mainArtist.id &&
+          !collabNominatedArtists.has(p.id) &&
+          !usedFeatIds.has(p.id) &&
+          (resolveArtistLanguage(p.language, p.country, p.countryCode) === mainLang || p.mainGenreId === mainArtist.mainGenreId)
+        );
+        const fallbackPartners = activeNPCs.filter(p => p.id !== mainArtist.id && !usedFeatIds.has(p.id));
+        const partnerPool = compatiblePartners.length > 0
+          ? compatiblePartners
+          : fallbackPartners.length > 0
+          ? fallbackPartners
+          : activeNPCs.filter(p => p.id !== mainArtist.id);
+
+        const featArtist = partnerPool[(year + slot * 7) % Math.max(1, partnerPool.length)] || mainArtist;
+        const cTitle = AwardEngine.generateGalaUniqueSongTitle(
+          world,
+          mainArtist,
+          year * 310 + slot * 43 + 11,
+          collabTitlesUsed
+        );
+        const normCTitle = AwardEngine.normalizeTitle(cTitle);
+        collabTitlesUsed.add(normCTitle);
+        galaNominatedSongTitles.add(normCTitle);
+
+        const streamsVal = 10800000 + ((year * 5 + slot * 11) % 9) * 950000;
+        const cSongId = `song_collab_gala_${year}_${mainArtist.id}_${slot}`;
         const fallbackCollab: Song = {
           id: cSongId,
           title: cTitle,
           artistId: mainArtist.id,
-          featuredArtistIds: [featArtist.id],
+          featuredArtistIds: featArtist.id !== mainArtist.id ? [featArtist.id] : [],
           genreId: mainArtist.mainGenreId,
           subGenreIds: mainArtist.subGenreIds || [],
           releaseYear: year,
-          releaseMonth: 7,
-          quality: 86,
-          commercialAppeal: 88,
-          originality: 80,
+          releaseMonth: ((year + slot * 2) % 10) + 1,
+          quality: 84 + (slot % 5),
+          commercialAppeal: 86 + ((slot * 3) % 6),
+          originality: 79 + ((slot * 2) % 7),
           hypeAtRelease: 80,
-          streamsTotal: 12000000,
-          streamsLastMonth: 1800000,
+          streamsTotal: streamsVal,
+          streamsLastMonth: Math.floor(streamsVal * 0.16),
           monthlyStreamsHistory: [],
-          peakPosition: { Global: 6, Argentina: 2, USA: null, LatinAmerica: 3, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+          peakPosition: { Global: 6 + slot, Argentina: 2 + slot, USA: null, LatinAmerica: 3 + slot, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
           weeksOnChart: { Global: 8, Argentina: 10, USA: 0, LatinAmerica: 8, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
           longevityCurve: 'steady',
           isSingle: true,
@@ -1191,11 +1476,12 @@ export class AwardEngine {
           song: fallbackCollab,
           artist: mainArtist,
           featText: featArtist.name,
-          score: 68 - i * 2,
-          highlightText: `Feat: ${featArtist.name} • 12.0M streams`,
-          nominationReason: `Por la electrizante colaboración que encendió las pistas de baile.`
+          score: 68 - selectedCollabCandidates.length * 2,
+          highlightText: `Feat: ${featArtist.name} • ${(streamsVal / 1000000).toFixed(1)}M streams`,
+          nominationReason: `Por la química vocal y sinergia en estudio junto a ${featArtist.name} en "${cTitle}".`
         });
         collabNominatedArtists.add(mainArtist.id);
+        usedFeatIds.add(featArtist.id);
       }
     }
 
@@ -1260,7 +1546,7 @@ export class AwardEngine {
     // ==========================================
     // Genre Field: Urban, trap, reggaeton, drill, hip hop.
     // Anti-monopoly: max 1 per artist.
-    const urbanGenres = ['trap_latino', 'reggaeton_latino', 'drill_latino', 'hip_hop_rap', 'rage_latino', 'rkt'];
+    const urbanGenres = ['trap_latino', 'reggaeton', 'reggaeton_latino', 'drill', 'drill_latino', 'hip_hop_rap', 'rage_latino', 'rkt', 'funk_brasilero', 'afrobeat_dancehall'];
     const urbanSongs = allPublishedSongs.filter(s => urbanGenres.includes(s.genreId));
 
     const urbanScores = urbanSongs.map(song => {
@@ -1296,28 +1582,53 @@ export class AwardEngine {
 
     // Safety fallback
     if (selectedUrbanCandidates.length < NOMINEES_PER_CATEGORY) {
-      const availableNPCs = activeNPCs.filter(a => !urbanNominatedArtists.has(a.id));
-      for (let i = 0; i < availableNPCs.length && selectedUrbanCandidates.length < NOMINEES_PER_CATEGORY; i++) {
-        const npc = availableNPCs[i];
-        const uId = `song_urban_fallback_${year}_${i}`;
-        const uTitle = `Himno de Barrio ${i + 1}`;
+      const allAvailableUrbanNPCs = activeNPCs.filter(a => !urbanNominatedArtists.has(a.id));
+      const genreAlignedUrbanNPCs = allAvailableUrbanNPCs.filter(a => urbanGenres.includes(a.mainGenreId));
+      const orderedUrbanPool = genreAlignedUrbanNPCs.length >= NOMINEES_PER_CATEGORY
+        ? genreAlignedUrbanNPCs
+        : [...genreAlignedUrbanNPCs, ...allAvailableUrbanNPCs.filter(a => !urbanGenres.includes(a.mainGenreId))];
+
+      const urbanTitlesUsed = new Set<string>([
+        ...galaNominatedSongTitles,
+        ...selectedUrbanCandidates.map(c => AwardEngine.normalizeTitle(c.song.title))
+      ]);
+
+      for (let i = 0; i < orderedUrbanPool.length && selectedUrbanCandidates.length < NOMINEES_PER_CATEGORY; i++) {
+        const npc = orderedUrbanPool[(year * 5 + i) % orderedUrbanPool.length];
+        if (!npc || urbanNominatedArtists.has(npc.id)) continue;
+
+        const targetUrbanGenre = urbanGenres.includes(npc.mainGenreId) ? npc.mainGenreId : 'trap_latino';
+        const uTitle = AwardEngine.generateGalaUniqueSongTitle(
+          world,
+          npc,
+          year * 410 + i * 47 + 17,
+          urbanTitlesUsed,
+          targetUrbanGenre
+        );
+        const normUTitle = AwardEngine.normalizeTitle(uTitle);
+        urbanTitlesUsed.add(normUTitle);
+        galaNominatedSongTitles.add(normUTitle);
+
+        const uStreams = 9400000 + ((year * 3 + i * 7) % 8) * 800000;
+        const uQuality = 84 + (i % 5);
+        const uId = `song_urban_gala_${year}_${npc.id}_${i}`;
         const fUrban: Song = {
           id: uId,
           title: uTitle,
           artistId: npc.id,
           featuredArtistIds: [],
-          genreId: 'trap_latino',
-          subGenreIds: [],
+          genreId: targetUrbanGenre,
+          subGenreIds: npc.subGenreIds || [],
           releaseYear: year,
-          releaseMonth: 8,
-          quality: 85,
+          releaseMonth: ((year + i * 3) % 10) + 1,
+          quality: uQuality,
           commercialAppeal: 84,
           originality: 82,
-          hypeAtRelease: 75,
-          streamsTotal: 10000000,
-          streamsLastMonth: 1500000,
+          hypeAtRelease: Math.max(70, npc.stats.hype),
+          streamsTotal: uStreams,
+          streamsLastMonth: Math.floor(uStreams * 0.15),
           monthlyStreamsHistory: [],
-          peakPosition: { Global: 10, Argentina: 4, USA: null, LatinAmerica: 6, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+          peakPosition: { Global: 10 + i, Argentina: 4 + i, USA: null, LatinAmerica: 6 + i, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
           weeksOnChart: { Global: 6, Argentina: 8, USA: 0, LatinAmerica: 6, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
           longevityCurve: 'steady',
           isSingle: true,
@@ -1330,9 +1641,9 @@ export class AwardEngine {
         selectedUrbanCandidates.push({
           song: fUrban,
           artist: npc,
-          score: 66 - i * 2,
-          highlightText: `Flow & Calidad 85/100 • 10.0M streams`,
-          nominationReason: `Por su autenticidad y fuerza rítmica en la escena urbana.`
+          score: 66 - selectedUrbanCandidates.length * 2,
+          highlightText: `Flow & Calidad ${uQuality}/100 • ${(uStreams / 1000000).toFixed(1)}M streams`,
+          nominationReason: `Por la pegada rítmica y cadencia de "${uTitle}" en el circuito urbano.`
         });
         urbanNominatedArtists.add(npc.id);
       }
@@ -1436,10 +1747,31 @@ export class AwardEngine {
     // Safety fallback
     if (selectedVideoCandidates.length < NOMINEES_PER_CATEGORY) {
       const availableNPCs = activeNPCs.filter(a => !videoNominatedArtists.has(a.id));
+      const videoTitlesUsed = new Set<string>([
+        ...galaNominatedSongTitles,
+        ...selectedVideoCandidates.map(c => AwardEngine.normalizeTitle(c.song.title))
+      ]);
+      const acclaimedDirectors = ['Salomón Reyes', 'Nadia Vance', 'Léo Moreau', 'Hiroshi Sato', 'Clara Salvatierra', 'Elena Rostova'];
+
       for (let i = 0; i < availableNPCs.length && selectedVideoCandidates.length < NOMINEES_PER_CATEGORY; i++) {
-        const npc = availableNPCs[i];
-        const vId = `song_video_fallback_${year}_${i}`;
-        const vTitle = `Odisea Visual - ${npc.name}`;
+        const npc = availableNPCs[(year * 11 + i) % availableNPCs.length];
+        if (!npc || videoNominatedArtists.has(npc.id)) continue;
+
+        const vTitle = AwardEngine.generateGalaUniqueSongTitle(
+          world,
+          npc,
+          year * 510 + i * 53 + 23,
+          videoTitlesUsed
+        );
+        const normVTitle = AwardEngine.normalizeTitle(vTitle);
+        videoTitlesUsed.add(normVTitle);
+        galaNominatedSongTitles.add(normVTitle);
+
+        const videoViews = 7800000 + ((year + i * 4) % 9) * 950000;
+        const videoBudget = 14000 + ((year + i * 3) % 6) * 3500;
+        const directorName = acclaimedDirectors[(year + i) % acclaimedDirectors.length];
+        const vId = `song_video_gala_${year}_${npc.id}_${i}`;
+
         const fVideoSong: Song = {
           id: vId,
           title: vTitle,
@@ -1448,15 +1780,15 @@ export class AwardEngine {
           genreId: npc.mainGenreId,
           subGenreIds: npc.subGenreIds || [],
           releaseYear: year,
-          releaseMonth: 9,
-          quality: 88,
-          commercialAppeal: 82,
-          originality: 85,
-          hypeAtRelease: 80,
-          streamsTotal: 9000000,
-          streamsLastMonth: 1200000,
+          releaseMonth: ((year + i * 2) % 10) + 1,
+          quality: 87 + (i % 4),
+          commercialAppeal: 82 + (i % 5),
+          originality: 85 + (i % 4),
+          hypeAtRelease: Math.max(75, npc.stats.hype),
+          streamsTotal: Math.floor(videoViews * 1.15),
+          streamsLastMonth: Math.floor(videoViews * 0.14),
           monthlyStreamsHistory: [],
-          peakPosition: { Global: 12, Argentina: 5, USA: null, LatinAmerica: 8, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+          peakPosition: { Global: 12 + i, Argentina: 5 + i, USA: null, LatinAmerica: 8 + i, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
           weeksOnChart: { Global: 5, Argentina: 7, USA: 0, LatinAmerica: 5, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
           longevityCurve: 'steady',
           isSingle: true,
@@ -1464,9 +1796,9 @@ export class AwardEngine {
           isClassic: false,
           wentViral: true,
           musicVideo: {
-            views: 8500000,
-            budget: 15000,
-            director: 'Vanguard Visuals'
+            views: videoViews,
+            budget: videoBudget,
+            director: directorName
           }
         };
         world.songs[vId] = fVideoSong;
@@ -1474,9 +1806,9 @@ export class AwardEngine {
         selectedVideoCandidates.push({
           song: fVideoSong,
           artist: npc,
-          score: 65 - i * 2,
-          highlightText: `8.5M vistas • Presupuesto visual \$15,000`,
-          nominationReason: `Por su despliegue cinemático y audaz estética visual.`
+          score: 65 - selectedVideoCandidates.length * 2,
+          highlightText: `${(videoViews / 1000000).toFixed(1)}M vistas • Presupuesto visual ${videoBudget.toLocaleString()}`,
+          nominationReason: `Por la fotografía y narrativa audiovisual de "${vTitle}" dirigida por ${directorName}.`
         });
         videoNominatedArtists.add(npc.id);
       }
@@ -1554,9 +1886,21 @@ export class AwardEngine {
       const albumItem = !isSong ? (item as Album) : null;
       const art = world.artists[item.artistId];
 
-      const producerId = songItem?.producerId || albumItem?.producerId;
-      const producer = producerId ? world.producers[producerId] : undefined;
-      const producerName = producer ? producer.name : (art ? `Producción de ${art.name}` : 'Producción Independiente');
+      const allWorldProds = Object.values(world.producers || {});
+      let producerId = songItem?.producerId || albumItem?.producerId;
+      let producer = producerId ? world.producers[producerId] : undefined;
+      if (!producer && art && !art.isPlayer && allWorldProds.length > 0) {
+        const artLang = resolveArtistLanguage(art.language, art.country, art.countryCode);
+        const compatibleProds = allWorldProds.filter(p =>
+          p.genreSpecialties?.includes(item.genreId) ||
+          (p.country && resolveArtistLanguage(undefined, p.country) === artLang)
+        );
+        const prodPool = compatibleProds.length > 0 ? compatibleProds : allWorldProds;
+        const hashIdx = Math.abs(item.id.split('').reduce((acc, ch) => acc * 31 + ch.charCodeAt(0), 7));
+        producer = prodPool[hashIdx % prodPool.length];
+        producerId = producer?.id;
+      }
+      const producerName = producer ? producer.name : (art ? art.name : 'Producción Ejecutiva');
 
       const qualityVal = songItem ? songItem.quality : (albumItem ? albumItem.criticalScore : 70);
       const originalityVal = songItem ? songItem.originality : (albumItem ? albumItem.commercialScore * 0.8 : 70);
@@ -1620,32 +1964,54 @@ export class AwardEngine {
     // Safety fallback
     if (selectedProdCandidates.length < NOMINEES_PER_CATEGORY) {
       const availableNPCs = activeNPCs.filter(a => (prodArtistCounts.get(a.id) || 0) < 2);
+      const allRealProducers = Object.values(world.producers || {});
+      const prodExcludedTitles = new Set<string>([...galaNominatedSongTitles, ...prodCategoryTitles]);
+
       for (let i = 0; i < availableNPCs.length && selectedProdCandidates.length < NOMINEES_PER_CATEGORY; i++) {
-        const npc = availableNPCs[i];
-        let fallbackTitle = `Master Mix - ${npc.name} Vol. ${i + 1}`;
-        let norm = AwardEngine.normalizeTitle(fallbackTitle);
-        while (prodCategoryTitles.has(norm)) {
-          fallbackTitle = `${fallbackTitle} Remaster`;
-          norm = AwardEngine.normalizeTitle(fallbackTitle);
-        }
+        const npc = availableNPCs[(year * 13 + i) % availableNPCs.length];
+        if (!npc || (prodArtistCounts.get(npc.id) || 0) >= 2) continue;
+
+        const npcLang = resolveArtistLanguage(npc.language, npc.country, npc.countryCode);
+        const availableProds = allRealProducers.filter(p => (prodProducerCounts.get(p.id) || 0) < 1);
+        const relaxedProds = allRealProducers.filter(p => (prodProducerCounts.get(p.id) || 0) < 2);
+        const candidateProds = availableProds.length > 0 ? availableProds : relaxedProds;
+        const matchedProds = candidateProds.filter(p =>
+          p.genreSpecialties?.includes(npc.mainGenreId) ||
+          (p.country && resolveArtistLanguage(undefined, p.country) === npcLang)
+        );
+        const chosenProd = (matchedProds.length > 0 ? matchedProds : candidateProds)[
+          (year + i * 3) % Math.max(1, (matchedProds.length > 0 ? matchedProds : candidateProds).length)
+        ];
+
+        const fallbackTitle = AwardEngine.generateGalaUniqueSongTitle(
+          world,
+          npc,
+          year * 610 + i * 59 + 31,
+          prodExcludedTitles
+        );
+        const norm = AwardEngine.normalizeTitle(fallbackTitle);
+        prodExcludedTitles.add(norm);
+
+        const mixQuality = 86 + (i % 6);
         const fallbackSongId = `song_prod_fill_${year}_${npc.id}_${selectedProdCandidates.length}`;
         const fallbackSong: Song = {
           id: fallbackSongId,
           title: fallbackTitle,
           artistId: npc.id,
           featuredArtistIds: [],
+          producerId: chosenProd?.id,
           genreId: npc.mainGenreId,
           subGenreIds: npc.subGenreIds || [],
           releaseYear: year,
-          releaseMonth: 7,
-          quality: 85,
-          commercialAppeal: 75,
-          originality: 80,
+          releaseMonth: ((year + i * 3) % 10) + 1,
+          quality: mixQuality,
+          commercialAppeal: 78,
+          originality: 82,
           hypeAtRelease: npc.stats.hype,
-          streamsTotal: 100000,
-          streamsLastMonth: 15000,
+          streamsTotal: 1450000 + i * 320000,
+          streamsLastMonth: 210000 + i * 45000,
           monthlyStreamsHistory: [],
-          peakPosition: { Global: 20, Argentina: 12, USA: null, LatinAmerica: 16, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
+          peakPosition: { Global: 18 + i, Argentina: 10 + i, USA: null, LatinAmerica: 14 + i, Europe: null, Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null },
           weeksOnChart: { Global: 5, Argentina: 6, USA: 0, LatinAmerica: 5, Europe: 0, Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0 },
           longevityCurve: 'steady',
           isSingle: true,
@@ -1655,19 +2021,24 @@ export class AwardEngine {
         };
         world.songs[fallbackSongId] = fallbackSong;
 
+        const finalProdName = chosenProd ? chosenProd.name : npc.name;
         selectedProdCandidates.push({
           item: fallbackSong,
           isSong: true,
           title: fallbackTitle,
           artist: npc,
-          producerId: undefined,
-          producerName: `Producción de ${npc.name}`,
+          producerId: chosenProd?.id,
+          producerName: finalProdName,
           score: 65 - selectedProdCandidates.length * 2,
-          highlightText: `Productor: Producción de ${npc.name} • Calidad de Mezcla: 85/100`,
-          nominationReason: `Por la solidez de la mezcla acústica y vanguardia sónica.`
+          highlightText: `Productor: ${finalProdName} • Calidad de Mezcla: ${mixQuality}/100`,
+          nominationReason: `Por la ingeniería de mezcla y separación de planos firmada por ${finalProdName} en "${fallbackTitle}".`
         });
         prodArtistCounts.set(npc.id, (prodArtistCounts.get(npc.id) || 0) + 1);
+        if (chosenProd) {
+          prodProducerCounts.set(chosenProd.id, (prodProducerCounts.get(chosenProd.id) || 0) + 1);
+        }
         prodCategoryTitles.add(norm);
+        galaNominatedSongTitles.add(norm);
       }
     }
 

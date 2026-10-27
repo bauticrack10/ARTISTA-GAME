@@ -672,20 +672,20 @@ export const StudioView: React.FC<StudioViewProps> = ({
           </div>
 
           {/* Selector de Pestañas con estilo consola */}
-          <div className="flex items-center gap-1 p-1 liquid-glass-pill text-xs font-semibold shrink-0 self-start md:self-auto">
+          <div className="flex items-center gap-1.5 p-1 liquid-glass-pill text-xs sm:text-sm font-semibold shrink-0 self-start md:self-auto">
             <button
               onClick={() => {
                 playSound('click');
                 setActiveTab('single');
                 onTabChange?.('single');
               }}
-              className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'single'
                   ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
+                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 bg-transparent'
               }`}
             >
-              <Music2 className="w-3.5 h-3.5" />
+              <Music2 className="w-4 h-4 shrink-0" />
               <span>Grabar Single</span>
             </button>
             <button
@@ -694,13 +694,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 setActiveTab('album');
                 onTabChange?.('album');
               }}
-              className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'album'
                   ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
+                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 bg-transparent'
               }`}
             >
-              <Layers className="w-3.5 h-3.5" />
+              <Layers className="w-4 h-4 shrink-0" />
               <span>Grabar Álbum / EP</span>
             </button>
             <button
@@ -709,13 +709,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 setActiveTab('catalog');
                 onTabChange?.('catalog');
               }}
-              className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'catalog'
                   ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] bg-transparent'
+                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 bg-transparent'
               }`}
             >
-              <Disc3 className="w-3.5 h-3.5" />
+              <Disc3 className="w-4 h-4 shrink-0" />
               <span>Mi Catálogo ({playerSongs.length})</span>
             </button>
           </div>
@@ -728,19 +728,19 @@ export const StudioView: React.FC<StudioViewProps> = ({
             <strong className="text-[#F4F0EA]">{playerSongs.length} temas</strong>
             <span className="text-[#8E8E99]">({playerAlbums.length} LP/EP)</span>
           </div>
-          <span className="text-[#26262B] hidden sm:inline">•</span>
+          <span className="text-white/35 hidden sm:inline">•</span>
           <div className="flex items-center gap-1.5">
             <span className="text-[#8E8E99]">Calidad Media:</span>
             <strong className="text-[#10B981]">{avgQuality}%</strong>
           </div>
-          <span className="text-[#26262B] hidden sm:inline">•</span>
+          <span className="text-white/35 hidden sm:inline">•</span>
           <div className="flex items-center gap-1.5">
             <span className="text-[#8E8E99]">Cupo Anual Singles:</span>
             <strong className={isSinglesLimitReached ? 'text-[#EF4444]' : 'text-[#F4F0EA]'}>
               {singlesThisYear}/{MAX_SINGLES}
             </strong>
           </div>
-          <span className="text-[#26262B] hidden sm:inline">•</span>
+          <span className="text-white/35 hidden sm:inline">•</span>
           <div className="flex items-center gap-1.5">
             <span className="text-[#8E8E99]">Energía en Sesión:</span>
             <strong className={player.stats.energy >= 35 ? 'text-[#10B981]' : player.stats.energy >= 15 ? 'text-[#F59E0B]' : 'text-[#EF4444]'}>
@@ -1127,11 +1127,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 <span className="text-[#8E8E99]">
                   Costo Total: <strong className={`text-sm ${isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>${totalSingleCost.toLocaleString('es-AR')}</strong>
                 </span>
-                <span className="text-[#26262B]">•</span>
+                <span className="text-white/35">•</span>
                 <span className="text-[#8E8E99]">
                   Fondos: <strong className={isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#10B981]'}>${player.stats.funds.toLocaleString('es-AR')}</strong>
                 </span>
-                <span className="text-[#26262B]">•</span>
+                <span className="text-white/35">•</span>
                 <span className="text-[#8E8E99]">
                   Sesión: <strong className="text-[#FF2A4B]">-15% Energía</strong>
                 </span>
@@ -1527,15 +1527,15 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 <span className="text-[#8E8E99]">
                   Costo Total: <strong className={`text-sm ${isAlbumFundsInsufficient ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>${totalAlbumCost.toLocaleString('es-AR')}</strong>
                 </span>
-                <span className="text-[#26262B]">•</span>
+                <span className="text-white/35">•</span>
                 <span className="text-[#8E8E99]">
                   Fondos: <strong className={isAlbumFundsInsufficient ? 'text-[#EF4444]' : 'text-[#10B981]'}>${player.stats.funds.toLocaleString('es-AR')}</strong>
                 </span>
-                <span className="text-[#26262B]">•</span>
+                <span className="text-white/35">•</span>
                 <span className="text-[#8E8E99]">
                   Sesión: <strong className="text-[#FF2A4B]">-35% Energía</strong>
                 </span>
-                <span className="text-[#26262B]">•</span>
+                <span className="text-white/35">•</span>
                 <span className="text-[#8E8E99]">
                   Pistas: <strong className={isAlbumTracksInsufficient ? 'text-[#EF4444]' : 'text-[#F4F0EA]'}>{totalAlbumTracksCount}/{minTracksRequired}</strong>
                 </span>
@@ -1618,7 +1618,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
                   catalogFilter === 'all'
                     ? 'bg-[#FF2A4B] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F0EA]'
+                    : 'text-[#DCE2EE] hover:text-white hover:bg-white/10'
                 }`}
               >
                 Todos ({playerSongs.length + playerAlbums.length})
@@ -1628,7 +1628,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
                   catalogFilter === 'albums'
                     ? 'bg-[#FF2A4B] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F0EA]'
+                    : 'text-[#DCE2EE] hover:text-white hover:bg-white/10'
                 }`}
               >
                 Álbumes ({playerAlbums.length})
@@ -1638,7 +1638,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
                   catalogFilter === 'singles'
                     ? 'bg-[#FF2A4B] text-white font-bold'
-                    : 'text-[#8E8E99] hover:text-[#F4F0EA]'
+                    : 'text-[#DCE2EE] hover:text-white hover:bg-white/10'
                 }`}
               >
                 Singles ({playerSongs.length})

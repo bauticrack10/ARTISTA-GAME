@@ -22,8 +22,6 @@ import {
   VolumeX,
   Radio,
   Smartphone,
-  Music2,
-  Layers,
   Settings
 } from 'lucide-react';
 import {
@@ -122,6 +120,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     return playerSongs.length >= 2 && (player?.stats?.monthlyListeners || 0) >= 1000 && playerEnergy >= 85;
   }, [playerSongs.length, player?.stats?.monthlyListeners, playerEnergy]);
 
+  const pendingCollabCount = React.useMemo(() => {
+    if (!Array.isArray(world?.pendingCollabOffers)) return 0;
+    return world.pendingCollabOffers.filter((o) => o && (!o.status || o.status === 'pending')).length;
+  }, [world?.pendingCollabOffers]);
+
   const hasActiveGala = Boolean(world?.activeGalaCeremony);
   const hasActiveBeef = Object.keys(world?.activeBeefs || {}).length > 0;
   const hasStudioAction = playerEnergy >= 85 && singlesThisYear === 0;
@@ -183,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Centro: Selector de Período y Botón de Acción Primaria de Videojuego */}
         <div className="order-last lg:order-none w-full lg:w-auto flex items-center gap-2.5 shrink-0 justify-center">
-          <div className="flex items-center border border-white/10 bg-[#0E0F14]/80 rounded-[4px] p-0.5 text-xs font-mono exclusion-group gap-0.5">
+          <div className="flex items-center border border-white/15 bg-[#0C101B]/85 rounded-[4px] p-0.5 text-xs font-mono exclusion-group gap-0.5">
             {([
               { val: 1, label: '1M', title: 'Avanzar 1 Mes' },
               { val: 3, label: '3M', title: 'Avanzar 3 Meses' },
@@ -199,8 +202,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 aria-pressed={cycleMonths === opt.val}
                 className={`px-2.5 py-1 rounded-[3px] font-mono text-xs font-bold transition-all cursor-pointer ${
                   cycleMonths === opt.val
-                    ? 'bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/40 shadow-[0_0_12px_rgba(0,229,153,0.2)]'
-                    : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
+                    ? 'bg-[#00E599]/20 text-[#00E599] border border-[#00E599]/50 shadow-[0_0_12px_rgba(0,229,153,0.25)]'
+                    : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 border border-transparent'
                 }`}
                 title={opt.title}
               >
@@ -267,7 +270,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Award className="w-3.5 h-3.5 text-[#00D2FF] shrink-0" />
             <span className={`font-extrabold text-[#00D2FF] font-mono tabular-nums whitespace-nowrap transition-transform duration-300 ${poppingHud.points ? 'animate-hud-pop text-cyan-200' : ''}`}>
-              {(player?.legacyScore ?? 0).toLocaleString('es-AR')} <span className="text-[10px] sm:text-xs text-[#00D2FF]/70 font-sans">PTS</span>
+              {(player?.legacyScore ?? 0).toLocaleString('es-AR')} <span className="text-[10px] sm:text-xs text-[#00D2FF]/85 font-sans">PTS</span>
             </span>
           </div>
 
@@ -286,7 +289,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className={`h-full rounded-[3px] transition-all duration-300 relative overflow-hidden shadow-[inset_0_-2px_0_rgba(0,0,0,0.4)] ${energyStyle.bar}`}
                 style={{ width: `${Math.min(100, Math.max(0, playerEnergy))}%` }}
               >
-                {/* Brillo especular superior blanco al 20% */}
                 <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/20 pointer-events-none" />
               </div>
             </div>
@@ -298,10 +300,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               playSound('click');
               onOpenPhone?.();
             }}
-            className="w-8 h-8 rounded-[4px] flex items-center justify-center relative border border-white/10 bg-[#0E0F14]/70 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer text-[#F4F0EA] group shrink-0"
+            className="w-8 h-8 rounded-[4px] flex items-center justify-center relative border border-white/15 bg-[#0C101B]/85 hover:bg-white/15 hover:border-white/25 transition-all cursor-pointer text-[#F4F0EA] group shrink-0"
             title="Abrir Smartphone (DMs, TrendX y Banco)"
           >
-            <Smartphone className="w-4 h-4 text-[#8E8E99] group-hover:text-[#F4F0EA] transition-colors" />
+            <Smartphone className="w-4 h-4 text-[#DCE2EE] group-hover:text-white transition-colors" />
             {(world?.unreadPhoneCount ?? 0) > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 rounded-[3px] bg-[#FF4F00] text-white text-3xs font-sans font-black flex items-center justify-center shadow-sm">
                 {world.unreadPhoneCount}
@@ -309,13 +311,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          <div className="border border-white/10 bg-[#0E0F14]/70 rounded-[4px] p-0.5 flex items-center gap-0.5">
+          <div className="border border-white/15 bg-[#0C101B]/85 rounded-[4px] p-0.5 flex items-center gap-0.5">
             <button
               id="btn-toggle-audio-sfx"
               onClick={handleToggleSound}
               aria-pressed={soundEnabled}
               className={`w-7 h-7 rounded-[3px] flex items-center justify-center transition-colors cursor-pointer ${
-                soundEnabled ? 'text-[#00E599]' : 'text-[#52525B] hover:text-[#8E8E99]'
+                soundEnabled ? 'text-[#00E599]' : 'text-[#CBD5E1] hover:text-white'
               }`}
               title={soundEnabled ? 'Silenciar Audio' : 'Activar Audio'}
             >
@@ -327,7 +329,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 playSound('click');
                 setIsSettingsOpen(true);
               }}
-              className="w-7 h-7 rounded-[3px] flex items-center justify-center text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-[3px] flex items-center justify-center text-[#DCE2EE] hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               title="Ajustes y Guardado"
             >
               <Settings className="w-3.5 h-3.5" />
@@ -336,137 +338,144 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* FILA 2: Navegación Principal Simplificada */}
-      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-1.5 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 overflow-x-auto scroll-fade-x">
+      {/* FILA 2: Navegación Principal Centrada */}
+      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-2 border-t border-white/10 flex items-center justify-center">
+        <nav aria-label="Navegación principal" className="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto scroll-fade-x max-w-full">
           <button
             id="nav-tab-dashboard"
             onClick={() => handleTabClick('dashboard')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               currentTab === 'dashboard'
-                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
+                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Compass className={`w-3.5 h-3.5 ${currentTab === 'dashboard' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <Compass className={`w-4 h-4 ${currentTab === 'dashboard' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
             <span>Inicio</span>
           </button>
 
           <button
             id="nav-tab-studio"
             onClick={() => handleTabClick('studio')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeHub === 'music'
-                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
+                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Disc3 className={`w-3.5 h-3.5 ${activeHub === 'music' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <Disc3 className={`w-4 h-4 ${activeHub === 'music' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
             <span>Estudio & Música</span>
             {hasStudioAction && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shrink-0" title="Listo para grabar" />
+              <span className="w-2 h-2 rounded-full bg-[#F59E0B] shrink-0" title="Listo para grabar" />
             )}
           </button>
 
           <button
             id="nav-hub-world"
             onClick={() => handleTabClick('streaming')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeHub === 'world'
-                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
+                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Radio className={`w-3.5 h-3.5 ${activeHub === 'world' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <Radio className={`w-4 h-4 ${activeHub === 'world' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
             <span>Escena & Charts</span>
+            {pendingCollabCount > 0 && (
+              <span
+                className="px-1.5 py-0.5 rounded-[3px] bg-[#00E599] text-[#032115] text-[10px] font-extrabold leading-none tabular-nums"
+                title={`${pendingCollabCount} oferta(s) de colaboración pendiente(s)`}
+              >
+                {pendingCollabCount}
+              </span>
+            )}
             {hasActiveBeef && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF4F00] shrink-0" title="Feudo activo" />
+              <span className="w-2 h-2 rounded-full bg-[#FF4F00] shrink-0" title="Feudo activo" />
             )}
           </button>
 
           <button
             id="nav-hub-career"
             onClick={() => handleTabClick('tours')}
-            className={`tap px-3 py-1.5 rounded-[4px] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeHub === 'career'
-                ? 'liquid-glass-pill text-[#F4F0EA] border-[#FF4F00]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5 border border-transparent'
+                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
+                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Briefcase className={`w-3.5 h-3.5 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <Briefcase className={`w-4 h-4 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
             <span>Carrera & Negocios</span>
             {(isTourReady || hasActiveGala) && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-[#10B981] shrink-0" />
             )}
           </button>
-        </div>
+        </nav>
+      </div>
 
-        {/* Sub-pestañas solo cuando hay opciones secundarias (sin texto redundante en Inicio) */}
-        {activeHub !== 'dashboard' && (
-          <div className="flex items-center gap-1.5 overflow-x-auto scroll-fade-x">
-            {activeHub === 'music' && (
-              <>
-                <button
-                  onClick={() => handleTabClick('studio_single')}
-                  className="px-2.5 py-1 rounded-[4px] text-xs font-medium liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
-                >
-                  <Music2 className="w-3 h-3 text-[#FF4F00]" />
-                  <span>Single</span>
-                </button>
-                <button
-                  onClick={() => handleTabClick('studio_album')}
-                  className="px-2.5 py-1 rounded-[4px] text-xs font-medium liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
-                >
-                  <Layers className="w-3 h-3 text-[#FF4F00]" />
-                  <span>Álbum / EP</span>
-                </button>
-                <button
-                  onClick={() => handleTabClick('catalog')}
-                  className="px-2.5 py-1 rounded-[4px] text-xs font-medium liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
-                >
-                  <Disc3 className="w-3 h-3 text-[#10B981]" />
-                  <span>Catálogo ({playerSongs.length})</span>
-                </button>
-              </>
-            )}
-
+      {/* FILA 3: Subcategorías Centradas para Escena & Charts y Carrera & Negocios */}
+      {(activeHub === 'world' || activeHub === 'career') && (
+        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-2 border-t border-white/10 bg-[#070A12]/65 flex items-center justify-center">
+          <div className="flex items-center justify-center gap-2 sm:gap-2.5 overflow-x-auto scroll-fade-x max-w-full">
             {activeHub === 'world' && (
               <>
                 <button
                   id="nav-tab-streaming"
                   onClick={() => handleTabClick('streaming')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'streaming'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
+                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
                   }`}
                 >
-                  <Radio className="w-3 h-3 text-[#FF4F00]" />
+                  <Radio className="w-4 h-4 text-[#FF4F00] shrink-0" />
                   <span>Streaming</span>
                 </button>
+
                 <button
                   id="nav-tab-charts"
                   onClick={() => handleTabClick('charts')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'charts'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
+                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
                   }`}
                 >
-                  <BarChart3 className="w-3 h-3 text-[#10B981]" />
+                  <BarChart3 className="w-4 h-4 text-[#10B981] shrink-0" />
                   <span>Charts</span>
                 </button>
+
                 <button
                   id="nav-tab-relations"
                   onClick={() => handleTabClick('relations')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-4 sm:px-4.5 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'relations'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-gradient-to-r from-[#FF4F00]/28 to-[#00E599]/20 text-white border border-[#FF4F00]/75 shadow-[0_0_18px_rgba(255,79,0,0.30),inset_0_1px_0_rgba(255,255,255,0.40)]'
+                      : 'bg-gradient-to-r from-[#0E1726]/90 to-[#111E2E]/90 text-white border border-[#00E599]/45 hover:border-[#00E599]/80 hover:from-[#132235] hover:to-[#16293B] shadow-[0_0_12px_rgba(0,229,153,0.14),inset_0_1px_0_rgba(255,255,255,0.22)]'
                   }`}
                 >
-                  <Network className="w-3 h-3 text-[#8E8E99]" />
+                  <Network className="w-4 h-4 text-[#00E599] shrink-0" />
                   <span>Artistas & Feudos</span>
+                  {pendingCollabCount > 0 ? (
+                    <span
+                      className="px-1.5 py-0.5 rounded-[3px] bg-[#00E599] text-[#032115] text-[10px] sm:text-[11px] font-extrabold leading-none tabular-nums shadow-[0_0_8px_rgba(0,229,153,0.45)]"
+                      title={`${pendingCollabCount} oferta(s) de colaboración pendiente(s)`}
+                    >
+                      {pendingCollabCount} FT.
+                    </span>
+                  ) : (
+                    <span
+                      className={`px-1.5 py-0.5 rounded-[3px] text-[10px] font-extrabold uppercase tracking-wider leading-none ${
+                        currentTab === 'relations'
+                          ? 'bg-[#FF4F00] text-white'
+                          : 'bg-[#00E599]/18 text-[#00E599] border border-[#00E599]/35'
+                      }`}
+                    >
+                      Collabs
+                    </span>
+                  )}
+                  {hasActiveBeef && (
+                    <span className="w-2 h-2 rounded-full bg-[#FF4F00] shrink-0" title="Feudo activo" />
+                  )}
                 </button>
               </>
             )}
@@ -476,68 +485,72 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   id="nav-tab-tours"
                   onClick={() => handleTabClick('tours')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'tours'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
+                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
                   }`}
                 >
-                  <Plane className="w-3 h-3 text-[#10B981]" />
+                  <Plane className="w-4 h-4 text-[#10B981] shrink-0" />
                   <span>Giras</span>
                 </button>
+
                 <button
                   id="nav-tab-industry"
                   onClick={() => handleTabClick('industry')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'industry'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
+                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
                   }`}
                 >
-                  <Building2 className="w-3 h-3 text-[#8E8E99]" />
+                  <Building2 className="w-4 h-4 text-[#38BDF8] shrink-0" />
                   <span>Sellos & Mánagers</span>
                 </button>
+
                 <button
                   id="nav-tab-lifestyle"
                   onClick={() => handleTabClick('lifestyle')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'lifestyle'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
+                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
                   }`}
                 >
-                  <ShoppingBag className="w-3 h-3 text-[#FF4F00]" />
+                  <ShoppingBag className="w-4 h-4 text-[#FF4F00] shrink-0" />
                   <span>Tienda</span>
                 </button>
+
                 <button
                   id="nav-tab-awards"
                   onClick={() => handleTabClick('awards')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'awards'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
+                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
                   }`}
                 >
-                  <Award className="w-3 h-3 text-[#F59E0B]" />
+                  <Award className="w-4 h-4 text-[#F59E0B] shrink-0" />
                   <span>Premios</span>
                 </button>
+
                 <button
                   id="nav-tab-career"
                   onClick={() => handleTabClick('career')}
-                  className={`px-2.5 py-1 rounded-[4px] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
                     currentTab === 'career'
-                      ? 'liquid-glass-pill text-[#F4F0EA] border-white/30'
-                      : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F0EA]'
+                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
+                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
                   }`}
                 >
-                  <TrendingUp className="w-3 h-3 text-[#F59E0B]" />
+                  <TrendingUp className="w-4 h-4 text-[#F59E0B] shrink-0" />
                   <span>Eras</span>
                 </button>
               </>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {isSettingsOpen && (
         <SettingsModal
