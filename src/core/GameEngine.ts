@@ -2482,8 +2482,20 @@ export class GameEngine {
       if (result.newsItem) {
         this.world.news.unshift(result.newsItem);
       }
-      this.syncAudienceMetrics(player);
-      this.notify();
+      if (actionType === 'reflective_rest' || actionType === 'home_rest') {
+        const energyAfterRest = player.stats.energy;
+        this.advanceCycle(1, false);
+        player.stats.energy = Math.min(100, energyAfterRest);
+        result.statChanges = {
+          ...(result.statChanges || {}),
+          energy: player.stats.energy,
+          hype: player.stats.hype
+        };
+        this.notify();
+      } else {
+        this.syncAudienceMetrics(player);
+        this.notify();
+      }
     }
     return result;
   }
@@ -2955,7 +2967,7 @@ export class GameEngine {
       if (!this.world.playlists) {
         this.world.playlists = EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
       }
-      StreamingEngine.updatePlaylists(this.world, this.world.songs, this.world.artists);
+      StreamingEngine.updatePlaylists(this.world);
 
       // 5.2 Generación Estacional de Invitaciones a Festivales Globales
       if (!this.world.festivalInvitations) this.world.festivalInvitations = [];
@@ -3248,7 +3260,7 @@ export class GameEngine {
         body: `El artista decidió poner una pausa temporal en su agenda para recuperar energía física y mental lejos de los reflectores.`,
         year: this.world.currentYear,
         month: this.world.currentMonth,
-        category: 'personal',
+        category: 'culture',
         relatedArtistIds: [player.id],
         sentiment: 'neutral',
         importance: 2
@@ -3294,7 +3306,7 @@ export class GameEngine {
       player.stats.funds = Math.max(0, player.stats.funds + effects.fundsDelta);
       this.recordFinancialTransaction({
         type: effects.fundsDelta > 0 ? 'income' : 'expense',
-        category: effects.fundsDelta > 0 ? 'sponsorship' : 'production',
+        category: effects.fundsDelta > 0 ? 'other' : 'production',
         amount: Math.abs(effects.fundsDelta),
         description: `Smartphone: ${choice.label}`
       });
@@ -3406,8 +3418,9 @@ export class GameEngine {
     const ceremony = this.world.awardsHistory?.find(c => c.year === year);
     if (ceremony) {
       for (const cat of ceremony.categories) {
-        if (cat.winner && cat.winner.id === player.id) {
-          awardsWonYear.push(cat.title);
+        const catAny = cat as any;
+        if ((catAny.winner && catAny.winner.id === player.id) || cat.winnerId === player.id) {
+          awardsWonYear.push(catAny.title || cat.name);
         }
       }
     }
@@ -3460,7 +3473,7 @@ export class GameEngine {
     let fundsEarnedYear = 0;
     if (this.world.financialLedger) {
       fundsEarnedYear = this.world.financialLedger
-        .filter(t => t.type === 'income' && t.date?.startsWith(`${year}`))
+        .filter(t => t.type === 'income' && (t.year === year || t.dateStr?.includes(`${year}`)))
         .reduce((acc, t) => acc + t.amount, 0);
     }
     if (fundsEarnedYear === 0) {
@@ -3748,12 +3761,12 @@ export class GameEngine {
     });
 
     const result = StreamingEngine.simulateSnippetCampaign({
+      songId: song.id,
       song,
       artist: player,
-      concept: params.concept,
+      concept: params.concept as any,
       budget: params.budget,
-      influencerTier: params.influencerTier,
-      world: this.world
+      influencerTier: params.influencerTier
     });
 
     // Aplicar efectos de la campaña de forma segura
@@ -3820,7 +3833,7 @@ export class GameEngine {
       if (!parsed || typeof parsed !== 'object') return false;
 
       const rawWorld = parsed.world || (parsed.artists ? parsed : null);
-      let rawPlayerId = parsed.playerId || (rawWorld && Object.values(rawWorld.artists || {}).find((a: any) => a.isPlayer)?.id);
+      let rawPlayerId = parsed.playerId || (rawWorld && (Object.values(rawWorld.artists || {}) as any[]).find((a: any) => a.isPlayer)?.id);
 
       if (!rawWorld) {
         console.warn('Save state lacking world');
@@ -3835,7 +3848,7 @@ export class GameEngine {
       this.world.artists = this.world.artists || {};
       this.world.songs = this.world.songs || {};
       this.world.albums = this.world.albums || {};
-      this.world.charts = this.world.charts || {};
+      this.world.charts = (this.world.charts || {}) as WorldState['charts'];
       this.world.trends = this.world.trends || {};
       this.world.genres = this.world.genres || INITIAL_GENRES;
       this.world.labels = this.world.labels || INITIAL_LABELS;

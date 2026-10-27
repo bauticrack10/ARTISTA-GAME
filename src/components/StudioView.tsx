@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { activateOnKey } from '../utils/a11y';
 import {
   Artist,
   WorldState,
   Song,
   Album,
-  ReleaseType,
   LongevityCurve,
   Producer,
   MusicVideoConcept,
@@ -14,31 +13,22 @@ import {
   ReleaseConfirmationData
 } from '../types';
 import { ReleaseConfirmationModal } from './ReleaseConfirmationModal';
-import { FeatArtistSelector } from './FeatArtistSelector';
 import { getArtistDerivedStyles, SUBGENRE_DETAILS } from '../data/genres';
 import { GameEngine } from '../core/GameEngine';
 import { IndustryEngine } from '../systems/IndustryEngine';
 import {
   Disc3,
-  Users,
   Mic,
   Sliders,
-  DollarSign,
   Layers,
   CheckCircle2,
   Music2,
-  Flame,
   Award,
   Lock,
-  Unlock,
   AlertCircle,
   Plus,
   Trash2,
-  TrendingUp,
-  Info,
   Calendar,
-  Radio,
-  FileMusic,
   CheckSquare,
   Square,
   Video,
@@ -50,26 +40,19 @@ import {
   Eye,
   Crown,
   Zap,
-  Play,
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
 import { TimeSystem } from '../systems/TimeSystem';
 import {
-  getGenreTheme,
-  getGenreBadgeClass,
   RELEASE_BADGES,
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
 import { playSound } from '../utils/audioSystem';
 import {
-  formatMoney,
   cleanCountTag,
-  cleanQuotes,
-  formatCompactNumber,
   formatReleaseDate,
-  formatProducerCredit,
-  formatProducerLabel
+  formatProducerCredit
 } from '../utils/formatters';
 
 export interface VideoConceptOption {
@@ -271,34 +254,135 @@ const TITLE_SUGGESTIONS = [
   'Vértigo y Luces'
 ];
 
+const DEFAULT_ALBUM_TRACKS = [
+  'Intro',
+  'Fuego en las Calles',
+  'Noches de Gloria',
+  'Diamantes y Cicatrices',
+  'Bajo las Luces del Neón',
+  'Outro'
+];
+
+interface StudioDraftState {
+  activeTab: 'single' | 'album' | 'catalog';
+  singleTitle: string;
+  selectedSubgenreId: string;
+  singleProducer: string;
+  singleProdBudget: number;
+  singleMktBudget: number;
+  hasMusicVideo: boolean;
+  selectedVideoConcept: MusicVideoConcept;
+  selectedDirectorTier: MusicVideoDirectorTier;
+  albumTitle: string;
+  albumType: Album['type'];
+  selectedAlbumSubgenreId: string;
+  albumProducer: string;
+  albumProdBudget: number;
+  albumMktBudget: number;
+  includedSingleIds: string[];
+  newTrackTitles: string[];
+}
+
+const studioDraftMemory: Record<string, StudioDraftState> = {};
+
+const getStudioDraftKey = (playerId: string) => `el_artista_studio_draft_${playerId}`;
+
+const loadStudioDraft = (playerId: string, defaultSubgenreId: string): StudioDraftState => {
+  if (studioDraftMemory[playerId]) {
+    return studioDraftMemory[playerId];
+  }
+  try {
+    const raw = localStorage.getItem(getStudioDraftKey(playerId));
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<StudioDraftState>;
+      const loaded: StudioDraftState = {
+        activeTab: parsed.activeTab || 'single',
+        singleTitle: parsed.singleTitle ?? '',
+        selectedSubgenreId: parsed.selectedSubgenreId || defaultSubgenreId,
+        singleProducer: parsed.singleProducer ?? '',
+        singleProdBudget: typeof parsed.singleProdBudget === 'number' ? parsed.singleProdBudget : 0,
+        singleMktBudget: typeof parsed.singleMktBudget === 'number' ? parsed.singleMktBudget : 0,
+        hasMusicVideo: Boolean(parsed.hasMusicVideo),
+        selectedVideoConcept: parsed.selectedVideoConcept || 'Cine 4K Cinematográfico',
+        selectedDirectorTier: parsed.selectedDirectorTier || 'Estudio Indie',
+        albumTitle: parsed.albumTitle ?? '',
+        albumType: parsed.albumType && parsed.albumType !== 'collab_album' ? parsed.albumType : 'album',
+        selectedAlbumSubgenreId: parsed.selectedAlbumSubgenreId || defaultSubgenreId,
+        albumProducer: parsed.albumProducer ?? '',
+        albumProdBudget: typeof parsed.albumProdBudget === 'number' ? parsed.albumProdBudget : 12000,
+        albumMktBudget: typeof parsed.albumMktBudget === 'number' ? parsed.albumMktBudget : 10000,
+        includedSingleIds: Array.isArray(parsed.includedSingleIds) ? parsed.includedSingleIds : [],
+        newTrackTitles: Array.isArray(parsed.newTrackTitles) && parsed.newTrackTitles.length > 0
+          ? parsed.newTrackTitles
+          : [...DEFAULT_ALBUM_TRACKS]
+      };
+      studioDraftMemory[playerId] = loaded;
+      return loaded;
+    }
+  } catch {
+    // Ignore storage read errors
+  }
+  const fresh: StudioDraftState = {
+    activeTab: 'single',
+    singleTitle: '',
+    selectedSubgenreId: defaultSubgenreId,
+    singleProducer: '',
+    singleProdBudget: 0,
+    singleMktBudget: 0,
+    hasMusicVideo: false,
+    selectedVideoConcept: 'Cine 4K Cinematográfico',
+    selectedDirectorTier: 'Estudio Indie',
+    albumTitle: '',
+    albumType: 'album',
+    selectedAlbumSubgenreId: defaultSubgenreId,
+    albumProducer: '',
+    albumProdBudget: 12000,
+    albumMktBudget: 10000,
+    includedSingleIds: [],
+    newTrackTitles: [...DEFAULT_ALBUM_TRACKS]
+  };
+  studioDraftMemory[playerId] = fresh;
+  return fresh;
+};
+
+const saveStudioDraft = (playerId: string, draft: StudioDraftState) => {
+  studioDraftMemory[playerId] = draft;
+  try {
+    localStorage.setItem(getStudioDraftKey(playerId), JSON.stringify(draft));
+  } catch {
+    // Ignore storage write errors
+  }
+};
+
 export const StudioView: React.FC<StudioViewProps> = ({
   player,
   world,
   initialTab,
   onTabChange,
-  onOpenCollabModal,
   onReleaseSong,
   onReleaseAlbum
 }) => {
-  const [activeTab, setActiveTab] = useState<'single' | 'album' | 'catalog'>(initialTab || 'single');
-  const [catalogFilter, setCatalogFilter] = useState<'all' | 'singles' | 'albums'>('all');
-
-  useEffect(() => {
-    if (initialTab) {
-      setActiveTab(initialTab);
-    }
-  }, [initialTab]);
-
   const currentEra = player?.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1] : undefined;
   const styleDerivation = getArtistDerivedStyles(player, currentEra, world?.genres || {});
-  const primaryGenreTheme = getGenreTheme(styleDerivation.primaryGenreId);
+  const defaultSubgenreId = styleDerivation.availableStyles[0]?.id || '';
 
-  // Available scene artists for features
-  const sceneArtists = useMemo(() => {
-    return (Object.values(world?.artists || {}) as Artist[]).filter(
-      a => a.id !== player?.id && !a.isRetired
-    );
-  }, [world?.artists, player?.id]);
+  const initialDraft = useMemo(
+    () => loadStudioDraft(player.id, defaultSubgenreId),
+    [player.id, defaultSubgenreId]
+  );
+
+  const [activeTab, setActiveTab] = useState<'single' | 'album' | 'catalog'>(
+    initialTab || initialDraft.activeTab || 'single'
+  );
+  const [catalogFilter, setCatalogFilter] = useState<'all' | 'singles' | 'albums'>('all');
+
+  const prevInitialTabRef = useRef(initialTab);
+  useEffect(() => {
+    if (initialTab && initialTab !== prevInitialTabRef.current) {
+      setActiveTab(initialTab);
+      prevInitialTabRef.current = initialTab;
+    }
+  }, [initialTab]);
 
   // Singles released this year
   const MAX_SINGLES = GameEngine.MAX_SINGLES_PER_YEAR;
@@ -324,20 +408,19 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }));
   };
 
-  // Single State
-  const [singleTitle, setSingleTitle] = useState('');
-  const [singleFeaturedArtist, setSingleFeaturedArtist] = useState<string>('');
+  // Single State (initialized from persistent draft)
+  const [singleTitle, setSingleTitle] = useState<string>(initialDraft.singleTitle);
   const [selectedSubgenreId, setSelectedSubgenreId] = useState<string>(
-    styleDerivation.availableStyles[0]?.id || ''
+    initialDraft.selectedSubgenreId || defaultSubgenreId
   );
-  const [singleProducer, setSingleProducer] = useState<string>('');
-  const [singleProdBudget, setSingleProdBudget] = useState(0);
-  const [singleMktBudget, setSingleMktBudget] = useState(0);
+  const [singleProducer, setSingleProducer] = useState<string>(initialDraft.singleProducer);
+  const [singleProdBudget, setSingleProdBudget] = useState<number>(initialDraft.singleProdBudget);
+  const [singleMktBudget, setSingleMktBudget] = useState<number>(initialDraft.singleMktBudget);
 
-  // Music Video Production State
-  const [hasMusicVideo, setHasMusicVideo] = useState(false);
-  const [selectedVideoConcept, setSelectedVideoConcept] = useState<MusicVideoConcept>('Cine 4K Cinematográfico');
-  const [selectedDirectorTier, setSelectedDirectorTier] = useState<MusicVideoDirectorTier>('Estudio Indie');
+  // Music Video Production State (initialized from persistent draft)
+  const [hasMusicVideo, setHasMusicVideo] = useState<boolean>(initialDraft.hasMusicVideo);
+  const [selectedVideoConcept, setSelectedVideoConcept] = useState<MusicVideoConcept>(initialDraft.selectedVideoConcept);
+  const [selectedDirectorTier, setSelectedDirectorTier] = useState<MusicVideoDirectorTier>(initialDraft.selectedDirectorTier);
 
   const currentDirectorTier = DIRECTOR_TIERS.find(t => t.id === selectedDirectorTier) || DIRECTOR_TIERS[1];
   const videoCost = hasMusicVideo ? currentDirectorTier.cost : 0;
@@ -345,29 +428,67 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const totalSingleCost = singleProdBudget + singleMktBudget + singleProdFee + videoCost;
   const isFundsInsufficient = totalSingleCost > player.stats.funds;
 
-  // Album State
-  const [albumTitle, setAlbumTitle] = useState('');
-  const [albumFeaturedArtist, setAlbumFeaturedArtist] = useState<string>('');
-  const [albumType, setAlbumType] = useState<Album['type']>('album');
-  const [selectedAlbumSubgenreId, setSelectedAlbumSubgenreId] = useState<string>(
-    styleDerivation.availableStyles[0]?.id || ''
+  // Album State (initialized from persistent draft)
+  const [albumTitle, setAlbumTitle] = useState<string>(initialDraft.albumTitle);
+  const [albumType, setAlbumType] = useState<Album['type']>(
+    initialDraft.albumType === 'collab_album' ? 'album' : initialDraft.albumType
   );
-  const [albumProducer, setAlbumProducer] = useState<string>('');
-  const [albumProdBudget, setAlbumProdBudget] = useState(12000);
-  const [albumMktBudget, setAlbumMktBudget] = useState(10000);
+  const [selectedAlbumSubgenreId, setSelectedAlbumSubgenreId] = useState<string>(
+    initialDraft.selectedAlbumSubgenreId || defaultSubgenreId
+  );
+  const [albumProducer, setAlbumProducer] = useState<string>(initialDraft.albumProducer);
+  const [albumProdBudget, setAlbumProdBudget] = useState<number>(initialDraft.albumProdBudget);
+  const [albumMktBudget, setAlbumMktBudget] = useState<number>(initialDraft.albumMktBudget);
 
   // Standalone singles available for album inclusion
   const availablePreviousSingles = playerSongs.filter(s => s.isSingle && !s.albumId);
-  const [includedSingleIds, setIncludedSingleIds] = useState<string[]>([]);
+  const [includedSingleIds, setIncludedSingleIds] = useState<string[]>(
+    initialDraft.includedSingleIds.filter(id => availablePreviousSingles.some(s => s.id === id))
+  );
 
   // New Tracks for the album
-  const [newTrackTitles, setNewTrackTitles] = useState<string[]>([
-    'Intro',
-    'Fuego en las Calles',
-    'Noches de Gloria',
-    'Diamantes y Cicatrices',
-    'Bajo las Luces del Neón',
-    'Outro'
+  const [newTrackTitles, setNewTrackTitles] = useState<string[]>(initialDraft.newTrackTitles);
+
+  // Sync all Studio draft fields to persistent store whenever any field changes
+  useEffect(() => {
+    saveStudioDraft(player.id, {
+      activeTab,
+      singleTitle,
+      selectedSubgenreId,
+      singleProducer,
+      singleProdBudget,
+      singleMktBudget,
+      hasMusicVideo,
+      selectedVideoConcept,
+      selectedDirectorTier,
+      albumTitle,
+      albumType,
+      selectedAlbumSubgenreId,
+      albumProducer,
+      albumProdBudget,
+      albumMktBudget,
+      includedSingleIds,
+      newTrackTitles
+    });
+  }, [
+    player.id,
+    activeTab,
+    singleTitle,
+    selectedSubgenreId,
+    singleProducer,
+    singleProdBudget,
+    singleMktBudget,
+    hasMusicVideo,
+    selectedVideoConcept,
+    selectedDirectorTier,
+    albumTitle,
+    albumType,
+    selectedAlbumSubgenreId,
+    albumProducer,
+    albumProdBudget,
+    albumMktBudget,
+    includedSingleIds,
+    newTrackTitles
   ]);
 
   const [notification, setNotification] = useState<string | null>(null);
@@ -415,31 +536,25 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }
   };
 
-  // Close confirmation modal & clear form only now
+  const resetSingleDraft = () => {
+    setSingleTitle('');
+    setHasMusicVideo(false);
+    setSingleProdBudget(0);
+    setSingleMktBudget(0);
+    setSingleProducer('');
+  };
+
+  const resetAlbumDraft = () => {
+    setAlbumTitle('');
+    setIncludedSingleIds([]);
+    setAlbumProducer('');
+    setAlbumProdBudget(12000);
+    setAlbumMktBudget(10000);
+    setNewTrackTitles([...DEFAULT_ALBUM_TRACKS]);
+  };
+
+  // Close confirmation modal & navigate to catalog
   const handleCloseConfirmation = () => {
-    if (confirmedRelease) {
-      if (confirmedRelease.type === 'single') {
-        setSingleTitle('');
-        setSingleFeaturedArtist('');
-        setHasMusicVideo(false);
-        setSingleProdBudget(0);
-        setSingleMktBudget(0);
-        setSingleProducer('');
-      } else {
-        setAlbumTitle('');
-        setAlbumFeaturedArtist('');
-        setIncludedSingleIds([]);
-        setAlbumProducer('');
-        setNewTrackTitles([
-          'Intro',
-          'Fuego en las Calles',
-          'Noches de Gloria',
-          'Diamantes y Cicatrices',
-          'Bajo las Luces del Neón',
-          'Outro'
-        ]);
-      }
-    }
     setConfirmedRelease(null);
     setActiveTab('catalog');
     onTabChange?.('catalog');
@@ -484,14 +599,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       const prodObj = singleProducer ? world.producers[singleProducer] : undefined;
       const subObj = selectedSubgenreId ? SUBGENRE_DETAILS[selectedSubgenreId] : undefined;
-      const featObj = singleFeaturedArtist ? world.artists[singleFeaturedArtist] : undefined;
       const genreName = world.genres[styleDerivation.primaryGenreId]?.name || styleDerivation.primaryGenreId;
 
       onReleaseSong({
         title: finalTitle,
         genreId: styleDerivation.primaryGenreId,
         subGenreIds: selectedSubgenreId ? [selectedSubgenreId] : [],
-        featuredArtistIds: singleFeaturedArtist ? [singleFeaturedArtist] : [],
+        featuredArtistIds: [],
         producerId: singleProducer || undefined,
         budgetProduction: singleProdBudget,
         budgetMarketing: singleMktBudget,
@@ -512,7 +626,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         genreName,
         subGenreId: selectedSubgenreId || undefined,
         subGenreName: subObj?.name || undefined,
-        featuredArtistNames: featObj ? [featObj.name] : undefined,
+        featuredArtistNames: undefined,
         producerName: prodObj?.name || undefined,
         musicVideo: hasMusicVideo ? {
           concept: selectedVideoConcept,
@@ -530,6 +644,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         }
       };
 
+      resetSingleDraft();
       playSound('release');
       setConfirmedRelease(releaseData);
       setNotification(
@@ -605,8 +720,6 @@ export const StudioView: React.FC<StudioViewProps> = ({
         producerId: albumProducer || undefined
       });
 
-      const featObj = albumFeaturedArtist ? world.artists[albumFeaturedArtist] : undefined;
-
       const releaseData: ReleaseConfirmationData = {
         type: albumType,
         title: finalTitle,
@@ -617,7 +730,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         genreName,
         subGenreId: selectedAlbumSubgenreId || undefined,
         subGenreName: subObj?.name || undefined,
-        featuredArtistNames: featObj ? [featObj.name] : undefined,
+        featuredArtistNames: undefined,
         producerName: prodObj?.name || undefined,
         releaseYear: world.currentYear,
         releaseMonth: world.currentMonth,
@@ -630,6 +743,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
         }
       };
 
+      resetAlbumDraft();
       playSound('release');
       setConfirmedRelease(releaseData);
       setNotification(`¡El proyecto "${finalTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`);
@@ -863,37 +977,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
               </div>
             </div>
 
-            {/* Right Column: Collaborators, Producer & Budgets */}
+            {/* Right Column: Producer & Budgets */}
             <div className="space-y-5">
-              {/* Featured Artist Selector & Collab Hub Shortcut */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-[#FF2A4B]" />
-                    Artista Invitado
-                  </label>
-                  {onOpenCollabModal && (
-                    <button
-                      type="button"
-                      onClick={() => onOpenCollabModal(singleFeaturedArtist || undefined)}
-                      className="text-xs text-[#FF2A4B] hover:underline font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                      title="Abrir el panel interactivo completo de colaboraciones"
-                    >
-                      <Users className="w-3 h-3" />
-                      Estudio de Colaboración Avanzada
-                    </button>
-                  )}
-                </div>
-                <FeatArtistSelector
-                  selectedArtistId={singleFeaturedArtist}
-                  onChange={setSingleFeaturedArtist}
-                  sceneArtists={sceneArtists}
-                  player={player}
-                  world={world}
-                  onOpenAdvancedCollab={onOpenCollabModal}
-                />
-              </div>
-
               {/* Producer */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA] mb-2">
@@ -1253,7 +1338,6 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     <option value="ep">EP Extended Play • Mín. 4 temas</option>
                     <option value="mixtape">Mixtape Callejera • Mín. 6 temas</option>
                     <option value="deluxe">Edición Deluxe • Mín. 10 temas</option>
-                    <option value="collab_album">Álbum Colaborativo • Mín. 6 temas</option>
                   </select>
                 </div>
 
@@ -1277,35 +1361,6 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     })}
                   </select>
                 </div>
-              </div>
-
-              {/* Featured Artist Selector & Collab Hub Shortcut for Album */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-[#FF2A4B]" />
-                    Artista Invitado Principal
-                  </label>
-                  {onOpenCollabModal && (
-                    <button
-                      type="button"
-                      onClick={() => onOpenCollabModal(albumFeaturedArtist || undefined)}
-                      className="text-xs text-[#FF2A4B] hover:underline font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                      title="Abrir el panel para crear un Álbum Colaborativo completo"
-                    >
-                      <Disc3 className="w-3 h-3" />
-                      Álbum Colaborativo ("Oasis")
-                    </button>
-                  )}
-                </div>
-                <FeatArtistSelector
-                  selectedArtistId={albumFeaturedArtist}
-                  onChange={setAlbumFeaturedArtist}
-                  sceneArtists={sceneArtists}
-                  player={player}
-                  world={world}
-                  onOpenAdvancedCollab={onOpenCollabModal}
-                />
               </div>
 
               {/* Sub-style Selection for Album */}

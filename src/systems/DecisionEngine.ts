@@ -104,14 +104,14 @@ export class DecisionEngine {
       reflective_rest: {
         id: 'reflective_rest',
         title: 'Aislamiento y Silencio Vocal',
-        subtitle: 'Apagar el teléfono y frenar la agenda de prensa',
-        description: 'Cuarenta y ocho horas fuera del circuito con reposo absoluto de cuerdas vocales para bajar pulsaciones antes de que la distribuidora reclame entregas.',
+        subtitle: 'Apagar el teléfono y frenar la agenda de prensa (consume 1 mes)',
+        description: 'Un mes fuera del circuito con reposo absoluto de cuerdas vocales para bajar pulsaciones antes de que la distribuidora reclame entregas.',
         category: 'wellness',
         costFunds: 400,
         costEnergy: -50, // Recupera 50 de energía
         iconName: 'Coffee',
         colorAccent: '#10B981',
-        badgeLabel: '+50 Energía • +2 Disciplina • +1 Creatividad',
+        badgeLabel: '+50 Energía • +2 Disciplina • 1 Mes',
         statDeltas: {
           discipline: 2,
           creativity: 1
@@ -123,14 +123,14 @@ export class DecisionEngine {
       home_rest: {
         id: 'home_rest',
         title: 'Dormir en Casa con Teléfono Apagado',
-        subtitle: 'Persiana baja y cero costos de producción',
-        description: 'Cancelar ensayos por un día, recuperar horas de sueño atrasadas y dejar en visto al mánager sin tocar el presupuesto.',
+        subtitle: 'Persiana baja, cero costos y pausa de agenda (consume 1 mes)',
+        description: 'Frenar ensayos y sesiones durante el mes para recuperar horas de sueño atrasadas y dejar en visto al mánager sin tocar el presupuesto.',
         category: 'wellness',
         costFunds: 0,
         costEnergy: -25,
         iconName: 'Coffee',
         colorAccent: '#10B981',
-        badgeLabel: '+25 Energía • $0',
+        badgeLabel: '+25 Energía • $0 • 1 Mes',
         statDeltas: {
           discipline: 1
         },
@@ -289,10 +289,10 @@ export class DecisionEngine {
         narrative = `Te encerraste en la sala B hasta las cuatro de la mañana cortando baterías y descartando compases flojos hasta dar con una estructura firme.`;
         break;
       case 'reflective_rest':
-        narrative = `Cortaste el teléfono dos días seguidos y cumpliste reposo vocal estricto (+${netEnergyDelta}% Energía). Volvés al estudio con el oído descansado.`;
+        narrative = `Frenaste la agenda durante el mes y cumpliste reposo vocal estricto (+${netEnergyDelta}% Energía • 1 Mes transcurrido). Volvés al estudio con el oído descansado.`;
         break;
       case 'home_rest':
-        narrative = `Dormiste diez horas de corrido sin gastar un peso (+${netEnergyDelta}% Energía) y dejaste que el cuerpo baje la fatiga acumulada.`;
+        narrative = `Bajaste la persiana en casa durante el mes sin gastar un peso (+${netEnergyDelta}% Energía • 1 Mes transcurrido) y dejaste que el cuerpo baje la fatiga acumulada.`;
         break;
       case 'industry_networking':
         narrative = `Mostraste dos maquetas sin mezclar en una escucha cerrada con prensa y distribuidoras; varios editores pidieron el wav final apenas termines el mastering.`;

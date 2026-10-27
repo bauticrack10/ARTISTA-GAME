@@ -13,6 +13,281 @@ export class ChartEngine {
   static REGIONS: MusicRegion[] = ['Global', 'Argentina', 'LatinAmerica', 'USA', 'Europe', 'Spain', 'Mexico', 'UK', 'Brazil', 'Asia', 'Africa'];
 
   /**
+   * Generates a deterministic per-song, per-region affinity variance (between 0.72 and 1.35)
+   * so that each song performs organically differently across distinct regional markets.
+   */
+  static getDeterministicRegionalVariance(songId: string, region: MusicRegion): number {
+    const key = `${songId}:${region}`;
+    let hash = 2166136261;
+    for (let i = 0; i < key.length; i++) {
+      hash ^= key.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    const normalized = (hash >>> 0) / 4294967295; // 0..1
+    return 0.72 + normalized * 0.63; // 0.72 .. 1.35
+  }
+
+  /**
+   * Computes a realistic regional market share and local affinity multiplier for a song in a given region.
+   * Ensures that Global Top 50 is led by international superstars while national/regional charts
+   * (such as Argentina Top 50) are genuinely dominated by local and culturally affine artists.
+   */
+  static calculateRegionalMultiplier(
+    song: Song,
+    artist: Artist | undefined,
+    region: MusicRegion,
+    allArtists: Record<string, Artist>
+  ): number {
+    const variance = this.getDeterministicRegionalVariance(song.id, region);
+    if (!artist) return variance;
+
+    const artistCountry = artist.country || '';
+    const artistCode = (artist.countryCode || '').toUpperCase();
+    const artistLang = (artist.language || '').toLowerCase();
+
+    const localPop = artist.popularityLocal ?? artist.stats?.popularity ?? 50;
+    const regionalPop = artist.popularityRegional ?? artist.stats?.popularity ?? 50;
+    const globalPop = artist.popularityGlobal ?? (
+      artist.isPlayer
+        ? Math.max(15, Math.floor((artist.stats?.popularity ?? 25) * 0.78))
+        : (artist.stats?.popularity ?? 45)
+    );
+
+    const isArgentina = artistCountry.includes('Argentina') || artistCode === 'AR';
+    const isSpain = artistCountry.includes('España') || artistCountry.includes('Spain') || artistCode === 'ES';
+    const isMexico = artistCountry.includes('México') || artistCountry.includes('Mexico') || artistCode === 'MX';
+    const isUSA = artistCountry.includes('USA') || artistCountry.includes('Estados Unidos') || artistCountry.includes('Canadá') || artistCode === 'US' || artistCode === 'CA';
+    const isUK = artistCountry.includes('Reino Unido') || artistCountry.includes('UK') || artistCountry.includes('Irlanda') || artistCode === 'GB' || artistCode === 'IE';
+    const isBrazil = artistCountry.includes('Brasil') || artistCountry.includes('Brazil') || artistCode === 'BR';
+    const isConoSur = artistCountry.includes('Uruguay') || artistCountry.includes('Chile') || artistCode === 'UY' || artistCode === 'CL';
+    const isOtherLatam =
+      artistCountry.includes('Puerto Rico') ||
+      artistCountry.includes('Colombia') ||
+      artistCountry.includes('República Dominicana') ||
+      artistCountry.includes('Perú') ||
+      artistCountry.includes('Venezuela') ||
+      artistCountry.includes('Cuba') ||
+      artistCountry.includes('Ecuador') ||
+      artistCountry.includes('Jamaica') ||
+      ['PR', 'CO', 'DO', 'PE', 'VE', 'CU', 'EC', 'JM'].includes(artistCode);
+
+    const isHispanic = isArgentina || isSpain || isMexico || isConoSur || isOtherLatam || artistLang === 'es';
+    const isLatinAmericaAll = isArgentina || isMexico || isConoSur || isOtherLatam || isBrazil;
+
+    const isEurope =
+      isSpain ||
+      isUK ||
+      artistCountry.includes('Francia') ||
+      artistCountry.includes('Alemania') ||
+      artistCountry.includes('Italia') ||
+      artistCountry.includes('Suecia') ||
+      artistCountry.includes('Noruega') ||
+      artistCountry.includes('Países Bajos') ||
+      artistCountry.includes('Bélgica') ||
+      artistCountry.includes('Portugal') ||
+      artistCountry.includes('Polonia') ||
+      artistCountry.includes('Rusia') ||
+      artistCountry.includes('Turquía') ||
+      ['FR', 'DE', 'IT', 'SE', 'NO', 'NL', 'BE', 'PT', 'PL', 'RU', 'TR'].includes(artistCode) ||
+      Boolean(artist.influenceRegions?.includes('Europe'));
+
+    const isAsia =
+      artistCountry.includes('Corea') ||
+      artistCountry.includes('Japón') ||
+      artistCountry.includes('India') ||
+      artistCountry.includes('Filipinas') ||
+      artistCountry.includes('Indonesia') ||
+      artistCountry.includes('China') ||
+      artistCountry.includes('Australia') ||
+      artistCountry.includes('Nueva Zelanda') ||
+      ['KR', 'JP', 'IN', 'PH', 'ID', 'CN', 'AU', 'NZ'].includes(artistCode) ||
+      Boolean(artist.influenceRegions?.includes('Asia'));
+
+    const isAfrica =
+      artistCountry.includes('Nigeria') ||
+      artistCountry.includes('Ghana') ||
+      artistCountry.includes('Sudáfrica') ||
+      artistCountry.includes('Marruecos') ||
+      artistCountry.includes('Egipto') ||
+      ['NG', 'GH', 'ZA', 'MA', 'EG'].includes(artistCode) ||
+      Boolean(artist.influenceRegions?.includes('Africa'));
+
+    // Check if any featured collaborator is native to the target region
+    let hasLocalFeature = false;
+    if (song.featuredArtistIds && song.featuredArtistIds.length > 0) {
+      for (const featId of song.featuredArtistIds) {
+        const feat = allArtists[featId];
+        if (!feat) continue;
+        const fc = feat.country || '';
+        const fcode = (feat.countryCode || '').toUpperCase();
+        if (region === 'Argentina' && (fc.includes('Argentina') || fcode === 'AR')) hasLocalFeature = true;
+        else if (region === 'Spain' && (fc.includes('España') || fcode === 'ES')) hasLocalFeature = true;
+        else if (region === 'Mexico' && (fc.includes('México') || fcode === 'MX')) hasLocalFeature = true;
+        else if (region === 'USA' && (fc.includes('USA') || fcode === 'US')) hasLocalFeature = true;
+        else if (region === 'UK' && (fc.includes('UK') || fc.includes('Reino Unido') || fcode === 'GB')) hasLocalFeature = true;
+        else if (region === 'Brazil' && (fc.includes('Brasil') || fcode === 'BR')) hasLocalFeature = true;
+      }
+    }
+
+    let baseMultiplier = 1.0;
+
+    switch (region) {
+      case 'Global': {
+        const commercialBoost = 0.85 + (Math.max(20, song.commercialAppeal || 60) / 100) * 0.35;
+        if (globalPop >= 92 && (isUSA || isUK || artistCode === 'PR' || artistCode === 'CO' || artistCode === 'KR' || artistCode === 'CA')) {
+          baseMultiplier = (1.35 + ((globalPop - 90) / 10) * 0.50) * commercialBoost;
+        } else if (globalPop >= 85 || artist.influenceRegions?.includes('Global')) {
+          if (isArgentina && globalPop < 95) {
+            // Argentine superstars have intense Cono Sur concentration; only mega-hits reach top Global positions
+            baseMultiplier = (0.48 + ((globalPop - 80) / 20) * 0.36) * commercialBoost;
+          } else {
+            baseMultiplier = (0.95 + ((globalPop - 80) / 20) * 0.45) * commercialBoost;
+          }
+        } else if (globalPop >= 72) {
+          baseMultiplier = (0.38 + ((globalPop - 70) / 15) * 0.32) * commercialBoost;
+        } else {
+          // Strictly local/emerging artists have concentrated home-country streams, not global distribution
+          baseMultiplier = (0.16 + (globalPop / 72) * 0.22) * commercialBoost;
+        }
+        break;
+      }
+
+      case 'Argentina': {
+        if (isArgentina) {
+          baseMultiplier = 9.5 + (Math.max(40, localPop) / 100) * 6.5; // 9.5x .. 16.0x
+        } else if (isConoSur) {
+          baseMultiplier = 2.1 + (regionalPop / 100) * 1.1; // Uruguay & Chile
+        } else if (isHispanic) {
+          baseMultiplier = 1.05 + (regionalPop / 100) * 0.85; // Puerto Rico, Colombia, España, México
+        } else if (isBrazil) {
+          baseMultiplier = 0.16 + (globalPop / 100) * 0.14;
+        } else {
+          // Non-Hispanic rest of world (USA, UK, Asia, Africa, Europe): low local share in Argentina
+          baseMultiplier = 0.04 + (Math.max(0, globalPop - 60) / 40) * 0.09; // 0.04x .. 0.13x
+        }
+        break;
+      }
+
+      case 'Spain': {
+        if (isSpain) {
+          baseMultiplier = 9.5 + (Math.max(40, localPop) / 100) * 6.0;
+        } else if (isArgentina || isOtherLatam || isMexico) {
+          baseMultiplier = 1.5 + (regionalPop / 100) * 1.1;
+        } else if (isEurope) {
+          baseMultiplier = 0.25 + (globalPop / 100) * 0.25;
+        } else {
+          baseMultiplier = 0.07 + (Math.max(0, globalPop - 60) / 40) * 0.12;
+        }
+        break;
+      }
+
+      case 'Mexico': {
+        if (isMexico) {
+          baseMultiplier = 10.0 + (Math.max(40, localPop) / 100) * 6.0;
+        } else if (isOtherLatam || isArgentina || isSpain) {
+          baseMultiplier = 1.35 + (regionalPop / 100) * 1.05;
+        } else if (isUSA) {
+          baseMultiplier = 0.14 + (globalPop / 100) * 0.16;
+        } else {
+          baseMultiplier = 0.05 + (Math.max(0, globalPop - 60) / 40) * 0.10;
+        }
+        break;
+      }
+
+      case 'LatinAmerica': {
+        if (isHispanic && !isSpain) {
+          baseMultiplier = 3.8 + (Math.max(40, regionalPop) / 100) * 2.4;
+        } else if (isSpain) {
+          baseMultiplier = 2.2 + (regionalPop / 100) * 1.3;
+        } else if (isBrazil) {
+          baseMultiplier = 1.3 + (regionalPop / 100) * 0.8;
+        } else {
+          baseMultiplier = 0.08 + (Math.max(0, globalPop - 60) / 40) * 0.14;
+        }
+        break;
+      }
+
+      case 'USA': {
+        if (isUSA) {
+          baseMultiplier = 3.4 + (Math.max(40, localPop) / 100) * 2.2;
+        } else if (artistCode === 'PR') {
+          baseMultiplier = 1.8 + (regionalPop / 100) * 1.1;
+        } else if (isUK || isMexico) {
+          baseMultiplier = 0.9 + (globalPop / 100) * 0.65;
+        } else if (isAsia && globalPop >= 85) {
+          baseMultiplier = 0.65 + (globalPop / 100) * 0.55;
+        } else {
+          baseMultiplier = 0.12 + (Math.max(0, globalPop - 60) / 40) * 0.22;
+        }
+        break;
+      }
+
+      case 'UK': {
+        if (isUK) {
+          baseMultiplier = 9.0 + (Math.max(40, localPop) / 100) * 5.5;
+        } else if (isUSA) {
+          baseMultiplier = 0.55 + (globalPop / 100) * 0.55;
+        } else if (isEurope || isAfrica) {
+          baseMultiplier = 0.45 + (globalPop / 100) * 0.45;
+        } else {
+          baseMultiplier = 0.08 + (Math.max(0, globalPop - 60) / 40) * 0.14;
+        }
+        break;
+      }
+
+      case 'Europe': {
+        if (isEurope) {
+          baseMultiplier = 4.2 + (Math.max(40, regionalPop) / 100) * 3.0;
+        } else if (isUSA) {
+          baseMultiplier = 0.45 + (globalPop / 100) * 0.45;
+        } else {
+          baseMultiplier = 0.18 + (Math.max(0, globalPop - 60) / 40) * 0.28;
+        }
+        break;
+      }
+
+      case 'Brazil': {
+        if (isBrazil) {
+          baseMultiplier = 12.0 + (Math.max(40, localPop) / 100) * 6.5;
+        } else if (isLatinAmericaAll) {
+          baseMultiplier = 0.22 + (regionalPop / 100) * 0.22;
+        } else {
+          baseMultiplier = 0.06 + (Math.max(0, globalPop - 60) / 40) * 0.12;
+        }
+        break;
+      }
+
+      case 'Asia': {
+        if (isAsia) {
+          baseMultiplier = 9.5 + (Math.max(40, localPop) / 100) * 6.0;
+        } else if (isUSA || isUK) {
+          baseMultiplier = 0.12 + (globalPop / 100) * 0.16;
+        } else {
+          baseMultiplier = 0.04 + (Math.max(0, globalPop - 60) / 40) * 0.09;
+        }
+        break;
+      }
+
+      case 'Africa': {
+        if (isAfrica) {
+          baseMultiplier = 11.0 + (Math.max(40, localPop) / 100) * 6.5;
+        } else if (isUSA || isUK) {
+          baseMultiplier = 0.10 + (globalPop / 100) * 0.15;
+        } else {
+          baseMultiplier = 0.04 + (Math.max(0, globalPop - 60) / 40) * 0.08;
+        }
+        break;
+      }
+    }
+
+    if (hasLocalFeature) {
+      baseMultiplier *= 2.25;
+    }
+
+    return baseMultiplier * variance;
+  }
+
+  /**
    * Calculates regional charts with strict deterministic tie-breaking and rank uniqueness.
    * Guarantees exactly one song per position (#1, #2, ..., #50) with no collisions.
    */
@@ -44,53 +319,7 @@ export class ChartEngine {
       // Score each song for this specific region
       const scoredSongs = activeSongs.map(song => {
         const artist = allArtists[song.artistId];
-        let regionalMultiplier = 1.0;
-
-        if (artist) {
-          const artistCountry = artist.country || '';
-          if (region === 'Argentina' && artistCountry.includes('Argentina')) {
-            regionalMultiplier = 2.4;
-          } else if (region === 'LatinAmerica' && (
-            artistCountry.includes('Argentina') ||
-            artistCountry.includes('Puerto Rico') ||
-            artistCountry.includes('México') ||
-            artistCountry.includes('Colombia') ||
-            artistCountry.includes('Chile') ||
-            artistCountry.includes('Uruguay') ||
-            artistCountry.includes('República Dominicana') ||
-            artistCountry.includes('Brasil')
-          )) {
-            regionalMultiplier = 1.8;
-          } else if (region === 'Spain' && artistCountry.includes('España')) {
-            regionalMultiplier = 2.2;
-          } else if (region === 'USA' && artistCountry.includes('USA')) {
-            regionalMultiplier = 2.0;
-          } else if (region === 'Mexico' && artistCountry.includes('México')) {
-            regionalMultiplier = 2.5;
-          } else if (region === 'UK' && (artistCountry.includes('Reino Unido') || artistCountry.includes('UK') || artistCountry.includes('Irlanda'))) {
-            regionalMultiplier = 2.2;
-          } else if (region === 'Brazil' && (artistCountry.includes('Brasil') || artistCountry.includes('Brazil'))) {
-            regionalMultiplier = 2.6;
-          } else if (region === 'Asia' && (
-            artistCountry.includes('Corea del Sur') ||
-            artistCountry.includes('Japón') ||
-            artistCountry.includes('India') ||
-            artistCountry.includes('Filipinas') ||
-            artistCountry.includes('Indonesia') ||
-            artistCountry.includes('China')
-          )) {
-            regionalMultiplier = 2.3;
-          } else if (region === 'Africa' && (
-            artistCountry.includes('Nigeria') ||
-            artistCountry.includes('Ghana') ||
-            artistCountry.includes('Sudáfrica') ||
-            artistCountry.includes('Marruecos') ||
-            artistCountry.includes('Egipto')
-          )) {
-            regionalMultiplier = 2.4;
-          }
-        }
-
+        const regionalMultiplier = this.calculateRegionalMultiplier(song, artist, region, allArtists);
         const score = (song.streamsLastMonth / 4) * regionalMultiplier; // weekly stream equivalent
 
         return {
@@ -237,7 +466,7 @@ export class ChartEngine {
   ): ChartValidationResult {
     const errors: string[] = [];
     const duplicateRanks: number[] = [];
-    const duplicateSongIds: string[] = [];
+    const duplicateSongIds: any[] = [];
     let hasGaps = false;
 
     if (!chart || !Array.isArray(chart.entries)) {
@@ -325,4 +554,3 @@ export class ChartEngine {
     };
   }
 }
-

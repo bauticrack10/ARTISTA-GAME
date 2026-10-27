@@ -11,8 +11,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Users,
-  Music2,
-  X
+  Music2
 } from 'lucide-react';
 import { playSound } from '../utils/audioSystem';
 import { useTourRequirements } from '../hooks/useTourRequirements';
@@ -59,7 +58,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
       onRest();
       gameJuice.triggerConfetti(targetEl || '#btn-take-vacation');
       gameJuice.triggerFloatingNumber({
-        text: '+50% Energía',
+        text: '+50% Energía • +1 Mes',
         origin: targetEl || '#btn-take-vacation',
         type: 'energy',
         targetHud: 'energy'
@@ -71,8 +70,8 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
         targetHud: 'money'
       });
       setFeedbackMessage({
-        title: 'Descanso Reflexivo Completado',
-        text: 'Recuperaste +50% de energía física, +2 Disciplina y +1 Creatividad.',
+        title: 'Descanso Reflexivo Completado (+1 Mes)',
+        text: 'Avanzaste 1 mes de recuperación: +50% de energía física, +2 Disciplina y +1 Creatividad.',
         success: true
       });
       return;
@@ -89,14 +88,14 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
           playSound('click');
           gameJuice.triggerConfetti(targetEl || '#btn-home-rest');
           gameJuice.triggerFloatingNumber({
-            text: '+25% Energía',
+            text: '+25% Energía • +1 Mes',
             origin: targetEl || '#btn-home-rest',
             type: 'energy',
             targetHud: 'energy'
           });
           setFeedbackMessage({
-            title: res.title,
-            text: res.narrativeText,
+            title: `${res.title} (+1 Mes)`,
+            text: `${res.narrativeText} Avanzaste 1 mes mientras recuperabas energía.`,
             success: true
           });
         } else {
@@ -295,7 +294,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
               </span>
             </div>
             <p className="text-xs text-[#8E8E99] leading-snug">
-              Recupera energía vital para grabar o salir de gira.
+              Recupera energía vital para grabar o salir de gira (consume 1 mes).
             </p>
           </div>
 
@@ -320,7 +319,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                   }`}
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  <span>{isEnergyFull ? 'Energía al 100%' : 'Retiro ($400 • +50%)'}</span>
+                  <span>{isEnergyFull ? 'Energía al 100%' : 'Retiro ($400 • +50% • 1 Mes)'}</span>
                 </button>
                 {!isEnergyFull && (
                   <button
@@ -331,7 +330,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                     }}
                     className="w-full text-center text-xs text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer py-0.5"
                   >
-                    Casa ($0 • +25% Energía)
+                    Casa ($0 • +25% En. • 1 Mes)
                   </button>
                 )}
               </>
@@ -354,7 +353,7 @@ export const DecisionHub: React.FC<DecisionHubProps> = ({
                 }`}
               >
                 <Coffee className="w-3.5 h-3.5" />
-                <span>{isEnergyFull ? 'Energía al 100%' : 'Descansar ($0 • +25%)'}</span>
+                <span>{isEnergyFull ? 'Energía al 100%' : 'Descansar ($0 • +25% • 1 Mes)'}</span>
               </button>
             )}
           </div>

@@ -3259,6 +3259,68 @@ textarea::placeholder {
 }
 
 /* ==========================================================================
+   NOTIFICACIÓN DE COLABORACIÓN OPACA & CARCASA IPHONE 16 PRO
+   ========================================================================== */
+
+.collab-toast-opaque-card {
+  background: linear-gradient(165deg, rgba(14, 17, 26, 0.97) 0%, rgba(9, 11, 18, 0.98) 100%) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.92), 0 0 0 1px rgba(255, 255, 255, 0.14) !important;
+}
+
+.collab-toast-opaque-subcard {
+  background-color: rgba(7, 9, 15, 0.96) !important;
+}
+
+.iphone-pro-chassis {
+  border-radius: 50px !important;
+  background: linear-gradient(145deg, #2A2E39 0%, #161821 50%, #242834 100%) !important;
+  padding: 10px !important;
+  box-shadow:
+    0 0 0 2px #3A3F4D,
+    0 30px 80px rgba(0, 0, 0, 0.92),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
+}
+
+.iphone-pro-screen {
+  border-radius: 41px !important;
+  background: #07090F !important;
+}
+
+.iphone-dynamic-island {
+  border-radius: 9999px !important;
+  background: #000000 !important;
+}
+
+.iphone-card {
+  border-radius: 18px !important;
+  background: #11141F !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+.iphone-bubble-in {
+  border-radius: 18px 18px 18px 4px !important;
+  background: #151926 !important;
+}
+
+.iphone-bubble-out {
+  border-radius: 18px 18px 4px 18px !important;
+}
+
+.iphone-dock {
+  border-radius: 26px !important;
+  background: rgba(18, 22, 34, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+.iphone-close-outside {
+  border-radius: 9999px !important;
+  background: rgba(15, 18, 28, 0.95) !important;
+}
+
+/* ==========================================================================
    ACCESIBILIDAD: REDUCED MOTION DIRECTIVE
    ========================================================================== */
 

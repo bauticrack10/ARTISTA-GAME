@@ -197,6 +197,71 @@ export class WorldSimulation {
     }
     const allProducersList = Object.values(world.producers || {});
 
+    // Ensure rich, globally diverse initial catalog across all continents when a save starts with few songs
+    const forcedInitialReleaseArtistIds = new Set<string>();
+    if (totalSongsCounter < 65) {
+      const sortedNPCs = [...activeNPCList]
+        .filter(a => (songsByArtistId.get(a.id)?.length || 0) === 0)
+        .sort((a, b) => (b.stats?.popularity || 0) - (a.stats?.popularity || 0));
+
+      const regionQuotas: Record<string, { current: number; max: number }> = {
+        Argentina: { current: 0, max: 16 },
+        USA: { current: 0, max: 16 },
+        UK: { current: 0, max: 8 },
+        Spain: { current: 0, max: 8 },
+        Mexico: { current: 0, max: 8 },
+        Brazil: { current: 0, max: 8 },
+        LatinAmerica: { current: 0, max: 12 },
+        Europe: { current: 0, max: 8 },
+        Asia: { current: 0, max: 8 },
+        Africa: { current: 0, max: 8 }
+      };
+
+      const classifyArtistBucket = (a: Artist): string => {
+        const c = a.country || '';
+        const code = (a.countryCode || '').toUpperCase();
+        if (c.includes('Argentina') || code === 'AR') return 'Argentina';
+        if (c.includes('USA') || c.includes('Estados Unidos') || c.includes('Canadá') || code === 'US' || code === 'CA') return 'USA';
+        if (c.includes('Reino Unido') || c.includes('UK') || c.includes('Irlanda') || code === 'GB' || code === 'IE') return 'UK';
+        if (c.includes('España') || c.includes('Spain') || code === 'ES') return 'Spain';
+        if (c.includes('México') || c.includes('Mexico') || code === 'MX') return 'Mexico';
+        if (c.includes('Brasil') || c.includes('Brazil') || code === 'BR') return 'Brazil';
+        if (
+          c.includes('Puerto Rico') || c.includes('Colombia') || c.includes('Chile') ||
+          c.includes('Uruguay') || c.includes('República Dominicana') || c.includes('Perú') ||
+          c.includes('Venezuela') || c.includes('Cuba') || c.includes('Ecuador') || c.includes('Jamaica') ||
+          ['PR', 'CO', 'CL', 'UY', 'DO', 'PE', 'VE', 'CU', 'EC', 'JM'].includes(code)
+        ) {
+          return 'LatinAmerica';
+        }
+        if (
+          c.includes('Corea') || c.includes('Japón') || c.includes('India') ||
+          c.includes('Filipinas') || c.includes('Indonesia') || c.includes('China') ||
+          c.includes('Australia') || c.includes('Nueva Zelanda') ||
+          ['KR', 'JP', 'IN', 'PH', 'ID', 'CN', 'AU', 'NZ'].includes(code)
+        ) {
+          return 'Asia';
+        }
+        if (
+          c.includes('Nigeria') || c.includes('Ghana') || c.includes('Sudáfrica') ||
+          c.includes('Marruecos') || c.includes('Egipto') ||
+          ['NG', 'GH', 'ZA', 'MA', 'EG'].includes(code)
+        ) {
+          return 'Africa';
+        }
+        return 'Europe';
+      };
+
+      for (const npc of sortedNPCs) {
+        const bucket = classifyArtistBucket(npc);
+        const q = regionQuotas[bucket];
+        if (q && q.current < q.max) {
+          q.current++;
+          forcedInitialReleaseArtistIds.add(npc.id);
+        }
+      }
+    }
+
     const pickCompatibleCollabPartner = (lead: Artist): Artist | null => {
       const leadLang = resolveArtistLanguage(lead.language, lead.country, lead.countryCode);
       const langPeers = npcByLang.get(leadLang) || [];
@@ -264,7 +329,12 @@ export class WorldSimulation {
       }
 
       // Dynamic career stage & era check
-      const artistSongs = songsByArtistId.get(artist.id) || [];
+      let artistSongs = songsByArtistId.get(artist.id);
+      if (!artistSongs) {
+        artistSongs = [];
+        songsByArtistId.set(artist.id, artistSongs);
+      }
+
       const hitsCount = artistSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
       artist.careerStage = LegacyEngine.evaluateCareerStage(artist, yearsActive, hitsCount);
       LegacyEngine.checkAndCreateEra(artist, world.currentYear, world.currentMonth);
@@ -277,8 +347,9 @@ export class WorldSimulation {
         ? (world.currentYear - artist.lastReleaseYear) * 12 + (world.currentMonth - (artist.lastReleaseMonth || 1))
         : 99;
 
-      if (monthsSinceLastRelease >= 4 && Math.random() < 0.18) {
-        const isAlbum = monthsSinceLastRelease >= 14 && Math.random() < 0.35;
+      const forceInitialSingle = forcedInitialReleaseArtistIds.has(artist.id);
+      if (forceInitialSingle || (monthsSinceLastRelease >= 4 && Math.random() < 0.18)) {
+        const isAlbum = !forceInitialSingle && monthsSinceLastRelease >= 14 && Math.random() < 0.35;
         const estProdBudget = Math.floor(artist.stats.funds * 0.05 + artist.stats.popularity * 100);
         const estMktBudget = Math.floor(artist.stats.funds * 0.08 + artist.stats.hype * 80);
 
@@ -351,6 +422,7 @@ export class WorldSimulation {
             world.songs[songId] = newSong;
             albumSongIds.push(songId);
             newSongsGenerated.push(newSong);
+            artistSongs.push(newSong);
           }
 
           const gradients = [
@@ -433,6 +505,7 @@ export class WorldSimulation {
 
           world.songs[songId] = newSong;
           newSongsGenerated.push(newSong);
+          artistSongs.push(newSong);
         }
       }
 

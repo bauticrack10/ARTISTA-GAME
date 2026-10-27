@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import { Artist, Producer } from '../types';
 import { playSound } from '../utils/audioSystem';
-import { formatMoney, formatCompactNumber } from '../utils/formatters';
+import { formatMoney } from '../utils/formatters';
 import {
   Mic2,
   Sliders,
   Clock,
-  DollarSign,
-  Zap,
-  TrendingUp,
   Volume2,
   Check,
-  X,
-  Radio,
-  ArrowRight,
   Headphones
 } from 'lucide-react';
 
@@ -90,10 +84,10 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
       } ${className}`}
     >
       <div
-        className={`bg-[#111114] border rounded-[6px] p-5 relative overflow-hidden transition-all duration-200 ${
+        className={`collab-toast-opaque-card border rounded-[6px] p-5 relative overflow-hidden transition-all duration-200 ${
           isProducer
-            ? 'border-[#00E599]/40 hover:border-[#00E599]/70'
-            : 'border-[#FF4F00]/40 hover:border-[#FF4F00]/70'
+            ? 'border-[#00E599]/50 hover:border-[#00E599]/80'
+            : 'border-[#FF4F00]/50 hover:border-[#FF4F00]/80'
         }`}
       >
         {/* Left Decorative Accent Strip */}
@@ -109,19 +103,19 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
         <div className="flex items-center justify-between gap-2 mb-3 relative z-10">
           <div className="flex items-center gap-1.5">
             {isProducer ? (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider bg-[#18181C] border border-[#242429] text-[#00E599]">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider collab-toast-opaque-subcard border border-[#242429] text-[#00E599]">
                 <Sliders className="w-3 h-3 text-[#00E599]" />
                 Propuesta de Productor • Beatmaker
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider bg-[#18181C] border border-[#242429] text-[#FF4F00]">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider collab-toast-opaque-subcard border border-[#242429] text-[#FF4F00]">
                 <Mic2 className="w-3 h-3 text-[#FF4F00]" />
                 Invitación de Feat • Cantante
               </span>
             )}
           </div>
 
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold bg-[#18181C] border border-[#F59E0B]/30 text-[#F59E0B]">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold collab-toast-opaque-subcard border border-[#F59E0B]/40 text-[#F59E0B]">
             <Clock className="w-2.5 h-2.5 text-[#F59E0B]" />
             Expira en {offer.expiresInMonths} {offer.expiresInMonths === 1 ? 'mes' : 'meses'}
           </span>
@@ -130,10 +124,10 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
         {/* Sender Profile Row */}
         <div className="flex items-start gap-3 relative z-10 mb-3">
           <div
-            className={`w-10 h-10 rounded-[4px] flex items-center justify-center font-bold text-base text-[#F4F4F6] shrink-0 border ${
+            className={`w-10 h-10 rounded-[4px] flex items-center justify-center font-bold text-base text-[#F4F4F6] shrink-0 border collab-toast-opaque-subcard ${
               isProducer
-                ? 'bg-[#18181C] border-[#00E599]/40 text-[#00E599]'
-                : 'bg-[#18181C] border-[#FF4F00]/40 text-[#FF4F00]'
+                ? 'border-[#00E599]/40 text-[#00E599]'
+                : 'border-[#FF4F00]/40 text-[#FF4F00]'
             }`}
           >
             {senderInitial}
@@ -144,7 +138,7 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
               <h3 className="text-sm font-bold text-[#F4F4F6] truncate">
                 {senderName}
               </h3>
-              <span className="text-2xs uppercase font-bold text-[#8E8E99] px-1.5 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] font-sans">
+              <span className="text-2xs uppercase font-bold text-[#8E8E99] px-1.5 py-0.5 rounded-[2px] collab-toast-opaque-subcard border border-[#242429] font-sans">
                 {offer.genreName}
               </span>
             </div>
@@ -156,19 +150,19 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
         </div>
 
         {/* Quote / Pitch Message */}
-        <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-3 mb-3 text-xs italic text-[#D4D4D8] relative z-10 leading-relaxed">
+        <div className="collab-toast-opaque-subcard border border-[#242429] rounded-[4px] p-3 mb-3 text-xs italic text-[#D4D4D8] relative z-10 leading-relaxed">
           "{offer.pitchQuote}"
         </div>
 
         {/* Financial & Impact Badges Matrix */}
         <div className="grid grid-cols-3 gap-2 mb-4 relative z-10 text-xs font-sans tabular-nums">
-          <div className="bg-[#09090B] border border-[#242429] p-2 rounded-[4px] space-y-0.5">
-            <span className="text-2xs uppercase font-bold text-[#52525B] tracking-wider block">Regalías</span>
+          <div className="collab-toast-opaque-subcard border border-[#242429] p-2 rounded-[4px] space-y-0.5">
+            <span className="text-2xs uppercase font-bold text-[#8E8E99] tracking-wider block">Regalías</span>
             <span className="text-[#00E599] font-bold">{offer.royaltySplitPlayer}% Split</span>
           </div>
 
-          <div className="bg-[#09090B] border border-[#242429] p-2 rounded-[4px] space-y-0.5">
-            <span className="text-2xs uppercase font-bold text-[#52525B] tracking-wider block">
+          <div className="collab-toast-opaque-subcard border border-[#242429] p-2 rounded-[4px] space-y-0.5">
+            <span className="text-2xs uppercase font-bold text-[#8E8E99] tracking-wider block">
               {isProducer ? 'Boost Calidad' : 'Anticipo'}
             </span>
             <span className="text-[#F4F4F6] font-bold">
@@ -176,8 +170,8 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
             </span>
           </div>
 
-          <div className="bg-[#09090B] border border-[#242429] p-2 rounded-[4px] space-y-0.5">
-            <span className="text-2xs uppercase font-bold text-[#52525B] tracking-wider block">Impacto</span>
+          <div className="collab-toast-opaque-subcard border border-[#242429] p-2 rounded-[4px] space-y-0.5">
+            <span className="text-2xs uppercase font-bold text-[#8E8E99] tracking-wider block">Impacto</span>
             <span className="text-[#F4F4F6] font-bold">{offer.projectedExposure}</span>
           </div>
         </div>
@@ -190,8 +184,8 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
             onClick={handleToggleDemo}
             className={`px-3 py-2 rounded-[4px] text-xs font-sans font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
               isPlayingDemo
-                ? 'bg-[#FF4F00]/15 text-[#FF4F00] border-[#FF4F00]'
-                : 'bg-[#18181C] text-[#8E8E99] border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
+                ? 'bg-[#FF4F00]/20 text-[#FF4F00] border-[#FF4F00]'
+                : 'collab-toast-opaque-subcard text-[#D4D4D8] border-[#242429] hover:text-[#F4F4F6] hover:border-[#3F3F46]'
             }`}
             title="Escuchar maqueta de audio de muestra"
           >
@@ -202,7 +196,7 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
               </>
             ) : (
               <>
-                <Headphones className="w-3.5 h-3.5 text-[#8E8E99]" />
+                <Headphones className="w-3.5 h-3.5 text-[#D4D4D8]" />
                 <span className="text-xs">Maqueta</span>
               </>
             )}
@@ -212,7 +206,7 @@ export const CollabOfferNotification: React.FC<CollabOfferNotificationProps> = (
           <button
             type="button"
             onClick={handleDecline}
-            className="flex-1 py-2 px-3 rounded-[4px] text-xs font-sans font-semibold bg-[#18181C] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer text-center"
+            className="flex-1 py-2 px-3 rounded-[4px] text-xs font-sans font-semibold collab-toast-opaque-subcard hover:bg-[#242429] text-[#D4D4D8] hover:text-[#F4F4F6] border border-[#242429] transition-all cursor-pointer text-center"
           >
             Declinar
           </button>
