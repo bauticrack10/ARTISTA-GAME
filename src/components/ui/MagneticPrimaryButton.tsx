@@ -8,14 +8,16 @@ export interface MagneticPrimaryButtonProps extends React.ButtonHTMLAttributes<H
   soundEffect?: string | false;
   magneticPull?: number;
   fullWidth?: boolean;
+  variant?: 'primary' | 'secondary';
 }
 
 /**
- * Botón de Acción Primaria Magnético (MagneticPrimaryButton)
- * - Efecto magnético sutil con mouse tracking (física de resorte/transform translate leve que atrae el botón hacia el cursor al pasar cerca, volviendo elásticamente al centro onMouseLeave).
- * - Acabado luminoso de alto contraste: gradiente sutil esmeralda a cian (from-[#00E599] to-[#00D2FF] con texto oscuro de alto contraste), y resplandor exterior suave shadow-[0_0_25px_rgba(16,185,129,0.35)].
- * - Efecto 'shimmer': un haz de luz diagonal sutil que cruza el botón cada pocos segundos en estado de reposo (animación CSS @keyframes btn-shimmer).
- * - Respuesta táctil elástica: hover:scale-[1.02] active:scale-[0.98] con transición suave.
+ * Botón de Acción Principal 'Liquid Glass Lens' (MagneticPrimaryButton)
+ * - Geometría de cápsula: border-radius 9999px.
+ * - Iluminación interna multicapa: resplandor especular blanco superior, sombra cáustica interna en la base y halo difuso exterior.
+ * - Física óptica reactiva: dispersión cromática (cyan y magenta en bordes) y elevación en hover; compresión elástica a scale(0.97) e inversión de bisel en active.
+ * - Efecto magnético sutil con mouse tracking (física de atracción hacia el cursor).
+ * - Refracción óptica con fallback progresivo y optimización a 60fps.
  * - Accesibilidad: respeta estrictamente @media (prefers-reduced-motion).
  */
 export const MagneticPrimaryButton = React.forwardRef<HTMLButtonElement, MagneticPrimaryButtonProps>(
@@ -27,6 +29,7 @@ export const MagneticPrimaryButton = React.forwardRef<HTMLButtonElement, Magneti
       soundEffect = 'click',
       magneticPull = 10,
       fullWidth = false,
+      variant = 'primary',
       children,
       className = '',
       onClick,
@@ -102,6 +105,15 @@ export const MagneticPrimaryButton = React.forwardRef<HTMLButtonElement, Magneti
       setIsPressed(false);
     };
 
+    const handleTouchStart = () => {
+      if (disabled) return;
+      setIsPressed(true);
+    };
+
+    const handleTouchEnd = () => {
+      setIsPressed(false);
+    };
+
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled) return;
       if (soundEffect) {
@@ -114,39 +126,51 @@ export const MagneticPrimaryButton = React.forwardRef<HTMLButtonElement, Magneti
       onClick?.(e);
     };
 
+    // Física de compresión elástica activa y elevación óptica en hover
     const dynamicTransform = prefersReducedMotion.current
       ? undefined
       : {
-          transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${
-            isPressed ? 0.98 : isHovered ? 1.02 : 1
-          })`,
+          transform: isPressed
+            ? `translate3d(${offset.x}px, ${offset.y + 1}px, 0) scale(0.97)`
+            : isHovered
+            ? `translate3d(${offset.x}px, ${offset.y - 2}px, 0) scale(1.02)`
+            : 'translate3d(0, 0, 0) scale(1)',
           transition: isHovered
-            ? 'transform 0.1s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.2s ease, filter 0.2s ease'
+            ? 'transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.2s ease, filter 0.2s ease'
             : 'transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, filter 0.2s ease'
         };
+
+    const variantClass = variant === 'secondary'
+      ? 'liquid-btn-secondary'
+      : 'liquid-btn-primary game-btn-primary';
 
     return (
       <button
         ref={setRefs}
         type={type}
         disabled={disabled}
+        data-hovered={isHovered ? 'true' : undefined}
+        data-pressed={isPressed ? 'true' : undefined}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         style={{ ...dynamicTransform, ...style }}
-        className={`game-btn-primary ${fullWidth ? 'w-full' : ''} ${className}`}
+        className={`liquid-btn ${variantClass} ${fullWidth ? 'w-full' : ''} ${className}`}
         {...rest}
       >
         {icon && iconPosition === 'left' && (
-          <span className="shrink-0 flex items-center justify-center">{icon}</span>
+          <span className="shrink-0 flex items-center justify-center relative z-10">{icon}</span>
         )}
-        {label && <span>{label}</span>}
-        {children && (typeof children === 'string' ? <span>{children}</span> : children)}
+        {label && <span className="relative z-10">{label}</span>}
+        {children && (typeof children === 'string' ? <span className="relative z-10">{children}</span> : <div className="relative z-10 contents">{children}</div>)}
         {icon && iconPosition === 'right' && (
-          <span className="shrink-0 flex items-center justify-center">{icon}</span>
+          <span className="shrink-0 flex items-center justify-center relative z-10">{icon}</span>
         )}
       </button>
     );

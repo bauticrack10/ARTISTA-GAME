@@ -2314,14 +2314,14 @@ input[type="range"]::-moz-range-thumb {
   z-index: 1;
 }
 
-/* 3. LIQUID LENS & LIQUID SUBCARD (Fichas secundarias, paneles compactos y botones) */
+/* 3. LIQUID LENS & LIQUID SUBCARD (Fichas secundarias, paneles compactos y tarjetas de listas)
+   Optimizado para 60fps: usa desenfoque nativo estándar para no sobrecargar la GPU con filtros SVG en listas */
 @utility liquid-lens {
   position: relative;
   isolation: isolate;
   background: rgba(255, 255, 255, 0.05);
-  -webkit-backdrop-filter: blur(8px) saturate(1.4) brightness(1.06);
-  backdrop-filter: blur(8px) saturate(1.4) brightness(1.06);
-  backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.06);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
+  backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.28);
@@ -2337,9 +2337,8 @@ input[type="range"]::-moz-range-thumb {
   position: relative;
   isolation: isolate;
   background: rgba(255, 255, 255, 0.05);
-  -webkit-backdrop-filter: blur(8px) saturate(1.4) brightness(1.06);
-  backdrop-filter: blur(8px) saturate(1.4) brightness(1.06);
-  backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.06);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
+  backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.28);
@@ -2360,9 +2359,8 @@ input[type="range"]::-moz-range-thumb {
   position: relative;
   isolation: isolate;
   background: rgba(255, 255, 255, 0.05) !important;
-  -webkit-backdrop-filter: blur(8px) saturate(1.4) brightness(1.06) !important;
-  backdrop-filter: blur(8px) saturate(1.4) brightness(1.06) !important;
-  backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.06) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.4) brightness(1.06) !important;
+  backdrop-filter: blur(14px) saturate(1.4) brightness(1.06) !important;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.28) !important;
@@ -2410,9 +2408,8 @@ input[type="range"]::-moz-range-thumb {
   position: relative;
   isolation: isolate;
   background: rgba(255, 255, 255, 0.05);
-  -webkit-backdrop-filter: blur(6px) saturate(1.4) brightness(1.05);
-  backdrop-filter: blur(6px) saturate(1.4) brightness(1.05);
-  backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(3px) saturate(1.4) brightness(1.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.4) brightness(1.05);
+  backdrop-filter: blur(8px) saturate(1.4) brightness(1.05);
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.30);
@@ -2428,9 +2425,8 @@ input[type="range"]::-moz-range-thumb {
   position: relative;
   isolation: isolate;
   background: rgba(255, 255, 255, 0.05) !important;
-  -webkit-backdrop-filter: blur(6px) saturate(1.4) brightness(1.05) !important;
-  backdrop-filter: blur(6px) saturate(1.4) brightness(1.05) !important;
-  backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(3px) saturate(1.4) brightness(1.05) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(1.4) brightness(1.05) !important;
+  backdrop-filter: blur(8px) saturate(1.4) brightness(1.05) !important;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.30) !important;
@@ -2463,28 +2459,313 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.50) !important;
 }
 
+/* ==========================================================================
+   6. SISTEMA LIQUID GLASS LENS BUTTONS & OPTIONS
+   Geometría de cápsula, iluminación interna multicapa, dispersión cromática en hover,
+   inversión de bisel en active y refracción óptica con fallback progresivo a 60fps
+   ========================================================================== */
+
+/* Base para botones Liquid Glass Lens (.liquid-btn) */
+@utility liquid-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(6px) saturate(1.7) brightness(1.15);
+  backdrop-filter: blur(6px) saturate(1.7) brightness(1.15);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.2s ease,
+              border-color 0.2s ease;
+}
+
+.liquid-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px !important;
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(6px) saturate(1.7) brightness(1.15) !important;
+  backdrop-filter: blur(6px) saturate(1.7) brightness(1.15) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.2s ease,
+              border-color 0.2s ease;
+}
+
+/* Bisel especular superior de lente en botones */
+.liquid-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
+  border-radius: 9999px 9999px 0 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+/* Botón Primario Liquid Lens (.liquid-btn-primary): Verde Esmeralda Vibrante */
+@utility liquid-btn-primary {
+  border-radius: 9999px;
+  color: #032115;
+  background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%);
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(0, 229, 153, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.40);
+}
+
+.liquid-btn-primary {
+  border-radius: 9999px !important;
+  color: #032115 !important;
+  background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.40) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(0, 229, 153, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.40) !important;
+}
+
+.liquid-btn-primary:hover,
+.liquid-btn-primary[data-hovered="true"] {
+  filter: brightness(1.25) !important;
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.60) !important;
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.45),
+    inset 2px 0 3px -1px rgba(0, 210, 255, 0.55),
+    inset -2px 0 3px -1px rgba(255, 0, 128, 0.50),
+    0 0 35px rgba(0, 229, 153, 0.60),
+    0 12px 28px rgba(0, 0, 0, 0.45) !important;
+}
+
+.liquid-btn-primary:active,
+.liquid-btn-primary[data-pressed="true"] {
+  transform: translateY(1px) scale(0.97) !important;
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.65),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 0 16px rgba(0, 229, 153, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.50) !important;
+}
+
+/* Botón Secundario Liquid Lens (.liquid-btn-secondary): Índigo / Azul translúcido */
+@utility liquid-btn-secondary {
+  border-radius: 9999px;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.22) 0%, rgba(59, 130, 246, 0.16) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.60);
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(99, 102, 241, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.40);
+}
+
+.liquid-btn-secondary {
+  border-radius: 9999px !important;
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.22) 0%, rgba(59, 130, 246, 0.16) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.60) !important;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(99, 102, 241, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.40) !important;
+}
+
+.liquid-btn-secondary:hover,
+.liquid-btn-secondary[data-hovered="true"] {
+  filter: brightness(1.25) !important;
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.32) 0%, rgba(59, 130, 246, 0.26) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.40) !important;
+  border-top-color: rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.45),
+    inset 2px 0 3px -1px rgba(0, 210, 255, 0.55),
+    inset -2px 0 3px -1px rgba(255, 0, 128, 0.50),
+    0 0 32px rgba(99, 102, 241, 0.45),
+    0 12px 28px rgba(0, 0, 0, 0.45) !important;
+}
+
+.liquid-btn-secondary:active,
+.liquid-btn-secondary[data-pressed="true"] {
+  transform: translateY(1px) scale(0.97) !important;
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.65),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 0 16px rgba(99, 102, 241, 0.30),
+    0 4px 12px rgba(0, 0, 0, 0.50) !important;
+}
+
+/* Opciones Interactivas Tipo Lente (.liquid-option) */
+@utility liquid-option {
+  position: relative;
+  isolation: isolate;
+  background-color: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.4);
+  backdrop-filter: blur(8px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+
+  &:hover {
+    filter: brightness(1.18);
+    transform: translateY(-1.5px);
+    border-color: rgba(255, 255, 255, 0.28);
+    border-top-color: rgba(255, 255, 255, 0.50);
+    box-shadow:
+      inset 0 1.5px 2px rgba(255, 255, 255, 0.70),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.35),
+      inset 2px 0 3px -1px rgba(0, 210, 255, 0.35),
+      inset -2px 0 3px -1px rgba(255, 0, 128, 0.30),
+      0 0 20px rgba(0, 229, 153, 0.25),
+      0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow:
+      inset 0 3px 5px rgba(0, 0, 0, 0.60),
+      inset 0 1px 1px rgba(255, 255, 255, 0.25),
+      0 2px 8px rgba(0, 0, 0, 0.30);
+  }
+}
+
+.liquid-option {
+  position: relative;
+  isolation: isolate;
+  background-color: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.4);
+  backdrop-filter: blur(8px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.liquid-option:hover {
+  filter: brightness(1.18);
+  transform: translateY(-1.5px);
+  border-color: rgba(255, 255, 255, 0.28);
+  border-top-color: rgba(255, 255, 255, 0.50);
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.70),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.35),
+    inset 2px 0 3px -1px rgba(0, 210, 255, 0.35),
+    inset -2px 0 3px -1px rgba(255, 0, 128, 0.30),
+    0 0 20px rgba(0, 229, 153, 0.25),
+    0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.liquid-option:active {
+  transform: scale(0.98);
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.60),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.30);
+}
+
+.liquid-option.selected,
+.liquid-option[data-selected="true"],
+.liquid-option[aria-selected="true"] {
+  background-color: rgba(0, 229, 153, 0.12) !important;
+  border-color: rgba(0, 229, 153, 0.60) !important;
+  border-top-color: rgba(0, 255, 172, 0.85) !important;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.80),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(0, 229, 153, 0.40),
+    0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  filter: brightness(1.15);
+}
+
 /* Progressive enhancement con @supports para navegadores modernos que soportan SVG filter en backdrop */
-@supports (backdrop-filter: url(#liquid-refract)) {
+@supports (backdrop-filter: url(#liquid-refract)) or (backdrop-filter: url(#liquid-lens-btn)) {
+  @media (min-width: 641px) {
+    /* Reservado para tarjeta central / modal principal (máx 1 simultáneo) */
+    .liquid-card,
+    .liquid-glass-card,
+    .glass-level-2,
+    [class*="liquid-glass-card"] {
+      backdrop-filter: blur(2px) url(#liquid-refract) blur(6px) saturate(1.6) brightness(1.08) !important;
+    }
+
+    /* Reservado para HUD superior único (máx 1 simultáneo) */
+    .liquid-hud {
+      backdrop-filter: blur(1.5px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.08) !important;
+    }
+
+    /* Reservado para botones de acción principales (máx 2-3 simultáneos en viewport) */
+    .liquid-btn,
+    .liquid-btn-primary,
+    .liquid-btn-secondary {
+      backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(3px) saturate(1.7) brightness(1.15) !important;
+    }
+
+    .liquid-btn:hover,
+    .liquid-btn-primary:hover,
+    .liquid-btn-secondary:hover {
+      backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(3px) saturate(1.8) brightness(1.25) !important;
+    }
+  }
+}
+
+/* Optimización móvil y 60fps para pantallas pequeñas: usa desenfoque nativo sin sobrecarga SVG */
+@media (max-width: 640px) {
   .liquid-card,
   .liquid-glass-card,
-  .glass-level-2,
-  [class*="liquid-glass-card"] {
-    backdrop-filter: blur(2px) url(#liquid-refract) blur(6px) saturate(1.6) brightness(1.08) !important;
-  }
-
-  .liquid-hud {
-    backdrop-filter: blur(1.5px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.08) !important;
-  }
-
+  .liquid-hud,
+  .liquid-btn,
+  .liquid-btn-primary,
+  .liquid-btn-secondary,
+  .liquid-option,
   .liquid-lens,
   .liquid-subcard,
   .liquid-glass-subcard,
-  .glass-level-1 {
-    backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.06) !important;
-  }
-
-  .liquid-glass-pill {
-    backdrop-filter: blur(1px) url(#liquid-lens-btn) blur(3px) saturate(1.4) brightness(1.05) !important;
+  .liquid-glass-pill,
+  .liquid-glass-header {
+    backdrop-filter: blur(12px) saturate(1.4) brightness(1.05) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(1.4) brightness(1.05) !important;
   }
 }
 

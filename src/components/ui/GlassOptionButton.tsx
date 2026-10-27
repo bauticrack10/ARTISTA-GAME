@@ -11,9 +11,11 @@ export interface GlassOptionButtonProps extends React.ButtonHTMLAttributes<HTMLB
 }
 
 /**
- * Opción de Cristal Esmerilado (GlassOptionButton)
- * - Cápsula de cristal esmerilado: bg-white/[0.05] backdrop-blur-md border border-white/10 text-white
- * - En focus o hover: iluminan su borde suavemente (border-white/30 y bg-white/[0.12])
+ * Opción Interactiva 'Liquid Glass Lens' (GlassOptionButton)
+ * - Ficha tipo lente (.liquid-option): bisel especular superior, sombra cáustica en la base y halo exterior difuso.
+ * - Estados ópticos: hover con elevación (-1.5px) y dispersión cromática; active con compresión física elástica a scale(0.98).
+ * - Selección: brillo esmeralda reforzado con halo difuso y bisel reflectante de alta fidelidad.
+ * - Accesibilidad y rendimiento optimizado para 60fps con desenfoque nativo para elementos interactivos.
  */
 export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOptionButtonProps>(
   (
@@ -50,25 +52,54 @@ export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOption
         ref={ref}
         type={type}
         disabled={disabled}
+        aria-selected={selected}
+        data-selected={selected ? 'true' : undefined}
         onClick={handleClick}
-        className={`w-full text-left rounded-[10px] p-3.5 transition-all duration-200 cursor-pointer border bg-white/[0.05] backdrop-blur-md text-white select-none ${
-          selected
-            ? 'border-[#00E599]/60 bg-white/[0.12] shadow-[0_0_20px_rgba(0,229,153,0.30)] ring-1 ring-[#00E599]/40'
-            : 'border-white/10 hover:border-white/30 hover:bg-white/[0.12] hover:shadow-[0_0_18px_rgba(0,229,153,0.18)] active:scale-[0.98]'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+        className={`liquid-option glass-option w-full text-left p-4 rounded-[14px] text-white select-none transition-all duration-200 cursor-pointer relative overflow-hidden group ${
+          selected ? 'selected' : ''
+        } ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${className}`}
         {...rest}
       >
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            {icon && <div className="shrink-0 text-[#00E599]">{icon}</div>}
-            <div className="min-w-0">
+        {/* Bisel especular diagonal superior (sheen óptico curvo) */}
+        <div
+          className="absolute inset-x-0 top-0 h-[45%] pointer-events-none mix-blend-screen opacity-70 group-hover:opacity-100 transition-opacity"
+          style={{
+            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.03) 60%, transparent 100%)',
+            borderTopLeftRadius: 'inherit',
+            borderTopRightRadius: 'inherit'
+          }}
+          aria-hidden="true"
+        />
+
+        <div className="flex items-center justify-between gap-3 relative z-10">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
+            {icon && (
+              <div
+                className={`shrink-0 flex items-center justify-center w-9 h-9 rounded-full transition-colors ${
+                  selected
+                    ? 'bg-[#00E599]/20 text-[#00E599]'
+                    : 'bg-white/[0.08] text-[#00E599] group-hover:bg-[#00E599]/15'
+                }`}
+              >
+                {icon}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
               {label && (
-                <div className="font-bold text-sm text-[#F4F0EA] tracking-wide truncate">
+                <div
+                  className={`font-bold text-sm tracking-wide truncate transition-colors ${
+                    selected ? 'text-white' : 'text-[#F4F0EA] group-hover:text-white'
+                  }`}
+                >
                   {label}
                 </div>
               )}
               {subtitle && (
-                <div className="text-xs text-[#8E8E99] font-normal mt-0.5 truncate">
+                <div
+                  className={`text-xs font-normal mt-0.5 truncate transition-colors ${
+                    selected ? 'text-[#00E599]/90' : 'text-[#8E8E99] group-hover:text-[#A1A1AA]'
+                  }`}
+                >
                   {subtitle}
                 </div>
               )}
