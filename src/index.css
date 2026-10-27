@@ -57,8 +57,8 @@
   --text-xs--line-height: 1.25rem;
 
   --radius-control: 6px;
-  --radius-card: 10px;
-  --radius-panel: 14px;
+  --radius-card: 4px;
+  --radius-panel: 4px;
 }
 
 /* Minimum pointer target for compact desktop controls. */
@@ -79,6 +79,22 @@
     font-size: 0.875rem !important;
     line-height: 1.25rem !important;
   }
+}
+
+/* Restricción global: ángulos rectos con máximo 4px de redondeado */
+.rounded-3xl,
+.rounded-2xl,
+.rounded-xl,
+.rounded-lg,
+.rounded-md,
+.rounded-\[28px\],
+.rounded-\[18px\],
+.rounded-\[14px\],
+.rounded-\[12px\],
+.rounded-\[10px\],
+.rounded-\[8px\],
+.rounded-\[6px\] {
+  border-radius: 4px !important;
 }
 
 /* ==========================================================================
@@ -119,7 +135,7 @@
   letter-spacing: -0.01em;
   color: #032115;
   background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%);
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.40);
   border-top: 1.5px solid rgba(255, 255, 255, 0.75);
   box-shadow:
@@ -183,7 +199,7 @@
   letter-spacing: -0.01em;
   color: #032115;
   background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%);
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.40);
   border-top: 1.5px solid rgba(255, 255, 255, 0.75);
   box-shadow:
@@ -253,7 +269,7 @@
   background-color: rgba(26, 27, 40, 0.85);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.6);
   transition: all 0.12s ease-out;
   cursor: pointer;
@@ -282,7 +298,7 @@
   font-weight: 800;
   color: #FFFFFF;
   background-color: #EF4444;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 0 #991B1B, 0 8px 18px rgba(239, 68, 68, 0.40);
   transition: all 0.12s ease-out;
@@ -318,7 +334,7 @@
   font-size: 0.9375rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1.5px solid rgba(255, 255, 255, 0.32);
   padding: 0.75rem 1.5rem;
   cursor: pointer;
@@ -643,7 +659,7 @@
   background-color: rgba(15, 23, 42, 0.88);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border-radius: 18px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.20);
   border-top: 1px solid rgba(255, 255, 255, 0.35);
   box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85),
@@ -753,7 +769,7 @@
   height: 40px;
   min-height: 40px;
   flex-shrink: 0;
-  border-radius: 9999px;
+  border-radius: 4px;
   background-color: #0A0A0F;
   border: 1.5px solid #242436;
   box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85),
@@ -776,7 +792,7 @@
   left: 0;
   bottom: 0;
   height: 100%;
-  border-radius: 9999px;
+  border-radius: 3px;
   background-color: var(--kit-progress-color, #00E599);
   transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
@@ -870,7 +886,7 @@
   font-size: 0.9375rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1.5px solid rgba(255, 255, 255, 0.32);
   padding: 0.75rem 1.5rem;
   cursor: pointer;
@@ -2201,7 +2217,7 @@ input[type="range"]::-moz-range-thumb {
   -webkit-backdrop-filter: blur(10px) saturate(1.8) brightness(1.12) contrast(1.05);
   backdrop-filter: blur(16px) saturate(1.6) brightness(1.08);
   backdrop-filter: blur(2px) url(#liquid-refract) blur(6px) saturate(1.6) brightness(1.08);
-  border-radius: 28px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-top: 1px solid rgba(255, 255, 255, 0.32);
   box-shadow:
@@ -2223,7 +2239,7 @@ input[type="range"]::-moz-range-thumb {
   -webkit-backdrop-filter: blur(10px) saturate(1.8) brightness(1.12) contrast(1.05) !important;
   backdrop-filter: blur(16px) saturate(1.6) brightness(1.08) !important;
   backdrop-filter: blur(2px) url(#liquid-refract) blur(6px) saturate(1.6) brightness(1.08) !important;
-  border-radius: 28px;
+  border-radius: 4px !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.32) !important;
   box-shadow:
@@ -2270,7 +2286,7 @@ input[type="range"]::-moz-range-thumb {
   position: relative;
   isolation: isolate;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 9999px;
+  border-radius: 4px;
   -webkit-backdrop-filter: blur(6px) saturate(1.5) brightness(1.08);
   backdrop-filter: blur(6px) saturate(1.5) brightness(1.08);
   backdrop-filter: blur(1.5px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.08);
@@ -2287,7 +2303,7 @@ input[type="range"]::-moz-range-thumb {
   position: relative;
   isolation: isolate;
   background: rgba(255, 255, 255, 0.08) !important;
-  border-radius: 9999px;
+  border-radius: 4px !important;
   -webkit-backdrop-filter: blur(6px) saturate(1.5) brightness(1.08) !important;
   backdrop-filter: blur(6px) saturate(1.5) brightness(1.08) !important;
   backdrop-filter: blur(1.5px) url(#liquid-lens-btn) blur(4px) saturate(1.5) brightness(1.08) !important;
@@ -2322,7 +2338,7 @@ input[type="range"]::-moz-range-thumb {
   background: rgba(255, 255, 255, 0.05);
   -webkit-backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
   backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
-  border-radius: 14px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow:
@@ -2339,7 +2355,7 @@ input[type="range"]::-moz-range-thumb {
   background: rgba(255, 255, 255, 0.05);
   -webkit-backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
   backdrop-filter: blur(14px) saturate(1.4) brightness(1.06);
-  border-radius: 14px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow:
@@ -2361,7 +2377,7 @@ input[type="range"]::-moz-range-thumb {
   background: rgba(255, 255, 255, 0.05) !important;
   -webkit-backdrop-filter: blur(14px) saturate(1.4) brightness(1.06) !important;
   backdrop-filter: blur(14px) saturate(1.4) brightness(1.06) !important;
-  border-radius: 14px;
+  border-radius: 4px !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.28) !important;
   box-shadow:
@@ -2410,7 +2426,7 @@ input[type="range"]::-moz-range-thumb {
   background: rgba(255, 255, 255, 0.05);
   -webkit-backdrop-filter: blur(8px) saturate(1.4) brightness(1.05);
   backdrop-filter: blur(8px) saturate(1.4) brightness(1.05);
-  border-radius: 9999px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.30);
   box-shadow:
@@ -2427,7 +2443,7 @@ input[type="range"]::-moz-range-thumb {
   background: rgba(255, 255, 255, 0.05) !important;
   -webkit-backdrop-filter: blur(8px) saturate(1.4) brightness(1.05) !important;
   backdrop-filter: blur(8px) saturate(1.4) brightness(1.05) !important;
-  border-radius: 9999px;
+  border-radius: 4px !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.30) !important;
   box-shadow:
@@ -2472,7 +2488,7 @@ input[type="range"]::-moz-range-thumb {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 9999px;
+  border-radius: 4px;
   user-select: none;
   cursor: pointer;
   overflow: hidden;
@@ -2490,7 +2506,7 @@ input[type="range"]::-moz-range-thumb {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 9999px !important;
+  border-radius: 4px !important;
   user-select: none;
   cursor: pointer;
   overflow: hidden;
@@ -2511,7 +2527,7 @@ input[type="range"]::-moz-range-thumb {
   right: 0;
   height: 48%;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
-  border-radius: 9999px 9999px 0 0;
+  border-radius: 4px 4px 0 0;
   pointer-events: none;
   mix-blend-mode: overlay;
   z-index: 1;
@@ -2519,7 +2535,7 @@ input[type="range"]::-moz-range-thumb {
 
 /* Botón Primario Liquid Lens (.liquid-btn-primary): Verde Esmeralda Vibrante */
 @utility liquid-btn-primary {
-  border-radius: 9999px;
+  border-radius: 4px;
   color: #032115;
   background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%);
   border: 1px solid rgba(255, 255, 255, 0.40);
@@ -2532,7 +2548,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .liquid-btn-primary {
-  border-radius: 9999px !important;
+  border-radius: 4px !important;
   color: #032115 !important;
   background: linear-gradient(135deg, #00E599 0%, #00D2FF 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.40) !important;
@@ -2571,7 +2587,7 @@ input[type="range"]::-moz-range-thumb {
 
 /* Botón Secundario Liquid Lens (.liquid-btn-secondary): Índigo / Azul translúcido */
 @utility liquid-btn-secondary {
-  border-radius: 9999px;
+  border-radius: 4px;
   color: #FFFFFF;
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.22) 0%, rgba(59, 130, 246, 0.16) 100%);
   border: 1px solid rgba(255, 255, 255, 0.20);
@@ -2584,7 +2600,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .liquid-btn-secondary {
-  border-radius: 9999px !important;
+  border-radius: 4px !important;
   color: #FFFFFF !important;
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.22) 0%, rgba(59, 130, 246, 0.16) 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.20) !important;
@@ -2631,7 +2647,7 @@ input[type="range"]::-moz-range-thumb {
   backdrop-filter: blur(8px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 14px;
+  border-radius: 4px;
   box-shadow:
     inset 0 1.5px 2px rgba(255, 255, 255, 0.45),
     inset 0 -2px 4px rgba(0, 0, 0, 0.35),
@@ -2672,7 +2688,7 @@ input[type="range"]::-moz-range-thumb {
   backdrop-filter: blur(8px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 14px;
+  border-radius: 4px !important;
   box-shadow:
     inset 0 1.5px 2px rgba(255, 255, 255, 0.45),
     inset 0 -2px 4px rgba(0, 0, 0, 0.35),

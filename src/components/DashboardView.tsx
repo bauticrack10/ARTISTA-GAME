@@ -87,7 +87,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-20 text-fg">
+    <div className="w-full space-y-8 pb-20 text-fg">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
         {/* COLUMNA PRINCIPAL (8 cols): Perfil, Acciones del Mes, Estadísticas y Catálogo */}
         <div className="lg:col-span-8 space-y-8">

@@ -73,7 +73,7 @@ export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOption
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className={`liquid-option glass-option spotlight-border w-full text-left p-4 rounded-[14px] text-white select-none transition-all duration-200 cursor-pointer relative overflow-hidden group ${
+        className={`liquid-option glass-option spotlight-border w-full text-left p-4 rounded-[4px] text-white select-none transition-all duration-200 cursor-pointer relative overflow-hidden group ${
           selected ? 'selected' : ''
         } ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${className}`}
         {...rest}

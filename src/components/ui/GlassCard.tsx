@@ -93,7 +93,7 @@ export const GlassCard = forwardRef<GlassCardHandle, GlassCardProps>(
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className={`relative rounded-[14px] border border-white/10 bg-[#0E0F17]/80 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 spotlight-border ${variantStyles} ${reactiveClass} ${className}`}
+        className={`relative rounded-[4px] border border-white/10 bg-[#0E0F17]/80 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 spotlight-border ${variantStyles} ${reactiveClass} ${className}`}
         {...rest}
       >
         {/* Sutil haz especular en el borde superior */}
