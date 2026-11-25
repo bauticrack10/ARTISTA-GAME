@@ -206,7 +206,7 @@ export class EventEngine {
                 'La fiesta se extendió hasta altas horas. Ganaste presencia en historias y notoriedad, pero tu cuerpo sintió el desgaste.',
               hypeChange: 18,
               energyChange: -18,
-              personalityChanges: { discipline: Math.max(0, context.player.personality.discipline - 3) },
+              personalityChanges: { discipline: -3 },
               timelineEntry: {
                 text: `${context.player.name} fue visto en exclusivas fiestas nocturnas de ${context.player.city}.`,
                 category: 'personal'
@@ -227,7 +227,7 @@ export class EventEngine {
               narrativeText:
                 'Priorizaste tu descanso y salud vocal. Al día siguiente estabas listo para rendir al 100% en el micrófono.',
               energyChange: 8,
-              personalityChanges: { discipline: Math.min(100, context.player.personality.discipline + 4) }
+              personalityChanges: { discipline: 4 }
             })
           }
         ]
@@ -254,8 +254,8 @@ export class EventEngine {
                 'La maqueta capturó la esencia callejera de tus inicios y fue celebrada por tu comunidad núcleo.',
               statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 4) },
               personalityChanges: {
-                originality: Math.min(100, context.player.personality.originality + 2),
-                skill: Math.min(100, context.player.personality.skill + 1)
+                originality: 2,
+                skill: 1
               },
               hypeChange: 14,
               energyChange: -8,
@@ -273,8 +273,8 @@ export class EventEngine {
             apply: () => ({
               narrativeText: 'Archivaste la idea para pulirla con mejores arreglos en tu próximo proyecto discográfico.',
               personalityChanges: {
-                skill: Math.min(100, context.player.personality.skill + 2),
-                discipline: Math.min(100, context.player.personality.discipline + 2)
+                skill: 2,
+                discipline: 2
               },
               statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 3) }
             })
@@ -304,8 +304,8 @@ export class EventEngine {
               hypeChange: 15,
               reputationChange: 4,
               personalityChanges: {
-                charisma: Math.min(100, context.player.personality.charisma + 2),
-                ambition: Math.min(100, context.player.personality.ambition + 2)
+                charisma: 2,
+                ambition: 2
               },
               statChanges: { fanbaseLoyalty: Math.min(100, context.player.stats.fanbaseLoyalty + 5) }
             })
@@ -317,7 +317,7 @@ export class EventEngine {
             apply: () => ({
               narrativeText:
                 'El debate se diluyó dejando tu imagen intacta y tu aura de misterio reforzada.',
-              personalityChanges: { discipline: Math.min(100, context.player.personality.discipline + 3) },
+              personalityChanges: { discipline: 3 },
               statChanges: { energy: Math.min(100, context.player.stats.energy + 2) }
             })
           }
@@ -345,8 +345,8 @@ export class EventEngine {
               hypeChange: 14,
               fansChange: 3500,
               personalityChanges: {
-                sociability: Math.min(100, context.player.personality.sociability + 2),
-                charisma: Math.min(100, context.player.personality.charisma + 1)
+                sociability: 2,
+                charisma: 1
               },
               energyChange: -5
             })
@@ -358,8 +358,8 @@ export class EventEngine {
             apply: () => ({
               narrativeText: 'Mantuviste el foco estricto en la calidad de tus próximas obras.',
               personalityChanges: {
-                discipline: Math.min(100, context.player.personality.discipline + 2),
-                creativity: Math.min(100, context.player.personality.creativity + 1)
+                discipline: 2,
+                creativity: 1
               },
               statChanges: { artisticCredibility: Math.min(100, context.player.stats.artisticCredibility + 3) },
               energyChange: 5
@@ -397,12 +397,11 @@ export class EventEngine {
           consequencesDescription: `+${formatMoney(contract.signingBonus)} Anticipo, ${contract.royaltyPercentage}% Regalías, +3 Ambición, +2 Atractivo Comercial`,
           apply: () => ({
             narrativeText: `Has sellado tu acuerdo oficial con ${label.name}. La discográfica activa de inmediato tu presupuesto promocional.`,
-            fundsChange: contract.signingBonus,
             popularityChange: label.type === 'major' ? 10 : 6,
             hypeChange: 20,
             personalityChanges: {
-              ambition: Math.min(100, context.player.personality.ambition + 3),
-              commercialAppeal: Math.min(100, context.player.personality.commercialAppeal + 2)
+              ambition: 3,
+              commercialAppeal: 2
             },
             newContract: contract,
             timelineEntry: {
@@ -429,8 +428,8 @@ export class EventEngine {
               fanbaseLoyalty: Math.min(100, context.player.stats.fanbaseLoyalty + 6)
             },
             personalityChanges: {
-              independence: Math.min(100, context.player.personality.independence + 5),
-              originality: Math.min(100, context.player.personality.originality + 2)
+              independence: 5,
+              originality: 2
             },
             reputationChange: 5,
             hypeChange: 10,

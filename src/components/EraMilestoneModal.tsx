@@ -20,6 +20,7 @@ import {
 import { ArtistAvatar } from './ArtistAvatar';
 import confetti from 'canvas-confetti';
 import { formatCityCountry, cleanQuotes } from '../utils/formatters';
+import { showToast } from '../utils/toastBus';
 
 export type MagazinePreset = 'rolling_stone' | 'billboard' | 'underground_zine' | 'the_fader';
 
@@ -111,9 +112,10 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
     try {
       await navigator.clipboard.writeText(getSocialShareText());
       setIsCopied(true);
+      showToast('Texto copiado al portapapeles.', 'info');
       setTimeout(() => setIsCopied(false), 3000);
     } catch (e) {
-      alert('Texto copiado al portapapeles.');
+      showToast('Texto copiado al portapapeles.', 'info');
     }
   };
 
@@ -257,7 +259,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
       link.click();
     } catch (err) {
       console.error('Error generating canvas cover:', err);
-      alert('No se pudo generar el archivo de imagen automáticamente.');
+      showToast('No se pudo generar el archivo de imagen automáticamente.', 'error');
     } finally {
       setIsDownloading(false);
     }
@@ -279,7 +281,7 @@ export const EraMilestoneModal: React.FC<EraMilestoneModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div
-        className="bg-[#111114] border border-[#242429] max-w-4xl w-full rounded-[6px] flex flex-col overflow-hidden text-[#F4F4F6] shadow-2xl relative my-auto max-h-[92vh]"
+        className="lg-modal bg-[#111114] border border-[#242429] max-w-4xl w-full rounded-[8px] flex flex-col overflow-hidden text-[#F4F4F6] shadow-2xl relative my-auto max-h-[92vh]"
       >
         {/* Top Header Bar */}
         <div className="px-6 py-4 border-b border-[#242429] bg-[#111114] flex items-center justify-between">

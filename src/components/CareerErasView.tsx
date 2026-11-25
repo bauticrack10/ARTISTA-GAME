@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Artist, WorldState, Song, Album, Tour } from '../types';
+import { useScrollToTop } from '../hooks/useScrollToTop';
+import { Artist, WorldState, Song, Album, Tour, Genre } from '../types';
 import {
   TrendingUp,
   Ticket,
@@ -10,34 +11,70 @@ import {
   MapPin,
   Building2,
   Newspaper,
-  Video
+  Video,
+  Plus,
+  X
 } from 'lucide-react';
 import { TimeSystem } from '../systems/TimeSystem';
 import { getGenreBadgeClass } from '../utils/themeColors';
 import { formatMoney, cleanQuotes, formatCityCountry, formatReleaseDate } from '../utils/formatters';
+import { playSound } from '../utils/audioSystem';
+import { showToast } from '../utils/toastBus';
 import { LegacyCardModal } from './LegacyCardModal';
+import { SectionSubNav } from './ui/SectionSubNav';
 
 interface CareerErasViewProps {
   player: Artist;
   world: WorldState;
   onOpenMilestone?: (data?: any) => void;
+  onStartNewEra?: (name: string, genreId: string) => { success: boolean; message?: string } | void;
   onRetireArtist?: () => void;
+  onNavigate?: (tab: string) => void;
 }
 
 export const CareerErasView: React.FC<CareerErasViewProps> = ({
   player,
   world,
   onOpenMilestone,
-  onRetireArtist
+  onStartNewEra,
+  onRetireArtist,
+  onNavigate
 }) => {
   const [legacyModalOpen, setLegacyModalOpen] = useState(false);
   const [timelineFilter, setTimelineFilter] = useState<'all' | 'eras' | 'releases' | 'tours' | 'awards'>('all');
+  const [showNewEraForm, setShowNewEraForm] = useState(false);
+  const [newEraName, setNewEraName] = useState('');
+  const [newEraGenre, setNewEraGenre] = useState(player?.primaryGenre || Object.keys(world?.genres || {})[0] || 'pop');
+  useScrollToTop([timelineFilter]);
 
   const playerId = player?.id || 'player';
-  const yearsActive = TimeSystem.calculateCareerLengthYears(player?.careerStartYear || 2026, world?.currentYear || 2026);
+  const yearsActive = Math.max(0, (player?.retirementYear || world?.currentYear || 2026) - (player?.careerStartYear || 2026));
   const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s.artistId === playerId);
   const playerAlbums = (Object.values(world?.albums || {}) as Album[]).filter(a => a.artistId === playerId);
   const playerTours = (world?.tours || []).filter(t => t.artistId === playerId);
+
+  const handleSubmitNewEra = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = newEraName.trim();
+    if (!trimmed) {
+      showToast('Escribe un nombre para la nueva era.', 'warning');
+      return;
+    }
+    if (!onStartNewEra) {
+      showToast('Transición de era registrada en planificación. Lanza música con el nuevo sonido en el Estudio.', 'info');
+      setShowNewEraForm(false);
+      return;
+    }
+    const res = onStartNewEra(trimmed, newEraGenre);
+    if (res && typeof res === 'object' && res.success === false) {
+      showToast(res.message || 'No se pudo iniciar la nueva era.', 'error');
+      return;
+    }
+    playSound('level_up');
+    showToast((res && typeof res === 'object' && res.message) || `Nueva era "${trimmed}" iniciada.`, 'success');
+    setNewEraName('');
+    setShowNewEraForm(false);
+  };
 
   const totalNo1s = playerSongs.filter(s => s.peakPosition?.Global === 1 || s.peakPosition?.Argentina === 1).length;
   const totalHits = playerSongs.filter(s => (s.peakPosition?.Global ?? 99) <= 10).length;
@@ -213,17 +250,24 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
   });
 
   return (
-    <div className="space-y-6 pb-16 font-sans text-[#F4F0EA]">
+    <div className="space-y-5 pb-16 font-sans text-[#F4F0EA]">
+      <SectionSubNav
+        hub="legado"
+        activeTab="career"
+        onNavigate={onNavigate}
+        awardsCount={player?.awardsWon?.length || 0}
+      />
+
       {/* 1. COMPACT HEADER + KPIs */}
-      <div className="liquid-glass-card p-5 sm:p-6 space-y-5">
+      <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 sm:p-6 space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-2xs font-bold uppercase tracking-wider liquid-glass-pill text-[#FF4F00] px-2 py-0.5 rounded-[4px]">
+              <span className="text-2xs font-bold uppercase tracking-wider bg-[#18181C] border border-[#242429] text-[#FF4F00] px-2 py-0.5 rounded-[4px]">
                 Trayectoria & Legado
               </span>
               <span className="text-xs text-[#8E8E99] tabular-nums">
-                {yearsActive + 1} Años Activo • {player.careerStage}
+                {yearsActive} {yearsActive === 1 ? 'Año Activo' : 'Años Activos'} • {player.careerStage}
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#F4F0EA] tracking-tight mt-1 flex items-center gap-2.5">
@@ -234,6 +278,20 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
 
           {/* Action Controls & Legacy Score */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            {!player.isRetired && (
+              <button
+                type="button"
+                onClick={() => {
+                  playSound('click');
+                  setShowNewEraForm(prev => !prev);
+                }}
+                className="flex items-center justify-center gap-2 bg-[#18181C] hover:bg-[#242429] border border-[#FF4F00]/45 text-[#FF4F00] font-bold text-xs px-3.5 py-2.5 rounded-[4px] transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4" strokeWidth={1.75} />
+                <span>Iniciar Nueva Era</span>
+              </button>
+            )}
+
             {onOpenMilestone && (
               <button
                 id="btn-generate-cover-eras"
@@ -248,9 +306,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
                     year: world.currentYear
                   })
                 }
-                className="flex items-center justify-center gap-2 bg-[#F4F0EA] hover:bg-white text-[#0B0B0C] font-bold text-xs px-3.5 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
+                className="flex items-center justify-center gap-2 bg-[#F4F0EA] hover:bg-white text-[#09090B] font-bold text-xs px-3.5 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
               >
-                <Newspaper className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+                <Newspaper className="w-4 h-4 text-[#FF4F00]" strokeWidth={1.75} />
                 <span>Generar Portada de Revista</span>
               </button>
             )}
@@ -258,13 +316,13 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
             <button
               id="btn-open-legacy-card"
               onClick={() => setLegacyModalOpen(true)}
-              className="flex items-center justify-center gap-2 bg-[#FF2A4B] hover:bg-[#E02040] text-[#F4F0EA] font-bold text-xs px-3.5 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold text-xs px-3.5 py-2.5 rounded-[4px] active:translate-y-[1px] transition-all cursor-pointer"
             >
-              <Disc3 className="w-4 h-4 text-[#F4F0EA]" strokeWidth={1.75} />
+              <Disc3 className="w-4 h-4 text-white" strokeWidth={1.75} />
               <span>Ficha Oficial EPK</span>
             </button>
 
-            <div className="bg-[#0B0B0C] px-4 py-2 rounded-[4px] border border-[#26262B] text-center tabular-nums">
+            <div className="bg-[#18181C] px-4 py-2 rounded-[4px] border border-[#242429] text-center tabular-nums">
               <span className="text-2xs text-[#F59E0B] block uppercase tracking-wider font-bold">
                 Legado
               </span>
@@ -276,29 +334,71 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
           </div>
         </div>
 
+        {/* Compact New Era Form */}
+        {showNewEraForm && (
+          <form onSubmit={handleSubmitNewEra} className="bg-[#18181C] border border-[#FF4F00]/45 rounded-[6px] p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <input
+              type="text"
+              value={newEraName}
+              onChange={(e) => setNewEraName(e.target.value)}
+              placeholder="Nombre de la nueva era (ej: Noches de Neón, El Renacimiento)..."
+              maxLength={60}
+              className="flex-1 bg-[#111114] border border-[#242429] rounded-[4px] px-3 py-2 text-xs text-[#F4F0EA] placeholder-[#52525B] focus:outline-none focus:border-[#FF4F00]"
+            />
+            <select
+              value={newEraGenre}
+              onChange={(e) => setNewEraGenre(e.target.value)}
+              aria-label="Enfoque sonoro de la nueva era"
+              className="bg-[#111114] border border-[#242429] rounded-[4px] px-3 py-2 text-xs text-[#F4F0EA] focus:outline-none focus:border-[#FF4F00]"
+            >
+              {(Object.values(world?.genres || {}) as Genre[]).map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
+            <div className="flex items-center gap-2">
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-bold cursor-pointer whitespace-nowrap"
+              >
+                Abrir Era
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowNewEraForm(false)}
+                className="p-2 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99] hover:text-[#F4F0EA] cursor-pointer"
+                aria-label="Cancelar"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
+        )}
+
         {/* 6 Compact KPI Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 tabular-nums">
-          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+          <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
             <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold">Total Streams</span>
             <p className="text-base font-bold text-[#F4F0EA] mt-0.5">{(player.stats.totalStreams / 1000000).toFixed(1)}M</p>
           </div>
-          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+          <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
             <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold">Hits Top 10</span>
-            <p className="text-base font-bold text-[#FF2A4B] mt-0.5">{totalHits} <span className="text-xs font-normal text-[#8E8E99]">temas</span></p>
+            <p className="text-base font-bold text-[#FF4F00] mt-0.5">{totalHits} <span className="text-xs font-normal text-[#8E8E99]">temas</span></p>
           </div>
-          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+          <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
             <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold">Hits #1 Charts</span>
             <p className="text-base font-bold text-[#10B981] mt-0.5">{totalNo1s} <span className="text-xs font-normal text-[#8E8E99]">himnos</span></p>
           </div>
-          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+          <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
             <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold">Álbumes</span>
             <p className="text-base font-bold text-[#F4F0EA] mt-0.5">{playerAlbums.length} <span className="text-xs font-normal text-[#8E8E99]">LPs</span></p>
           </div>
-          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+          <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
             <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold">Premios</span>
             <p className="text-base font-bold text-[#F59E0B] mt-0.5">{player.awardsWon.length} <span className="text-xs font-normal text-[#8E8E99]">trofeos</span></p>
           </div>
-          <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px]">
+          <div className="bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
             <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-bold">Giras</span>
             <p className="text-base font-bold text-[#10B981] mt-0.5">{playerTours.length} <span className="text-xs font-normal text-[#8E8E99]">tours</span></p>
           </div>
@@ -308,19 +408,19 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
       {/* 2. HITOS DESTACADOS: MEJOR DISCO & MEJOR GIRA (COMPACT) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Mejor Disco */}
-        <div className="liquid-glass-card p-5 space-y-3">
+        <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 space-y-3">
           <div className="flex items-center justify-between pb-1">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
-              <Disc3 className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              <Disc3 className="w-4 h-4 text-[#FF4F00]" strokeWidth={1.75} />
               Mejor Disco Histórico
             </h2>
-            <span className="text-2xs uppercase font-bold bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
+            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
               Obra Cumbre
             </span>
           </div>
 
           {bestAlbum ? (
-            <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] p-4 space-y-3">
+            <div className="bg-[#18181C] border border-[#242429] rounded-[4px] p-4 space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <span className="text-2xs text-[#8E8E99] tabular-nums block">
@@ -333,42 +433,42 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#26262B] text-center tabular-nums text-xs">
-                <div className="bg-[#141417] p-2 rounded-[4px] border border-[#26262B]">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center tabular-nums text-xs">
+                <div className="bg-[#111114] p-2 rounded-[4px] border border-[#242429]">
                   <span className="text-2xs text-[#8E8E99] uppercase block">Streams</span>
                   <span className="font-bold text-[#F4F0EA]">{(bestAlbum.totalStreams / 1000000).toFixed(1)}M</span>
                 </div>
-                <div className="bg-[#141417] p-2 rounded-[4px] border border-[#26262B]">
+                <div className="bg-[#111114] p-2 rounded-[4px] border border-[#242429]">
                   <span className="text-2xs text-[#8E8E99] uppercase block">Ventas Debut</span>
-                  <span className="font-bold text-[#FF2A4B]">{(bestAlbum.firstWeekSales || 0).toLocaleString('es-AR')}</span>
+                  <span className="font-bold text-[#FF4F00]">{(bestAlbum.firstWeekSales || 0).toLocaleString('es-AR')}</span>
                 </div>
-                <div className="bg-[#141417] p-2 rounded-[4px] border border-[#26262B]">
+                <div className="bg-[#111114] p-2 rounded-[4px] border border-[#242429]">
                   <span className="text-2xs text-[#8E8E99] uppercase block">Crítica</span>
                   <span className="font-bold text-[#10B981]">{bestAlbum.criticalScore}/100</span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] p-4 text-xs text-[#8E8E99]">
+            <div className="bg-[#18181C] border border-[#242429] rounded-[4px] p-4 text-xs text-[#8E8E99]">
               Aún no has publicado un álbum. Grabá tu primer LP o EP en el Estudio.
             </div>
           )}
         </div>
 
         {/* Mejor Gira */}
-        <div className="liquid-glass-card p-5 space-y-3">
+        <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 space-y-3">
           <div className="flex items-center justify-between pb-1">
             <h2 className="text-sm font-bold text-[#F4F0EA] uppercase tracking-wider flex items-center gap-2">
-              <Ticket className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              <Ticket className="w-4 h-4 text-[#FF4F00]" strokeWidth={1.75} />
               Mejor Gira Histórica
             </h2>
-            <span className="text-2xs uppercase font-bold bg-[#1C1C21] text-[#10B981] border border-[#10B981]/40 px-2 py-0.5 rounded-[4px]">
+            <span className="text-2xs uppercase font-bold bg-[#18181C] text-[#10B981] border border-[#10B981]/40 px-2 py-0.5 rounded-[4px]">
               Récord Taquilla
             </span>
           </div>
 
           {bestTour ? (
-            <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] p-4 space-y-3">
+            <div className="bg-[#18181C] border border-[#242429] rounded-[4px] p-4 space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <span className="text-2xs text-[#8E8E99] tabular-nums block">
@@ -376,28 +476,28 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
                   </span>
                   <h3 className="text-base font-bold text-[#F4F0EA] mt-0.5">{bestTour.name}</h3>
                 </div>
-                <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/40">
+                <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] text-[#F59E0B] border border-[#F59E0B]/40">
                   {bestTour.tier || 'club'}
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#26262B] text-center tabular-nums text-xs">
-                <div className="bg-[#141417] p-2 rounded-[4px] border border-[#26262B]">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429] text-center tabular-nums text-xs">
+                <div className="bg-[#111114] p-2 rounded-[4px] border border-[#242429]">
                   <span className="text-2xs text-[#8E8E99] uppercase block">Recaudación</span>
                   <span className="font-bold text-[#10B981]">{formatMoney(bestTour.grossRevenue || 0)}</span>
                 </div>
-                <div className="bg-[#141417] p-2 rounded-[4px] border border-[#26262B]">
+                <div className="bg-[#111114] p-2 rounded-[4px] border border-[#242429]">
                   <span className="text-2xs text-[#8E8E99] uppercase block">Neto Artista</span>
                   <span className="font-bold text-[#10B981]">{formatMoney(bestTour.netArtistProfit || 0)}</span>
                 </div>
-                <div className="bg-[#141417] p-2 rounded-[4px] border border-[#26262B]">
+                <div className="bg-[#111114] p-2 rounded-[4px] border border-[#242429]">
                   <span className="text-2xs text-[#8E8E99] uppercase block">Tickets</span>
                   <span className="font-bold text-[#F4F0EA]">{(bestTour.totalTicketsSold || 0).toLocaleString('es-AR')}</span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] p-4 text-xs text-[#8E8E99]">
+            <div className="bg-[#18181C] border border-[#242429] rounded-[4px] p-4 text-xs text-[#8E8E99]">
               Aún no has salido de gira. Organizá tu primer tour en la sección de Giras & Festivales.
             </div>
           )}
@@ -405,11 +505,11 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
       </div>
 
       {/* 3. LÍNEA DE TIEMPO UNIFICADA DE ERAS & TRAYECTORIA */}
-      <div className="liquid-glass-card p-5 space-y-4">
+      <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
           <div>
             <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              <Calendar className="w-4 h-4 text-[#FF4F00]" strokeWidth={1.75} />
               Línea de Tiempo de Eras & Trayectoria ({filteredTimeline.length})
             </h2>
             <p className="text-xs text-[#8E8E99] mt-0.5">
@@ -431,8 +531,8 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
                 onClick={() => setTimelineFilter(f.id as any)}
                 className={`px-3 py-1.5 rounded-[4px] transition-colors cursor-pointer border whitespace-nowrap ${
                   timelineFilter === f.id
-                    ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold border-[#FF2A4B]'
-                    : 'bg-[#0B0B0C] text-[#8E8E99] border-[#26262B] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                    ? 'bg-[#FF4F00] text-white font-bold border-[#FF4F00]'
+                    : 'bg-[#18181C] text-[#8E8E99] border-[#242429] hover:text-[#F4F0EA] hover:bg-[#242429]'
                 }`}
               >
                 {f.label}
@@ -452,10 +552,10 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
               return (
                 <div
                   key={item.id}
-                  className="bg-[#0B0B0C] p-4 rounded-[6px] border border-[#26262B] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[#3F3F46] transition-all"
+                  className="bg-[#18181C] p-4 rounded-[6px] border border-[#242429] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[#3F3F46] transition-all"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-[4px] border border-[#26262B] bg-[#1C1C21] text-[#FF2A4B] shrink-0 mt-0.5">
+                    <div className="p-2 rounded-[4px] border border-[#242429] bg-[#111114] text-[#FF4F00] shrink-0 mt-0.5">
                       <ItemIcon className="w-4 h-4" strokeWidth={1.75} />
                     </div>
 
@@ -465,7 +565,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] border border-[#26262B] bg-[#1C1C21] text-[#F59E0B]">
+                          <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] border border-[#242429] bg-[#111114] text-[#F59E0B]">
                             {item.badge}
                           </span>
                         )}
@@ -502,9 +602,9 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
                             quote: item.eraData!.highlightSummary
                           })
                         }
-                        className="inline-flex items-center gap-1 text-2xs font-semibold text-[#F4F0EA] hover:text-[#FF2A4B] transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 text-2xs font-semibold text-[#F4F0EA] hover:text-[#FF4F00] transition-colors cursor-pointer"
                       >
-                        <Newspaper className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
+                        <Newspaper className="w-3 h-3 text-[#FF4F00]" strokeWidth={1.75} />
                         <span>Portada</span>
                       </button>
                     )}
@@ -523,6 +623,7 @@ export const CareerErasView: React.FC<CareerErasViewProps> = ({
           world={world}
           onClose={() => setLegacyModalOpen(false)}
           onRetire={onRetireArtist}
+          onRetireArtist={onRetireArtist}
         />
       )}
     </div>

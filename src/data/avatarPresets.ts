@@ -41,27 +41,27 @@ export interface VectorAvatarPreset {
 
 export const AVATAR_PALETTES: AvatarPaletteOption[] = [
   {
-    id: 'synth_violet',
+    id: 'amber_vinyl',
     label: 'Naranja Señal & Cinta',
     val: 'from-[#FF4F00] via-[#EA580C] to-[#9A3412]',
     description: 'Saturación cálida de consola analógica y cinta de dos pulgadas'
   },
   {
-    id: 'cyber_magenta',
+    id: 'crimson_studio',
     label: 'Rojo REC & Carmesí',
-    val: 'from-[#FF2A4B] via-[#E11D48] to-[#881337]',
+    val: 'from-[#FF2A4B] via-[#DC2626] to-[#7F1D1D]',
     description: 'Luz roja de cabina encendida en plena toma vocal'
   },
   {
-    id: 'electric_cyan',
-    label: 'Cian Osciloscopio',
-    val: 'from-[#06B6D4] via-[#0284C7] to-[#0F172A]',
+    id: 'oscilloscope_sky',
+    label: 'Cielo Osciloscopio',
+    val: 'from-[#38BDF8] via-[#0284C7] to-[#0F172A]',
     description: 'Medidores digitales de espectro y sintetizadores de rack'
   },
   {
     id: 'emerald_studio',
     label: 'Esmeralda VU Meter',
-    val: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
+    val: 'from-[#10B981] via-[#0D9488] to-[#0369A1]',
     description: 'Señal limpia en rango nominal sin saturar el bus maestro'
   },
   {
@@ -73,7 +73,7 @@ export const AVATAR_PALETTES: AvatarPaletteOption[] = [
   {
     id: 'sunset_urban',
     label: 'Válvula & Terracota',
-    val: 'from-[#F97316] via-[#E11D48] to-[#7C2D12]',
+    val: 'from-[#F97316] via-[#DC2626] to-[#7C2D12]',
     description: 'Preamplificadores a válvulas al límite de ganancia en el club'
   },
   {
@@ -120,7 +120,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
     id: 'flow_street',
     name: 'Hype Master',
     category: 'urban',
-    color: 'from-[#F97316] via-[#E11D48] to-[#881337]',
+    color: 'from-[#F97316] via-[#DC2626] to-[#7F1D1D]',
     icon: 'flame',
     description: 'Dueño del pogo en festivales y de los cortes que suenan en cada auto del barrio.'
   },
@@ -128,7 +128,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
     id: 'studio_master',
     name: 'Master Producer',
     category: 'electronic',
-    color: 'from-[#10B981] via-[#0D9488] to-[#06B6D4]',
+    color: 'from-[#10B981] via-[#0D9488] to-[#0369A1]',
     icon: 'headphones',
     description: 'Oído quirúrgico en la consola para separar cada frecuencia de la mezcla.'
   },
@@ -136,7 +136,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
     id: 'pop_icon',
     name: 'Pop Icon',
     category: 'pop',
-    color: 'from-[#FF2A4B] via-[#E11D48] to-[#9F1239]',
+    color: 'from-[#FF2A4B] via-[#DC2626] to-[#7F1D1D]',
     icon: 'sparkles',
     description: 'Estribillos radiales diseñados para rotar sin pausa y llenar arenas.'
   },
@@ -144,7 +144,7 @@ export const VECTOR_PRESETS: VectorAvatarPreset[] = [
     id: 'synth_electro',
     name: 'Club & Modular Nights',
     category: 'electronic',
-    color: 'from-[#06B6D4] via-[#0284C7] to-[#0F172A]',
+    color: 'from-[#38BDF8] via-[#0284C7] to-[#0F172A]',
     icon: 'zap',
     description: 'Secuenciadores analógicos y bombos a 128 BPM pensados para la pista.'
   },

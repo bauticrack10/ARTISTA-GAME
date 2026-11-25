@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 import { activateOnKey } from '../utils/a11y';
-import { WorldState, Artist, AwardCeremony, OfficialCertification } from '../types';
+import { WorldState, Artist, AwardCeremony, OfficialCertification, Song, Album } from '../types';
 import { CertificationEngine } from '../systems/CertificationEngine';
+import { SectionSubNav } from './ui/SectionSubNav';
 import {
   Award,
   Trophy,
@@ -14,7 +16,8 @@ import {
   Disc3,
   Sliders,
   Calendar,
-  Medal
+  Medal,
+  Check
 } from 'lucide-react';
 
 interface AwardsViewProps {
@@ -30,6 +33,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
     ceremonies.length > 0 ? ceremonies[0].year : null
   );
   const [filterOnlyPlayerWins, setFilterOnlyPlayerWins] = useState<boolean>(false);
+  useScrollToTop([filterOnlyPlayerWins]);
 
   const filteredCeremonies = filterOnlyPlayerWins
     ? ceremonies.filter(c => c.categories.some(cat => cat.winnerArtistId === player?.id))
@@ -71,8 +75,8 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
     const list: OfficialCertification[] = [...(player.officialCertifications || [])];
     const seen = new Set(list.map(c => c.id));
 
-    Object.values(world.songs || {}).forEach(s => {
-      if (s.artistId === player.id && s.certifications) {
+    (Object.values(world?.songs || {}) as Song[]).forEach(s => {
+      if (s && s.artistId === player.id && s.certifications) {
         s.certifications.forEach(c => {
           if (!seen.has(c.id)) {
             seen.add(c.id);
@@ -82,8 +86,8 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       }
     });
 
-    Object.values(world.albums || {}).forEach(a => {
-      if (a.artistId === player.id && a.certifications) {
+    (Object.values(world?.albums || {}) as Album[]).forEach(a => {
+      if (a && a.artistId === player.id && a.certifications) {
         a.certifications.forEach(c => {
           if (!seen.has(c.id)) {
             seen.add(c.id);
@@ -98,11 +102,18 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
   return (
     <div className="space-y-5 pb-12 font-sans text-[#F4F0EA]">
+      <SectionSubNav
+        hub="legado"
+        activeTab="awards"
+        onNavigate={onNavigate}
+        awardsCount={player?.awardsWon?.length || 0}
+      />
+
       {/* Compact Header */}
-      <div className="liquid-glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xs uppercase font-bold tracking-wider liquid-glass-pill text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
+            <span className="text-2xs uppercase font-bold tracking-wider bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 px-2 py-0.5 rounded-[4px]">
               Academia Musical
             </span>
             <span className="text-xs text-[#8E8E99]">Galas Anuales • Diciembre</span>
@@ -114,15 +125,15 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 tabular-nums">
-          <div className="liquid-glass-pill px-3.5 py-2 text-center">
+          <div className="bg-[#18181C] border border-[#242429] rounded-[6px] px-3.5 py-2 text-center">
             <span className="text-2xs text-[#F59E0B] block uppercase tracking-wider font-bold">Estatuillas</span>
             <span className="text-xl font-bold text-[#F59E0B]">{player.awardsWon.length}</span>
           </div>
-          <div className="liquid-glass-pill px-3.5 py-2 text-center">
+          <div className="bg-[#18181C] border border-[#242429] rounded-[6px] px-3.5 py-2 text-center">
             <span className="text-2xs text-[#8E8E99] block uppercase tracking-wider font-bold">Discos Oro/Plat.</span>
             <span className="text-xl font-bold text-[#F4F0EA]">{playerCerts.length}</span>
           </div>
-          <div className="liquid-glass-pill px-3.5 py-2 text-center">
+          <div className="bg-[#18181C] border border-[#242429] rounded-[6px] px-3.5 py-2 text-center">
             <span className="text-2xs text-[#8E8E99] block uppercase tracking-wider font-bold">Legado</span>
             <span className="text-xl font-bold text-[#F4F0EA]">{player.legacyScore}/100</span>
           </div>
@@ -132,7 +143,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       {/* Compact Top Showcase: Player Trophies + Certifications + Hall of Fame */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* 1. Vitrina de Trofeos de la Academia */}
-        <div className="liquid-glass-card p-4 space-y-3">
+        <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-4 space-y-3">
           <div className="flex items-center justify-between pb-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Trophy className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
@@ -141,7 +152,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
             {player.awardsWon.length === 0 && onNavigate && (
               <button
                 onClick={() => onNavigate('studio')}
-                className="text-2xs font-bold text-[#FF2A4B] hover:underline cursor-pointer flex items-center gap-1"
+                className="text-2xs font-bold text-[#FF4F00] hover:underline cursor-pointer flex items-center gap-1"
               >
                 <Disc3 className="w-3 h-3" strokeWidth={1.75} />
                 Ir al Estudio
@@ -150,7 +161,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
           </div>
 
           {player.awardsWon.length === 0 ? (
-            <div className="px-3.5 py-3 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-xs text-[#8E8E99] flex items-center justify-between gap-2">
+            <div className="px-3.5 py-3 rounded-[4px] bg-[#18181C] border border-[#242429] text-xs text-[#8E8E99] flex items-center justify-between gap-2">
               <span>Sin estatuillas aún. Las galas premian cada mes 12.</span>
               <span className="text-2xs uppercase font-bold text-[#52525B] shrink-0">+6 Legado c/u</span>
             </div>
@@ -163,9 +174,9 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                 return (
                   <div
                     key={idx}
-                    className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B] flex items-start gap-2.5 hover:border-[#3F3F46] transition-all"
+                    className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429] flex items-start gap-2.5 hover:border-[#3F3F46] transition-all"
                   >
-                    <div className="p-2 bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/30 rounded-[4px] shrink-0">
+                    <div className="p-2 bg-[#111114] text-[#F59E0B] border border-[#F59E0B]/30 rounded-[4px] shrink-0">
                       <CategoryIcon className="w-3.5 h-3.5 text-[#F59E0B]" strokeWidth={1.75} />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -182,7 +193,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
         </div>
 
         {/* 2. Certificaciones Oficiales (Oro / Platino / Diamante) */}
-        <div className="liquid-glass-card p-4 space-y-3">
+        <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-4 space-y-3">
           <div className="flex items-center justify-between pb-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Medal className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
@@ -194,7 +205,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
           </div>
 
           {playerCerts.length === 0 ? (
-            <div className="px-3.5 py-3 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-xs text-[#8E8E99]">
+            <div className="px-3.5 py-3 rounded-[4px] bg-[#18181C] border border-[#242429] text-xs text-[#8E8E99]">
               Tus sencillos y álbumes reciben placas automáticamente al superar 500k, 1M y 10M de reproducciones.
             </div>
           ) : (
@@ -204,7 +215,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                 return (
                   <div
                     key={cert.id}
-                    className={`p-3 rounded-[4px] border border-[#26262B] bg-[#0B0B0C] flex items-center justify-between gap-2.5 ${styling.frameClass}`}
+                    className={`p-3 rounded-[4px] border border-[#242429] bg-[#18181C] flex items-center justify-between gap-2.5 ${styling.frameClass}`}
                   >
                     <div className="min-w-0">
                       <span className={`text-3xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] border ${styling.badgeClass}`}>
@@ -218,7 +229,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                       </p>
                     </div>
 
-                    <div className="w-8 h-8 rounded-[4px] border border-[#26262B] bg-[#1C1C21] flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-[4px] border border-[#242429] bg-[#111114] flex items-center justify-center shrink-0">
                       <Disc3 className="w-4 h-4" style={{ color: styling.iconColor }} strokeWidth={1.75} />
                     </div>
                   </div>
@@ -231,7 +242,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
       {/* Compact Hall of Fame Bar */}
       {hallOfFame.length > 0 && (
-        <div className="liquid-glass-card p-4 space-y-3">
+        <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0EA] flex items-center gap-2">
               <Crown className="w-4 h-4 text-[#F59E0B]" strokeWidth={1.75} />
@@ -246,8 +257,8 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                 key={artist.id}
                 className={`px-3 py-2.5 rounded-[4px] border flex items-center justify-between gap-2 text-xs ${
                   artist.isPlayer
-                    ? 'bg-[#1C1C21] border-[#FF2A4B]/60'
-                    : 'bg-[#0B0B0C] border-[#26262B]'
+                    ? 'bg-[#18181C] border-[#FF4F00]/60'
+                    : 'bg-[#18181C] border-[#242429]'
                 }`}
               >
                 <div className="min-w-0">
@@ -269,13 +280,13 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
       )}
 
       {/* History of Past Ceremonies (Intact) */}
-      <div className="liquid-glass-card p-5 space-y-4">
+      <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
           <div>
             <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+              <Trophy className="w-4 h-4 text-[#FF4F00]" strokeWidth={1.75} />
               <span>Historial de Galas Anuales</span>
-              <span className="text-xs px-2 py-0.5 rounded-[4px] bg-[#1C1C21] text-[#FF2A4B] tabular-nums font-semibold border border-[#26262B]">
+              <span className="text-xs px-2 py-0.5 rounded-[4px] bg-[#18181C] text-[#FF4F00] tabular-nums font-semibold border border-[#242429]">
                 {ceremonies.length}
               </span>
             </h2>
@@ -287,19 +298,20 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
           <div className="flex items-center gap-2">
             <button
               onClick={() => setFilterOnlyPlayerWins(!filterOnlyPlayerWins)}
-              className={`px-3 py-1.5 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer border ${
+              className={`px-3 py-1.5 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer border inline-flex items-center gap-1.5 ${
                 filterOnlyPlayerWins
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA] font-bold border-[#FF2A4B]'
-                  : 'bg-[#0B0B0C] text-[#8E8E99] border-[#26262B] hover:text-[#F4F0EA]'
+                  ? 'bg-[#FF4F00] text-white font-bold border-[#FF4F00]'
+                  : 'bg-[#18181C] text-[#8E8E99] border-[#242429] hover:text-[#F4F0EA]'
               }`}
             >
-              {filterOnlyPlayerWins ? '✓ Solo Mis Victorias' : 'Filtrar Mis Victorias'}
+              {filterOnlyPlayerWins && <Check className="w-3.5 h-3.5" strokeWidth={2} />}
+              <span>{filterOnlyPlayerWins ? 'Solo Mis Victorias' : 'Filtrar Mis Victorias'}</span>
             </button>
           </div>
         </div>
 
         {ceremonies.length === 0 ? (
-          <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[4px] p-6 text-center space-y-1.5">
+          <div className="bg-[#18181C] border border-[#242429] rounded-[4px] p-6 text-center space-y-1.5">
             <Calendar className="w-5 h-5 text-[#8E8E99] mx-auto" strokeWidth={1.75} />
             <h3 className="text-sm font-semibold text-[#F4F0EA]">Sin Galas Realizadas Aún</h3>
             <p className="text-xs text-[#8E8E99] max-w-md mx-auto">
@@ -320,7 +332,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
               return (
                 <div
                   key={ceremony.year}
-                  className="bg-[#0B0B0C] rounded-[6px] border border-[#26262B] overflow-hidden transition-all"
+                  className="bg-[#18181C] rounded-[6px] border border-[#242429] overflow-hidden transition-all"
                 >
                   {/* Ceremony Header Row */}
                   <div
@@ -328,10 +340,10 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                     tabIndex={0}
                     onKeyDown={activateOnKey}
                     onClick={() => setExpandedYear(isExpanded ? null : ceremony.year)}
-                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:bg-[#1C1C21] transition-colors border-b border-[#26262B]"
+                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:bg-[#1E1E24] transition-colors border-b border-[#242429]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-[#1C1C21] rounded-[4px] border border-[#26262B] text-[#F59E0B] shrink-0 font-bold text-xs tabular-nums">
+                      <div className="p-2 bg-[#111114] rounded-[4px] border border-[#242429] text-[#F59E0B] shrink-0 font-bold text-xs tabular-nums">
                         {ceremony.year}
                       </div>
 
@@ -363,14 +375,14 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                             e.stopPropagation();
                             onOpenGala(ceremony);
                           }}
-                          className="flex items-center gap-1.5 bg-[#FF2A4B] hover:bg-[#E02040] text-[#F4F0EA] font-bold px-3.5 py-1.5 rounded-[4px] text-xs transition-all cursor-pointer active:translate-y-[1px]"
+                          className="flex items-center gap-1.5 bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold px-3.5 py-1.5 rounded-[4px] text-xs transition-all cursor-pointer active:translate-y-[1px]"
                         >
                           <Play className="w-3 h-3 fill-current" strokeWidth={1.75} />
                           <span>Revivir Gala Interactiva</span>
                         </button>
                       )}
 
-                      <div className="p-1 rounded-[4px] hover:bg-[#1C1C21] text-[#8E8E99]">
+                      <div className="p-1 rounded-[4px] hover:bg-[#111114] text-[#8E8E99]">
                         {isExpanded ? <ChevronUp className="w-4 h-4" strokeWidth={1.75} /> : <ChevronDown className="w-4 h-4" strokeWidth={1.75} />}
                       </div>
                     </div>
@@ -378,7 +390,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
                   {/* Expanded Categories Breakdown */}
                   {isExpanded && (
-                    <div className="p-4 bg-[#141417] space-y-3">
+                    <div className="p-4 bg-[#111114] space-y-3">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {ceremony.categories.map((cat, catIdx) => {
                           const isPlayerWinner = cat.winnerArtistId === player.id;
@@ -390,24 +402,24 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                               key={cat.id || catIdx}
                               className={`p-3.5 rounded-[4px] border text-xs space-y-2 transition-all ${
                                 isPlayerWinner
-                                  ? 'bg-[#1C1C21] border-[#10B981]/50'
-                                  : 'bg-[#0B0B0C] border-[#26262B]'
+                                  ? 'bg-[#18181C] border-[#10B981]/50'
+                                  : 'bg-[#18181C] border-[#242429]'
                               }`}
                             >
-                              <div className="flex items-center justify-between border-b border-[#26262B] pb-2">
+                              <div className="flex items-center justify-between border-b border-[#242429] pb-2">
                                 <div className="flex items-center gap-1.5">
-                                  <CatIcon className={`w-3.5 h-3.5 ${isPlayerWinner ? 'text-[#10B981]' : 'text-[#FF2A4B]'}`} strokeWidth={1.75} />
+                                  <CatIcon className={`w-3.5 h-3.5 ${isPlayerWinner ? 'text-[#10B981]' : 'text-[#FF4F00]'}`} strokeWidth={1.75} />
                                   <span className="font-bold text-xs text-[#F4F0EA]">
                                     {cat.name}
                                   </span>
                                 </div>
 
                                 {isPlayerWinner ? (
-                                  <span className="font-bold text-[#10B981] bg-[#1C1C21] border border-[#10B981]/30 px-2 py-0.5 rounded-[4px] text-2xs">
+                                  <span className="font-bold text-[#10B981] bg-[#111114] border border-[#10B981]/30 px-2 py-0.5 rounded-[4px] text-2xs">
                                     ¡Tu Victoria!
                                   </span>
                                 ) : isPlayerNominated ? (
-                                  <span className="font-bold text-[#8E8E99] bg-[#1C1C21] border border-[#26262B] px-2 py-0.5 rounded-[4px] text-2xs">
+                                  <span className="font-bold text-[#8E8E99] bg-[#111114] border border-[#242429] px-2 py-0.5 rounded-[4px] text-2xs">
                                     Nominado
                                   </span>
                                 ) : null}
@@ -428,7 +440,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                                   )}
                                 </p>
                                 {cat.winTypeLabel && (
-                                  <span className="text-2xs text-[#F59E0B] bg-[#1C1C21] px-1.5 py-0.5 rounded-[4px] border border-[#F59E0B]/30 inline-block mt-0.5">
+                                  <span className="text-2xs text-[#F59E0B] bg-[#111114] px-1.5 py-0.5 rounded-[4px] border border-[#F59E0B]/30 inline-block mt-0.5">
                                     {cat.winTypeLabel}
                                   </span>
                                 )}
@@ -441,7 +453,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
 
                               {/* Nominees Grid */}
                               {cat.nominees && cat.nominees.length > 0 && (
-                                <div className="pt-2 border-t border-[#26262B] space-y-1.5">
+                                <div className="pt-2 border-t border-[#242429] space-y-1.5">
                                   <span className="text-2xs uppercase text-[#8E8E99] font-bold tracking-wider block tabular-nums">
                                     Nominados • {cat.nominees.length}
                                   </span>
@@ -454,14 +466,14 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                                           key={nIdx}
                                           className={`p-2 rounded-[4px] border text-xs flex items-center justify-between gap-1.5 transition-all ${
                                             isNomWinner
-                                              ? 'bg-[#1C1C21] border-[#F59E0B]/40 font-semibold text-[#F59E0B]'
+                                              ? 'bg-[#111114] border-[#F59E0B]/40 font-semibold text-[#F59E0B]'
                                               : isNomPlayer
-                                              ? 'bg-[#1C1C21] border-[#FF2A4B]/40 font-semibold text-[#FF2A4B]'
-                                              : 'bg-[#0B0B0C] border-[#26262B] text-[#8E8E99]'
+                                              ? 'bg-[#111114] border-[#FF4F00]/40 font-semibold text-[#FF4F00]'
+                                              : 'bg-[#111114] border-[#242429] text-[#8E8E99]'
                                           }`}
                                         >
                                           <div className="min-w-0 flex-1 truncate">
-                                            <span className="tabular-nums text-2xs mr-1 text-[#FF2A4B]">#{nIdx + 1}</span>
+                                            <span className="tabular-nums text-2xs mr-1 text-[#FF4F00]">#{nIdx + 1}</span>
                                             <span className="text-[#F4F0EA]">
                                               {nom.itemTitle ? `"${nom.itemTitle}"` : nom.artistName}
                                             </span>
@@ -472,12 +484,12 @@ export const AwardsView: React.FC<AwardsViewProps> = ({ world, player, onOpenGal
                                             )}
                                           </div>
                                           {isNomPlayer && (
-                                            <span className="text-2xs bg-[#FF2A4B] text-[#F4F0EA] px-1.5 py-0.5 rounded-[4px] font-bold shrink-0">
+                                            <span className="text-2xs bg-[#FF4F00] text-white px-1.5 py-0.5 rounded-[4px] font-bold shrink-0">
                                               Tú
                                             </span>
                                           )}
                                           {isNomWinner && (
-                                            <span className="text-2xs bg-[#1C1C21] text-[#F59E0B] border border-[#F59E0B]/40 px-1.5 py-0.5 rounded-[4px] font-bold shrink-0">
+                                            <span className="text-2xs bg-[#18181C] text-[#F59E0B] border border-[#F59E0B]/40 px-1.5 py-0.5 rounded-[4px] font-bold shrink-0">
                                               <Trophy className="inline w-3 h-3 mr-1 align-[-2px] text-[#F59E0B]" strokeWidth={1.75} aria-hidden="true" />
                                               Ganador
                                             </span>

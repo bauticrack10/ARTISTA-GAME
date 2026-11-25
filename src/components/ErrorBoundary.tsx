@@ -15,13 +15,15 @@ interface ErrorBoundaryState {
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  public state: ErrorBoundaryState;
-  public props: ErrorBoundaryProps;
-  public setState!: (state: any, callback?: () => void) => void;
+  declare public state: ErrorBoundaryState;
+  declare public props: ErrorBoundaryProps;
+  declare public setState: (
+    state: Partial<ErrorBoundaryState> | ((prev: ErrorBoundaryState) => Partial<ErrorBoundaryState>),
+    callback?: () => void
+  ) => void;
 
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.props = props;
     this.state = {
       hasError: false,
       error: null,
@@ -49,6 +51,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   handleHardReset = () => {
     try {
       localStorage.removeItem('el_artista_save');
+      localStorage.removeItem('el_artista_first_steps_dismissed');
+      localStorage.removeItem('el_artista_onboarding_tooltip_dismissed');
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('el_artista_studio_draft_')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((k) => localStorage.removeItem(k));
     } catch (e) {}
     window.location.reload();
   };
@@ -108,15 +120,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                   {errorStack && (
                     <div className="space-y-1">
                       <span className="text-[#FF4F00] font-bold text-[10px] uppercase">Stack Trace:</span>
-                      <pre className="text-[#8E8E99] whitespace-pre-wrap break-all bg-[#111114] p-2.5 rounded-[2px] border border-[#242429]">
+                      <pre className="font-sans tabular-nums text-[#A0A0AB] whitespace-pre-wrap break-all bg-[#111114] p-2.5 rounded-[2px] border border-[#242429]">
                         {errorStack}
                       </pre>
                     </div>
                   )}
                   {componentStack && (
                     <div className="space-y-1">
-                      <span className="text-[#00E599] font-bold text-[10px] uppercase">Component Stack:</span>
-                      <pre className="text-[#8E8E99] whitespace-pre-wrap break-all bg-[#111114] p-2.5 rounded-[2px] border border-[#242429]">
+                      <span className="text-[#34D399] font-bold text-[10px] uppercase">Component Stack:</span>
+                      <pre className="font-sans tabular-nums text-[#A0A0AB] whitespace-pre-wrap break-all bg-[#111114] p-2.5 rounded-[2px] border border-[#242429]">
                         {componentStack}
                       </pre>
                     </div>

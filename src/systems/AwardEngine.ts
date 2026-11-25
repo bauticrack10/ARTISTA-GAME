@@ -1538,7 +1538,33 @@ export class AwardEngine {
 
     if (collabLeadArtist) {
       collabLeadArtist.awardsWon.push(`Mejor Colaboración: "${winningCollab.title}" (${year})`);
+      if (!collabLeadArtist.awardsRecord) collabLeadArtist.awardsRecord = [];
+      collabLeadArtist.awardsRecord.push({
+        id: `win_collab_${year}_${winningCollab.id}`,
+        ceremonyName: `Premios de la Música ${year}`,
+        categoryId: `award_best_collab_${year}`,
+        categoryName: 'Mejor Colaboración',
+        year,
+        itemId: winningCollab.id,
+        itemTitle: winningCollab.title,
+        itemType: 'song',
+        winType: 'unanimous',
+        reason: `Por la química vocal y resonancia masiva en "${winningCollab.title}".`
+      });
       collabLeadArtist.legacyScore = Math.min(100, collabLeadArtist.legacyScore + 4);
+      if (isPlayerCollabWinner) {
+        const pArtist = world.artists[playerId];
+        if (pArtist) {
+          pArtist.stats.hype = Math.min(100, pArtist.stats.hype + 20);
+          pArtist.stats.reputation = Math.min(100, pArtist.stats.reputation + 8);
+          pArtist.stats.artisticCredibility = Math.min(100, pArtist.stats.artisticCredibility + 6);
+        }
+      }
+      awardNews.push({
+        headline: `Mejor Colaboración (${year}): "${winningCollab.title}" de ${collabLeadArtist.name} ft. ${winningCollabCandidate.featText}`,
+        body: `El jurado destacó la química interpretativa y el impacto conjunto de la alianza.`,
+        relatedArtistId: winningCollab.artistId
+      });
     }
 
     // ==========================================
@@ -1702,7 +1728,30 @@ export class AwardEngine {
 
     if (urbanArtist) {
       urbanArtist.awardsWon.push(`Mejor Canción Urbana: "${winningUrban.title}" (${year})`);
+      if (!urbanArtist.awardsRecord) urbanArtist.awardsRecord = [];
+      urbanArtist.awardsRecord.push({
+        id: `win_urban_${year}_${winningUrban.id}`,
+        ceremonyName: `Premios de la Música ${year}`,
+        categoryId: `award_best_urban_${year}`,
+        categoryName: 'Mejor Canción Urbana / Trap',
+        year,
+        itemId: winningUrban.id,
+        itemTitle: winningUrban.title,
+        itemType: 'song',
+        winType: 'unanimous',
+        reason: `Por consolidar el sonido urbano con "${winningUrban.title}".`
+      });
       urbanArtist.legacyScore = Math.min(100, urbanArtist.legacyScore + 4);
+      if (isPlayerUrbanWinner) {
+        urbanArtist.stats.hype = Math.min(100, urbanArtist.stats.hype + 22);
+        urbanArtist.stats.reputation = Math.min(100, urbanArtist.stats.reputation + 7);
+        urbanArtist.stats.artisticCredibility = Math.min(100, urbanArtist.stats.artisticCredibility + 8);
+      }
+      awardNews.push({
+        headline: `Mejor Canción Urbana (${year}): "${winningUrban.title}" de ${urbanArtist.name}`,
+        body: `El corte urbano se llevó el premio de género tras dominar las listas y los clubes.`,
+        relatedArtistId: winningUrban.artistId
+      });
     }
 
     // ==========================================
@@ -1714,14 +1763,17 @@ export class AwardEngine {
 
     const videoScores = videoSongs.map(song => {
       const art = world.artists[song.artistId];
+      const videoYear = song.musicVideo?.releaseYear ?? song.releaseYear;
+      const isVideoInYear = videoYear === year;
       const views = song.musicVideo?.views || Math.floor(song.streamsTotal * 0.4);
       const budget = song.musicVideo?.budget || 5000;
       const viewsScore = Math.min(45, (views / 20000000) * 45);
       const visualBudgetScore = Math.min(25, (budget / 20000) * 25);
       const viralBonus = song.wentViral ? 15 : 0;
+      const yearBonus = isVideoInYear ? 24 : Math.max(0, 6 - (year - videoYear) * 4);
       const randomVariance = Math.random() * 4;
 
-      const totalScore = Math.round(viewsScore + visualBudgetScore + viralBonus + randomVariance);
+      const totalScore = Math.round(viewsScore + visualBudgetScore + viralBonus + yearBonus + randomVariance);
 
       return {
         song,
@@ -1867,7 +1919,30 @@ export class AwardEngine {
 
     if (videoArtist) {
       videoArtist.awardsWon.push(`Mejor Video Musical: "${winningVideo.title}" (${year})`);
+      if (!videoArtist.awardsRecord) videoArtist.awardsRecord = [];
+      videoArtist.awardsRecord.push({
+        id: `win_video_${year}_${winningVideo.id}`,
+        ceremonyName: `Premios de la Música ${year}`,
+        categoryId: `award_best_music_video_${year}`,
+        categoryName: 'Mejor Video Musical & Impacto Cultural',
+        year,
+        itemId: winningVideo.id,
+        itemTitle: winningVideo.title,
+        itemType: 'song',
+        winType: 'unanimous',
+        reason: `Por su propuesta audiovisual y fenómeno cultural en "${winningVideo.title}".`
+      });
       videoArtist.legacyScore = Math.min(100, videoArtist.legacyScore + 4);
+      if (isPlayerVideoWinner) {
+        videoArtist.stats.hype = Math.min(100, videoArtist.stats.hype + 22);
+        videoArtist.stats.reputation = Math.min(100, videoArtist.stats.reputation + 8);
+        videoArtist.stats.artisticCredibility = Math.min(100, videoArtist.stats.artisticCredibility + 6);
+      }
+      awardNews.push({
+        headline: `Mejor Video Musical (${year}): "${winningVideo.title}" de ${videoArtist.name}`,
+        body: `Su dirección estética y montaje audiovisual conquistaron el galardón al impacto visual del año.`,
+        relatedArtistId: winningVideo.artistId
+      });
     }
 
     // ==========================================
@@ -2123,6 +2198,29 @@ export class AwardEngine {
         body: `Elogiada por ingenieros y productores como el estándar de oro en calidad de audio y mezcla del año.`,
         relatedArtistId: winningItem.artistId
       });
+    }
+
+    // Record nominationHistory for all nominees across all 8 categories
+    const ceremonyName = `Premios de la Música ${year}`;
+    for (const cat of categories) {
+      for (const nom of cat.nominees || []) {
+        const nomArtist = world.artists[nom.artistId];
+        if (!nomArtist) continue;
+        if (!nomArtist.nominationHistory) nomArtist.nominationHistory = [];
+        const already = nomArtist.nominationHistory.some(
+          h => h.categoryId === cat.id && h.year === year && h.itemId === nom.itemId
+        );
+        if (!already) {
+          nomArtist.nominationHistory.push({
+            ceremonyName,
+            categoryId: cat.id,
+            categoryName: cat.name,
+            year,
+            itemId: nom.itemId,
+            itemTitle: nom.itemTitle
+          });
+        }
+      }
     }
 
     // Build Hall of Fame snapshot based on actual won awards

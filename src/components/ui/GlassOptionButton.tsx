@@ -12,12 +12,9 @@ export interface GlassOptionButtonProps extends React.ButtonHTMLAttributes<HTMLB
 }
 
 /**
- * Opción Interactiva 'Liquid Glass Lens' (GlassOptionButton)
- * - Ficha tipo lente (.liquid-option): bisel especular superior, sombra cáustica en la base y halo exterior difuso.
- * - Iluminación reactiva al cursor (Spotlight Glass Borders con variables --mouse-x y --mouse-y).
- * - Estados ópticos: hover con elevación (-1.5px) y dispersión cromática; active con compresión física elástica a scale(0.98).
- * - Selección: brillo esmeralda reforzado con halo difuso y bisel reflectante de alta fidelidad.
- * - Accesibilidad y rendimiento optimizado para 60fps con desenfoque nativo para elementos interactivos.
+ * Opción Interactiva de Estudio (GlassOptionButton)
+ * - Superficie elevada #18181C con borde #2A2A32 y spotlight reactivo al cursor
+ * - Estado seleccionado con realce Signal Orange (#FF4F00)
  */
 export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOptionButtonProps>(
   (
@@ -73,30 +70,19 @@ export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOption
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className={`liquid-option glass-option spotlight-border w-full text-left p-4 rounded-[4px] text-white select-none transition-all duration-200 cursor-pointer relative overflow-hidden group ${
+        className={`liquid-option glass-option spotlight-border w-full text-left p-4 rounded-[6px] text-[#F4F0EA] select-none transition-all duration-150 cursor-pointer relative overflow-hidden group ${
           selected ? 'selected' : ''
         } ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${className}`}
         {...rest}
       >
-        {/* Bisel especular diagonal superior (sheen óptico curvo) */}
-        <div
-          className="absolute inset-x-0 top-0 h-[45%] pointer-events-none mix-blend-screen opacity-70 group-hover:opacity-100 transition-opacity"
-          style={{
-            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.03) 60%, transparent 100%)',
-            borderTopLeftRadius: 'inherit',
-            borderTopRightRadius: 'inherit'
-          }}
-          aria-hidden="true"
-        />
-
         <div className="flex items-center justify-between gap-3 relative z-10">
           <div className="flex items-center gap-3.5 min-w-0 flex-1">
             {icon && (
               <div
                 className={`shrink-0 flex items-center justify-center w-9 h-9 rounded-full transition-colors ${
                   selected
-                    ? 'bg-[#00E599]/20 text-[#00E599]'
-                    : 'bg-white/[0.08] text-[#00E599] group-hover:bg-[#00E599]/15'
+                    ? 'bg-[#FF4F00]/20 text-[#FF4F00]'
+                    : 'bg-white/[0.06] text-[#A1A1AA] group-hover:bg-[#FF4F00]/12 group-hover:text-[#FF4F00]'
                 }`}
               >
                 {icon}
@@ -115,7 +101,7 @@ export const GlassOptionButton = React.forwardRef<HTMLButtonElement, GlassOption
               {subtitle && (
                 <div
                   className={`text-xs font-normal mt-0.5 truncate transition-colors ${
-                    selected ? 'text-[#00E599]/90' : 'text-[#8E8E99] group-hover:text-[#A1A1AA]'
+                    selected ? 'text-[#FF6B2B]' : 'text-[#8E8E99] group-hover:text-[#A1A1AA]'
                   }`}
                 >
                   {subtitle}

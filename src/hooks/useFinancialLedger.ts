@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Artist, WorldState, FinancialTransaction, TransactionCategory } from '../types';
-import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
+import { EconomyEngine } from '../systems/EconomyEngine';
 
 export type TransactionFilterType = 'all' | 'income' | 'expense';
 export type TransactionSortOption = 'newest' | 'oldest' | 'highest' | 'lowest';
@@ -131,34 +131,10 @@ export function useFinancialLedger(
     const netCashflow = totalIncome - totalExpense;
     const currentBalance = player.stats?.funds || 0;
 
-    // Monthly baseline calculations (calibrated for gentle underground progression)
-    let monthlyLivingCost = 35;
-    const pop = player.stats?.popularity || 0;
-    if (pop > 85) monthlyLivingCost = 28000;
-    else if (pop > 70) monthlyLivingCost = 12000;
-    else if (pop > 50) monthlyLivingCost = 3800;
-    else if (pop > 30) monthlyLivingCost = 1200;
-    else if (pop > 15) monthlyLivingCost = 400;
-    else if (pop > 8) monthlyLivingCost = 120;
-
-    let monthlyLifestyleUpkeep = 0;
-    if (player.lifestyleUpgrades && player.lifestyleUpgrades.length > 0) {
-      const itemMap = new Map(LIFESTYLE_ITEMS.map((item) => [item.id, item]));
-      for (const upgradeId of player.lifestyleUpgrades) {
-        const item = itemMap.get(upgradeId);
-        if (item) {
-          monthlyLifestyleUpkeep += item.monthlyUpkeep;
-        }
-      }
-    }
-
-    let monthlyManagerCost = 0;
-    if (player.managerId && world?.managers && world.managers[player.managerId]) {
-      const manager = world.managers[player.managerId];
-      // Estimated commission
-      const estimatedMonthlyGross = (player.stats?.monthlyListeners || 0) * 0.0035 + (player.stats?.fansCount || 0) * 0.02;
-      monthlyManagerCost = Math.floor(estimatedMonthlyGross * (manager.commissionFeePct / 100));
-    }
+    const opEstimate = EconomyEngine.getOperatingCostsEstimate(player, world);
+    const monthlyLivingCost = opEstimate.livingCostMonthly;
+    const monthlyLifestyleUpkeep = opEstimate.upkeepMonthly;
+    const monthlyManagerCost = opEstimate.monthly.managerCommission;
 
     const monthlyTotalBurnRate = monthlyLivingCost + monthlyLifestyleUpkeep + monthlyManagerCost;
     const semiAnnualOperatingCost = monthlyTotalBurnRate * 6;
@@ -206,13 +182,8 @@ export function useFinancialLedger(
     };
   }, [
     rawTransactions,
-    player.stats?.funds,
-    player.stats?.popularity,
-    player.stats?.monthlyListeners,
-    player.stats?.fansCount,
-    player.lifestyleUpgrades,
-    player.managerId,
-    world?.managers
+    player,
+    world
   ]);
 
   // 3. Category Summaries

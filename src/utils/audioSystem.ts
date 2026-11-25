@@ -13,11 +13,15 @@ class AudioSystem {
   private listeners: SoundListener[] = [];
 
   constructor() {
-    // Cargar preferencia del usuario de localStorage
+    // Cargar preferencia del usuario de localStorage de forma segura
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('el_artista_sfx_muted');
-      if (saved !== null) {
-        this.isMuted = saved === 'true';
+      try {
+        const saved = window.localStorage.getItem('el_artista_sfx_muted');
+        if (saved !== null) {
+          this.isMuted = saved === 'true';
+        }
+      } catch {
+        // Ignorar SecurityError en modo incógnito / iframe
       }
     }
   }
@@ -31,9 +35,26 @@ class AudioSystem {
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      this.ctx.resume().catch(() => {});
     }
     return this.ctx;
+  }
+
+  private safeCleanupNode(osc: OscillatorNode, ...nodes: AudioNode[]): void {
+    osc.onended = () => {
+      try {
+        osc.disconnect();
+      } catch {
+        // ignore
+      }
+      for (const node of nodes) {
+        try {
+          node.disconnect();
+        } catch {
+          // ignore
+        }
+      }
+    };
   }
 
   public getIsMuted(): boolean {
@@ -60,7 +81,11 @@ class AudioSystem {
   public toggleMute(): boolean {
     this.isMuted = !this.isMuted;
     if (typeof window !== 'undefined') {
-      localStorage.setItem('el_artista_sfx_muted', String(this.isMuted));
+      try {
+        window.localStorage.setItem('el_artista_sfx_muted', String(this.isMuted));
+      } catch {
+        // Ignorar errores de almacenamiento
+      }
     }
     this.notify();
     return this.isMuted;
@@ -77,9 +102,57 @@ class AudioSystem {
   public setMuted(muted: boolean): void {
     this.isMuted = muted;
     if (typeof window !== 'undefined') {
-      localStorage.setItem('el_artista_sfx_muted', String(muted));
+      try {
+        window.localStorage.setItem('el_artista_sfx_muted', String(muted));
+      } catch {
+        // Ignorar errores de almacenamiento
+      }
     }
     this.notify();
+  }
+
+  /**
+   * Reproduce un fragmento musical breve (2.4s) para previews de canciones en Streaming
+   */
+  public playPreviewBeat(genreId?: string): void {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.initContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const isUrban = genreId?.includes('trap') || genreId?.includes('reggaeton') || genreId?.includes('hip_hop');
+      const isElectronic = genreId?.includes('electronica') || genreId?.includes('funk');
+      const scale = isUrban
+        ? [130.81, 155.56, 174.61, 196.0, 233.08]
+        : isElectronic
+        ? [220.0, 261.63, 329.63, 392.0, 440.0]
+        : [196.0, 246.94, 293.66, 369.99, 392.0];
+
+      for (let step = 0; step < 8; step++) {
+        const t = now + step * 0.28;
+        const osc = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+        osc.type = isElectronic ? 'sawtooth' : 'triangle';
+        osc.frequency.setValueAtTime(scale[step % scale.length], t);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1400, t);
+        filter.frequency.exponentialRampToValueAtTime(420, t + 0.24);
+
+        gain.gain.setValueAtTime(0.001, t);
+        gain.gain.linearRampToValueAtTime(0.09, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        this.safeCleanupNode(osc, filter, gain);
+        osc.start(t);
+        osc.stop(t + 0.27);
+      }
+    } catch {
+      // ignore playback notice
+    }
   }
 
   /**
@@ -108,6 +181,7 @@ class AudioSystem {
 
           osc.connect(gain);
           gain.connect(ctx.destination);
+          this.safeCleanupNode(osc, gain);
 
           osc.start(now);
           osc.stop(now + 0.04);
@@ -137,6 +211,7 @@ class AudioSystem {
             osc.connect(filter);
             filter.connect(gain);
             gain.connect(ctx.destination);
+            this.safeCleanupNode(osc, filter, gain);
 
             osc.start(now + idx * 0.06);
             osc.stop(now + 1.25);
@@ -159,6 +234,7 @@ class AudioSystem {
 
             osc.connect(gain);
             gain.connect(ctx.destination);
+            this.safeCleanupNode(osc, gain);
 
             osc.start(now + i * 0.08);
             osc.stop(now + i * 0.08 + 0.36);
@@ -188,6 +264,7 @@ class AudioSystem {
 
               osc.connect(gain);
               gain.connect(ctx.destination);
+              this.safeCleanupNode(osc, gain);
 
               osc.start(now + delay);
               osc.stop(now + delay + dur + 0.05);
@@ -210,6 +287,7 @@ class AudioSystem {
 
           osc.connect(gain);
           gain.connect(ctx.destination);
+          this.safeCleanupNode(osc, gain);
 
           osc.start(now);
           osc.stop(now + 0.52);
@@ -232,6 +310,7 @@ class AudioSystem {
 
             osc.connect(gain);
             gain.connect(ctx.destination);
+            this.safeCleanupNode(osc, gain);
 
             osc.start(now + idx * 0.07);
             osc.stop(now + idx * 0.07 + 0.26);
@@ -254,6 +333,7 @@ class AudioSystem {
 
             osc.connect(gain);
             gain.connect(ctx.destination);
+            this.safeCleanupNode(osc, gain);
 
             osc.start(now + i * 0.09);
             osc.stop(now + 1.45);
@@ -284,6 +364,7 @@ class AudioSystem {
             osc.connect(filter);
             filter.connect(gain);
             gain.connect(ctx.destination);
+            this.safeCleanupNode(osc, filter, gain);
 
             osc.start(now + idx * 0.04);
             osc.stop(now + 0.9);
@@ -311,6 +392,7 @@ class AudioSystem {
           osc.connect(filter);
           filter.connect(gain);
           gain.connect(ctx.destination);
+          this.safeCleanupNode(osc, filter, gain);
 
           osc.start(now);
           osc.stop(now + 0.36);

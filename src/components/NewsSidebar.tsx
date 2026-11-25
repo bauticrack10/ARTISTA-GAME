@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { WorldState, Artist, NewsItem, SocialPost } from '../types';
-import { useSpotlight } from '../hooks/useSpotlight';
 import {
   Radio,
   TrendingUp,
@@ -24,7 +23,6 @@ type SidebarTab = 'press' | 'social';
 export const NewsSidebar: React.FC<NewsSidebarProps> = ({
   world,
   player,
-  maxHeight = 'max-h-[620px]',
   className = ''
 }) => {
   const [activeTab, setActiveTab] = useState<SidebarTab>('press');
@@ -88,7 +86,7 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
     }
     switch (item.category) {
       case 'industry':
-        return { label: 'INDUSTRIA', style: 'bg-[#18181C] text-[#8E8E99] border-[#242429]' };
+        return { label: 'INDUSTRIA', style: 'bg-[#111114] text-[#8E8E99] border-[#242429]' };
       case 'chart':
         return { label: 'CHARTS', style: 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30' };
       case 'award':
@@ -99,23 +97,19 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
       case 'scandal':
         return { label: 'POLÉMICA', style: 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30' };
       default:
-        return { label: 'ESCENA', style: 'bg-[#00E599]/15 text-[#00E599] border-[#00E599]/30' };
+        return { label: 'ESCENA', style: 'bg-[#34D399]/15 text-[#34D399] border-[#34D399]/30' };
     }
   };
 
-  const { onMouseMove: handleSpotlightMove, onMouseLeave: handleSpotlightLeave } = useSpotlight<HTMLElement>();
-
   return (
     <aside
-      onMouseMove={handleSpotlightMove}
-      onMouseLeave={handleSpotlightLeave}
-      className={`liquid-glass-card spotlight-border animate-stagger-in stagger-4 p-5 space-y-3.5 flex flex-col h-full text-[#F4F4F6] ${className}`}
+      className={`surface-1 bg-[#111114] border border-[#242429] rounded-[6px] animate-stagger-in stagger-4 p-5 space-y-3.5 flex flex-col h-full text-[#F4F4F6] ${className}`}
     >
       {/* Header con Selector Directo */}
-      <div className="flex items-center justify-between gap-2 pb-1 relative z-10">
+      <div className="flex items-center justify-between gap-2 pb-1">
         <div className="flex items-center gap-2">
           {activeTab === 'press' ? (
-            <Radio className="w-4 h-4 text-[#00E599]" />
+            <Radio className="w-4 h-4 text-[#34D399]" />
           ) : (
             <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
           )}
@@ -124,22 +118,24 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
           </h3>
         </div>
 
-        <div className="flex items-center liquid-glass-pill p-0.5 text-xs">
+        <div className="flex items-center surface-2 bg-[#18181C] border border-[#242429] rounded-[4px] p-0.5 text-xs">
           <button
+            type="button"
             onClick={() => setActiveTab('press')}
-            className={`py-1 px-2.5 rounded-[6px] font-sans font-bold transition-all cursor-pointer ${
+            className={`py-1 px-2.5 rounded-[3px] font-sans font-bold transition-all cursor-pointer ${
               activeTab === 'press'
-                ? 'bg-white/15 text-[#F4F4F6] border border-white/20 shadow-xs'
+                ? 'bg-[#FF4F00] text-white'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
             Prensa
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('social')}
-            className={`py-1 px-2.5 rounded-[6px] font-sans font-bold transition-all cursor-pointer ${
+            className={`py-1 px-2.5 rounded-[3px] font-sans font-bold transition-all cursor-pointer ${
               activeTab === 'social'
-                ? 'bg-white/15 text-[#F4F4F6] border border-white/20 shadow-xs'
+                ? 'bg-[#FF4F00] text-white'
                 : 'text-[#8E8E99] hover:text-[#F4F4F6]'
             }`}
           >
@@ -150,9 +146,9 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
       {/* TAB 1: PRENSA */}
       {activeTab === 'press' && (
-        <div className="space-y-2.5 flex-1 overflow-y-auto pr-1 relative z-10 min-h-[280px]">
+        <div className="space-y-2.5 flex-1 overflow-y-auto pr-1 min-h-[280px]">
           {newsList.length === 0 ? (
-            <div className="liquid-glass-subcard p-6 text-center text-xs text-[#8E8E99] border-dashed">
+            <div className="surface-2 bg-[#18181C] border border-[#242429] rounded-[4px] p-6 text-center text-xs text-[#8E8E99]">
               No hay noticias recientes.
             </div>
           ) : (
@@ -165,19 +161,17 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
               return (
                 <article
                   key={news.id}
-                  className={`liquid-glass-subcard p-3 text-xs space-y-1.5 group hover:border-white/28 transition-all ${
-                    isPlayerMentioned
-                      ? 'border-l-4 border-l-[#FF4F00]'
-                      : ''
+                  className={`surface-2 bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-xs space-y-1.5 transition-all ${
+                    isPlayerMentioned ? 'border-l-4 border-l-[#FF4F00]' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5">
-                      <span className={`text-[10px] font-sans font-bold uppercase px-1.5 py-0.2 rounded-[4px] border ${tag.style}`}>
+                      <span className={`text-[10px] font-sans font-bold uppercase px-1.5 py-0.5 rounded-[4px] border ${tag.style}`}>
                         {tag.label}
                       </span>
                       {isPlayerMentioned && (
-                        <span className="text-[10px] font-sans font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-1.5 py-0.2 rounded-[4px]">
+                        <span className="text-[10px] font-sans font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-1.5 py-0.5 rounded-[4px]">
                           Tú
                         </span>
                       )}
@@ -203,16 +197,16 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
       {/* TAB 2: REDES */}
       {activeTab === 'social' && (
-        <div className="space-y-2.5 flex-1 overflow-y-auto pr-1 relative z-10 min-h-[280px]">
+        <div className="space-y-2.5 flex-1 overflow-y-auto pr-1 min-h-[280px]">
           {socialPosts.map((post) => (
             <div
               key={post.id}
-              className="liquid-glass-subcard p-3 text-xs space-y-2 group hover:border-white/28 transition-all"
+              className="surface-2 bg-[#18181C] border border-[#242429] hover:border-[#3F3F46] rounded-[4px] p-3 text-xs space-y-2 transition-all"
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="font-bold text-[#F4F4F6] truncate">{post.authorName}</span>
-                  {post.authorVerified && <CheckCircle className="w-3 h-3 text-cyan-400 shrink-0" />}
+                  {post.authorVerified && <CheckCircle className="w-3 h-3 text-[#38BDF8] shrink-0" />}
                   <span className="text-[11px] text-[#8E8E99] truncate">@{post.authorHandle}</span>
                 </div>
                 <span className="text-[10px] text-[#8E8E99] font-sans tabular-nums shrink-0">
@@ -224,11 +218,11 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
 
               <div className="flex items-center gap-4 text-[11px] text-[#8E8E99] font-sans tabular-nums pt-1">
                 <span className="flex items-center gap-1">
-                  <Heart className="w-3 h-3 text-[#FF2A4B]" />
+                  <Heart className="w-3 h-3 text-[#FF4F00]" />
                   {(post.likes || 0).toLocaleString('es-AR')}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Repeat className="w-3 h-3 text-[#00E599]" />
+                  <Repeat className="w-3 h-3 text-[#34D399]" />
                   {(post.retweetsOrShares || 0).toLocaleString('es-AR')}
                 </span>
                 <span className="flex items-center gap-1">
@@ -241,18 +235,25 @@ export const NewsSidebar: React.FC<NewsSidebarProps> = ({
         </div>
       )}
 
-      {/* Radar de la Escena al pie para balance de altura completa */}
-      <div className="liquid-glass-subcard p-3 text-xs space-y-1.5 relative z-10 mt-auto shrink-0">
+      {/* Radar de la Escena al pie */}
+      <div className="surface-2 bg-[#18181C] border border-[#242429] rounded-[4px] p-3 text-xs space-y-1.5 mt-auto shrink-0">
         <div className="flex items-center justify-between text-[11px] font-bold text-[#8E8E99]">
           <span className="flex items-center gap-1.5">
-            <Radio className="w-3.5 h-3.5 text-[#00E599]" />
+            <Radio className="w-3.5 h-3.5 text-[#34D399]" />
             Radar de la Escena
           </span>
-          <span className="text-[#00E599] font-sans text-2xs uppercase tracking-wider">Activo</span>
+          <span className="text-[#34D399] font-sans text-2xs uppercase tracking-wider">Activo</span>
         </div>
-        <div className="flex items-center justify-between text-[11px] text-[#8E8E99]">
-          <span>Temporada: <strong className="text-[#F4F4F6] font-sans">{TimeSystem.getMonthName(world?.currentMonth || 1)} {world?.currentYear || 2026}</strong></span>
-          <span>Hype global: <strong className="text-[#FF4F00] font-sans">{player?.stats?.hype || 0}/100</strong></span>
+        <div className="flex items-center justify-between text-[11px] text-[#8E8E99] tabular-nums">
+          <span>
+            Temporada:{' '}
+            <strong className="text-[#F4F4F6] font-sans">
+              {TimeSystem.getMonthName(world?.currentMonth || 1)} {world?.currentYear || 2026}
+            </strong>
+          </span>
+          <span>
+            Hype: <strong className="text-[#FF4F00] font-sans">{player?.stats?.hype || 0}/100</strong>
+          </span>
         </div>
       </div>
     </aside>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Artist,
   WorldState,
+  Song,
   GlobalFestival,
   FestivalSlot,
   StageProductionConfig,
@@ -10,12 +11,11 @@ import {
   FestivalInvitation
 } from '../types';
 import {
-  GLOBAL_FESTIVALS,
   LIVE_SHOW_DILEMMAS,
-  STAGE_PRODUCTION_COSTS,
   FestivalEngine
 } from '../systems/FestivalEngine';
 import { playSound } from '../utils/audioSystem';
+import { showToast } from '../utils/toastBus';
 import { formatMoney } from '../utils/formatters';
 import {
   Flame,
@@ -36,7 +36,8 @@ import {
   Radio,
   Eye,
   HelpCircle,
-  Clock
+  Clock,
+  Ticket
 } from 'lucide-react';
 
 interface LiveShowModalProps {
@@ -74,8 +75,8 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
   const [pyro, setPyro] = useState<'none' | 'sparks_fog' | 'flamethrowers_lasers'>('none');
   const [crew, setCrew] = useState<'solo_dj' | 'live_band' | 'elite_dancers_choir'>('solo_dj');
 
-  // Setlist Selection (up to 5 songs)
-  const playerSongs = Object.values(world?.songs || {}).filter(s => s && s.artistId === player?.id);
+  // Setlist Selection (up to 6 songs)
+  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s && s.artistId === player?.id);
   const [selectedSongIds, setSelectedSongIds] = useState<string[]>(() => {
     // Default: top songs by popularity/streams
     return [...playerSongs]
@@ -122,9 +123,18 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
     guestArtistIds: []
   };
   const productionCost = FestivalEngine.calculateProductionCost(currentProductionConfig);
-  const estimatedPayout = invitation ? invitation.payout : 35000;
+  const pop = player?.stats?.popularity || 0;
+  const basePayoutBySlot: Record<FestivalSlot, number> = {
+    opening_act: 9000 + pop * 280,
+    sunset_slot: 38000 + pop * 800,
+    sub_headliner: 120000 + pop * 1700,
+    headliner: 350000 + pop * 4500
+  };
+  const prestigeScale = (festival?.prestige || 85) / 85;
+  const estimatedPayout = invitation?.payout ?? Math.round((basePayoutBySlot[slot] || 35000) * prestigeScale);
   const isFundsInsufficient = productionCost > (player?.stats?.funds || 0);
   const isEnergyInsufficient = (player?.stats?.energy || 0) < 20;
+  const isSetlistEmpty = playerSongs.length === 0 || selectedSongIds.length === 0;
 
   const handleToggleSong = (songId: string) => {
     playSound('click');
@@ -137,6 +147,14 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
   };
 
   const handleProceedToDilemma = () => {
+    if (playerSongs.length === 0) {
+      showToast('Graba al menos un tema en el Estudio antes de subir al escenario.', 'warning');
+      return;
+    }
+    if (selectedSongIds.length === 0) {
+      showToast('Selecciona al menos 1 canción para armar tu setlist.', 'warning');
+      return;
+    }
     if (isFundsInsufficient || isEnergyInsufficient) return;
     playSound('level_up');
     setStep('dilemma');
@@ -158,19 +176,20 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
       playSound('chart_no1');
       setStep('result');
     } catch (err: any) {
-      alert(err.message || 'Error al ejecutar el show en vivo.');
+      showToast(err?.message || 'Error al ejecutar el show en vivo.', 'error');
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 overflow-y-auto animate-fade-in">
-      <div className="relative w-full max-w-4xl bg-[#111114] border border-[#242429] rounded-[6px] shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh]">
+      <div className="lg-modal relative w-full max-w-4xl bg-[#111114] border border-[#242429] rounded-[8px] shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh]">
         {/* Modal Header */}
         <div className="p-5 sm:p-6 bg-[#18181C] border-b border-[#242429] text-[#F4F4F6] relative flex items-start justify-between shrink-0">
           <div className="space-y-1.5 pr-8">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-sans uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
-                🎪 Festival Mundial • {festival.country}
+              <span className="text-[10px] font-sans uppercase tracking-wider px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99] inline-flex items-center gap-1">
+                <Ticket className="w-3 h-3 text-[#FF4F00]" />
+                Festival Mundial • {festival.country}
               </span>
               <span className="text-[10px] font-sans px-2 py-0.5 rounded-[4px] bg-[#242429] text-[#F4F4F6]">
                 {FestivalEngine.getSlotTitle(slot)}
@@ -408,8 +427,12 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                   ¿Cómo decides reaccionar en el escenario?
                 </h4>
                 <div className="space-y-2.5">
-                  {currentDilemma.choices.map(choice => {
+                  {(currentDilemma.choices || []).map(choice => {
                     const isSelected = selectedChoiceId === choice.id;
+                    const playerStatVal = choice.statCheck
+                      ? ((player?.stats as any)?.[choice.statCheck.stat] ?? (player?.personality as any)?.[choice.statCheck.stat] ?? 0)
+                      : null;
+                    const meetsStat = choice.statCheck && playerStatVal !== null ? playerStatVal >= choice.statCheck.min : true;
                     return (
                       <button
                         key={choice.id}
@@ -424,15 +447,26 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
                             : 'bg-[#111114] border-[#242429] hover:border-[#3F3F46] text-[#8E8E99]'
                         }`}
                       >
-                        <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
                           <span className="text-sm font-bold text-[#F4F4F6]">
                             {choice.text}
                           </span>
-                          <span className={`text-[10px] font-sans tabular-nums px-2 py-0.5 rounded-[4px] border ${
-                            choice.scoreModifier > 0 ? 'bg-[#111114] text-[#00E599] border-[#00E599]/30' : 'bg-[#1F1215] text-[#EF4444] border-[#451A20]'
-                          }`}>
-                            {choice.scoreModifier > 0 ? `+${choice.scoreModifier} Euforia` : `${choice.scoreModifier} Euforia`}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {choice.statCheck && (
+                              <span className={`text-[10px] font-sans tabular-nums px-2 py-0.5 rounded-[4px] border ${
+                                meetsStat
+                                  ? 'bg-[#111114] text-[#00E599] border-[#00E599]/35'
+                                  : 'bg-[#18181C] text-[#F59E0B] border-[#F59E0B]/40'
+                              }`}>
+                                Req: {String(choice.statCheck.stat)} ≥ {choice.statCheck.min} ({playerStatVal})
+                              </span>
+                            )}
+                            <span className={`text-[10px] font-sans tabular-nums px-2 py-0.5 rounded-[4px] border ${
+                              choice.scoreModifier > 0 ? 'bg-[#111114] text-[#00E599] border-[#00E599]/30' : 'bg-[#1F1215] text-[#EF4444] border-[#451A20]'
+                            }`}>
+                              {choice.scoreModifier > 0 ? `+${choice.scoreModifier} Euforia` : `${choice.scoreModifier} Euforia`}
+                            </span>
+                          </div>
                         </div>
                         <p className="text-xs text-[#8E8E99] mt-1.5 leading-relaxed">
                           {choice.description}
@@ -569,9 +603,9 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
               <button
                 type="button"
                 onClick={handleProceedToDilemma}
-                disabled={isFundsInsufficient || isEnergyInsufficient}
+                disabled={isFundsInsufficient || isEnergyInsufficient || isSetlistEmpty}
                 className={`px-5 py-2.5 rounded-[4px] text-xs font-sans font-bold transition-all flex items-center gap-2 ${
-                  isFundsInsufficient || isEnergyInsufficient
+                  isFundsInsufficient || isEnergyInsufficient || isSetlistEmpty
                     ? 'bg-[#18181C] border border-[#242429] text-[#52525B] cursor-not-allowed'
                     : 'bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer'
                 }`}
@@ -584,7 +618,7 @@ export const LiveShowModal: React.FC<LiveShowModalProps> = ({
             {step === 'dilemma' && (
               <button
                 type="button"
-                onClick={() => handleResolveAndPerform(selectedChoiceId || currentDilemma.choices[0].id)}
+                onClick={() => handleResolveAndPerform(selectedChoiceId || currentDilemma.choices?.[0]?.id)}
                 className="px-6 py-2.5 rounded-[4px] text-xs font-sans font-bold bg-[#FF4F00] hover:bg-[#E04500] text-white active:translate-y-[1px] cursor-pointer flex items-center gap-2"
               >
                 <Mic2 className="w-4 h-4" />

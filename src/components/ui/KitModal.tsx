@@ -17,9 +17,9 @@ export interface KitModalProps {
 
 /**
  * Modales de Juego Táctiles
- * - Bordes redondeados gruesos, banda saturada para el título (.kit-header-band), sombras profundas (.kit-modal)
+ * - Bordes redondeados limpios, banda saturada para el título (.kit-header-band), cristal denso (.kit-modal)
  * - Botón de cerrar .kit-close anclado absoluto en esquina superior derecha
- * - Contenedor .kit-modal-header con reservas laterales simétricas de 72px a izquierda y derecha (px-[72px]) para centrado óptico sin colisionar con el botón de cierre
+ * - Contenedor .kit-modal-header con reservas laterales simétricas de 72px a izquierda y derecha (px-[72px])
  */
 export const KitModal: React.FC<KitModalProps> = ({
   isOpen,
@@ -48,27 +48,29 @@ export const KitModal: React.FC<KitModalProps> = ({
 
   const bandVariantClass =
     bandVariant === 'emerald'
-      ? 'kit-header-band-emerald text-[#032115]'
+      ? 'kit-header-band-emerald text-[#09090B]'
       : bandVariant === 'rec'
       ? 'kit-header-band-rec text-white'
       : bandVariant === 'amber'
-      ? 'kit-header-band-amber text-[#451A03]'
+      ? 'kit-header-band-amber text-[#09090B]'
       : bandVariant === 'cyan'
-      ? 'kit-header-band-cyan text-[#082F49]'
+      ? 'kit-header-band-cyan text-[#09090B]'
       : 'kit-header-band text-[#F4F0EA]';
+
+  const isLightBand = bandVariant === 'emerald' || bandVariant === 'amber' || bandVariant === 'cyan';
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in"
       onClick={() => {
         playSound('click');
         onClose();
       }}
     >
       <div
-        className={`kit-modal w-full ${maxWidth} text-[#F4F0EA] my-auto ${className}`}
+        className={`kit-modal lg-modal w-full ${maxWidth} text-[#F4F0EA] my-auto ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {!hideCloseButton && (
@@ -85,14 +87,18 @@ export const KitModal: React.FC<KitModalProps> = ({
           </button>
         )}
 
-        {/* Contenedor .kit-modal-header con reservas laterales simétricas de 72px a izquierda y derecha (px-[72px]) para centrado óptico sin colisionar con el botón de cierre */}
+        {/* Contenedor .kit-modal-header con reservas laterales simétricas de 72px (px-[72px]) */}
         <div className="kit-modal-header px-[72px]">
           {title && (
             <div className={`kit-header-band ${bandVariantClass}`}>
               <div className="flex flex-col items-center justify-center text-center">
                 <div className="flex items-center gap-2">
                   {icon && <span className="shrink-0">{icon}</span>}
-                  <h2 className="kit-text-header font-display text-lg sm:text-xl tracking-tight uppercase">
+                  <h2
+                    className={`font-display text-lg sm:text-xl font-extrabold tracking-tight uppercase ${
+                      isLightBand ? 'text-[#09090B]' : 'kit-text-header text-[#F4F0EA]'
+                    }`}
+                  >
                     {title}
                   </h2>
                 </div>

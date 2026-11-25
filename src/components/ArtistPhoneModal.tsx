@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   MessageSquare,
@@ -8,19 +8,24 @@ import {
   Wifi,
   CheckCheck,
   Send,
-  Heart
+  Heart,
+  Flame,
+  Lightbulb,
+  Music
 } from 'lucide-react';
-import { Artist, WorldState, ArtistPhoneMessage } from '../types';
+import { Artist, WorldState, ArtistPhoneMessage, SocialPost } from '../types';
 import { formatMoney, formatFans } from '../utils/formatters';
 import { playSound } from '../utils/audioSystem';
+import { showToast } from '../utils/toastBus';
 
 interface ArtistPhoneModalProps {
   player: Artist;
   world: WorldState;
   isOpen: boolean;
   onClose: () => void;
-  onReplyMessage: (messageId: string, choiceIndex: number) => void;
+  onReplyMessage: (messageId: string, choiceIndex: number) => { success?: boolean; message?: string } | void;
   onMarkAllAsRead: () => void;
+  onMarkMessageRead?: (messageId: string) => void;
 }
 
 export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
@@ -29,28 +34,47 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
   isOpen,
   onClose,
   onReplyMessage,
-  onMarkAllAsRead
+  onMarkAllAsRead,
+  onMarkMessageRead
 }) => {
   const [activeApp, setActiveApp] = useState<'messages' | 'feed' | 'wallet'>('messages');
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [feedbackEffect, setFeedbackEffect] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const messages: ArtistPhoneMessage[] = world?.phoneMessages || player?.phoneMessages || [];
   const unreadCount = world?.unreadPhoneCount || 0;
+  const socialFeed: SocialPost[] = (world?.socialFeed || []).slice(0, 10);
 
   // Selected message for thread view
   const activeMessage = messages.find((m) => m.id === selectedMessageId) || messages[0] || null;
 
   const handleSelectMessage = (msg: ArtistPhoneMessage) => {
     setSelectedMessageId(msg.id);
+    if (!msg.isRead) {
+      onMarkMessageRead?.(msg.id);
+    }
     playSound('click');
   };
 
   const handleReply = (messageId: string, choiceIndex: number) => {
+    const res = onReplyMessage(messageId, choiceIndex);
+    if (res && typeof res === 'object' && res.success === false) {
+      showToast(res.message || 'No se pudo procesar la respuesta.', 'error');
+      return;
+    }
+
     playSound('money');
-    onReplyMessage(messageId, choiceIndex);
 
     const msg = messages.find((m) => m.id === messageId);
     const choice = msg?.choices?.[choiceIndex];
@@ -60,7 +84,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
       if (choice.effects.hypeDelta) summary.push(`${choice.effects.hypeDelta > 0 ? '+' : ''}${choice.effects.hypeDelta} Hype`);
       if (choice.effects.fansDelta) summary.push(`${choice.effects.fansDelta > 0 ? '+' : ''}${choice.effects.fansDelta.toLocaleString('es-AR')} Fans`);
       if (choice.effects.energyDelta) summary.push(`${choice.effects.energyDelta > 0 ? '+' : ''}${choice.effects.energyDelta}% Energía`);
-      setFeedbackEffect(summary.join(' • ') || '¡Respuesta enviada!');
+      setFeedbackEffect(summary.join(' • ') || 'Respuesta enviada.');
       setTimeout(() => setFeedbackEffect(null), 3000);
     }
   };
@@ -133,7 +157,7 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
         <div className="hidden sm:block absolute -right-[3px] top-44 w-[3px] h-16 bg-[#4A5060] rounded-r-full pointer-events-none" />
 
         {/* iPhone 16 Pro Titanium Chassis */}
-        <div className="w-full h-[790px] max-h-[90vh] iphone-pro-chassis flex flex-col relative text-[#F4F4F6] select-none">
+        <div className="lg-modal w-full h-[790px] max-h-[90vh] iphone-pro-chassis flex flex-col relative text-[#F4F4F6] select-none">
           {/* Inner OLED Curved Screen */}
           <div className="w-full h-full iphone-pro-screen flex flex-col overflow-hidden relative border border-white/10">
             {/* Dynamic Island + Top iOS Status Bar */}
@@ -341,52 +365,42 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                     <span className="text-2xs uppercase font-sans font-bold text-[#8E8E99] block tracking-wider">
                       Tendencias Globales
                     </span>
-                    <h4 className="text-xs font-bold text-[#F4F4F6] mt-0.5">#{player.name.replace(/\s+/g, '')}</h4>
+                    <h4 className="text-xs font-bold text-[#F4F4F6] mt-0.5">#{(player?.name || 'Artista').replace(/\s+/g, '')}</h4>
                     <p className="text-2xs text-[#8E8E99] font-sans tabular-nums">
-                      {(player.stats?.monthlyListeners || 50000).toLocaleString('es-AR')} personas hablando de esto en vivo.
+                      {(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')} oyentes mensuales activos.
                     </p>
                   </div>
 
-                  {/* Feed Items procedural */}
-                  {[
-                    {
-                      user: '@TrapArgLeaks',
-                      handle: 'Trap Leaks Oficial',
-                      text: `Dicen que ${player.name} estuvo en el estudio hasta las 5 AM grabando algo histórico... ¿Se viene álbum? 🔥`,
-                      likes: '14.2K',
-                      retweets: '2.8K'
-                    },
-                    {
-                      user: '@BillboardArg',
-                      handle: 'Billboard Charts',
-                      text: `📈 IMPACTO: Los oyentes mensuales de ${player.name} siguen subiendo como cohete tras los últimos lanzamientos.`,
-                      likes: '9.5K',
-                      retweets: '1.1K'
-                    },
-                    {
-                      user: '@FanaticosDelArtista',
-                      handle: 'Comunidad Fiel',
-                      text: `Necesitamos una gira por estadios YA. No podemos esperar más hermano 🏟️✨`,
-                      likes: '5.4K',
-                      retweets: '980'
-                    }
-                  ].map((tweet, idx) => (
-                    <div key={idx} className="iphone-card p-3.5 space-y-2">
-                      <div className="flex items-center justify-between text-2xs">
-                        <span className="font-bold text-[#F4F4F6]">{tweet.handle}</span>
-                        <span className="text-[#8E8E99] font-sans">{tweet.user}</span>
-                      </div>
-                      <p className="text-xs text-[#F4F4F6] leading-relaxed">{tweet.text}</p>
-                      <div className="flex items-center gap-4 text-2xs font-sans text-[#8E8E99] pt-1.5 border-t border-white/10">
-                        <span className="flex items-center gap-1 hover:text-[#EF4444]">
-                          <Heart className="w-3 h-3 text-[#EF4444]" /> {tweet.likes}
-                        </span>
-                        <span className="flex items-center gap-1 hover:text-[#00E599]">
-                          <TrendingUp className="w-3 h-3 text-[#00E599]" /> {tweet.retweets}
-                        </span>
-                      </div>
+                  {socialFeed.length === 0 ? (
+                    <div className="iphone-card p-5 text-center space-y-2">
+                      <Music className="w-6 h-6 text-[#FF4F00] mx-auto" />
+                      <p className="text-xs font-bold text-[#F4F4F6]">Sin actividad viral todavía</p>
+                      <p className="text-2xs text-[#8E8E99] leading-relaxed">
+                        Lanza música, organiza giras o responde mensajes para generar conversación real en TrendX.
+                      </p>
                     </div>
-                  ))}
+                  ) : (
+                    socialFeed.map((post) => (
+                      <div key={post.id} className="iphone-card p-3.5 space-y-2">
+                        <div className="flex items-center justify-between gap-2 text-2xs">
+                          <span className="font-bold text-[#F4F4F6] truncate">{post.authorName}</span>
+                          <span className="text-[#8E8E99] font-sans shrink-0">{post.authorHandle}</span>
+                        </div>
+                        <p className="text-xs text-[#F4F4F6] leading-relaxed">{post.content}</p>
+                        <div className="flex items-center justify-between text-2xs font-sans text-[#8E8E99] pt-1.5 border-t border-white/10 tabular-nums">
+                          <div className="flex items-center gap-4">
+                            <span className="flex items-center gap-1 hover:text-[#EF4444]">
+                              <Heart className="w-3 h-3 text-[#EF4444]" /> {(post.likes || 0).toLocaleString('es-AR')}
+                            </span>
+                            <span className="flex items-center gap-1 hover:text-[#10B981]">
+                              <TrendingUp className="w-3 h-3 text-[#10B981]" /> {(post.retweetsOrShares || 0).toLocaleString('es-AR')}
+                            </span>
+                          </div>
+                          <span>M{post.month}/{post.year}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               )}
 
@@ -423,15 +437,19 @@ export const ArtistPhoneModal: React.FC<ArtistPhoneModalProps> = ({
                     </div>
                     <div className="iphone-card p-3">
                       <span className="text-2xs text-[#8E8E99] uppercase block font-sans">Nivel de Hype</span>
-                      <span className="font-bold text-[#F59E0B] font-sans tabular-nums">
-                        {player.stats?.hype || 0}/100 🔥
+                      <span className="font-bold text-[#F59E0B] font-sans tabular-nums inline-flex items-center gap-1">
+                        {player.stats?.hype || 0}/100
+                        <Flame className="w-3.5 h-3.5 text-[#F59E0B]" />
                       </span>
                     </div>
                   </div>
 
                   {/* Financial Tip */}
                   <div className="iphone-card p-3.5 text-xs text-[#8E8E99] space-y-1">
-                    <span className="font-bold text-[#F4F4F6] block font-sans">💡 Consejo de Mánager:</span>
+                    <span className="font-bold text-[#F4F4F6] flex items-center gap-1.5 font-sans">
+                      <Lightbulb className="w-3.5 h-3.5 text-[#F59E0B]" />
+                      Consejo de Mánager
+                    </span>
                     <p>
                       Mantén siempre un colchón de al menos $15.000 para emergencias de giras y producciones de videoclips.
                     </p>

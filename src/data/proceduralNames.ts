@@ -1234,7 +1234,7 @@ function extractTitleSet(existingTitles?: Set<string> | string[] | Record<string
   if (existingTitles instanceof Set) {
     existingTitles.forEach(t => result.add(normalizeTitle(t)));
   } else if (Array.isArray(existingTitles)) {
-    existingTitles.forEach(item => {
+    (existingTitles as any[]).forEach((item: any) => {
       const title = typeof item === 'string' ? item : item?.title;
       if (title) result.add(normalizeTitle(title));
     });

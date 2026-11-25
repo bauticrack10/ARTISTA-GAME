@@ -1,21 +1,22 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Artist, WorldState } from '../types';
 import {
   X,
   Download,
   Upload,
-  RotateCcw,
-  ShieldCheck,
   Save,
   AlertTriangle,
-  CheckCircle2,
-  FileText
+  CheckCircle2
 } from 'lucide-react';
 import { playSound } from '../utils/audioSystem';
 
 interface SettingsModalProps {
-  player: Artist;
-  world: WorldState;
+  isOpen?: boolean;
+  player?: Artist;
+  world?: WorldState;
+  artistName?: string;
+  currentYear?: number;
+  currentMonth?: number;
   onClose: () => void;
   onExportSave: () => void;
   onImportSave: (jsonContent: string) => void;
@@ -23,8 +24,12 @@ interface SettingsModalProps {
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen = true,
   player,
   world,
+  artistName,
+  currentYear,
+  currentMonth,
   onClose,
   onExportSave,
   onImportSave,
@@ -33,6 +38,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const displayName = player?.name || artistName || 'Artista';
+  const displayYear = world?.currentYear ?? currentYear ?? 2026;
+  const displayMonth = world?.currentMonth ?? currentMonth ?? 1;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,17 +77,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-fade-in backdrop-blur-xs">
-      <div className="w-full max-w-lg bg-[#141417] border border-[#26262B] rounded-[6px] shadow-2xl text-[#F4F0EA] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-fade-in">
+      <div className="lg-modal w-full max-w-lg bg-[#111114] border border-[#242429] rounded-[8px] shadow-2xl text-[#F4F0EA] overflow-hidden">
         {/* Header */}
-        <div className="p-5 border-b border-[#26262B] flex items-center justify-between bg-[#111114]">
+        <div className="p-5 border-b border-[#242429] flex items-center justify-between bg-[#111114]">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-[4px] bg-[#18181C] border border-[#26262B] flex items-center justify-center text-[#FF4F00]">
+            <div className="w-7 h-7 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#FF4F00]">
               <Save className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-3xs uppercase font-sans font-bold tracking-widest text-[#8E8E99] block">
-                MEMORIA & GESTIÓN
+              <span className="text-3xs uppercase font-sans font-bold tracking-widest text-[#8E8E99] block tabular-nums">
+                MEMORIA & GESTIÓN • {displayName} • {String(displayMonth).padStart(2, '0')}/{displayYear}
               </span>
               <h2 className="text-sm font-bold text-[#F4F0EA]">
                 Ajustes & Guardado de Partida

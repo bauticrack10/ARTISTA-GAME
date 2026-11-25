@@ -5,6 +5,13 @@ export interface CertificationCheckResult {
   newsItems: Array<{ headline: string; body: string; relatedArtistId: string }>;
 }
 
+const TIER_SPANISH_LABELS: Record<CertificationTier, string> = {
+  gold: 'DISCO DE ORO',
+  platinum: 'DISCO DE PLATINO',
+  multi_platinum: 'MULTI-PLATINO',
+  diamond: 'DISCO DE DIAMANTE'
+};
+
 export class CertificationEngine {
   // Official thresholds in accordance with global streaming & sales standards
   static SINGLE_THRESHOLDS: Array<{ tier: CertificationTier; multiplier?: number; minStreams: number; label: string }> = [
@@ -34,8 +41,11 @@ export class CertificationEngine {
 
     // 1. Evaluate Singles / Songs
     for (const song of songs) {
-      if (!song || !song.id || !song.streamsTotal) continue;
+      if (!song || !song.id || !song.streamsTotal || song.streamsTotal < 500000) continue;
       if (!song.certifications) song.certifications = [];
+      if (song.certifications.some(c => c.tier === 'diamond')) continue;
+
+      let highestNewCert: OfficialCertification | null = null;
 
       for (const th of this.SINGLE_THRESHOLDS) {
         if (song.streamsTotal >= th.minStreams) {
@@ -62,24 +72,32 @@ export class CertificationEngine {
             song.certifications.push(cert);
             newCertifications.push(cert);
 
-            // Register in Artist record
             const artist = world.artists[song.artistId];
             if (artist) {
               if (!artist.officialCertifications) artist.officialCertifications = [];
               artist.officialCertifications.push(cert);
+            }
 
-              // Headline for World News
-              const iconEmoji = th.tier === 'diamond' ? '💎' : th.tier === 'platinum' || th.tier === 'multi_platinum' ? '💿' : '📀';
-              const headline = `${iconEmoji} ¡${th.label.toUpperCase()}! "${song.title}" de ${artist.name}`;
-              const body = `La entidad certificadora oficial de la industria ha otorgado la placa de ${th.label} a "${song.title}" tras superar ${(song.streamsTotal).toLocaleString('es-AR')} reproducciones globales.`;
-
-              newsItems.push({
-                headline,
-                body,
-                relatedArtistId: artist.id
-              });
+            if (!highestNewCert) {
+              highestNewCert = cert;
             }
           }
+        }
+      }
+
+      if (highestNewCert) {
+        const artist = world.artists[song.artistId];
+        if (artist) {
+          const iconEmoji = highestNewCert.tier === 'diamond' ? '💎' : highestNewCert.tier === 'platinum' || highestNewCert.tier === 'multi_platinum' ? '💿' : '📀';
+          const tierLabel = TIER_SPANISH_LABELS[highestNewCert.tier] || highestNewCert.label.toUpperCase();
+          const headline = `${iconEmoji} ¡${tierLabel}! "${song.title}" de ${artist.name}`;
+          const body = `La entidad certificadora oficial de la industria ha otorgado la placa de ${highestNewCert.label} a "${song.title}" tras superar ${(song.streamsTotal).toLocaleString('es-AR')} reproducciones globales.`;
+
+          newsItems.push({
+            headline,
+            body,
+            relatedArtistId: artist.id
+          });
         }
       }
     }
@@ -88,9 +106,13 @@ export class CertificationEngine {
     for (const album of albums) {
       if (!album || !album.id) continue;
       if (!album.certifications) album.certifications = [];
+      if (album.certifications.some(c => c.tier === 'diamond')) continue;
 
       // Calculate equivalent units: Pure first-week / career sales + (Streams / 1500)
       const equivalentUnits = (album.firstWeekSales || 0) + Math.floor((album.totalStreams || 0) / 1500);
+      if (equivalentUnits < 50000) continue;
+
+      let highestNewAlbumCert: OfficialCertification | null = null;
 
       for (const th of this.ALBUM_THRESHOLDS) {
         if (equivalentUnits >= th.minUnits) {
@@ -120,18 +142,28 @@ export class CertificationEngine {
             if (artist) {
               if (!artist.officialCertifications) artist.officialCertifications = [];
               artist.officialCertifications.push(cert);
+            }
 
-              const iconEmoji = th.tier === 'diamond' ? '💎' : th.tier === 'platinum' || th.tier === 'multi_platinum' ? '💿' : '📀';
-              const headline = `${iconEmoji} ¡ÁLBUM DE ${th.tier.toUpperCase()}! "${album.title}" de ${artist.name}`;
-              const body = `El álbum "${album.title}" alcanza oficialmente el estatus de ${th.label} con ${equivalentUnits.toLocaleString('es-AR')} unidades equivalentes certificadas.`;
-
-              newsItems.push({
-                headline,
-                body,
-                relatedArtistId: artist.id
-              });
+            if (!highestNewAlbumCert) {
+              highestNewAlbumCert = cert;
             }
           }
+        }
+      }
+
+      if (highestNewAlbumCert) {
+        const artist = world.artists[album.artistId];
+        if (artist) {
+          const iconEmoji = highestNewAlbumCert.tier === 'diamond' ? '💎' : highestNewAlbumCert.tier === 'platinum' || highestNewAlbumCert.tier === 'multi_platinum' ? '💿' : '📀';
+          const tierLabel = TIER_SPANISH_LABELS[highestNewAlbumCert.tier] || highestNewAlbumCert.label.toUpperCase();
+          const headline = `${iconEmoji} ¡ÁLBUM ${tierLabel}! "${album.title}" de ${artist.name}`;
+          const body = `El álbum "${album.title}" alcanza oficialmente el estatus de ${highestNewAlbumCert.label} con ${equivalentUnits.toLocaleString('es-AR')} unidades equivalentes certificadas.`;
+
+          newsItems.push({
+            headline,
+            body,
+            relatedArtistId: artist.id
+          });
         }
       }
     }

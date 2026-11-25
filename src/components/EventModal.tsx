@@ -59,7 +59,7 @@ export const EventModal: React.FC<EventModalProps> = ({
       className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-5 py-6 sm:py-10 overflow-y-auto animate-fade-in"
     >
       <div
-        className={`kit-modal animate-stagger-in max-w-2xl w-full p-5 sm:p-8 space-y-6 text-[#F4F4F6] relative overflow-hidden my-auto ${
+        className={`lg-modal kit-modal animate-stagger-in max-w-2xl w-full p-5 sm:p-8 space-y-6 text-[#F4F4F6] relative overflow-hidden my-auto ${
           importanceLevel === 5 || isCrisis
             ? 'border-2 border-[#EF4444]'
             : isBloqueoCreativo
@@ -125,7 +125,7 @@ export const EventModal: React.FC<EventModalProps> = ({
             </div>
 
             {/* Artist Mini Status Pill */}
-            <div className="flex items-center gap-3 bg-[#09090B] px-3 py-1 rounded-[4px] border border-[#242429] text-xs font-mono tabular-nums text-[#F4F4F6]">
+            <div className="flex items-center gap-3 bg-[#09090B] px-3 py-1 rounded-[4px] border border-[#242429] text-xs font-sans tabular-nums text-[#F4F4F6]">
               <span className="flex items-center gap-1 text-[#00E599]">
                 <DollarSign className="w-3.5 h-3.5" />
                 <span className="font-bold">${player?.stats?.funds != null ? player.stats.funds.toLocaleString() : '0'}</span>

@@ -66,7 +66,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
       case 'general':
         return { label: 'Campo General', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' };
       case 'genre':
-        return { label: 'Categoría de Género', color: 'bg-purple-500/20 text-purple-300 border-purple-500/40' };
+        return { label: 'Categoría de Género', color: 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/40' };
       case 'craft':
         return { label: 'Técnica & Sonido', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' };
       default:
@@ -84,7 +84,7 @@ export const AwardsGalaModal: React.FC<AwardsGalaModalProps> = ({
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in"
     >
       <div
-        className="bg-[#111114] border border-[#242429] rounded-[6px] max-w-4xl w-full max-h-[94vh] flex flex-col overflow-hidden text-[#F4F4F6] shadow-2xl"
+        className="lg-modal bg-[#111114] border border-[#242429] rounded-[8px] max-w-4xl w-full max-h-[94vh] flex flex-col overflow-hidden text-[#F4F4F6] shadow-2xl"
       >
         {/* Modal Header: Contextual Temporality & Performance Summary */}
         <div className="p-5 sm:p-6 border-b border-[#242429] bg-[#111114] flex items-center justify-between gap-3">

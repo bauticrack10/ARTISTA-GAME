@@ -80,7 +80,7 @@ export const YearEndWrappedModal: React.FC<YearEndWrappedModalProps> = ({
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-lg flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       {/* Wrapped Story Container */}
       <div
-        className="w-full max-w-[460px] h-[720px] max-h-[92vh] bg-[#111114] border border-[#242429] rounded-[6px] shadow-2xl flex flex-col overflow-hidden relative text-[#F4F4F6] select-none"
+        className="lg-modal w-full max-w-[460px] h-[720px] max-h-[92vh] bg-[#111114] border border-[#242429] rounded-[8px] shadow-2xl flex flex-col overflow-hidden relative text-[#F4F4F6] select-none"
       >
         {/* Top Story Progress Bars */}
         <div className="p-4 flex items-center gap-1.5 z-20 border-b border-[#242429]">

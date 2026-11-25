@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Disc3, ArrowRight, X } from 'lucide-react';
+import { Disc3, ArrowRight, X } from 'lucide-react';
 import { playSound } from '../../utils/audioSystem';
 
 export interface QuickOnboardingTooltipProps {
@@ -50,37 +50,32 @@ export const QuickOnboardingTooltip: React.FC<QuickOnboardingTooltipProps> = ({
   return (
     <aside
       aria-label="Recomendación inicial"
-      className={`relative z-30 liquid-glass-card border border-[#FF4F00]/40 p-3 sm:p-4 shadow-[0_10px_30px_rgba(255,79,0,0.18)] transition-all ${className}`}
+      className={`surface-1 bg-[#111114] border border-[#FF4F00]/45 rounded-[6px] p-3.5 sm:p-4 transition-all ${className}`}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2.5">
-          <div className="w-8 h-8 rounded-[8px] bg-gradient-to-b from-[#FF5F1A] to-[#FF3B00] text-white flex items-center justify-center shrink-0 shadow-[0_2px_0_#992500] mt-0.5 animate-bounce">
-            <Sparkles className="w-4 h-4 fill-white" />
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-[4px] bg-[#FF4F00] text-white flex items-center justify-center shrink-0 mt-0.5">
+            <Disc3 className="w-4 h-4" />
           </div>
 
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#FF4F00] font-sans">
-                Primer Paso Recomendado
-              </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/30 animate-pulse">
-                Acción Activa
-              </span>
-            </div>
+            <span className="text-2xs font-bold uppercase tracking-wider text-[#FF4F00] font-sans block">
+              Sugerencia de Debut
+            </span>
 
-            <h4 className="text-sm font-extrabold text-white leading-tight font-sans">
-              ¡Graba tu primer single o realiza una acción del mes!
+            <h4 className="text-sm font-bold text-[#F4F4F6] leading-tight font-sans">
+              Grabá tu primer single para empezar a sumar oyentes
             </h4>
 
             <p className="text-xs text-[#8E8E99] leading-snug">
-              Ingresa al Estudio para componer tu tema debut o utiliza las acciones del mes abajo para entrenar voz y ganar vitalidad.
+              Entrá al Estudio para lanzar tu tema debut o entrená abajo en Acciones del Mes antes de publicar.
             </p>
 
             <div className="pt-1.5 flex items-center gap-2 flex-wrap">
               <button
                 type="button"
                 onClick={handleAction}
-                className="kit-btn kit-btn-orange py-1.5 px-3 text-xs font-bold tracking-wider uppercase flex items-center gap-1.5 cursor-pointer shadow-sm"
+                className="rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white py-1.5 px-3 text-xs font-bold tracking-wider uppercase flex items-center gap-1.5 cursor-pointer transition-colors"
               >
                 <Disc3 className="w-3.5 h-3.5 shrink-0" />
                 <span>Grabar en Estudio</span>
@@ -90,7 +85,7 @@ export const QuickOnboardingTooltip: React.FC<QuickOnboardingTooltipProps> = ({
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="px-2.5 py-1 text-xs text-[#8E8E99] hover:text-white transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded-[4px] surface-2 bg-[#18181C] border border-[#242429] text-xs text-[#8E8E99] hover:text-white transition-colors cursor-pointer"
               >
                 Entendido
               </button>
@@ -101,7 +96,7 @@ export const QuickOnboardingTooltip: React.FC<QuickOnboardingTooltipProps> = ({
         <button
           type="button"
           onClick={handleDismiss}
-          className="p-1 rounded-[4px] hover:bg-white/10 text-[#8E8E99] hover:text-white transition-colors cursor-pointer shrink-0"
+          className="p-1 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-white transition-colors cursor-pointer shrink-0"
           title="Descartar recomendación"
         >
           <X className="w-4 h-4" />

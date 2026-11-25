@@ -6,30 +6,23 @@ import { SettingsModal } from './SettingsModal';
 import {
   Zap,
   DollarSign,
-  Users,
   Play,
   Award,
   Disc3,
-  BarChart3,
   Compass,
-  Building2,
-  Network,
-  ShoppingBag,
   Briefcase,
-  Plane,
-  TrendingUp,
   Volume2,
   VolumeX,
   Radio,
   Smartphone,
-  Settings
+  Settings,
+  Headphones
 } from 'lucide-react';
 import {
   formatMoney,
-  formatFans
+  formatCompactNumber
 } from '../utils/formatters';
 import { gameJuice, HudTarget } from '../utils/gameJuice';
-import { MagneticPrimaryButton } from './ui';
 import { ArtistaLogo } from './ArtistaLogo';
 
 interface NavbarProps {
@@ -40,12 +33,13 @@ interface NavbarProps {
   onAdvanceCycle: (months: 1 | 3 | 6 | 12) => void;
   onReturnToTitle: () => void;
   onOpenPhone?: () => void;
+  onOpenFinancialLedger?: () => void;
   onExportSave?: () => void;
   onImportSave?: (jsonContent: string) => void;
   onResetCareer?: () => void;
 }
 
-type HubId = 'dashboard' | 'music' | 'world' | 'career';
+type HubId = 'dashboard' | 'studio' | 'scene' | 'career' | 'legacy';
 
 export const Navbar: React.FC<NavbarProps> = ({
   player,
@@ -55,6 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onAdvanceCycle,
   onReturnToTitle,
   onOpenPhone,
+  onOpenFinancialLedger,
   onExportSave,
   onImportSave,
   onResetCareer
@@ -90,8 +85,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const getActiveHub = (): HubId => {
     if (currentTab === 'dashboard') return 'dashboard';
-    if (currentTab === 'studio') return 'music';
-    if (currentTab === 'streaming' || currentTab === 'charts' || currentTab === 'relations') return 'world';
+    if (currentTab === 'studio') return 'studio';
+    if (currentTab === 'charts' || currentTab === 'streaming' || currentTab === 'relations') return 'scene';
+    if (currentTab === 'career' || currentTab === 'awards') return 'legacy';
     return 'career';
   };
 
@@ -104,7 +100,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const playerEnergy = player?.stats?.energy ?? 100;
   const playerFunds = player?.stats?.funds ?? 0;
   const playerFans = player?.stats?.fansCount ?? 0;
-  const playerName = player?.name || 'Artista';
+  const playerListeners = player?.stats?.monthlyListeners ?? 0;
+  const legacyScore = player?.legacyScore ?? 0;
 
   const playerSongs = React.useMemo(() => {
     const pId = player?.id || 'player';
@@ -118,45 +115,57 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, [playerSongs, currentYear]);
 
   const isTourReady = React.useMemo(() => {
-    return playerSongs.length >= 2 && (player?.stats?.monthlyListeners || 0) >= 1000 && playerEnergy >= 85;
-  }, [playerSongs.length, player?.stats?.monthlyListeners, playerEnergy]);
+    return playerSongs.length >= 2 && playerListeners >= 1000 && playerEnergy >= 85;
+  }, [playerSongs.length, playerListeners, playerEnergy]);
 
   const pendingCollabCount = React.useMemo(() => {
     if (!Array.isArray(world?.pendingCollabOffers)) return 0;
     return world.pendingCollabOffers.filter((o) => o && (!o.status || o.status === 'pending')).length;
   }, [world?.pendingCollabOffers]);
 
-  const hasActiveGala = Boolean(world?.activeGalaCeremony);
+  const hasPendingGala = Boolean(
+    (world as any)?.pendingAwardCeremony || world?.activeGalaCeremony
+  );
   const hasActiveBeef = Object.keys(world?.activeBeefs || {}).length > 0;
   const hasStudioAction = playerEnergy >= 85 && singlesThisYear === 0;
 
   const getEnergyBadge = () => {
     if (playerEnergy >= 75) {
       return {
-        bg: 'border-emerald-500/30 text-emerald-300',
-        bar: 'bg-gradient-to-r from-emerald-500 to-[#00E599]'
+        border: 'border-[#34D399]/35',
+        text: 'text-[#34D399]',
+        icon: 'text-[#34D399]',
+        bar: 'bg-[#34D399]'
       };
-    } else if (playerEnergy >= 35) {
+    }
+    if (playerEnergy >= 35) {
       return {
-        bg: 'border-amber-500/30 text-amber-300',
-        bar: 'bg-gradient-to-r from-amber-500 to-amber-300'
+        border: 'border-[#F59E0B]/40',
+        text: 'text-[#F59E0B]',
+        icon: 'text-[#F59E0B]',
+        bar: 'bg-[#F59E0B]'
       };
     }
     return {
-      bg: 'border-rose-500/40 text-rose-300',
-      bar: 'bg-gradient-to-r from-rose-600 to-rose-400'
+      border: 'border-[#EF4444]/45',
+      text: 'text-[#EF4444]',
+      icon: 'text-[#EF4444]',
+      bar: 'bg-[#EF4444]'
     };
   };
 
   const energyStyle = getEnergyBadge();
+  const cycleShortLabel =
+    cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1A';
 
   return (
-    <header className="sticky top-0 z-40 liquid-glass-header text-[#F4F0EA] select-none border-b border-white/10 shadow-lg">
-      {/* FILA 1: HUD de Videojuego - Marca, Control de Turno Primario y Recursos */}
+    <header className="sticky top-0 z-40 lg-bar bg-[#111114]/88 backdrop-blur-xl text-[#F4F0EA] select-none border-b border-white/10 shadow-lg font-sans">
+      {/* FILA 1: HUD Principal */}
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-2.5 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3">
-        {/* Izquierda: Logo + Indicador de Ciclo Actual */}
+        {/* Izquierda: Logo + Fecha */}
         <div className="flex items-center gap-3 shrink-0">
           <button
+            type="button"
             onClick={() => {
               playSound('click');
               onReturnToTitle();
@@ -170,35 +179,36 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="h-5 w-px bg-white/15 hidden sm:block" />
 
           <div
-            className="flex items-center gap-2 liquid-hud rounded-[4px] px-3.5 py-1.5 text-xs whitespace-nowrap font-mono tabular-nums"
+            className="lg-pill flex items-center gap-2 rounded-[4px] px-3 py-1.5 text-xs whitespace-nowrap font-sans tabular-nums border border-white/15 bg-white/5"
             title={`Fecha actual: ${monthName} ${currentYear}`}
           >
-            <span className="w-2.5 h-2.5 rounded-full bg-[#00E599] shrink-0 shadow-[0_0_8px_rgba(0,229,153,0.8)]" />
-            <span className="font-extrabold text-[#F4F0EA]">
+            <span className="w-2 h-2 rounded-full bg-[#34D399] shrink-0" />
+            <span className="font-bold text-[#F4F0EA]">
               {monthName} {currentYear}
             </span>
           </div>
         </div>
 
-        {/* Centro: Selector de Período y Botón de Acción Primaria de Videojuego */}
+        {/* Centro: Control de Turno (1M/3M/6M/1A + Avanzar Signal Orange) */}
         <div className="order-last lg:order-none w-full lg:w-auto flex items-center gap-2.5 shrink-0 justify-center">
-          <div className="flex items-center border border-white/15 bg-[#0C101B]/85 rounded-[4px] p-0.5 text-xs font-mono exclusion-group gap-0.5">
+          <div className="lg-pill flex items-center border border-white/15 bg-black/35 rounded-[4px] p-0.5 text-xs font-sans tabular-nums gap-0.5">
             {([
               { val: 1, label: '1M', title: 'Avanzar 1 Mes' },
               { val: 3, label: '3M', title: 'Avanzar 3 Meses' },
               { val: 6, label: '6M', title: 'Avanzar 6 Meses' },
-              { val: 12, label: '1Y', title: 'Avanzar 1 Año' },
+              { val: 12, label: '1A', title: 'Avanzar 1 Año' },
             ] as const).map((opt) => (
               <button
                 key={opt.val}
+                type="button"
                 onClick={() => {
                   playSound('click');
                   setCycleMonths(opt.val);
                 }}
                 aria-pressed={cycleMonths === opt.val}
-                className={`px-2.5 py-1 rounded-[3px] font-mono text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-[3px] font-sans tabular-nums text-xs font-bold transition-all cursor-pointer ${
                   cycleMonths === opt.val
-                    ? 'bg-[#00E599]/20 text-[#00E599] border border-[#00E599]/50 shadow-[0_0_12px_rgba(0,229,153,0.25)]'
+                    ? 'bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/55'
                     : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 border border-transparent'
                 }`}
                 title={opt.title}
@@ -208,12 +218,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
-          {/* BOTÓN PRIMARIO DE ACCIÓN MAGNÉTICO (Avanzar Turno / Semestre) */}
-          <MagneticPrimaryButton
+          <button
             id="btn-advance-cycle"
+            type="button"
             onClick={(e) => {
               playSound('click');
-              gameJuice.triggerConfetti(e.currentTarget);
               gameJuice.triggerFloatingNumber({
                 text: cycleMonths === 1 ? '+1 Mes' : cycleMonths === 3 ? '+3 Meses' : cycleMonths === 6 ? '+6 Meses' : '+1 Año',
                 origin: e.currentTarget,
@@ -221,99 +230,96 @@ export const Navbar: React.FC<NavbarProps> = ({
               });
               onAdvanceCycle(cycleMonths);
             }}
-            className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold tracking-tight uppercase whitespace-nowrap shrink-0"
+            className="px-4 sm:px-5 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] active:translate-y-[1px] text-white text-xs sm:text-sm font-bold tracking-tight uppercase whitespace-nowrap shrink-0 flex items-center gap-2 border border-[#FF7833]/50 shadow-md transition-all cursor-pointer"
             title="Procesar el ciclo seleccionado y simular el mundo"
-            icon={<Play className="w-4 h-4 fill-[#032115] text-[#032115] shrink-0" />}
-            label={`Avanzar (${cycleMonths === 1 ? '+1M' : cycleMonths === 3 ? '+3M' : cycleMonths === 6 ? '+6M' : '+1Y'})`}
-          />
+          >
+            <Play className="w-3.5 h-3.5 fill-current shrink-0" />
+            <span>Avanzar {cycleShortLabel}</span>
+          </button>
         </div>
 
-        {/* Derecha: HUD de Recursos (Fondos, Fans, Medidor HP de Energía) + Utilidades */}
+        {/* Derecha: 3 Indicadores Semánticos + Utilidades */}
         <div className="flex items-center gap-2 text-xs shrink-0 ml-auto lg:ml-0 flex-wrap sm:flex-nowrap">
-          <div
+          {/* 1. Fondos (Clicable -> Libro Contable) */}
+          <button
             id="hud-money"
-            className={`flex items-center gap-1.5 liquid-hud rounded-[4px] px-3.5 py-1.5 border border-emerald-500/25 bg-[#00E599]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
-              poppingHud.money ? 'scale-110 sm:scale-120 ring-2 ring-[#00E599] shadow-[0_0_18px_#00E599] z-20' : ''
+            type="button"
+            onClick={() => {
+              playSound('click');
+              onOpenFinancialLedger?.();
+            }}
+            className={`lg-pill flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 border border-[#34D399]/30 bg-[#34D399]/10 hover:bg-[#34D399]/18 hover:border-[#34D399]/55 transition-all duration-200 cursor-pointer ${
+              poppingHud.money ? 'scale-110 ring-2 ring-[#34D399] z-20' : ''
             }`}
-            title={`Fondos Disponibles: ${formatMoney(playerFunds)}`}
+            title={`Fondos Disponibles: ${formatMoney(playerFunds)} (Clic para abrir Libro Contable)`}
           >
-            <DollarSign className="w-3.5 h-3.5 text-[#00E599] shrink-0" />
-            <span className={`font-extrabold text-[#00E599] font-mono tabular-nums whitespace-nowrap transition-transform duration-300 ${poppingHud.money ? 'animate-hud-pop text-[#00FFAC]' : ''}`}>
+            <DollarSign className="w-3.5 h-3.5 text-[#34D399] shrink-0" />
+            <span className={`font-bold text-[#34D399] font-sans tabular-nums whitespace-nowrap ${poppingHud.money ? 'animate-hud-pop' : ''}`}>
               {formatMoney(playerFunds)}
             </span>
-          </div>
+          </button>
 
+          {/* 2. Oyentes/mes (Sky #38BDF8, tooltip con Fans + Puntos Legado) */}
           <div
             id="hud-fans"
-            className={`flex items-center gap-1.5 liquid-hud rounded-[4px] px-3.5 py-1.5 border border-orange-500/25 bg-[#FF4F00]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
-              poppingHud.fans ? 'scale-110 sm:scale-120 ring-2 ring-[#FF4F00] shadow-[0_0_18px_#FF4F00] z-20' : ''
+            className={`lg-pill flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 border border-[#38BDF8]/30 bg-[#38BDF8]/10 transition-all duration-200 ${
+              poppingHud.fans ? 'scale-110 ring-2 ring-[#38BDF8] z-20' : ''
             }`}
-            title={`Fans: ${playerFans.toLocaleString('es-AR')} • Oyentes Mensuales: ${(player?.stats?.monthlyListeners || 0).toLocaleString('es-AR')}`}
+            title={`Oyentes/mes: ${playerListeners.toLocaleString('es-AR')} • Fans: ${playerFans.toLocaleString('es-AR')} • Puntos Legado: ${legacyScore.toLocaleString('es-AR')}`}
           >
-            <Users className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
-            <span className={`font-extrabold font-mono tabular-nums text-[#F4F0EA] transition-transform duration-300 ${poppingHud.fans ? 'animate-hud-pop text-[#FF4F00]' : ''}`}>
-              {formatFans(playerFans)}
+            <Headphones className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
+            <span className={`font-bold font-sans tabular-nums text-[#38BDF8] whitespace-nowrap ${poppingHud.fans ? 'animate-hud-pop' : ''}`}>
+              {formatCompactNumber(playerListeners)}
             </span>
+            <span className="text-[11px] text-[#8E8E99] hidden xl:inline">/mes</span>
           </div>
 
-          {/* Marcador de Puntos / Legacy Score */}
-          <div
-            id="hud-points"
-            className={`flex items-center gap-1.5 liquid-hud rounded-[4px] px-3.5 py-1.5 border border-cyan-500/25 bg-[#00D2FF]/10 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
-              poppingHud.points ? 'scale-110 sm:scale-120 ring-2 ring-[#00D2FF] shadow-[0_0_18px_#00D2FF] z-20' : ''
-            }`}
-            title={`Puntos de Carrera (Legacy Score): ${(player?.legacyScore ?? 0).toLocaleString('es-AR')}`}
-          >
-            <Award className="w-3.5 h-3.5 text-[#00D2FF] shrink-0" />
-            <span className={`font-extrabold text-[#00D2FF] font-mono tabular-nums whitespace-nowrap transition-transform duration-300 ${poppingHud.points ? 'animate-hud-pop text-cyan-200' : ''}`}>
-              {(player?.legacyScore ?? 0).toLocaleString('es-AR')} <span className="text-[10px] sm:text-xs text-[#00D2FF]/85 font-sans">PTS</span>
-            </span>
-          </div>
-
-          {/* Medidor HP de Energía Cilíndrico con Brillo Especular */}
+          {/* 3. Energía % (Semáforo Emerald / Amber / Red) */}
           <div
             id="hud-energy"
-            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs liquid-hud rounded-[4px] ${energyStyle.bg} bg-black/40 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
-              poppingHud.energy ? 'scale-125 ring-2 ring-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.8)] z-20' : ''
+            className={`lg-pill flex items-center gap-2 px-3 py-1.5 text-xs rounded-[4px] border ${energyStyle.border} bg-black/35 transition-all duration-200 ${
+              poppingHud.energy ? 'scale-110 ring-2 ring-[#F59E0B] z-20' : ''
             }`}
             title={`Energía Vital: ${playerEnergy}%`}
           >
-            <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="font-extrabold font-mono tabular-nums">{playerEnergy}%</span>
-            <div className="w-12 h-3.5 bg-[#0A0A0F] rounded-[3px] border border-white/20 overflow-hidden shrink-0 hidden sm:block relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.85)]">
+            <Zap className={`w-3.5 h-3.5 shrink-0 ${energyStyle.icon}`} />
+            <span className={`font-bold font-sans tabular-nums ${energyStyle.text}`}>{playerEnergy}%</span>
+            <div className="w-10 h-2 bg-[#09090B] rounded-[2px] border border-white/15 overflow-hidden shrink-0 hidden sm:block">
               <div
-                className={`h-full rounded-[3px] transition-all duration-300 relative overflow-hidden shadow-[inset_0_-2px_0_rgba(0,0,0,0.4)] ${energyStyle.bar}`}
+                className={`h-full transition-all duration-300 ${energyStyle.bar}`}
                 style={{ width: `${Math.min(100, Math.max(0, playerEnergy))}%` }}
-              >
-                <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/20 pointer-events-none" />
-              </div>
+              />
             </div>
           </div>
 
+          {/* Smartphone */}
           <button
             id="btn-open-artist-phone"
+            type="button"
             onClick={() => {
               playSound('click');
               onOpenPhone?.();
             }}
-            className="w-8 h-8 rounded-[4px] flex items-center justify-center relative border border-white/15 bg-[#0C101B]/85 hover:bg-white/15 hover:border-white/25 transition-all cursor-pointer text-[#F4F0EA] group shrink-0"
+            className="lg-pill w-8 h-8 rounded-[4px] flex items-center justify-center relative border border-white/15 bg-black/35 hover:bg-white/10 hover:border-white/25 transition-all cursor-pointer text-[#F4F0EA] group shrink-0"
             title="Abrir Smartphone (DMs, TrendX y Banco)"
           >
             <Smartphone className="w-4 h-4 text-[#DCE2EE] group-hover:text-white transition-colors" />
             {(world?.unreadPhoneCount ?? 0) > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-[3px] bg-[#FF4F00] text-white text-3xs font-sans font-black flex items-center justify-center shadow-sm">
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-[3px] bg-[#FF4F00] text-white text-[10px] font-sans font-bold flex items-center justify-center shadow-sm tabular-nums">
                 {world.unreadPhoneCount}
               </span>
             )}
           </button>
 
-          <div className="border border-white/15 bg-[#0C101B]/85 rounded-[4px] p-0.5 flex items-center gap-0.5">
+          {/* Audio + Ajustes */}
+          <div className="lg-pill border border-white/15 bg-black/35 rounded-[4px] p-0.5 flex items-center gap-0.5">
             <button
               id="btn-toggle-audio-sfx"
+              type="button"
               onClick={handleToggleSound}
               aria-pressed={soundEnabled}
               className={`w-7 h-7 rounded-[3px] flex items-center justify-center transition-colors cursor-pointer ${
-                soundEnabled ? 'text-[#00E599]' : 'text-[#CBD5E1] hover:text-white'
+                soundEnabled ? 'text-[#34D399]' : 'text-[#8E8E99] hover:text-white'
               }`}
               title={soundEnabled ? 'Silenciar Audio' : 'Activar Audio'}
             >
@@ -321,6 +327,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             <button
               id="btn-open-settings"
+              type="button"
               onClick={() => {
                 playSound('click');
                 setIsSettingsOpen(true);
@@ -334,52 +341,64 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* FILA 2: Navegación Principal Centrada */}
+      {/* FILA 2: 5 Hubs Limpios */}
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-2 border-t border-white/10 flex items-center justify-center">
-        <nav aria-label="Navegación principal" className="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto scroll-fade-x max-w-full">
+        <nav aria-label="Navegación principal" className="flex items-center justify-center gap-1.5 sm:gap-2.5 overflow-x-auto max-w-full">
+          {/* 1. Inicio */}
           <button
             id="nav-tab-dashboard"
+            type="button"
             onClick={() => handleTabClick('dashboard')}
-            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-              currentTab === 'dashboard'
-                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
+            className={`tap px-3.5 sm:px-4 py-1.5 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+              activeHub === 'dashboard'
+                ? 'bg-[#FF4F00]/18 text-white border border-[#FF4F00]/70'
+                : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Compass className={`w-4 h-4 ${currentTab === 'dashboard' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
+            <Compass className={`w-4 h-4 ${activeHub === 'dashboard' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
             <span>Inicio</span>
           </button>
 
+          {/* 2. Estudio */}
           <button
             id="nav-tab-studio"
+            type="button"
             onClick={() => handleTabClick('studio')}
-            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeHub === 'music'
-                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
+            className={`tap px-3.5 sm:px-4 py-1.5 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+              activeHub === 'studio'
+                ? 'bg-[#FF4F00]/18 text-white border border-[#FF4F00]/70'
+                : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Disc3 className={`w-4 h-4 ${activeHub === 'music' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
-            <span>Estudio & Música</span>
+            <Disc3 className={`w-4 h-4 ${activeHub === 'studio' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <span>Estudio</span>
             {hasStudioAction && (
               <span className="w-2 h-2 rounded-full bg-[#F59E0B] shrink-0" title="Listo para grabar" />
             )}
           </button>
 
+          {/* 3. Escena */}
           <button
             id="nav-hub-world"
-            onClick={() => handleTabClick('streaming')}
-            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeHub === 'world'
-                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
+            type="button"
+            onClick={() => {
+              const target =
+                currentTab === 'charts' || currentTab === 'streaming' || currentTab === 'relations'
+                  ? 'charts'
+                  : 'charts';
+              handleTabClick(target);
+            }}
+            className={`tap px-3.5 sm:px-4 py-1.5 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+              activeHub === 'scene'
+                ? 'bg-[#FF4F00]/18 text-white border border-[#FF4F00]/70'
+                : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Radio className={`w-4 h-4 ${activeHub === 'world' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
-            <span>Escena & Charts</span>
+            <Radio className={`w-4 h-4 ${activeHub === 'scene' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <span>Escena</span>
             {pendingCollabCount > 0 && (
               <span
-                className="px-1.5 py-0.5 rounded-[3px] bg-[#00E599] text-[#032115] text-[10px] font-extrabold leading-none tabular-nums"
+                className="px-1.5 py-0.5 rounded-[3px] bg-[#34D399] text-[#09090B] text-[10px] font-bold leading-none tabular-nums"
                 title={`${pendingCollabCount} oferta(s) de colaboración pendiente(s)`}
               >
                 {pendingCollabCount}
@@ -390,171 +409,49 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
+          {/* 4. Carrera */}
           <button
             id="nav-hub-career"
+            type="button"
             onClick={() => handleTabClick('tours')}
-            className={`tap px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+            className={`tap px-3.5 sm:px-4 py-1.5 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeHub === 'career'
-                ? 'bg-[#FF4F00]/20 text-white border border-[#FF4F00]/65 shadow-[0_0_16px_rgba(255,79,0,0.22),inset_0_1px_0_rgba(255,255,255,0.3)]'
-                : 'text-[#E2E8F0] hover:text-white hover:bg-white/10 border border-transparent'
+                ? 'bg-[#FF4F00]/18 text-white border border-[#FF4F00]/70'
+                : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 border border-transparent'
             }`}
           >
-            <Briefcase className={`w-4 h-4 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#CBD5E1]'}`} />
-            <span>Carrera & Negocios</span>
-            {(isTourReady || hasActiveGala) && (
-              <span className="w-2 h-2 rounded-full bg-[#10B981] shrink-0" />
+            <Briefcase className={`w-4 h-4 ${activeHub === 'career' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <span>Carrera</span>
+            {isTourReady && (
+              <span className="w-2 h-2 rounded-full bg-[#34D399] shrink-0" title="Listo para girar" />
+            )}
+          </button>
+
+          {/* 5. Legado */}
+          <button
+            id="nav-hub-legacy"
+            type="button"
+            onClick={() => handleTabClick('career')}
+            className={`tap px-3.5 sm:px-4 py-1.5 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+              activeHub === 'legacy'
+                ? 'bg-[#FF4F00]/18 text-white border border-[#FF4F00]/70'
+                : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 border border-transparent'
+            }`}
+          >
+            <Award className={`w-4 h-4 ${activeHub === 'legacy' ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
+            <span>Legado</span>
+            {hasPendingGala && (
+              <span className="w-2 h-2 rounded-full bg-[#F59E0B] shrink-0" title="Gala de premios disponible" />
             )}
           </button>
         </nav>
       </div>
 
-      {/* FILA 3: Subcategorías Centradas para Escena & Charts y Carrera & Negocios */}
-      {(activeHub === 'world' || activeHub === 'career') && (
-        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-2 border-t border-white/10 bg-[#070A12]/65 flex items-center justify-center">
-          <div className="flex items-center justify-center gap-2 sm:gap-2.5 overflow-x-auto scroll-fade-x max-w-full">
-            {activeHub === 'world' && (
-              <>
-                <button
-                  id="nav-tab-streaming"
-                  onClick={() => handleTabClick('streaming')}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'streaming'
-                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
-                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
-                  }`}
-                >
-                  <Radio className="w-4 h-4 text-[#FF4F00] shrink-0" />
-                  <span>Streaming</span>
-                </button>
-
-                <button
-                  id="nav-tab-charts"
-                  onClick={() => handleTabClick('charts')}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'charts'
-                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
-                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
-                  }`}
-                >
-                  <BarChart3 className="w-4 h-4 text-[#10B981] shrink-0" />
-                  <span>Charts</span>
-                </button>
-
-                <button
-                  id="nav-tab-relations"
-                  onClick={() => handleTabClick('relations')}
-                  className={`px-4 sm:px-4.5 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'relations'
-                      ? 'bg-gradient-to-r from-[#FF4F00]/28 to-[#00E599]/20 text-white border border-[#FF4F00]/75 shadow-[0_0_18px_rgba(255,79,0,0.30),inset_0_1px_0_rgba(255,255,255,0.40)]'
-                      : 'bg-gradient-to-r from-[#0E1726]/90 to-[#111E2E]/90 text-white border border-[#00E599]/45 hover:border-[#00E599]/80 hover:from-[#132235] hover:to-[#16293B] shadow-[0_0_12px_rgba(0,229,153,0.14),inset_0_1px_0_rgba(255,255,255,0.22)]'
-                  }`}
-                >
-                  <Network className="w-4 h-4 text-[#00E599] shrink-0" />
-                  <span>Artistas & Feudos</span>
-                  {pendingCollabCount > 0 ? (
-                    <span
-                      className="px-1.5 py-0.5 rounded-[3px] bg-[#00E599] text-[#032115] text-[10px] sm:text-[11px] font-extrabold leading-none tabular-nums shadow-[0_0_8px_rgba(0,229,153,0.45)]"
-                      title={`${pendingCollabCount} oferta(s) de colaboración pendiente(s)`}
-                    >
-                      {pendingCollabCount} FT.
-                    </span>
-                  ) : (
-                    <span
-                      className={`px-1.5 py-0.5 rounded-[3px] text-[10px] font-extrabold uppercase tracking-wider leading-none ${
-                        currentTab === 'relations'
-                          ? 'bg-[#FF4F00] text-white'
-                          : 'bg-[#00E599]/18 text-[#00E599] border border-[#00E599]/35'
-                      }`}
-                    >
-                      Collabs
-                    </span>
-                  )}
-                  {hasActiveBeef && (
-                    <span className="w-2 h-2 rounded-full bg-[#FF4F00] shrink-0" title="Feudo activo" />
-                  )}
-                </button>
-              </>
-            )}
-
-            {activeHub === 'career' && (
-              <>
-                <button
-                  id="nav-tab-tours"
-                  onClick={() => handleTabClick('tours')}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'tours'
-                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
-                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
-                  }`}
-                >
-                  <Plane className="w-4 h-4 text-[#10B981] shrink-0" />
-                  <span>Giras</span>
-                </button>
-
-                <button
-                  id="nav-tab-industry"
-                  onClick={() => handleTabClick('industry')}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'industry'
-                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
-                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
-                  }`}
-                >
-                  <Building2 className="w-4 h-4 text-[#38BDF8] shrink-0" />
-                  <span>Sellos & Mánagers</span>
-                </button>
-
-                <button
-                  id="nav-tab-lifestyle"
-                  onClick={() => handleTabClick('lifestyle')}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'lifestyle'
-                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
-                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
-                  }`}
-                >
-                  <ShoppingBag className="w-4 h-4 text-[#FF4F00] shrink-0" />
-                  <span>Tienda</span>
-                </button>
-
-                <button
-                  id="nav-tab-awards"
-                  onClick={() => handleTabClick('awards')}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'awards'
-                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
-                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
-                  }`}
-                >
-                  <Award className="w-4 h-4 text-[#F59E0B] shrink-0" />
-                  <span>Premios</span>
-                </button>
-
-                <button
-                  id="nav-tab-career"
-                  onClick={() => handleTabClick('career')}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
-                    currentTab === 'career'
-                      ? 'bg-[#161E31]/95 text-white border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.35)]'
-                      : 'bg-[#0C101B]/80 text-[#E2E8F0] border border-white/15 hover:bg-[#161E31]/85 hover:text-white hover:border-white/30'
-                  }`}
-                >
-                  <TrendingUp className="w-4 h-4 text-[#F59E0B] shrink-0" />
-                  <span>Eras</span>
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
       {isSettingsOpen && (
         <SettingsModal
-          isOpen={isSettingsOpen}
+          player={player}
+          world={world}
           onClose={() => setIsSettingsOpen(false)}
-          artistName={playerName}
-          currentYear={currentYear}
-          currentMonth={currentMonth}
           onExportSave={() => onExportSave?.()}
           onImportSave={(json) => onImportSave?.(json)}
           onResetCareer={() => {

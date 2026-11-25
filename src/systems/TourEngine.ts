@@ -102,9 +102,43 @@ export class TourEngine {
       profitMargin = 0.58;
     }
 
-    // Pick cities based on tier
+    // Pick cities based on tier (local/regional tiers stay in home country/region; large tiers go international)
     const allCitiesList = Object.values(CITIES_BY_REGION || {}).flat();
-    const shuffled = [...allCitiesList].sort(() => 0.5 - Math.random());
+    const normalizeCountry = (c?: string) => (c || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace('estados unidos', 'usa')
+      .replace('reino unido', 'uk')
+      .replace('spain', 'espana')
+      .replace('brazil', 'brasil')
+      .trim();
+
+    const artistCountryNorm = normalizeCountry(artist?.country);
+    const homeCities = allCitiesList.filter(c => normalizeCountry(c.country) === artistCountryNorm);
+    const regionalCities = allCitiesList.filter(c => {
+      if (normalizeCountry(c.country) === artistCountryNorm) return true;
+      if (artist?.influenceRegions?.some(r => r === c.region)) return true;
+      if (['argentina', 'chile', 'uruguay', 'colombia', 'mexico', 'peru', 'puerto rico'].includes(artistCountryNorm)) {
+        return c.region === 'Argentina' || c.region === 'LatinAmerica';
+      }
+      return false;
+    });
+
+    let candidatePool = allCitiesList;
+    if (tier === 'club') {
+      candidatePool = homeCities.length >= stopCount
+        ? homeCities
+        : regionalCities.length >= stopCount
+        ? regionalCities
+        : allCitiesList;
+    } else if (tier === 'theater') {
+      candidatePool = regionalCities.length >= stopCount
+        ? regionalCities
+        : allCitiesList;
+    }
+
+    const shuffled = [...candidatePool].sort(() => 0.5 - Math.random());
     const selectedCities = shuffled.slice(0, stopCount);
 
     let totalCapacity = 0;

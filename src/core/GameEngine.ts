@@ -42,7 +42,10 @@ import {
   ArtistPhoneMessage,
   ArtistPhoneChoice,
   YearEndWrappedData,
-  SimulationStepMonths
+  SimulationStepMonths,
+  CareerGoal,
+  CareerEra,
+  LifestyleItem
 } from '../types';
 import { PhoneMessageEngine } from '../systems/PhoneMessageEngine';
 import { generateUniqueSongTitle, resolveArtistLanguage } from '../data/proceduralNames';
@@ -80,6 +83,31 @@ const createDefaultWeeksOnChart = (): Record<MusicRegion, number> => ({
   Spain: 0, Mexico: 0, UK: 0, Brazil: 0, Asia: 0, Africa: 0
 });
 
+const safeNum = (val: unknown, fallback: number): number => {
+  if (typeof val === 'number') return Number.isFinite(val) ? val : fallback;
+  if (typeof val === 'string' && val.trim() !== '') {
+    const n = Number(val);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  return fallback;
+};
+
+const deepCloneRecord = <T>(rec: Record<string, T>): Record<string, T> =>
+  JSON.parse(JSON.stringify(rec));
+
+const cloneEditorialPlaylists = (): Record<string, EditorialPlaylist> => {
+  const out: Record<string, EditorialPlaylist> = {};
+  for (const p of EDITORIAL_PLAYLISTS) {
+    out[p.id] = {
+      ...p,
+      genreFilters: p.genreFilters ? [...p.genreFilters] : [],
+      trackIds: [...(p.trackIds || [])],
+      tracks: p.tracks ? p.tracks.map(t => ({ ...t })) : []
+    };
+  }
+  return out;
+};
+
 export class GameEngine {
   // Cap on world.news kept across cycles: the feed is history for the UI, not an infinite log, and an
   // unbounded array makes every future unshift() progressively more expensive (see advanceCycle()).
@@ -90,6 +118,7 @@ export class GameEngine {
   private eventQueue: EventDefinition[] = [];
   private currentEvent: EventDefinition | null = null;
   private activeGalaCeremony: AwardCeremony | null = null;
+  private lastReleaseImpactBreakdown: NonNullable<ReleaseConfirmationData['impactBreakdown']> = [];
   private onStateChangeListeners: Array<(world: WorldState, player: Artist, currentEvent: EventDefinition | null, activeGala: AwardCeremony | null) => void> = [];
 
   constructor(customPlayer?: Partial<Artist>) {
@@ -168,7 +197,16 @@ export class GameEngine {
         lifestyleUpgrades: customPlayer.lifestyleUpgrades || [],
         financialLedger: customPlayer.financialLedger || [],
         isProdigy: customPlayer.isProdigy,
-        prodigyMultiplier: customPlayer.prodigyMultiplier
+        prodigyMultiplier: customPlayer.prodigyMultiplier,
+        monthlyActionsUsed: customPlayer.monthlyActionsUsed ?? 0,
+        lastActionYear: customPlayer.lastActionYear ?? 2026,
+        lastActionMonth: customPlayer.lastActionMonth ?? 1,
+        activeCreativeBuffs: customPlayer.activeCreativeBuffs ? { ...customPlayer.activeCreativeBuffs } : {},
+        completedGoalIds: customPlayer.completedGoalIds ? [...customPlayer.completedGoalIds] : [],
+        claimedGoalIds: customPlayer.claimedGoalIds ? [...customPlayer.claimedGoalIds] : [],
+        playedFestivalsByYear: customPlayer.playedFestivalsByYear ? { ...customPlayer.playedFestivalsByYear } : {},
+        yearStartFans: customPlayer.yearStartFans ?? (customPlayer.stats?.fansCount ?? 12000),
+        yearStartTotalStreams: customPlayer.yearStartTotalStreams ?? (customPlayer.stats?.totalStreams ?? 0)
       };
       this.world.artists[this.playerId] = playerArtist;
     } else {
@@ -236,7 +274,16 @@ export class GameEngine {
         generationIndex: 1,
         influences: [],
         lifestyleUpgrades: [],
-        financialLedger: []
+        financialLedger: [],
+        monthlyActionsUsed: 0,
+        lastActionYear: 2026,
+        lastActionMonth: 1,
+        activeCreativeBuffs: {},
+        completedGoalIds: [],
+        claimedGoalIds: [],
+        playedFestivalsByYear: {},
+        yearStartFans: 12000,
+        yearStartTotalStreams: 0
       };
       this.world.artists[this.playerId] = playerArtist;
     }
@@ -250,14 +297,14 @@ export class GameEngine {
       currentYear: 2026,
       currentMonth: 1,
       activeTrendIds: [],
-      genres: JSON.parse(JSON.stringify(INITIAL_GENRES)),
+      genres: deepCloneRecord(INITIAL_GENRES),
       trends: {},
-      artists: JSON.parse(JSON.stringify(INITIAL_ARTISTS)),
+      artists: deepCloneRecord(INITIAL_ARTISTS),
       songs: {},
       albums: {},
-      labels: JSON.parse(JSON.stringify(INITIAL_LABELS)),
-      producers: JSON.parse(JSON.stringify(INITIAL_PRODUCERS)),
-      managers: JSON.parse(JSON.stringify(INITIAL_MANAGERS)),
+      labels: deepCloneRecord(INITIAL_LABELS),
+      producers: deepCloneRecord(INITIAL_PRODUCERS),
+      managers: deepCloneRecord(INITIAL_MANAGERS),
       tours: [],
       charts: {
         Global: { region: 'Global', year: 2026, month: 1, entries: [] },
@@ -316,11 +363,12 @@ export class GameEngine {
       financialLedger: [],
       pendingCollabOffers: [],
       activeCollabPacts: [],
-      playlists: EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {}),
+      playlists: cloneEditorialPlaylists(),
       festivalInvitations: [],
       festivalHistory: [],
       phoneMessages: [],
       unreadPhoneCount: 0,
+      officialCertifications: [],
       activeYearEndWrapped: null,
       playerWrappedHistory: []
     };
@@ -596,24 +644,294 @@ export class GameEngine {
     }
 
     const itemMap = new Map(LIFESTYLE_ITEMS.map(i => [i.id, i]));
+    const byCategory = new Map<string, LifestyleItem[]>();
+
     for (const id of player.lifestyleUpgrades) {
       const item = itemMap.get(id);
-      if (item) {
-        buffs.monthlyUpkeep += item.monthlyUpkeep;
-        if (item.effects.qualityBonus) buffs.qualityBonus += item.effects.qualityBonus;
-        if (item.effects.passiveEnergyPerMonth) buffs.passiveEnergyPerMonth += item.effects.passiveEnergyPerMonth;
-        if (item.effects.hypeDecayReduction) buffs.hypeDecayReduction += item.effects.hypeDecayReduction;
-        if (item.effects.tourFatigueReduction) buffs.tourFatigueReduction += item.effects.tourFatigueReduction;
-        if (item.effects.skillBonus) buffs.skillBonus += item.effects.skillBonus;
-        if (item.effects.creativityBonus) buffs.creativityBonus += item.effects.creativityBonus;
-        if (item.effects.charismaBonus) buffs.charismaBonus += item.effects.charismaBonus;
-        if (item.effects.disciplineBonus) buffs.disciplineBonus += item.effects.disciplineBonus;
-        if (item.effects.reputationBonus) buffs.reputationBonus += item.effects.reputationBonus;
-        if (item.effects.commercialAppealBonus) buffs.commercialAppealBonus += item.effects.commercialAppealBonus;
-        if (item.effects.originalityBonus) buffs.originalityBonus += item.effects.originalityBonus;
-      }
+      if (!item) continue;
+      buffs.monthlyUpkeep += item.monthlyUpkeep;
+      const groupKey = (item.category === 'home_studio' || item.category === 'studio') ? 'studio_line' : item.category;
+      const list = byCategory.get(groupKey) || [];
+      list.push(item);
+      byCategory.set(groupKey, list);
     }
+
+    const aggregateEffect = (items: LifestyleItem[], getter: (eff: LifestyleItem['effects']) => number | undefined): number => {
+      const vals = items.map(i => getter(i.effects) || 0).filter(v => v > 0).sort((a, b) => b - a);
+      if (vals.length === 0) return 0;
+      const best = vals[0];
+      const synergy = vals.slice(1).reduce((s, v) => s + v * 0.25, 0);
+      return best + synergy;
+    };
+
+    for (const items of byCategory.values()) {
+      buffs.qualityBonus += aggregateEffect(items, e => e.qualityBonus);
+      buffs.passiveEnergyPerMonth += aggregateEffect(items, e => e.passiveEnergyPerMonth);
+      buffs.hypeDecayReduction += aggregateEffect(items, e => e.hypeDecayReduction);
+      buffs.tourFatigueReduction += aggregateEffect(items, e => e.tourFatigueReduction);
+      buffs.skillBonus += aggregateEffect(items, e => e.skillBonus);
+      buffs.creativityBonus += aggregateEffect(items, e => e.creativityBonus);
+      buffs.charismaBonus += aggregateEffect(items, e => e.charismaBonus);
+      buffs.disciplineBonus += aggregateEffect(items, e => e.disciplineBonus);
+      buffs.reputationBonus += aggregateEffect(items, e => e.reputationBonus);
+      buffs.commercialAppealBonus += aggregateEffect(items, e => e.commercialAppealBonus);
+      buffs.originalityBonus += aggregateEffect(items, e => e.originalityBonus);
+    }
+
+    // Topes sanos anti-exploit aditivo
+    buffs.qualityBonus = Math.min(30, Math.round(buffs.qualityBonus));
+    buffs.passiveEnergyPerMonth = Math.min(18, Math.round(buffs.passiveEnergyPerMonth));
+    buffs.tourFatigueReduction = Math.min(0.55, Number(buffs.tourFatigueReduction.toFixed(4)));
+    buffs.hypeDecayReduction = Math.min(0.40, Number(buffs.hypeDecayReduction.toFixed(4)));
+    buffs.skillBonus = Math.round(buffs.skillBonus);
+    buffs.creativityBonus = Math.round(buffs.creativityBonus);
+    buffs.charismaBonus = Math.round(buffs.charismaBonus);
+    buffs.disciplineBonus = Math.round(buffs.disciplineBonus);
+    buffs.reputationBonus = Math.round(buffs.reputationBonus);
+    buffs.commercialAppealBonus = Math.round(buffs.commercialAppealBonus);
+    buffs.originalityBonus = Math.round(buffs.originalityBonus);
+
     return buffs;
+  }
+
+  public getStudioTierInfo(playerArg?: Artist): {
+    tier: number;
+    maxTier: number;
+    label: string;
+    effectiveQualityBonus: number;
+    ownedStudioItems: LifestyleItem[];
+    nextUpgrade?: LifestyleItem;
+  } {
+    const player = playerArg || this.getPlayer();
+    const ownedIds = new Set(player.lifestyleUpgrades || []);
+    const studioItems = LIFESTYLE_ITEMS.filter(i => i.category === 'home_studio' || i.category === 'studio');
+    const ownedStudioItems = studioItems.filter(i => ownedIds.has(i.id));
+
+    let tier = 0;
+    let label = 'Grabación Casera Básica';
+    if (ownedIds.has('studio_acoustic_suite')) {
+      tier = 5;
+      label = 'Tier 5 • Estudio Privado de Élite';
+    } else if (ownedIds.has('studio_console_ssl')) {
+      tier = 4;
+      label = 'Tier 4 • Sala Analógica SSL';
+    } else if (ownedIds.has('studio_neumann_u87')) {
+      tier = 3;
+      label = 'Tier 3 • Estudio Boutique Vocal';
+    } else if (ownedIds.has('studio_mic_shure_sm7b') || ownedIds.has('studio_analog_synth')) {
+      tier = 2;
+      label = 'Tier 2 • Cabina Semi-Profesional';
+    } else if (ownedStudioItems.length > 0) {
+      tier = 1;
+      label = 'Tier 1 • Home Studio Inicial';
+    }
+
+    const buffs = this.getPlayerLifestyleBuffs();
+    const nextUpgrade = studioItems.find(i => !ownedIds.has(i.id));
+
+    return {
+      tier,
+      maxTier: 5,
+      label,
+      effectiveQualityBonus: buffs.qualityBonus,
+      ownedStudioItems,
+      nextUpgrade
+    };
+  }
+
+  public getMonthlyActionStatus(playerArg?: Artist): {
+    used: number;
+    max: number;
+    remaining: number;
+    canAct: boolean;
+    hasManagerBonus: boolean;
+    activeCreativeBuffs: NonNullable<Artist['activeCreativeBuffs']>;
+  } {
+    const player = playerArg || this.getPlayer();
+    const isSameMonth =
+      player.lastActionYear === this.world.currentYear &&
+      player.lastActionMonth === this.world.currentMonth;
+    const used = isSameMonth ? (player.monthlyActionsUsed || 0) : 0;
+    const max = player.managerId ? 3 : 2;
+    const remaining = Math.max(0, max - used);
+
+    return {
+      used,
+      max,
+      remaining,
+      canAct: remaining > 0,
+      hasManagerBonus: Boolean(player.managerId),
+      activeCreativeBuffs: { ...(player.activeCreativeBuffs || {}) }
+    };
+  }
+
+  public getLastReleaseImpactBreakdown(): NonNullable<ReleaseConfirmationData['impactBreakdown']> {
+    return [...(this.lastReleaseImpactBreakdown || [])];
+  }
+
+  public getCareerGoals(): CareerGoal[] {
+    return LegacyEngine.getCareerGoals(this.getPlayer(), this.world);
+  }
+
+  public claimCareerGoal(goalId: string): { success: boolean; message: string; goal?: CareerGoal } {
+    const player = this.getPlayer();
+    const goals = LegacyEngine.getCareerGoals(player, this.world);
+    const goal = goals.find(g => g.id === goalId);
+    if (!goal) {
+      return { success: false, message: 'Objetivo de carrera no encontrado.' };
+    }
+    if (!goal.completed) {
+      return { success: false, message: `Aún no completaste el objetivo "${goal.title}" (${goal.progress}/${goal.target}).` };
+    }
+    if (goal.claimed) {
+      return { success: false, message: `Ya reclamaste la recompensa de "${goal.title}".` };
+    }
+
+    if (!player.completedGoalIds) player.completedGoalIds = [];
+    if (!player.claimedGoalIds) player.claimedGoalIds = [];
+    if (!player.completedGoalIds.includes(goalId)) player.completedGoalIds.push(goalId);
+    player.claimedGoalIds.push(goalId);
+
+    if (goal.rewardFunds && goal.rewardFunds > 0) {
+      player.stats.funds += goal.rewardFunds;
+      this.recordFinancialTransaction({
+        type: 'income',
+        category: 'other',
+        amount: goal.rewardFunds,
+        description: `Recompensa objetivo de carrera: ${goal.title}`
+      });
+    }
+    if (goal.rewardHype) {
+      player.stats.hype = Math.min(100, player.stats.hype + goal.rewardHype);
+    }
+    if (goal.rewardReputation) {
+      player.stats.reputation = Math.min(100, player.stats.reputation + goal.rewardReputation);
+    }
+    if (goal.rewardLegacy) {
+      player.legacyScore = Math.min(100, player.legacyScore + goal.rewardLegacy);
+    }
+
+    goal.claimed = true;
+    this.notify();
+    return {
+      success: true,
+      message: `¡Objetivo "${goal.title}" completado! Recompensa obtenida: ${goal.rewardLabel}`,
+      goal
+    };
+  }
+
+  public startNewEra(name: string, genreFocus?: string): { success: boolean; message: string; era?: CareerEra } {
+    const player = this.getPlayer();
+    const cleanName = (name || '').trim();
+    if (!cleanName) {
+      return { success: false, message: 'El nombre de la nueva era es obligatorio.' };
+    }
+
+    const lastEra = player.eras && player.eras.length > 0 ? player.eras[player.eras.length - 1] : undefined;
+    if (lastEra) {
+      const monthsSince = (this.world.currentYear - lastEra.startYear) * 12 + (this.world.currentMonth - lastEra.startMonth);
+      if (monthsSince < 12) {
+        return {
+          success: false,
+          message: `Debes esperar al menos 12 meses desde el inicio de tu era actual para abrir una nueva (llevas ${monthsSince} mes/es).`
+        };
+      }
+      lastEra.endYear = this.world.currentYear;
+      lastEra.endMonth = this.world.currentMonth;
+    }
+
+    const resolvedGenre = genreFocus && this.world.genres[genreFocus] ? genreFocus : player.mainGenreId;
+    player.mainGenreId = resolvedGenre;
+
+    const newEra: CareerEra = {
+      id: `era_${player.id}_${this.world.currentYear}_${this.world.currentMonth}`,
+      name: cleanName,
+      startYear: this.world.currentYear,
+      startMonth: this.world.currentMonth,
+      genreFocus: resolvedGenre,
+      stage: player.careerStage,
+      highlightSummary: `Reinvención creativa "${cleanName}" enfocada en ${this.world.genres[resolvedGenre]?.name || resolvedGenre}.`
+    };
+    if (!player.eras) player.eras = [];
+    player.eras.push(newEra);
+
+    player.stats.hype = Math.min(100, player.stats.hype + 10);
+    this.world.news.unshift({
+      id: `news_era_${Date.now()}`,
+      headline: `Nueva Era: ${player.name} inaugura "${cleanName}"`,
+      body: `${player.name} cerró su ciclo previo para abrir una nueva etapa artística centrada en ${this.world.genres[resolvedGenre]?.name || resolvedGenre}.`,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'culture',
+      relatedArtistIds: [player.id],
+      sentiment: 'positive',
+      importance: 4
+    });
+
+    if (!this.world.globalHistoryTimeline) this.world.globalHistoryTimeline = [];
+    this.world.globalHistoryTimeline.unshift({
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      text: `${player.name} inauguró la era "${cleanName}" (${this.world.genres[resolvedGenre]?.name || resolvedGenre}).`,
+      category: 'career'
+    });
+
+    this.notify();
+    return {
+      success: true,
+      message: `¡Nueva era "${cleanName}" inaugurada con éxito! (+10 Hype)`,
+      era: newEra
+    };
+  }
+
+  public retirePlayer(): { success: boolean; message: string } {
+    const player = this.getPlayer();
+    if (player.isRetired) {
+      return { success: false, message: 'Tu artista ya se encuentra retirado.' };
+    }
+    const yearsActive = TimeSystem.calculateCareerLengthYears(player.careerStartYear, this.world.currentYear);
+    if (yearsActive < 5) {
+      return {
+        success: false,
+        message: `Debes acumular al menos 5 años de trayectoria antes de retirarte (llevas ${yearsActive} año/s).`
+      };
+    }
+
+    player.isRetired = true;
+    player.retirementYear = this.world.currentYear;
+    player.retirementMonth = this.world.currentMonth;
+    this.world.retirementMonth = this.world.currentMonth;
+    player.careerStage = 'Retired';
+    LegacyEngine.checkAndCreateEra(player, this.world.currentYear, this.world.currentMonth);
+
+    if (!player.historicalNotes) player.historicalNotes = [];
+    player.historicalNotes.push(`Anunció su retiro oficial de los escenarios en ${this.world.currentYear} tras ${yearsActive} años de carrera.`);
+
+    if (!this.world.globalHistoryTimeline) this.world.globalHistoryTimeline = [];
+    this.world.globalHistoryTimeline.unshift({
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      text: `${player.name} anunció su retiro artístico oficial tras ${yearsActive} años de trayectoria.`,
+      category: 'career'
+    });
+
+    this.world.news.unshift({
+      id: `news_retire_${Date.now()}`,
+      headline: `Fin de una era: ${player.name} anuncia su retiro de la música`,
+      body: `Tras ${yearsActive} años de carrera, ${player.name} cierra su etapa activa dejando un legado imborrable.`,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'culture',
+      relatedArtistIds: [player.id],
+      sentiment: 'neutral',
+      importance: 5
+    });
+
+    this.notify();
+    return {
+      success: true,
+      message: `${player.name} se ha retirado oficialmente de los escenarios en ${this.world.currentYear}.`
+    };
   }
 
   public buyLifestyleItem(itemId: string): { success: boolean; message: string } {
@@ -796,7 +1114,10 @@ export class GameEngine {
     }
 
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
-    if (prod) {
+    const producerPact = params.producerId && params.producerId !== 'self'
+      ? (this.world.activeCollabPacts || []).find(p => p.targetProducerId === params.producerId && p.status === 'active')
+      : undefined;
+    if (prod && !producerPact) {
       const prodCheck = IndustryEngine.canWorkWithProducer(player, prod);
       if (!prodCheck.canWork) {
         throw new Error(`Requisitos no cumplidos para contratar a ${prod.name}: ${prodCheck.missingReasons.join(', ')}`);
@@ -817,7 +1138,8 @@ export class GameEngine {
       }
     }
 
-    const producerFee = prod ? prod.costPerTrack : 0;
+    const discountMult = producerPact?.producerDiscountPct ? Math.max(0, 1 - producerPact.producerDiscountPct / 100) : 1;
+    const producerFee = prod ? Math.floor(prod.costPerTrack * discountMult) : 0;
     const videoCost = params.musicVideo ? params.musicVideo.budget : 0;
     const totalCost = params.budgetProduction + params.budgetMarketing + producerFee + videoCost;
 
@@ -852,18 +1174,30 @@ export class GameEngine {
     // Organic Performance and Longevity Curve Derivation via IndustryEngine:
     // performanceScore = (Calidad de Producción * 0.4) + (Inversión Marketing * 0.3) + (Creatividad/Skills * 0.2) + (Random Factor * 0.1)
     const lifestyleBuffs = this.getPlayerLifestyleBuffs();
+    const creativeQualityBuff = player.activeCreativeBuffs?.nextTrackQuality || 0;
+    const labelMarketingSupport = (
+      player.activeContract &&
+      player.activeContract.labelId === player.labelId &&
+      (player.activeContract.marketingBudgetPerRelease || 0) > 0
+    ) ? player.activeContract.marketingBudgetPerRelease! : 0;
+
     const safeBudgetProd = Number.isFinite(params.budgetProduction) ? params.budgetProduction : 0;
     const safeBudgetMktg = Number.isFinite(params.budgetMarketing) ? params.budgetMarketing : 0;
+    const effectiveBudgetMktg = safeBudgetMktg + labelMarketingSupport;
 
     const perfEval = IndustryEngine.deriveTrackPerformanceAndLongevity({
       artist: player,
       productionBudget: safeBudgetProd,
-      marketingBudget: safeBudgetMktg,
+      marketingBudget: effectiveBudgetMktg,
       producer: prod,
       subGenreId: params.subGenreIds && params.subGenreIds.length > 0 ? params.subGenreIds[0] : undefined,
       musicVideo: params.musicVideo,
-      qualityBonus: lifestyleBuffs?.qualityBonus || 0
+      qualityBonus: (lifestyleBuffs?.qualityBonus || 0) + creativeQualityBuff
     });
+
+    if (player.activeCreativeBuffs && creativeQualityBuff > 0) {
+      player.activeCreativeBuffs.nextTrackQuality = 0;
+    }
 
     const chosenLongevity = params.longevityCurve || perfEval.longevityCurve;
 
@@ -883,7 +1217,7 @@ export class GameEngine {
     }
     const hypeFactor = Math.floor((player.stats?.hype || 0) * 0.10);
 
-    const calcQuality = (skillsComponent * 0.40) + (studioComponent * 0.35) + (genreSynergy * 0.10) + (hypeFactor * 0.10) + formFactor;
+    const calcQuality = (skillsComponent * 0.40) + (studioComponent * 0.35) + (genreSynergy * 0.10) + (hypeFactor * 0.10) + formFactor + (creativeQualityBuff * 0.5);
     const baseQuality = Math.min(100, Math.max(12, Math.floor(Number.isFinite(calcQuality) ? calcQuality : 50)));
 
     const rawAppeal = (player.personality?.commercialAppeal || 50) * 0.45 + (Number.isFinite(perfEval.marketingInvestment) ? perfEval.marketingInvestment : 40) * 0.55;
@@ -894,9 +1228,21 @@ export class GameEngine {
     // Deduct player funds and energy
     player.stats.funds = Math.max(0, player.stats.funds - totalCost);
     player.stats.energy = Math.max(0, player.stats.energy - 15);
-    player.stats.hype = Math.min(100, player.stats.hype + (params.budgetMarketing > 0 ? Math.floor(params.budgetMarketing / 2000) * 10 : 0) + 15 + mvHypeBonus);
+    player.stats.hype = Math.min(100, player.stats.hype + (effectiveBudgetMktg > 0 ? Math.floor(effectiveBudgetMktg / 2000) * 10 : 0) + 15 + mvHypeBonus);
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
+
+    if (producerPact) {
+      producerPact.status = 'fulfilled';
+    }
+
+    this.lastReleaseImpactBreakdown = [
+      { label: 'Equipamiento & Estudio', value: `+${lifestyleBuffs?.qualityBonus || 0} Calidad`, tone: (lifestyleBuffs?.qualityBonus || 0) > 0 ? 'positive' : 'neutral' },
+      { label: 'Productor', value: prod ? `${prod.name} (+${prod.qualityBoost})` : 'Autoproducido', tone: prod ? 'positive' : 'neutral' },
+      { label: 'Co-inversión del Sello', value: labelMarketingSupport > 0 ? `+${formatMoney(labelMarketingSupport)}` : '$0', tone: labelMarketingSupport > 0 ? 'gold' : 'neutral' },
+      { label: 'Sinergia Creativa', value: creativeQualityBuff > 0 ? `+${creativeQualityBuff} Calidad` : 'Ninguna', tone: creativeQualityBuff > 0 ? 'positive' : 'neutral' },
+      { label: 'Score de Producción', value: `${perfEval.performanceScore}/100`, tone: perfEval.performanceScore >= 75 ? 'gold' : 'positive' }
+    ];
 
     if (params.budgetProduction > 0) {
       this.recordFinancialTransaction({
@@ -1162,7 +1508,10 @@ export class GameEngine {
     const albumId = `album_${player.id}_${this.world.currentYear}_${this.world.currentMonth}_${Math.floor(Math.random() * 1000)}`;
 
     const prod = params.producerId ? this.world.producers[params.producerId] : undefined;
-    if (prod) {
+    const producerPact = params.producerId && params.producerId !== 'self'
+      ? (this.world.activeCollabPacts || []).find(p => p.targetProducerId === params.producerId && p.status === 'active')
+      : undefined;
+    if (prod && !producerPact) {
       const prodCheck = IndustryEngine.canWorkWithProducer(player, prod);
       if (!prodCheck.canWork) {
         throw new Error(`Requisitos no cumplidos para contratar a ${prod.name}: ${prodCheck.missingReasons.join(', ')}`);
@@ -1170,18 +1519,34 @@ export class GameEngine {
     }
     const qualityBoost = prod ? prod.qualityBoost : 0;
 
-    const prodFee = prod ? prod.costPerTrack * Math.min(rawNewTitles.length, 6) : 0;
+    const discountMult = producerPact?.producerDiscountPct ? Math.max(0, 1 - producerPact.producerDiscountPct / 100) : 1;
+    const prodFee = prod ? Math.floor(prod.costPerTrack * Math.min(rawNewTitles.length, 6) * discountMult) : 0;
     const totalCost = params.budgetProduction + params.budgetMarketing + prodFee;
 
     if (totalCost > player.stats.funds) {
       throw new Error(`Fondos insuficientes para este álbum. Costo: $${totalCost.toLocaleString()}, Disponibles: $${player.stats.funds.toLocaleString()}`);
     }
 
+    const labelMarketingSupport = (
+      player.activeContract &&
+      player.activeContract.labelId === player.labelId &&
+      (player.activeContract.marketingBudgetPerRelease || 0) > 0
+    ) ? player.activeContract.marketingBudgetPerRelease! : 0;
+    const effectiveAlbumMarketing = params.budgetMarketing + labelMarketingSupport;
+
+    const creativeQualityBuff = player.activeCreativeBuffs?.nextTrackQuality || 0;
+    if (player.activeCreativeBuffs && creativeQualityBuff > 0) {
+      player.activeCreativeBuffs.nextTrackQuality = 0;
+    }
+
     player.stats.funds = Math.max(0, player.stats.funds - totalCost);
     player.stats.energy = Math.max(0, player.stats.energy - 35);
-    player.stats.hype = Math.min(100, player.stats.hype + 35);
+    player.stats.hype = Math.min(100, player.stats.hype + 35 + Math.floor(labelMarketingSupport / 5000));
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
+    if (producerPact) {
+      producerPact.status = 'fulfilled';
+    }
 
     if (params.budgetProduction > 0) {
       this.recordFinancialTransaction({
@@ -1199,12 +1564,11 @@ export class GameEngine {
         description: `Campaña de marketing para álbum "${params.title}"`
       });
     }
-    if (prod && prod.costPerTrack > 0) {
-      const prodCost = prod.costPerTrack * Math.min(rawNewTitles.length, 6);
+    if (prod && prodFee > 0) {
       this.recordFinancialTransaction({
         type: 'expense',
         category: 'production',
-        amount: prodCost,
+        amount: prodFee,
         description: `Producción ejecutiva de ${prod.name} para álbum "${params.title}"`
       });
     }
@@ -1232,10 +1596,10 @@ export class GameEngine {
       const trackPerf = IndustryEngine.deriveTrackPerformanceAndLongevity({
         artist: player,
         productionBudget: Math.floor(params.budgetProduction / Math.max(1, rawNewTitles.length)),
-        marketingBudget: Math.floor(params.budgetMarketing / Math.max(1, rawNewTitles.length)),
+        marketingBudget: Math.floor(effectiveAlbumMarketing / Math.max(1, rawNewTitles.length)),
         producer: prod,
         subGenreId: params.subGenreIds && params.subGenreIds.length > 0 ? params.subGenreIds[0] : undefined,
-        qualityBonus: lifestyleBuffs.qualityBonus
+        qualityBonus: lifestyleBuffs.qualityBonus + creativeQualityBuff
       });
 
       const sId = `song_alb_${player.id}_${this.world.currentYear}_${idx}_${Math.floor(Math.random() * 1000)}`;
@@ -1277,9 +1641,17 @@ export class GameEngine {
       artist: player,
       producerBoost: qualityBoost,
       productionBudget: params.budgetProduction,
-      marketingBudget: params.budgetMarketing,
+      marketingBudget: effectiveAlbumMarketing,
       includedSinglesTotalStreams: includedSinglesStreams
     });
+
+    this.lastReleaseImpactBreakdown = [
+      { label: 'Equipamiento & Estudio', value: `+${lifestyleBuffs.qualityBonus} Calidad`, tone: lifestyleBuffs.qualityBonus > 0 ? 'positive' : 'neutral' },
+      { label: 'Productor', value: prod ? `${prod.name} (+${prod.qualityBoost})` : 'Autoproducido', tone: prod ? 'positive' : 'neutral' },
+      { label: 'Co-inversión del Sello', value: labelMarketingSupport > 0 ? `+${formatMoney(labelMarketingSupport)}` : '$0', tone: labelMarketingSupport > 0 ? 'gold' : 'neutral' },
+      { label: 'Sinergia Creativa', value: creativeQualityBuff > 0 ? `+${creativeQualityBuff} Calidad` : 'Ninguna', tone: creativeQualityBuff > 0 ? 'positive' : 'neutral' },
+      { label: 'Recepción Crítica', value: `${impact.criticalScore}/100`, tone: impact.criticalScore >= 76 ? 'gold' : 'positive' }
+    ];
 
     const gradients = [
       'from-amber-600 to-orange-800',
@@ -1376,13 +1748,22 @@ export class GameEngine {
 
     const isAlbum = params.type === 'collab_ep' || params.type === 'collab_album' || params.type === 'collab_mixtape';
 
-    // Validar cupo anual de singles si aplica
+    // Validar cupo anual de singles si aplica (y evitar doble lanzamiento tras single solista en el mismo mes)
     if (params.type === 'single_feat') {
       const currentYearSingles = this.getPlayerSinglesReleasedThisYear();
       if (currentYearSingles >= GameEngine.MAX_SINGLES_PER_YEAR) {
         return {
           success: false,
           reason: `Has alcanzado el límite anual de lanzamientos (${GameEngine.MAX_SINGLES_PER_YEAR} singles por año). El cupo se reiniciará en enero.`
+        };
+      }
+      const soloSinglesThisMonth = Object.values(this.world.songs).filter(
+        s => s.artistId === player.id && s.isSingle && (!s.featuredArtistIds || s.featuredArtistIds.length === 0) && s.releaseYear === this.world.currentYear && s.releaseMonth === this.world.currentMonth
+      ).length;
+      if (soloSinglesThisMonth >= 1) {
+        return {
+          success: false,
+          reason: `Ya lanzaste un sencillo este mes (${this.world.currentYear}, Mes ${this.world.currentMonth}). Avanza el tiempo antes de publicar otro single.`
         };
       }
     }
@@ -1396,9 +1777,12 @@ export class GameEngine {
       };
     }
 
-    // Validar productor si fue seleccionado
+    // Validar productor si fue seleccionado (respetando pacto activo con productor)
     const prod = params.producerId && params.producerId !== 'self' ? this.world.producers[params.producerId] : undefined;
-    if (prod) {
+    const producerPact = params.producerId && params.producerId !== 'self'
+      ? (this.world.activeCollabPacts || []).find(p => p.targetProducerId === params.producerId && p.status === 'active')
+      : undefined;
+    if (prod && !producerPact) {
       const prodCheck = IndustryEngine.canWorkWithProducer(player, prod);
       if (!prodCheck.canWork) {
         return {
@@ -1418,9 +1802,10 @@ export class GameEngine {
       };
     }
 
-    // Validar fondos totales requeridos
+    // Validar fondos totales requeridos (aplicando descuento de pacto con productor si existe)
     const trackCount = isAlbum ? Math.max(minTracks, rawTrackTitles.length) : 1;
-    const producerFee = prod ? (isAlbum ? prod.costPerTrack * Math.min(trackCount, 6) : prod.costPerTrack) : 0;
+    const prodDiscountMult = producerPact?.producerDiscountPct ? Math.max(0, 1 - producerPact.producerDiscountPct / 100) : 1;
+    const producerFee = prod ? Math.floor((isAlbum ? prod.costPerTrack * Math.min(trackCount, 6) : prod.costPerTrack) * prodDiscountMult) : 0;
     const totalCost = params.budgetProduction + params.budgetMarketing + producerFee;
 
     if (totalCost > player.stats.funds) {
@@ -1430,7 +1815,10 @@ export class GameEngine {
       };
     }
 
-    // 3. Ejecutar RelationshipEngine.calculateCollabFeasibility
+    // 3. Ejecutar RelationshipEngine.calculateCollabFeasibility o aceptar automáticamente si hay CollabPact activo
+    const activeArtistPact = (this.world.activeCollabPacts || []).find(
+      p => p.targetArtistId === target.id && p.status === 'active'
+    );
     const feas = RelationshipEngine.calculateCollabFeasibility(
       player,
       target,
@@ -1438,6 +1826,12 @@ export class GameEngine {
       params.budgetProduction,
       params.creditOrder
     );
+    if (activeArtistPact) {
+      feas.willAccept = true;
+      feas.chemistryScore = Math.max(14, feas.chemistryScore);
+      feas.crossFanbasePotential = Math.max(500, feas.crossFanbasePotential);
+      feas.reason = `Colaboración aprobada automáticamente bajo el pacto de estudio vigente con ${target.name}.`;
+    }
 
     // 4. Si es rechazada: registrar en histórico, reducir levemente afinidad (-3 a -5), notificar y retornar sin descontar fondos ni crear entidades
     if (!feas.willAccept) {
@@ -1510,6 +1904,12 @@ export class GameEngine {
     player.stats.energy = Math.max(0, player.stats.energy - requiredEnergy);
     player.lastReleaseYear = this.world.currentYear;
     player.lastReleaseMonth = this.world.currentMonth;
+    if (activeArtistPact) {
+      activeArtistPact.status = 'fulfilled';
+    }
+    if (producerPact) {
+      producerPact.status = 'fulfilled';
+    }
 
     if (params.budgetProduction > 0) {
       this.recordFinancialTransaction({
@@ -1808,6 +2208,10 @@ export class GameEngine {
     const player = this.getPlayer();
     if (!player) throw new Error('Artista no encontrado.');
 
+    if (player.lastTourYear === this.world.currentYear && player.lastTourMonth === this.world.currentMonth) {
+      throw new Error('Ya realizaste una gira este mes. Avanza el calendario (+1M) para organizar la siguiente.');
+    }
+
     const tourValidation = TourEngine.canStartTour(player, this.world);
     if (!tourValidation.allowed) {
       throw new Error(tourValidation.reason || 'Necesitas catálogo y fans para vender entradas (mín. 2 temas o 1 EP, ≥1.000 oyentes y ≥85% energía).');
@@ -1821,17 +2225,33 @@ export class GameEngine {
       this.world.currentMonth,
       this.world
     );
+
+    const manager = player.managerId ? this.world.managers[player.managerId] : undefined;
+    if (manager && manager.negotiationSkill > 0) {
+      const managerBoost = 1 + Math.min(0.25, manager.negotiationSkill / 400);
+      tour.grossRevenue = Math.floor((tour.grossRevenue || 0) * managerBoost);
+      tour.netArtistProfit = Math.floor((tour.netArtistProfit || 0) * managerBoost);
+    }
+
+    const showBuff = player.activeCreativeBuffs?.nextShowBonus || 0;
+    if (showBuff > 0 && player.activeCreativeBuffs) {
+      player.activeCreativeBuffs.nextShowBonus = 0;
+    }
+
     const lifestyleBuffs = this.getPlayerLifestyleBuffs();
-    const reducedFatigue = Math.max(5, Math.floor((tour.energyFatigue || 20) * (1 - (lifestyleBuffs?.tourFatigueReduction || 0))));
+    const totalFatigueReduction = Math.min(0.65, (lifestyleBuffs?.tourFatigueReduction || 0) + (showBuff > 0 ? 0.15 : 0));
+    const reducedFatigue = Math.max(5, Math.floor((tour.energyFatigue || 20) * (1 - totalFatigueReduction)));
 
     if (!Array.isArray(this.world.tours)) {
       this.world.tours = [];
     }
     this.world.tours.push(tour);
+    player.lastTourYear = this.world.currentYear;
+    player.lastTourMonth = this.world.currentMonth;
 
     const safeNetProfit = Number.isFinite(tour.netArtistProfit) ? tour.netArtistProfit : 0;
     const safeFatigue = Number.isFinite(reducedFatigue) ? reducedFatigue : 20;
-    const safeHype = Number.isFinite(tour.hypeGenerated) ? tour.hypeGenerated : 5;
+    const safeHype = (Number.isFinite(tour.hypeGenerated) ? tour.hypeGenerated : 5) + Math.round(showBuff * 0.4);
     const safeFans = Number.isFinite(tour.fanbaseGained) ? tour.fanbaseGained : 50;
 
     player.stats.funds = Math.max(0, (player.stats.funds || 0) + safeNetProfit);
@@ -1863,9 +2283,24 @@ export class GameEngine {
     return tour;
   }
 
-  public signContract(contract: LabelContract) {
+  public signContract(contract: LabelContract, options?: { skipExclusivityCheck?: boolean }) {
     const player = this.getPlayer();
     const label = this.world.labels[contract.labelId];
+
+    if (
+      !options?.skipExclusivityCheck &&
+      player.activeContract &&
+      !player.activeContract.isDistributor &&
+      !player.activeContract.isArtistOwned &&
+      player.activeContract.albumsDelivered < player.activeContract.albumsRequired &&
+      contract.labelId !== player.labelId &&
+      !contract.isDistributor &&
+      !contract.isArtistOwned
+    ) {
+      throw new Error(
+        `Tienes un contrato discográfico exclusivo vigente (${player.activeContract.albumsDelivered}/${player.activeContract.albumsRequired} álbumes). Paga la cláusula de rescisión o completa las entregas antes de firmar otro sello.`
+      );
+    }
 
     // 1. Deducir cuota anual si aplica
     if (contract.annualFee && contract.annualFee > 0) {
@@ -1906,6 +2341,64 @@ export class GameEngine {
     }
 
     this.notify();
+  }
+
+  public breakActiveContract(): { success: boolean; message: string; cost: number } {
+    const player = this.getPlayer();
+    const contract = player.activeContract;
+    if (!contract || contract.isDistributor || contract.isArtistOwned) {
+      return {
+        success: false,
+        message: 'No tienes un contrato discográfico exclusivo activo para rescindir.',
+        cost: 0
+      };
+    }
+
+    const cost = Math.max(
+      500,
+      contract.breakoutClause ?? Math.round((contract.signingBonus || 10000) * 0.35)
+    );
+    if (player.stats.funds < cost) {
+      return {
+        success: false,
+        message: `Fondos insuficientes para pagar la cláusula de rescisión (${formatMoney(cost)} requeridos).`,
+        cost
+      };
+    }
+
+    const oldLabel = player.labelId ? this.world.labels[player.labelId] : undefined;
+    player.stats.funds = Math.max(0, player.stats.funds - cost);
+    this.recordFinancialTransaction({
+      type: 'expense',
+      category: 'contract',
+      amount: cost,
+      description: `Cláusula de rescisión contractual (${oldLabel?.name || contract.labelId})`
+    });
+
+    if (oldLabel && Array.isArray(oldLabel.rosterArtistIds)) {
+      oldLabel.rosterArtistIds = oldLabel.rosterArtistIds.filter(id => id !== player.id);
+    }
+    player.labelId = null;
+    player.activeContract = null;
+
+    this.world.news.unshift({
+      id: `news_break_contract_${Date.now()}`,
+      headline: `${player.name} rescinde su contrato con ${oldLabel?.name || 'su sello'}`,
+      body: `Tras abonar ${formatMoney(cost)} de cláusula de salida, ${player.name} recupera su estatus como artista independiente.`,
+      year: this.world.currentYear,
+      month: this.world.currentMonth,
+      category: 'industry',
+      relatedArtistIds: [player.id],
+      sentiment: 'neutral',
+      importance: 4
+    });
+
+    this.notify();
+    return {
+      success: true,
+      message: `Contrato rescindido pagando ${formatMoney(cost)}. Vuelves a ser artista independiente.`,
+      cost
+    };
   }
 
   public signDeal(labelId: string): { success: boolean; contract?: LabelContract; error?: string } {
@@ -2469,8 +2962,41 @@ export class GameEngine {
 
   public executeDecisionAction(actionType: DecisionActionType): DecisionExecutionResult {
     const player = this.getPlayer();
+    const isRestAction = actionType === 'reflective_rest' || actionType === 'home_rest';
+    if (!isRestAction) {
+      const agenda = this.getMonthlyActionStatus(player);
+      if (!agenda.canAct) {
+        return {
+          success: false,
+          actionId: actionType,
+          title: 'Agenda Mensual Completa',
+          narrativeText: `Ya usaste tus ${agenda.max} acciones de desarrollo este mes. Avanza al mes siguiente o contrata un Mánager para sumar +1 espacio en tu agenda.`,
+          gainsSummary: '',
+          personalityChanges: {},
+          fundsSpent: 0,
+          energyChange: 0,
+          error: 'Agenda mensual completa.'
+        };
+      }
+    }
+
     const result = DecisionEngine.executeDecision(actionType, player, this.world);
     if (result.success) {
+      if (!isRestAction) {
+        const sameMonth = player.lastActionYear === this.world.currentYear && player.lastActionMonth === this.world.currentMonth;
+        player.monthlyActionsUsed = (sameMonth ? (player.monthlyActionsUsed || 0) : 0) + 1;
+        player.lastActionYear = this.world.currentYear;
+        player.lastActionMonth = this.world.currentMonth;
+        if (!player.activeCreativeBuffs) player.activeCreativeBuffs = {};
+        if (actionType === 'studio_practice') {
+          player.activeCreativeBuffs.nextTrackQuality = Math.min(12, (player.activeCreativeBuffs.nextTrackQuality || 0) + 8);
+        } else if (actionType === 'vocal_training') {
+          player.activeCreativeBuffs.nextShowBonus = Math.min(15, (player.activeCreativeBuffs.nextShowBonus || 0) + 10);
+        } else if (actionType === 'industry_networking') {
+          player.activeCreativeBuffs.nextPromoBoost = Math.min(30, (player.activeCreativeBuffs.nextPromoBoost || 0) + 20);
+        }
+      }
+
       if (result.fundsSpent > 0) {
         this.recordFinancialTransaction({
           type: 'expense',
@@ -2482,10 +3008,11 @@ export class GameEngine {
       if (result.newsItem) {
         this.world.news.unshift(result.newsItem);
       }
-      if (actionType === 'reflective_rest' || actionType === 'home_rest') {
-        const energyAfterRest = player.stats.energy;
+      if (isRestAction) {
+        const restGain = Math.max(0, result.energyChange || 0);
+        player.stats.energy = Math.max(0, player.stats.energy - restGain);
         this.advanceCycle(1, false);
-        player.stats.energy = Math.min(100, energyAfterRest);
+        player.stats.energy = Math.min(100, player.stats.energy + restGain);
         result.statChanges = {
           ...(result.statChanges || {}),
           energy: player.stats.energy,
@@ -2527,7 +3054,12 @@ export class GameEngine {
 
     // Apply outcome deltas with Prodigy Multiplier if active
     const prodigyMultiplier = player.isProdigy ? (player.prodigyMultiplier || 3) : 1;
-    if (outcome.fundsChange) {
+    const isDuplicateContractBonus = Boolean(
+      outcome.newContract &&
+      outcome.newContract.signingBonus > 0 &&
+      outcome.fundsChange === outcome.newContract.signingBonus
+    );
+    if (outcome.fundsChange && !isDuplicateContractBonus) {
       player.stats.funds = Math.max(0, player.stats.funds + outcome.fundsChange);
       if (outcome.fundsChange > 0) {
         this.recordFinancialTransaction({
@@ -2575,12 +3107,12 @@ export class GameEngine {
           let targetVal: number;
           if (v < 0) {
             targetVal = Math.max(0, currentVal + v);
-          } else if (v <= 25 && currentVal > 30) {
-            // Delta value passed (e.g. +3)
+          } else if (v <= 25) {
+            // Delta value passed (e.g. +3, +10) regardless of currentVal
             const effDelta = player.isProdigy ? v * (player.prodigyMultiplier || 3) : v;
             targetVal = Math.min(100, Math.max(0, currentVal + effDelta));
           } else {
-            // Absolute target value passed
+            // Absolute target value passed (> 25)
             const delta = v - currentVal;
             if (delta > 0 && player.isProdigy) {
               targetVal = Math.min(100, currentVal + delta * (player.prodigyMultiplier || 3));
@@ -2595,7 +3127,10 @@ export class GameEngine {
 
     // 3. Contracts & Managers
     if (outcome.newContract) {
-      this.signContract(outcome.newContract);
+      this.signContract(outcome.newContract, { skipExclusivityCheck: true });
+    }
+    if (outcome.wentViralSongId && this.world.songs[outcome.wentViralSongId]) {
+      this.world.songs[outcome.wentViralSongId].wentViral = true;
     }
     if (outcome.newManagerId) {
       this.hireManager(outcome.newManagerId);
@@ -2690,6 +3225,18 @@ export class GameEngine {
       }
       if (outcome.careerImpact.stageOverride) {
         player.careerStage = outcome.careerImpact.stageOverride;
+      }
+      if (outcome.careerImpact.forceGenreTransition) {
+        const mappedGenre = outcome.careerImpact.forceGenreTransition === 'experimental_fusion'
+          ? 'musica_electronica'
+          : outcome.careerImpact.forceGenreTransition;
+        if (this.world.genres[mappedGenre]) {
+          player.mainGenreId = mappedGenre;
+        }
+      }
+      if (outcome.careerImpact.addDisputeFlag) {
+        if (!player.historicalNotes) player.historicalNotes = [];
+        player.historicalNotes.unshift(`Disputa registrada: ${outcome.careerImpact.addDisputeFlag}`);
       }
     }
 
@@ -2826,11 +3373,15 @@ export class GameEngine {
           activeTrends,
           this.world.genres[song.genreId],
           this.world.artists,
-          playerSongs
+          playerSongs,
+          this.world.playlists
         );
         song.streamsLastMonth = streamRes.streams;
         song.streamsTotal += streamRes.streams;
         song.monthlyStreamsHistory.push(streamRes.streams);
+        if (song.albumId && this.world.albums[song.albumId]) {
+          this.world.albums[song.albumId].totalStreams = (this.world.albums[song.albumId].totalStreams || 0) + streamRes.streams;
+        }
         if (streamRes.wentViralNow) song.wentViral = true;
         if (streamRes.becomesClassicNow) song.isClassic = true;
         if (song.musicVideo) {
@@ -2965,9 +3516,23 @@ export class GameEngine {
 
       // 5.1 Actualización Dinámica de Playlists Editoriales & Algorítmicas
       if (!this.world.playlists) {
-        this.world.playlists = EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
+        this.world.playlists = cloneEditorialPlaylists();
       }
       StreamingEngine.updatePlaylists(this.world);
+
+      // Limpiar invitaciones a festivales expiradas y pactos vencidos
+      if (Array.isArray(this.world.festivalInvitations)) {
+        this.world.festivalInvitations = this.world.festivalInvitations.filter(
+          (inv) => inv.year > this.world.currentYear || (inv.year === this.world.currentYear && inv.month >= this.world.currentMonth)
+        );
+      }
+      if (Array.isArray(this.world.activeCollabPacts)) {
+        for (const pact of this.world.activeCollabPacts) {
+          if (pact.status === 'active' && pact.expiresYear < this.world.currentYear) {
+            pact.status = 'expired';
+          }
+        }
+      }
 
       // 5.2 Generación Estacional de Invitaciones a Festivales Globales
       if (!this.world.festivalInvitations) this.world.festivalInvitations = [];
@@ -2999,6 +3564,17 @@ export class GameEngine {
 
       // 5.3 Certificaciones Oficiales de la Industria (Discos de Oro, Platino y Diamante)
       const certRes = CertificationEngine.evaluateCertifications(this.world);
+      if (certRes.newCertifications.length > 0) {
+        if (!Array.isArray(this.world.officialCertifications)) {
+          this.world.officialCertifications = [];
+        }
+        const existingCertIds = new Set(this.world.officialCertifications.map(c => c.id));
+        for (const cert of certRes.newCertifications) {
+          if (!existingCertIds.has(cert.id)) {
+            this.world.officialCertifications.push(cert);
+          }
+        }
+      }
       for (const item of certRes.newsItems) {
         this.world.news.unshift({
           id: `news_cert_${Date.now()}_${Math.random()}`,
@@ -3050,6 +3626,8 @@ export class GameEngine {
 
         // Generar Spotify Wrapped Anual del jugador
         this.generateYearEndWrapped(droughtYear);
+        player.yearStartFans = player.stats.fansCount;
+        player.yearStartTotalStreams = player.stats.totalStreams;
       }
 
       // 7. Update player career stage & legacy
@@ -3285,22 +3863,30 @@ export class GameEngine {
   // PILAR SMARTPHONE & DMs INTERACTIVOS
   // ==========================================
 
-  public replyToPhoneMessage(messageId: string, choiceIndex: number): void {
-    if (!this.world.phoneMessages) return;
+  public replyToPhoneMessage(messageId: string, choiceIndex: number): { success: boolean; message?: string } {
+    if (!this.world.phoneMessages) return { success: false, message: 'No hay mensajes disponibles.' };
     const msg = this.world.phoneMessages.find(m => m.id === messageId);
-    if (!msg) return;
+    if (!msg) return { success: false, message: 'Mensaje no encontrado.' };
 
-    // Si ya fue respondido, ignorar
-    if (msg.chosenReplyIndex !== undefined) return;
+    if (msg.chosenReplyIndex !== undefined) {
+      return { success: false, message: 'Este mensaje ya fue respondido.' };
+    }
 
     const choice = msg.choices?.[choiceIndex];
-    if (!choice) return;
-
-    msg.isRead = true;
-    msg.chosenReplyIndex = choiceIndex;
+    if (!choice) return { success: false, message: 'Opción no válida.' };
 
     const player = this.getPlayer();
     const effects = choice.effects;
+
+    if (effects.fundsDelta && effects.fundsDelta < 0 && player.stats.funds < Math.abs(effects.fundsDelta)) {
+      return {
+        success: false,
+        message: `Fondos insuficientes. Requiere ${formatMoney(Math.abs(effects.fundsDelta))} y tienes ${formatMoney(player.stats.funds)}.`
+      };
+    }
+
+    msg.isRead = true;
+    msg.chosenReplyIndex = choiceIndex;
 
     if (effects.fundsDelta) {
       player.stats.funds = Math.max(0, player.stats.funds + effects.fundsDelta);
@@ -3353,8 +3939,23 @@ export class GameEngine {
       });
     }
 
+    if (effects.fansDelta || effects.hypeDelta) {
+      this.syncAudienceMetrics(player);
+    }
+
     this.updateUnreadPhoneCount();
     this.notify();
+    return { success: true };
+  }
+
+  public markPhoneMessageRead(messageId: string): void {
+    if (!this.world.phoneMessages) return;
+    const msg = this.world.phoneMessages.find(m => m.id === messageId);
+    if (msg && !msg.isRead) {
+      msg.isRead = true;
+      this.updateUnreadPhoneCount();
+      this.notify();
+    }
   }
 
   public markAllPhoneMessagesRead(): void {
@@ -3419,7 +4020,11 @@ export class GameEngine {
     if (ceremony) {
       for (const cat of ceremony.categories) {
         const catAny = cat as any;
-        if ((catAny.winner && catAny.winner.id === player.id) || cat.winnerId === player.id) {
+        if (
+          cat.winnerArtistId === player.id ||
+          Boolean(cat.playerWon) ||
+          (catAny.winner && catAny.winner.id === player.id)
+        ) {
           awardsWonYear.push(catAny.title || cat.name);
         }
       }
@@ -3480,8 +4085,10 @@ export class GameEngine {
       fundsEarnedYear = Math.max(5000, Math.floor(totalStreamsYear * 0.0035 + player.stats.popularity * 1200));
     }
 
-    // Fans ganados
-    const fansGainedYear = Math.max(500, Math.floor(player.stats.fansCount * 0.25 + totalStreamsYear * 0.0008));
+    // Fans ganados reales respecto al inicio del año
+    const fansGainedYear = player.yearStartFans !== undefined
+      ? Math.max(0, player.stats.fansCount - player.yearStartFans)
+      : Math.max(500, Math.floor(player.stats.fansCount * 0.25 + totalStreamsYear * 0.0008));
 
     // Veredicto de la industria
     let industryVerdict = 'Un año de constancia y exploración que sentó cimientos firmes para el futuro.';
@@ -3496,8 +4103,8 @@ export class GameEngine {
     }
 
     const quoteShareable = awardsWonYear.length > 0
-      ? `🏆 ${year}: El año dorado de ${player.name}. Gracias a los millones que hicieron esto posible.`
-      : `🎵 ${year}: ${totalStreamsYear.toLocaleString('es-AR')} reproducciones. Esto recién comienza.`;
+      ? `${year}: El año dorado de ${player.name}. Gracias a los millones que hicieron esto posible.`
+      : `${year}: ${totalStreamsYear.toLocaleString('es-AR')} reproducciones. Esto recién comienza.`;
 
     const wrappedData: YearEndWrappedData = {
       year,
@@ -3549,6 +4156,10 @@ export class GameEngine {
     const player = this.getPlayer();
     if (!player) throw new Error('Artista no encontrado.');
 
+    if (this.getPlayerSongs().length === 0 && (!params.setlistSongIds || params.setlistSongIds.length === 0)) {
+      throw new Error('Debes publicar al menos 1 canción en tu catálogo antes de presentarte en un festival.');
+    }
+
     if (player.stats.energy < 20) {
       throw new Error('Energía insuficiente para actuar en el festival (requiere al menos 20% de energía).');
     }
@@ -3556,6 +4167,12 @@ export class GameEngine {
     const festival = GLOBAL_FESTIVALS.find(f => f.id === params.festivalId);
     if (!festival) {
       throw new Error(`El festival con ID "${params.festivalId}" no existe en el circuito mundial.`);
+    }
+
+    if (!player.playedFestivalsByYear) player.playedFestivalsByYear = {};
+    const playedThisYear = player.playedFestivalsByYear[this.world.currentYear] || [];
+    if (playedThisYear.includes(params.festivalId)) {
+      throw new Error(`Ya actuaste en ${festival.name} este año (${this.world.currentYear}). Podrás volver en la edición del año próximo.`);
     }
 
     const productionCost = FestivalEngine.calculateProductionCost(params.production);
@@ -3574,6 +4191,34 @@ export class GameEngine {
       world: this.world
     });
 
+    const activeInv = Array.isArray(this.world.festivalInvitations)
+      ? this.world.festivalInvitations.find(
+          i => i.id === params.invitationId || (i.festivalId === params.festivalId && i.year === this.world.currentYear)
+        )
+      : undefined;
+    if (activeInv?.payout && activeInv.payout > (result.payoutGross || 0)) {
+      result.payoutGross = activeInv.payout;
+      result.grossRevenue = activeInv.payout;
+    }
+
+    const manager = player.managerId ? this.world.managers[player.managerId] : undefined;
+    if (manager && manager.negotiationSkill > 0) {
+      const bonusMul = 1 + Math.min(0.25, manager.negotiationSkill / 400);
+      result.payoutGross = Math.floor((result.payoutGross || 0) * bonusMul);
+      result.grossRevenue = result.payoutGross;
+    }
+    result.netProfit = (result.payoutGross || 0) - productionCost;
+
+    const showBuff = player.activeCreativeBuffs?.nextShowBonus || 0;
+    if (showBuff > 0 && player.activeCreativeBuffs) {
+      player.activeCreativeBuffs.nextShowBonus = 0;
+      result.performanceScore = Math.min(100, (result.performanceScore || result.crowdRating || 70) + showBuff);
+      result.crowdRating = result.performanceScore;
+    }
+
+    playedThisYear.push(params.festivalId);
+    player.playedFestivalsByYear[this.world.currentYear] = playedThisYear;
+
     // Descontar costo de producción y acreditar ganancia bruta
     if (productionCost > 0) {
       player.stats.funds = Math.max(0, player.stats.funds - productionCost);
@@ -3585,29 +4230,38 @@ export class GameEngine {
       });
     }
 
-    if (result.payoutGross > 0) {
-      player.stats.funds += result.payoutGross;
+    if ((result.payoutGross || 0) > 0) {
+      player.stats.funds += result.payoutGross!;
       this.recordFinancialTransaction({
         type: 'income',
         category: 'tour',
-        amount: result.payoutGross,
+        amount: result.payoutGross!,
         description: `Caché por actuación en vivo en ${festival.name} (${params.slot})`
       });
     }
 
     // Consumo de energía
     const rawEnergyUsed = result.energyUsed ?? result.energySpent ?? 20;
-    const safeEnergyUsed = Number.isFinite(rawEnergyUsed) ? rawEnergyUsed : 20;
+    const baseEnergyUsed = Number.isFinite(rawEnergyUsed) ? rawEnergyUsed : 20;
+    const safeEnergyUsed = showBuff > 0 ? Math.max(10, Math.floor(baseEnergyUsed * 0.85)) : baseEnergyUsed;
     player.stats.energy = Math.max(5, Math.min(100, (player.stats.energy || 100) - safeEnergyUsed));
 
-    // Fans, Hype y Popularidad
+    // Fans, Hype, Popularidad, Reputación y Credibilidad
     const safeFansGained = Number.isFinite(result.fansGained) ? result.fansGained : 150;
-    const safeHypeGained = Number.isFinite(result.hypeGained) ? result.hypeGained : 5;
+    const safeHypeGained = (Number.isFinite(result.hypeGained) ? result.hypeGained : 5) + Math.round(showBuff * 0.3);
     const safePopGained = Number.isFinite(result.popularityGained) ? result.popularityGained : 2;
+    const safeRepGained = Number.isFinite(result.reputationGained) ? result.reputationGained! : 0;
+    const safeCredGained = Number.isFinite(result.credibilityGained) ? result.credibilityGained! : 0;
 
     player.stats.fansCount = Math.max(0, (player.stats.fansCount || 0) + safeFansGained);
     player.stats.hype = Math.min(100, Math.max(0, (player.stats.hype || 0) + safeHypeGained));
     player.stats.popularity = Math.min(100, Math.max(0, (player.stats.popularity || 0) + safePopGained));
+    if (safeRepGained !== 0) {
+      player.stats.reputation = Math.min(100, Math.max(0, (player.stats.reputation || 0) + safeRepGained));
+    }
+    if (safeCredGained !== 0) {
+      player.stats.artisticCredibility = Math.min(100, Math.max(0, (player.stats.artisticCredibility || 0) + safeCredGained));
+    }
 
     // Registrar en histórico del artista y del mundo
     if (!Array.isArray(player.livePerformanceHistory)) player.livePerformanceHistory = [];
@@ -3680,6 +4334,14 @@ export class GameEngine {
       };
     }
 
+    if (player.stats.energy < 5) {
+      return {
+        success: false,
+        message: 'Energía insuficiente para preparar un pitch editorial (requiere al menos 5%).',
+        added: false
+      };
+    }
+
     // Evaluar compatibilidad con género y filtros
     if (playlist.genreFilters && playlist.genreFilters.length > 0) {
       const match = playlist.genreFilters.includes(song.genreId) || song.subGenreIds?.some(sg => playlist.genreFilters?.includes(sg));
@@ -3692,8 +4354,20 @@ export class GameEngine {
       }
     }
 
+    const promoBuff = player.activeCreativeBuffs?.nextPromoBoost || 0;
+    const labelMarketingBonus = player.labelId && this.world.labels[player.labelId]
+      ? Math.floor((this.world.labels[player.labelId].marketingPower || 0) * 0.12)
+      : 0;
+    const pitchDiscount = Math.min(16, Math.floor(promoBuff * 0.35) + labelMarketingBonus);
+
+    player.stats.energy = Math.max(0, player.stats.energy - 5);
+    if (promoBuff > 0 && player.activeCreativeBuffs) {
+      player.activeCreativeBuffs.nextPromoBoost = 0;
+    }
+
     // Calidad y potencial
-    const qualityThreshold = playlist.followers >= 20000000 ? 75 : playlist.followers >= 10000000 ? 65 : 50;
+    const baseThreshold = playlist.followers >= 20000000 ? 75 : playlist.followers >= 10000000 ? 65 : 50;
+    const qualityThreshold = Math.max(30, baseThreshold - pitchDiscount);
     if (song.quality < qualityThreshold) {
       return {
         success: false,
@@ -3711,7 +4385,7 @@ export class GameEngine {
 
     const position = 1;
     player.stats.hype = Math.min(100, player.stats.hype + 8);
-    const boost = Math.floor(playlist.followers * 0.015);
+    const boost = Math.min(25000, Math.floor(playlist.followers * 0.002));
     song.streamsTotal += boost;
     song.streamsLastMonth += boost;
 
@@ -3748,11 +4422,30 @@ export class GameEngine {
     const song = this.world.songs[params.songId];
     if (!song) throw new Error('Canción no encontrada.');
 
+    if (player.stats.energy < 8) {
+      throw new Error('Energía insuficiente para rodar una campaña de snippets (requiere al menos 8%).');
+    }
+
+    if (!song.snippetCampaigns) song.snippetCampaigns = [];
+    const alreadyPushedThisMonth = song.snippetCampaigns.some(
+      c => c.year === this.world.currentYear && c.month === this.world.currentMonth
+    );
+    if (alreadyPushedThisMonth) {
+      throw new Error(`Ya lanzaste una campaña de snippets para "${song.title}" este mes. Avanza el calendario para impulsar una nueva.`);
+    }
+
     if (params.budget > player.stats.funds) {
       throw new Error(`Fondos insuficientes para la campaña en redes ($${params.budget.toLocaleString('es-AR')} requeridos, tienes $${player.stats.funds.toLocaleString('es-AR')}).`);
     }
 
     player.stats.funds = Math.max(0, player.stats.funds - params.budget);
+    player.stats.energy = Math.max(0, player.stats.energy - 8);
+
+    const promoBuff = player.activeCreativeBuffs?.nextPromoBoost || 0;
+    if (promoBuff > 0 && player.activeCreativeBuffs) {
+      player.activeCreativeBuffs.nextPromoBoost = 0;
+    }
+
     this.recordFinancialTransaction({
       type: 'expense',
       category: 'marketing',
@@ -3769,8 +4462,10 @@ export class GameEngine {
       influencerTier: params.influencerTier
     });
 
+    const promoMultiplier = promoBuff > 0 ? 1 + promoBuff / 100 : 1;
+
     // Aplicar efectos de la campaña de forma segura
-    const streamsBoost = result.streamsBoostGenerated ?? result.streamingConversions ?? 0;
+    const streamsBoost = Math.floor((result.streamsBoostGenerated ?? result.streamingConversions ?? 0) * promoMultiplier);
     song.streamsTotal = (song.streamsTotal || 0) + streamsBoost;
     song.streamsLastMonth = (song.streamsLastMonth || 0) + streamsBoost;
     if (result.isViralTrend || result.isViral) song.wentViral = true;
@@ -3778,11 +4473,23 @@ export class GameEngine {
     const hypeGain = result.hypeGained ?? result.hypeGenerated ?? 0;
     player.stats.hype = Math.min(100, (player.stats.hype || 0) + hypeGain);
 
-    const listenersGain = result.monthlyListenersGained ?? result.listenersGained ?? 0;
-    player.stats.monthlyListeners = (player.stats.monthlyListeners || 0) + listenersGain;
-
+    const listenersGain = Math.floor((result.monthlyListenersGained ?? result.listenersGained ?? 0) * promoMultiplier);
     const fansGain = result.fansGained ?? Math.floor(listenersGain * 0.12);
     player.stats.fansCount = (player.stats.fansCount || 0) + fansGain;
+
+    song.snippetCampaigns.unshift({
+      id: `snip_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      songId: song.id,
+      songTitle: song.title,
+      snippetType: 'dance_challenge',
+      platform: 'tiktok',
+      views: result.tiktokViews || result.viewsGenerated || 0,
+      engagementRate: 6.5,
+      hypeGenerated: hypeGain,
+      cost: params.budget,
+      month: this.world.currentMonth,
+      year: this.world.currentYear
+    });
 
     this.world.news.unshift({
       id: `news_snippet_${Date.now()}`,
@@ -3806,6 +4513,30 @@ export class GameEngine {
     const song = this.world.songs[songId];
     if (!song) throw new Error('Canción no encontrada.');
 
+    const songAny = song as any;
+    if (!songAny._interactedCommentKeys) {
+      songAny._interactedCommentKeys = [] as string[];
+    }
+    const key = `${commentId}:${action}`;
+    const commentObj = song.comments?.find(c => c.id === commentId);
+    const alreadyDone =
+      songAny._interactedCommentKeys.includes(key) ||
+      (action === 'like' && commentObj?.likedByArtist) ||
+      (action === 'pin' && commentObj?.isPinned);
+
+    if (alreadyDone) {
+      return {
+        success: false,
+        message: 'Ya interactuaste con este comentario.'
+      };
+    }
+
+    songAny._interactedCommentKeys.push(key);
+    if (commentObj) {
+      if (action === 'like') commentObj.likedByArtist = true;
+      if (action === 'pin') commentObj.isPinned = true;
+    }
+
     player.stats.fanbaseLoyalty = Math.min(100, player.stats.fanbaseLoyalty + 1);
     player.stats.hype = Math.min(100, player.stats.hype + 1);
     this.notify();
@@ -3817,11 +4548,14 @@ export class GameEngine {
 
   public exportSaveState(): string {
     const save: GameSaveState = {
-      version: 1,
+      version: 2,
       seed: 123456,
       savedAt: new Date().toISOString(),
       playerId: this.playerId,
-      world: this.world
+      world: this.world,
+      currentEvent: this.currentEvent,
+      eventQueue: this.eventQueue,
+      activeGalaCeremony: this.activeGalaCeremony
     };
     return JSON.stringify(save, null, 2);
   }
@@ -3850,27 +4584,31 @@ export class GameEngine {
       this.world.albums = this.world.albums || {};
       this.world.charts = (this.world.charts || {}) as WorldState['charts'];
       this.world.trends = this.world.trends || {};
-      this.world.genres = this.world.genres || INITIAL_GENRES;
-      this.world.labels = this.world.labels || INITIAL_LABELS;
-      this.world.producers = this.world.producers || INITIAL_PRODUCERS;
-      this.world.managers = this.world.managers || INITIAL_MANAGERS;
+      this.world.genres = this.world.genres || deepCloneRecord(INITIAL_GENRES);
+      this.world.labels = this.world.labels || deepCloneRecord(INITIAL_LABELS);
+      this.world.producers = this.world.producers || deepCloneRecord(INITIAL_PRODUCERS);
+      this.world.managers = this.world.managers || deepCloneRecord(INITIAL_MANAGERS);
       this.world.news = Array.isArray(this.world.news) ? this.world.news : [];
       this.world.awardsHistory = Array.isArray(this.world.awardsHistory) ? this.world.awardsHistory : [];
       this.world.tours = Array.isArray(this.world.tours) ? this.world.tours : [];
       this.world.socialFeed = Array.isArray(this.world.socialFeed) ? this.world.socialFeed : [];
-      this.world.ecosystemContacts = Array.isArray(this.world.ecosystemContacts) && this.world.ecosystemContacts.length > 0
-        ? this.world.ecosystemContacts
-        : RelationshipEngine.getInitialEcosystemContacts();
+      const rawEco = this.world.ecosystemContacts as any;
+      this.world.ecosystemContacts =
+        rawEco && typeof rawEco === 'object' && !Array.isArray(rawEco) && Object.keys(rawEco).length > 0
+          ? rawEco
+          : RelationshipEngine.getInitialEcosystemContacts();
       this.world.activeBeefs = this.world.activeBeefs || {};
       this.world.financialLedger = Array.isArray(this.world.financialLedger) ? this.world.financialLedger : [];
       this.world.pendingCollabOffers = Array.isArray(this.world.pendingCollabOffers) ? this.world.pendingCollabOffers : [];
       this.world.activeCollabPacts = Array.isArray(this.world.activeCollabPacts) ? this.world.activeCollabPacts : [];
-      this.world.playlists = this.world.playlists || EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
+      this.world.playlists = this.world.playlists || cloneEditorialPlaylists();
       this.world.festivalInvitations = Array.isArray(this.world.festivalInvitations) ? this.world.festivalInvitations : [];
       this.world.festivalHistory = Array.isArray(this.world.festivalHistory) ? this.world.festivalHistory : [];
       this.world.recentEventIdsHistory = Array.isArray(this.world.recentEventIdsHistory) ? this.world.recentEventIdsHistory : [];
       this.world.activeNarrativeChains = this.world.activeNarrativeChains || {};
       this.world.officialCertifications = Array.isArray(this.world.officialCertifications) ? this.world.officialCertifications : [];
+      this.world.phoneMessages = Array.isArray(this.world.phoneMessages) ? this.world.phoneMessages : [];
+      this.world.unreadPhoneCount = safeNum(this.world.unreadPhoneCount, this.world.phoneMessages.filter(m => !m.isRead).length);
 
       // 2. Player Schema Migration & Safe Defaults
       let player = rawPlayerId ? this.world.artists[rawPlayerId] : undefined;
@@ -3896,31 +4634,31 @@ export class GameEngine {
       player.legacyScore = Number(player.legacyScore) || 0;
       player.isRetired = Boolean(player.isRetired);
 
-      // Safe Stats Defaults
+      // Safe Stats Defaults (preserving legitimate 0 values)
       player.stats = player.stats || {} as any;
-      player.stats.funds = Number(player.stats.funds) >= 0 ? Number(player.stats.funds) : 1000;
-      player.stats.energy = Math.min(100, Math.max(0, Number(player.stats.energy) || 100));
-      player.stats.popularity = Math.min(100, Math.max(0, Number(player.stats.popularity) || 10));
-      player.stats.reputation = Math.min(100, Math.max(0, Number(player.stats.reputation) || 10));
-      player.stats.artisticCredibility = Math.min(100, Math.max(0, Number(player.stats.artisticCredibility) || 20));
-      player.stats.monthlyListeners = Number(player.stats.monthlyListeners) || 0;
-      player.stats.totalStreams = Number(player.stats.totalStreams) || 0;
-      player.stats.fansCount = Number(player.stats.fansCount) || 50;
-      player.stats.fanbaseLoyalty = Math.min(100, Math.max(0, Number(player.stats.fanbaseLoyalty) || 50));
-      player.stats.hype = Math.min(100, Math.max(0, Number(player.stats.hype) || 20));
+      player.stats.funds = Math.max(0, safeNum(player.stats.funds, 1000));
+      player.stats.energy = Math.min(100, Math.max(0, safeNum(player.stats.energy, 100)));
+      player.stats.popularity = Math.min(100, Math.max(0, safeNum(player.stats.popularity, 10)));
+      player.stats.reputation = Math.min(100, Math.max(0, safeNum(player.stats.reputation, 10)));
+      player.stats.artisticCredibility = Math.min(100, Math.max(0, safeNum(player.stats.artisticCredibility, 20)));
+      player.stats.monthlyListeners = Math.max(0, safeNum(player.stats.monthlyListeners, 0));
+      player.stats.totalStreams = Math.max(0, safeNum(player.stats.totalStreams, 0));
+      player.stats.fansCount = Math.max(0, safeNum(player.stats.fansCount, 50));
+      player.stats.fanbaseLoyalty = Math.min(100, Math.max(0, safeNum(player.stats.fanbaseLoyalty, 50)));
+      player.stats.hype = Math.min(100, Math.max(0, safeNum(player.stats.hype, 20)));
 
-      // Safe Personality Defaults
+      // Safe Personality Defaults (preserving legitimate 0 values)
       player.personality = player.personality || {} as any;
-      player.personality.skill = Number(player.personality.skill) || 50;
-      player.personality.creativity = Number(player.personality.creativity) || 50;
-      player.personality.ambition = Number(player.personality.ambition) || 50;
-      player.personality.discipline = Number(player.personality.discipline) || 50;
-      player.personality.charisma = Number(player.personality.charisma) || 50;
-      player.personality.commercialAppeal = Number(player.personality.commercialAppeal) || 50;
-      player.personality.originality = Number(player.personality.originality) || 50;
-      player.personality.riskTolerance = Number(player.personality.riskTolerance) || 50;
-      player.personality.sociability = Number(player.personality.sociability) || 50;
-      player.personality.independence = Number(player.personality.independence) || 50;
+      player.personality.skill = Math.min(100, Math.max(0, safeNum(player.personality.skill, 50)));
+      player.personality.creativity = Math.min(100, Math.max(0, safeNum(player.personality.creativity, 50)));
+      player.personality.ambition = Math.min(100, Math.max(0, safeNum(player.personality.ambition, 50)));
+      player.personality.discipline = Math.min(100, Math.max(0, safeNum(player.personality.discipline, 50)));
+      player.personality.charisma = Math.min(100, Math.max(0, safeNum(player.personality.charisma, 50)));
+      player.personality.commercialAppeal = Math.min(100, Math.max(0, safeNum(player.personality.commercialAppeal, 50)));
+      player.personality.originality = Math.min(100, Math.max(0, safeNum(player.personality.originality, 50)));
+      player.personality.riskTolerance = Math.min(100, Math.max(0, safeNum(player.personality.riskTolerance, 50)));
+      player.personality.sociability = Math.min(100, Math.max(0, safeNum(player.personality.sociability, 50)));
+      player.personality.independence = Math.min(100, Math.max(0, safeNum(player.personality.independence, 50)));
 
       // Safe Arrays
       player.eras = Array.isArray(player.eras) && player.eras.length > 0 ? player.eras : [{
@@ -3938,7 +4676,18 @@ export class GameEngine {
       player.financialLedger = Array.isArray(player.financialLedger) ? player.financialLedger : [];
       player.officialCertifications = Array.isArray(player.officialCertifications) ? player.officialCertifications : [];
       player.phoneMessages = Array.isArray(player.phoneMessages) ? player.phoneMessages : [];
-      player.unreadPhoneCount = Number(player.unreadPhoneCount) || 0;
+      player.unreadPhoneCount = safeNum(player.unreadPhoneCount, 0);
+      if (this.world.phoneMessages.length === 0 && player.phoneMessages.length > 0) {
+        this.world.phoneMessages = player.phoneMessages;
+        this.updateUnreadPhoneCount();
+      }
+      player.monthlyActionsUsed = safeNum(player.monthlyActionsUsed, 0);
+      player.lastActionYear = safeNum(player.lastActionYear, this.world.currentYear);
+      player.lastActionMonth = safeNum(player.lastActionMonth, this.world.currentMonth);
+      player.activeCreativeBuffs = player.activeCreativeBuffs || {};
+      player.completedGoalIds = Array.isArray(player.completedGoalIds) ? player.completedGoalIds : [];
+      player.claimedGoalIds = Array.isArray(player.claimedGoalIds) ? player.claimedGoalIds : [];
+      player.playedFestivalsByYear = player.playedFestivalsByYear || {};
 
       // 3. Songs & Albums safe hydration
       for (const song of Object.values(this.world.songs || {})) {
@@ -3956,8 +4705,9 @@ export class GameEngine {
         album.peakChartPosition = album.peakChartPosition || createDefaultPeakPosition();
       }
 
-      this.currentEvent = null;
-      this.eventQueue = [];
+      this.currentEvent = parsed.currentEvent ?? null;
+      this.eventQueue = Array.isArray(parsed.eventQueue) ? parsed.eventQueue : [];
+      this.activeGalaCeremony = parsed.activeGalaCeremony ?? null;
       this.notify();
       return true;
     } catch (e) {

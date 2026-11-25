@@ -168,7 +168,7 @@ export class DecisionEngine {
     const itemMap = new Map(LIFESTYLE_ITEMS.map(i => [i.id, i]));
     return player.lifestyleUpgrades.some(id => {
       const item = itemMap.get(id);
-      return item && item.category === 'coaching';
+      return item && item.category === 'coaching' && item.price >= 12000;
     });
   }
 

@@ -117,7 +117,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-fade-in font-sans">
-      <div className="kit-modal max-w-xl w-full flex flex-col text-[#F4F4F6] relative my-auto">
+      <div className="lg-modal kit-modal max-w-xl w-full flex flex-col text-[#F4F4F6] relative my-auto">
         {/* Botón de cerrar .kit-close anclado absoluto en esquina superior derecha */}
         <button
           onClick={onClose}
@@ -208,7 +208,7 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
                 {data.featuredArtistNames && data.featuredArtistNames.length > 0 && (
                   <>
                     <span>•</span>
-                    <span className="text-pink-400">ft. {data.featuredArtistNames.join(', ')}</span>
+                    <span className="text-[#FF4F00] font-medium">ft. {data.featuredArtistNames.join(', ')}</span>
                   </>
                 )}
               </div>
@@ -235,6 +235,35 @@ export const ReleaseConfirmationModal: React.FC<ReleaseConfirmationModalProps> =
               </span>
             </div>
           </div>
+
+          {data.impactBreakdown && data.impactBreakdown.length > 0 && (
+            <div className="bg-[#09090B] border border-[#242429] rounded-[4px] p-3.5 space-y-2">
+              <span className="text-[10px] uppercase font-sans font-bold text-[#8E8E99] tracking-wider block">
+                Desglose de Factores del Lanzamiento
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {data.impactBreakdown.map((item, idx) => (
+                  <div
+                    key={`${item.label}-${idx}`}
+                    className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-[4px] bg-[#111114] border border-[#242429] text-xs"
+                  >
+                    <span className="text-[#8E8E99] truncate">{item.label}</span>
+                    <span
+                      className={`font-bold tabular-nums shrink-0 ${
+                        item.tone === 'positive'
+                          ? 'text-[#10B981]'
+                          : item.tone === 'gold'
+                          ? 'text-[#F59E0B]'
+                          : 'text-[#F4F4F6]'
+                      }`}
+                    >
+                      {item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Modal Footer */}

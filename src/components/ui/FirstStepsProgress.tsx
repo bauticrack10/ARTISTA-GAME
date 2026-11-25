@@ -1,6 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Artist, WorldState } from '../../types';
-import { CheckCircle2, Circle, ChevronRight, Sparkles, X, ChevronDown, ChevronUp, Disc3, Zap, Users, Ticket } from 'lucide-react';
+import React, { useState } from 'react';
+import { Artist, WorldState, CareerGoal } from '../../types';
+import {
+  CheckCircle2,
+  Circle,
+  ChevronRight,
+  Flag,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Disc3,
+  Zap,
+  Users,
+  Ticket,
+  Award,
+  Target
+} from 'lucide-react';
 import { playSound } from '../../utils/audioSystem';
 
 export interface FirstStepsProgressProps {
@@ -8,6 +22,8 @@ export interface FirstStepsProgressProps {
   world: WorldState;
   playerSongsCount: number;
   onNavigate: (tab: string) => void;
+  careerGoals?: CareerGoal[];
+  onClaimGoal?: (goalId: string) => void;
   className?: string;
 }
 
@@ -18,6 +34,7 @@ interface StepItem {
   isCompleted: boolean;
   actionTab?: string;
   actionLabel?: string;
+  scrollToHub?: boolean;
   icon: React.ReactNode;
 }
 
@@ -26,6 +43,8 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
   world,
   playerSongsCount,
   onNavigate,
+  careerGoals = [],
+  onClaimGoal,
   className = ''
 }) => {
   const [isDismissed, setIsDismissed] = useState<boolean>(() => {
@@ -63,51 +82,60 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
     } catch {}
   };
 
-  // Definición de hitos con Progreso Dotado:
-  // Paso 1 ("Crear Artista") viene PRE-COMPLETADO para activar el efecto psicológico de avance garantizado
+  const hasToured =
+    (world?.tours || []).some((t) => t.artistId === player.id) ||
+    (player.livePerformanceHistory?.length || 0) > 0;
+
+  const hasTrainedOrPromoted =
+    (player.stats?.energy ?? 100) < 100 ||
+    (world?.currentMonth || 1) > 1 ||
+    (player.stats?.reputation || 0) > 20 ||
+    (player.monthlyActionsUsed || 0) > 0;
+
+  // Orden lógico: 1. Artista creado -> 2. Grabar primer Single -> 3. Entrenar o Promocionar -> 4. Alcanzar 1,000 oyentes -> 5. Primera Gira
   const steps: StepItem[] = [
     {
       id: 'step_create',
-      label: 'Crear Artista',
+      label: 'Artista creado',
       hint: 'Identidad, sonido y país definidos',
-      isCompleted: true, // Progreso Dotado: completado por defecto
-      icon: <Sparkles className="w-3.5 h-3.5 text-[#00E599]" />
-    },
-    {
-      id: 'step_action',
-      label: 'Primera Acción / Descanso',
-      hint: 'Entrena técnica vocal, descansa o haz networking',
-      isCompleted: (player.stats?.energy ?? 100) < 100 || (world.currentMonth || 1) > 1 || (player.stats?.reputation || 0) > 20,
-      actionTab: 'dashboard',
-      actionLabel: 'Ver Acciones',
-      icon: <Zap className="w-3.5 h-3.5 text-[#FF4F00]" />
+      isCompleted: true,
+      icon: <Flag className="w-3.5 h-3.5 text-[#34D399]" />
     },
     {
       id: 'step_single',
-      label: 'Grabar Primer Single',
+      label: 'Grabar primer Single',
       hint: 'Compone y masteriza tu tema debut en el estudio',
       isCompleted: playerSongsCount >= 1,
       actionTab: 'studio',
       actionLabel: 'Ir al Estudio',
-      icon: <Disc3 className="w-3.5 h-3.5 text-cyan-400" />
+      icon: <Disc3 className="w-3.5 h-3.5 text-[#38BDF8]" />
+    },
+    {
+      id: 'step_action',
+      label: 'Entrenar o Promocionar',
+      hint: 'Usa tus acciones del mes para subir skill o hype',
+      isCompleted: hasTrainedOrPromoted,
+      scrollToHub: true,
+      actionLabel: 'Ver Acciones',
+      icon: <Zap className="w-3.5 h-3.5 text-[#FF4F00]" />
     },
     {
       id: 'step_audience',
-      label: '1,000 Oyentes Mensuales',
-      hint: 'Promociona y distribuye en plataformas',
+      label: 'Alcanzar 1,000 oyentes',
+      hint: 'Promociona y entra en playlists editoriales',
       isCompleted: (player.stats?.monthlyListeners || 0) >= 1000,
       actionTab: 'streaming',
       actionLabel: 'Streaming',
-      icon: <Users className="w-3.5 h-3.5 text-amber-400" />
+      icon: <Users className="w-3.5 h-3.5 text-[#F59E0B]" />
     },
     {
       id: 'step_tour',
-      label: 'Primera Gira o Concierto',
+      label: 'Primera Gira',
       hint: 'Lleva tu música a los escenarios en vivo',
-      isCompleted: (player.stats?.toursCompleted || 0) > 0,
+      isCompleted: hasToured,
       actionTab: 'tours',
       actionLabel: 'Giras',
-      icon: <Ticket className="w-3.5 h-3.5 text-purple-400" />
+      icon: <Ticket className="w-3.5 h-3.5 text-[#FF4F00]" />
     }
   ];
 
@@ -115,43 +143,150 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
   const progressPercent = Math.round((completedCount / steps.length) * 100);
   const nextActiveStep = steps.find((s) => !s.isCompleted);
 
-  if (isDismissed) return null;
+  const activeGoals = (careerGoals || []).slice(0, 3);
+
+  // Cuando los primeros pasos se completan o descartan, mostrar los 3 Objetivos Activos de Carrera
+  if (isDismissed || progressPercent === 100) {
+    if (activeGoals.length === 0) return null;
+
+    return (
+      <section
+        className={`surface-1 bg-[#111114] border border-[#242429] rounded-[6px] p-4 sm:p-5 space-y-3.5 ${className}`}
+        aria-label="Objetivos Activos de Carrera"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-[4px] bg-[#FF4F00]/15 border border-[#FF4F00]/35 text-[#FF4F00] flex items-center justify-center shrink-0">
+              <Target className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="font-display text-xs sm:text-sm font-extrabold uppercase tracking-tight text-[#F4F4F6]">
+                Objetivos Activos de Carrera
+              </h4>
+              <p className="text-xs text-[#8E8E99]">
+                Metas de tu etapa actual con recompensas directas
+              </p>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 rounded-[4px] surface-2 bg-[#18181C] border border-[#242429] text-xs font-sans font-bold text-[#34D399] tabular-nums">
+            {activeGoals.filter((g) => g.completed).length}/{activeGoals.length} listos
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {activeGoals.map((goal) => {
+            const pct = Math.min(100, Math.round((goal.progress / Math.max(1, goal.target)) * 100));
+            return (
+              <div
+                key={goal.id}
+                className={`surface-2 bg-[#18181C] rounded-[4px] border p-3.5 flex flex-col justify-between gap-2.5 ${
+                  goal.completed && !goal.claimed
+                    ? 'border-[#34D399]/55'
+                    : 'border-[#242429]'
+                }`}
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-[#F4F4F6] leading-tight">
+                      {goal.title}
+                    </span>
+                    <Award className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
+                  </div>
+                  <p className="text-xs text-[#8E8E99] leading-snug">{goal.description}</p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-2xs font-sans tabular-nums text-[#8E8E99]">
+                    <span>
+                      {goal.progress.toLocaleString('es-AR')} / {goal.target.toLocaleString('es-AR')} {goal.unit}
+                    </span>
+                    <span className="font-bold text-[#F4F4F6]">{pct}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-[#09090B] rounded-[2px] overflow-hidden border border-[#242429]">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        goal.completed ? 'bg-[#34D399]' : 'bg-[#FF4F00]'
+                      }`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  <span className="text-2xs font-semibold text-[#F59E0B] truncate">
+                    {goal.rewardLabel}
+                  </span>
+
+                  {goal.completed && !goal.claimed && onClaimGoal ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playSound('level_up');
+                        onClaimGoal(goal.id);
+                      }}
+                      className="px-3 py-1 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-bold uppercase tracking-wider cursor-pointer shrink-0 transition-colors"
+                    >
+                      Reclamar
+                    </button>
+                  ) : goal.claimed ? (
+                    <span className="px-2 py-0.5 rounded-[4px] bg-[#34D399]/15 border border-[#34D399]/35 text-[#34D399] text-2xs font-bold shrink-0">
+                      Reclamado
+                    </span>
+                  ) : goal.ctaTab ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playSound('click');
+                        onNavigate(goal.ctaTab!);
+                      }}
+                      className="px-2.5 py-1 rounded-[4px] bg-[#111114] border border-[#242429] hover:border-[#FF4F00] text-[#F4F4F6] text-2xs font-bold cursor-pointer shrink-0 flex items-center gap-1"
+                    >
+                      <span>Ir</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div
-      className={`liquid-glass-card border border-white/12 p-4 sm:p-5 relative transition-all duration-300 ${className}`}
+      className={`surface-1 bg-[#111114] border border-[#242429] rounded-[6px] p-4 sm:p-5 relative transition-all duration-300 ${className}`}
       aria-label="Progreso de Primeros Pasos"
     >
-      {/* Cabecera compacta con barra de progreso cilíndrica */}
+      {/* Cabecera compacta */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-[8px] bg-gradient-to-b from-[#00FFAC] to-[#00B373] text-[#032115] flex items-center justify-center shrink-0 shadow-[0_2px_0_#008053]">
-            <Sparkles className="w-4 h-4 fill-current" />
+          <div className="w-7 h-7 rounded-[4px] bg-[#34D399]/15 border border-[#34D399]/35 text-[#34D399] flex items-center justify-center shrink-0">
+            <Flag className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="kit-text-header font-display text-xs sm:text-sm tracking-tight text-white uppercase">
+              <h4 className="font-display text-xs sm:text-sm font-extrabold tracking-tight text-white uppercase">
                 Primeros Pasos
               </h4>
-              <span className="liquid-glass-pill px-2.5 py-0.5 text-xs font-mono font-bold text-[#00E599] border border-[#00E599]/30 tabular-nums">
+              <span className="px-2.5 py-0.5 rounded-[4px] surface-2 bg-[#18181C] text-xs font-sans font-bold text-[#34D399] border border-[#34D399]/30 tabular-nums">
                 {completedCount} de {steps.length} ({progressPercent}%)
               </span>
             </div>
             <p className="text-xs text-[#8E8E99] leading-tight">
-              {progressPercent === 100
-                ? '¡Completaste todos los primeros pasos de tu carrera!'
-                : nextActiveStep
+              {nextActiveStep
                 ? `Siguiente objetivo: ${nextActiveStep.label}`
                 : 'Progresando en la industria'}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-center">
+        <div className="flex items-center gap-1.5 self-end sm:self-center">
           <button
             type="button"
             onClick={handleToggleCollapse}
-            className="p-1 rounded-[6px] hover:bg-white/10 text-[#8E8E99] hover:text-white transition-colors cursor-pointer"
+            className="p-1.5 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-white transition-colors cursor-pointer"
             title={isCollapsed ? 'Expandir hitos' : 'Minimizar hitos'}
           >
             {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
@@ -159,7 +294,7 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
           <button
             type="button"
             onClick={handleDismiss}
-            className="p-1 rounded-[6px] hover:bg-white/10 text-[#8E8E99] hover:text-rose-400 transition-colors cursor-pointer"
+            className="p-1.5 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#EF4444] transition-colors cursor-pointer"
             title="Ocultar Primeros Pasos"
           >
             <X className="w-4 h-4" />
@@ -167,46 +302,39 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
         </div>
       </div>
 
-      {/* Barra de progreso cilíndrica con brillo especular */}
-      <div className="mt-3 relative w-full h-3 sm:h-3.5 bg-[#0A0A0F] rounded-full border border-white/15 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.85)] flex-shrink-0">
+      {/* Barra de progreso */}
+      <div className="mt-3 relative w-full h-2.5 bg-[#09090B] rounded-[4px] border border-[#242429] overflow-hidden">
         <div
-          className="h-full rounded-full transition-all duration-500 relative overflow-hidden shadow-[inset_0_-2px_0_rgba(0,0,0,0.4)] bg-gradient-to-r from-emerald-500 via-[#00E599] to-[#00FFAC]"
+          className="h-full transition-all duration-500 bg-[#34D399]"
           style={{ width: `${progressPercent}%` }}
-        >
-          {/* Brillo especular superior continuo */}
-          <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/25 pointer-events-none" />
-          {/* Efecto Shimmer continuo en la barra */}
-          <div className="kit-shimmer absolute inset-0 pointer-events-none" />
-        </div>
+        />
       </div>
 
       {/* Lista de pasos (colapsable) */}
       {!isCollapsed && (
-        <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 pt-1 border-t border-white/8">
-          {steps.map((step, idx) => {
+        <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 pt-3 border-t border-[#242429]">
+          {steps.map((step) => {
             const isCurrent = !step.isCompleted && nextActiveStep?.id === step.id;
 
             return (
               <div
                 key={step.id}
-                className={`p-2.5 rounded-[8px] border transition-all flex flex-col justify-between gap-1.5 ${
+                className={`p-2.5 rounded-[4px] border transition-all flex flex-col justify-between gap-2 ${
                   step.isCompleted
-                    ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200'
+                    ? 'bg-[#18181C] border-[#34D399]/35 text-[#F4F4F6]'
                     : isCurrent
-                    ? 'bg-[#FF4F00]/10 border-[#FF4F00]/50 text-white shadow-[0_0_12px_rgba(255,79,0,0.2)]'
-                    : 'bg-black/20 border-white/8 text-[#8E8E99]'
+                    ? 'bg-[#18181C] border-[#FF4F00]/65 text-white'
+                    : 'bg-[#18181C]/60 border-[#242429] text-[#8E8E99]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-1.5">
-                  <span className="text-xs font-sans font-extrabold uppercase tracking-wider tabular-nums opacity-60">
-                    0{idx + 1}
-                  </span>
+                  {step.icon}
                   {step.isCompleted ? (
-                    <CheckCircle2 className="w-4 h-4 text-[#00E599] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#34D399] shrink-0" />
                   ) : isCurrent ? (
-                    <span className="w-2 h-2 rounded-full bg-[#FF4F00] animate-ping shrink-0" />
+                    <span className="w-2 h-2 rounded-full bg-[#FF4F00] shrink-0" />
                   ) : (
-                    <Circle className="w-3.5 h-3.5 text-white/20 shrink-0" />
+                    <Circle className="w-3.5 h-3.5 text-[#52525B] shrink-0" />
                   )}
                 </div>
 
@@ -219,14 +347,18 @@ export const FirstStepsProgress: React.FC<FirstStepsProgressProps> = ({
                   </p>
                 </div>
 
-                {isCurrent && step.actionTab && (
+                {isCurrent && (step.actionTab || step.scrollToHub) && (
                   <button
                     type="button"
                     onClick={() => {
                       playSound('click');
-                      onNavigate(step.actionTab!);
+                      if (step.scrollToHub) {
+                        document.getElementById('decision-hub-card')?.scrollIntoView({ behavior: 'smooth' });
+                      } else if (step.actionTab) {
+                        onNavigate(step.actionTab);
+                      }
                     }}
-                    className="mt-1 w-full kit-btn kit-btn-orange py-1 px-2 text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-1 cursor-pointer"
+                    className="mt-1 w-full rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white py-1.5 px-2 text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-1 cursor-pointer transition-colors"
                   >
                     <span>{step.actionLabel || 'Ir ahora'}</span>
                     <ChevronRight className="w-3 h-3 shrink-0" />

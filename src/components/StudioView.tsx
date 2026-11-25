@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 import { activateOnKey } from '../utils/a11y';
 import {
   Artist,
@@ -13,7 +14,9 @@ import {
   ReleaseConfirmationData
 } from '../types';
 import { ReleaseConfirmationModal } from './ReleaseConfirmationModal';
+import { FeatArtistSelector } from './FeatArtistSelector';
 import { getArtistDerivedStyles, SUBGENRE_DETAILS } from '../data/genres';
+import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
 import { GameEngine } from '../core/GameEngine';
 import { IndustryEngine } from '../systems/IndustryEngine';
 import {
@@ -41,7 +44,11 @@ import {
   Crown,
   Zap,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Users,
+  Radio,
+  Handshake,
+  Check
 } from 'lucide-react';
 import { TimeSystem } from '../systems/TimeSystem';
 import {
@@ -49,6 +56,7 @@ import {
   ARTISTIC_COVER_GRADIENTS
 } from '../utils/themeColors';
 import { playSound } from '../utils/audioSystem';
+import { showToast } from '../utils/toastBus';
 import {
   cleanCountTag,
   formatReleaseDate,
@@ -70,7 +78,8 @@ export const VIDEO_CONCEPTS: VideoConceptOption[] = [
     id: 'Cine 4K Cinematográfico',
     name: 'Cine 4K Cinematográfico',
     tag: '4K Anamórfico',
-    description: 'Planos secuencia cinematográficos, iluminación con lentes anamórficas de 35mm, narrativa dramática y etalonaje de película de autor.',
+    description:
+      'Planos secuencia cinematográficos, iluminación con lentes anamórficas de 35mm, narrativa dramática y etalonaje de película de autor.',
     icon: Clapperboard,
     gradient: 'from-cyan-500/20 to-blue-600/20',
     borderHover: 'hover:border-[#3F3F46]'
@@ -79,7 +88,8 @@ export const VIDEO_CONCEPTS: VideoConceptOption[] = [
     id: 'VHS Retro Synthwave',
     name: 'VHS Retro Synthwave',
     tag: 'Textura Analógica 80s',
-    description: 'Luces de neón, escaneo analógico en cinta VHS, destellos de cromo y atmósfera de club nocturno retro.',
+    description:
+      'Luces de neón, escaneo analógico en cinta VHS, destellos de cromo y atmósfera de club nocturno retro.',
     icon: Tv,
     gradient: 'from-amber-500/20 to-rose-600/20',
     borderHover: 'hover:border-[#3F3F46]'
@@ -88,7 +98,8 @@ export const VIDEO_CONCEPTS: VideoConceptOption[] = [
     id: 'Animación 3D Futurista',
     name: 'Animación 3D Futurista',
     tag: 'CGI Unreal Engine',
-    description: 'Avatares 3D hiperrealistas, efectos visuales de partículas, escenografía distópica y estética de videojuego AAA.',
+    description:
+      'Avatares 3D hiperrealistas, efectos visuales de partículas, escenografía distópica y estética de videojuego AAA.',
     icon: Box,
     gradient: 'from-cyan-500/20 to-emerald-600/20',
     borderHover: 'hover:border-[#3F3F46]'
@@ -97,7 +108,8 @@ export const VIDEO_CONCEPTS: VideoConceptOption[] = [
     id: 'Urbano Callejero DIY',
     name: 'Urbano Callejero DIY',
     tag: 'Guerrilla & Fisheye',
-    description: 'Grabación en formato guerrilla urbana con lente Fisheye, tomas nocturnas con flash crudo y dinamismo callejero underground.',
+    description:
+      'Grabación en formato guerrilla urbana con lente Fisheye, tomas nocturnas con flash crudo y dinamismo callejero underground.',
     icon: Camera,
     gradient: 'from-amber-500/20 to-orange-600/20',
     borderHover: 'hover:border-[#3F3F46]'
@@ -106,7 +118,8 @@ export const VIDEO_CONCEPTS: VideoConceptOption[] = [
     id: 'Psicodélico & Arte Conceptual',
     name: 'Psicodélico & Arte Conceptual',
     tag: 'Vanguardia & Surrealismo',
-    description: 'Simbolismos oníricos, vestuarios de alta costura conceptual, distorsiones visuales hipnóticas y dirección artística de galería.',
+    description:
+      'Simbolismos oníricos, vestuarios de alta costura conceptual, distorsiones visuales hipnóticas y dirección artística de galería.',
     icon: Eye,
     gradient: 'from-emerald-500/20 to-teal-600/20',
     borderHover: 'hover:border-[#3F3F46]'
@@ -156,7 +169,8 @@ export const DIRECTOR_TIERS: DirectorTierOption[] = [
     name: 'Director de Élite Mundial',
     tag: 'Nivel MTV VMAs / Hollywood',
     cost: 20000,
-    description: 'Director galardonado internacionalmente con cámaras RED/ARRI, efectos especiales y distribución global masiva.',
+    description:
+      'Director galardonado internacionalmente con cámaras RED/ARRI, efectos especiales y distribución global masiva.',
     hypeBoost: 50,
     velocityBoost: 70,
     viralBoost: 35,
@@ -166,17 +180,17 @@ export const DIRECTOR_TIERS: DirectorTierOption[] = [
 ];
 
 export const CAREER_STAGE_RANK: Record<CareerStage, number> = {
-  'Underground': 0,
-  'Emerging': 1,
-  'Declining': 1,
-  'Breakout': 2,
-  'Comeback': 2,
-  'Established': 3,
-  'Veteran': 3,
-  'Mainstream': 4,
-  'Superstar': 5,
-  'Legend': 6,
-  'Retired': 0
+  Underground: 0,
+  Emerging: 1,
+  Declining: 1,
+  Breakout: 2,
+  Comeback: 2,
+  Established: 3,
+  Veteran: 3,
+  Mainstream: 4,
+  Superstar: 5,
+  Legend: 6,
+  Retired: 0
 };
 
 export interface ProducerLockInfo {
@@ -186,10 +200,7 @@ export interface ProducerLockInfo {
   minCareerStage: CareerStage;
 }
 
-export const getProducerLockStatus = (
-  producer: Producer,
-  player: Artist
-): ProducerLockInfo => {
+export const getProducerLockStatus = (producer: Producer, player: Artist): ProducerLockInfo => {
   const check = IndustryEngine.canWorkWithProducer(player, producer);
   const minPop = producer.requirements?.minPopularity ?? 0;
   const minStage: CareerStage = minPop >= 70 ? 'Established' : minPop >= 35 ? 'Breakout' : 'Underground';
@@ -207,7 +218,9 @@ interface StudioViewProps {
   world: WorldState;
   initialTab?: 'single' | 'album' | 'catalog';
   onTabChange?: (tab: 'single' | 'album' | 'catalog') => void;
+  onNavigate?: (tab: string) => void;
   onOpenCollabModal?: (artistId?: string) => void;
+  studioTierInfo?: { tier: number; maxTier?: number; label?: string; qualityBonus?: number };
   onReleaseSong: (params: {
     title: string;
     genreId: string;
@@ -222,7 +235,7 @@ interface StudioViewProps {
       budget: number;
       directorTier: string;
     };
-  }) => void;
+  }) => Song | void;
   onReleaseAlbum: (params: {
     title: string;
     type: Album['type'];
@@ -234,7 +247,7 @@ interface StudioViewProps {
     budgetProduction: number;
     budgetMarketing: number;
     producerId?: string;
-  }) => void;
+  }) => Album | void;
 }
 
 const TITLE_SUGGESTIONS = [
@@ -263,10 +276,18 @@ const DEFAULT_ALBUM_TRACKS = [
   'Outro'
 ];
 
+const ALBUM_BUDGET_PRESETS = [
+  { id: 'indie', label: 'Indie', prod: 4000, mktg: 2000 },
+  { id: 'nacional', label: 'Nacional', prod: 12000, mktg: 10000 },
+  { id: 'global', label: 'Global', prod: 28000, mktg: 25000 },
+  { id: 'blockbuster', label: 'Blockbuster', prod: 50000, mktg: 50000 }
+] as const;
+
 interface StudioDraftState {
   activeTab: 'single' | 'album' | 'catalog';
   singleTitle: string;
   selectedSubgenreId: string;
+  featuredArtistId: string;
   singleProducer: string;
   singleProdBudget: number;
   singleMktBudget: number;
@@ -299,6 +320,7 @@ const loadStudioDraft = (playerId: string, defaultSubgenreId: string): StudioDra
         activeTab: parsed.activeTab || 'single',
         singleTitle: parsed.singleTitle ?? '',
         selectedSubgenreId: parsed.selectedSubgenreId || defaultSubgenreId,
+        featuredArtistId: parsed.featuredArtistId ?? '',
         singleProducer: parsed.singleProducer ?? '',
         singleProdBudget: typeof parsed.singleProdBudget === 'number' ? parsed.singleProdBudget : 0,
         singleMktBudget: typeof parsed.singleMktBudget === 'number' ? parsed.singleMktBudget : 0,
@@ -309,12 +331,13 @@ const loadStudioDraft = (playerId: string, defaultSubgenreId: string): StudioDra
         albumType: parsed.albumType && parsed.albumType !== 'collab_album' ? parsed.albumType : 'album',
         selectedAlbumSubgenreId: parsed.selectedAlbumSubgenreId || defaultSubgenreId,
         albumProducer: parsed.albumProducer ?? '',
-        albumProdBudget: typeof parsed.albumProdBudget === 'number' ? parsed.albumProdBudget : 12000,
-        albumMktBudget: typeof parsed.albumMktBudget === 'number' ? parsed.albumMktBudget : 10000,
+        albumProdBudget: typeof parsed.albumProdBudget === 'number' ? parsed.albumProdBudget : 4000,
+        albumMktBudget: typeof parsed.albumMktBudget === 'number' ? parsed.albumMktBudget : 2000,
         includedSingleIds: Array.isArray(parsed.includedSingleIds) ? parsed.includedSingleIds : [],
-        newTrackTitles: Array.isArray(parsed.newTrackTitles) && parsed.newTrackTitles.length > 0
-          ? parsed.newTrackTitles
-          : [...DEFAULT_ALBUM_TRACKS]
+        newTrackTitles:
+          Array.isArray(parsed.newTrackTitles) && parsed.newTrackTitles.length > 0
+            ? parsed.newTrackTitles
+            : [...DEFAULT_ALBUM_TRACKS]
       };
       studioDraftMemory[playerId] = loaded;
       return loaded;
@@ -326,6 +349,7 @@ const loadStudioDraft = (playerId: string, defaultSubgenreId: string): StudioDra
     activeTab: 'single',
     singleTitle: '',
     selectedSubgenreId: defaultSubgenreId,
+    featuredArtistId: '',
     singleProducer: '',
     singleProdBudget: 0,
     singleMktBudget: 0,
@@ -336,8 +360,8 @@ const loadStudioDraft = (playerId: string, defaultSubgenreId: string): StudioDra
     albumType: 'album',
     selectedAlbumSubgenreId: defaultSubgenreId,
     albumProducer: '',
-    albumProdBudget: 12000,
-    albumMktBudget: 10000,
+    albumProdBudget: 4000,
+    albumMktBudget: 2000,
     includedSingleIds: [],
     newTrackTitles: [...DEFAULT_ALBUM_TRACKS]
   };
@@ -359,6 +383,9 @@ export const StudioView: React.FC<StudioViewProps> = ({
   world,
   initialTab,
   onTabChange,
+  onNavigate,
+  onOpenCollabModal,
+  studioTierInfo,
   onReleaseSong,
   onReleaseAlbum
 }) => {
@@ -375,6 +402,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
     initialTab || initialDraft.activeTab || 'single'
   );
   const [catalogFilter, setCatalogFilter] = useState<'all' | 'singles' | 'albums'>('all');
+  useScrollToTop([activeTab, catalogFilter]);
 
   const prevInitialTabRef = useRef(initialTab);
   useEffect(() => {
@@ -384,11 +412,70 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }
   }, [initialTab]);
 
-  // Singles released this year
+  // Singles released this year & this month
   const MAX_SINGLES = GameEngine.MAX_SINGLES_PER_YEAR;
-  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s.artistId === player?.id);
-  const singlesThisYear = playerSongs.filter(s => s.releaseYear === world?.currentYear && s.isSingle).length;
+  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter((s) => s.artistId === player?.id);
+  const playerSingles = playerSongs.filter((s) => s.isSingle);
+  const singlesThisYear = playerSingles.filter((s) => s.releaseYear === world?.currentYear).length;
+  const singlesThisMonth = playerSingles.filter(
+    (s) => s.releaseYear === world?.currentYear && s.releaseMonth === world?.currentMonth
+  ).length;
   const isSinglesLimitReached = singlesThisYear >= MAX_SINGLES;
+  const isMonthlySingleLimitReached = singlesThisMonth >= 1;
+
+  // Studio Tier, Label Marketing & Active Synergy
+  const computedStudioStats = useMemo(() => {
+    const owned = new Set(player.lifestyleUpgrades || []);
+    const studioItems = LIFESTYLE_ITEMS.filter(
+      (item) => (item.category === 'home_studio' || item.category === 'studio') && owned.has(item.id)
+    );
+    const qualityFromStudio = studioItems.reduce((acc, item) => acc + (item.effects.qualityBonus || 0), 0);
+    const derivedTier =
+      studioTierInfo?.tier ??
+      (studioItems.length >= 9 || qualityFromStudio >= 22
+        ? 5
+        : studioItems.length >= 6 || qualityFromStudio >= 14
+        ? 4
+        : studioItems.length >= 3 || qualityFromStudio >= 7
+        ? 3
+        : studioItems.length >= 1
+        ? 2
+        : 1);
+    const tierNames = [
+      'Home Studio Básico',
+      'Home Studio Equipado',
+      'Cabina Indie',
+      'Estudio Profesional',
+      'Estudio Master AAA'
+    ];
+    return {
+      tier: derivedTier,
+      maxTier: studioTierInfo?.maxTier ?? 5,
+      label: studioTierInfo?.label || tierNames[Math.min(4, Math.max(0, derivedTier - 1))],
+      studioQualityBonus: studioTierInfo?.qualityBonus ?? qualityFromStudio
+    };
+  }, [player.lifestyleUpgrades, studioTierInfo]);
+
+  const labelMarketingContribution = player.activeContract?.marketingBudgetPerRelease ?? 0;
+  const activeSynergyQuality =
+    (player.activeCreativeBuffs?.nextTrackQuality ?? 0) + computedStudioStats.studioQualityBonus;
+
+  // Active collaboration pacts
+  const activeCollabPacts = useMemo(() => {
+    return (world?.activeCollabPacts || []).filter((p) => p && p.status === 'active');
+  }, [world?.activeCollabPacts]);
+
+  // Scene artists eligible/available for feat selection
+  const sceneArtists = useMemo(() => {
+    return (Object.values(world?.artists || {}) as Artist[])
+      .filter((a) => a.id !== player.id && !a.isRetired)
+      .sort((a, b) => {
+        const affA = player.relationships?.[a.id]?.affinity ?? 0;
+        const affB = player.relationships?.[b.id]?.affinity ?? 0;
+        if (affB !== affA) return affB - affA;
+        return (b.stats?.popularity ?? 0) - (a.stats?.popularity ?? 0);
+      });
+  }, [world?.artists, player.id, player.relationships]);
 
   const avgQuality = useMemo(() => {
     if (playerSongs.length === 0) return 0;
@@ -402,33 +489,39 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const [expandedAlbumIds, setExpandedAlbumIds] = useState<Record<string, boolean>>({});
 
   const toggleAlbumExpanded = (albumId: string) => {
-    setExpandedAlbumIds(prev => ({
+    setExpandedAlbumIds((prev) => ({
       ...prev,
       [albumId]: !prev[albumId]
     }));
   };
 
-  // Single State (initialized from persistent draft)
+  // Single State
   const [singleTitle, setSingleTitle] = useState<string>(initialDraft.singleTitle);
   const [selectedSubgenreId, setSelectedSubgenreId] = useState<string>(
     initialDraft.selectedSubgenreId || defaultSubgenreId
   );
+  const [featuredArtistId, setFeaturedArtistId] = useState<string>(initialDraft.featuredArtistId || '');
   const [singleProducer, setSingleProducer] = useState<string>(initialDraft.singleProducer);
   const [singleProdBudget, setSingleProdBudget] = useState<number>(initialDraft.singleProdBudget);
   const [singleMktBudget, setSingleMktBudget] = useState<number>(initialDraft.singleMktBudget);
 
-  // Music Video Production State (initialized from persistent draft)
+  // Music Video Production State
   const [hasMusicVideo, setHasMusicVideo] = useState<boolean>(initialDraft.hasMusicVideo);
-  const [selectedVideoConcept, setSelectedVideoConcept] = useState<MusicVideoConcept>(initialDraft.selectedVideoConcept);
-  const [selectedDirectorTier, setSelectedDirectorTier] = useState<MusicVideoDirectorTier>(initialDraft.selectedDirectorTier);
+  const [selectedVideoConcept, setSelectedVideoConcept] = useState<MusicVideoConcept>(
+    initialDraft.selectedVideoConcept
+  );
+  const [selectedDirectorTier, setSelectedDirectorTier] = useState<MusicVideoDirectorTier>(
+    initialDraft.selectedDirectorTier
+  );
 
-  const currentDirectorTier = DIRECTOR_TIERS.find(t => t.id === selectedDirectorTier) || DIRECTOR_TIERS[1];
+  const currentDirectorTier = DIRECTOR_TIERS.find((t) => t.id === selectedDirectorTier) || DIRECTOR_TIERS[1];
   const videoCost = hasMusicVideo ? currentDirectorTier.cost : 0;
-  const singleProdFee = singleProducer && world?.producers ? (world.producers[singleProducer]?.costPerTrack || 0) : 0;
+  const singleProdFee =
+    singleProducer && world?.producers ? world.producers[singleProducer]?.costPerTrack || 0 : 0;
   const totalSingleCost = singleProdBudget + singleMktBudget + singleProdFee + videoCost;
   const isFundsInsufficient = totalSingleCost > player.stats.funds;
 
-  // Album State (initialized from persistent draft)
+  // Album State
   const [albumTitle, setAlbumTitle] = useState<string>(initialDraft.albumTitle);
   const [albumType, setAlbumType] = useState<Album['type']>(
     initialDraft.albumType === 'collab_album' ? 'album' : initialDraft.albumType
@@ -441,20 +534,21 @@ export const StudioView: React.FC<StudioViewProps> = ({
   const [albumMktBudget, setAlbumMktBudget] = useState<number>(initialDraft.albumMktBudget);
 
   // Standalone singles available for album inclusion
-  const availablePreviousSingles = playerSongs.filter(s => s.isSingle && !s.albumId);
+  const availablePreviousSingles = playerSongs.filter((s) => s.isSingle && !s.albumId);
   const [includedSingleIds, setIncludedSingleIds] = useState<string[]>(
-    initialDraft.includedSingleIds.filter(id => availablePreviousSingles.some(s => s.id === id))
+    initialDraft.includedSingleIds.filter((id) => availablePreviousSingles.some((s) => s.id === id))
   );
 
   // New Tracks for the album
   const [newTrackTitles, setNewTrackTitles] = useState<string[]>(initialDraft.newTrackTitles);
 
-  // Sync all Studio draft fields to persistent store whenever any field changes
+  // Sync all Studio draft fields to persistent store
   useEffect(() => {
     saveStudioDraft(player.id, {
       activeTab,
       singleTitle,
       selectedSubgenreId,
+      featuredArtistId,
       singleProducer,
       singleProdBudget,
       singleMktBudget,
@@ -475,6 +569,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
     activeTab,
     singleTitle,
     selectedSubgenreId,
+    featuredArtistId,
     singleProducer,
     singleProdBudget,
     singleMktBudget,
@@ -493,31 +588,38 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   const [notification, setNotification] = useState<string | null>(null);
 
-  const playerAlbums = (Object.values(world.albums) as Album[]).filter(a => a.artistId === player.id);
+  const playerAlbums = (Object.values(world.albums) as Album[]).filter((a) => a.artistId === player.id);
 
-  // Minimum tracks validation by format
   const getMinTracksForType = (type: Album['type']): number => {
     switch (type) {
-      case 'ep': return 4;
-      case 'mixtape': return 6;
-      case 'album': return 6;
-      case 'deluxe': return 10;
-      case 'collab_album': return 6;
-      default: return 6;
+      case 'ep':
+        return 4;
+      case 'mixtape':
+        return 6;
+      case 'album':
+        return 6;
+      case 'deluxe':
+        return 10;
+      case 'collab_album':
+        return 6;
+      default:
+        return 6;
     }
   };
 
-  const totalAlbumTracksCount = includedSingleIds.length + newTrackTitles.filter(t => t.trim().length > 0).length;
+  const validNewTracksCount = newTrackTitles.filter((t) => t.trim().length > 0).length;
+  const totalAlbumTracksCount = includedSingleIds.length + validNewTracksCount;
   const minTracksRequired = getMinTracksForType(albumType);
 
-  const albumProdFee = albumProducer ? (world.producers[albumProducer]?.costPerTrack || 0) * Math.min(newTrackTitles.filter(t => t.trim().length > 0).length, 6) : 0;
+  const albumProdFee = albumProducer
+    ? (world.producers[albumProducer]?.costPerTrack || 0) * Math.min(validNewTracksCount, 6)
+    : 0;
   const totalAlbumCost = albumProdBudget + albumMktBudget + albumProdFee;
   const isAlbumFundsInsufficient = totalAlbumCost > player.stats.funds;
   const isAlbumTracksInsufficient = totalAlbumTracksCount < minTracksRequired;
   const isAlbumEnergyInsufficient = player.stats.energy < 35;
   const isAlbumDisabled = isAlbumTracksInsufficient || isAlbumFundsInsufficient || isAlbumEnergyInsufficient;
 
-  // Quick title suggestion
   const generateRandomTitle = (isAlbum: boolean): string => {
     const random = TITLE_SUGGESTIONS[Math.floor(Math.random() * TITLE_SUGGESTIONS.length)];
     if (isAlbum) {
@@ -530,7 +632,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   const toggleSingleInclusion = (id: string) => {
     if (includedSingleIds.includes(id)) {
-      setIncludedSingleIds(includedSingleIds.filter(s => s !== id));
+      setIncludedSingleIds(includedSingleIds.filter((s) => s !== id));
     } else {
       setIncludedSingleIds([...includedSingleIds, id]);
     }
@@ -538,6 +640,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
   const resetSingleDraft = () => {
     setSingleTitle('');
+    setFeaturedArtistId('');
     setHasMusicVideo(false);
     setSingleProdBudget(0);
     setSingleMktBudget(0);
@@ -548,12 +651,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
     setAlbumTitle('');
     setIncludedSingleIds([]);
     setAlbumProducer('');
-    setAlbumProdBudget(12000);
-    setAlbumMktBudget(10000);
+    setAlbumProdBudget(4000);
+    setAlbumMktBudget(2000);
     setNewTrackTitles([...DEFAULT_ALBUM_TRACKS]);
   };
 
-  // Close confirmation modal & navigate to catalog
   const handleCloseConfirmation = () => {
     setConfirmedRelease(null);
     setActiveTab('catalog');
@@ -570,16 +672,34 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }
 
     if (isSinglesLimitReached) {
-      alert(`Has alcanzado el límite anual de lanzamientos (${MAX_SINGLES} singles en ${world.currentYear}). Avanza al próximo año o graba un Álbum Completo.`);
+      showToast(
+        `Has alcanzado el límite anual de lanzamientos (${MAX_SINGLES} singles en ${world.currentYear}). Avanza al próximo año o graba un Álbum Completo.`,
+        'warning'
+      );
+      return;
+    }
+
+    if (isMonthlySingleLimitReached) {
+      showToast(
+        'Ya lanzaste un single este mes. Avanza +1M en la barra superior para publicar otro sencillo.',
+        'warning'
+      );
       return;
     }
 
     if (totalSingleCost > player.stats.funds) {
-      alert(`Fondos insuficientes. Necesitas $${totalSingleCost.toLocaleString()} y tienes $${player.stats.funds.toLocaleString()}`);
+      showToast(
+        `Fondos insuficientes. Necesitas $${totalSingleCost.toLocaleString('es-AR')} y tienes $${player.stats.funds.toLocaleString('es-AR')}.`,
+        'error'
+      );
       return;
     }
+
     if (player.stats.energy < 15) {
-      alert('Tu artista está demasiado agotado para grabar (energía menor a 15%). ¡Toma un respiro antes!');
+      showToast(
+        'Tu artista está demasiado agotado para grabar (energía menor a 15%). ¡Toma un descanso primero!',
+        'warning'
+      );
       return;
     }
 
@@ -588,7 +708,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
       if (prodObj) {
         const check = getProducerLockStatus(prodObj, player);
         if (!check.isUnlocked) {
-          alert(`No cumples los requisitos para contratar a ${prodObj.name}: ${check.lockReason}`);
+          showToast(
+            `No cumples los requisitos para contratar a ${prodObj.name}: ${check.lockReason}`,
+            'warning'
+          );
           return;
         }
       }
@@ -600,21 +723,62 @@ export const StudioView: React.FC<StudioViewProps> = ({
       const prodObj = singleProducer ? world.producers[singleProducer] : undefined;
       const subObj = selectedSubgenreId ? SUBGENRE_DETAILS[selectedSubgenreId] : undefined;
       const genreName = world.genres[styleDerivation.primaryGenreId]?.name || styleDerivation.primaryGenreId;
+      const featArtist = featuredArtistId ? world.artists[featuredArtistId] : undefined;
 
-      onReleaseSong({
+      const createdSong = onReleaseSong({
         title: finalTitle,
         genreId: styleDerivation.primaryGenreId,
         subGenreIds: selectedSubgenreId ? [selectedSubgenreId] : [],
-        featuredArtistIds: [],
+        featuredArtistIds: featuredArtistId ? [featuredArtistId] : [],
         producerId: singleProducer || undefined,
         budgetProduction: singleProdBudget,
         budgetMarketing: singleMktBudget,
-        musicVideo: hasMusicVideo ? {
-          concept: selectedVideoConcept,
-          budget: videoCost,
-          directorTier: selectedDirectorTier
-        } : undefined
-      });
+        musicVideo: hasMusicVideo
+          ? {
+              concept: selectedVideoConcept,
+              budget: videoCost,
+              directorTier: selectedDirectorTier
+            }
+          : undefined
+      }) as Song | undefined;
+
+      const songQuality = createdSong?.quality ?? Math.min(99, 55 + activeSynergyQuality);
+      const songCritScore = Math.min(98, Math.max(40, Math.round(songQuality * 0.85 + (createdSong?.originality ?? 50) * 0.15)));
+      const estimatedFirstWeek = Math.max(
+        400,
+        Math.round(
+          (player.stats.monthlyListeners || 200) * 0.35 +
+            (singleMktBudget + labelMarketingContribution) * 0.25 +
+            songQuality * 18
+        )
+      );
+
+      const impactBreakdown: ReleaseConfirmationData['impactBreakdown'] = [
+        {
+          label: 'Estudio',
+          value: `Tier ${computedStudioStats.tier}/${computedStudioStats.maxTier}`,
+          tone: 'neutral'
+        },
+        {
+          label: 'Calidad Final',
+          value: `${songQuality}%`,
+          tone: songQuality >= 80 ? 'gold' : 'positive'
+        }
+      ];
+      if (labelMarketingContribution > 0) {
+        impactBreakdown.push({
+          label: 'Mktg del Sello',
+          value: `+$${labelMarketingContribution.toLocaleString('es-AR')}`,
+          tone: 'positive'
+        });
+      }
+      if (activeSynergyQuality > 0) {
+        impactBreakdown.push({
+          label: 'Sinergia Activa',
+          value: `+${activeSynergyQuality} Calidad`,
+          tone: 'positive'
+        });
+      }
 
       const releaseData: ReleaseConfirmationData = {
         type: 'single',
@@ -626,13 +790,15 @@ export const StudioView: React.FC<StudioViewProps> = ({
         genreName,
         subGenreId: selectedSubgenreId || undefined,
         subGenreName: subObj?.name || undefined,
-        featuredArtistNames: undefined,
+        featuredArtistNames: featArtist ? [featArtist.name] : undefined,
         producerName: prodObj?.name || undefined,
-        musicVideo: hasMusicVideo ? {
-          concept: selectedVideoConcept,
-          budget: videoCost,
-          directorTier: selectedDirectorTier
-        } : undefined,
+        musicVideo: hasMusicVideo
+          ? {
+              concept: selectedVideoConcept,
+              budget: videoCost,
+              directorTier: selectedDirectorTier
+            }
+          : undefined,
         releaseYear: world.currentYear,
         releaseMonth: world.currentMonth,
         totalBudget: totalSingleCost,
@@ -641,7 +807,16 @@ export const StudioView: React.FC<StudioViewProps> = ({
           marketing: singleMktBudget,
           producerFee: singleProdFee,
           videoCost: videoCost
-        }
+        },
+        criticalScore: songCritScore,
+        criticalReviewText:
+          songCritScore >= 82
+            ? 'Producción nítida y gancho inmediato con alto potencial de rotación.'
+            : songCritScore >= 65
+            ? 'Corte sólido que suma consistencia al catálogo de la era actual.'
+            : 'Maqueta cruda de circuito independiente con margen para pulir en mezcla.',
+        firstWeekSales: estimatedFirstWeek,
+        impactBreakdown
       };
 
       resetSingleDraft();
@@ -655,7 +830,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
       setTimeout(() => setNotification(null), 5000);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'Error al procesar el lanzamiento del single.';
-      alert(`Error en el lanzamiento: ${errMsg}`);
+      showToast(`Error en el lanzamiento: ${errMsg}`, 'error');
     } finally {
       setIsPublishing(false);
     }
@@ -670,7 +845,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
     }
 
     if (totalAlbumTracksCount < minTracksRequired) {
-      alert(`Un proyecto en formato ${albumType.toUpperCase()} requiere al menos ${minTracksRequired} canciones. Tienes ${totalAlbumTracksCount}.`);
+      showToast(
+        `Un proyecto en formato ${albumType.toUpperCase()} requiere al menos ${minTracksRequired} canciones. Tienes ${totalAlbumTracksCount}.`,
+        'warning'
+      );
       return;
     }
 
@@ -679,21 +857,33 @@ export const StudioView: React.FC<StudioViewProps> = ({
       if (prodObj) {
         const check = getProducerLockStatus(prodObj, player);
         if (!check.isUnlocked) {
-          alert(`No cumples los requisitos para contratar a ${prodObj.name}: ${check.lockReason}`);
+          showToast(
+            `No cumples los requisitos para contratar a ${prodObj.name}: ${check.lockReason}`,
+            'warning'
+          );
           return;
         }
       }
     }
 
-    const prodFee = albumProducer ? (world.producers[albumProducer]?.costPerTrack || 0) * Math.min(newTrackTitles.length, 6) : 0;
+    const validNewTracks = newTrackTitles.filter((t) => t.trim().length > 0);
+    const prodFee = albumProducer
+      ? (world.producers[albumProducer]?.costPerTrack || 0) * Math.min(validNewTracks.length, 6)
+      : 0;
     const totalCost = albumProdBudget + albumMktBudget + prodFee;
 
     if (totalCost > player.stats.funds) {
-      alert(`Fondos insuficientes. Necesitas $${totalCost.toLocaleString()} y tienes $${player.stats.funds.toLocaleString()}`);
+      showToast(
+        `Fondos insuficientes. Necesitas $${totalCost.toLocaleString('es-AR')} y tienes $${player.stats.funds.toLocaleString('es-AR')}.`,
+        'error'
+      );
       return;
     }
     if (player.stats.energy < 35) {
-      alert('Tu artista está exhausto. Producir y masterizar un proyecto completo requiere al menos 35% de energía.');
+      showToast(
+        'Tu artista está exhausto. Producir y masterizar un proyecto completo requiere al menos 35% de energía.',
+        'warning'
+      );
       return;
     }
 
@@ -704,11 +894,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
       const subObj = selectedAlbumSubgenreId ? SUBGENRE_DETAILS[selectedAlbumSubgenreId] : undefined;
       const genreName = world.genres[styleDerivation.primaryGenreId]?.name || styleDerivation.primaryGenreId;
 
-      const validNewTracks = newTrackTitles.filter(t => t.trim().length > 0);
-      const includedSingles = includedSingleIds.map(id => playerSongs.find(s => s.id === id)?.title || id);
+      const includedSingles = includedSingleIds.map((id) => playerSongs.find((s) => s.id === id)?.title || id);
       const allTrackTitles = [...includedSingles, ...validNewTracks];
 
-      onReleaseAlbum({
+      const createdAlbum = onReleaseAlbum({
         title: finalTitle,
         type: albumType,
         genreId: styleDerivation.primaryGenreId,
@@ -718,7 +907,34 @@ export const StudioView: React.FC<StudioViewProps> = ({
         budgetProduction: albumProdBudget,
         budgetMarketing: albumMktBudget,
         producerId: albumProducer || undefined
-      });
+      }) as Album | undefined;
+
+      const impactBreakdown: ReleaseConfirmationData['impactBreakdown'] = [
+        {
+          label: 'Estudio',
+          value: `Tier ${computedStudioStats.tier}/${computedStudioStats.maxTier}`,
+          tone: 'neutral'
+        },
+        {
+          label: 'Repertorio',
+          value: `${allTrackTitles.length} Pistas`,
+          tone: 'positive'
+        }
+      ];
+      if (labelMarketingContribution > 0) {
+        impactBreakdown.push({
+          label: 'Mktg del Sello',
+          value: `+$${labelMarketingContribution.toLocaleString('es-AR')}`,
+          tone: 'positive'
+        });
+      }
+      if (activeSynergyQuality > 0) {
+        impactBreakdown.push({
+          label: 'Sinergia Activa',
+          value: `+${activeSynergyQuality} Calidad`,
+          tone: 'positive'
+        });
+      }
 
       const releaseData: ReleaseConfirmationData = {
         type: albumType,
@@ -740,36 +956,42 @@ export const StudioView: React.FC<StudioViewProps> = ({
           marketing: albumMktBudget,
           producerFee: prodFee,
           videoCost: 0
-        }
+        },
+        criticalScore: createdAlbum?.criticalScore,
+        criticalReviewText: createdAlbum?.criticalReviewText,
+        firstWeekSales: createdAlbum?.firstWeekSales,
+        impactBreakdown
       };
 
       resetAlbumDraft();
       playSound('release');
       setConfirmedRelease(releaseData);
-      setNotification(`¡El proyecto "${finalTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`);
+      setNotification(
+        `¡El proyecto "${finalTitle}" ha sido publicado en todas las plataformas con gran repercusión crítica!`
+      );
       setTimeout(() => setNotification(null), 6000);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'Error al procesar el lanzamiento del álbum.';
-      alert(`Error en el lanzamiento: ${errMsg}`);
+      showToast(`Error en el lanzamiento: ${errMsg}`, 'error');
     } finally {
       setIsPublishing(false);
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 85) return 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40';
-    if (score >= 70) return 'bg-amber-950/60 text-amber-400 border-amber-500/40';
-    return 'bg-rose-950/60 text-rose-400 border-rose-500/40';
+    if (score >= 85) return 'bg-[#34D399]/15 text-[#34D399] border-[#34D399]/40';
+    if (score >= 70) return 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/40';
+    return 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/40';
   };
 
   return (
     <div className="space-y-6 pb-16 font-sans text-[#F4F0EA]">
-      {/* --- ENCABEZADO DEL ESTUDIO: COMPACTO Y UNIFICADO --- */}
-      <div className="liquid-glass-card p-5 space-y-4">
+      {/* --- ENCABEZADO DEL ESTUDIO --- */}
+      <div className="surface-1 bg-[#111114] border border-[#242429] rounded-[6px] p-5 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider liquid-glass-pill text-[#FF4F00] border border-[#FF4F00]/30">
+              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase tracking-wider surface-2 bg-[#18181C] text-[#FF4F00] border border-[#FF4F00]/35">
                 Estudio & Máster
               </span>
               <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
@@ -785,9 +1007,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </h1>
           </div>
 
-          {/* Selector de Pestañas con estilo consola */}
-          <div className="flex items-center gap-1.5 p-1 liquid-glass-pill text-xs sm:text-sm font-semibold shrink-0 self-start md:self-auto">
+          {/* Selector de Pestañas */}
+          <div className="flex items-center gap-1.5 p-1 surface-2 bg-[#18181C] border border-[#242429] rounded-[4px] text-xs sm:text-sm font-semibold shrink-0 self-start md:self-auto">
             <button
+              type="button"
               onClick={() => {
                 playSound('click');
                 setActiveTab('single');
@@ -795,14 +1018,15 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }}
               className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'single'
-                  ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 bg-transparent'
+                  ? 'bg-[#FF4F00] text-white font-bold'
+                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/5 bg-transparent'
               }`}
             >
               <Music2 className="w-4 h-4 shrink-0" />
               <span>Grabar Single</span>
             </button>
             <button
+              type="button"
               onClick={() => {
                 playSound('click');
                 setActiveTab('album');
@@ -810,14 +1034,15 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }}
               className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'album'
-                  ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 bg-transparent'
+                  ? 'bg-[#FF4F00] text-white font-bold'
+                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/5 bg-transparent'
               }`}
             >
               <Layers className="w-4 h-4 shrink-0" />
               <span>Grabar Álbum / EP</span>
             </button>
             <button
+              type="button"
               onClick={() => {
                 playSound('click');
                 setActiveTab('catalog');
@@ -825,76 +1050,155 @@ export const StudioView: React.FC<StudioViewProps> = ({
               }}
               className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[4px] transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'catalog'
-                  ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/10 bg-transparent'
+                  ? 'bg-[#FF4F00] text-white font-bold'
+                  : 'text-[#DCE2EE] hover:text-white hover:bg-white/5 bg-transparent'
               }`}
             >
               <Disc3 className="w-4 h-4 shrink-0" />
-              <span>Mi Catálogo ({playerSongs.length})</span>
+              <span>Mi Catálogo ({playerSingles.length + playerAlbums.length})</span>
             </button>
           </div>
         </div>
 
-        {/* Fila única compacta de indicadores de sesión */}
-        <div className="flex items-center gap-4 sm:gap-6 flex-wrap pt-2 text-xs font-sans tabular-nums">
+        {/* Fila única compacta de indicadores de sesión + Tier / Sello / Sinergia */}
+        <div className="flex items-center gap-3 sm:gap-5 flex-wrap pt-2 border-t border-[#242429] text-xs font-sans tabular-nums">
           <div className="flex items-center gap-1.5">
-            <span className="text-[#8E8E99]">Catálogo:</span>
-            <strong className="text-[#F4F0EA]">{playerSongs.length} temas</strong>
-            <span className="text-[#8E8E99]">({playerAlbums.length} LP/EP)</span>
+            <span className="text-[#8E8E99]">Estudio:</span>
+            <strong className="text-[#FF4F00]">
+              Tier {computedStudioStats.tier}/{computedStudioStats.maxTier}
+            </strong>
+            <span className="text-[#8E8E99] hidden sm:inline">({computedStudioStats.label})</span>
           </div>
-          <span className="text-white/35 hidden sm:inline">•</span>
+          <span className="text-[#3F3F46] hidden sm:inline">•</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[#8E8E99]">Mktg del Sello:</span>
+            <strong className="text-[#34D399]">+${labelMarketingContribution.toLocaleString('es-AR')}</strong>
+          </div>
+          <span className="text-[#3F3F46] hidden sm:inline">•</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[#8E8E99]">Sinergia Activa:</span>
+            <strong className="text-[#38BDF8]">+{activeSynergyQuality} Calidad</strong>
+          </div>
+          <span className="text-[#3F3F46] hidden sm:inline">•</span>
           <div className="flex items-center gap-1.5">
             <span className="text-[#8E8E99]">Calidad Media:</span>
-            <strong className="text-[#10B981]">{avgQuality}%</strong>
+            <strong className="text-[#34D399]">{avgQuality}%</strong>
           </div>
-          <span className="text-white/35 hidden sm:inline">•</span>
+          <span className="text-[#3F3F46] hidden sm:inline">•</span>
           <div className="flex items-center gap-1.5">
             <span className="text-[#8E8E99]">Cupo Anual Singles:</span>
             <strong className={isSinglesLimitReached ? 'text-[#EF4444]' : 'text-[#F4F0EA]'}>
               {singlesThisYear}/{MAX_SINGLES}
             </strong>
           </div>
-          <span className="text-white/35 hidden sm:inline">•</span>
+          <span className="text-[#3F3F46] hidden sm:inline">•</span>
           <div className="flex items-center gap-1.5">
-            <span className="text-[#8E8E99]">Energía en Sesión:</span>
-            <strong className={player.stats.energy >= 35 ? 'text-[#10B981]' : player.stats.energy >= 15 ? 'text-[#F59E0B]' : 'text-[#EF4444]'}>
+            <span className="text-[#8E8E99]">Energía:</span>
+            <strong
+              className={
+                player.stats.energy >= 35
+                  ? 'text-[#34D399]'
+                  : player.stats.energy >= 15
+                  ? 'text-[#F59E0B]'
+                  : 'text-[#EF4444]'
+              }
+            >
               {player.stats.energy}%
             </strong>
           </div>
         </div>
       </div>
 
-      {/* --- NOTIFICATION TOAST --- */}
+      {/* --- NOTIFICATION BANNER --- */}
       {notification && (
-        <div className="bg-[#0B0B0C] border border-[#10B981]/40 text-[#10B981] p-4 rounded-[4px] flex items-center gap-3 text-sm font-semibold animate-fade-in">
-          <CheckCircle2 className="w-5 h-5 text-[#10B981] shrink-0" />
+        <div className="surface-2 bg-[#18181C] border border-[#34D399]/40 text-[#34D399] p-4 rounded-[4px] flex items-center gap-3 text-sm font-semibold">
+          <CheckCircle2 className="w-5 h-5 text-[#34D399] shrink-0" />
           <span>{notification}</span>
         </div>
       )}
 
       {/* --- TAB 1: SINGLE CREATION --- */}
       {activeTab === 'single' && (
-        <form onSubmit={handleCreateSingle} className="liquid-glass-card p-6 space-y-6">
+        <form onSubmit={handleCreateSingle} className="surface-1 bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2">
             <div>
-              <h2 className="kit-text-header font-display text-lg tracking-tight text-[#F4F0EA] flex items-center gap-2">
-                <Mic className="w-5 h-5 text-[#00E599]" />
+              <h2 className="font-display font-extrabold text-lg tracking-tight text-[#F4F0EA] flex items-center gap-2 uppercase">
+                <Mic className="w-5 h-5 text-[#34D399]" />
                 Componer Nuevo Single
               </h2>
               <p className="text-xs text-[#8E8E99] mt-0.5">
                 Grabá un corte adelanto para medir rotación en listas editoriales y pauta radial antes de cerrar un LP.
               </p>
             </div>
+
+            {onOpenCollabModal && (
+              <button
+                type="button"
+                onClick={() => onOpenCollabModal(featuredArtistId || undefined)}
+                className="px-3.5 py-2 rounded-[4px] surface-2 bg-[#18181C] border border-[#FF4F00]/45 hover:border-[#FF4F00] text-[#F4F0EA] text-xs font-bold flex items-center gap-2 transition-colors cursor-pointer shrink-0"
+              >
+                <Handshake className="w-4 h-4 text-[#FF4F00]" />
+                <span>Negociar Colaboración / Proyecto Conjunto</span>
+              </button>
+            )}
           </div>
 
+          {/* Banner de Pactos Activos */}
+          {activeCollabPacts.length > 0 && (
+            <div className="surface-2 bg-[#18181C] border border-[#34D399]/40 rounded-[4px] p-3.5 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#34D399] uppercase tracking-wider">
+                <Handshake className="w-4 h-4" />
+                <span>Pactos de Estudio Activos ({activeCollabPacts.length})</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {activeCollabPacts.map((pact) => {
+                  const targetArtist = pact.targetArtistId ? world.artists[pact.targetArtistId] : undefined;
+                  const targetProducer = pact.targetProducerId ? world.producers[pact.targetProducerId] : undefined;
+                  return (
+                    <div
+                      key={pact.id}
+                      className="px-3 py-1.5 rounded-[4px] bg-[#111114] border border-[#242429] text-xs flex items-center gap-2"
+                    >
+                      {targetArtist && (
+                        <span className="text-[#F4F0EA] font-semibold">
+                          Feat acordado con <strong className="text-[#34D399]">{targetArtist.name}</strong>
+                        </span>
+                      )}
+                      {targetProducer && (
+                        <span className="text-[#F4F0EA] font-semibold">
+                          Productor <strong className="text-[#38BDF8]">{targetProducer.name}</strong>
+                          {pact.producerDiscountPct ? ` (-${pact.producerDiscountPct}% tarifa)` : ''}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Aviso de límite anual o mensual */}
           {isSinglesLimitReached && (
-            <div className="bg-[#0B0B0C] border border-[#F59E0B]/40 text-[#F59E0B] p-4 rounded-[4px] text-xs space-y-1">
+            <div className="surface-2 bg-[#18181C] border border-[#F59E0B]/40 text-[#F59E0B] p-4 rounded-[4px] text-xs space-y-1">
               <div className="flex items-center gap-1.5 font-bold text-sm">
                 <AlertCircle className="w-4 h-4" />
                 Límite anual de singles alcanzado • {MAX_SINGLES}/{MAX_SINGLES}
               </div>
               <p className="text-[#8E8E99] leading-relaxed">
-                El cupo de sencillos se reinicia cada año. Avanza de mes/año o graba un <strong className="text-[#F4F0EA]">Álbum / EP Completo</strong> en la pestaña contigua.
+                El cupo de sencillos se reinicia cada año. Avanza de mes/año o graba un{' '}
+                <strong className="text-[#F4F0EA]">Álbum / EP Completo</strong> en la pestaña contigua.
+              </p>
+            </div>
+          )}
+
+          {!isSinglesLimitReached && isMonthlySingleLimitReached && (
+            <div className="surface-2 bg-[#18181C] border border-[#EF4444]/45 text-[#EF4444] p-4 rounded-[4px] text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-sm">
+                <Lock className="w-4 h-4" />
+                Single mensual ya publicado ({TimeSystem.getMonthName(world.currentMonth)} {world.currentYear})
+              </div>
+              <p className="text-[#8E8E99] leading-relaxed">
+                Solo podés estrenar 1 single por mes para no saturar tu rotación. Avanzá <strong className="text-[#F4F0EA]">+1M</strong> en la barra superior para habilitar el próximo lanzamiento.
               </p>
             </div>
           )}
@@ -910,7 +1214,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <button
                     type="button"
                     onClick={() => generateRandomTitle(false)}
-                    className="text-xs text-[#FF2A4B] hover:underline font-semibold cursor-pointer transition-colors"
+                    className="text-xs text-[#FF4F00] hover:underline font-semibold cursor-pointer transition-colors"
                   >
                     Sugerir Título
                   </button>
@@ -919,8 +1223,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   type="text"
                   placeholder="Ej: Medianoche en Tokio, Barrio Fino..."
                   value={singleTitle}
-                  onChange={e => setSingleTitle(e.target.value)}
-                  className="w-full glass-input px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#8E8E99] transition-all"
+                  onChange={(e) => setSingleTitle(e.target.value)}
+                  className="w-full surface-2 bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#52525B] focus:outline-none transition-all"
                 />
               </div>
 
@@ -929,8 +1233,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA] mb-2">
                   Dirección Sónica de la Era • {styleDerivation.primaryGenreName?.trim() || ''}
                 </label>
-                <div className="space-y-2 exclusion-group">
-                  {styleDerivation.availableStyles.map(style => {
+                <div className="space-y-2">
+                  {styleDerivation.availableStyles.map((style) => {
                     const isSelected = selectedSubgenreId === style.id;
                     return (
                       <div
@@ -945,20 +1249,24 @@ export const StudioView: React.FC<StudioViewProps> = ({
                         }}
                         className={`p-3 rounded-[4px] border transition-all ${
                           !style.isUnlocked
-                            ? 'opacity-60 bg-[#0B0B0C] border-[#26262B] cursor-not-allowed'
+                            ? 'opacity-60 surface-2 bg-[#18181C] border-[#242429] cursor-not-allowed'
                             : isSelected
-                            ? 'bg-[#1C1C21] text-[#F4F0EA] border-[#FF2A4B] cursor-pointer'
-                            : 'bg-[#0B0B0C] hover:bg-[#1C1C21] border-[#26262B] hover:border-[#3F3F46] text-[#F4F0EA] cursor-pointer'
+                            ? 'surface-2 bg-[#18181C] text-[#F4F0EA] border-[#FF4F00] cursor-pointer'
+                            : 'surface-2 bg-[#18181C] border-[#242429] hover:border-[#3F3F46] text-[#F4F0EA] cursor-pointer'
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className={`text-xs font-semibold ${isSelected ? 'text-[#FF2A4B]' : 'text-[#F4F0EA]'}`}>
+                          <span className={`text-xs font-semibold ${isSelected ? 'text-[#FF4F00]' : 'text-[#F4F0EA]'}`}>
                             {style.name}
                           </span>
                           {style.isUnlocked ? (
-                            <span className={`text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] ${
-                              isSelected ? 'bg-[#FF2A4B]/20 text-[#FF2A4B] border border-[#FF2A4B]/40' : 'bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981]'
-                            }`}>
+                            <span
+                              className={`text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] ${
+                                isSelected
+                                  ? 'bg-[#FF4F00]/20 text-[#FF4F00] border border-[#FF4F00]/40'
+                                  : 'bg-[#34D399]/15 border border-[#34D399]/30 text-[#34D399]'
+                              }`}
+                            >
                               Disponible
                             </span>
                           ) : (
@@ -967,9 +1275,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             </span>
                           )}
                         </div>
-                        <p className="text-xs mt-1 leading-snug text-[#8E8E99]">
-                          {style.description}
-                        </p>
+                        <p className="text-xs mt-1 leading-snug text-[#8E8E99]">{style.description}</p>
                       </div>
                     );
                   })}
@@ -977,8 +1283,34 @@ export const StudioView: React.FC<StudioViewProps> = ({
               </div>
             </div>
 
-            {/* Right Column: Producer & Budgets */}
+            {/* Right Column: Feat Artist, Producer & Budgets */}
             <div className="space-y-5">
+              {/* Invitar Artista (Feat) */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA]">
+                    Invitar Artista (Feat Opcional)
+                  </label>
+                  {featuredArtistId && (
+                    <button
+                      type="button"
+                      onClick={() => setFeaturedArtistId('')}
+                      className="text-xs text-[#8E8E99] hover:text-[#EF4444] cursor-pointer"
+                    >
+                      Quitar invitado
+                    </button>
+                  )}
+                </div>
+                <FeatArtistSelector
+                  selectedArtistId={featuredArtistId}
+                  onChange={setFeaturedArtistId}
+                  sceneArtists={sceneArtists}
+                  player={player}
+                  world={world}
+                  onOpenAdvancedCollab={onOpenCollabModal}
+                />
+              </div>
+
               {/* Producer */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA] mb-2">
@@ -986,15 +1318,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </label>
                 <select
                   value={singleProducer}
-                  onChange={e => setSingleProducer(e.target.value)}
-                  className="w-full bg-[#0B0B0C] border border-[#26262B] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
+                  onChange={(e) => setSingleProducer(e.target.value)}
+                  className="w-full surface-2 bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
                 >
                   <option value="">Autoproducción en Home Studio • $0</option>
-                  {(Object.values(world.producers) as Producer[]).map(p => {
+                  {(Object.values(world.producers) as Producer[]).map((p) => {
                     const lockInfo = getProducerLockStatus(p, player);
                     return (
-                      <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#0B0B0C] text-[#F4F0EA]">
-                        {lockInfo.isUnlocked ? '' : '[Bloqueado] '}{p.name} • +{p.qualityBoost}% Calidad • ${p.costPerTrack.toLocaleString()} {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                      <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#111114] text-[#F4F0EA]">
+                        {lockInfo.isUnlocked ? '' : '[Bloqueado] '}
+                        {p.name} • +{p.qualityBoost}% Calidad • ${p.costPerTrack.toLocaleString('es-AR')}{' '}
+                        {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
                       </option>
                     );
                   })}
@@ -1003,14 +1337,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
               {/* Budgets Sliders */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] space-y-2 flex flex-col justify-between">
+                <div className="surface-2 bg-[#18181C] p-4 rounded-[4px] border border-[#242429] space-y-2 flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="block text-xs font-semibold text-[#F59E0B]">
-                      Producción & Mezcla
-                    </span>
-                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
-                      Máx: $25.000
-                    </span>
+                    <span className="block text-xs font-semibold text-[#F59E0B]">Producción & Mezcla</span>
+                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">Máx: $25.000</span>
                   </div>
                   <div className="text-xs font-bold font-sans tabular-nums text-[#F59E0B]">
                     {singleProdBudget === 0 ? '$0 • Home Studio' : `$${singleProdBudget.toLocaleString('es-AR')}`}
@@ -1022,8 +1352,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       max="25000"
                       step="250"
                       value={singleProdBudget}
-                      onChange={e => setSingleProdBudget(Number(e.target.value))}
-                      className="w-full h-2 bg-[#1C1C21] rounded-[2px] appearance-none cursor-pointer border border-[#26262B] accent-[#F59E0B] focus:outline-none"
+                      onChange={(e) => setSingleProdBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-[#111114] rounded-[2px] appearance-none cursor-pointer border border-[#242429] accent-[#F59E0B] focus:outline-none"
                     />
                     <div className="flex items-center justify-between text-2xs text-[#8E8E99] font-sans tabular-nums">
                       <span>$0</span>
@@ -1033,16 +1363,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   </div>
                 </div>
 
-                <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] space-y-2 flex flex-col justify-between">
+                <div className="surface-2 bg-[#18181C] p-4 rounded-[4px] border border-[#242429] space-y-2 flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="block text-xs font-semibold text-[#10B981]">
-                      Marketing & Campaña
-                    </span>
-                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
-                      Máx: $25.000
-                    </span>
+                    <span className="block text-xs font-semibold text-[#34D399]">Marketing & Campaña</span>
+                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">Máx: $25.000</span>
                   </div>
-                  <div className="text-xs font-bold font-sans tabular-nums text-[#10B981]">
+                  <div className="text-xs font-bold font-sans tabular-nums text-[#34D399]">
                     {singleMktBudget === 0 ? '$0 • Difusión Orgánica' : `$${singleMktBudget.toLocaleString('es-AR')}`}
                   </div>
                   <div className="space-y-1.5 pt-1">
@@ -1052,8 +1378,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       max="25000"
                       step="250"
                       value={singleMktBudget}
-                      onChange={e => setSingleMktBudget(Number(e.target.value))}
-                      className="w-full h-2 bg-[#1C1C21] rounded-[2px] appearance-none cursor-pointer border border-[#26262B] accent-[#10B981] focus:outline-none"
+                      onChange={(e) => setSingleMktBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-[#111114] rounded-[2px] appearance-none cursor-pointer border border-[#242429] accent-[#34D399] focus:outline-none"
                     />
                     <div className="flex items-center justify-between text-2xs text-[#8E8E99] font-sans tabular-nums">
                       <span>$0</span>
@@ -1066,21 +1392,21 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
           </div>
 
-          {/* --- MUSIC VIDEO PRODUCTION SECTION (RODAJE DE VIDEOCLIPS) --- */}
-          <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[6px] p-4 sm:p-5 space-y-4">
+          {/* --- MUSIC VIDEO PRODUCTION SECTION --- */}
+          <div className="surface-2 bg-[#18181C] border border-[#242429] rounded-[6px] p-4 sm:p-5 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-[4px] border ${
-                  hasMusicVideo
-                    ? 'bg-[#FF2A4B]/15 text-[#FF2A4B] border-[#FF2A4B]/40'
-                    : 'bg-[#141417] text-[#8E8E99] border-[#26262B]'
-                }`}>
+                <div
+                  className={`p-2 rounded-[4px] border ${
+                    hasMusicVideo
+                      ? 'bg-[#FF4F00]/15 text-[#FF4F00] border-[#FF4F00]/40'
+                      : 'bg-[#111114] text-[#8E8E99] border-[#242429]'
+                  }`}
+                >
                   <Clapperboard className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-[#F4F0EA]">
-                    Videoclip Oficial (Opcional)
-                  </h3>
+                  <h3 className="text-sm font-semibold text-[#F4F0EA]">Videoclip Oficial (Opcional)</h3>
                   <p className="text-xs text-[#8E8E99]">
                     Sumá un corte audiovisual para impulsar rotación inicial, reproducciones y alcance viral.
                   </p>
@@ -1092,17 +1418,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 onClick={() => setHasMusicVideo(!hasMusicVideo)}
                 className={`px-3.5 py-2 rounded-[4px] text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
                   hasMusicVideo
-                    ? 'bg-[#FF2A4B] text-white'
-                    : 'bg-[#141417] hover:bg-[#1C1C21] text-[#F4F0EA] border border-[#26262B]'
+                    ? 'bg-[#FF4F00] text-white'
+                    : 'bg-[#111114] hover:bg-[#1F1F24] text-[#F4F0EA] border border-[#242429]'
                 }`}
               >
-                <Video className="w-3.5 h-3.5" />
-                <span>{hasMusicVideo ? '✓ Videoclip Activado' : '+ Rodar Videoclip Oficial'}</span>
+                {hasMusicVideo ? <Check className="w-3.5 h-3.5" /> : <Video className="w-3.5 h-3.5" />}
+                <span>{hasMusicVideo ? 'Videoclip Activado' : '+ Rodar Videoclip Oficial'}</span>
               </button>
             </div>
 
             {hasMusicVideo && (
-              <div className="space-y-5 pt-3 border-t border-[#26262B]">
+              <div className="space-y-5 pt-3 border-t border-[#242429]">
                 {/* 1. CONCEPT & AESTHETICS */}
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
@@ -1114,8 +1440,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 exclusion-group">
-                    {VIDEO_CONCEPTS.map(concept => {
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+                    {VIDEO_CONCEPTS.map((concept) => {
                       const isSelected = selectedVideoConcept === concept.id;
                       const ConceptIcon = concept.icon;
                       return (
@@ -1127,39 +1453,37 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           onClick={() => setSelectedVideoConcept(concept.id)}
                           className={`p-3 rounded-[4px] border transition-all flex flex-col justify-between gap-2 cursor-pointer ${
                             isSelected
-                              ? 'bg-[#1C1C21] border-[#FF2A4B]'
-                              : 'bg-[#141417] border-[#26262B] hover:border-[#3F3F46]'
+                              ? 'bg-[#111114] border-[#FF4F00]'
+                              : 'bg-[#111114] border-[#242429] hover:border-[#3F3F46]'
                           }`}
                         >
                           <div className="space-y-1">
                             <div className="flex items-center justify-between gap-1.5">
-                              <ConceptIcon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-[#FF2A4B]' : 'text-[#8E8E99]'}`} />
+                              <ConceptIcon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
                               <span className="text-2xs font-sans text-[#8E8E99] truncate">{concept.tag}</span>
                             </div>
                             <span className="text-xs font-bold text-[#F4F0EA] block">{concept.name}</span>
                           </div>
-                          <p className="text-2xs text-[#8E8E99] leading-snug">
-                            {concept.description}
-                          </p>
+                          <p className="text-2xs text-[#8E8E99] leading-snug">{concept.description}</p>
                         </div>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* 2. DIRECTOR TIER & PRODUCTION BUDGET */}
+                {/* 2. DIRECTOR TIER */}
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA]">
                       2. Nivel de Dirección & Presupuesto Audiovisual
                     </label>
                     <span className="text-xs text-[#8E8E99] font-sans tabular-nums">
-                      Tarifa: <strong className="text-[#10B981]">${currentDirectorTier.cost.toLocaleString()}</strong>
+                      Tarifa: <strong className="text-[#34D399]">${currentDirectorTier.cost.toLocaleString('es-AR')}</strong>
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 exclusion-group">
-                    {DIRECTOR_TIERS.map(tier => {
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {DIRECTOR_TIERS.map((tier) => {
                       const isSelected = selectedDirectorTier === tier.id;
                       const TierIcon = tier.icon;
                       return (
@@ -1171,30 +1495,36 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           onClick={() => setSelectedDirectorTier(tier.id)}
                           className={`p-3.5 rounded-[4px] border transition-all flex flex-col justify-between gap-3 cursor-pointer ${
                             isSelected
-                              ? 'bg-[#1C1C21] border-[#FF2A4B]'
-                              : 'bg-[#141417] border-[#26262B] hover:border-[#3F3F46]'
+                              ? 'bg-[#111114] border-[#FF4F00]'
+                              : 'bg-[#111114] border-[#242429] hover:border-[#3F3F46]'
                           }`}
                         >
                           <div className="space-y-1">
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2">
-                                <TierIcon className={`w-4 h-4 ${isSelected ? 'text-[#FF2A4B]' : 'text-[#8E8E99]'}`} />
+                                <TierIcon className={`w-4 h-4 ${isSelected ? 'text-[#FF4F00]' : 'text-[#8E8E99]'}`} />
                                 <h4 className="text-xs font-bold text-[#F4F0EA]">{tier.name}</h4>
                               </div>
-                              <span className="text-xs font-bold font-sans tabular-nums text-[#10B981] bg-[#0B0B0C] px-2 py-0.5 rounded-[4px] border border-[#26262B]">
-                                ${tier.cost.toLocaleString()}
+                              <span className="text-xs font-bold font-sans tabular-nums text-[#34D399] bg-[#18181C] px-2 py-0.5 rounded-[4px] border border-[#242429]">
+                                ${tier.cost.toLocaleString('es-AR')}
                               </span>
                             </div>
-                            <span className="text-2xs text-[#8E8E99] font-semibold block">{tier.tag} • {tier.estimatedViews}</span>
-                            <p className="text-xs text-[#8E8E99] leading-snug pt-0.5">
-                              {tier.description}
-                            </p>
+                            <span className="text-2xs text-[#8E8E99] font-semibold block">
+                              {tier.tag} • {tier.estimatedViews}
+                            </span>
+                            <p className="text-xs text-[#8E8E99] leading-snug pt-0.5">{tier.description}</p>
                           </div>
 
-                          <div className="flex items-center justify-between pt-2 border-t border-[#26262B] text-2xs font-sans tabular-nums text-[#8E8E99]">
-                            <span>Hype: <strong className="text-[#F4F0EA]">+{tier.hypeBoost}</strong></span>
-                            <span>Stream: <strong className="text-[#10B981]">+{tier.velocityBoost}%</strong></span>
-                            <span>Viral: <strong className="text-[#FF2A4B]">+{tier.viralBoost}%</strong></span>
+                          <div className="flex items-center justify-between pt-2 border-t border-[#242429] text-2xs font-sans tabular-nums text-[#8E8E99]">
+                            <span>
+                              Hype: <strong className="text-[#F4F0EA]">+{tier.hypeBoost}</strong>
+                            </span>
+                            <span>
+                              Stream: <strong className="text-[#38BDF8]">+{tier.velocityBoost}%</strong>
+                            </span>
+                            <span>
+                              Viral: <strong className="text-[#FF4F00]">+{tier.viralBoost}%</strong>
+                            </span>
                           </div>
                         </div>
                       );
@@ -1205,29 +1535,59 @@ export const StudioView: React.FC<StudioViewProps> = ({
             )}
           </div>
 
-          {/* --- BARRA ÚNICA DE RESUMEN DE COSTOS + LANZAMIENTO DE SINGLE --- */}
-          <div className="p-4 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-3 flex-wrap text-xs font-sans tabular-nums">
+          {/* --- BARRA DE RESUMEN DE COSTOS + LANZAMIENTO DE SINGLE --- */}
+          <div
+            className={`p-4 rounded-[4px] border flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${
+              isFundsInsufficient
+                ? 'bg-rose-950/40 border-rose-500/50 text-rose-300'
+                : 'surface-2 bg-[#18181C] border-[#242429]'
+            }`}
+          >
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2.5 flex-wrap text-xs font-sans tabular-nums">
                 <span className="text-[#8E8E99]">
-                  Costo Total: <strong className={`text-sm ${isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>${totalSingleCost.toLocaleString('es-AR')}</strong>
+                  Costo Total:{' '}
+                  <strong className={`text-sm ${isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>
+                    ${totalSingleCost.toLocaleString('es-AR')}
+                  </strong>
                 </span>
-                <span className="text-white/35">•</span>
+                {isFundsInsufficient && (
+                  <span className="px-2 py-0.5 rounded-[4px] bg-[#EF4444]/20 border border-[#EF4444]/45 text-[#EF4444] text-2xs font-bold uppercase">
+                    Excede Fondos
+                  </span>
+                )}
+                <span className="text-[#3F3F46]">•</span>
                 <span className="text-[#8E8E99]">
-                  Fondos: <strong className={isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#10B981]'}>${player.stats.funds.toLocaleString('es-AR')}</strong>
+                  Fondos:{' '}
+                  <strong className={isFundsInsufficient ? 'text-[#EF4444]' : 'text-[#34D399]'}>
+                    ${player.stats.funds.toLocaleString('es-AR')}
+                  </strong>
                 </span>
-                <span className="text-white/35">•</span>
+                <span className="text-[#3F3F46]">•</span>
                 <span className="text-[#8E8E99]">
-                  Sesión: <strong className="text-[#FF2A4B]">-15% Energía</strong>
+                  Sesión: <strong className="text-[#FF4F00]">-15% Energía</strong>
                 </span>
+                <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#FF4F00] font-semibold">
+                  Estudio Tier {computedStudioStats.tier}/{computedStudioStats.maxTier}
+                </span>
+                {labelMarketingContribution > 0 && (
+                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#34D399]/35 text-[#34D399] font-semibold">
+                    Sello: +${labelMarketingContribution.toLocaleString('es-AR')} Mktg
+                  </span>
+                )}
+                {activeSynergyQuality > 0 && (
+                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#38BDF8]/35 text-[#38BDF8] font-semibold">
+                    Sinergia: +{activeSynergyQuality} Calidad
+                  </span>
+                )}
                 {singleProducer && (
-                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#141417] border border-[#26262B] text-[#8E8E99]">
-                    Productor: +${singleProdFee.toLocaleString()}
+                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
+                    Productor: +${singleProdFee.toLocaleString('es-AR')}
                   </span>
                 )}
                 {hasMusicVideo && (
-                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#141417] border border-[#26262B] text-[#8E8E99]">
-                    Videoclip: +${videoCost.toLocaleString()}
+                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
+                    Videoclip: +${videoCost.toLocaleString('es-AR')}
                   </span>
                 )}
               </div>
@@ -1235,18 +1595,23 @@ export const StudioView: React.FC<StudioViewProps> = ({
               <div className="text-xs">
                 {isFundsInsufficient ? (
                   <span className="text-[#EF4444] flex items-center gap-1.5 font-medium">
-                    <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes (faltan ${(totalSingleCost - player.stats.funds).toLocaleString('es-AR')}).
+                    <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes (faltan $
+                    {(totalSingleCost - player.stats.funds).toLocaleString('es-AR')}).
                   </span>
                 ) : isSinglesLimitReached ? (
                   <span className="text-[#EF4444] flex items-center gap-1.5 font-medium">
                     <Lock className="w-3.5 h-3.5" /> Límite anual de singles alcanzado ({MAX_SINGLES}/{MAX_SINGLES}).
+                  </span>
+                ) : isMonthlySingleLimitReached ? (
+                  <span className="text-[#EF4444] flex items-center gap-1.5 font-medium">
+                    <Lock className="w-3.5 h-3.5" /> Ya lanzaste un single este mes. Avanza +1M para publicar otro.
                   </span>
                 ) : player.stats.energy < 15 ? (
                   <span className="text-[#F59E0B] flex items-center gap-1.5 font-medium">
                     <Zap className="w-3.5 h-3.5" /> Artista agotado (requiere al menos 15% energía).
                   </span>
                 ) : (
-                  <span className="text-[#10B981] flex items-center gap-1.5">
+                  <span className="text-[#34D399] flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Listo para grabación y distribución.
                   </span>
                 )}
@@ -1256,29 +1621,35 @@ export const StudioView: React.FC<StudioViewProps> = ({
             <button
               id="btn-submit-single"
               type="submit"
-              disabled={isPublishing || isSinglesLimitReached || isFundsInsufficient || player.stats.energy < 15}
+              disabled={isPublishing || isSinglesLimitReached || isMonthlySingleLimitReached || isFundsInsufficient || player.stats.energy < 15}
               title={
                 isFundsInsufficient
                   ? `Fondos insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalSingleCost.toLocaleString('es-AR')})`
                   : isSinglesLimitReached
                   ? `Cupo anual de singles alcanzado (${singlesThisYear}/${MAX_SINGLES})`
+                  : isMonthlySingleLimitReached
+                  ? 'Ya lanzaste un single este mes. Avanza el ciclo +1M'
                   : player.stats.energy < 15
                   ? `Energía insuficiente (${player.stats.energy}% / 15% requerida)`
                   : 'Grabar y publicar sencillo'
               }
-              className="kit-btn kit-btn-emerald py-3 px-8 text-sm shrink-0"
+              className={`py-3 px-7 rounded-[4px] text-sm font-bold uppercase tracking-wide flex items-center justify-center gap-2 transition-all shrink-0 ${
+                isPublishing || isSinglesLimitReached || isMonthlySingleLimitReached || isFundsInsufficient || player.stats.energy < 15
+                  ? 'bg-[#242429] text-[#8E8E99] cursor-not-allowed'
+                  : 'bg-[#FF4F00] hover:bg-[#E04500] text-white cursor-pointer shadow-md'
+              }`}
             >
-              <span className="kit-btn-content">
-                <Disc3 className={`w-4 h-4 ${isFundsInsufficient ? 'text-white/40' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
-                <span className="kit-btn-label">
-                  {isPublishing
-                    ? 'Publicando y Masterizando...'
-                    : isFundsInsufficient
-                    ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalSingleCost.toLocaleString('es-AR')})`
-                    : hasMusicVideo
-                    ? 'Grabar Single & Estrenar Videoclip'
-                    : 'Grabar & Publicar Single'}
-                </span>
+              <Disc3 className={`w-4 h-4 ${isPublishing ? 'animate-spin' : ''}`} />
+              <span>
+                {isPublishing
+                  ? 'Publicando y Masterizando...'
+                  : isFundsInsufficient
+                  ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalSingleCost.toLocaleString('es-AR')})`
+                  : isMonthlySingleLimitReached
+                  ? 'Bloqueado (Avanzar Mes)'
+                  : hasMusicVideo
+                  ? 'Grabar Single & Estrenar Videoclip'
+                  : 'Grabar & Publicar Single'}
               </span>
             </button>
           </div>
@@ -1287,10 +1658,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       {/* --- TAB 2: ALBUM & EP CREATION STUDIO --- */}
       {activeTab === 'album' && (
-        <form onSubmit={handleCreateAlbum} className="liquid-glass-card p-6 space-y-6">
+        <form onSubmit={handleCreateAlbum} className="surface-1 bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6">
           <div className="pb-2">
-            <h2 className="kit-text-header font-display text-lg tracking-tight text-[#F4F0EA] flex items-center gap-2">
-              <Layers className="w-5 h-5 text-[#00E599]" />
+            <h2 className="font-display font-extrabold text-lg tracking-tight text-[#F4F0EA] flex items-center gap-2 uppercase">
+              <Layers className="w-5 h-5 text-[#34D399]" />
               Estudio de Composición de Álbumes & Proyectos
             </h2>
             <p className="text-xs text-[#8E8E99] mt-0.5">
@@ -1299,7 +1670,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column: Concept, Format & Previous Singles */}
+            {/* Left Column */}
             <div className="space-y-5">
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -1309,7 +1680,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <button
                     type="button"
                     onClick={() => generateRandomTitle(true)}
-                    className="text-xs text-[#FF2A4B] hover:underline font-semibold cursor-pointer transition-colors"
+                    className="text-xs text-[#FF4F00] hover:underline font-semibold cursor-pointer transition-colors"
                   >
                     Sugerir Título Conceptual
                   </button>
@@ -1318,8 +1689,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   type="text"
                   placeholder="Ej: Crónicas de una Noche, Génesis..."
                   value={albumTitle}
-                  onChange={e => setAlbumTitle(e.target.value)}
-                  className="w-full glass-input px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#8E8E99] transition-all"
+                  onChange={(e) => setAlbumTitle(e.target.value)}
+                  className="w-full surface-2 bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3.5 py-2.5 text-sm text-[#F4F0EA] placeholder:text-[#52525B] focus:outline-none transition-all"
                 />
               </div>
 
@@ -1331,8 +1702,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   </label>
                   <select
                     value={albumType}
-                    onChange={e => setAlbumType(e.target.value as Album['type'])}
-                    className="w-full bg-[#0B0B0C] border border-[#26262B] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
+                    onChange={(e) => setAlbumType(e.target.value as Album['type'])}
+                    className="w-full surface-2 bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="album">Álbum de Estudio LP • Mín. 6 temas</option>
                     <option value="ep">EP Extended Play • Mín. 4 temas</option>
@@ -1347,15 +1718,17 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   </label>
                   <select
                     value={albumProducer}
-                    onChange={e => setAlbumProducer(e.target.value)}
-                    className="w-full bg-[#0B0B0C] border border-[#26262B] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
+                    onChange={(e) => setAlbumProducer(e.target.value)}
+                    className="w-full surface-2 bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
                   >
                     <option value="">Autoproducido • $0</option>
-                    {(Object.values(world.producers) as Producer[]).map(p => {
+                    {(Object.values(world.producers) as Producer[]).map((p) => {
                       const lockInfo = getProducerLockStatus(p, player);
                       return (
-                        <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#0B0B0C] text-[#F4F0EA]">
-                          {lockInfo.isUnlocked ? '' : '[Bloqueado] '}{p.name} • +{p.qualityBoost}% Calidad • ${p.costPerTrack.toLocaleString()}/tema {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
+                        <option key={p.id} value={p.id} disabled={!lockInfo.isUnlocked} className="bg-[#111114] text-[#F4F0EA]">
+                          {lockInfo.isUnlocked ? '' : '[Bloqueado] '}
+                          {p.name} • +{p.qualityBoost}% Calidad • ${p.costPerTrack.toLocaleString('es-AR')}/tema{' '}
+                          {!lockInfo.isUnlocked ? `[Bloqueado: ${lockInfo.lockReason}]` : ''}
                         </option>
                       );
                     })}
@@ -1370,12 +1743,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </label>
                 <select
                   value={selectedAlbumSubgenreId}
-                  onChange={e => setSelectedAlbumSubgenreId(e.target.value)}
-                  className="w-full bg-[#0B0B0C] border border-[#26262B] focus:border-[#3F3F46] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
+                  onChange={(e) => setSelectedAlbumSubgenreId(e.target.value)}
+                  className="w-full surface-2 bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F0EA] focus:outline-none transition-colors cursor-pointer"
                 >
                   {styleDerivation.availableStyles
-                    .filter(s => s.isUnlocked)
-                    .map(s => (
+                    .filter((s) => s.isUnlocked)
+                    .map((s) => (
                       <option key={s.id} value={s.id}>
                         {s.name} • {s.aestheticTone}
                       </option>
@@ -1383,15 +1756,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </select>
               </div>
 
-              {/* Previous Singles Inclusion Section */}
-              <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] space-y-2.5">
+              {/* Previous Singles Inclusion */}
+              <div className="surface-2 bg-[#18181C] p-4 rounded-[4px] border border-[#242429] space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[#F4F0EA]">
                     Incluir Singles Previos • {cleanCountTag(includedSingleIds.length, availablePreviousSingles.length, 'seleccionados')}
                   </label>
-                  <span className="text-2xs text-[#8E8E99]">
-                    Aportan streams iniciales
-                  </span>
+                  <span className="text-2xs text-[#8E8E99]">Aportan streams iniciales</span>
                 </div>
 
                 {availablePreviousSingles.length === 0 ? (
@@ -1400,7 +1771,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   </p>
                 ) : (
                   <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-                    {availablePreviousSingles.map(single => {
+                    {availablePreviousSingles.map((single) => {
                       const isChecked = includedSingleIds.includes(single.id);
                       const singleReleaseDate = formatReleaseDate(single.releaseMonth, single.releaseYear, 'short');
                       const prodName = formatProducerCredit(single.producerId, world.producers, { short: true });
@@ -1413,13 +1784,13 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           onClick={() => toggleSingleInclusion(single.id)}
                           className={`p-2.5 rounded-[4px] border flex items-center justify-between text-xs cursor-pointer transition-all ${
                             isChecked
-                              ? 'bg-[#1C1C21] text-[#F4F0EA] border-[#FF2A4B]'
-                              : 'bg-[#141417] hover:bg-[#1C1C21] border-[#26262B] text-[#F4F0EA]'
+                              ? 'bg-[#111114] text-[#F4F0EA] border-[#FF4F00]'
+                              : 'bg-[#111114] hover:border-[#3F3F46] border-[#242429] text-[#F4F0EA]'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {isChecked ? (
-                              <CheckSquare className="w-4 h-4 text-[#FF2A4B] shrink-0" />
+                              <CheckSquare className="w-4 h-4 text-[#FF4F00] shrink-0" />
                             ) : (
                               <Square className="w-4 h-4 text-[#8E8E99] shrink-0" />
                             )}
@@ -1430,7 +1801,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                               </span>
                             </div>
                           </div>
-                          <span className="text-xs font-sans tabular-nums text-[#10B981] shrink-0">
+                          <span className="text-xs font-sans tabular-nums text-[#38BDF8] shrink-0">
                             {(single.streamsTotal / 1000).toFixed(0)}k streams
                           </span>
                         </div>
@@ -1451,34 +1822,35 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setNewTrackTitles([...newTrackTitles, `Pista ${newTrackTitles.length + 1}`])}
-                    className="text-xs font-semibold text-[#FF2A4B] hover:underline flex items-center gap-1 cursor-pointer transition-colors"
+                    className="text-xs font-semibold text-[#FF4F00] hover:underline flex items-center gap-1 cursor-pointer transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" /> Agregar Pista
                   </button>
                 </div>
 
                 <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                  {/* Display Included Singles First */}
                   {includedSingleIds.map((sId, i) => {
-                    const single = playerSongs.find(s => s.id === sId);
+                    const single = playerSongs.find((s) => s.id === sId);
                     const singleMonth = TimeSystem.getMonthName(single?.releaseMonth || 1);
                     return (
-                      <div key={sId} className="flex items-center justify-between bg-[#1C1C21] px-3 py-2 rounded-[4px] border border-[#FF2A4B]/40 text-xs">
+                      <div
+                        key={sId}
+                        className="flex items-center justify-between surface-2 bg-[#18181C] px-3 py-2 rounded-[4px] border border-[#FF4F00]/40 text-xs"
+                      >
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="font-sans tabular-nums text-xs text-[#FF2A4B] w-6 font-bold">{i + 1}.</span>
+                          <span className="font-sans tabular-nums text-xs text-[#FF4F00] w-6 font-bold">{i + 1}.</span>
                           <span className="font-semibold text-[#F4F0EA] truncate">{single?.title || sId}</span>
                           <span className="text-2xs text-[#8E8E99] font-sans shrink-0">
                             ({singleMonth} {single?.releaseYear})
                           </span>
                         </div>
-                        <span className="text-2xs uppercase font-bold bg-[#FF2A4B]/20 text-[#FF2A4B] px-2 py-0.5 rounded-[4px] border border-[#FF2A4B]/30 shrink-0">
+                        <span className="text-2xs uppercase font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-2 py-0.5 rounded-[4px] border border-[#FF4F00]/30 shrink-0">
                           Single Previo
                         </span>
                       </div>
                     );
                   })}
 
-                  {/* Display New Editable Tracks */}
                   {newTrackTitles.map((track, i) => {
                     const trackNumber = includedSingleIds.length + i + 1;
                     return (
@@ -1487,12 +1859,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
                         <input
                           type="text"
                           value={track}
-                          onChange={e => {
+                          onChange={(e) => {
                             const copy = [...newTrackTitles];
                             copy[i] = e.target.value;
                             setNewTrackTitles(copy);
                           }}
-                          className="flex-1 bg-[#0B0B0C] border border-[#26262B] focus:border-[#3F3F46] rounded-[4px] px-3 py-1.5 text-xs text-[#F4F0EA] focus:outline-none"
+                          className="flex-1 surface-2 bg-[#18181C] border border-[#242429] focus:border-[#FF4F00] rounded-[4px] px-3 py-1.5 text-xs text-[#F4F0EA] focus:outline-none"
                         />
                         {newTrackTitles.length > 2 && (
                           <button
@@ -1510,16 +1882,45 @@ export const StudioView: React.FC<StudioViewProps> = ({
                 </div>
               </div>
 
-              {/* Budgets */}
+              {/* Presets Rápidos de Presupuesto de Álbum */}
+              <div className="space-y-2">
+                <span className="block text-xs font-semibold uppercase tracking-wider text-[#8E8E99]">
+                  Presets de Presupuesto (Prod / Mktg)
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {ALBUM_BUDGET_PRESETS.map((preset) => {
+                    const isPresetActive = albumProdBudget === preset.prod && albumMktBudget === preset.mktg;
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => {
+                          playSound('click');
+                          setAlbumProdBudget(preset.prod);
+                          setAlbumMktBudget(preset.mktg);
+                        }}
+                        className={`p-2 rounded-[4px] border text-left transition-all cursor-pointer ${
+                          isPresetActive
+                            ? 'bg-[#FF4F00]/15 border-[#FF4F00] text-white'
+                            : 'surface-2 bg-[#18181C] border-[#242429] hover:border-[#3F3F46] text-[#F4F0EA]'
+                        }`}
+                      >
+                        <span className="text-xs font-bold block">{preset.label}</span>
+                        <span className="text-2xs text-[#8E8E99] tabular-nums block">
+                          ${(preset.prod / 1000).toFixed(0)}k / ${(preset.mktg / 1000).toFixed(0)}k
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Budgets Sliders */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] space-y-2 flex flex-col justify-between">
+                <div className="surface-2 bg-[#18181C] p-4 rounded-[4px] border border-[#242429] space-y-2 flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="block text-xs font-semibold text-[#F59E0B]">
-                      Producción & Mastering
-                    </span>
-                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
-                      Máx: $60.000
-                    </span>
+                    <span className="block text-xs font-semibold text-[#F59E0B]">Producción & Mastering</span>
+                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">Máx: $60.000</span>
                   </div>
                   <div className="text-sm font-bold font-sans tabular-nums text-[#F59E0B]">
                     ${albumProdBudget.toLocaleString('es-AR')}
@@ -1531,8 +1932,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       max="60000"
                       step="1000"
                       value={albumProdBudget}
-                      onChange={e => setAlbumProdBudget(Number(e.target.value))}
-                      className="w-full h-2 bg-[#1C1C21] rounded-[2px] appearance-none cursor-pointer border border-[#26262B] accent-[#F59E0B] focus:outline-none"
+                      onChange={(e) => setAlbumProdBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-[#111114] rounded-[2px] appearance-none cursor-pointer border border-[#242429] accent-[#F59E0B] focus:outline-none"
                     />
                     <div className="flex items-center justify-between text-2xs text-[#8E8E99] font-sans tabular-nums">
                       <span>$3.000</span>
@@ -1542,16 +1943,12 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   </div>
                 </div>
 
-                <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] space-y-2 flex flex-col justify-between">
+                <div className="surface-2 bg-[#18181C] p-4 rounded-[4px] border border-[#242429] space-y-2 flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="block text-xs font-semibold text-[#10B981]">
-                      Campaña de Lanzamiento
-                    </span>
-                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
-                      Máx: $60.000
-                    </span>
+                    <span className="block text-xs font-semibold text-[#34D399]">Campaña de Lanzamiento</span>
+                    <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">Máx: $60.000</span>
                   </div>
-                  <div className="text-sm font-bold font-sans tabular-nums text-[#10B981]">
+                  <div className="text-sm font-bold font-sans tabular-nums text-[#34D399]">
                     ${albumMktBudget.toLocaleString('es-AR')}
                   </div>
                   <div className="space-y-1.5 pt-1">
@@ -1561,8 +1958,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
                       max="60000"
                       step="1000"
                       value={albumMktBudget}
-                      onChange={e => setAlbumMktBudget(Number(e.target.value))}
-                      className="w-full h-2 bg-[#1C1C21] rounded-[2px] appearance-none cursor-pointer border border-[#26262B] accent-[#10B981] focus:outline-none"
+                      onChange={(e) => setAlbumMktBudget(Number(e.target.value))}
+                      className="w-full h-2 bg-[#111114] rounded-[2px] appearance-none cursor-pointer border border-[#242429] accent-[#34D399] focus:outline-none"
                     />
                     <div className="flex items-center justify-between text-2xs text-[#8E8E99] font-sans tabular-nums">
                       <span>$2.000</span>
@@ -1575,28 +1972,50 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
           </div>
 
-          {/* --- BARRA ÚNICA DE RESUMEN DE COSTOS + LANZAMIENTO DE ÁLBUM --- */}
-          <div className="p-4 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-3 flex-wrap text-xs font-sans tabular-nums">
+          {/* --- BARRA DE RESUMEN DE COSTOS + LANZAMIENTO DE ÁLBUM --- */}
+          <div className="p-4 rounded-[4px] surface-2 bg-[#18181C] border border-[#242429] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2.5 flex-wrap text-xs font-sans tabular-nums">
                 <span className="text-[#8E8E99]">
-                  Costo Total: <strong className={`text-sm ${isAlbumFundsInsufficient ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>${totalAlbumCost.toLocaleString('es-AR')}</strong>
+                  Costo Total:{' '}
+                  <strong className={`text-sm ${isAlbumFundsInsufficient ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>
+                    ${totalAlbumCost.toLocaleString('es-AR')}
+                  </strong>
                 </span>
-                <span className="text-white/35">•</span>
+                <span className="text-[#3F3F46]">•</span>
                 <span className="text-[#8E8E99]">
-                  Fondos: <strong className={isAlbumFundsInsufficient ? 'text-[#EF4444]' : 'text-[#10B981]'}>${player.stats.funds.toLocaleString('es-AR')}</strong>
+                  Fondos:{' '}
+                  <strong className={isAlbumFundsInsufficient ? 'text-[#EF4444]' : 'text-[#34D399]'}>
+                    ${player.stats.funds.toLocaleString('es-AR')}
+                  </strong>
                 </span>
-                <span className="text-white/35">•</span>
+                <span className="text-[#3F3F46]">•</span>
                 <span className="text-[#8E8E99]">
-                  Sesión: <strong className="text-[#FF2A4B]">-35% Energía</strong>
+                  Sesión: <strong className="text-[#FF4F00]">-35% Energía</strong>
                 </span>
-                <span className="text-white/35">•</span>
+                <span className="text-[#3F3F46]">•</span>
                 <span className="text-[#8E8E99]">
-                  Pistas: <strong className={isAlbumTracksInsufficient ? 'text-[#EF4444]' : 'text-[#F4F0EA]'}>{totalAlbumTracksCount}/{minTracksRequired}</strong>
+                  Pistas:{' '}
+                  <strong className={isAlbumTracksInsufficient ? 'text-[#EF4444]' : 'text-[#F4F0EA]'}>
+                    {totalAlbumTracksCount}/{minTracksRequired}
+                  </strong>
                 </span>
+                <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#FF4F00] font-semibold">
+                  Estudio Tier {computedStudioStats.tier}/{computedStudioStats.maxTier}
+                </span>
+                {labelMarketingContribution > 0 && (
+                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#34D399]/35 text-[#34D399] font-semibold">
+                    Sello: +${labelMarketingContribution.toLocaleString('es-AR')} Mktg
+                  </span>
+                )}
+                {activeSynergyQuality > 0 && (
+                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#38BDF8]/35 text-[#38BDF8] font-semibold">
+                    Sinergia: +{activeSynergyQuality} Calidad
+                  </span>
+                )}
                 {albumProducer && (
-                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#141417] border border-[#26262B] text-[#8E8E99]">
-                    Productor: +${albumProdFee.toLocaleString()}
+                  <span className="text-2xs px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
+                    Productor: +${albumProdFee.toLocaleString('es-AR')}
                   </span>
                 )}
               </div>
@@ -1604,7 +2023,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
               <div className="text-xs">
                 {isAlbumFundsInsufficient ? (
                   <span className="text-[#EF4444] flex items-center gap-1.5 font-medium">
-                    <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes (faltan ${(totalAlbumCost - player.stats.funds).toLocaleString('es-AR')}).
+                    <AlertCircle className="w-3.5 h-3.5" /> Fondos insuficientes (faltan $
+                    {(totalAlbumCost - player.stats.funds).toLocaleString('es-AR')}).
                   </span>
                 ) : isAlbumTracksInsufficient ? (
                   <span className="text-[#EF4444] flex items-center gap-1.5 font-medium">
@@ -1615,7 +2035,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     <Zap className="w-3.5 h-3.5" /> Artista exhausto (requiere al menos 35% de energía).
                   </span>
                 ) : (
-                  <span className="text-[#10B981] flex items-center gap-1.5">
+                  <span className="text-[#34D399] flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Proyecto listo para producción y publicación.
                   </span>
                 )}
@@ -1635,17 +2055,19 @@ export const StudioView: React.FC<StudioViewProps> = ({
                   ? 'Energía insuficiente (mín. 35%)'
                   : 'Publicar proyecto completo'
               }
-              className="kit-btn kit-btn-emerald py-3 px-8 text-sm shrink-0"
+              className={`py-3 px-7 rounded-[4px] text-sm font-bold uppercase tracking-wide flex items-center justify-center gap-2 transition-all shrink-0 ${
+                isPublishing || isAlbumDisabled
+                  ? 'bg-[#242429] text-[#8E8E99] cursor-not-allowed'
+                  : 'bg-[#FF4F00] hover:bg-[#E04500] text-white cursor-pointer shadow-md'
+              }`}
             >
-              <span className="kit-btn-content">
-                <Layers className={`w-4 h-4 ${isAlbumDisabled ? 'text-white/40' : 'text-white'} ${isPublishing ? 'animate-spin' : ''}`} />
-                <span className="kit-btn-label">
-                  {isPublishing
-                    ? 'Publicando y Masterizando...'
-                    : isAlbumFundsInsufficient
-                    ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalAlbumCost.toLocaleString('es-AR')})`
-                    : 'Publicar Proyecto Completo'}
-                </span>
+              <Layers className={`w-4 h-4 ${isPublishing ? 'animate-spin' : ''}`} />
+              <span>
+                {isPublishing
+                  ? 'Publicando y Masterizando...'
+                  : isAlbumFundsInsufficient
+                  ? `Fondos Insuficientes ($${player.stats.funds.toLocaleString('es-AR')} / $${totalAlbumCost.toLocaleString('es-AR')})`
+                  : 'Publicar Proyecto Completo'}
               </span>
             </button>
           </div>
@@ -1654,11 +2076,11 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
       {/* --- TAB 3: DISCOGRAPHY & CATALOG VIEWER --- */}
       {activeTab === 'catalog' && (
-        <div className="liquid-glass-card p-6 space-y-6">
+        <div className="surface-1 bg-[#111114] border border-[#242429] rounded-[6px] p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
             <div>
-              <h2 className="kit-text-header font-display text-xl tracking-tight text-[#F4F0EA] flex items-center gap-2">
-                <Music2 className="w-5 h-5 text-[#00E599]" />
+              <h2 className="font-display font-extrabold text-xl tracking-tight text-[#F4F0EA] flex items-center gap-2 uppercase">
+                <Music2 className="w-5 h-5 text-[#34D399]" />
                 Discografía & Catálogo Oficial
               </h2>
               <p className="text-xs text-[#8E8E99] mt-1">
@@ -1667,36 +2089,33 @@ export const StudioView: React.FC<StudioViewProps> = ({
             </div>
 
             {/* Filter Pills */}
-            <div className="flex items-center gap-1.5 p-1 liquid-glass-pill text-xs font-semibold">
+            <div className="flex items-center gap-1.5 p-1 surface-2 bg-[#18181C] border border-[#242429] rounded-[4px] text-xs font-semibold">
               <button
+                type="button"
                 onClick={() => setCatalogFilter('all')}
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
-                  catalogFilter === 'all'
-                    ? 'bg-[#FF2A4B] text-white font-bold'
-                    : 'text-[#DCE2EE] hover:text-white hover:bg-white/10'
+                  catalogFilter === 'all' ? 'bg-[#FF4F00] text-white font-bold' : 'text-[#DCE2EE] hover:text-white hover:bg-white/5'
                 }`}
               >
-                Todos ({playerSongs.length + playerAlbums.length})
+                Todos ({playerSingles.length + playerAlbums.length})
               </button>
               <button
+                type="button"
                 onClick={() => setCatalogFilter('albums')}
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
-                  catalogFilter === 'albums'
-                    ? 'bg-[#FF2A4B] text-white font-bold'
-                    : 'text-[#DCE2EE] hover:text-white hover:bg-white/10'
+                  catalogFilter === 'albums' ? 'bg-[#FF4F00] text-white font-bold' : 'text-[#DCE2EE] hover:text-white hover:bg-white/5'
                 }`}
               >
                 Álbumes ({playerAlbums.length})
               </button>
               <button
+                type="button"
                 onClick={() => setCatalogFilter('singles')}
                 className={`px-3 py-1.5 rounded-[4px] transition-all cursor-pointer ${
-                  catalogFilter === 'singles'
-                    ? 'bg-[#FF2A4B] text-white font-bold'
-                    : 'text-[#DCE2EE] hover:text-white hover:bg-white/10'
+                  catalogFilter === 'singles' ? 'bg-[#FF4F00] text-white font-bold' : 'text-[#DCE2EE] hover:text-white hover:bg-white/5'
                 }`}
               >
-                Singles ({playerSongs.length})
+                Singles ({playerSingles.length})
               </button>
             </div>
           </div>
@@ -1705,7 +2124,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
           {(catalogFilter === 'all' || catalogFilter === 'albums') && (
             <div className="space-y-4">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8E8E99] font-sans flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-[#FF2A4B]" />
+                <Layers className="w-4 h-4 text-[#FF4F00]" />
                 Álbumes & Proyectos de Larga Duración
               </h3>
 
@@ -1716,7 +2135,8 @@ export const StudioView: React.FC<StudioViewProps> = ({
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {playerAlbums.map((album, aIdx) => {
-                    const coverGrad = album.coverGradient || ARTISTIC_COVER_GRADIENTS[aIdx % ARTISTIC_COVER_GRADIENTS.length];
+                    const coverGrad =
+                      album.coverGradient || ARTISTIC_COVER_GRADIENTS[aIdx % ARTISTIC_COVER_GRADIENTS.length];
                     const albumReleaseDateStr = formatReleaseDate(album.releaseMonth, album.releaseYear, 'long');
                     const albumReleaseDateFull = formatReleaseDate(album.releaseMonth, album.releaseYear, 'full');
                     const albumProducerName = formatProducerCredit(album.producerId, world.producers, { short: false });
@@ -1725,7 +2145,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     return (
                       <div
                         key={album.id}
-                        className="bg-[#1C1C21] border border-[#26262B] rounded-[6px] p-5 space-y-4 hover:border-[#3F3F46] transition-all flex flex-col justify-between"
+                        className="surface-2 bg-[#18181C] border border-[#242429] rounded-[4px] p-5 space-y-4 hover:border-[#3F3F46] transition-all flex flex-col justify-between"
                       >
                         <div className="flex items-start gap-4">
                           <div
@@ -1736,10 +2156,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
                           <div className="space-y-1.5 flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase bg-[#FF2A4B]/20 border border-[#FF2A4B]/40 text-[#FF2A4B]">
+                              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-sans font-bold uppercase bg-[#FF4F00]/20 border border-[#FF4F00]/40 text-[#FF4F00]">
                                 {world.genres[album.genreId]?.name || album.genreId}
                               </span>
-                              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-semibold bg-[#0B0B0C] border border-[#26262B] text-[#F4F0EA] uppercase">
+                              <span className="px-2 py-0.5 rounded-[4px] text-2xs font-semibold bg-[#111114] border border-[#242429] text-[#F4F0EA] uppercase">
                                 {album.type}
                               </span>
                             </div>
@@ -1748,8 +2168,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             </h4>
                             <div className="flex items-center gap-2 flex-wrap text-xs text-[#8E8E99]">
                               <span className="inline-flex items-center gap-1" title={albumReleaseDateFull}>
-                                <Calendar className="w-3.5 h-3.5 text-[#FF2A4B] shrink-0" />
-                                <span><strong className="text-[#F4F0EA] font-semibold">{albumReleaseDateStr}</strong></span>
+                                <Calendar className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
+                                <span>
+                                  <strong className="text-[#F4F0EA] font-semibold">{albumReleaseDateStr}</strong>
+                                </span>
                               </span>
                               <span>•</span>
                               <span className="inline-flex items-center gap-1">
@@ -1762,17 +2184,15 @@ export const StudioView: React.FC<StudioViewProps> = ({
                           </div>
 
                           <div className="text-right shrink-0">
-                            <span className="text-2xs uppercase font-semibold text-[#8E8E99] block">
-                              1ª Semana
-                            </span>
-                            <span className="font-sans tabular-nums font-bold text-sm text-[#10B981]">
-                              {album.firstWeekSales.toLocaleString()} u.
+                            <span className="text-2xs uppercase font-semibold text-[#8E8E99] block">1ª Semana</span>
+                            <span className="font-sans tabular-nums font-bold text-sm text-[#34D399]">
+                              {album.firstWeekSales.toLocaleString('es-AR')} u.
                             </span>
                           </div>
                         </div>
 
                         {/* Metacritic Review Box */}
-                        <div className="bg-[#0B0B0C] border border-[#26262B] p-3 rounded-[4px] space-y-1 text-xs">
+                        <div className="bg-[#111114] border border-[#242429] p-3 rounded-[4px] space-y-1 text-xs">
                           <div className="flex items-center justify-between">
                             <span className="font-semibold text-[#F4F0EA] flex items-center gap-1.5">
                               <Award className="w-3.5 h-3.5 text-[#F59E0B]" />
@@ -1795,10 +2215,10 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             <button
                               type="button"
                               onClick={() => toggleAlbumExpanded(album.id)}
-                              className="w-full flex items-center justify-between py-1.5 px-2.5 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] hover:border-[#3F3F46] text-xs text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
+                              className="w-full flex items-center justify-between py-1.5 px-2.5 rounded-[4px] bg-[#111114] border border-[#242429] hover:border-[#3F3F46] text-xs text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
                             >
                               <span className="flex items-center gap-1.5 font-medium">
-                                <Music2 className="w-3.5 h-3.5 text-[#FF2A4B]" />
+                                <Music2 className="w-3.5 h-3.5 text-[#FF4F00]" />
                                 Tracklist oficial • {album.songIds.length} pistas
                               </span>
                               {isExpanded ? (
@@ -1820,20 +2240,25 @@ export const StudioView: React.FC<StudioViewProps> = ({
                                   const trkReleaseMonth = trk.releaseMonth || album.releaseMonth || 1;
                                   const trkReleaseYear = trk.releaseYear || album.releaseYear;
                                   const trkDateStr = formatReleaseDate(trkReleaseMonth, trkReleaseYear, 'short');
-                                  const trkProducer = formatProducerCredit(trk.producerId || album.producerId, world.producers, { short: true });
+                                  const trkProducer = formatProducerCredit(trk.producerId || album.producerId, world.producers, {
+                                    short: true
+                                  });
 
                                   return (
                                     <div
                                       key={sId}
-                                      className="flex items-center justify-between p-2 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] text-xs"
+                                      className="flex items-center justify-between p-2 rounded-[4px] bg-[#111114] border border-[#242429] text-xs"
                                     >
                                       <div className="flex items-center gap-2 min-w-0">
                                         <span className="font-sans tabular-nums text-2xs text-[#8E8E99] w-4">{trackIdx + 1}.</span>
-                                        <span className="font-semibold text-[#F4F0EA] truncate max-w-[150px] sm:max-w-[200px]" title={trk.title}>
+                                        <span
+                                          className="font-semibold text-[#F4F0EA] truncate max-w-[150px] sm:max-w-[200px]"
+                                          title={trk.title}
+                                        >
                                           {trk.title}
                                         </span>
                                         {trk.isSingle && (
-                                          <span className="text-2xs uppercase font-bold bg-[#FF2A4B]/20 text-[#FF2A4B] px-1.5 py-0.2 rounded-[4px] border border-[#FF2A4B]/30">
+                                          <span className="text-2xs uppercase font-bold bg-[#FF4F00]/20 text-[#FF4F00] px-1.5 py-0.5 rounded-[4px] border border-[#FF4F00]/30">
                                             Single
                                           </span>
                                         )}
@@ -1841,9 +2266,7 @@ export const StudioView: React.FC<StudioViewProps> = ({
                                       <div className="flex items-center gap-3 text-xs text-[#8E8E99] font-sans tabular-nums shrink-0">
                                         <span>{trkDateStr}</span>
                                         <span>{trkProducer}</span>
-                                        <span className="text-[#10B981] font-semibold">
-                                          Q: {trk.quality}%
-                                        </span>
+                                        <span className="text-[#34D399] font-semibold">Q: {trk.quality}%</span>
                                       </div>
                                     </div>
                                   );
@@ -1862,20 +2285,23 @@ export const StudioView: React.FC<StudioViewProps> = ({
 
           {/* SINGLES SECTION */}
           {(catalogFilter === 'all' || catalogFilter === 'singles') && (
-            <div className="space-y-4 pt-4 border-t border-[#26262B]">
+            <div className="space-y-4 pt-4 border-t border-[#242429]">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8E8E99] flex items-center gap-1.5">
-                <Disc3 className="w-4 h-4 text-[#FF2A4B]" />
-                Sencillos & Pistas Individuales
+                <Disc3 className="w-4 h-4 text-[#FF4F00]" />
+                Sencillos & Cortes Individuales ({playerSingles.length})
               </h3>
 
-              {playerSongs.length === 0 ? (
+              {playerSingles.length === 0 ? (
                 <p className="text-xs text-[#8E8E99] italic py-2">
-                  No tienes canciones grabadas aún.
+                  No tienes sencillos publicados aún.
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {playerSongs.map(song => {
-                    const subgenre = song.subGenreIds && song.subGenreIds.length > 0 ? SUBGENRE_DETAILS[song.subGenreIds[0]] : undefined;
+                  {playerSingles.map((song) => {
+                    const subgenre =
+                      song.subGenreIds && song.subGenreIds.length > 0
+                        ? SUBGENRE_DETAILS[song.subGenreIds[0]]
+                        : undefined;
                     const isHit = (song.peakPosition?.Global ?? 99) <= 10;
                     const releaseDateStr = formatReleaseDate(song.releaseMonth, song.releaseYear, 'long');
                     const releaseDateFull = formatReleaseDate(song.releaseMonth, song.releaseYear, 'full');
@@ -1885,59 +2311,55 @@ export const StudioView: React.FC<StudioViewProps> = ({
                     return (
                       <div
                         key={song.id}
-                        className="bg-[#1C1C21] border border-[#26262B] p-4 rounded-[6px] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[#3F3F46] transition-all"
+                        className="surface-2 bg-[#18181C] border border-[#242429] p-4 rounded-[4px] flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[#3F3F46] transition-all"
                       >
                         <div className="space-y-1.5 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="text-sm font-semibold text-[#F4F0EA]">
-                              {song.title}
-                            </h4>
-                            <span className="text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#FF2A4B]/20 border border-[#FF2A4B]/40 text-[#FF2A4B]">
+                            <h4 className="text-sm font-semibold text-[#F4F0EA]">{song.title}</h4>
+                            <span className="text-2xs font-sans font-bold px-2 py-0.5 rounded-[4px] bg-[#FF4F00]/20 border border-[#FF4F00]/40 text-[#FF4F00]">
                               {world.genres[song.genreId]?.name || song.genreId}
                             </span>
                             {subgenre && (
-                              <span className="text-2xs font-sans font-medium bg-[#0B0B0C] border border-[#26262B] text-[#8E8E99] px-2 py-0.5 rounded-[4px]">
+                              <span className="text-2xs font-sans font-medium bg-[#111114] border border-[#242429] text-[#8E8E99] px-2 py-0.5 rounded-[4px]">
                                 {subgenre.name}
                               </span>
                             )}
                             {albumParent ? (
-                              <span className="text-2xs font-sans font-medium bg-[#0B0B0C] border border-[#FF2A4B]/40 text-[#FF2A4B] px-2 py-0.5 rounded-[4px] flex items-center gap-1" title={`Pertenece al álbum "${albumParent.title}"`}>
-                                <Layers className="w-2.5 h-2.5 text-[#FF2A4B]" />
+                              <span
+                                className="text-2xs font-sans font-medium bg-[#111114] border border-[#FF4F00]/40 text-[#FF4F00] px-2 py-0.5 rounded-[4px] flex items-center gap-1"
+                                title={`Pertenece al álbum "${albumParent.title}"`}
+                              >
+                                <Layers className="w-2.5 h-2.5 text-[#FF4F00]" />
                                 Álbum: {albumParent.title}
                               </span>
-                            ) : song.isSingle ? (
-                              <span className="text-2xs font-sans font-medium bg-[#0B0B0C] border border-[#26262B] text-[#F4F0EA] px-2 py-0.5 rounded-[4px]">
+                            ) : (
+                              <span className="text-2xs font-sans font-medium bg-[#111114] border border-[#242429] text-[#F4F0EA] px-2 py-0.5 rounded-[4px]">
                                 Single Oficial
                               </span>
-                            ) : null}
+                            )}
+                            {song.featuredArtistIds && song.featuredArtistIds.length > 0 && (
+                              <span className="text-2xs font-sans font-bold bg-[#111114] text-[#34D399] border border-[#34D399]/35 px-2 py-0.5 rounded-[4px] flex items-center gap-1">
+                                <Users className="w-2.5 h-2.5" />
+                                ft. {song.featuredArtistIds.map((id) => world.artists[id]?.name || id).join(', ')}
+                              </span>
+                            )}
                             {song.musicVideo && (
-                              <span className="text-2xs font-sans font-bold bg-[#0B0B0C] text-[#38BDF8] border border-[#38BDF8]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1">
+                              <span className="text-2xs font-sans font-bold bg-[#111114] text-[#38BDF8] border border-[#38BDF8]/40 px-2 py-0.5 rounded-[4px] flex items-center gap-1">
                                 <Video className="w-2.5 h-2.5 text-[#38BDF8]" />
                                 Videoclip
                               </span>
                             )}
-                            {song.wentViral && (
-                              <span className={RELEASE_BADGES.viral}>
-                                Viral Hit
-                              </span>
-                            )}
-                            {isHit && (
-                              <span className={RELEASE_BADGES.hitTop10}>
-                                Hit Top 10
-                              </span>
-                            )}
-                            {song.isClassic && (
-                              <span className={RELEASE_BADGES.classic}>
-                                Clásico
-                              </span>
-                            )}
+                            {song.wentViral && <span className={RELEASE_BADGES.viral}>Viral Hit</span>}
+                            {isHit && <span className={RELEASE_BADGES.hitTop10}>Hit Top 10</span>}
+                            {song.isClassic && <span className={RELEASE_BADGES.classic}>Clásico</span>}
                           </div>
 
-                          {/* Release Date and Producer Information */}
                           <div className="flex items-center gap-2 flex-wrap text-xs text-[#8E8E99]">
                             <span className="inline-flex items-center gap-1" title={releaseDateFull}>
-                              <Calendar className="w-3.5 h-3.5 text-[#FF2A4B] shrink-0" />
-                              <span>Lanzamiento: <strong className="text-[#F4F0EA] font-semibold">{releaseDateStr}</strong></span>
+                              <Calendar className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
+                              <span>
+                                Lanzamiento: <strong className="text-[#F4F0EA] font-semibold">{releaseDateStr}</strong>
+                              </span>
                             </span>
                             <span>•</span>
                             <span className="inline-flex items-center gap-1">
@@ -1946,32 +2368,56 @@ export const StudioView: React.FC<StudioViewProps> = ({
                             </span>
                             <span>•</span>
                             <span className="tabular-nums">
-                              Calidad: <strong className="text-[#10B981]">{song.quality}%</strong> • Comercial: <strong className="text-[#F4F0EA]">{song.commercialAppeal}%</strong> • Originalidad: <strong className="text-[#F59E0B]">{song.originality}%</strong>
+                              Calidad: <strong className="text-[#34D399]">{song.quality}%</strong> • Comercial:{' '}
+                              <strong className="text-[#F4F0EA]">{song.commercialAppeal}%</strong> • Originalidad:{' '}
+                              <strong className="text-[#F59E0B]">{song.originality}%</strong>
                             </span>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-6 text-xs font-sans tabular-nums shrink-0">
+                        <div className="flex items-center gap-4 sm:gap-6 text-xs font-sans tabular-nums shrink-0 flex-wrap">
                           <div>
                             <span className="text-[#8E8E99] block text-2xs uppercase">Peak Global</span>
-                            <span className={`font-bold text-sm ${song.peakPosition?.Global === 1 ? 'text-[#F59E0B] font-extrabold' : song.peakPosition?.Global && song.peakPosition.Global <= 10 ? 'text-[#FF2A4B]' : 'text-[#F4F0EA]'}`}>
+                            <span
+                              className={`font-bold text-sm ${
+                                song.peakPosition?.Global === 1
+                                  ? 'text-[#F59E0B] font-extrabold'
+                                  : song.peakPosition?.Global && song.peakPosition.Global <= 10
+                                  ? 'text-[#FF4F00]'
+                                  : 'text-[#F4F0EA]'
+                              }`}
+                            >
                               {song.peakPosition?.Global ? `#${song.peakPosition.Global}` : '—'}
                             </span>
                           </div>
 
                           <div>
                             <span className="text-[#8E8E99] block text-2xs uppercase">Streams / Mes</span>
-                            <span className="font-bold text-sm text-[#10B981]">
-                              {song.streamsLastMonth.toLocaleString()}
+                            <span className="font-bold text-sm text-[#38BDF8]">
+                              {song.streamsLastMonth.toLocaleString('es-AR')}
                             </span>
                           </div>
 
                           <div>
-                            <span className="text-[#8E8E99] block text-2xs uppercase">Total Acumulado</span>
+                            <span className="text-[#8E8E99] block text-2xs uppercase">Total</span>
                             <span className="font-bold text-sm text-[#F4F0EA]">
                               {(song.streamsTotal / 1000000).toFixed(2)}M
                             </span>
                           </div>
+
+                          {onNavigate && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                playSound('click');
+                                onNavigate('streaming');
+                              }}
+                              className="px-3 py-1.5 rounded-[4px] bg-[#111114] border border-[#242429] hover:border-[#FF4F00] text-[#F4F0EA] hover:text-[#FF4F00] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <Radio className="w-3.5 h-3.5" />
+                              <span>Promocionar / Playlists</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                     );

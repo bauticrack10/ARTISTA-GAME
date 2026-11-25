@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
-import { WorldState, MusicRegion, Artist, ChartEntry } from '../types';
-import { BarChart3, Trophy, Flame, TrendingUp, TrendingDown, Minus, Disc3, Crown, Play } from 'lucide-react';
-import { RELEASE_BADGES } from '../utils/themeColors';
-import { MUSIC_REGION_CONFIG, formatMusicRegion, formatMusicRegionLabel } from '../utils/formatters';
+import { useScrollToTop } from '../hooks/useScrollToTop';
+import { WorldState, MusicRegion, Artist } from '../types';
+import { BarChart3, TrendingUp, TrendingDown, Minus, Crown, Play } from 'lucide-react';
+import { formatMusicRegionLabel } from '../utils/formatters';
+import { SectionSubNav } from './ui/SectionSubNav';
 
 interface ChartsViewProps {
   world: WorldState;
   player: Artist;
   onAdvanceCycle?: () => void;
+  onNavigate?: (tab: string) => void;
 }
 
 // Shared column template so header labels and row cells always line up.
 const CHART_GRID = 'grid grid-cols-[3.5rem_minmax(0,1fr)_3rem_3.5rem] sm:grid-cols-[4.5rem_minmax(0,1fr)_9rem_4rem_5rem] items-center gap-3';
 
-export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvanceCycle }) => {
+export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvanceCycle, onNavigate }) => {
   const [selectedRegion, setSelectedRegion] = useState<MusicRegion>('Global');
+  useScrollToTop([selectedRegion]);
 
   const currentYear = world?.currentYear || 2026;
   const currentMonth = world?.currentMonth || 1;
@@ -24,6 +27,10 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
     month: currentMonth,
     entries: []
   };
+
+  const pendingCollabCount = Array.isArray(world?.pendingCollabOffers)
+    ? world.pendingCollabOffers.filter((o) => o && (!o.status || o.status === 'pending')).length
+    : 0;
 
   const regions: Array<{ id: MusicRegion; label: string }> = [
     { id: 'Global', label: formatMusicRegionLabel('Global') },
@@ -40,20 +47,27 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
   ];
 
   return (
-    <div className="space-y-6 pb-12 text-[#F4F4F6]">
+    <div className="space-y-5 pb-12 text-[#F4F0EA] font-sans">
+      <SectionSubNav
+        hub="escena"
+        activeTab="charts"
+        onNavigate={onNavigate}
+        pendingCollabCount={pendingCollabCount}
+      />
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 liquid-glass-card p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#111114] border border-[#242429] rounded-[8px] p-5 sm:p-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] uppercase font-sans font-bold tracking-widest liquid-glass-pill text-[#8E8E99] px-2.5 py-0.5">
+            <span className="text-[11px] uppercase font-sans font-bold tracking-widest bg-[#18181C] border border-[#242429] rounded-[4px] text-[#8E8E99] px-2.5 py-0.5">
               Rankings Oficiales
             </span>
-            <span className="text-xs font-sans text-[#8E8E99]">
+            <span className="text-xs font-sans text-[#8E8E99] tabular-nums">
               Año {currentYear} • Mes {currentMonth}
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-[#F4F4F6] tracking-tight flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-[#FF4F00]" />
+          <h1 className="text-2xl font-display font-bold text-[#F4F0EA] tracking-tight flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-[#FF4F00]" strokeWidth={1.75} />
             Charts Oficiales de Streaming & Ventas
           </h1>
           <p className="text-xs text-[#8E8E99] mt-1">
@@ -62,7 +76,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
         </div>
 
         {/* Region Selector */}
-        <div role="tablist" aria-label="Región del ranking" className="flex items-center gap-1 overflow-x-auto scroll-fade-x liquid-glass-pill p-1.5 max-w-full sm:max-w-[60%] text-xs">
+        <div role="tablist" aria-label="Región del ranking" className="flex items-center gap-1 overflow-x-auto scroll-fade-x bg-[#18181C] border border-[#242429] rounded-[6px] p-1.5 max-w-full sm:max-w-[60%] text-xs">
           {regions.map(r => {
             const isActive = selectedRegion === r.id;
             return (
@@ -73,8 +87,8 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 onClick={() => setSelectedRegion(r.id)}
                 className={`tap shrink-0 px-3 py-1.5 rounded-[4px] font-sans text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#FF4F00] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                    : 'text-[#8E8E99] hover:text-[#F4F4F6] hover:bg-white/5'
+                    ? 'bg-[#FF4F00] text-white'
+                    : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#111114]'
                 }`}
               >
                 {r.label}
@@ -85,8 +99,8 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
       </div>
 
       {/* Chart List Table */}
-      <div role="table" aria-label={`Ranking ${formatMusicRegionLabel(selectedRegion)}`} className="liquid-glass-card overflow-hidden">
-        <div role="row" className={`${CHART_GRID} px-4 py-3 text-[10px] text-[#8E8E99] font-sans font-bold uppercase tracking-widest bg-white/[0.04]`}>
+      <div role="table" aria-label={`Ranking ${formatMusicRegionLabel(selectedRegion)}`} className="bg-[#111114] border border-[#242429] rounded-[8px] overflow-hidden">
+        <div role="row" className={`${CHART_GRID} px-4 py-3 text-[11px] text-[#8E8E99] font-sans font-bold uppercase tracking-widest bg-[#18181C] border-b border-[#242429]`}>
           <span role="columnheader" className="text-center">Pos.</span>
           <span role="columnheader">Canción & Artista</span>
           <span role="columnheader" className="hidden sm:block text-right">Streams / sem.</span>
@@ -95,10 +109,10 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
         </div>
 
         {currentChart.entries.length === 0 ? (
-          <div className="p-10 flex flex-col items-center gap-4 text-center">
+          <div className="p-10 flex flex-col items-center gap-4 text-center bg-[#111114]">
             <BarChart3 className="w-8 h-8 text-[#52525B]" aria-hidden="true" />
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-[#F4F4F6]">Todavía no hay ranking para esta región</p>
+              <p className="text-sm font-semibold text-[#F4F0EA]">Todavía no hay ranking para esta región</p>
               <p className="text-xs text-[#8E8E99] max-w-md">
                 Los charts se calculan al avanzar el tiempo con el streaming acumulado de cada lanzamiento.
               </p>
@@ -109,12 +123,12 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 className="tap inline-flex items-center gap-2 px-4 py-2 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-sans font-bold cursor-pointer transition-colors active:translate-y-[1px]"
               >
                 <Play className="w-3.5 h-3.5 fill-white" aria-hidden="true" />
-                Avanzar ciclo (+6M)
+                Avanzar 1 Mes (+1M)
               </button>
             )}
           </div>
         ) : (
-          <div role="rowgroup" className="divide-y divide-white/5">
+          <div role="rowgroup" className="divide-y divide-[#242429] bg-[#111114]">
             {currentChart.entries.map((entry, idx) => {
               const isPlayerSong = entry.artistId === player?.id;
               let movement = <Minus className="w-3.5 h-3.5 text-[#52525B]" />;
@@ -127,8 +141,8 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 );
               } else if (entry.lastRank > entry.rank) {
                 movement = (
-                  <span className="flex items-center text-xs font-sans font-bold text-[#00E599] tabular-nums">
-                    <TrendingUp className="w-3.5 h-3.5 mr-0.5 text-[#00E599]" />
+                  <span className="flex items-center text-xs font-sans font-bold text-[#10B981] tabular-nums">
+                    <TrendingUp className="w-3.5 h-3.5 mr-0.5 text-[#10B981]" />
                     +{entry.lastRank - entry.rank}
                   </span>
                 );
@@ -149,14 +163,14 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                 <div
                   key={entry.songId}
                   role="row"
-                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-white/[0.04] ${
+                  className={`${CHART_GRID} px-4 py-3 text-xs transition-colors hover:bg-[#18181C] ${
                     isPlayerSong
                       ? 'bg-[#FF4F00]/10 border-l-4 border-l-[#FF4F00]'
                       : isNo1
                       ? 'bg-[#F59E0B]/5'
                       : idx % 2 === 0
-                      ? 'bg-transparent'
-                      : 'bg-white/[0.015]'
+                      ? 'bg-[#111114]'
+                      : 'bg-[#141417]'
                   }`}
                 >
                     {/* Position */}
@@ -169,7 +183,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                             : isTop3
                             ? 'text-[#FF4F00]'
                             : isTop10
-                            ? 'text-[#F4F4F6]'
+                            ? 'text-[#F4F0EA]'
                             : 'text-[#8E8E99]'
                         }`}>
                           #{entry.rank}
@@ -180,7 +194,7 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
 
                     {/* Song & artist */}
                     <div role="cell" className="min-w-0">
-                      <h4 className="font-semibold text-[#F4F4F6] text-sm line-clamp-1 flex items-center gap-2">
+                      <h4 className="font-semibold text-[#F4F0EA] text-sm line-clamp-1 flex items-center gap-2">
                         {entry.title}
                         {isPlayerSong && (
                           <span className="shrink-0 text-[10px] bg-[#FF4F00] text-white font-sans font-bold px-2 py-0.5 rounded-[4px]">
@@ -199,10 +213,10 @@ export const ChartsView: React.FC<ChartsViewProps> = ({ world, player, onAdvance
                     </div>
 
                     {/* Metrics */}
-                    <span role="cell" className="hidden sm:block font-sans font-bold text-[#00E599] text-right tabular-nums">
+                    <span role="cell" className="hidden sm:block font-sans font-bold text-[#10B981] text-right tabular-nums">
                       {entry.streamsThisWeek.toLocaleString('es-AR')}
                     </span>
-                    <span role="cell" className={`font-sans font-bold text-center tabular-nums ${entry.peakRank === 1 ? 'text-[#F59E0B] font-extrabold' : 'text-[#F4F4F6]'}`}>
+                    <span role="cell" className={`font-sans font-bold text-center tabular-nums ${entry.peakRank === 1 ? 'text-[#F59E0B] font-extrabold' : 'text-[#F4F0EA]'}`}>
                       #{entry.peakRank}
                     </span>
                     <span role="cell" className="font-sans text-[#8E8E99] text-center tabular-nums">

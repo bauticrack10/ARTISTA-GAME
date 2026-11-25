@@ -5,6 +5,7 @@ import type React from 'react';
  * Pair with role="button" and tabIndex={0}; Enter and Space trigger the element's own onClick.
  */
 export const activateOnKey = (e: React.KeyboardEvent<HTMLElement>) => {
+  if (e.repeat) return;
   if (e.target !== e.currentTarget) return;
   if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();

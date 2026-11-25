@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { AwardCeremony, AwardCategory, Artist, AwardNominee } from '../types';
 import { playSound } from '../utils/audioSystem';
 import {
@@ -66,6 +66,14 @@ export function useAwardsGala({
   const [selectedNomineeIndex, setSelectedNomineeIndex] = useState<number | null>(null);
   const [showSummary, setShowSummary] = useState<boolean>(false);
 
+  useEffect(() => {
+    setCurrentCategoryIndex(0);
+    setRevealedCategories({});
+    setCategoryPhase('presentation');
+    setSelectedNomineeIndex(null);
+    setShowSummary(false);
+  }, [ceremony.year]);
+
   const categories = useMemo(() => ceremony.categories || [], [ceremony.categories]);
   const currentCategory = categories[currentCategoryIndex];
   const isCurrentRevealed = !!revealedCategories[currentCategoryIndex];
@@ -120,7 +128,9 @@ export function useAwardsGala({
   }, []);
 
   const handleOpenEnvelope = useCallback((index?: number) => {
+    if (index !== undefined && index !== currentCategoryIndex) return;
     const targetIdx = index ?? currentCategoryIndex;
+    if (targetIdx < 0 || targetIdx >= categories.length) return;
     playSound('award');
     setRevealedCategories(prev => ({ ...prev, [targetIdx]: true }));
     setCategoryPhase('revealed');

@@ -254,6 +254,17 @@ export const SYSTEM_DEFINITIONS: Record<string, { icon: LucideIcon; badgeClass: 
   }
 };
 
+function parseMoneyAmount(raw: string): number {
+  const cleaned = raw.trim().replace(/[.,]+$/, '');
+  if (/^\d{1,3}(\.\d{3})+$/.test(cleaned)) {
+    return parseFloat(cleaned.replace(/\./g, ''));
+  }
+  if (/^\d{1,3}(,\d{3})+$/.test(cleaned)) {
+    return parseFloat(cleaned.replace(/,/g, ''));
+  }
+  return parseFloat(cleaned.replace(/[.,](?=\d{3}\b)/g, '').replace(/,/g, ''));
+}
+
 /**
  * Extracts numeric funds cost from choice properties or narrative text if not explicitly set
  */
@@ -262,13 +273,14 @@ function extractCostFunds(choice: EventChoice): number {
     return choice.costFunds;
   }
   const combined = `${choice.consequencesDescription || ''} ${choice.text || ''}`;
-  // Look for patterns like "-$600", "-$25,000", "Pagarle $150", "Requiere $500", "costo de $1000"
-  const match = combined.match(/(?:-\s*\$|pagar(?:le)?\s*\$|requiere\s*\$|costo\s*(?:de)?\s*\$|\$\s*)([0-9,.]+)/i);
+  // Ignore positive amounts like "+$20,000" or "+$15.000" when detecting costs
+  const sanitized = combined.replace(/\+\s*\$\s*[0-9.,]+/g, '');
+  // Look for patterns like "-$600", "-$15.000", "-$25,000", "Pagarle $150", "Requiere $500", "costo de $1000"
+  const match = sanitized.match(/(?:-\s*\$\s*|pagar(?:le)?\s*\$\s*|requiere\s*\$\s*|costo\s*(?:de)?\s*\$\s*|\$\s*)([0-9][0-9.,]*)/i);
   if (match) {
-    const rawNum = match[1].replace(/,/g, '');
-    const val = parseFloat(rawNum);
+    const val = parseMoneyAmount(match[1]);
     if (!isNaN(val) && val > 0) {
-      if (combined.includes('-$') || /pagar|costo|requiere|invertir|acuerdo/i.test(combined)) {
+      if (/-\s*\$/.test(sanitized) || /pagar|costo|requiere|invertir|acuerdo|multa|indemniz/i.test(sanitized)) {
         return val;
       }
     }
@@ -333,25 +345,25 @@ function parseConsequences(desc: string): { chips: ParsedImpactChip[]; cleanedNa
       }
 
       if (part.includes('$') || lower.includes('fondos') || lower.includes('costas') || lower.includes('adelanto')) {
-        type = 'money';
+        if (type === 'neutral') type = 'money';
         icon = DollarSign;
       } else if (lower.includes('energía') || lower.includes('fatiga')) {
-        type = 'energy';
+        if (type === 'neutral') type = 'energy';
         icon = Zap;
       } else if (lower.includes('stream') || lower.includes('reproduccion') || lower.includes('reproducción')) {
-        type = 'streams';
+        if (type === 'neutral') type = 'streams';
         icon = Disc3;
       } else if (lower.includes('oyente')) {
-        type = 'listeners';
+        if (type === 'neutral') type = 'listeners';
         icon = Headphones;
       } else if (lower.includes('hype') || lower.includes('viral')) {
-        type = 'hype';
+        if (type === 'neutral') type = 'hype';
         icon = Flame;
       } else if (lower.includes('fan')) {
-        type = 'fans';
+        if (type === 'neutral') type = 'fans';
         icon = Users;
       } else if (lower.includes('reputación') || lower.includes('credibilidad') || lower.includes('legado')) {
-        type = 'reputation';
+        if (type === 'neutral') type = 'reputation';
         icon = Star;
       }
 
@@ -770,7 +782,7 @@ export function useEventModal({
       isYearEnd: false,
       monthName
     };
-  }, [world.currentMonth, world.currentYear, event.id, event.category, event.title, event.eventYear]);
+  }, [world?.currentMonth, world?.currentYear, event.id, event.category, event.title, event.eventYear]);
 
   // Category visual metadata
   const categoryMeta: CategoryMeta = useMemo(() => {
@@ -922,7 +934,7 @@ export function useEventModal({
       const { hasRisk, riskWarning, riskSeverity } = detectRiskWarning(choice, playerFunds);
       let successProbability = choice.successProbability;
       let riskProbability = choice.riskProbability;
-      if (hasRisk && (!successProbability || !riskProbability)) {
+      if (hasRisk && (successProbability === undefined || riskProbability === undefined)) {
         const disc = player?.personality?.discipline ?? 50;
         const cred = player?.stats?.artisticCredibility ?? 50;
         const rep = player?.stats?.reputation ?? 50;

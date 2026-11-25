@@ -1,42 +1,38 @@
 import React, { useState } from 'react';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 import {
   Artist,
   WorldState,
   Song,
   EditorialPlaylist,
-  YouTubeComment,
   SnippetCampaignResult,
   TikTokInfluencerTier
 } from '../types';
 import { StreamingEngine, EDITORIAL_PLAYLISTS } from '../systems/StreamingEngine';
-import { playSound } from '../utils/audioSystem';
-import { formatMoney, formatFans } from '../utils/formatters';
+import { audioSystem, playSound } from '../utils/audioSystem';
+import { showToast } from '../utils/toastBus';
+import { formatFans } from '../utils/formatters';
 import { ArtistAvatar } from './ArtistAvatar';
+import { SectionSubNav } from './ui/SectionSubNav';
 import {
   Radio,
   Play,
   Pause,
-  Headphones,
   TrendingUp,
   Flame,
   CheckCircle2,
-  Users,
   Video,
   MessageSquare,
   Heart,
   Pin,
   Send,
-  Sliders,
-  DollarSign,
   Share2,
   Disc3,
   BarChart3,
-  Award,
-  Zap,
-  Info,
-  Layers,
-  Search,
-  Plus
+  Plus,
+  Film,
+  ThumbsUp,
+  X
 } from 'lucide-react';
 
 interface StreamingPlatformViewProps {
@@ -45,6 +41,7 @@ interface StreamingPlatformViewProps {
   onPitchSong: (songId: string, playlistId: string) => { success: boolean; message: string; added: boolean; position?: number };
   onLaunchSnippet: (params: { songId: string; concept: string; budget: number; influencerTier?: TikTokInfluencerTier }) => SnippetCampaignResult;
   onInteractComment?: (songId: string, commentId: string, action: 'pin' | 'like') => void;
+  onNavigate?: (tab: string) => void;
 }
 
 export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
@@ -52,10 +49,12 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
   world,
   onPitchSong,
   onLaunchSnippet,
-  onInteractComment
+  onInteractComment,
+  onNavigate
 }) => {
   // Sub-tabs: 'profile' (Top 5 & Overview) | 'playlists' | 'youtube' | 'tiktok'
   const [activeTab, setActiveTab] = useState<'profile' | 'playlists' | 'youtube' | 'tiktok'>('profile');
+  useScrollToTop([activeTab]);
 
   // Currently previewing track
   const [playingSongId, setPlayingSongId] = useState<string | null>(null);
@@ -74,7 +73,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
   const [lastSnippetResult, setLastSnippetResult] = useState<SnippetCampaignResult | null>(null);
 
   // YouTube Comments Selection
-  const playerSongs = Object.values(world.songs || {}).filter(s => s.artistId === player.id);
+  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s && s.artistId === player?.id);
   const songsWithVideo = playerSongs.filter(s => Boolean(s.musicVideo));
   const [selectedVideoSongId, setSelectedVideoSongId] = useState<string>(
     songsWithVideo.length > 0 ? songsWithVideo[0].id : (playerSongs[0]?.id || '')
@@ -82,19 +81,44 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
   const [commentHeartedMap, setCommentHeartedMap] = useState<Record<string, boolean>>({});
   const [commentPinnedMap, setCommentPinnedMap] = useState<Record<string, boolean>>({});
 
+  const pendingCollabCount = Array.isArray(world?.pendingCollabOffers)
+    ? world.pendingCollabOffers.filter((o) => o && (!o.status || o.status === 'pending')).length
+    : 0;
+
   // Sort player songs by total streams for Top Tracks
   const topSongs = [...playerSongs]
     .sort((a, b) => (b.streamsTotal || 0) - (a.streamsTotal || 0))
     .slice(0, 5);
 
-  const activePlaylists = Object.values(world.playlists || EDITORIAL_PLAYLISTS.reduce((acc, p) => ({ ...acc, [p.id]: p }), {}));
+  const fallbackPlaylistsRecord = EDITORIAL_PLAYLISTS.reduce<Record<string, EditorialPlaylist>>(
+    (acc, p) => ({ ...acc, [p.id]: p }),
+    {}
+  );
+  const activePlaylists = Object.values(
+    world?.playlists || world?.editorialPlaylists || fallbackPlaylistsRecord
+  ) as EditorialPlaylist[];
 
-  const handleTogglePlaySong = (songId: string) => {
-    if (playingSongId === songId) {
+  const handleTogglePlaySong = (song: Song) => {
+    if (playingSongId === song.id) {
       setPlayingSongId(null);
     } else {
       playSound('click');
-      setPlayingSongId(songId);
+      audioSystem.playPreviewBeat(song.genreId);
+      setPlayingSongId(song.id);
+    }
+  };
+
+  const handleShareProfile = async () => {
+    playSound('click');
+    const slug = (player?.name || 'artista').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const url = `https://elartista.music/artist/${slug}`;
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      }
+      showToast('Enlace de perfil copiado', 'success');
+    } catch {
+      showToast('Enlace de perfil copiado', 'success');
     }
   };
 
@@ -108,12 +132,15 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
     });
     if (res.success) {
       playSound('level_up');
+      showToast(res.message, 'success');
+    } else {
+      showToast(res.message, 'warning');
     }
   };
 
   const handleExecuteSnippet = () => {
     if (!selectedSnippetSongId) {
-      alert('Por favor selecciona una canción para la campaña.');
+      showToast('Por favor selecciona una canción para la campaña.', 'warning');
       return;
     }
     playSound('click');
@@ -126,8 +153,9 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       });
       setLastSnippetResult(res);
       playSound('chart_no1');
+      showToast('Campaña de snippets lanzada con éxito.', 'success');
     } catch (err: any) {
-      alert(err.message || 'Error al lanzar la campaña.');
+      showToast(err.message || 'Error al lanzar la campaña.', 'error');
     }
   };
 
@@ -144,15 +172,22 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
   };
 
   // Current song comments
-  const activeVideoSong = world.songs[selectedVideoSongId] || playerSongs[0];
+  const activeVideoSong = (selectedVideoSongId ? world?.songs?.[selectedVideoSongId] : undefined) || playerSongs[0];
   const videoComments = activeVideoSong
     ? StreamingEngine.generateVideoComments(activeVideoSong, player, world)
     : [];
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-6 space-y-6 text-[#F4F4F6]">
+    <div className="space-y-5 pb-12 text-[#F4F0EA] font-sans">
+      <SectionSubNav
+        hub="escena"
+        activeTab="streaming"
+        onNavigate={onNavigate}
+        pendingCollabCount={pendingCollabCount}
+      />
+
       {/* --- PLATFORM ARTIST BANNER (ANALOG STUDIO / PRO CONSOLE STYLE) --- */}
-      <div className="relative rounded-[16px] overflow-hidden liquid-glass-card p-6 sm:p-8">
+      <div className="relative rounded-[8px] overflow-hidden bg-[#111114] border border-[#242429] p-5 sm:p-7">
         <div className="flex flex-col md:flex-row items-center md:items-end gap-6 relative z-10">
           {/* Avatar with Sound Reactive Ring */}
           <div className="relative group shrink-0">
@@ -162,11 +197,11 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               avatarIcon={player.avatarIcon}
               size="2xl"
               rounded="rounded-[4px]"
-              className="border border-white/20"
+              className="border border-[#242429]"
             />
             {playingSongId && (
               <div className="absolute inset-0 bg-black/60 rounded-[4px] flex items-center justify-center">
-                <Radio className="w-8 h-8 text-[#00E599] animate-pulse" />
+                <Radio className="w-8 h-8 text-[#FF4F00] animate-pulse" />
               </div>
             )}
           </div>
@@ -174,40 +209,40 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
           {/* Artist Stats & Bio */}
           <div className="space-y-2 text-center md:text-left flex-1 min-w-0">
             <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1 text-[10px] font-sans font-bold text-[#F4F4F6] liquid-glass-pill px-2.5 py-0.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#00E599]" />
+              <span className="inline-flex items-center gap-1 text-[10px] font-sans font-bold text-[#F4F0EA] bg-[#18181C] border border-[#242429] rounded-[4px] px-2.5 py-0.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
                 Artista Verificado
               </span>
               <span className="text-xs text-[#8E8E99] font-sans">
                 {player.country} • {world.genres[player.mainGenreId]?.name || 'Urbano'}
               </span>
-              <span className="text-[10px] font-sans font-bold text-[#FF4F00] liquid-glass-pill border-[#FF4F00]/30 px-2.5 py-0.5">
+              <span className="text-[10px] font-sans font-bold text-[#FF4F00] bg-[#18181C] border border-[#FF4F00]/35 rounded-[4px] px-2.5 py-0.5">
                 {player.careerStage}
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-[#F4F4F6] tracking-tight truncate">
+            <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#F4F0EA] tracking-tight truncate">
               {player.name}
             </h1>
 
             <div className="flex items-center justify-center md:justify-start gap-6 pt-1 text-xs">
               <div>
-                <span className="text-[#52525B] block text-[10px] uppercase font-sans font-semibold">Oyentes Mensuales</span>
-                <span className="text-lg sm:text-xl font-bold font-sans text-[#00E599] tabular-nums">
+                <span className="text-[#8E8E99] block text-[10px] uppercase font-sans font-semibold">Oyentes Mensuales</span>
+                <span className="text-lg sm:text-xl font-bold font-sans text-[#10B981] tabular-nums">
                   {(player.stats?.monthlyListeners ?? 0).toLocaleString('es-AR')}
                 </span>
               </div>
               <div className="w-px h-8 bg-[#242429]" />
               <div>
-                <span className="text-[#52525B] block text-[10px] uppercase font-sans font-semibold">Streams Totales</span>
-                <span className="text-lg sm:text-xl font-bold font-sans text-[#00E599] tabular-nums">
+                <span className="text-[#8E8E99] block text-[10px] uppercase font-sans font-semibold">Streams Totales</span>
+                <span className="text-lg sm:text-xl font-bold font-sans text-[#10B981] tabular-nums">
                   {(player.stats.totalStreams / 1000000).toFixed(2)}M
                 </span>
               </div>
               <div className="w-px h-8 bg-[#242429]" />
               <div>
-                <span className="text-[#52525B] block text-[10px] uppercase font-sans font-semibold">Seguidores / Fans</span>
-                <span className="text-lg sm:text-xl font-bold font-sans text-[#F4F4F6] tabular-nums">
+                <span className="text-[#8E8E99] block text-[10px] uppercase font-sans font-semibold">Seguidores / Fans</span>
+                <span className="text-lg sm:text-xl font-bold font-sans text-[#F4F0EA] tabular-nums">
                   {formatFans(player.stats.fansCount)}
                 </span>
               </div>
@@ -227,12 +262,10 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               <span>Pitch a Curadores</span>
             </button>
             <button
-              onClick={() => {
-                playSound('click');
-                alert(`Perfil oficial de ${player.name} copiado al portapapeles.`);
-              }}
-              className="p-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-[#8E8E99] hover:text-[#F4F4F6] transition-colors cursor-pointer"
+              onClick={handleShareProfile}
+              className="p-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
               title="Compartir perfil"
+              aria-label="Copiar enlace de perfil"
             >
               <Share2 className="w-4 h-4" />
             </button>
@@ -240,7 +273,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
         </div>
 
         {/* Sub Navigation Bar */}
-        <div className="flex items-center gap-2 mt-4 pt-1 overflow-x-auto scrollbar-none text-xs font-semibold">
+        <div className="flex items-center gap-2 mt-5 pt-3 border-t border-[#242429] overflow-x-auto scrollbar-none text-xs font-semibold">
           {[
             { id: 'profile', label: 'Top Canciones & Métricas', icon: BarChart3 },
             { id: 'playlists', label: 'Playlists Editoriales Activas', icon: Radio },
@@ -258,8 +291,8 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-[6px] font-sans text-xs whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#FF4F00] text-white font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                    : 'liquid-glass-pill text-[#8E8E99] hover:text-[#F4F4F6]'
+                    ? 'bg-[#FF4F00] text-white font-bold'
+                    : 'bg-[#18181C] border border-[#242429] text-[#8E8E99] hover:text-[#F4F0EA]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -274,9 +307,9 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {activeTab === 'profile' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Top 5 Songs */}
-          <div className="lg:col-span-2 liquid-glass-card p-6 space-y-4">
+          <div className="lg:col-span-2 bg-[#111114] border border-[#242429] rounded-[8px] p-6 space-y-4">
             <div className="flex items-center justify-between pb-1">
-              <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+              <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
                 <Disc3 className="w-4 h-4 text-[#FF4F00]" />
                 Top 5 Canciones Más Populares
               </h2>
@@ -301,7 +334,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                       className={`flex items-center justify-between p-3 rounded-[4px] border transition-all ${
                         isPlaying
                           ? 'bg-[#FF4F00]/10 border-[#FF4F00]'
-                          : 'bg-[#09090B] border-[#242429] hover:border-[#3F3F46]'
+                          : 'bg-[#18181C] border-[#242429] hover:border-[#3F3F46]'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -310,7 +343,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                         </span>
 
                         <button
-                          onClick={() => handleTogglePlaySong(song.id)}
+                          onClick={() => handleTogglePlaySong(song)}
                           className="w-8 h-8 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white flex items-center justify-center shrink-0 cursor-pointer shadow-xs transition-transform active:scale-95"
                           title={isPlaying ? 'Pausar tema' : 'Reproducir preview'}
                         >
@@ -318,7 +351,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                         </button>
 
                         <div className="min-w-0">
-                          <h3 className="text-xs font-bold text-[#F4F4F6] truncate">
+                          <h3 className="text-xs font-bold text-[#F4F0EA] truncate">
                             {song.title}
                           </h3>
                           <div className="flex items-center gap-1.5 text-[10px] text-[#8E8E99]">
@@ -341,11 +374,11 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                         </div>
 
                         <div className="text-right">
-                          <span className="text-[#00E599] font-bold block tabular-nums">
-                            {song.streamsLastMonth.toLocaleString('es-AR')} /mes
+                          <span className="text-[#10B981] font-bold block tabular-nums">
+                            {(song.streamsLastMonth || 0).toLocaleString('es-AR')} /mes
                           </span>
                           <span className="text-[10px] text-[#8E8E99] block tabular-nums">
-                            Total: {(song.streamsTotal / 1000000).toFixed(2)}M
+                            Total: {((song.streamsTotal || 0) / 1000000).toFixed(2)}M
                           </span>
                         </div>
                       </div>
@@ -358,9 +391,9 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
           {/* Quick Metrics & Curators Snapshot */}
           <div className="space-y-6">
-            <div className="liquid-glass-card p-6 space-y-4">
-              <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
-                <Radio className="w-4 h-4 text-[#00E599]" />
+            <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-6 space-y-4">
+              <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
+                <Radio className="w-4 h-4 text-[#10B981]" />
                 Presencia Editorial
               </h2>
               <p className="text-xs text-[#8E8E99]">
@@ -371,15 +404,15 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 {activePlaylists.slice(0, 3).map(pl => {
                   const playerTracksInPl = (pl.trackIds || []).filter(sId => world.songs[sId]?.artistId === player.id);
                   return (
-                    <div key={pl.id} className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429] flex items-center justify-between gap-3">
+                    <div key={pl.id} className="p-3 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-between gap-3">
                       <div>
-                        <span className="text-xs font-bold text-[#F4F4F6] block">{pl.name}</span>
+                        <span className="text-xs font-bold text-[#F4F0EA] block">{pl.name}</span>
                         <span className="text-[10px] text-[#8E8E99] font-sans tabular-nums">{pl.followers.toLocaleString('es-AR')} seguidores</span>
                       </div>
                       <span className={`text-[10px] font-sans font-bold px-2 py-0.5 rounded-[4px] ${
                         playerTracksInPl.length > 0
-                          ? 'bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/30'
-                          : 'bg-[#18181C] text-[#8E8E99] border border-[#242429]'
+                          ? 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30'
+                          : 'bg-[#111114] text-[#8E8E99] border border-[#242429]'
                       }`}>
                         {playerTracksInPl.length > 0 ? `${playerTracksInPl.length} temas dentro` : 'Sin temas'}
                       </span>
@@ -390,7 +423,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
               <button
                 onClick={() => setActiveTab('playlists')}
-                className="w-full py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-sans font-semibold text-[#F4F4F6] transition-colors cursor-pointer"
+                className="w-full py-2 rounded-[4px] bg-[#18181C] hover:bg-[#242429] border border-[#242429] text-xs font-sans font-semibold text-[#F4F0EA] transition-colors cursor-pointer"
               >
                 Ver todas las playlists editoriales →
               </button>
@@ -402,9 +435,9 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {/* --- TAB 2: EDITORIAL PLAYLISTS --- */}
       {activeTab === 'playlists' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 liquid-glass-card p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#111114] border border-[#242429] rounded-[8px] p-6">
             <div>
-              <h2 className="text-lg font-bold text-[#F4F4F6] flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[#F4F0EA] flex items-center gap-2">
                 <Radio className="w-5 h-5 text-[#FF4F00]" />
                 Circuito de Playlists Editoriales & Algorítmicas
               </h2>
@@ -435,11 +468,11 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   key={playlist.id}
                   className="bg-[#111114] border border-[#242429] hover:border-[#3F3F46] rounded-[6px] overflow-hidden flex flex-col justify-between transition-all group shadow-xs"
                 >
-                  <div className="p-4 bg-[#18181C] border-b border-[#242429] text-[#F4F4F6] relative">
+                  <div className="p-4 bg-[#18181C] border-b border-[#242429] text-[#F4F0EA] relative">
                     <span className="text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#8E8E99]">
                       {playlist.curator}
                     </span>
-                    <h3 className="text-base font-bold tracking-tight mt-2 text-[#F4F4F6]">
+                    <h3 className="text-base font-bold tracking-tight mt-2 text-[#F4F0EA]">
                       {playlist.name}
                     </h3>
                     <p className="text-[11px] text-[#8E8E99] line-clamp-2 mt-1">
@@ -451,13 +484,13 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     <div className="space-y-1 text-xs font-sans">
                       <div className="flex justify-between text-[#8E8E99]">
                         <span>Seguidores:</span>
-                        <span className="text-[#F4F4F6] font-bold tabular-nums">
+                        <span className="text-[#F4F0EA] font-bold tabular-nums">
                           {playlist.followers.toLocaleString('es-AR')}
                         </span>
                       </div>
                       <div className="flex justify-between text-[#8E8E99]">
                         <span>Multiplicador Streams:</span>
-                        <span className="text-[#00E599] font-bold tabular-nums">
+                        <span className="text-[#10B981] font-bold tabular-nums">
                           x{playlist.streamMultiplier}
                         </span>
                       </div>
@@ -470,19 +503,19 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     </div>
 
                     {playerTracksInPlaylist.length > 0 ? (
-                      <div className="p-2.5 rounded-[4px] bg-[#00E599]/10 border border-[#00E599]/30 text-[#00E599] text-xs space-y-1">
-                        <span className="text-[10px] uppercase font-sans font-bold text-[#00E599] block flex items-center gap-1">
+                      <div className="p-2.5 rounded-[4px] bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs space-y-1">
+                        <span className="text-[10px] uppercase font-sans font-bold text-[#10B981] block flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           ¡Tu música está dentro!
                         </span>
                         {playerTracksInPlaylist.map(track => (
-                          <span key={track.id} className="block text-[11px] truncate font-semibold text-[#F4F4F6]">
+                          <span key={track.id} className="block text-[11px] truncate font-semibold text-[#F4F0EA]">
                             • "{track.title}"
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <div className="p-2.5 rounded-[4px] bg-[#09090B] border border-[#242429] text-[11px] font-sans text-[#8E8E99] text-center">
+                      <div className="p-2.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[11px] font-sans text-[#8E8E99] text-center">
                         Ningún tema tuyo en esta lista aún.
                       </div>
                     )}
@@ -496,10 +529,36 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
       {/* --- TAB 3: YOUTUBE & FAN COMMENTS --- */}
       {activeTab === 'youtube' && (
+        playerSongs.length === 0 ? (
+          <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-10 text-center space-y-4">
+            <div className="w-12 h-12 rounded-[6px] bg-[#18181C] border border-[#242429] flex items-center justify-center mx-auto text-[#FF4F00]">
+              <Video className="w-6 h-6" strokeWidth={1.75} />
+            </div>
+            <div className="space-y-1 max-w-md mx-auto">
+              <h2 className="text-base font-bold text-[#F4F0EA]">Sin Videoclips ni Comentarios de Fans Aún</h2>
+              <p className="text-xs text-[#8E8E99]">
+                Publica tu primer sencillo o videoclip en el Estudio para empezar a recibir visualizaciones y reacciones de tu comunidad.
+              </p>
+            </div>
+            {onNavigate && (
+              <button
+                type="button"
+                onClick={() => {
+                  playSound('click');
+                  onNavigate('studio');
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-bold cursor-pointer transition-colors"
+              >
+                <Disc3 className="w-4 h-4" />
+                <span>Grabar en el Estudio</span>
+              </button>
+            )}
+          </div>
+        ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Song Video Selector */}
-          <div className="liquid-glass-card p-6 space-y-4">
-            <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+          <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-6 space-y-4">
+            <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
               <Video className="w-4 h-4 text-[#38BDF8]" />
               Seleccionar Lanzamiento
             </h2>
@@ -509,7 +568,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
             <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
               {playerSongs.map(song => {
-                const isSelected = selectedVideoSongId === song.id;
+                const isSelected = activeVideoSong?.id === song.id;
                 return (
                   <button
                     key={song.id}
@@ -520,17 +579,18 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     }}
                     className={`w-full p-3 rounded-[4px] border text-left transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#FF4F00]/10 border-[#FF4F00] text-[#F4F4F6]'
-                        : 'bg-[#09090B] border-[#242429] text-[#8E8E99] hover:border-[#3F3F46]'
+                        ? 'bg-[#FF4F00]/10 border-[#FF4F00] text-[#F4F0EA]'
+                        : 'bg-[#18181C] border-[#242429] text-[#8E8E99] hover:border-[#3F3F46]'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#F4F4F6] truncate">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-[#F4F0EA] truncate">
                         {song.title}
                       </span>
                       {song.musicVideo && (
-                        <span className="text-[10px] font-sans font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-1.5 py-0.2 rounded-[4px]">
-                          🎬 4K
+                        <span className="text-[10px] font-sans font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-1.5 py-0.5 rounded-[4px] inline-flex items-center gap-1 shrink-0">
+                          <Film className="w-3 h-3" />
+                          <span>4K</span>
                         </span>
                       )}
                     </div>
@@ -544,10 +604,10 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
           </div>
 
           {/* Comments Stream */}
-          <div className="lg:col-span-2 liquid-glass-card p-6 space-y-4">
+          <div className="lg:col-span-2 bg-[#111114] border border-[#242429] rounded-[8px] p-6 space-y-4">
             <div className="flex items-center justify-between pb-1">
               <div>
-                <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+                <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-[#FF4F00]" />
                   Comentarios de la Comunidad: "{activeVideoSong?.title || 'Tema'}"
                 </h2>
@@ -568,24 +628,24 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     className={`p-4 rounded-[4px] border transition-all ${
                       isPinned
                         ? 'bg-[#18181C] border-l-4 border-l-[#FF4F00] border-[#242429]'
-                        : 'bg-[#09090B] border-[#242429]'
+                        : 'bg-[#18181C] border-[#242429]'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center font-sans font-bold text-[#F4F4F6] text-xs shrink-0">
+                        <div className="w-8 h-8 rounded-[4px] bg-[#111114] border border-[#242429] flex items-center justify-center font-sans font-bold text-[#F4F0EA] text-xs shrink-0">
                           {comment.authorName.charAt(0)}
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs font-bold text-[#F4F4F6]">
+                            <span className="text-xs font-bold text-[#F4F0EA]">
                               {comment.authorName}
                             </span>
                             <span className="text-[10px] text-[#8E8E99] font-sans">
                               {comment.authorHandle}
                             </span>
                             {isPinned && (
-                              <span className="text-[9px] font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/10 px-1.5 py-0.2 rounded-[4px] border border-[#FF4F00]/30 flex items-center gap-0.5">
+                              <span className="text-[9px] font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/10 px-1.5 py-0.5 rounded-[4px] border border-[#FF4F00]/30 flex items-center gap-0.5">
                                 <Pin className="w-2.5 h-2.5" /> Fijado
                               </span>
                             )}
@@ -604,7 +664,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                           className={`p-1.5 rounded-[4px] border transition-all cursor-pointer ${
                             isHearted
                               ? 'bg-[#EF4444]/10 border-[#EF4444]/40 text-[#EF4444]'
-                              : 'bg-[#18181C] border-[#242429] text-[#8E8E99] hover:text-[#EF4444]'
+                              : 'bg-[#111114] border-[#242429] text-[#8E8E99] hover:text-[#EF4444]'
                           }`}
                           title={isHearted ? 'Quitar corazón' : 'Dar corazón de artista'}
                         >
@@ -617,7 +677,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                           className={`p-1.5 rounded-[4px] border transition-all cursor-pointer ${
                             isPinned
                               ? 'bg-[#FF4F00]/10 border-[#FF4F00] text-[#FF4F00]'
-                              : 'bg-[#18181C] border-[#242429] text-[#8E8E99] hover:text-[#F4F4F6]'
+                              : 'bg-[#111114] border-[#242429] text-[#8E8E99] hover:text-[#F4F0EA]'
                           }`}
                           title={isPinned ? 'Desfijar comentario' : 'Fijar arriba'}
                         >
@@ -631,12 +691,14 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     </p>
 
                     <div className="flex items-center gap-4 mt-2.5 text-[11px] text-[#8E8E99] font-sans">
-                      <span className="flex items-center gap-1 text-[#00E599] tabular-nums">
-                        👍 {comment.likes.toLocaleString('es-AR')} likes
+                      <span className="flex items-center gap-1.5 text-[#10B981] tabular-nums">
+                        <ThumbsUp className="w-3 h-3" />
+                        {comment.likes.toLocaleString('es-AR')} likes
                       </span>
                       {isHearted && (
                         <span className="text-[#EF4444] text-[10px] flex items-center gap-1">
-                          ❤️ Marcado con corazón por {player.name}
+                          <Heart className="w-3 h-3 fill-[#EF4444]" />
+                          Marcado con corazón por {player.name}
                         </span>
                       )}
                     </div>
@@ -646,15 +708,16 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
             </div>
           </div>
         </div>
+        )
       )}
 
       {/* --- TAB 4: TIKTOK / REELS SNIPPET LAB --- */}
       {activeTab === 'tiktok' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Campaign Form */}
-          <div className="lg:col-span-2 liquid-glass-card p-6 space-y-6">
+          <div className="lg:col-span-2 bg-[#111114] border border-[#242429] rounded-[8px] p-6 space-y-6">
             <div>
-              <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+              <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
                 <Flame className="w-5 h-5 text-[#FF4F00]" />
                 Estudio de Snippets Virales (TikTok & Reels)
               </h2>
@@ -672,7 +735,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 <select
                   value={selectedSnippetSongId}
                   onChange={(e) => setSelectedSnippetSongId(e.target.value)}
-                  className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F4F6] focus:border-[#3F3F46] focus:outline-hidden"
+                  className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F0EA] focus:border-[#3F3F46] focus:outline-hidden"
                 >
                   <option value="">-- Selecciona una canción del catálogo --</option>
                   {playerSongs.map(s => (
@@ -705,11 +768,11 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                       }}
                       className={`p-3 rounded-[4px] border text-left transition-all cursor-pointer ${
                         snippetConcept === c.id
-                          ? 'bg-[#FF4F00]/10 border-[#FF4F00] text-[#F4F4F6]'
-                          : 'bg-[#09090B] border-[#242429] text-[#8E8E99] hover:border-[#3F3F46]'
+                          ? 'bg-[#FF4F00]/10 border-[#FF4F00] text-[#F4F0EA]'
+                          : 'bg-[#18181C] border-[#242429] text-[#8E8E99] hover:border-[#3F3F46]'
                       }`}
                     >
-                      <span className="text-xs font-bold block text-[#F4F4F6]">{c.id}</span>
+                      <span className="text-xs font-bold block text-[#F4F0EA]">{c.id}</span>
                       <span className="text-[10px] text-[#8E8E99] block mt-1">{c.desc}</span>
                     </button>
                   ))}
@@ -728,7 +791,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                       playSound('click');
                       setSnippetTier(e.target.value as any);
                     }}
-                    className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F4F6] focus:border-[#3F3F46] focus:outline-hidden"
+                    className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F0EA] focus:border-[#3F3F46] focus:outline-hidden"
                   >
                     <option value="micro">Micro-Influencers (10k - 50k seguidores)</option>
                     <option value="macro">Macro-Creadores (100k - 500k seguidores)</option>
@@ -739,7 +802,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-[#D4D4D8] flex justify-between">
                     <span>4. Presupuesto Invertido:</span>
-                    <strong className="text-[#00E599] font-sans tabular-nums">${snippetBudget.toLocaleString('es-AR')}</strong>
+                    <strong className="text-[#10B981] font-sans tabular-nums">${snippetBudget.toLocaleString('es-AR')}</strong>
                   </label>
                   <input
                     type="range"
@@ -780,19 +843,19 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
 
           {/* Results Card */}
           <div className="space-y-6">
-            <div className="liquid-glass-card p-6 space-y-4">
-              <h2 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[#00E599]" />
+            <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-6 space-y-4">
+              <h2 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-[#10B981]" />
                 Impacto de la Última Campaña
               </h2>
 
               {lastSnippetResult ? (
                 <div className="space-y-4 animate-fade-in">
-                  <div className="p-4 rounded-[4px] bg-[#09090B] border border-[#242429] space-y-2">
+                  <div className="p-4 rounded-[4px] bg-[#18181C] border border-[#242429] space-y-2">
                     <span className="text-[10px] font-sans font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/30">
                       Trend {(lastSnippetResult.viralTier || 'viral').toUpperCase()}
                     </span>
-                    <h3 className="text-sm font-bold text-[#F4F4F6]">
+                    <h3 className="text-sm font-bold text-[#F4F0EA]">
                       {lastSnippetResult.headline || lastSnippetResult.concept || 'Campaña Viral'}
                     </h3>
                     <p className="text-xs text-[#D4D4D8] leading-relaxed">
@@ -801,25 +864,25 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 text-xs font-sans">
-                    <div className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429]">
+                    <div className="p-3 rounded-[4px] bg-[#18181C] border border-[#242429]">
                       <span className="text-[10px] text-[#8E8E99] block uppercase">Vistas TikTok</span>
                       <span className="text-sm font-bold text-[#FF4F00] tabular-nums">
                         {(lastSnippetResult.tiktokViews ?? lastSnippetResult.viewsGenerated ?? 0).toLocaleString('es-AR')}
                       </span>
                     </div>
-                    <div className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429]">
+                    <div className="p-3 rounded-[4px] bg-[#18181C] border border-[#242429]">
                       <span className="text-[10px] text-[#8E8E99] block uppercase">Videos UGC</span>
                       <span className="text-sm font-bold text-[#38BDF8] tabular-nums">
                         {(lastSnippetResult.ugcCreations ?? lastSnippetResult.creationsCount ?? 0).toLocaleString('es-AR')}
                       </span>
                     </div>
-                    <div className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429]">
+                    <div className="p-3 rounded-[4px] bg-[#18181C] border border-[#242429]">
                       <span className="text-[10px] text-[#8E8E99] block uppercase">Streams Ganados</span>
-                      <span className="text-sm font-bold text-[#00E599] tabular-nums">
+                      <span className="text-sm font-bold text-[#10B981] tabular-nums">
                         +{(lastSnippetResult.streamsBoostGenerated ?? lastSnippetResult.streamingConversions ?? 0).toLocaleString('es-AR')}
                       </span>
                     </div>
-                    <div className="p-3 rounded-[4px] bg-[#09090B] border border-[#242429]">
+                    <div className="p-3 rounded-[4px] bg-[#18181C] border border-[#242429]">
                       <span className="text-[10px] text-[#8E8E99] block uppercase">Hype Creado</span>
                       <span className="text-sm font-bold text-[#F59E0B] tabular-nums">
                         +{lastSnippetResult.hypeGained ?? lastSnippetResult.hypeGenerated ?? 0} pts
@@ -840,9 +903,9 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
       {/* --- PITCH MODAL --- */}
       {pitchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-fade-in">
-          <div className="w-full max-w-lg liquid-glass-card p-6 shadow-2xl space-y-5">
+          <div className="lg-modal w-full max-w-lg bg-[#111114] border border-[#242429] rounded-[8px] p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between pb-1">
-              <h3 className="text-base font-bold text-[#F4F4F6] flex items-center gap-2">
+              <h3 className="text-base font-bold text-[#F4F0EA] flex items-center gap-2">
                 <Send className="w-4 h-4 text-[#FF4F00]" />
                 Pitch Editorial de Canción
               </h3>
@@ -852,9 +915,10 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                   setPitchModalOpen(false);
                   setPitchFeedback(null);
                 }}
-                className="text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer"
+                className="p-1 rounded-[4px] text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#18181C] cursor-pointer"
+                aria-label="Cerrar modal"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -866,7 +930,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 <select
                   value={selectedPitchSongId}
                   onChange={(e) => setSelectedPitchSongId(e.target.value)}
-                  className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F4F6] focus:border-[#3F3F46] focus:outline-hidden"
+                  className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F0EA] focus:border-[#3F3F46] focus:outline-hidden"
                 >
                   <option value="">-- Elige un tema del catálogo --</option>
                   {playerSongs.map(s => (
@@ -884,7 +948,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                 <select
                   value={selectedPitchPlaylistId}
                   onChange={(e) => setSelectedPitchPlaylistId(e.target.value)}
-                  className="w-full bg-[#09090B] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F4F6] focus:border-[#3F3F46] focus:outline-hidden"
+                  className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] p-3 text-xs text-[#F4F0EA] focus:border-[#3F3F46] focus:outline-hidden"
                 >
                   {activePlaylists.map(pl => (
                     <option key={pl.id} value={pl.id}>
@@ -897,7 +961,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
               {pitchFeedback && (
                 <div className={`p-3.5 rounded-[4px] text-xs font-sans ${
                   pitchFeedback.success
-                    ? 'bg-[#00E599]/10 border border-[#00E599]/40 text-[#00E599]'
+                    ? 'bg-[#10B981]/10 border border-[#10B981]/40 text-[#10B981]'
                     : 'bg-[#EF4444]/10 border border-[#EF4444]/40 text-[#EF4444]'
                 }`}>
                   {pitchFeedback.message}
@@ -912,7 +976,7 @@ export const StreamingPlatformView: React.FC<StreamingPlatformViewProps> = ({
                     setPitchModalOpen(false);
                     setPitchFeedback(null);
                   }}
-                  className="px-4 py-2 rounded-[4px] bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] border border-[#242429] text-xs font-sans font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-[4px] bg-[#18181C] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#242429] text-xs font-sans font-semibold transition-colors cursor-pointer"
                 >
                   Cerrar
                 </button>

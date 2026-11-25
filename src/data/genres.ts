@@ -229,7 +229,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'trap_latino',
     description: 'Sintetizadores eufóricos, texturas cyberpunk y energía frenética de moshpit.',
     aestheticTone: 'Raves futuristas, neón y catarsis desbordada',
-    requiredTrait: { trait: 'riskTolerance', min: 70, label: 'Tolerancia al Riesgo 70+' },
+    requiredTrait: { trait: 'riskTolerance', min: 25, label: 'Tolerancia al Riesgo 25+' },
     qualityBonus: 4,
     commercialBonus: 6,
     originalityBonus: 8
@@ -240,7 +240,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'trap_latino',
     description: 'Pads etéreos, campanas brillantes y flow relajado con gran atmósfera.',
     aestheticTone: 'Ensueño urbano, nostálgico, introspección chill',
-    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    requiredTrait: { trait: 'creativity', min: 40, label: 'Creatividad 40+' },
     qualityBonus: 6,
     commercialBonus: 3,
     originalityBonus: 7
@@ -251,7 +251,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'trap_latino',
     description: 'Guitarras melancólicas, letras de desamor, vacío y vulnerabilidad.',
     aestheticTone: 'Habitaciones a oscuras, lluvia y desahogo íntimo',
-    requiredTrait: { trait: 'charisma', min: 70, label: 'Carisma 70+' },
+    requiredTrait: { trait: 'charisma', min: 25, label: 'Carisma 25+' },
     qualityBonus: 4,
     commercialBonus: 8,
     originalityBonus: 4
@@ -262,7 +262,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'trap_latino',
     description: 'Patrones rítmicos acelerados con bajos deslizantes y tensión constante.',
     aestheticTone: 'Adrenalina, velocidad nocturna y actitud desafiante',
-    requiredTrait: { trait: 'skill', min: 75, label: 'Habilidad 75+' },
+    requiredTrait: { trait: 'skill', min: 40, label: 'Habilidad 40+' },
     qualityBonus: 5,
     commercialBonus: 6,
     originalityBonus: 5
@@ -285,7 +285,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'reggaeton',
     description: 'Fusión underground con texturas industriales y vocales distorsionadas.',
     aestheticTone: 'Club nocturno alternativo, vanguardia y transgresión',
-    requiredTrait: { trait: 'originality', min: 75, label: 'Originalidad 75+' },
+    requiredTrait: { trait: 'originality', min: 40, label: 'Originalidad 40+' },
     qualityBonus: 5,
     commercialBonus: 4,
     originalityBonus: 9
@@ -296,7 +296,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'reggaeton',
     description: 'Melodías vocales dulces, sintetizadores cálidos y temática de conquista amorosa.',
     aestheticTone: 'Atardeceres en la playa, radio masiva y verano eterno',
-    requiredTrait: { trait: 'commercialAppeal', min: 70, label: 'Atracción Comercial 70+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 25, label: 'Atracción Comercial 25+' },
     qualityBonus: 4,
     commercialBonus: 12,
     originalityBonus: 3
@@ -307,7 +307,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'reggaeton',
     description: 'Metales caribeños veloces, percusión acústica y energía tropical explosiva.',
     aestheticTone: 'Carnaval callejero, baile acelerado y jolgorio',
-    requiredTrait: { trait: 'creativity', min: 70, label: 'Creatividad 70+' },
+    requiredTrait: { trait: 'creativity', min: 25, label: 'Creatividad 25+' },
     qualityBonus: 5,
     commercialBonus: 7,
     originalityBonus: 6
@@ -318,7 +318,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'reggaeton',
     description: 'BPM elevado, percusión implacable y estribillos ultra pegadizos.',
     aestheticTone: 'Barrio caliente, fiesta en la calle y potencia rítmica',
-    requiredTrait: { trait: 'skill', min: 70, label: 'Habilidad 70+' },
+    requiredTrait: { trait: 'skill', min: 25, label: 'Habilidad 25+' },
     qualityBonus: 4,
     commercialBonus: 9,
     originalityBonus: 4
@@ -341,7 +341,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'hip_hop_rap',
     description: 'Storytelling profundo, crítica sociopolítica y peso conceptual.',
     aestheticTone: 'Crónica documental, introspección y compromiso cultural',
-    requiredTrait: { trait: 'creativity', min: 80, label: 'Creatividad 80+' },
+    requiredTrait: { trait: 'creativity', min: 55, label: 'Creatividad 55+' },
     qualityBonus: 9,
     commercialBonus: 2,
     originalityBonus: 8
@@ -352,7 +352,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'hip_hop_rap',
     description: 'Voces agresivas, ritmos oscuros y actitud de confrontación directa.',
     aestheticTone: 'Ring de boxeo, asfalto y energía cruda sin filtro',
-    requiredTrait: { trait: 'discipline', min: 75, label: 'Disciplina 75+' },
+    requiredTrait: { trait: 'discipline', min: 40, label: 'Disciplina 40+' },
     qualityBonus: 6,
     commercialBonus: 4,
     originalityBonus: 5
@@ -363,7 +363,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'hip_hop_rap',
     description: 'Contrabajos elegantes, pianos rhodes y rimas con swing relajado.',
     aestheticTone: 'Café bohemio, noche lluviosa y sofisticación acústica',
-    requiredTrait: { trait: 'skill', min: 80, label: 'Habilidad 80+' },
+    requiredTrait: { trait: 'skill', min: 55, label: 'Habilidad 55+' },
     qualityBonus: 10,
     commercialBonus: 4,
     originalityBonus: 8
@@ -374,7 +374,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'hip_hop_rap',
     description: 'Bajos vibrantes, cadencias sincopadas y estribillos con actitud.',
     aestheticTone: 'Autos tuneados, fiesta sureña y poderío rítmico',
-    requiredTrait: { trait: 'commercialAppeal', min: 70, label: 'Atracción Comercial 70+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 25, label: 'Atracción Comercial 25+' },
     qualityBonus: 5,
     commercialBonus: 8,
     originalityBonus: 4
@@ -397,7 +397,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'pop_moderno',
     description: 'Sintetizadores ochenteros analógicos, baterías punchy y melodías nostálgicas.',
     aestheticTone: 'Autopistas nocturnas, luces de neón y nostalgia brillante',
-    requiredTrait: { trait: 'creativity', min: 70, label: 'Creatividad 70+' },
+    requiredTrait: { trait: 'creativity', min: 25, label: 'Creatividad 25+' },
     qualityBonus: 7,
     commercialBonus: 9,
     originalityBonus: 6
@@ -408,7 +408,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'pop_moderno',
     description: 'Guitarras acústicas suaves, melodías etéreas y letras íntimas.',
     aestheticTone: 'Cámara analógica, naturaleza, cartas escritas a mano',
-    requiredTrait: { trait: 'artisticCredibility', min: 60, label: 'Credibilidad 60+' },
+    requiredTrait: { trait: 'artisticCredibility', min: 25, label: 'Credibilidad 25+' },
     qualityBonus: 8,
     commercialBonus: 5,
     originalityBonus: 7
@@ -419,7 +419,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'pop_moderno',
     description: 'Pitches acelerados, distorsión extrema y melodías azucaradas frenéticas.',
     aestheticTone: 'Internet caótico, videojuegos retro y rebelión digital',
-    requiredTrait: { trait: 'riskTolerance', min: 80, label: 'Tolerancia al Riesgo 80+' },
+    requiredTrait: { trait: 'riskTolerance', min: 55, label: 'Tolerancia al Riesgo 55+' },
     qualityBonus: 6,
     commercialBonus: 4,
     originalityBonus: 10
@@ -430,7 +430,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'pop_moderno',
     description: 'Bases electrónicas bailables diseñadas para festivales y playlists de hit.',
     aestheticTone: 'Festivales masivos, fuegos artificiales y drops bailables',
-    requiredTrait: { trait: 'commercialAppeal', min: 75, label: 'Atracción Comercial 75+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 40, label: 'Atracción Comercial 40+' },
     qualityBonus: 5,
     commercialBonus: 11,
     originalityBonus: 4
@@ -453,7 +453,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'rock_alternativo',
     description: 'Líneas de bajo penetrantes, guitarras gélidas y atmósfera sombría.',
     aestheticTone: 'Fábricas industriales, blanco y negro, niebla urbana',
-    requiredTrait: { trait: 'originality', min: 70, label: 'Originalidad 70+' },
+    requiredTrait: { trait: 'originality', min: 25, label: 'Originalidad 25+' },
     qualityBonus: 8,
     commercialBonus: 3,
     originalityBonus: 8
@@ -464,7 +464,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'rock_alternativo',
     description: 'Guitarras con fuzz pesado, coros desgarradores y energía visceral.',
     aestheticTone: 'Camisas leñadoras, sótanos sudorosos y desahogo emocional',
-    requiredTrait: { trait: 'discipline', min: 70, label: 'Disciplina 70+' },
+    requiredTrait: { trait: 'discipline', min: 25, label: 'Disciplina 25+' },
     qualityBonus: 7,
     commercialBonus: 4,
     originalityBonus: 6
@@ -475,7 +475,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'rock_alternativo',
     description: 'Capas infinitas de delay, reverb y voces susurradas bajo guitarras oceánicas.',
     aestheticTone: 'Nubes psicodélicas, trance sonoro y belleza etérea',
-    requiredTrait: { trait: 'creativity', min: 80, label: 'Creatividad 80+' },
+    requiredTrait: { trait: 'creativity', min: 55, label: 'Creatividad 55+' },
     qualityBonus: 9,
     commercialBonus: 2,
     originalityBonus: 9
@@ -498,7 +498,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'r_and_b_soul',
     description: 'Teclados vintage, armonías complejas y mensaje espiritual y profundo.',
     aestheticTone: 'Velas encendidas, té caliente, poesía y paz interior',
-    requiredTrait: { trait: 'skill', min: 75, label: 'Habilidad 75+' },
+    requiredTrait: { trait: 'skill', min: 40, label: 'Habilidad 40+' },
     qualityBonus: 9,
     commercialBonus: 4,
     originalityBonus: 7
@@ -509,7 +509,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'r_and_b_soul',
     description: 'Texturas oscuras, reverberaciones profundas y melodías seductoras.',
     aestheticTone: 'Rascacielos a las 4 AM, soledad y romance misterioso',
-    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    requiredTrait: { trait: 'creativity', min: 40, label: 'Creatividad 40+' },
     qualityBonus: 7,
     commercialBonus: 7,
     originalityBonus: 8
@@ -520,7 +520,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'r_and_b_soul',
     description: 'Ruido de cinta analógica, samples acogedores y calidez hogareña.',
     aestheticTone: 'Estudio casero, café matutino y relax reflexivo',
-    requiredTrait: { trait: 'originality', min: 70, label: 'Originalidad 70+' },
+    requiredTrait: { trait: 'originality', min: 25, label: 'Originalidad 25+' },
     qualityBonus: 6,
     commercialBonus: 6,
     originalityBonus: 6
@@ -543,7 +543,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'musica_electronica',
     description: 'Arpegios épicos, sintetizadores analógicos y progresiones emotivas.',
     aestheticTone: 'Escenarios monumentales, visuales 3D e introspección masiva',
-    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    requiredTrait: { trait: 'creativity', min: 40, label: 'Creatividad 40+' },
     qualityBonus: 8,
     commercialBonus: 6,
     originalityBonus: 8
@@ -554,7 +554,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'musica_electronica',
     description: 'Tambores orgánicos, cantos conmovedores y groove envolvente.',
     aestheticTone: 'Ritual ancestral, calidez solar y baile comunitario',
-    requiredTrait: { trait: 'skill', min: 70, label: 'Habilidad 70+' },
+    requiredTrait: { trait: 'skill', min: 25, label: 'Habilidad 25+' },
     qualityBonus: 7,
     commercialBonus: 7,
     originalityBonus: 7
@@ -565,7 +565,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'musica_electronica',
     description: 'Breakbeats veloces, bajos reese atronadores y adrenalina pura.',
     aestheticTone: 'Warehouse rave clandestina, velocidad y trance',
-    requiredTrait: { trait: 'riskTolerance', min: 75, label: 'Tolerancia al Riesgo 75+' },
+    requiredTrait: { trait: 'riskTolerance', min: 40, label: 'Tolerancia al Riesgo 40+' },
     qualityBonus: 7,
     commercialBonus: 5,
     originalityBonus: 7
@@ -588,7 +588,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'drill',
     description: 'Hi-hats con swing británico, bajos con glide y juego de palabras.',
     aestheticTone: 'Londres nocturno, abrigos oscuros y precisión lírica',
-    requiredTrait: { trait: 'skill', min: 75, label: 'Habilidad 75+' },
+    requiredTrait: { trait: 'skill', min: 40, label: 'Habilidad 40+' },
     qualityBonus: 7,
     commercialBonus: 6,
     originalityBonus: 6
@@ -599,7 +599,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'drill',
     description: 'Sonido pesado, samples de melodías clásicas y barras de impacto.',
     aestheticTone: 'Brooklyn, humo, energía arrolladora',
-    requiredTrait: { trait: 'charisma', min: 70, label: 'Carisma 70+' },
+    requiredTrait: { trait: 'charisma', min: 25, label: 'Carisma 25+' },
     qualityBonus: 6,
     commercialBonus: 8,
     originalityBonus: 5
@@ -610,7 +610,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'drill',
     description: 'Samples de baladas o pop acelerados combinados con baterías drill.',
     aestheticTone: 'Nostalgia urbana, melodías pop y ritmo pesado',
-    requiredTrait: { trait: 'commercialAppeal', min: 70, label: 'Atracción Comercial 70+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 25, label: 'Atracción Comercial 25+' },
     qualityBonus: 6,
     commercialBonus: 10,
     originalityBonus: 6
@@ -633,7 +633,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'afrobeat_dancehall',
     description: 'Bajos log drum percusivos, pianos de jazz y tempo pausado y envolvente.',
     aestheticTone: 'Clubs de Johannesburgo, sofisticación bailable y groove profundo',
-    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    requiredTrait: { trait: 'creativity', min: 40, label: 'Creatividad 40+' },
     qualityBonus: 8,
     commercialBonus: 8,
     originalityBonus: 9
@@ -644,7 +644,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'afrobeat_dancehall',
     description: 'Sonido jamaiquino potente, toasting dinámico y cadencia bailable.',
     aestheticTone: 'Sistemas de sonido en Kingston, humo y sudor',
-    requiredTrait: { trait: 'charisma', min: 75, label: 'Carisma 75+' },
+    requiredTrait: { trait: 'charisma', min: 40, label: 'Carisma 40+' },
     qualityBonus: 6,
     commercialBonus: 8,
     originalityBonus: 5
@@ -655,7 +655,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'afrobeat_dancehall',
     description: 'Guitarras a contratiempo, mensaje de unidad y armonías soleadas.',
     aestheticTone: 'Playa, brisa marina y vibración espiritual',
-    requiredTrait: { trait: 'creativity', min: 70, label: 'Creatividad 70+' },
+    requiredTrait: { trait: 'creativity', min: 25, label: 'Creatividad 25+' },
     qualityBonus: 7,
     commercialBonus: 7,
     originalityBonus: 6
@@ -678,7 +678,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'corridos_urbanos',
     description: 'Sección de vientos atronadora, charchetas y letras de poder y acción.',
     aestheticTone: 'Caravanas, sombreros, adrenalina y fuerza arrolladora',
-    requiredTrait: { trait: 'discipline', min: 75, label: 'Disciplina 75+' },
+    requiredTrait: { trait: 'discipline', min: 40, label: 'Disciplina 40+' },
     qualityBonus: 6,
     commercialBonus: 10,
     originalityBonus: 5
@@ -689,7 +689,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'corridos_urbanos',
     description: 'Acordes menores conmovedores, requinto lento y poesía melancólica.',
     aestheticTone: 'Noches estrelladas en el rancho, desamor y fogata',
-    requiredTrait: { trait: 'creativity', min: 70, label: 'Creatividad 70+' },
+    requiredTrait: { trait: 'creativity', min: 25, label: 'Creatividad 25+' },
     qualityBonus: 8,
     commercialBonus: 8,
     originalityBonus: 7
@@ -700,7 +700,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'corridos_urbanos',
     description: 'Fusión de requinto tradicional con sintetizadores y bombos electrónicos.',
     aestheticTone: 'Festivales masivos, discotecas de lujo y fusión moderna',
-    requiredTrait: { trait: 'commercialAppeal', min: 75, label: 'Atracción Comercial 75+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 40, label: 'Atracción Comercial 40+' },
     qualityBonus: 5,
     commercialBonus: 11,
     originalityBonus: 7
@@ -723,7 +723,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'kpop_jpop',
     description: 'Flows vertiginosos, bajos 808 futuristas y actitud urbana arrolladora.',
     aestheticTone: 'Cyberpunk, moda vanguardista y energía de moshpit',
-    requiredTrait: { trait: 'discipline', min: 75, label: 'Disciplina 75+' },
+    requiredTrait: { trait: 'discipline', min: 40, label: 'Disciplina 40+' },
     qualityBonus: 6,
     commercialBonus: 9,
     originalityBonus: 7
@@ -734,7 +734,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'kpop_jpop',
     description: 'Guitarras virtuosas, progresiones armónicas complejas y melodías épicas de opening.',
     aestheticTone: 'Neo-Tokyo, velocidad analógica, épica y nostalgia anime',
-    requiredTrait: { trait: 'skill', min: 75, label: 'Habilidad 75+' },
+    requiredTrait: { trait: 'skill', min: 40, label: 'Habilidad 40+' },
     qualityBonus: 9,
     commercialBonus: 7,
     originalityBonus: 8
@@ -745,7 +745,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'kpop_jpop',
     description: 'Líneas de bajo slap brillantes, teclados Rhodes ochenteros y sofisticación nocturna.',
     aestheticTone: 'Atardeceres en Shibuya, luces de neón ochenteras y elegancia nocturna',
-    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    requiredTrait: { trait: 'creativity', min: 40, label: 'Creatividad 40+' },
     qualityBonus: 8,
     commercialBonus: 6,
     originalityBonus: 9
@@ -768,7 +768,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'cumbia_tropical',
     description: 'Guitarras acústicas bailables, estribillos contagiosos y espíritu veraniego festivo.',
     aestheticTone: 'Playas, festivales al aire libre, frescura y juventud',
-    requiredTrait: { trait: 'commercialAppeal', min: 70, label: 'Atracción Comercial 70+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 25, label: 'Atracción Comercial 25+' },
     qualityBonus: 5,
     commercialBonus: 11,
     originalityBonus: 4
@@ -779,7 +779,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'cumbia_tropical',
     description: 'Ecos y saludos en vivo, pitch rebajado, percusión profunda y vientos tropicales.',
     aestheticTone: 'Pistas sonideras mexicanas, luces giratorias y magnetismo popular',
-    requiredTrait: { trait: 'charisma', min: 70, label: 'Carisma 70+' },
+    requiredTrait: { trait: 'charisma', min: 25, label: 'Carisma 25+' },
     qualityBonus: 7,
     commercialBonus: 7,
     originalityBonus: 8
@@ -790,7 +790,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'cumbia_tropical',
     description: 'Piano tunga-tunga característico, acordeón enérgico, tambora imparable y estadios bailando.',
     aestheticTone: 'Bailes de Córdoba, euforia sin fin y carisma arrollador',
-    requiredTrait: { trait: 'energy', min: 70, label: 'Energía 70+' },
+    requiredTrait: { trait: 'energy', min: 25, label: 'Energía 25+' },
     qualityBonus: 6,
     commercialBonus: 9,
     originalityBonus: 6
@@ -803,7 +803,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'metal_punk',
     description: 'Solos virtuosos a dos guitarras, dobles bombos demoledores y agudos legendarios.',
     aestheticTone: 'Estadios oscuros, cuero negro, cruces y virtuosismo valvular',
-    requiredTrait: { trait: 'skill', min: 80, label: 'Habilidad 80+' },
+    requiredTrait: { trait: 'skill', min: 55, label: 'Habilidad 55+' },
     qualityBonus: 9,
     commercialBonus: 5,
     originalityBonus: 6
@@ -814,7 +814,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'metal_punk',
     description: 'Bases mecánicas 4x4, sintetizadores cortantes, riffs monolíticos y teatralidad distópica.',
     aestheticTone: 'Fábricas de acero, fuego, futurismo distópico y potencia industrial',
-    requiredTrait: { trait: 'discipline', min: 75, label: 'Disciplina 75+' },
+    requiredTrait: { trait: 'discipline', min: 40, label: 'Disciplina 40+' },
     qualityBonus: 8,
     commercialBonus: 6,
     originalityBonus: 8
@@ -825,7 +825,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'metal_punk',
     description: 'Tres acordes rápidos, mensajes contestatarios, distorsión garajera y catarsis pura.',
     aestheticTone: 'Sótanos clandestinos, chaquetas desgastadas, fanzines y desobediencia',
-    requiredTrait: { trait: 'riskTolerance', min: 75, label: 'Tolerancia al Riesgo 75+' },
+    requiredTrait: { trait: 'riskTolerance', min: 40, label: 'Tolerancia al Riesgo 40+' },
     qualityBonus: 6,
     commercialBonus: 5,
     originalityBonus: 7
@@ -836,7 +836,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'metal_punk',
     description: 'Afinaciones bajas de 7 cuerdas, baterías con groove sincopado, scratches y furia.',
     aestheticTone: 'Moshpits de festivales, estética urbana noventera y furia juvenil',
-    requiredTrait: { trait: 'charisma', min: 70, label: 'Carisma 70+' },
+    requiredTrait: { trait: 'charisma', min: 25, label: 'Carisma 25+' },
     qualityBonus: 7,
     commercialBonus: 8,
     originalityBonus: 7
@@ -849,7 +849,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'country_folk',
     description: 'Producción masiva, guitarras brillantes, estribillos de arena y narrativas cotidianas.',
     aestheticTone: 'Camionetas, festivales rurales multitudinarios y radio masiva',
-    requiredTrait: { trait: 'commercialAppeal', min: 75, label: 'Atracción Comercial 75+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 40, label: 'Atracción Comercial 40+' },
     qualityBonus: 6,
     commercialBonus: 12,
     originalityBonus: 4
@@ -860,7 +860,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'country_folk',
     description: 'Guitarras de madera, banjos suaves, armonías susurradas y profundidad poética.',
     aestheticTone: 'Cabañas de madera, bosques de pinos, lluvia y calidez íntima',
-    requiredTrait: { trait: 'creativity', min: 75, label: 'Creatividad 75+' },
+    requiredTrait: { trait: 'creativity', min: 40, label: 'Creatividad 40+' },
     qualityBonus: 9,
     commercialBonus: 5,
     originalityBonus: 8
@@ -871,7 +871,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'country_folk',
     description: 'Punteos ultrarrápidos de mandolina, contrabajo sincopado y virtuosismo acústico.',
     aestheticTone: 'Porches de madera en los Apalaches, fogatas y destreza técnica',
-    requiredTrait: { trait: 'skill', min: 80, label: 'Habilidad 80+' },
+    requiredTrait: { trait: 'skill', min: 55, label: 'Habilidad 55+' },
     qualityBonus: 9,
     commercialBonus: 4,
     originalityBonus: 7
@@ -882,7 +882,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'country_folk',
     description: 'Violines celtas, flautas tin whistle, bodhrán y atmósferas legendarias.',
     aestheticTone: 'Colinas de Irlanda, pubs centenarios y misticismo gaélico',
-    requiredTrait: { trait: 'originality', min: 70, label: 'Originalidad 70+' },
+    requiredTrait: { trait: 'originality', min: 25, label: 'Originalidad 25+' },
     qualityBonus: 8,
     commercialBonus: 5,
     originalityBonus: 8
@@ -905,7 +905,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'jazz_bossa',
     description: 'Riqueza poética y armónica, mezcla de samba, psicodelia, jazz y compromiso cultural.',
     aestheticTone: 'Carnavales poéticos, teatros históricos de Salvador y legado inmortal',
-    requiredTrait: { trait: 'creativity', min: 80, label: 'Creatividad 80+' },
+    requiredTrait: { trait: 'creativity', min: 55, label: 'Creatividad 55+' },
     qualityBonus: 10,
     commercialBonus: 5,
     originalityBonus: 9
@@ -916,7 +916,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'jazz_bossa',
     description: 'Improvisación libre, acordes densos, teclados rhodes y virtuosismo instrumental.',
     aestheticTone: 'Clubs de jazz de Nueva York y París, vinilos de colección y vanguardia sonora',
-    requiredTrait: { trait: 'skill', min: 85, label: 'Habilidad 85+' },
+    requiredTrait: { trait: 'skill', min: 55, label: 'Habilidad 55+' },
     qualityBonus: 10,
     commercialBonus: 4,
     originalityBonus: 9
@@ -939,7 +939,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'funk_brasilero',
     description: 'Sintetizadores con melodías hipnóticas repetitivas, kicks secos y coreografías virales.',
     aestheticTone: 'Bailes urbanos paulistas, motos, gafas de espejo y coreografías virales',
-    requiredTrait: { trait: 'charisma', min: 75, label: 'Carisma 75+' },
+    requiredTrait: { trait: 'charisma', min: 40, label: 'Carisma 40+' },
     qualityBonus: 6,
     commercialBonus: 10,
     originalityBonus: 7
@@ -950,7 +950,7 @@ export const SUBGENRE_DETAILS: Record<string, SubgenreDetail> = {
     parentGenreId: 'funk_brasilero',
     description: 'Fusión de tamborzão brasileño con pop internacional, producción de élite y ganchos globales.',
     aestheticTone: 'Premios internacionales, videoclips millonarios y pistas de baile mundiales',
-    requiredTrait: { trait: 'commercialAppeal', min: 75, label: 'Atracción Comercial 75+' },
+    requiredTrait: { trait: 'commercialAppeal', min: 40, label: 'Atracción Comercial 40+' },
     qualityBonus: 7,
     commercialBonus: 12,
     originalityBonus: 6
@@ -1005,6 +1005,7 @@ export function getArtistDerivedStyles(
     if (detail.requiredTrait) {
       const req = detail.requiredTrait;
       const traitKey = req.trait;
+      const effectiveMin = req.min >= 80 ? 55 : req.min >= 75 ? 40 : req.min >= 60 ? 25 : req.min;
 
       // Evaluate artist personality traits strictly (primary), fallback to stats if applicable
       const personalityVal = artist.personality && (traitKey in artist.personality)
@@ -1016,9 +1017,10 @@ export function getArtistDerivedStyles(
 
       const currentVal = personalityVal !== undefined ? personalityVal : (statsVal !== undefined ? statsVal : 0);
 
-      if (currentVal < req.min) {
+      if (currentVal < effectiveMin) {
         isUnlocked = false;
-        lockReason = `Bloqueado: Requiere ${req.label} (Tienes ${Math.round(currentVal)})`;
+        const effectiveLabel = req.label.replace(/\b(60|70|75|80|85)\+/g, `${effectiveMin}+`);
+        lockReason = `Bloqueado: Requiere ${effectiveLabel} (Tienes ${Math.round(currentVal)})`;
       }
     }
 

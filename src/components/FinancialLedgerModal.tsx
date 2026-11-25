@@ -49,27 +49,27 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
   const getCategoryMeta = (cat: TransactionCategory) => {
     switch (cat) {
       case 'streaming':
-        return { label: 'Streaming', color: 'bg-info/15 text-info border-info/30', icon: Radio };
+        return { label: 'Streaming', color: 'bg-[#38BDF8]/15 text-[#38BDF8] border-[#38BDF8]/30', icon: Radio };
       case 'merch':
-        return { label: 'Merch', color: 'bg-purple-500/15 text-primary-soft border-purple-500/30', icon: ShoppingBag };
+        return { label: 'Merch', color: 'bg-[#FF4F00]/15 text-[#FF4F00] border-[#FF4F00]/30', icon: ShoppingBag };
       case 'production':
-        return { label: 'Producción', color: 'bg-amber-500/15 text-amber-300 border-amber-500/30', icon: Music };
+        return { label: 'Producción', color: 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30', icon: Music };
       case 'marketing':
-        return { label: 'Marketing', color: 'bg-pink-500/15 text-pink-300 border-pink-500/30', icon: TrendingUp };
+        return { label: 'Marketing', color: 'bg-[#FF4F00]/15 text-[#FF4F00] border-[#FF4F00]/35', icon: TrendingUp };
       case 'store':
-        return { label: 'Tienda', color: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30', icon: ShoppingBag };
+        return { label: 'Tienda', color: 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30', icon: ShoppingBag };
       case 'living_cost':
-        return { label: 'Costo de Vida', color: 'bg-slate-700/40 text-slate-300 border-slate-600/40', icon: Home };
+        return { label: 'Costo de Vida', color: 'bg-[#94A3B8]/15 text-[#94A3B8] border-[#94A3B8]/30', icon: Home };
       case 'maintenance':
-        return { label: 'Mantenimiento', color: 'bg-orange-500/15 text-orange-300 border-orange-500/30', icon: Sliders };
+        return { label: 'Mantenimiento', color: 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30', icon: Sliders };
       case 'tour':
-        return { label: 'Giras', color: 'bg-teal-500/15 text-teal-300 border-teal-500/30', icon: DollarSign };
+        return { label: 'Giras', color: 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/35', icon: DollarSign };
       case 'contract':
-        return { label: 'Contrato / Manager', color: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30', icon: FileText };
+        return { label: 'Contrato / Manager', color: 'bg-[#38BDF8]/15 text-[#38BDF8] border-[#38BDF8]/30', icon: FileText };
       case 'event':
-        return { label: 'Evento', color: 'bg-rose-500/15 text-rose-300 border-rose-500/30', icon: AlertCircle };
+        return { label: 'Evento', color: 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30', icon: AlertCircle };
       default:
-        return { label: 'Varios', color: 'bg-white/10 text-fg border-white/20', icon: DollarSign };
+        return { label: 'Varios', color: 'bg-[#18181C] text-[#94A3B8] border-[#242429]', icon: DollarSign };
     }
   };
 
@@ -89,7 +89,7 @@ export const FinancialLedgerModal: React.FC<FinancialLedgerModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div
-        className="bg-[#111114] border border-[#242429] max-w-4xl w-full rounded-[6px] p-6 sm:p-8 space-y-6 shadow-2xl text-[#F4F4F6] relative overflow-hidden my-auto"
+        className="lg-modal bg-[#111114] border border-[#242429] max-w-4xl w-full rounded-[8px] p-6 sm:p-8 space-y-6 shadow-2xl text-[#F4F4F6] relative overflow-hidden my-auto"
       >
         {/* Modal Header */}
         <div className="flex items-start justify-between gap-4 border-b border-[#242429] pb-5 relative z-10">

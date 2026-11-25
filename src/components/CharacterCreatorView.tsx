@@ -11,7 +11,6 @@ import {
 } from '../data/avatarPresets';
 import { ArtistAvatar } from './ArtistAvatar';
 import { StreamingEngine } from '../systems/StreamingEngine';
-import { MagneticPrimaryButton } from './ui';
 import {
   ArrowRight,
   User,
@@ -35,20 +34,13 @@ import {
   RotateCcw,
   ShieldCheck,
   Palette,
-  Mic,
-  Radio,
   Headphones,
-  Trophy,
-  Waves,
-  Activity,
-  Layers,
   AlertCircle,
   Plus,
   Minus,
-  Info,
   Target,
-  Wrench,
-  Award
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import {
   generateArtistName,
@@ -148,21 +140,21 @@ export const COUNTRY_GENRE_DEFAULTS: Record<string, { main: string; secondaries:
 
 interface TraitChipProps {
   label: string;
-  variant?: 'purple' | 'emerald' | 'amber' | 'cyan' | 'rose' | 'slate';
+  variant?: 'orange' | 'emerald' | 'amber' | 'cyan' | 'rose' | 'slate';
 }
 
-const TraitChip: React.FC<TraitChipProps> = ({ label, variant = 'purple' }) => {
-  let styleClasses = 'bg-[#FF2A4B]/15 text-[#FF2A4B] border-[#FF2A4B]/30';
+const TraitChip: React.FC<TraitChipProps> = ({ label, variant = 'orange' }) => {
+  let styleClasses = 'bg-[#FF4F00]/15 text-[#FF4F00] border-[#FF4F00]/30';
   if (label.startsWith('-') || variant === 'rose') {
     styleClasses = 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30';
   } else if (variant === 'emerald' || label.includes('Comercial') || label.includes('Ambición') || label.includes('Sociabilidad')) {
-    styleClasses = 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30';
+    styleClasses = 'bg-[#34D399]/15 text-[#34D399] border-[#34D399]/30';
   } else if (variant === 'amber' || label.includes('Carisma') || label.includes('Hype') || label.includes('Fans')) {
     styleClasses = 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30';
   } else if (variant === 'cyan' || label.includes('Habilidad') || label.includes('Disciplina') || label.includes('Constancia') || label.includes('Credibilidad')) {
-    styleClasses = 'bg-[#1C1C21] text-[#F4F0EA] border-[#3F3F46]';
+    styleClasses = 'bg-[#38BDF8]/15 text-[#38BDF8] border-[#38BDF8]/30';
   } else if (variant === 'slate') {
-    styleClasses = 'bg-[#1C1C21] text-[#8E8E99] border-[#26262B]';
+    styleClasses = 'bg-[#18181C] text-[#8E8E99] border-[#242429]';
   }
 
   return (
@@ -182,7 +174,7 @@ export const ARCHETYPE_PRESETS: Record<string, {
   subtitle: string;
   desc: string;
   chips: string[];
-  variant: 'purple' | 'emerald' | 'amber' | 'cyan' | 'slate';
+  variant: 'orange' | 'emerald' | 'amber' | 'cyan' | 'slate';
   traits: PersonalityTraits;
 }> = {
   visionary: {
@@ -191,7 +183,7 @@ export const ARCHETYPE_PRESETS: Record<string, {
     subtitle: 'Vanguardia Creativa & Concepto Crudo',
     desc: 'Prioriza originalidad radical y experimentación sonora. Gran impacto en crítica underground y nichos de culto.',
     chips: ['+Originalidad (35)', '+Creatividad (34)', '-Comercial (18)'],
-    variant: 'purple',
+    variant: 'orange',
     traits: {
       creativity: 34,
       originality: 35,
@@ -271,7 +263,7 @@ export const ARCHETYPE_PRESETS: Record<string, {
     subtitle: 'Ruptura Sonora & Autonomía',
     desc: 'Rompe barreras acústicas sin atarse a fórmulas ni algoritmos comerciales. Búsqueda de una identidad irrepetible.',
     chips: ['+Originalidad (35)', '+Creatividad (34)', '+Riesgo (33)'],
-    variant: 'purple',
+    variant: 'orange',
     traits: {
       originality: 35,
       creativity: 34,
@@ -466,6 +458,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const [isProdigy, setIsProdigy] = useState<boolean>(() => Math.random() < 0.00001);
   const [rollCount, setRollCount] = useState(0);
   const [rollMessage, setRollMessage] = useState<string | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
   // Developer testing keyboard shortcut (Shift+Alt+P in dev mode only)
   useEffect(() => {
@@ -873,23 +866,19 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
   const agePercentage = ((age - 16) / (35 - 16)) * 100;
 
   return (
-    <div
-      className="min-h-screen bg-[#0B0C10] text-[#F4F4F6] p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#FF4F00]/30 selection:text-white relative overflow-x-hidden"
-    >
-      {/* Ambient Studio Lighting Mesh */}
+    <div className="min-h-screen bg-[#09090B] text-[#F4F4F6] p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#FF4F00]/30 selection:text-white relative overflow-x-hidden">
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-white/[0.015] blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-white/[0.01] blur-3xl" />
         <div className="absolute inset-0 analog-grain opacity-20" />
       </div>
 
-      <div className="w-full space-y-6 relative z-10">
+      <div className="w-full space-y-6 relative z-10 max-w-7xl mx-auto">
         {/* Top Navigation Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
           <div className="flex items-start sm:items-center gap-3.5 min-w-0">
             <button
+              type="button"
               onClick={onBackToMenu}
-              className="shrink-0 p-2.5 rounded-[10px] liquid-glass-pill text-[#F4F4F6] hover:bg-white/10 hover:border-white/30 transition-all cursor-pointer"
+              className="shrink-0 p-2.5 rounded-[4px] surface-2 bg-[#18181C] border border-[#242429] text-[#F4F4F6] hover:border-[#3F3F46] transition-all cursor-pointer"
               title="Volver al Menú Principal"
               aria-label="Volver al Menú Principal"
             >
@@ -898,47 +887,47 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             <div>
               <h1 className="kit-text-header font-display text-2xl sm:text-3xl flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span>Creación del Artista</span>
-                <span className="whitespace-nowrap text-xs liquid-glass-pill text-[#00E599] border border-[#00E599]/35 px-3 py-1 rounded-[8px] font-mono tabular-nums font-bold">
+                <span className="whitespace-nowrap text-xs surface-2 bg-[#18181C] text-[#34D399] border border-[#34D399]/35 px-3 py-1 rounded-[4px] font-sans tabular-nums font-bold">
                   Año 1 • 2026
                 </span>
               </h1>
               <p className="text-sm text-[#8E8E99] mt-1 font-sans">
-                Definí tu plaza de origen, sonido de cabecera, horas de estudio iniciales y presupuesto de arranque.
+                Modo Rápido: elegí nombre, país, género y nivel para debutar en segundos, o abrí la personalización avanzada.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5">
-            <MagneticPrimaryButton
+            <button
+              type="button"
               id="btn-quick-start-top"
               onClick={() => handleSubmit()}
-              className="py-3 px-6 text-sm sm:text-base"
+              className="py-3 px-6 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] active:translate-y-[1px] text-white font-display font-extrabold text-sm sm:text-base uppercase tracking-wide flex items-center gap-2 border border-[#FF7833]/50 shadow-md transition-all cursor-pointer"
               title="Comenzar Carrera Directamente"
-              icon={<ArrowRight className="w-4 h-4 text-[#032115] stroke-[2.5]" />}
-              iconPosition="right"
-              label="Comenzar Carrera"
-            />
+            >
+              <span>Comenzar Carrera</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            </button>
           </div>
         </div>
 
         {/* Main Form + Live Preview Layout */}
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          {/* Left Columns (2 cols): Ordered Creation Steps */}
+          {/* Left Columns (2 cols): Modo Rápido arriba + Personalización Avanzada colapsable */}
           <div className="lg:col-span-2 space-y-6">
-            
             {/* ========================================================================= */}
-            {/* PASO 1: Identidad & Origen */}
+            {/* MODO RÁPIDO 1: Identidad & País */}
             {/* ========================================================================= */}
-            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+            <div className="surface-1 bg-[#111114] border border-[#242429] p-5 sm:p-6 space-y-5 rounded-[6px]">
               <div className="flex items-center justify-between pb-1">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <User className="w-4 h-4 text-[#FF4F00]" />
-                  <span>1. Identidad & Origen</span>
+                  <span>Identidad & Mercado de Origen</span>
                 </div>
                 <button
                   type="button"
                   onClick={handleRandomizeName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] liquid-glass-pill text-[#F4F4F6] text-xs font-sans font-semibold hover:bg-white/10 hover:border-white/30 transition-all cursor-pointer group"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] surface-2 bg-[#18181C] border border-[#242429] hover:border-[#FF4F00]/60 text-[#F4F4F6] text-xs font-sans font-semibold transition-all cursor-pointer group"
                   title="Generar nombre contextualizado para el país seleccionado"
                 >
                   <Shuffle className="w-3.5 h-3.5 text-[#FF4F00] group-hover:rotate-180 transition-transform duration-300" />
@@ -946,7 +935,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </button>
               </div>
 
-              {/* Names Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
@@ -954,316 +942,115 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   </label>
                   <input
                     type="text"
+                    placeholder="Dejalo vacío para generar uno al azar..."
                     value={name}
-                    onChange={e => setName(e.target.value)}
-                    className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-sm text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none transition-all font-medium"
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full surface-2 bg-[#18181C] rounded-[4px] px-3.5 py-2.5 text-sm text-[#F4F4F6] placeholder:text-[#52525B] border border-[#242429] focus:border-[#FF4F00] outline-none transition-all font-medium"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
-                    Nombre Real
-                  </label>
-                  <input
-                    type="text"
-                    value={realName}
-                    onChange={e => setRealName(e.target.value)}
-                    className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-sm text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none transition-all font-medium"
-                  />
-                </div>
-              </div>
-
-              {/* Age Slider */}
-              <div className="space-y-2 pt-1">
-                <div className="flex justify-between items-center text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
-                  <span>Edad Inicial</span>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-2xs font-sans font-bold px-2.5 py-0.5 rounded-[8px] liquid-glass-pill border ${ageCat.color}`}>
-                      {ageCat.label}
-                    </span>
-                    <span className="text-[#F4F4F6] font-sans text-sm font-bold tabular-nums liquid-glass-pill px-3 py-0.5 rounded-[8px]">
-                      {age} Años <span className="text-[#8E8E99] text-xs font-normal">• Nacido en {2026 - age}</span>
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="relative pt-1 pb-6">
-                  <input
-                    type="range"
-                    min={16}
-                    max={35}
-                    step={1}
-                    value={age}
-                    onChange={e => setAge(Number(e.target.value))}
-                    style={{
-                      background: `linear-gradient(to right, #FF4F00 0%, #FF4F00 ${agePercentage}%, rgba(255,255,255,0.1) ${agePercentage}%, rgba(255,255,255,0.1) 100%)`
-                    }}
-                    className="w-full h-2 rounded-[4px] border border-white/15 accent-[#FF4F00] cursor-pointer"
-                  />
-                  
-                  <div className="relative w-full text-2xs text-fg-muted font-sans select-none mt-1.5 h-4">
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={activateOnKey}
-                      onClick={() => setAge(16)}
-                      className="absolute left-0 text-left cursor-pointer hover:text-emerald-400"
-                    >
-                      <span className="font-bold text-fg">16 Años</span>{' '}
-                      <span className="hidden sm:inline text-success font-sans font-medium">• Joven Promesa</span>
-                    </span>
-                    
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={activateOnKey}
-                      onClick={() => setAge(25)}
-                      className="absolute left-[47.37%] -translate-x-1/2 text-center cursor-pointer hover:text-primary-soft"
-                    >
-                      <span className="font-bold text-fg">25 Años</span>
-                    </span>
-                    
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={activateOnKey}
-                      onClick={() => setAge(35)}
-                      className="absolute right-0 text-right cursor-pointer hover:text-amber-400"
-                    >
-                      <span className="font-bold text-fg">35 Años</span>{' '}
-                      <span className="hidden sm:inline text-warning font-sans font-medium">• Veterano</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Country & Hometown Selector */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
                   <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
                     País de Origen
                   </label>
                   <select
                     value={country}
-                    onChange={e => handleCountryChange(e.target.value)}
-                    className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-xs text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none cursor-pointer font-medium transition-all"
+                    onChange={(e) => handleCountryChange(e.target.value)}
+                    className="w-full surface-2 bg-[#18181C] rounded-[4px] px-3.5 py-2.5 text-sm text-[#F4F4F6] border border-[#242429] focus:border-[#FF4F00] outline-none cursor-pointer font-medium transition-all"
                   >
-                    {Object.keys(COUNTRY_CITIES).map(c => {
+                    {Object.keys(COUNTRY_CITIES).map((c) => {
                       const meta = COUNTRY_GENRE_DEFAULTS[c];
-                      const flag = meta?.flag || '🌍';
+                      const code = meta?.code || '';
                       return (
                         <option key={c} value={c} className="bg-[#111114] text-[#F4F4F6]">
-                          {flag} {c}
+                          {code ? `[${code}] ` : ''}{c}
                         </option>
                       );
                     })}
                   </select>
                 </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
-                      Ciudad Natal
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsCustomCity(!isCustomCity);
-                        if (!isCustomCity) {
-                          setCustomCityText('');
-                        }
-                      }}
-                      className="text-xs text-[#38BDF8] hover:text-[#7DD3FC] flex items-center gap-1 cursor-pointer font-semibold transition-colors"
-                    >
-                      {isCustomCity ? (
-                        <>
-                          <RotateCcw className="w-3 h-3" />
-                          <span>Elegir de lista</span>
-                        </>
-                      ) : (
-                        <span>+ Personalizar</span>
-                      )}
-                    </button>
-                  </div>
-
-                  {isCustomCity ? (
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <input
-                          type="text"
-                          autoFocus
-                          value={customCityText}
-                          onChange={e => setCustomCityText(e.target.value)}
-                          placeholder="Escribe tu ciudad o barrio (mín. 3 letras)..."
-                          className={`w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-xs text-[#F4F4F6] placeholder:text-[#52525B] outline-none transition-colors border ${
-                            customCityText.trim().length > 0 && !isCustomCityValid
-                              ? 'border-amber-500/60 focus:border-amber-500'
-                              : isCustomCityValid
-                              ? 'border-emerald-500/60 focus:border-emerald-500'
-                              : 'border-white/15 focus:border-[#FF4F00]/60'
-                          }`}
-                        />
-                        {isCustomCityValid && (
-                          <span
-                            className="p-2 rounded-[8px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0"
-                            title="Ciudad válida"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                          </span>
-                        )}
-                      </div>
-                      {customCityText.trim().length > 0 && !isCustomCityValid && (
-                        <p className="text-2xs text-amber-400 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3 shrink-0" />
-                          <span>Ingresa al menos 3 caracteres para tu ciudad personalizada.</span>
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <select
-                      value={city}
-                      onChange={e => setCity(e.target.value)}
-                      className="w-full liquid-glass-subcard rounded-[10px] px-3.5 py-2.5 text-xs text-[#F4F4F6] border border-white/15 focus:border-[#FF4F00]/60 outline-none cursor-pointer font-medium transition-all"
-                    >
-                      {(COUNTRY_CITIES[country] || []).map(ci => (
-                        <option key={ci} value={ci} className="bg-[#111114] text-[#F4F4F6]">
-                          {ci}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
               </div>
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 2: Estilo Musical & Géneros */}
+            {/* MODO RÁPIDO 2: Género Musical Principal */}
             {/* ========================================================================= */}
-            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+            <div className="surface-1 bg-[#111114] border border-[#242429] p-5 sm:p-6 space-y-4 rounded-[6px]">
               <div className="pb-1 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <Disc3 className="w-4 h-4 text-[#FF4F00]" />
-                  <span>2. Estilo Musical & Géneros</span>
+                  <span>Género Musical Principal</span>
                 </div>
                 {COUNTRY_GENRE_DEFAULTS[country] && (
-                  <span className="text-2xs text-[#FF4F00] liquid-glass-pill border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[8px] font-sans font-bold">
-                    Escena {COUNTRY_GENRE_DEFAULTS[country].flag} {country}
+                  <span className="text-2xs text-[#FF4F00] surface-2 bg-[#18181C] border border-[#FF4F00]/30 px-2.5 py-0.5 rounded-[4px] font-sans font-bold">
+                    Escena {COUNTRY_GENRE_DEFAULTS[country].code} • {country}
                   </span>
                 )}
               </div>
 
-              {/* Main Genre Selection Grid */}
-              <div className="space-y-2">
-                <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
-                  Género Musical Principal *
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                  {Object.values(world.genres).map((g: Genre) => {
-                    const isSelected = mainGenreId === g.id;
-                    const isRecommended = COUNTRY_GENRE_DEFAULTS[country]?.main === g.id;
-                    const isCountrySecondary = COUNTRY_GENRE_DEFAULTS[country]?.secondaries.includes(g.id);
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {Object.values(world.genres).map((g: Genre) => {
+                  const isSelected = mainGenreId === g.id;
+                  const isRecommended = COUNTRY_GENRE_DEFAULTS[country]?.main === g.id;
+                  const isCountrySecondary = COUNTRY_GENRE_DEFAULTS[country]?.secondaries.includes(g.id);
 
-                    return (
-                      <button
-                        type="button"
-                        key={g.id}
-                        onClick={() => {
-                          setMainGenreId(g.id);
-                          setSecondaryGenres(secondaryGenres.filter(sg => sg !== g.id));
-                        }}
-                        className={`p-3.5 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden group ${
-                          isSelected
-                            ? 'liquid-glass-subcard border-[#FF4F00] shadow-[0_0_18px_rgba(255,79,0,0.25)] text-white'
-                            : isRecommended
-                            ? 'liquid-glass-subcard border-[#FF4F00]/30 hover:border-[#FF4F00]'
-                            : 'liquid-glass-subcard border-white/10 hover:border-white/25'
-                        }`}
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-bold text-[#F4F4F6]">
-                              {g.name}
-                            </span>
-                            {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />}
-                          </div>
-                          <span className="text-2xs text-[#8E8E99] line-clamp-1">
-                            {g.aestheticTone || g.originCountry || ''}
-                          </span>
+                  return (
+                    <button
+                      type="button"
+                      key={g.id}
+                      onClick={() => {
+                        setMainGenreId(g.id);
+                        setSecondaryGenres(secondaryGenres.filter((sg) => sg !== g.id));
+                      }}
+                      className={`p-3.5 rounded-[4px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        isSelected
+                          ? 'surface-2 bg-[#18181C] border-[#FF4F00] text-white'
+                          : isRecommended
+                          ? 'surface-2 bg-[#18181C] border-[#FF4F00]/35 hover:border-[#FF4F00]'
+                          : 'surface-2 bg-[#18181C] border-[#242429] hover:border-[#3F3F46]'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-[#F4F4F6]">{g.name}</span>
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />}
                         </div>
+                        <span className="text-2xs text-[#8E8E99] line-clamp-1">
+                          {g.aestheticTone || g.originCountry || ''}
+                        </span>
+                      </div>
 
-                        {isRecommended && (
-                          <span className="text-2xs font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/15 px-2 py-0.5 rounded-[6px] border border-[#FF4F00]/35 w-fit mt-2">
-                           Sugerido para {country}
-                          </span>
-                        )}
-                        {!isRecommended && isCountrySecondary && (
-                          <span className="text-2xs font-sans font-semibold text-[#8E8E99] liquid-glass-pill px-2 py-0.5 rounded-[6px] w-fit mt-2">
-                            Popular en {country}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Secondary Subgenres (Chips/Badges) */}
-              <div className="space-y-2 pt-2">
-                <div className="flex justify-between items-center">
-                  <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
-                    Influencias & Subgéneros Secundarios
-                  </label>
-                  <span className="text-xs font-sans text-[#FF4F00] font-bold">
-                    {cleanCountTag(secondaryGenres.length, 3, 'seleccionados')}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {Object.values(world.genres)
-                    .filter((g: Genre) => g.id !== mainGenreId)
-                    .map((g: Genre) => {
-                      const isSelected = secondaryGenres.includes(g.id);
-                      const isRecommendedSub = COUNTRY_GENRE_DEFAULTS[country]?.secondaries.includes(g.id);
-
-                      return (
-                        <button
-                          type="button"
-                          key={g.id}
-                          onClick={() => toggleSecondaryGenre(g.id)}
-                          className={`px-3 py-1.5 rounded-[8px] text-xs font-sans font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
-                            isSelected
-                              ? 'liquid-glass-pill border-[#FF4F00] text-white bg-[#FF4F00]/20 shadow-[0_0_12px_rgba(255,79,0,0.2)]'
-                              : isRecommendedSub
-                              ? 'liquid-glass-pill border-[#FF4F00]/35 text-[#FF4F00] hover:text-[#F4F4F6] hover:border-[#FF4F00]'
-                              : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6] hover:border-white/25'
-                          }`}
-                        >
-                          <span>{isSelected ? '✓ ' : '+ '}</span>
-                          <span>{g.name}</span>
-                          {isRecommendedSub && !isSelected && (
-                            <span className="text-2xs text-[#FF4F00] font-sans">★</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                </div>
+                      {isRecommended && (
+                        <span className="text-2xs font-sans font-bold text-[#FF4F00] bg-[#FF4F00]/15 px-2 py-0.5 rounded-[4px] border border-[#FF4F00]/35 w-fit mt-2">
+                          Sugerido para {country}
+                        </span>
+                      )}
+                      {!isRecommended && isCountrySecondary && (
+                        <span className="text-2xs font-sans font-semibold text-[#8E8E99] bg-[#111114] border border-[#242429] px-2 py-0.5 rounded-[4px] w-fit mt-2">
+                          Popular en {country}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 3: Arquetipo & Filosofía Creativa (Rango Underground: 18 - 35) */}
+            {/* MODO RÁPIDO 3: Arquetipo Artístico */}
             {/* ========================================================================= */}
-            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+            <div className="surface-1 bg-[#111114] border border-[#242429] p-5 sm:p-6 space-y-4 rounded-[6px]">
               <div className="flex items-center justify-between pb-1 flex-wrap gap-2">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <Brain className="w-4 h-4 text-[#FF4F00]" />
-                  <span>3. Arquetipo Artístico & Habilidades Iniciales</span>
+                  <span>Arquetipo Artístico</span>
                 </div>
-                <span className="text-2xs font-sans tabular-nums text-[#8E8E99] liquid-glass-pill px-3 py-1 rounded-[8px]">
-                  Base Amateur: 18–35 pts • Promedio: <strong className="text-[#F4F4F6] font-sans">{averageSkillRating}/100</strong>
+                <span className="text-2xs font-sans tabular-nums text-[#8E8E99] surface-2 bg-[#18181C] border border-[#242429] px-3 py-1 rounded-[4px]">
+                  Base Amateur: 18–35 pts • Promedio:{' '}
+                  <strong className="text-[#F4F4F6] font-sans">{averageSkillRating}/100</strong>
                 </span>
               </div>
 
-              {/* Archetypes Grid with Stylized TraitChip components */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   {
@@ -1271,7 +1058,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     label: 'El Visionario',
                     desc: 'Prioriza originalidad radical y experimentación sonora. Gran impacto en crítica underground.',
                     chips: ['+Originalidad (35)', '+Creatividad (34)', '-Comercial (18)'],
-                    variant: 'purple' as const
+                    variant: 'orange' as const
                   },
                   {
                     id: 'entrepreneur',
@@ -1299,7 +1086,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     label: 'Vanguardia Pura',
                     desc: 'Rompe barreras sonoras sin atarse a tendencias ni algoritmos comerciales.',
                     chips: ['+Originalidad (35)', '+Creatividad (34)', '+Riesgo (33)'],
-                    variant: 'purple' as const
+                    variant: 'orange' as const
                   },
                   {
                     id: 'custom',
@@ -1314,23 +1101,22 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                     <button
                       type="button"
                       key={item.id}
-                      onClick={() => setArchetype(item.id as any)}
-                      className={`p-4 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between group ${
+                      onClick={() => {
+                        setArchetype(item.id as any);
+                        if (item.id === 'custom') setShowAdvanced(true);
+                      }}
+                      className={`p-4 rounded-[4px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'liquid-glass-subcard border-[#FF4F00] shadow-[0_0_18px_rgba(255,79,0,0.25)] text-white'
-                          : 'liquid-glass-subcard border-white/10 hover:border-white/25'
+                          ? 'surface-2 bg-[#18181C] border-[#FF4F00] text-white'
+                          : 'surface-2 bg-[#18181C] border-[#242429] hover:border-[#3F3F46]'
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-bold text-[#F4F4F6]">
-                            {item.label}
-                          </span>
+                          <span className="text-xs font-bold text-[#F4F4F6]">{item.label}</span>
                           {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />}
                         </div>
-                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-3">
-                          {item.desc}
-                        </p>
+                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-3">{item.desc}</p>
                       </div>
 
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -1342,130 +1128,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   );
                 })}
               </div>
-
-              {/* Mostrar los 10 controles punto por punto ÚNICAMENTE en modo Personalizado */}
-              {archetype === 'custom' && (
-                <div className="liquid-glass-subcard p-4 rounded-[12px] border border-white/15 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Sliders className="w-4 h-4 text-[#FF4F00]" />
-                      <span className="text-xs font-bold text-[#F4F4F6] uppercase tracking-wider font-sans">
-                        Reparto Manual de Habilidades
-                      </span>
-                      <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
-                        (Base {CUSTOM_BASE_STAT} • Máx {CUSTOM_MAX_STAT})
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        className={`px-3 py-1 rounded-[8px] border text-xs font-bold font-sans tabular-nums ${
-                          remainingCustomPoints === 0
-                            ? 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40'
-                            : remainingCustomPoints > 0
-                            ? 'liquid-glass-pill text-[#FF4F00] border-[#FF4F00]/50'
-                            : 'bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/40'
-                        }`}
-                      >
-                        Libres: {remainingCustomPoints}/{CUSTOM_POINTS_POOL} pts
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleApplyCustomPreset('balanced')}
-                        className="px-2.5 py-1 rounded-[6px] text-2xs font-semibold liquid-glass-pill text-[#F4F4F6] hover:bg-white/10 cursor-pointer"
-                      >
-                        Equilibrar
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleApplyCustomPreset('reset')}
-                        className="px-2.5 py-1 rounded-[6px] text-2xs font-semibold liquid-glass-pill text-[#EF4444] hover:bg-red-500/10 cursor-pointer flex items-center gap-1"
-                      >
-                        <RotateCcw className="w-3 h-3" />
-                        <span>Reiniciar</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* 10 Interactive Custom Trait Controls */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {TRAIT_METADATA_LIST.map((meta) => {
-                      const val = customTraits[meta.key];
-                      const IconComp = meta.icon;
-                      const canIncrement = remainingCustomPoints > 0 && val < CUSTOM_MAX_STAT;
-                      const canDecrement = val > CUSTOM_BASE_STAT;
-
-                      return (
-                        <div
-                          key={meta.key}
-                          className="liquid-glass-pill p-2.5 rounded-[10px] flex items-center justify-between gap-3"
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <IconComp className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
-                            <span className="text-xs font-semibold text-[#F4F4F6] truncate" title={meta.desc}>
-                              {meta.shortLabel}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => handleStepTrait(meta.key, -1)}
-                              disabled={!canDecrement}
-                              className={`p-1 rounded-[6px] border transition-colors cursor-pointer ${
-                                canDecrement
-                                  ? 'liquid-glass-pill text-[#F4F4F6] hover:border-[#EF4444]'
-                                  : 'opacity-40 text-[#52525B] cursor-not-allowed'
-                              }`}
-                              title="Disminuir -1 punto"
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-
-                            <input
-                              type="range"
-                              min={CUSTOM_BASE_STAT}
-                              max={CUSTOM_MAX_STAT}
-                              step={1}
-                              value={val}
-                              onChange={e => handleCustomTraitChange(meta.key, Number(e.target.value))}
-                              className="w-20 sm:w-24 h-1.5 rounded-[4px] border border-white/15 accent-[#FF4F00] cursor-pointer"
-                            />
-
-                            <button
-                              type="button"
-                              onClick={() => handleStepTrait(meta.key, 1)}
-                              disabled={!canIncrement}
-                              className={`p-1 rounded-[6px] border transition-colors cursor-pointer ${
-                                canIncrement
-                                  ? 'liquid-glass-pill text-[#F4F4F6] hover:border-[#FF4F00]'
-                                  : 'opacity-40 text-[#52525B] cursor-not-allowed'
-                              }`}
-                              title="Aumentar +1 punto"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-
-                            <span className="font-sans font-bold text-xs tabular-nums text-[#F4F4F6] w-7 text-right">
-                              {val}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 4: Punto de Partida / Background */}
+            {/* MODO RÁPIDO 4: Nivel Inicial */}
             {/* ========================================================================= */}
-            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
+            <div className="surface-1 bg-[#111114] border border-[#242429] p-5 sm:p-6 space-y-4 rounded-[6px]">
               <div className="pb-1">
                 <div className="flex items-center gap-2 text-[#F4F4F6] font-sans font-bold text-xs uppercase tracking-wider">
                   <TrendingUp className="w-4 h-4 text-[#FF4F00]" />
-                  <span>4. Punto de Partida / Background</span>
+                  <span>Nivel Inicial / Punto de Partida</span>
                 </div>
               </div>
 
@@ -1502,24 +1174,20 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                       type="button"
                       key={item.id}
                       onClick={() => setStartingLevel(item.id as any)}
-                      className={`p-4 rounded-[12px] border text-left transition-all cursor-pointer flex flex-col justify-between group ${
+                      className={`p-4 rounded-[4px] border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'liquid-glass-subcard border-[#FF4F00] shadow-[0_0_18px_rgba(255,79,0,0.25)] text-white'
-                          : 'liquid-glass-subcard border-white/10 hover:border-white/25'
+                          ? 'surface-2 bg-[#18181C] border-[#FF4F00] text-white'
+                          : 'surface-2 bg-[#18181C] border-[#242429] hover:border-[#3F3F46]'
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-bold text-[#F4F4F6]">
-                            {item.label}
-                          </span>
+                          <span className="text-xs font-bold text-[#F4F4F6]">{item.label}</span>
                           {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />}
                         </div>
-                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-3">
-                          {item.desc}
-                        </p>
+                        <p className="text-xs text-[#8E8E99] leading-relaxed mb-3">{item.desc}</p>
                       </div>
-                      <span className="text-2xs font-sans tabular-nums text-[#10B981] font-bold bg-[#10B981]/15 px-2.5 py-0.5 rounded-[6px] border border-[#10B981]/30 w-fit">
+                      <span className="text-2xs font-sans tabular-nums text-[#34D399] font-bold bg-[#34D399]/15 px-2.5 py-0.5 rounded-[4px] border border-[#34D399]/30 w-fit">
                         {item.badge}
                       </span>
                     </button>
@@ -1529,207 +1197,559 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
             </div>
 
             {/* ========================================================================= */}
-            {/* PASO 5: Identidad Visual & Avatar (Bloque Compacto) */}
+            {/* ACORDEÓN COLAPSABLE: PERSONALIZACIÓN AVANZADA */}
             {/* ========================================================================= */}
-            <div className="liquid-glass-card p-5 sm:p-6 space-y-5 rounded-[18px]">
-              <div className="flex items-center justify-between pb-1 flex-wrap gap-2">
-                <div className="flex items-center gap-2 text-[#F4F4F6] font-sans text-xs uppercase tracking-wider font-bold">
-                  <Palette className="w-4 h-4 text-[#FF4F00]" />
-                  <span>5. Identidad Visual & Avatar</span>
+            <div className="surface-1 bg-[#111114] border border-[#242429] rounded-[6px] overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setShowAdvanced((prev) => !prev)}
+                aria-expanded={showAdvanced}
+                className="w-full p-5 flex items-center justify-between gap-3 text-left hover:bg-[#18181C] transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Sliders className="w-4 h-4 text-[#FF4F00] shrink-0" />
+                  <span className="text-xs sm:text-sm font-bold text-[#F4F4F6]">
+                    Personalización Avanzada (Subgéneros, Atributos Point-Buy, Avatar y Prodigio)
+                  </span>
                 </div>
+                {showAdvanced ? (
+                  <ChevronUp className="w-4 h-4 text-[#8E8E99] shrink-0" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-[#8E8E99] shrink-0" />
+                )}
+              </button>
 
-                <div className="flex items-center gap-1 liquid-glass-pill p-1 rounded-[8px]">
-                  <button
-                    type="button"
-                    onClick={() => setAvatarType('symbol')}
-                    className={`px-3 py-1 rounded-[6px] font-sans text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      avatarType === 'symbol'
-                        ? 'bg-[#FF4F00] text-white shadow-sm'
-                        : 'text-[#8E8E99] hover:text-[#F4F4F6]'
-                    }`}
-                  >
-                    <Crown className="w-3.5 h-3.5" />
-                    <span>Símbolo</span>
-                  </button>
+              {showAdvanced && (
+                <div className="p-5 sm:p-6 pt-2 border-t border-[#242429] space-y-6">
+                  {/* Nombre Real, Ciudad Natal y Edad */}
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#8E8E99]">
+                      Biografía, Ciudad & Edad
+                    </h3>
 
-                  <button
-                    type="button"
-                    onClick={() => setAvatarType('initials')}
-                    className={`px-3 py-1 rounded-[6px] font-sans text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      avatarType === 'initials'
-                        ? 'bg-[#FF4F00] text-white shadow-sm'
-                        : 'text-[#8E8E99] hover:text-[#F4F4F6]'
-                    }`}
-                  >
-                    <User className="w-3.5 h-3.5" />
-                    <span>Iniciales</span>
-                  </button>
-                </div>
-              </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider mb-1.5">
+                          Nombre Real
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Opcional..."
+                          value={realName}
+                          onChange={(e) => setRealName(e.target.value)}
+                          className="w-full surface-2 bg-[#18181C] rounded-[4px] px-3.5 py-2.5 text-sm text-[#F4F4F6] placeholder:text-[#52525B] border border-[#242429] focus:border-[#FF4F00] outline-none transition-all font-medium"
+                        />
+                      </div>
 
-              {/* Presets rápidos en una sola fila de chips */}
-              <div className="space-y-1.5">
-                <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
-                  Presets Rápidos
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {VECTOR_PRESETS.map((preset) => {
-                    const isSelected = selectedPresetId === preset.id && avatarColor === preset.color && avatarIcon === preset.icon;
-                    return (
-                      <button
-                        type="button"
-                        key={preset.id}
-                        onClick={() => handleApplyPreset(preset)}
-                        className={`px-2.5 py-1.5 rounded-[8px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-2 ${
-                          isSelected
-                            ? 'liquid-glass-pill border-[#FF4F00] text-white bg-[#FF4F00]/20 shadow-[0_0_12px_rgba(255,79,0,0.2)]'
-                            : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6]'
-                        }`}
-                      >
-                        <span className={`w-3.5 h-3.5 rounded-[4px] bg-gradient-to-tr ${preset.color} shrink-0 border border-white/20`} />
-                        <span>{preset.name.split('(')[0].trim()}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Selector compacto de Símbolo y Paleta */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                {avatarType === 'symbol' ? (
-                  <div className="space-y-1.5">
-                    <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
-                      Ícono Escénico
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {AVATAR_SYMBOLS.map((sym: AvatarSymbolOption) => {
-                        const isSelected = avatarIcon === sym.id;
-                        const IconComp = sym.icon;
-                        return (
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
+                            Ciudad Natal
+                          </label>
                           <button
                             type="button"
-                            key={sym.id}
                             onClick={() => {
-                              setAvatarIcon(sym.id);
-                              setSelectedPresetId(null);
+                              setIsCustomCity(!isCustomCity);
+                              if (!isCustomCity) setCustomCityText('');
                             }}
-                            title={sym.label}
-                            className={`px-2.5 py-1.5 rounded-[8px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                              isSelected
-                                ? 'liquid-glass-pill border-[#FF4F00] text-[#FF4F00] bg-[#FF4F00]/15'
-                                : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6]'
-                            }`}
+                            className="text-xs text-[#38BDF8] hover:text-[#7DD3FC] flex items-center gap-1 cursor-pointer font-semibold transition-colors"
                           >
-                            <IconComp className="w-3.5 h-3.5" />
-                            <span>{sym.label.split('/')[0].trim()}</span>
+                            {isCustomCity ? (
+                              <>
+                                <RotateCcw className="w-3 h-3" />
+                                <span>Elegir de lista</span>
+                              </>
+                            ) : (
+                              <span>+ Personalizar</span>
+                            )}
                           </button>
+                        </div>
+
+                        {isCustomCity ? (
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <input
+                                type="text"
+                                value={customCityText}
+                                onChange={(e) => setCustomCityText(e.target.value)}
+                                placeholder="Escribe tu ciudad o barrio (mín. 3 letras)..."
+                                className={`w-full surface-2 bg-[#18181C] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F4F6] placeholder:text-[#52525B] outline-none transition-colors border ${
+                                  customCityText.trim().length > 0 && !isCustomCityValid
+                                    ? 'border-[#F59E0B]'
+                                    : isCustomCityValid
+                                    ? 'border-[#34D399]'
+                                    : 'border-[#242429] focus:border-[#FF4F00]'
+                                }`}
+                              />
+                              {isCustomCityValid && (
+                                <span
+                                  className="p-2 rounded-[4px] bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/35 shrink-0"
+                                  title="Ciudad válida"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                </span>
+                              )}
+                            </div>
+                            {customCityText.trim().length > 0 && !isCustomCityValid && (
+                              <p className="text-2xs text-[#F59E0B] flex items-center gap-1">
+                                <AlertCircle className="w-3 h-3 shrink-0" />
+                                <span>Ingresa al menos 3 caracteres para tu ciudad personalizada.</span>
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <select
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            className="w-full surface-2 bg-[#18181C] rounded-[4px] px-3.5 py-2.5 text-xs text-[#F4F4F6] border border-[#242429] focus:border-[#FF4F00] outline-none cursor-pointer font-medium transition-all"
+                          >
+                            {(COUNTRY_CITIES[country] || []).map((ci) => (
+                              <option key={ci} value={ci} className="bg-[#111114] text-[#F4F4F6]">
+                                {ci}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Age Slider */}
+                    <div className="space-y-2 pt-1">
+                      <div className="flex justify-between items-center text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
+                        <span>Edad Inicial</span>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-2xs font-sans font-bold px-2.5 py-0.5 rounded-[4px] border ${ageCat.color}`}>
+                            {ageCat.label}
+                          </span>
+                          <span className="text-[#F4F4F6] font-sans text-sm font-bold tabular-nums surface-2 bg-[#18181C] border border-[#242429] px-3 py-0.5 rounded-[4px]">
+                            {age} Años <span className="text-[#8E8E99] text-xs font-normal">• Nacido en {2026 - age}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="relative pt-1 pb-6">
+                        <input
+                          type="range"
+                          min={16}
+                          max={35}
+                          step={1}
+                          value={age}
+                          onChange={(e) => setAge(Number(e.target.value))}
+                          style={{
+                            background: `linear-gradient(to right, #FF4F00 0%, #FF4F00 ${agePercentage}%, #242429 ${agePercentage}%, #242429 100%)`
+                          }}
+                          className="w-full h-2 rounded-[4px] border border-[#242429] accent-[#FF4F00] cursor-pointer"
+                        />
+
+                        <div className="relative w-full text-2xs text-fg-muted font-sans select-none mt-1.5 h-4">
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={activateOnKey}
+                            onClick={() => setAge(16)}
+                            className="absolute left-0 text-left cursor-pointer hover:text-[#34D399]"
+                          >
+                            <span className="font-bold text-fg">16 Años</span>{' '}
+                            <span className="hidden sm:inline text-[#34D399] font-sans font-medium">• Joven Promesa</span>
+                          </span>
+
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={activateOnKey}
+                            onClick={() => setAge(25)}
+                            className="absolute left-[47.37%] -translate-x-1/2 text-center cursor-pointer hover:text-[#38BDF8]"
+                          >
+                            <span className="font-bold text-fg">25 Años</span>
+                          </span>
+
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={activateOnKey}
+                            onClick={() => setAge(35)}
+                            className="absolute right-0 text-right cursor-pointer hover:text-[#F59E0B]"
+                          >
+                            <span className="font-bold text-fg">35 Años</span>{' '}
+                            <span className="hidden sm:inline text-[#F59E0B] font-sans font-medium">• Veterano</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Secondary Subgenres */}
+                  <div className="space-y-2 pt-3 border-t border-[#242429]">
+                    <div className="flex justify-between items-center">
+                      <label className="block text-xs font-sans font-semibold text-[#8E8E99] uppercase tracking-wider">
+                        Influencias & Subgéneros Secundarios
+                      </label>
+                      <span className="text-xs font-sans text-[#FF4F00] font-bold tabular-nums">
+                        {cleanCountTag(secondaryGenres.length, 3, 'seleccionados')}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.values(world.genres)
+                        .filter((g: Genre) => g.id !== mainGenreId)
+                        .map((g: Genre) => {
+                          const isSelected = secondaryGenres.includes(g.id);
+                          const isRecommendedSub = COUNTRY_GENRE_DEFAULTS[country]?.secondaries.includes(g.id);
+
+                          return (
+                            <button
+                              type="button"
+                              key={g.id}
+                              onClick={() => toggleSecondaryGenre(g.id)}
+                              className={`px-3 py-1.5 rounded-[4px] text-xs font-sans font-semibold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                                isSelected
+                                  ? 'border-[#FF4F00] text-white bg-[#FF4F00]/20'
+                                  : isRecommendedSub
+                                  ? 'surface-2 bg-[#18181C] border-[#FF4F00]/40 text-[#FF4F00] hover:text-[#F4F4F6]'
+                                  : 'surface-2 bg-[#18181C] border-[#242429] text-[#8E8E99] hover:text-[#F4F4F6]'
+                              }`}
+                            >
+                              {isSelected ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                              <span>{g.name}</span>
+                              {isRecommendedSub && !isSelected && (
+                                <Star className="w-3 h-3 text-[#FF4F00]" />
+                              )}
+                            </button>
+                          );
+                        })}
+                    </div>
+                  </div>
+
+                  {/* Point-Buy Manual Attributes */}
+                  <div className="surface-2 bg-[#18181C] p-4 rounded-[4px] border border-[#242429] space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Sliders className="w-4 h-4 text-[#FF4F00]" />
+                        <span className="text-xs font-bold text-[#F4F4F6] uppercase tracking-wider font-sans">
+                          Reparto Manual de Habilidades (Point-Buy)
+                        </span>
+                        <span className="text-2xs text-[#8E8E99] font-sans tabular-nums">
+                          (Base {CUSTOM_BASE_STAT} • Máx {CUSTOM_MAX_STAT})
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {archetype !== 'custom' && (
+                          <button
+                            type="button"
+                            onClick={() => setArchetype('custom')}
+                            className="px-2.5 py-1 rounded-[4px] text-2xs font-bold bg-[#FF4F00] text-white cursor-pointer"
+                          >
+                            Activar Modo Manual
+                          </button>
+                        )}
+                        <span
+                          className={`px-3 py-1 rounded-[4px] border text-xs font-bold font-sans tabular-nums ${
+                            remainingCustomPoints === 0
+                              ? 'bg-[#34D399]/15 text-[#34D399] border-[#34D399]/35'
+                              : remainingCustomPoints > 0
+                              ? 'bg-[#111114] text-[#FF4F00] border-[#FF4F00]/45'
+                              : 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/40'
+                          }`}
+                        >
+                          Libres: {remainingCustomPoints}/{CUSTOM_POINTS_POOL} pts
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setArchetype('custom');
+                            handleApplyCustomPreset('balanced');
+                          }}
+                          className="px-2.5 py-1 rounded-[4px] text-2xs font-semibold bg-[#111114] border border-[#242429] text-[#F4F4F6] hover:border-[#3F3F46] cursor-pointer"
+                        >
+                          Equilibrar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setArchetype('custom');
+                            handleApplyCustomPreset('reset');
+                          }}
+                          className="px-2.5 py-1 rounded-[4px] text-2xs font-semibold bg-[#111114] border border-[#242429] text-[#EF4444] hover:border-[#EF4444]/40 cursor-pointer flex items-center gap-1"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Reiniciar</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-2.5 ${archetype !== 'custom' ? 'opacity-60' : ''}`}>
+                      {TRAIT_METADATA_LIST.map((meta) => {
+                        const val = archetype === 'custom' ? customTraits[meta.key] : computedPersonality[meta.key];
+                        const IconComp = meta.icon;
+                        const canIncrement = archetype === 'custom' && remainingCustomPoints > 0 && val < CUSTOM_MAX_STAT;
+                        const canDecrement = archetype === 'custom' && val > CUSTOM_BASE_STAT;
+
+                        return (
+                          <div
+                            key={meta.key}
+                            className="bg-[#111114] border border-[#242429] p-2.5 rounded-[4px] flex items-center justify-between gap-3"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <IconComp className="w-3.5 h-3.5 text-[#FF4F00] shrink-0" />
+                              <span className="text-xs font-semibold text-[#F4F4F6] truncate" title={meta.desc}>
+                                {meta.shortLabel}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (archetype !== 'custom') setArchetype('custom');
+                                  handleStepTrait(meta.key, -1);
+                                }}
+                                disabled={!canDecrement}
+                                className={`p-1 rounded-[4px] border transition-colors cursor-pointer ${
+                                  canDecrement
+                                    ? 'bg-[#18181C] border-[#242429] text-[#F4F4F6] hover:border-[#EF4444]'
+                                    : 'opacity-40 border-[#242429] text-[#52525B] cursor-not-allowed'
+                                }`}
+                                title="Disminuir -1 punto"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+
+                              <input
+                                type="range"
+                                min={CUSTOM_BASE_STAT}
+                                max={CUSTOM_MAX_STAT}
+                                step={1}
+                                value={val}
+                                disabled={archetype !== 'custom'}
+                                onChange={(e) => handleCustomTraitChange(meta.key, Number(e.target.value))}
+                                className="w-20 sm:w-24 h-1.5 rounded-[4px] border border-[#242429] accent-[#FF4F00] cursor-pointer"
+                              />
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (archetype !== 'custom') setArchetype('custom');
+                                  handleStepTrait(meta.key, 1);
+                                }}
+                                disabled={!canIncrement}
+                                className={`p-1 rounded-[4px] border transition-colors cursor-pointer ${
+                                  canIncrement
+                                    ? 'bg-[#18181C] border-[#242429] text-[#F4F4F6] hover:border-[#FF4F00]'
+                                    : 'opacity-40 border-[#242429] text-[#52525B] cursor-not-allowed'
+                                }`}
+                                title="Aumentar +1 punto"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+
+                              <span className="font-sans font-bold text-xs tabular-nums text-[#F4F4F6] w-7 text-right">
+                                {val}
+                              </span>
+                            </div>
+                          </div>
                         );
                       })}
                     </div>
                   </div>
-                ) : (
-                  <div className="space-y-1.5">
-                    <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
-                      Modo Iniciales
-                    </span>
-                    <p className="text-xs text-[#8E8E99] leading-relaxed">
-                      Usa las iniciales de tu nombre artístico sobre el acabado cromático seleccionado.
-                    </p>
-                  </div>
-                )}
 
-                <div className="space-y-1.5">
-                  <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
-                    Color de Fondo
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
-                      const isSelected = avatarColor === p.val;
-                      return (
+                  {/* Identidad Visual & Avatar */}
+                  <div className="space-y-4 pt-3 border-t border-[#242429]">
+                    <div className="flex items-center justify-between pb-1 flex-wrap gap-2">
+                      <div className="flex items-center gap-2 text-[#F4F4F6] font-sans text-xs uppercase tracking-wider font-bold">
+                        <Palette className="w-4 h-4 text-[#FF4F00]" />
+                        <span>Identidad Visual & Avatar</span>
+                      </div>
+
+                      <div className="flex items-center gap-1 surface-2 bg-[#18181C] border border-[#242429] p-1 rounded-[4px]">
                         <button
                           type="button"
-                          key={p.id}
-                          onClick={() => {
-                            setAvatarColor(p.val);
-                            setSelectedPresetId(null);
-                          }}
-                          title={p.description}
-                          className={`px-2.5 py-1.5 rounded-[8px] border text-xs font-sans font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                            isSelected
-                              ? 'liquid-glass-pill border-[#FF4F00] text-white bg-[#FF4F00]/15'
-                              : 'liquid-glass-pill border-white/10 text-[#8E8E99] hover:text-[#F4F4F6]'
+                          onClick={() => setAvatarType('symbol')}
+                          className={`px-3 py-1 rounded-[3px] font-sans text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                            avatarType === 'symbol' ? 'bg-[#FF4F00] text-white' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
                           }`}
                         >
-                          <span className={`w-3.5 h-3.5 rounded-[4px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/20`} />
-                          <span>{p.label.split('(')[0].trim()}</span>
+                          <Crown className="w-3.5 h-3.5" />
+                          <span>Símbolo</span>
                         </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* ========================================================================= */}
-            {/* RASGO ULTRA-RARO: Promesa / Prodigio */}
-            {/* ========================================================================= */}
-            <div
-              className={`p-5 rounded-[18px] border transition-all ${
-                isProdigy
-                  ? 'liquid-glass-card border-[#F59E0B] shadow-[0_0_24px_rgba(245,158,11,0.25)]'
-                  : 'liquid-glass-card border-white/15'
-              }`}
-            >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3.5">
+                        <button
+                          type="button"
+                          onClick={() => setAvatarType('initials')}
+                          className={`px-3 py-1 rounded-[3px] font-sans text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                            avatarType === 'initials' ? 'bg-[#FF4F00] text-white' : 'text-[#8E8E99] hover:text-[#F4F4F6]'
+                          }`}
+                        >
+                          <User className="w-3.5 h-3.5" />
+                          <span>Iniciales</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
+                        Presets Rápidos
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {VECTOR_PRESETS.map((preset) => {
+                          const isSelected =
+                            selectedPresetId === preset.id &&
+                            avatarColor === preset.color &&
+                            avatarIcon === preset.icon;
+                          return (
+                            <button
+                              type="button"
+                              key={preset.id}
+                              onClick={() => handleApplyPreset(preset)}
+                              className={`px-2.5 py-1.5 rounded-[4px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-2 ${
+                                isSelected
+                                  ? 'border-[#FF4F00] text-white bg-[#FF4F00]/20'
+                                  : 'surface-2 bg-[#18181C] border-[#242429] text-[#8E8E99] hover:text-[#F4F4F6]'
+                              }`}
+                            >
+                              <span
+                                className={`w-3.5 h-3.5 rounded-[3px] bg-gradient-to-tr ${preset.color} shrink-0 border border-white/20`}
+                              />
+                              <span>{preset.name.split('(')[0].trim()}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                      {avatarType === 'symbol' ? (
+                        <div className="space-y-1.5">
+                          <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
+                            Ícono Escénico
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {AVATAR_SYMBOLS.map((sym: AvatarSymbolOption) => {
+                              const isSelected = avatarIcon === sym.id;
+                              const IconComp = sym.icon;
+                              return (
+                                <button
+                                  type="button"
+                                  key={sym.id}
+                                  onClick={() => {
+                                    setAvatarIcon(sym.id);
+                                    setSelectedPresetId(null);
+                                  }}
+                                  title={sym.label}
+                                  className={`px-2.5 py-1.5 rounded-[4px] border text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                                    isSelected
+                                      ? 'border-[#FF4F00] text-[#FF4F00] bg-[#FF4F00]/15'
+                                      : 'surface-2 bg-[#18181C] border-[#242429] text-[#8E8E99] hover:text-[#F4F4F6]'
+                                  }`}
+                                >
+                                  <IconComp className="w-3.5 h-3.5" />
+                                  <span>{sym.label.split('/')[0].trim()}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-1.5">
+                          <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
+                            Modo Iniciales
+                          </span>
+                          <p className="text-xs text-[#8E8E99] leading-relaxed">
+                            Usa las iniciales de tu nombre artístico sobre el acabado cromático seleccionado.
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="space-y-1.5">
+                        <span className="block text-2xs font-sans font-bold text-[#8E8E99] uppercase tracking-wider">
+                          Color de Fondo
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {AVATAR_PALETTES.map((p: AvatarPaletteOption) => {
+                            const isSelected = avatarColor === p.val;
+                            return (
+                              <button
+                                type="button"
+                                key={p.id}
+                                onClick={() => {
+                                  setAvatarColor(p.val);
+                                  setSelectedPresetId(null);
+                                }}
+                                title={p.description}
+                                className={`px-2.5 py-1.5 rounded-[4px] border text-xs font-sans font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                                  isSelected
+                                    ? 'border-[#FF4F00] text-white bg-[#FF4F00]/15'
+                                    : 'surface-2 bg-[#18181C] border-[#242429] text-[#8E8E99] hover:text-[#F4F4F6]'
+                                }`}
+                              >
+                                <span
+                                  className={`w-3.5 h-3.5 rounded-[3px] bg-gradient-to-tr ${p.val} shrink-0 border border-white/20`}
+                                />
+                                <span>{p.label.split('(')[0].trim()}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rasgo Opcional: Promesa / Prodigio */}
                   <div
-                    className={`p-2.5 rounded-[10px] ${
+                    className={`p-4 rounded-[4px] border transition-all ${
                       isProdigy
-                        ? 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40'
-                        : 'liquid-glass-pill text-[#8E8E99]'
+                        ? 'surface-2 bg-[#18181C] border-[#F59E0B]'
+                        : 'surface-2 bg-[#18181C] border-[#242429]'
                     }`}
                   >
-                    {isProdigy ? <Crown className="w-4 h-4 text-[#F59E0B]" /> : <Star className="w-4 h-4 text-[#8E8E99]" />}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#F4F4F6]">
-                        Rasgo Opcional: Promesa / Prodigio
-                      </span>
-                      <span className="text-2xs px-2.5 py-0.5 rounded-[6px] font-sans tabular-nums font-bold liquid-glass-pill text-[#8E8E99]">
-                        1 en 100.000
-                      </span>
-                    </div>
-                    <p className={`text-xs mt-0.5 ${isProdigy ? 'text-[#F59E0B] font-semibold' : 'text-[#8E8E99]'}`}>
-                      {isProdigy
-                        ? '¡ACTIVADO! Atributos de élite y multiplicador x3 permanente.'
-                        : 'Tienta a la suerte antes de debutar para buscar el bono de oído absoluto.'}
-                    </p>
-                  </div>
-                </div>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3.5">
+                        <div
+                          className={`p-2.5 rounded-[4px] border ${
+                            isProdigy
+                              ? 'bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/40'
+                              : 'bg-[#111114] border-[#242429] text-[#8E8E99]'
+                          }`}
+                        >
+                          {isProdigy ? <Crown className="w-4 h-4 text-[#F59E0B]" /> : <Star className="w-4 h-4 text-[#8E8E99]" />}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-bold uppercase tracking-wider text-[#F4F4F6]">
+                              Rasgo Opcional: Promesa / Prodigio
+                            </span>
+                            <span className="text-2xs px-2 py-0.5 rounded-[4px] font-sans tabular-nums font-bold bg-[#111114] border border-[#242429] text-[#8E8E99]">
+                              1 en 100.000
+                            </span>
+                          </div>
+                          <p className={`text-xs mt-0.5 ${isProdigy ? 'text-[#F59E0B] font-semibold' : 'text-[#8E8E99]'}`}>
+                            {isProdigy
+                              ? '¡ACTIVADO! Atributos de élite y multiplicador x3 permanente.'
+                              : 'Tienta a la suerte antes de debutar para buscar el bono de oído absoluto.'}
+                          </p>
+                        </div>
+                      </div>
 
-                <div className="shrink-0">
-                  {!isProdigy ? (
-                    <button
-                      type="button"
-                      onClick={handleRollProdigyLuck}
-                      className="px-4 py-2 rounded-[8px] text-xs font-sans font-bold liquid-glass-pill hover:bg-white/10 text-[#F4F4F6] transition-all cursor-pointer flex items-center gap-1.5"
-                    >
-                      <Dices className="w-3.5 h-3.5 text-[#FF4F00]" />
-                      <span>Probar Suerte</span>
-                    </button>
-                  ) : (
-                    <div className="flex items-center gap-1.5 text-xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/15 px-3.5 py-1.5 rounded-[8px] border border-[#F59E0B]/30 shadow-md">
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>PRODIGIO ACTIVO</span>
+                      <div className="shrink-0">
+                        {!isProdigy ? (
+                          <button
+                            type="button"
+                            onClick={handleRollProdigyLuck}
+                            className="px-4 py-2 rounded-[4px] text-xs font-sans font-bold bg-[#111114] border border-[#242429] hover:border-[#FF4F00] text-[#F4F4F6] transition-all cursor-pointer flex items-center gap-1.5"
+                          >
+                            <Dices className="w-3.5 h-3.5 text-[#FF4F00]" />
+                            <span>Probar Suerte</span>
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-xs font-sans font-bold text-[#F59E0B] bg-[#F59E0B]/15 px-3.5 py-1.5 rounded-[4px] border border-[#F59E0B]/30">
+                            <ShieldCheck className="w-4 h-4" />
+                            <span>PRODIGIO ACTIVO</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
 
-              {rollMessage && (
-                <div className="mt-2 text-xs font-sans text-[#F4F4F6]">
-                  {rollMessage}
+                    {rollMessage && <div className="mt-2 text-xs font-sans text-[#F4F4F6]">{rollMessage}</div>}
+                  </div>
                 </div>
               )}
             </div>
@@ -1737,27 +1757,27 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
           {/* Right Column: Credencial Compacta en Vivo & CTA */}
           <div className="lg:sticky lg:top-6">
-            <div className="liquid-glass-card rounded-[18px] p-5 sm:p-6 space-y-5 shadow-2xl relative">
+            <div className="surface-1 bg-[#111114] border border-[#242429] rounded-[6px] p-5 sm:p-6 space-y-5 shadow-2xl relative">
               {/* Header Badge */}
               <div className="flex items-center justify-between pb-1">
                 <span className="text-2xs font-sans font-bold uppercase tracking-wider text-[#FF4F00] flex items-center gap-1.5">
                   <Disc3 className="w-3.5 h-3.5 text-[#FF4F00]" />
                   Credencial de Estudio
                 </span>
-                <span className="text-3xs font-sans font-bold tracking-widest uppercase text-[#8E8E99] liquid-glass-pill px-2 py-0.5 rounded-[6px]">
+                <span className="text-3xs font-sans font-bold tracking-widest uppercase text-[#8E8E99] surface-2 bg-[#18181C] border border-[#242429] px-2 py-0.5 rounded-[4px] tabular-nums">
                   PASS #001
                 </span>
               </div>
 
               {/* Avatar + Datos Principales */}
               <div className="flex items-start gap-4">
-                <div className="p-1.5 rounded-[14px] bg-[#09090B]/60 border border-white/20 shadow-lg shrink-0 flex items-center justify-center">
+                <div className="p-1.5 rounded-[4px] bg-[#09090B] border border-[#242429] shadow-lg shrink-0 flex items-center justify-center">
                   <ArtistAvatar
                     name={name.trim() || 'Artista'}
                     avatarColor={avatarColor}
                     avatarIcon={avatarType === 'symbol' ? avatarIcon : undefined}
                     size="lg"
-                    rounded="rounded-[12px]"
+                    rounded="rounded-[4px]"
                   />
                 </div>
 
@@ -1765,8 +1785,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F6] tracking-tight leading-snug break-words">
                     {name.trim() || 'Tu Nombre Artístico'}
                   </h2>
-                  <p className="text-xs text-[#8E8E99] font-sans">
-                    {realName.trim() ? `"${cleanQuotes(realName)}" • ` : ''}{age} Años
+                  <p className="text-xs text-[#8E8E99] font-sans tabular-nums">
+                    {realName.trim() ? `"${cleanQuotes(realName)}" • ` : ''}
+                    {age} Años
                   </p>
                   <p className="text-xs text-[#8E8E99] font-sans flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-[#FF4F00] shrink-0" />
@@ -1776,7 +1797,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {isProdigy && (
-                <div className="bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/35 px-3 py-2 rounded-[10px] text-xs font-sans font-bold flex items-center justify-center gap-2 shadow-md">
+                <div className="bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/35 px-3 py-2 rounded-[4px] text-xs font-sans font-bold flex items-center justify-center gap-2">
                   <Crown className="w-4 h-4 text-[#F59E0B] shrink-0" />
                   <span>Prodigio Musical • Multiplicador x3</span>
                 </div>
@@ -1784,38 +1805,38 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
 
               {/* Etiquetas de Estilo y Arquetipo */}
               <div className="flex flex-wrap gap-1.5 pt-1">
-                <span className="px-2.5 py-1 liquid-glass-pill text-[#F4F4F6] rounded-[8px] text-xs font-sans font-semibold">
+                <span className="px-2.5 py-1 surface-2 bg-[#18181C] border border-[#242429] text-[#F4F4F6] rounded-[4px] text-xs font-sans font-semibold">
                   {selectedMainGenre?.name || 'Género'}
                 </span>
-                <span className="px-2.5 py-1 liquid-glass-pill text-[#8E8E99] rounded-[8px] text-xs font-sans">
+                <span className="px-2.5 py-1 surface-2 bg-[#18181C] border border-[#242429] text-[#8E8E99] rounded-[4px] text-xs font-sans">
                   {archetype === 'custom' ? 'Personalizado' : ARCHETYPE_PRESETS[archetype]?.name}
                 </span>
-                <span className="px-2.5 py-1 liquid-glass-pill text-[#10B981] rounded-[8px] text-xs font-sans tabular-nums font-semibold">
+                <span className="px-2.5 py-1 surface-2 bg-[#18181C] border border-[#242429] text-[#34D399] rounded-[4px] text-xs font-sans tabular-nums font-semibold">
                   Hab. {averageSkillRating}/100
                 </span>
               </div>
 
               {/* Grilla 2x2 de Condiciones Iniciales */}
               <div className="grid grid-cols-2 gap-2.5 pt-1 font-sans tabular-nums">
-                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                <div className="surface-2 bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
                   <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Fondos</span>
-                  <span className="text-sm font-bold text-[#10B981] mt-0.5 block">
+                  <span className="text-sm font-bold text-[#34D399] mt-0.5 block">
                     {formatMoney(computedStats.funds)}
                   </span>
                 </div>
-                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                <div className="surface-2 bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
                   <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Comunidad</span>
                   <span className="text-sm font-bold text-[#F4F4F6] mt-0.5 block">
                     {formatFans(computedStats.fansCount)}
                   </span>
                 </div>
-                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                <div className="surface-2 bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
                   <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Popularidad</span>
                   <span className="text-sm font-bold text-[#F4F4F6] mt-0.5 block">
                     {computedStats.popularity}/100
                   </span>
                 </div>
-                <div className="liquid-glass-subcard p-3 rounded-[12px]">
+                <div className="surface-2 bg-[#18181C] border border-[#242429] p-3 rounded-[4px]">
                   <span className="text-2xs text-[#8E8E99] uppercase font-bold tracking-wider block">Hype Inicial</span>
                   <span className="text-sm font-bold text-[#FF4F00] mt-0.5 block">
                     {computedStats.hype}/100
@@ -1824,18 +1845,18 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
               </div>
 
               {/* Resumen de Habilidades Principales del Artista */}
-              <div className="liquid-glass-subcard p-3.5 rounded-[12px] space-y-2">
+              <div className="surface-2 bg-[#18181C] border border-[#242429] p-3.5 rounded-[4px] space-y-2">
                 <span className="text-3xs font-bold uppercase tracking-wider text-[#8E8E99] block">
                   Perfil de Talentos
                 </span>
                 <div className="space-y-1.5 text-xs font-sans">
-                  {topTwoTraits.map(trait => (
+                  {topTwoTraits.map((trait) => (
                     <div key={trait.key} className="flex items-center justify-between text-2xs">
                       <span className="text-[#8E8E99] font-medium">{trait.name}</span>
-                      <span className="text-[#F4F4F6] font-bold tabular-nums">{trait.value} pts</span>
+                      <span className="text-[#F4F4F6] font-bold tabular-nums">{trait.val} pts</span>
                     </div>
                   ))}
-                  <div className="w-full h-1.5 bg-white/10 rounded-[2px] overflow-hidden mt-1">
+                  <div className="w-full h-1.5 bg-[#09090B] rounded-[2px] overflow-hidden mt-1">
                     <div
                       className="h-full bg-[#FF4F00] rounded-[2px] transition-all"
                       style={{ width: `${Math.min(100, Math.max(0, Number(averageSkillRating)))}%` }}
@@ -1844,16 +1865,15 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({
                 </div>
               </div>
 
-              {/* Action Button - Primary Game CTA */}
-              <MagneticPrimaryButton
+              {/* Action Button - Primary Signal Orange CTA */}
+              <button
                 type="submit"
                 id="btn-launch-career-bottom"
-                fullWidth
-                className="py-4 px-6 text-base tracking-wide"
-                icon={<ArrowRight className="w-5 h-5 text-[#032115] stroke-[2.5]" />}
-                iconPosition="right"
-                label="Comenzar Carrera de Artista"
-              />
+                className="w-full py-4 px-6 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] active:translate-y-[1px] text-white font-display font-extrabold text-base tracking-wide uppercase flex items-center justify-center gap-2 border border-[#FF7833]/50 shadow-lg transition-all cursor-pointer"
+              >
+                <span>Comenzar Carrera de Artista</span>
+                <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+              </button>
             </div>
           </div>
         </form>

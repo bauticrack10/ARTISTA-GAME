@@ -7,4 +7,5 @@ export * from './GlassInput';
 export * from './GlassOptionButton';
 export * from './GlassCard';
 export * from './LiquidGlassFilters';
+export * from './ToastOverlay';
 

@@ -147,11 +147,11 @@ async function runBrowserAudit() {
       }
 
       return {
-        cardBackdropBlur: cardStyles?.backdropFilter || cardStyles?.webkitBackdropFilter,
+        cardBackdropBlur: cardStyles?.backdropFilter || (cardStyles as any)?.webkitBackdropFilter,
         cardBg: cardStyles?.backgroundColor,
         cardBorder: cardStyles?.borderColor,
-        pillBackdropBlur: pillStyles?.backdropFilter || pillStyles?.webkitBackdropFilter,
-        headerBackdropBlur: headerStyles?.backdropFilter || headerStyles?.webkitBackdropFilter,
+        pillBackdropBlur: pillStyles?.backdropFilter || (pillStyles as any)?.webkitBackdropFilter,
+        headerBackdropBlur: headerStyles?.backdropFilter || (headerStyles as any)?.webkitBackdropFilter,
         minFontSizePx: minFontSize
       };
     });
@@ -171,8 +171,8 @@ async function runBrowserAudit() {
     await new Promise((r) => setTimeout(r, 600));
 
     const currentScreenInfo = await page.evaluate(() => {
-      const h1 = document.querySelector('h1')?.innerText;
-      const navBrand = document.querySelector('header span')?.innerText;
+      const h1 = (document.querySelector('h1') as HTMLElement | null)?.innerText;
+      const navBrand = (document.querySelector('header span') as HTMLElement | null)?.innerText;
       return { h1, navBrand, bodySample: document.body.innerText.substring(0, 150) };
     });
     console.log('🖥️ Pantalla actual antes de screenshot desktop:', currentScreenInfo);

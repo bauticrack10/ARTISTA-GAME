@@ -12,27 +12,33 @@ import {
   TrendingUp,
   Share2,
   CheckCircle2,
-  UserCheck
+  UserCheck,
+  Folder,
+  Star
 } from 'lucide-react';
 import { playSound } from '../utils/audioSystem';
 import { formatMoney, formatFans } from '../utils/formatters';
+import { showToast } from '../utils/toastBus';
 
 interface LegacyCardModalProps {
   player: Artist;
   world: WorldState;
   onClose: () => void;
   onRetire?: () => void;
+  onRetireArtist?: () => void;
 }
 
 export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
   player,
   world,
   onClose,
-  onRetire
+  onRetire,
+  onRetireArtist
 }) => {
   const [copied, setCopied] = useState(false);
   const [retireConfirm, setRetireConfirm] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const retireHandler = onRetireArtist || onRetire;
 
   const playerSongs = (Object.values(world.songs || {}) as Song[]).filter(s => s.artistId === player.id);
   const playerAlbums = (Object.values(world.albums || {}) as Album[]).filter(a => a.artistId === player.id);
@@ -50,7 +56,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
 
   const handleShare = () => {
     playSound('click');
-    const text = `📁 DOSSIER OFICIAL: ${player.name} (${player.careerStage})\n🌟 Legado: ${player.legacyScore}/100 • Streams: ${(player.stats.totalStreams / 1000000).toFixed(1)}M\n🏆 Premios: ${player.awardsWon.length} • Placas Oficiales: ${totalCertificationsCount}\n#ElArtista #LegadoMusical`;
+    const text = `DOSSIER OFICIAL: ${player.name} (${player.careerStage})\nLegado: ${player.legacyScore}/100 • Streams: ${(player.stats.totalStreams / 1000000).toFixed(1)}M\nPremios: ${player.awardsWon.length} • Placas Oficiales: ${totalCertificationsCount}\n#ElArtista #LegadoMusical`;
     navigator.clipboard?.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
@@ -160,12 +166,12 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 animate-fade-in backdrop-blur-xs">
-      <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#141417] border border-[#26262B] rounded-[6px] shadow-2xl text-[#F4F0EA] flex flex-col justify-between">
+      <div className="lg-modal w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#111114] border border-[#242429] rounded-[8px] shadow-2xl text-[#F4F0EA] flex flex-col justify-between">
         {/* Header */}
-        <div className="p-6 border-b border-[#26262B] flex items-center justify-between bg-[#111114]">
+        <div className="p-6 border-b border-[#242429] flex items-center justify-between bg-[#111114]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#26262B] flex items-center justify-center text-[#FF4F00]">
-              <Disc3 className="w-4 h-4 animate-spin-slow" />
+            <div className="w-8 h-8 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#FF4F00]">
+              <Folder className="w-4 h-4" />
             </div>
             <div>
               <span className="text-3xs uppercase font-sans font-bold tracking-widest text-[#8E8E99] block">
@@ -188,10 +194,10 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
         {/* Content Body */}
         <div className="p-6 sm:p-8 space-y-6">
           {/* Hero Sheet */}
-          <div className="p-6 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] relative overflow-hidden space-y-4">
+          <div className="p-6 rounded-[4px] bg-[#0B0B0C] border border-[#242429] relative overflow-hidden space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <span className="text-3xs uppercase font-sans font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#26262B] text-[#FF4F00]">
+                <span className="text-3xs uppercase font-sans font-bold px-2 py-0.5 rounded-[2px] bg-[#18181C] border border-[#242429] text-[#FF4F00]">
                   {player.careerStage} • {yearsActive} Años de Trayectoria
                 </span>
                 <h1 className="text-2xl sm:text-4xl font-extrabold text-[#F4F0EA] tracking-tight mt-2 font-display">
@@ -202,8 +208,11 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
                 </p>
               </div>
 
-              <div className="text-right shrink-0 bg-[#141417] p-3 rounded-[4px] border border-[#26262B]">
-                <span className="text-3xs font-sans uppercase text-[#8E8E99] block font-bold">Puntaje Legado</span>
+              <div className="text-right shrink-0 bg-[#18181C] p-3 rounded-[4px] border border-[#242429]">
+                <span className="text-3xs font-sans uppercase text-[#8E8E99] font-bold flex items-center justify-end gap-1">
+                  <Star className="w-3 h-3 text-[#F59E0B]" />
+                  Puntaje Legado
+                </span>
                 <span className="text-2xl font-bold font-sans text-[#F59E0B] tabular-nums">
                   {player.legacyScore}/100
                 </span>
@@ -211,20 +220,23 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
             </div>
 
             {/* Core Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#26262B] text-xs font-sans tabular-nums">
-              <div className="p-2.5 bg-[#141417] rounded-[4px] border border-[#26262B]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#242429] text-xs font-sans tabular-nums">
+              <div className="p-2.5 bg-[#18181C] rounded-[4px] border border-[#242429]">
                 <span className="text-3xs text-[#8E8E99] uppercase block font-bold">Streams Totales</span>
                 <span className="text-sm font-bold text-[#10B981]">{(player.stats.totalStreams / 1000000).toFixed(2)}M</span>
               </div>
-              <div className="p-2.5 bg-[#141417] rounded-[4px] border border-[#26262B]">
+              <div className="p-2.5 bg-[#18181C] rounded-[4px] border border-[#242429]">
                 <span className="text-3xs text-[#8E8E99] uppercase block font-bold">Base de Fans</span>
                 <span className="text-sm font-bold text-[#F4F0EA]">{formatFans(player.stats.fansCount)}</span>
               </div>
-              <div className="p-2.5 bg-[#141417] rounded-[4px] border border-[#26262B]">
-                <span className="text-3xs text-[#8E8E99] uppercase block font-bold">Premios Ganados</span>
+              <div className="p-2.5 bg-[#18181C] rounded-[4px] border border-[#242429]">
+                <span className="text-3xs text-[#8E8E99] uppercase font-bold flex items-center gap-1">
+                  <Trophy className="w-3 h-3 text-[#F59E0B]" />
+                  Premios Ganados
+                </span>
                 <span className="text-sm font-bold text-[#F59E0B]">{player.awardsWon.length}</span>
               </div>
-              <div className="p-2.5 bg-[#141417] rounded-[4px] border border-[#26262B]">
+              <div className="p-2.5 bg-[#18181C] rounded-[4px] border border-[#242429]">
                 <span className="text-3xs text-[#8E8E99] uppercase block font-bold">Placas Oficiales</span>
                 <span className="text-sm font-bold text-[#38BDF8]">{totalCertificationsCount}</span>
               </div>
@@ -242,7 +254,7 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
               {topSongs.map((song, i) => (
                 <div
                   key={song.id}
-                  className="p-3 bg-[#0B0B0C] border border-[#26262B] rounded-[4px] flex items-center justify-between text-xs font-sans"
+                  className="p-3 bg-[#0B0B0C] border border-[#242429] rounded-[4px] flex items-center justify-between text-xs font-sans"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span className="text-[#8E8E99] font-bold w-4">{i + 1}.</span>
@@ -257,8 +269,8 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
           </div>
 
           {/* Retirement Section */}
-          <div className="p-4 rounded-[4px] bg-[#111114] border border-[#26262B] space-y-3">
-            <div className="flex items-start justify-between gap-3">
+          <div className="p-4 rounded-[4px] bg-[#18181C] border border-[#242429] space-y-3">
+            <div className="flex items-start justify-between gap-3 flex-wrap">
               <div>
                 <h4 className="text-xs font-sans font-bold uppercase text-[#F4F0EA]">
                   Gestión de Retiro Artístico
@@ -266,25 +278,35 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
                 <p className="text-2xs text-[#8E8E99] mt-0.5 max-w-lg leading-relaxed">
                   {player.isRetired
                     ? `El artista se retiró formalmente en el año ${player.retirementYear}. Su legado continúa acumulando regalías y reconocimiento histórico.`
+                    : yearsActive < 5
+                    ? `Disponible al cumplir 5 años de trayectoria activa (${yearsActive}/5 años completados).`
                     : 'Al retirarse, el artista concluye su etapa de lanzamientos activos y giras, preservando su legado para la posteridad.'}
                 </p>
               </div>
 
-              {!player.isRetired && onRetire && (
+              {!player.isRetired && retireHandler && (
                 <div>
                   {!retireConfirm ? (
                     <button
+                      type="button"
+                      disabled={yearsActive < 5}
                       onClick={() => setRetireConfirm(true)}
-                      className="px-3 py-1.5 rounded-[4px] border border-[#EF4444]/40 bg-[#EF4444]/10 hover:bg-[#EF4444]/20 text-[#EF4444] text-xs font-sans font-bold transition-all cursor-pointer"
+                      className={`px-3 py-1.5 rounded-[4px] border text-xs font-sans font-bold transition-all ${
+                        yearsActive < 5
+                          ? 'border-[#242429] bg-[#111114] text-[#52525B] cursor-not-allowed'
+                          : 'border-[#EF4444]/40 bg-[#EF4444]/10 hover:bg-[#EF4444]/20 text-[#EF4444] cursor-pointer'
+                      }`}
                     >
                       Anunciar Retiro
                     </button>
                   ) : (
                     <div className="flex items-center gap-2">
                       <button
+                        type="button"
                         onClick={() => {
                           playSound('award');
-                          onRetire();
+                          retireHandler();
+                          showToast('Retiro oficial anunciado. Tu catálogo pasa al archivo histórico.', 'success');
                           setRetireConfirm(false);
                         }}
                         className="px-3 py-1.5 rounded-[4px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-xs font-sans font-bold transition-all cursor-pointer"
@@ -292,8 +314,9 @@ export const LegacyCardModal: React.FC<LegacyCardModalProps> = ({
                         Confirmar Retiro
                       </button>
                       <button
+                        type="button"
                         onClick={() => setRetireConfirm(false)}
-                        className="px-2 py-1.5 rounded-[4px] border border-[#26262B] text-xs font-sans text-[#8E8E99]"
+                        className="px-2 py-1.5 rounded-[4px] border border-[#242429] text-xs font-sans text-[#8E8E99] cursor-pointer"
                       >
                         Cancelar
                       </button>

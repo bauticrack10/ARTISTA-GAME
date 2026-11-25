@@ -104,10 +104,11 @@ export class IndustryEngine {
       missing.push('Ya tienes un acuerdo activo con esta distribuidora o sello discográfico.');
     }
 
-    // Si tiene contrato activo no distribuidor y aún le restan álbumes por entregar
+    // Si tiene contrato activo no distribuidor (y no propio) y aún le restan álbumes por entregar
     if (
       artist.activeContract &&
       !artist.activeContract.isDistributor &&
+      !artist.activeContract.isArtistOwned &&
       artist.activeContract.albumsRequired > artist.activeContract.albumsDelivered &&
       label.type !== 'distributor'
     ) {
@@ -442,7 +443,7 @@ export class IndustryEngine {
         labelId: label.id,
         signingBonus: 0,
         royaltyPercentage: 95,
-        albumsRequired: 1,
+        albumsRequired: 999,
         albumsDelivered: 0,
         creativeControl: 100,
         marketingPower: label.marketingPower || Math.floor(pop * 0.85),
@@ -451,6 +452,7 @@ export class IndustryEngine {
         durationYears: 10,
         signedYear: currentYear,
         isDistributor: false,
+        isArtistOwned: true,
         annualFee: 0
       };
     }
@@ -637,6 +639,26 @@ export class IndustryEngine {
     artist.stats.funds = Math.max(0, artist.stats.funds - manager.requirements.hiringFee);
     artist.managerId = manager.id;
 
+    if (manager.requirements.hiringFee > 0) {
+      const tx = {
+        id: `tx_mgr_${world.currentYear}_${world.currentMonth}_${Date.now()}`,
+        year: world.currentYear,
+        month: world.currentMonth,
+        type: 'expense' as const,
+        category: 'manager' as const,
+        amount: manager.requirements.hiringFee,
+        description: `Contratación de mánager (${manager.name})`,
+        resultingBalance: artist.stats.funds,
+        balanceAfter: artist.stats.funds,
+        dateStr: `Año ${world.currentYear} - Mes ${world.currentMonth}`,
+        timestamp: Date.now()
+      };
+      if (!artist.financialLedger) artist.financialLedger = [];
+      artist.financialLedger.unshift(tx);
+      if (!world.financialLedger) world.financialLedger = [];
+      world.financialLedger.unshift(tx);
+    }
+
     world.news.unshift({
       id: `news_mgr_hire_${Date.now()}`,
       headline: `Alianza estratégica: ${artist.name} se une al equipo de ${manager.name}`,
@@ -687,8 +709,8 @@ export class IndustryEngine {
   ): { contractCompleted: boolean; labelName?: string; remainingAlbums?: number } {
     if (!artist.activeContract) return { contractCompleted: false };
 
-    // Los acuerdos de distribución digital no tienen cuotas de álbumes obligatorios para finalizar
-    if (artist.activeContract.isDistributor || artist.activeContract.albumsRequired <= 0) {
+    // Los acuerdos de distribución digital o sellos propios no tienen cuotas de álbumes obligatorios para finalizar
+    if (artist.activeContract.isDistributor || artist.activeContract.isArtistOwned || artist.activeContract.albumsRequired <= 0) {
       return { contractCompleted: false };
     }
 
@@ -739,6 +761,11 @@ export class IndustryEngine {
     labelName: string,
     world: WorldState
   ): RecordLabel {
+    const setupCost = 25000;
+    if (artist.stats.funds < setupCost) {
+      throw new Error(`Fondos insuficientes para fundar tu sello discográfico ($${setupCost.toLocaleString('es-AR')} requeridos).`);
+    }
+
     const newLabelId = `label_artist_${artist.id}_${world.currentYear}`;
     const newLabel: RecordLabel = {
       id: newLabelId,
@@ -746,7 +773,7 @@ export class IndustryEngine {
       type: 'artist_owned',
       country: artist.country,
       prestige: Math.floor(artist.stats.popularity * 0.9),
-      budget: Math.floor(artist.stats.funds * 0.4),
+      budget: Math.floor((artist.stats.funds - setupCost) * 0.4),
       marketingPower: Math.floor(artist.stats.popularity * 0.85),
       creativeFreedomAllowed: 100,
       rosterArtistIds: [artist.id],
@@ -755,19 +782,38 @@ export class IndustryEngine {
       scoutingCriteria: 'Sello autogestionado fundado para retener el 100% de la visión conceptual y másters.'
     };
 
-    artist.stats.funds = Math.max(0, artist.stats.funds - 25000); // Inversión de constitución legal
+    artist.stats.funds = Math.max(0, artist.stats.funds - setupCost); // Inversión de constitución legal
+    const tx = {
+      id: `tx_own_label_${world.currentYear}_${world.currentMonth}_${Date.now()}`,
+      year: world.currentYear,
+      month: world.currentMonth,
+      type: 'expense' as const,
+      category: 'contract' as const,
+      amount: setupCost,
+      description: `Constitución legal de sello propio "${labelName}"`,
+      resultingBalance: artist.stats.funds,
+      balanceAfter: artist.stats.funds,
+      dateStr: `Año ${world.currentYear} - Mes ${world.currentMonth}`,
+      timestamp: Date.now()
+    };
+    if (!artist.financialLedger) artist.financialLedger = [];
+    artist.financialLedger.unshift(tx);
+    if (!world.financialLedger) world.financialLedger = [];
+    world.financialLedger.unshift(tx);
+
     artist.labelId = newLabelId;
     artist.activeContract = {
       labelId: newLabelId,
       signingBonus: 0,
       royaltyPercentage: 95,
-      albumsRequired: 1,
+      albumsRequired: 999,
       albumsDelivered: 0,
       creativeControl: 100,
       marketingPower: newLabel.marketingPower,
       marketingBudgetPerRelease: 20000,
       durationYears: 10,
-      signedYear: world.currentYear
+      signedYear: world.currentYear,
+      isArtistOwned: true
     };
 
     world.labels[newLabelId] = newLabel;
@@ -843,7 +889,9 @@ export class IndustryEngine {
     const mvQualityBoost = musicVideo
       ? (musicVideo.directorTier === 'Director de Élite Mundial' ? 12 : musicVideo.directorTier === 'Estudio Indie' ? 7 : 3)
       : 0;
-    const budgetProdScore = Math.min(55, (productionBudget / 10000) * 45);
+    const budgetProdScore = productionBudget <= 12000
+      ? (productionBudget / 10000) * 45
+      : 54 + Math.min(18, Math.log10(1 + (productionBudget - 12000) / 10000) * 10.5);
     const productionQuality = Math.min(100, Math.max(10, Math.floor(
       budgetProdScore +
       prodQualityBoost +
@@ -858,7 +906,9 @@ export class IndustryEngine {
     const mvMarketingBoost = musicVideo
       ? (musicVideo.directorTier === 'Director de Élite Mundial' ? 30 : musicVideo.directorTier === 'Estudio Indie' ? 16 : 6)
       : 0;
-    const budgetMktScore = Math.min(60, (marketingBudget / 12000) * 50);
+    const budgetMktScore = marketingBudget <= 14000
+      ? (marketingBudget / 12000) * 50
+      : 58.33 + Math.min(20, Math.log10(1 + (marketingBudget - 14000) / 12000) * 12);
     const marketingInvestment = Math.min(100, Math.max(5, Math.floor(
       budgetMktScore +
       mvMarketingBoost +

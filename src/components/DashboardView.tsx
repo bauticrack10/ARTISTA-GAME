@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Artist, WorldState, Song, Album } from '../types';
+import { Artist, WorldState, Song, Album, CareerGoal } from '../types';
 import { Palette, Crown, User, Check, X } from 'lucide-react';
 import {
   AVATAR_PALETTES,
@@ -34,6 +34,9 @@ export interface DashboardViewProps {
   onUpdateAvatar?: (avatarUrl?: string, avatarColor?: string, avatarIcon?: string) => void;
   onUpdateProfile?: (updates: Partial<Artist>) => void;
   onOpenMilestone?: (data?: any) => void;
+  careerGoals?: CareerGoal[];
+  onClaimGoal?: (goalId: string) => void;
+  studioTierInfo?: any;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -42,20 +45,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigate,
   onRest,
   onExecuteDecision,
-  onUpdateAvatar
+  onUpdateAvatar,
+  careerGoals = [],
+  onClaimGoal
 }) => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string>(
     player?.avatarColor || 'from-[#FF4F00] via-[#D97706] to-[#18181C]'
   );
   const [selectedIcon, setSelectedIcon] = useState<string>(player?.avatarIcon || 'mic');
-  const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>(
-    player?.avatarIcon ? 'symbol' : 'symbol'
-  );
+  const [avatarType, setAvatarType] = useState<'symbol' | 'initials'>('symbol');
 
   const playerId = player?.id || 'player';
-  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter(s => s.artistId === playerId);
-  const playerAlbums = (Object.values(world?.albums || {}) as Album[]).filter(a => a.artistId === playerId);
+  const playerSongs = (Object.values(world?.songs || {}) as Song[]).filter((s) => s.artistId === playerId);
+  const playerAlbums = (Object.values(world?.albums || {}) as Album[]).filter((a) => a.artistId === playerId);
 
   const topSongs = [...playerSongs]
     .sort((a, b) => (b.streamsLastMonth || 0) - (a.streamsLastMonth || 0))
@@ -89,17 +92,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   return (
     <div className="w-full space-y-8 pb-20 text-fg">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
-        {/* COLUMNA PRINCIPAL (8 cols): Perfil, Acciones del Mes, Estadísticas y Catálogo */}
+        {/* COLUMNA PRINCIPAL (8 cols) */}
         <div className="lg:col-span-8 space-y-8">
-          {/* Barra de Primeros Pasos con Progreso Dotado (Paso 1 completado por defecto) */}
           <FirstStepsProgress
             player={player}
             world={world}
             playerSongsCount={playerSongs.length}
             onNavigate={onNavigate}
+            careerGoals={careerGoals}
+            onClaimGoal={onClaimGoal}
           />
 
-          {/* Tooltip flotante no modal para el primer paso recomendado */}
           <QuickOnboardingTooltip
             playerSongsCount={playerSongs.length}
             onNavigate={onNavigate}
@@ -149,7 +152,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* MODAL DE AVATAR */}
       {isAvatarModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs">
-          <div className="bg-[#111114] border border-[#242429] rounded-[6px] max-w-md w-full p-5 space-y-4 text-[#F4F4F6] shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="surface-1 bg-[#111114] border border-[#242429] rounded-[6px] max-w-md w-full p-5 space-y-4 text-[#F4F4F6] shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-1">
               <div className="flex items-center gap-2">
                 <Palette className="w-4 h-4 text-[#FF4F00]" />
@@ -158,6 +161,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => setIsAvatarModalOpen(false)}
                 className="p-1 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F4F6] cursor-pointer"
               >

@@ -19,10 +19,12 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'Global',
     followers: 32000000,
     streamMultiplier: 1.8,
+    genreFilter: 'all',
     genreFilters: [],
     description: 'Los mayores éxitos del planeta en este momento. La lista editorial más escuchada del mundo.',
     coverGradient: 'from-amber-600 to-orange-800',
     trackIds: [],
+    tracks: [],
     maxTracks: 50
   },
   {
@@ -32,10 +34,12 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'LatinAmerica',
     followers: 14000000,
     streamMultiplier: 1.6,
-    genreFilters: ['urban', 'reggaeton', 'trap_latino', 'pop', 'latin_pop', 'musica_mexicana'],
+    genreFilter: 'reggaeton',
+    genreFilters: ['reggaeton', 'reggaeton_urbano', 'trap_latino', 'pop_moderno', 'corridos_urbanos', 'cumbia_tropical', 'funk_brasilero', 'urban', 'pop', 'latin_pop', 'musica_mexicana'],
     description: 'El corazón de la música latina. Los temas que están encendiendo las pistas de baile de todo el mundo.',
     coverGradient: 'from-amber-500 via-rose-500 to-red-600',
     trackIds: [],
+    tracks: [],
     maxTracks: 50
   },
   {
@@ -45,10 +49,12 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'Argentina',
     followers: 3800000,
     streamMultiplier: 1.4,
-    genreFilters: ['trap_latino', 'urban', 'cumbia', 'rock', 'pop', 'rkt', 'cuarteto'],
+    genreFilter: 'trap_latino',
+    genreFilters: ['trap_latino', 'cumbia_tropical', 'rock_alternativo', 'pop_moderno', 'reggaeton', 'reggaeton_urbano', 'musica_electronica', 'urban', 'cumbia', 'rock', 'pop', 'rkt', 'cuarteto'],
     description: 'Lo que más suena en las calles de Buenos Aires, Córdoba, Rosario y todo el país.',
     coverGradient: 'from-sky-400 via-blue-600 to-slate-900',
     trackIds: [],
+    tracks: [],
     maxTracks: 50
   },
   {
@@ -58,10 +64,12 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'USA',
     followers: 12000000,
     streamMultiplier: 1.5,
-    genreFilters: ['hip_hop', 'trap', 'rap', 'trap_latino'],
+    genreFilter: 'hip_hop_rap',
+    genreFilters: ['hip_hop_rap', 'drill', 'trap_latino', 'hip_hop', 'trap', 'rap'],
     description: 'Puro peso pesado del hip-hop y el trap contemporáneo sin censura.',
     coverGradient: 'from-neutral-900 via-zinc-800 to-black',
     trackIds: [],
+    tracks: [],
     maxTracks: 50
   },
   {
@@ -71,10 +79,12 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'LatinAmerica',
     followers: 10500000,
     streamMultiplier: 1.5,
-    genreFilters: ['reggaeton', 'urban', 'dembow', 'latin_pop'],
+    genreFilter: 'reggaeton',
+    genreFilters: ['reggaeton', 'reggaeton_urbano', 'afrobeat_dancehall', 'funk_brasilero', 'urban', 'dembow', 'latin_pop'],
     description: 'Perreo intenso, dembow y los himnos definitivos del género urbano.',
     coverGradient: 'from-rose-600 to-red-900',
     trackIds: [],
+    tracks: [],
     maxTracks: 50
   },
   {
@@ -84,10 +94,12 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'Argentina',
     followers: 4200000,
     streamMultiplier: 1.35,
-    genreFilters: ['trap_latino', 'hip_hop', 'urban', 'rap'],
+    genreFilter: 'trap_latino',
+    genreFilters: ['trap_latino', 'drill', 'hip_hop_rap', 'hip_hop', 'urban', 'rap'],
     description: 'El sonido que nació en Antezana 247 y conquistó los parlantes de habla hispana.',
     coverGradient: 'from-zinc-800 to-zinc-950',
     trackIds: [],
+    tracks: [],
     maxTracks: 45
   },
   {
@@ -97,10 +109,12 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'Global',
     followers: 2500000,
     streamMultiplier: 1.25,
-    genreFilters: ['indie_rock', 'alternative', 'bedroom_pop', 'synthwave', 'experimental'],
+    genreFilter: 'rock_alternativo',
+    genreFilters: ['rock_alternativo', 'r_and_b_soul', 'jazz_bossa', 'country_folk', 'musica_electronica', 'pop_moderno', 'indie_rock', 'alternative', 'bedroom_pop', 'synthwave', 'experimental'],
     description: 'Vibras relajadas, guitarras atmosféricas y sonidos independientes para desconectar.',
     coverGradient: 'from-teal-600 via-emerald-700 to-slate-900',
     trackIds: [],
+    tracks: [],
     maxTracks: 40
   },
   {
@@ -110,11 +124,43 @@ export const EDITORIAL_PLAYLISTS: EditorialPlaylist[] = [
     region: 'Global',
     followers: 18000000,
     streamMultiplier: 1.2,
+    genreFilter: 'all',
     genreFilters: [],
     description: 'Tu mezcla semanal y algorítmica de música nueva hecha a la medida de tus gustos.',
     coverGradient: 'from-emerald-600 to-teal-900',
     trackIds: [],
+    tracks: [],
     maxTracks: 60
+  },
+  {
+    id: 'global_pulse_club',
+    name: 'Electro, K-Pop & Baile Global',
+    curator: 'Spotify Editorial',
+    region: 'Global',
+    followers: 6400000,
+    streamMultiplier: 1.35,
+    genreFilter: 'musica_electronica',
+    genreFilters: ['musica_electronica', 'kpop_jpop', 'pop_moderno', 'funk_brasilero', 'afrobeat_dancehall'],
+    description: 'Drops electrónicos, coreografías globales y ritmos de club sin fronteras.',
+    coverGradient: 'from-cyan-700 via-sky-800 to-slate-950',
+    trackIds: [],
+    tracks: [],
+    maxTracks: 45
+  },
+  {
+    id: 'roots_and_riff',
+    name: 'Raíces, Guitarras & Metal',
+    curator: 'Spotify Editorial',
+    region: 'Global',
+    followers: 3100000,
+    streamMultiplier: 1.25,
+    genreFilter: 'metal_punk',
+    genreFilters: ['metal_punk', 'rock_alternativo', 'country_folk', 'jazz_bossa', 'corridos_urbanos'],
+    description: 'Riffs distorsionados, cuerdas acústicas, metales regionales y virtuosismo instrumental.',
+    coverGradient: 'from-stone-700 via-zinc-800 to-black',
+    trackIds: [],
+    tracks: [],
+    maxTracks: 40
   }
 ];
 
@@ -466,7 +512,16 @@ export class StreamingEngine {
       }
     }
 
-    const finalStreams = Math.max(catalogFloor, calculatedStreams);
+    let finalStreams = Math.max(catalogFloor, calculatedStreams);
+
+    // Techo logarítmico realista por canción/mes para prevenir inflación exponencial en simulaciones de 100 años
+    const SOFT_SONG_MONTHLY_CAP = 65000000;
+    const HARD_SONG_MONTHLY_CAP = 180000000;
+    if (finalStreams > SOFT_SONG_MONTHLY_CAP) {
+      const excess = finalStreams - SOFT_SONG_MONTHLY_CAP;
+      const compressed = Math.floor(Math.log10(1 + excess / 10000000) * 35000000);
+      finalStreams = Math.min(HARD_SONG_MONTHLY_CAP, SOFT_SONG_MONTHLY_CAP + compressed);
+    }
 
     return {
       streams: finalStreams,
@@ -523,12 +578,20 @@ export class StreamingEngine {
       organicReach * 0.10
     );
 
-    // Oyentes únicos no pueden superar el total de reproducciones ni estar por debajo de la base de fans activa
+    // Oyentes únicos no pueden superar el total de reproducciones ni estar por debajo de la base de fans activa,
+    // respetando el techo poblacional global (~220M oyentes mensuales)
+    const MAX_GLOBAL_LISTENERS = 220000000;
+    const SOFT_LISTENER_CAP = 120000000;
     const maxPossibleListeners = Math.max(1, totalMonthlySongStreams);
     const fanFloor = Math.max(1, Math.min(totalMonthlySongStreams, Math.floor(fansCount * 0.45)));
 
-    const finalListeners = Math.min(maxPossibleListeners, Math.max(fanFloor, combined));
-    return Math.max(1, finalListeners);
+    let finalListeners = Math.min(maxPossibleListeners, Math.max(fanFloor, combined));
+    if (finalListeners > SOFT_LISTENER_CAP) {
+      const excess = finalListeners - SOFT_LISTENER_CAP;
+      const compressed = Math.floor(Math.log10(1 + excess / 25000000) * 45000000);
+      finalListeners = Math.min(MAX_GLOBAL_LISTENERS, SOFT_LISTENER_CAP + compressed);
+    }
+    return Math.max(1, Math.min(MAX_GLOBAL_LISTENERS, finalListeners));
   }
 
   /**
@@ -583,10 +646,12 @@ export class StreamingEngine {
       (artist.personality?.creativity || 70) * 0.10 +
       producerBoost * 0.5;
 
-    // Budget per track modifier
+    // Budget per track modifier (escalado hasta mid/late game)
     const budgetPerTrack = songs.length > 0 ? productionBudget / songs.length : 1000;
     let budgetMod = 0;
-    if (budgetPerTrack >= 3000) budgetMod = 3;
+    if (budgetPerTrack >= 25000) budgetMod = 7;
+    else if (budgetPerTrack >= 10000) budgetMod = 5;
+    else if (budgetPerTrack >= 3000) budgetMod = 3;
     else if (budgetPerTrack >= 1500) budgetMod = 1;
     else if (budgetPerTrack < 400) budgetMod = -3;
 
@@ -633,8 +698,10 @@ export class StreamingEngine {
       algorithmicPopularitySales = Math.floor(75600 + Math.pow((popRatio - 0.85) / 0.15, 1.2) * 130000);
     }
 
-    // Marketing impact
-    const marketingMultiplier = 1.0 + Math.min(1.8, marketingBudget / 20000);
+    // Marketing impact (preserva comportamiento Underground $0-$20k y escala logarítmicamente hasta $500k+)
+    const marketingMultiplier = marketingBudget <= 20000
+      ? 1.0 + (marketingBudget / 20000)
+      : 2.0 + Math.min(1.6, Math.log10(1 + (marketingBudget - 20000) / 25000) * 1.2);
 
     // Hype impact
     const hypeFactor = 0.6 + ((artist.stats?.hype || 30) / 100) * 0.8;
@@ -654,8 +721,11 @@ export class StreamingEngine {
     const firstWeekSales = Math.max(minSales, calculatedFirstWeekSales);
 
     // 3. Commercial score (0 - 100)
+    const mktCommercialScore = marketingBudget <= 20000
+      ? (marketingBudget / 30000) * 20
+      : 13.33 + Math.min(14, Math.log10(1 + (marketingBudget - 20000) / 30000) * 10);
     const commercialScore = Math.floor(
-      Math.min(100, ((artist.personality?.commercialAppeal || 70) * 0.4 + (artist.stats?.popularity || 10) * 0.4 + (marketingBudget / 30000) * 20))
+      Math.min(100, ((artist.personality?.commercialAppeal || 70) * 0.4 + (artist.stats?.popularity || 10) * 0.4 + mktCommercialScore))
     );
 
     return {
@@ -738,6 +808,9 @@ export class StreamingEngine {
 
     // Si la base de fans actual es muy pequeña en comparación con los oyentes (ej. 14k fans vs 6M oyentes),
     // se aplica un multiplicador de catch-up orgánico para equilibrar la comunidad rápidamente
+    const MAX_FANBASE = 220000000;
+    if (currentFans >= MAX_FANBASE) return 0;
+
     const fansToListenersRatio = currentFans / Math.max(1, monthlyListeners);
     let catchUpMultiplier = 1.0;
     if (fansToListenersRatio < 0.05) {
@@ -748,8 +821,13 @@ export class StreamingEngine {
       catchUpMultiplier = 0.7; // Desaceleración natural en bases de fans saturadas
     }
 
-    const newFansMonthly = Math.floor(monthlyListeners * baseConversionRate * catchUpMultiplier);
-    return Math.max(5, newFansMonthly);
+    // Saturación demográfica global por encima de 50M de fans
+    const saturationDampener = currentFans > 50000000
+      ? Math.max(0.05, 1 - (currentFans - 50000000) / (MAX_FANBASE - 50000000))
+      : 1.0;
+
+    const newFansMonthly = Math.floor(monthlyListeners * baseConversionRate * catchUpMultiplier * saturationDampener);
+    return Math.min(MAX_FANBASE - currentFans, Math.max(5, newFansMonthly));
   }
 
   /**
@@ -762,7 +840,9 @@ export class StreamingEngine {
   ): number {
     if (!worldOrPlaylists) return 1.0;
     const playlistsMap: Record<string, EditorialPlaylist> | undefined =
-      'playlists' in worldOrPlaylists ? worldOrPlaylists.playlists : (worldOrPlaylists as Record<string, EditorialPlaylist>);
+      ('artists' in worldOrPlaylists && 'songs' in worldOrPlaylists)
+        ? (worldOrPlaylists as WorldState).playlists
+        : (worldOrPlaylists as Record<string, EditorialPlaylist>);
     if (!playlistsMap) return 1.0;
 
     let maxMultiplier = 1.0;
@@ -794,22 +874,30 @@ export class StreamingEngine {
     if (!world.playlists) {
       world.playlists = {};
       for (const pl of EDITORIAL_PLAYLISTS) {
-        world.playlists[pl.id] = { ...pl, trackIds: [...pl.trackIds] };
+        world.playlists[pl.id] = {
+          ...pl,
+          genreFilters: pl.genreFilters ? [...pl.genreFilters] : [],
+          trackIds: [...(pl.trackIds || [])],
+          tracks: pl.tracks ? pl.tracks.map(t => ({ ...t })) : []
+        };
       }
     }
 
     const allSongs = Object.values(world.songs || {});
     if (allSongs.length === 0) return world.playlists;
 
+    // Pre-filter active/recent songs so 100-year catalogs don't scan decades-old dead tracks every month
+    const activePool = allSongs.filter(song => {
+      const age = (world.currentYear - song.releaseYear) * 12 + (world.currentMonth - song.releaseMonth);
+      return age >= 0 && (age <= 36 || song.isClassic || (song.streamsLastMonth || 0) >= 25000);
+    });
+
     for (const pl of Object.values(world.playlists)) {
       // 1. Filtrar canciones elegibles por lanzamiento y género
-      const candidateSongs = allSongs.filter(song => {
-        const age = (world.currentYear - song.releaseYear) * 12 + (world.currentMonth - song.releaseMonth);
-        if (age < 0) return false;
-
+      const candidateSongs = activePool.filter(song => {
         if (pl.genreFilters && pl.genreFilters.length > 0) {
           const mainMatch = pl.genreFilters.includes(song.genreId);
-          const subMatch = song.subGenreIds?.some(sg => pl.genreFilters.includes(sg));
+          const subMatch = song.subGenreIds?.some(sg => pl.genreFilters?.includes(sg));
           if (!mainMatch && !subMatch) return false;
         }
 
@@ -846,11 +934,11 @@ export class StreamingEngine {
           // Los hits masivos del planeta
           if (artistPop >= 70 || (song.streamsLastMonth || 0) > 400000) synergy += 30;
         } else if (pl.id === 'mansion_trap' || pl.id === 'exitos_argentina') {
-          if (artist?.country === 'Argentina' || ['trap_latino', 'rock', 'cumbia', 'rkt'].includes(song.genreId)) {
+          if (artist?.country === 'Argentina' || ['trap_latino', 'rock_alternativo', 'cumbia_tropical', 'rock', 'cumbia', 'rkt'].includes(song.genreId)) {
             synergy += 25;
           }
         } else if (pl.id === 'viva_latino' || pl.id === 'baila_reggaeton') {
-          if (['Argentina', 'Mexico', 'Spain', 'Colombia', 'Puerto Rico', 'Chile'].includes(artist?.country || '')) {
+          if (['Argentina', 'Mexico', 'México', 'Spain', 'España', 'Colombia', 'Puerto Rico', 'Chile'].includes(artist?.country || '')) {
             synergy += 20;
           }
         }
@@ -860,7 +948,15 @@ export class StreamingEngine {
       });
 
       scored.sort((a, b) => b.score - a.score);
-      pl.trackIds = scored.slice(0, pl.maxTracks).map(s => s.songId);
+      const topIds = scored.slice(0, pl.maxTracks || 50).map(s => s.songId);
+      pl.trackIds = topIds;
+      pl.tracks = topIds.map((id, idx) => ({
+        songId: id,
+        artistId: world.songs[id]?.artistId || '',
+        addedMonth: world.currentMonth,
+        addedYear: world.currentYear,
+        position: idx + 1
+      }));
     }
 
     return world.playlists;
@@ -1055,19 +1151,19 @@ export class StreamingEngine {
     const conceptStr = (concept || '').toLowerCase();
 
     if (conceptStr.includes('baile') || conceptStr.includes('coreograf')) {
-      if (['reggaeton', 'urban', 'pop', 'latin_pop', 'dembow', 'rkt'].includes(genreStr)) {
+      if (['reggaeton', 'reggaeton_urbano', 'pop_moderno', 'cumbia_tropical', 'funk_brasilero', 'afrobeat_dancehall', 'kpop_jpop', 'urban', 'pop', 'latin_pop', 'dembow', 'rkt'].includes(genreStr)) {
         synergyBoost = 1.35;
       }
     } else if (conceptStr.includes('meme') || conceptStr.includes('sped up') || conceptStr.includes('acelerado')) {
-      if (['trap_latino', 'drill', 'synthwave', 'pop', 'hip_hop'].includes(genreStr)) {
+      if (['trap_latino', 'drill', 'pop_moderno', 'hip_hop_rap', 'kpop_jpop', 'musica_electronica', 'funk_brasilero', 'synthwave', 'pop', 'hip_hop'].includes(genreStr)) {
         synergyBoost = 1.30;
       }
     } else if (conceptStr.includes('drop') || conceptStr.includes('gimnasio') || conceptStr.includes('motivaci')) {
-      if (['trap_latino', 'electronic', 'rock', 'drill'].includes(genreStr)) {
+      if (['trap_latino', 'musica_electronica', 'rock_alternativo', 'metal_punk', 'drill', 'hip_hop_rap', 'funk_brasilero', 'electronic', 'rock'].includes(genreStr)) {
         synergyBoost = 1.30;
       }
     } else if (conceptStr.includes('pov') || conceptStr.includes('melanc')) {
-      if (['indie_rock', 'alternative', 'r&b', 'bedroom_pop'].includes(genreStr)) {
+      if (['rock_alternativo', 'r_and_b_soul', 'pop_moderno', 'corridos_urbanos', 'country_folk', 'jazz_bossa', 'indie_rock', 'alternative', 'r&b', 'bedroom_pop'].includes(genreStr)) {
         synergyBoost = 1.35;
       }
     } else if (conceptStr.includes('lip-sync') || conceptStr.includes('glow-up')) {

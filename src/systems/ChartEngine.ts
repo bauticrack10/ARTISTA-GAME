@@ -310,9 +310,10 @@ export class ChartEngine {
       if (s && s.id) uniqueSongsMap.set(s.id, s);
     });
 
+    const totalSongsCount = uniqueSongsMap.size;
     const activeSongs = Array.from(uniqueSongsMap.values()).filter(s => {
       const ageMonths = (world.currentYear - s.releaseYear) * 12 + (world.currentMonth - s.releaseMonth);
-      return ageMonths >= 0 && (s.streamsLastMonth > 100 || s.streamsTotal > 500);
+      return ageMonths >= 0 && (s.streamsLastMonth > 100 || (totalSongsCount < 200 && s.streamsTotal > 500));
     });
 
     for (const region of this.REGIONS) {
@@ -445,11 +446,67 @@ export class ChartEngine {
       updatedCharts[region] = regionalChart;
     }
 
+    this.updateAlbumPeakPositions(world, allSongs, allArtists);
+
     return {
       updatedCharts: updatedCharts as Record<MusicRegion, RegionalChart>,
       newRecords,
       chartMilestoneNews
     };
+  }
+
+  /**
+   * Computes monthly regional ranking for active albums and updates album.peakChartPosition.
+   */
+  static updateAlbumPeakPositions(
+    world: WorldState,
+    allSongs: Record<string, Song> = world.songs,
+    allArtists: Record<string, Artist> = world.artists
+  ): void {
+    const albums = Object.values(world.albums || {}).filter(a => {
+      if (!a || !a.id) return false;
+      const age = (world.currentYear - a.releaseYear) * 12 + (world.currentMonth - a.releaseMonth);
+      return age >= 0 && (age <= 36 || a.totalStreams > 100000);
+    });
+    if (albums.length === 0) return;
+
+    const albumMetrics = albums.map(album => {
+      const songs = (album.songIds || []).map(id => allSongs[id]).filter(Boolean);
+      const monthlyStreams = songs.reduce((sum, s) => sum + (s.streamsLastMonth || 0), 0);
+      const age = (world.currentYear - album.releaseYear) * 12 + (world.currentMonth - album.releaseMonth);
+      const debutBoost = age === 0 ? (album.firstWeekSales || 0) * 150 : 0;
+      const repSong = songs[0];
+      const artist = allArtists[album.artistId];
+      return { album, monthlyStreams, debutBoost, repSong, artist };
+    }).filter(m => m.monthlyStreams > 0 || m.debutBoost > 0);
+
+    if (albumMetrics.length === 0) return;
+
+    for (const region of this.REGIONS) {
+      const scored = albumMetrics.map(m => {
+        const mult = m.repSong
+          ? this.calculateRegionalMultiplier(m.repSong, m.artist, region, allArtists)
+          : 1.0;
+        const score = (m.monthlyStreams + m.debutBoost) * mult;
+        return { album: m.album, score };
+      });
+      scored.sort((a, b) => b.score - a.score);
+
+      const top50 = scored.slice(0, 50);
+      top50.forEach((item, idx) => {
+        const rank = idx + 1;
+        if (!item.album.peakChartPosition) {
+          item.album.peakChartPosition = {
+            Global: null, Argentina: null, USA: null, LatinAmerica: null, Europe: null,
+            Spain: null, Mexico: null, UK: null, Brazil: null, Asia: null, Africa: null
+          };
+        }
+        const curr = item.album.peakChartPosition[region];
+        if (curr === null || curr === undefined || rank < curr) {
+          item.album.peakChartPosition[region] = rank;
+        }
+      });
+    }
   }
 
   /**

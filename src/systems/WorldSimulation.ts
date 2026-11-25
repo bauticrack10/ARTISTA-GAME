@@ -520,14 +520,22 @@ export class WorldSimulation {
           activeTrends,
           world.genres[song.genreId],
           world.artists,
-          artistSongs
+          artistSongs,
+          world.playlists
         );
 
         song.streamsLastMonth = streamResult.streams;
         song.streamsTotal += streamResult.streams;
         song.monthlyStreamsHistory.push(streamResult.streams);
+        if (song.monthlyStreamsHistory.length > 36) {
+          song.monthlyStreamsHistory = song.monthlyStreamsHistory.slice(-36);
+        }
         if (streamResult.wentViralNow) song.wentViral = true;
         if (streamResult.becomesClassicNow) song.isClassic = true;
+
+        if (song.albumId && world.albums[song.albumId]) {
+          world.albums[song.albumId].totalStreams = (world.albums[song.albumId].totalStreams || 0) + streamResult.streams;
+        }
 
         artistTotalMonthlyStreams += streamResult.streams;
       }
@@ -567,7 +575,7 @@ export class WorldSimulation {
         artist.stats.fanbaseLoyalty,
         artistSongs.some(s => s.releaseYear === world.currentYear && s.releaseMonth === world.currentMonth)
       );
-      artist.stats.fansCount += newFans;
+      artist.stats.fansCount = Math.min(220000000, artist.stats.fansCount + newFans);
     }
 
     return {

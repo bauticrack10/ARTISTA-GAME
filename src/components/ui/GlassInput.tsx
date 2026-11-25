@@ -9,9 +9,8 @@ export interface GlassInputProps extends React.InputHTMLAttributes<HTMLInputElem
 }
 
 /**
- * Input Reactivo de Cristal Esmerilado (GlassInput)
- * - Cápsula de cristal esmerilado: bg-white/[0.05] backdrop-blur-md border border-white/10 text-white
- * - En focus o hover: iluminan su borde suavemente (border-white/30 y bg-white/[0.12])
+ * Input de Estudio (GlassInput)
+ * - Superficie mate oscura #111114 con borde #242429 y realce Signal Orange (#FF4F00) en focus
  */
 export const GlassInput = React.forwardRef<HTMLInputElement, GlassInputProps>(
   (
@@ -30,7 +29,7 @@ export const GlassInput = React.forwardRef<HTMLInputElement, GlassInputProps>(
     return (
       <div className={`w-full space-y-1.5 ${containerClassName}`}>
         {label && (
-          <label className="block text-xs font-medium text-[#8E8E99] font-sans">
+          <label className="block text-xs font-medium text-[#A1A1AA] font-sans">
             {label}
           </label>
         )}
@@ -43,11 +42,11 @@ export const GlassInput = React.forwardRef<HTMLInputElement, GlassInputProps>(
           <input
             ref={ref}
             disabled={disabled}
-            className={`w-full bg-white/[0.05] backdrop-blur-md border ${
+            className={`w-full bg-[#111114] border ${
               error
-                ? 'border-[#EF4444] shadow-[0_0_12px_rgba(239,68,68,0.3)]'
-                : 'border-white/10 hover:border-white/30 hover:bg-white/[0.08] focus:border-white/30 focus:bg-white/[0.12] focus:shadow-[0_0_20px_rgba(0,229,153,0.25)]'
-            } text-white placeholder-white/40 rounded-[10px] px-3.5 py-2.5 text-sm transition-all duration-200 outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
+                ? 'border-[#EF4444] shadow-[0_0_0_3px_rgba(239,68,68,0.18)]'
+                : 'border-[#242429] hover:border-[#383842] focus:border-[#FF4F00] focus:bg-[#18181C] focus:shadow-[0_0_0_3px_rgba(255,79,0,0.16)]'
+            } text-[#F4F0EA] placeholder-[#71717A] rounded-[8px] px-3.5 py-2.5 text-sm transition-all duration-150 outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
               icon ? 'pl-10' : ''
             } ${suffix ? 'pr-12' : ''} ${className}`}
             {...rest}

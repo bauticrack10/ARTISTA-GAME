@@ -437,12 +437,16 @@ export class FestivalEngine {
   ): FestivalInvitation[] {
     const invitations: FestivalInvitation[] = [];
 
+    const mgr = artist.managerId && world?.managers ? world.managers[artist.managerId] : undefined;
+    const invitationWindowMonths = mgr && (mgr.industryNetwork || 0) >= 70 ? 3 : 2;
+    const managerNegotiationMult = mgr ? 1 + (0.05 + (mgr.negotiationSkill / 100) * 0.20) : 1;
+
     for (const fest of GLOBAL_FESTIVALS) {
       // Meses de diferencia cíclica anual (0 = ocurre este mes, 1 = el mes que viene, etc.)
       const monthDiff = (fest.month - currentMonth + 12) % 12;
 
-      // La temporada de ofertas se abre 1 o 2 meses antes, o en el mes mismo
-      if (monthDiff <= 2) {
+      // La temporada de ofertas se abre 1 o 2 meses antes (3 con buen mánager), o en el mes mismo
+      if (monthDiff <= invitationWindowMonths) {
         const slot = this.getEligibleSlot(artist, fest);
         if (!slot) continue;
 
@@ -478,7 +482,7 @@ export class FestivalEngine {
         }
 
         const prestigeMultiplier = fest.prestige / 85;
-        const payout = Math.floor(basePayout * prestigeMultiplier);
+        const payout = Math.floor(basePayout * prestigeMultiplier * managerNegotiationMult);
         const audienceExpected = Math.floor(fest.capacity * audienceRatio);
 
         invitations.push({
@@ -489,6 +493,8 @@ export class FestivalEngine {
           country: fest.country,
           month: fest.month,
           year: currentYear,
+          expiresMonth: fest.month,
+          expiresYear: currentYear,
           slot,
           slotTitle: this.getSlotTitle(slot),
           payout,
@@ -634,7 +640,7 @@ export class FestivalEngine {
 
     if (dilemmaChoice && dilemmaChoice.choiceId) {
       const dilemma = (dilemmaChoice.dilemmaId && LIVE_SHOW_DILEMMAS.find(d => d.id === dilemmaChoice.dilemmaId))
-        || LIVE_SHOW_DILEMMAS.find(d => d.choices.some(c => c.id === dilemmaChoice.choiceId));
+        || LIVE_SHOW_DILEMMAS.find(d => d.choices?.some(c => c.id === dilemmaChoice.choiceId));
       const option = dilemma?.choices?.find(c => c.id === dilemmaChoice.choiceId);
 
       if (dilemma && option) {

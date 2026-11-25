@@ -90,54 +90,54 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
   const getCategoryIcon = (cat: TransactionCategory) => {
     switch (cat) {
       case 'streaming':
-        return <Music className="w-4 h-4 text-cyan-400" />;
+        return <Music className="w-4 h-4 text-[#38BDF8]" />;
       case 'merch':
-        return <ShoppingBag className="w-4 h-4 text-amber-400" />;
+        return <ShoppingBag className="w-4 h-4 text-[#F59E0B]" />;
       case 'production':
-        return <Disc3 className="w-4 h-4 text-purple-400" />;
+        return <Disc3 className="w-4 h-4 text-[#FF4F00]" />;
       case 'marketing':
-        return <Radio className="w-4 h-4 text-pink-400" />;
+        return <Radio className="w-4 h-4 text-[#F59E0B]" />;
       case 'store':
-        return <ShoppingBag className="w-4 h-4 text-indigo-400" />;
+        return <ShoppingBag className="w-4 h-4 text-[#38BDF8]" />;
       case 'living_cost':
-        return <Building className="w-4 h-4 text-emerald-400" />;
+        return <Building className="w-4 h-4 text-[#10B981]" />;
       case 'maintenance':
-        return <Layers className="w-4 h-4 text-amber-400" />;
+        return <Layers className="w-4 h-4 text-[#F59E0B]" />;
       case 'tour':
-        return <TrendingUp className="w-4 h-4 text-emerald-400" />;
+        return <TrendingUp className="w-4 h-4 text-[#10B981]" />;
       case 'event':
-        return <Ticket className="w-4 h-4 text-yellow-400" />;
+        return <Ticket className="w-4 h-4 text-[#F59E0B]" />;
       case 'contract':
-        return <HeartHandshake className="w-4 h-4 text-blue-400" />;
+        return <HeartHandshake className="w-4 h-4 text-[#38BDF8]" />;
       default:
-        return <DollarSign className="w-4 h-4 text-slate-400" />;
+        return <DollarSign className="w-4 h-4 text-[#94A3B8]" />;
     }
   };
 
   const getCategoryBadgeClass = (cat: TransactionCategory) => {
     switch (cat) {
       case 'streaming':
-        return 'bg-cyan-950/60 text-cyan-300 border-cyan-500/30';
+        return 'bg-[#38BDF8]/10 text-[#38BDF8] border-[#38BDF8]/30';
       case 'merch':
-        return 'bg-amber-950/60 text-amber-300 border-amber-500/30';
+        return 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30';
       case 'production':
-        return 'bg-purple-950/60 text-purple-300 border-purple-500/30';
+        return 'bg-[#FF4F00]/10 text-[#FF4F00] border-[#FF4F00]/30';
       case 'marketing':
-        return 'bg-pink-950/60 text-pink-300 border-pink-500/30';
+        return 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/35';
       case 'store':
-        return 'bg-indigo-950/60 text-indigo-300 border-indigo-500/30';
+        return 'bg-[#38BDF8]/15 text-[#38BDF8] border-[#38BDF8]/35';
       case 'living_cost':
-        return 'bg-emerald-950/60 text-emerald-300 border-emerald-500/30';
+        return 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30';
       case 'maintenance':
-        return 'bg-orange-950/60 text-orange-300 border-orange-500/30';
+        return 'bg-[#FF4F00]/10 text-[#FF4F00] border-[#FF4F00]/30';
       case 'tour':
-        return 'bg-teal-950/60 text-teal-300 border-teal-500/30';
+        return 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/35';
       case 'event':
-        return 'bg-yellow-950/60 text-yellow-300 border-yellow-500/30';
+        return 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30';
       case 'contract':
-        return 'bg-blue-950/60 text-blue-300 border-blue-500/30';
+        return 'bg-[#94A3B8]/15 text-[#94A3B8] border-[#94A3B8]/30';
       default:
-        return 'bg-slate-900 text-slate-300 border-slate-700';
+        return 'bg-[#18181C] text-[#94A3B8] border-[#242429]';
     }
   };
 
@@ -561,7 +561,7 @@ export const FinancialLedger: React.FC<FinancialLedgerProps> = ({
   if (isModal) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 overflow-y-auto animate-in fade-in duration-200">
-        <div className="relative w-full max-w-5xl bg-[#111114] border border-[#242429] rounded-[6px] p-6 shadow-2xl max-h-[90vh] overflow-y-auto my-auto scrollbar-thin">
+        <div className="lg-modal relative w-full max-w-5xl bg-[#111114] border border-[#242429] rounded-[8px] p-6 shadow-2xl max-h-[90vh] overflow-y-auto my-auto scrollbar-thin">
           {content}
         </div>
       </div>

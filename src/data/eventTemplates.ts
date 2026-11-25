@@ -46,7 +46,6 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           consequencesDescription: `+${formatMoney(offerContract.signingBonus)} Fondos, ${offerContract.royaltyPercentage}% Regalías, +15 Hype, +4 Popularidad, Entrada a catálogo discográfico`,
           apply: () => ({
             narrativeText: `Firmaste tu primer contrato formal. El adelanto de ${formatMoney(offerContract.signingBonus)} te permite equipar tu estudio y profesionalizar tu proyecto.`,
-            fundsChange: offerContract.signingBonus,
             popularityChange: 4,
             hypeChange: 15,
             newContract: offerContract,
@@ -89,7 +88,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             hypeChange: 10,
             statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 2) },
             personalityChanges: {
-              independence: Math.min(100, ctx.player.personality.independence + 2)
+              independence: 2
             }
           })
         }
@@ -138,8 +137,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText: 'Comprendiste conceptos clave de mezcla que mejorarán la calidad de cada tema futuro.',
           personalityChanges: {
-            skill: Math.min(100, ctx.player.personality.skill + 3),
-            discipline: Math.min(100, ctx.player.personality.discipline + 1)
+            skill: 3,
+            discipline: 1
           },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 3) },
           energyChange: -8
@@ -167,7 +166,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText: 'La química entre tu voz y su base fue perfecta. Nació una alianza sonora prometedora.',
           hypeChange: 10,
           fansChange: 120,
-          personalityChanges: { sociability: Math.min(100, ctx.player.personality.sociability + 2) },
+          personalityChanges: { sociability: 2 },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 3) }
         })
       },
@@ -181,8 +180,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           fundsChange: -150,
           reputationChange: 4,
           personalityChanges: {
-            ambition: Math.min(100, ctx.player.personality.ambition + 2),
-            independence: Math.min(100, ctx.player.personality.independence + 2)
+            ambition: 2,
+            independence: 2
           },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 2) }
         })
@@ -213,7 +212,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           fundsChange: 80,
           energyChange: -12,
           hypeChange: 8,
-          personalityChanges: { charisma: Math.min(100, ctx.player.personality.charisma + 2) }
+          personalityChanges: { charisma: 2 }
         })
       },
       {
@@ -224,7 +223,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText: 'Vendiste todos los stickers y remeras. La gente se fue llevando tu logo en sus fundas de celular.',
           fundsChange: 140,
           fansChange: 80,
-          personalityChanges: { commercialAppeal: Math.min(100, ctx.player.personality.commercialAppeal + 1) },
+          personalityChanges: { commercialAppeal: 1 },
           statChanges: { fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 5) }
         })
       }
@@ -252,7 +251,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           popularityChange: 3,
           hypeChange: 10,
           streamsChange: 1500,
-          personalityChanges: { ambition: Math.min(100, ctx.player.personality.ambition + 1) }
+          personalityChanges: { ambition: 1 }
         })
       },
       {
@@ -268,8 +267,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           popularityChange: 4,
           streamsChange: 3800,
           personalityChanges: {
-            creativity: Math.min(100, ctx.player.personality.creativity + 2),
-            originality: Math.min(100, ctx.player.personality.originality + 1)
+            creativity: 2,
+            originality: 1
           },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) }
         })
@@ -297,8 +296,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           reputationChange: 6,
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 5) },
           personalityChanges: {
-            skill: Math.min(100, ctx.player.personality.skill + 2),
-            originality: Math.min(100, ctx.player.personality.originality + 1)
+            skill: 2,
+            originality: 1
           },
           fansChange: 800,
           energyChange: -10,
@@ -316,8 +315,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           hypeChange: 12,
           energyChange: -8,
           personalityChanges: {
-            charisma: Math.min(100, ctx.player.personality.charisma + 2),
-            commercialAppeal: Math.min(100, ctx.player.personality.commercialAppeal + 1)
+            charisma: 2,
+            commercialAppeal: 1
           }
         })
       },
@@ -328,7 +327,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText: 'Conociste a beatmakers underground que tienen grabadoras y pistas listas para experimentar.',
           statChanges: { energy: Math.min(100, ctx.player.stats.energy + 5) },
-          personalityChanges: { sociability: Math.min(100, ctx.player.personality.sociability + 2) },
+          personalityChanges: { sociability: 2 },
           fundsChange: 100
         })
       }
@@ -436,7 +435,6 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           consequencesDescription: `+${formatMoney(majorContract.signingBonus)} Adelanto inmediato, ${majorContract.royaltyPercentage}% Regalías, ${majorContract.marketingPower}% Marketing Masivo, ${majorContract.creativeControl}% Control Creativo`,
           apply: () => ({
             narrativeText: `Firmaste el contrato con la Major Multinacional. El adelanto millonario de ${formatMoney(majorContract.signingBonus)} ingresa a tus cuentas y la maquinaria promocional global se activa de inmediato.`,
-            fundsChange: majorContract.signingBonus,
             popularityChange: 12,
             reputationChange: -2,
             hypeChange: 25,
@@ -455,7 +453,6 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           consequencesDescription: `+${formatMoney(indieContract.signingBonus)} Adelanto, ${indieContract.royaltyPercentage}% Regalías Artista, ${indieContract.marketingPower}% Marketing, ${indieContract.creativeControl}% Control Creativo`,
           apply: () => ({
             narrativeText: `Optaste por el camino independiente de élite. Conservás el ${indieContract.royaltyPercentage}% de tus regalías con un adelanto de ${formatMoney(indieContract.signingBonus)} y respaldo estratégico de primer nivel.`,
-            fundsChange: indieContract.signingBonus,
             popularityChange: 8,
             statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6) },
             hypeChange: 20,
@@ -527,7 +524,6 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           consequencesDescription: `+${formatMoney(boutiqueContract.signingBonus)} Fondos, ${boutiqueContract.royaltyPercentage}% Regalías, ${boutiqueContract.creativeControl}% Control Creativo, 1 Álbum exigido`,
           apply: () => ({
             narrativeText: `Firmaste con el colectivo underground. Tenés ${formatMoney(boutiqueContract.signingBonus)} de presupuesto fresco para tus grabaciones sin resignar ni un ápice de tu identidad artística.`,
-            fundsChange: boutiqueContract.signingBonus,
             statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4) },
             newContract: boutiqueContract,
             newsGenerated: {
@@ -612,7 +608,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 12),
             fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 8)
           },
-          personalityChanges: { originality: Math.min(100, ctx.player.personality.originality + 10) },
+          personalityChanges: { originality: 10 },
           timelineEntry: {
             text: `Publicó una obra conceptual desafiando las expectativas comerciales tras su primer gran éxito en ${ctx.currentYear}.`,
             category: 'music'
@@ -627,7 +623,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'Apagaste las redes sociales y rechazaste shows apresurados para componer un cuerpo de obra integral. Tu fanaticada espera con devoción lo que promete ser un disco histórico.',
           energyChange: -15,
-          personalityChanges: { discipline: Math.min(100, ctx.player.personality.discipline + 10) },
+          personalityChanges: { discipline: 10 },
           statChanges: { fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 10) },
           timelineEntry: {
             text: `Se recluyó en el estudio para componer su álbum debut consagratorio durante el año ${ctx.currentYear}.`,
@@ -688,8 +684,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Contrataste productores especializados en estribillos pop. Tus maquetas ahora suenan más digeribles para el gran público, resignando parte de tu aspereza inicial.',
           fundsChange: -2000,
           personalityChanges: {
-            commercialAppeal: Math.min(100, ctx.player.personality.commercialAppeal + 8),
-            originality: Math.max(0, ctx.player.personality.originality - 4)
+            commercialAppeal: 8,
+            originality: -4
           },
           popularityChange: 4
         })
@@ -703,7 +699,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Hablaste directo a la cámara con el corazón en la mano. La comunidad aplaudió tu transparencia y miles de personas comenzaron a seguir tu proceso independiente.',
           hypeChange: 16,
           statChanges: { fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 10) },
-          personalityChanges: { charisma: Math.min(100, ctx.player.personality.charisma + 4) }
+          personalityChanges: { charisma: 4 }
         })
       }
     ]
@@ -907,7 +903,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Subiste un video desafiándolo a subirse al mismo escenario con un micrófono abierto frente al público real. Tu valentía fue aclamada por los fanáticos del rap tradicional.',
           hypeChange: 22,
           reputationChange: 6,
-          personalityChanges: { charisma: Math.min(100, ctx.player.personality.charisma + 8) }
+          personalityChanges: { charisma: 8 }
         })
       },
       {
@@ -917,7 +913,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'Decidiste no alimentar el circo de la farándula. Continuaste trabajando en tu próximo proyecto y dejaste que tus números y calidad musical demostraran la distancia entre ambos.',
-          personalityChanges: { discipline: Math.min(100, ctx.player.personality.discipline + 8) },
+          personalityChanges: { discipline: 8 },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8) },
           reputationChange: 5
         })
@@ -1039,7 +1035,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'El maestro aceptó experimentar con tus ritmos electrónicos y sintetizadores. Crearon un sonido híbrido nunca antes escuchado que arrasó en las pistas de baile y las radios globales.',
-          personalityChanges: { originality: Math.min(100, ctx.player.personality.originality + 12) },
+          personalityChanges: { originality: 12 },
           hypeChange: 35,
           fansChange: 30000,
           popularityChange: 8,
@@ -1058,7 +1054,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'El mini-documental de 20 minutos con las conversaciones íntimas sobre el oficio musical fue estrenado en festivales de cine y plataformas de streaming con enorme impacto cultural.',
           fundsChange: -12000,
-          personalityChanges: { charisma: Math.min(100, ctx.player.personality.charisma + 10) },
+          personalityChanges: { charisma: 10 },
           fansChange: 45000,
           reputationChange: 12,
           hypeChange: 30,
@@ -1131,7 +1127,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'Dejaste que el meme circulara sin rebajarte a participar en tendencias pasajeras. Tu comunidad valoró tu compostura y tu aura de artista inaccesible.',
-          personalityChanges: { discipline: Math.min(100, ctx.player.personality.discipline + 6) },
+          personalityChanges: { discipline: 6 },
           statChanges: { fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 8) }
         })
       }
@@ -1264,7 +1260,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Fundaste un festival autogestionado que recorre el continente con precios populares y trato justo para todos los artistas. Te convertiste en un héroe de la cultura independiente.',
           fundsChange: 140000,
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 16) },
-          personalityChanges: { independence: Math.min(100, ctx.player.personality.independence + 15) },
+          personalityChanges: { independence: 15 },
           reputationChange: 14,
           timelineEntry: {
             text: `Fundó un festival itinerante independiente de alcance internacional en ${ctx.currentYear}.`,
@@ -1315,7 +1311,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'Aprovechaste la intimación para dar un golpe de timón conceptual. Relanzaste tu imagen con un alter ego enigmático que entusiasmó a la prensa especializada y a tus fans.',
-          personalityChanges: { originality: Math.min(100, ctx.player.personality.originality + 12) },
+          personalityChanges: { originality: 12 },
           hypeChange: 26,
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8) },
           timelineEntry: {
@@ -1385,7 +1381,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'En lugar de pedir perdón a los medios corporativos, escribiste un disco salvaje abrazando la figura del forajido incomprendido. El álbum rompió récords de reproducciones y dividió a la sociedad.',
-          personalityChanges: { originality: Math.min(100, ctx.player.personality.originality + 14) },
+          personalityChanges: { originality: 14 },
           hypeChange: 36,
           reputationChange: -10,
           popularityChange: 8,
@@ -1404,7 +1400,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Te desconectaste del ruido y la histeria mediática. La tormenta pasó como todas las modas y tú saliste del retiro con las mejores canciones de tu vida.',
           energyChange: 35,
           hypeChange: -12,
-          personalityChanges: { creativity: Math.min(100, ctx.player.personality.creativity + 8) }
+          personalityChanges: { creativity: 8 }
         })
       }
     ]
@@ -1435,9 +1431,9 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'Diste el salto al vacío. El lanzamiento conmocionó al panorama musical: algunos oyentes conservadores se quejaron, pero la crítica internacional te consagró como un verdadero visionario musical.',
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 16) },
-          personalityChanges: { originality: Math.min(100, ctx.player.personality.originality + 15) },
+          personalityChanges: { originality: 15 },
           hypeChange: 22,
-          careerImpact: { forceGenreTransition: 'experimental_fusion' },
+          careerImpact: { forceGenreTransition: 'musica_electronica' },
           newsGenerated: {
             headline: `${ctx.player.name} rompe esquemas con una reinvención estética sin precedentes`,
             body: `El audaz giro sonoro de ${ctx.player.name} redefine los límites de la música contemporánea.`,
@@ -1457,7 +1453,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'Encontraste el equilibrio perfecto entre innovación y accesibilidad. Lograste introducir sonoridades complejas en las radios sin perder a tu público masivo.',
-          personalityChanges: { commercialAppeal: Math.min(100, ctx.player.personality.commercialAppeal + 8) },
+          personalityChanges: { commercialAppeal: 8 },
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8) },
           popularityChange: 5
         })
@@ -1469,7 +1465,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'Publicaste el disco bajo un alias enigmático en plataformas independientes. El proyecto se convirtió en una obra de culto venerada por los coleccionistas.',
-          personalityChanges: { originality: Math.min(100, ctx.player.personality.originality + 12) },
+          personalityChanges: { originality: 12 },
           statChanges: { fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 10) }
         })
       }
@@ -1500,7 +1496,6 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'Firmaste el megacontrato multimillonario. Tu cuenta bancaria estalló y la maquinaria promocional global se puso a tu servicio en 180 países, aunque ahora debes responder a los directivos del sello.',
-          fundsChange: 250000,
           popularityChange: 12,
           hypeChange: 30,
           statChanges: { artisticCredibility: Math.max(0, ctx.player.stats.artisticCredibility - 4) },
@@ -1536,7 +1531,6 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
         apply: () => ({
           narrativeText:
             'Elegiste la vía intermedia de élite. Conservas el 65% de tus regalías y el control creativo con un respaldo económico de primer nivel.',
-          fundsChange: 90000,
           popularityChange: 8,
           hypeChange: 20,
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6) },
@@ -1570,7 +1564,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 12),
             fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 10)
           },
-          personalityChanges: { independence: Math.min(100, ctx.player.personality.independence + 15) },
+          personalityChanges: { independence: 15 },
           reputationChange: 8,
           hypeChange: 15,
           timelineEntry: {
@@ -1732,7 +1726,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Te internaste en un centro especializado en descanso y salud vocal. Recuperaste la vitalidad, tu voz volvió con más potencia que nunca y aprendiste a cuidar tu instrumento biológico.',
           fundsChange: -6000,
           energyChange: 60,
-          personalityChanges: { discipline: Math.min(100, ctx.player.personality.discipline + 6) },
+          personalityChanges: { discipline: 6 },
           newsGenerated: {
             headline: `${ctx.player.name} prioriza su salud y completa un retiro médico de recuperación`,
             body: `El artista restablece su vitalidad tras un período de descanso supervisado por especialistas.`,
@@ -1753,7 +1747,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'Pusiste orden en tu vida: contrataste asistentes para delegar la logística y fijaste horarios estrictos de sueño. Tu productividad y energía alcanzaron un estándar profesional sostenible.',
           energyChange: 45,
-          personalityChanges: { discipline: Math.min(100, ctx.player.personality.discipline + 8) }
+          personalityChanges: { discipline: 8 }
         })
       },
       {
@@ -1819,7 +1813,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'Emocionaste a todo el recinto con un discurso cálido, sincero y cargado de memoria. La prensa unánime elogió tu estatura humana y madurez.',
           reputationChange: 12,
-          personalityChanges: { charisma: Math.min(100, ctx.player.personality.charisma + 8) },
+          personalityChanges: { charisma: 8 },
           statChanges: { fanbaseLoyalty: Math.min(100, ctx.player.stats.fanbaseLoyalty + 8) }
         })
       },
@@ -1864,8 +1858,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Dejaste de perseguir las modas comerciales y te concentraste en crear música atemporal. El nuevo material conmovió a los melómanos y devolvió a tu proyecto el aura de respeto.',
           statChanges: { artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 14) },
           personalityChanges: {
-            originality: Math.min(100, ctx.player.personality.originality + 10),
-            discipline: Math.min(100, ctx.player.personality.discipline + 8)
+            originality: 10,
+            discipline: 8
           },
           reputationChange: 6
         })
@@ -2164,8 +2158,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
               popularityChange: -popLoss,
               energyChange: 35,
               personalityChanges: {
-                creativity: Math.min(100, ctx.player.personality.creativity + 6),
-                originality: Math.min(100, ctx.player.personality.originality + 5)
+                creativity: 6,
+                originality: 5
               },
               newsGenerated: {
                 headline: `${ctx.player.name} en periodo de introspección artística`,
@@ -2286,8 +2280,8 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           energyChange: -25,
           popularityChange: 4,
           personalityChanges: {
-            discipline: Math.max(0, ctx.player.personality.discipline - 4),
-            sociability: Math.min(100, ctx.player.personality.sociability + 5)
+            discipline: -4,
+            sociability: 5
           },
           newsGenerated: {
             headline: `${ctx.player.name} en el ojo de la tormenta tras un descontrolado afterparty`,
@@ -2309,7 +2303,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 4)
           },
           personalityChanges: {
-            discipline: Math.min(100, ctx.player.personality.discipline + 6)
+            discipline: 6
           }
         })
       },
@@ -2455,7 +2449,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 10)
           },
           personalityChanges: {
-            originality: Math.min(100, ctx.player.personality.originality + 8)
+            originality: 8
           },
           hypeChange: 12
         })
@@ -2592,7 +2586,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'Desarmaste al conductor con calma y respuestas afiladas. Los analistas elogiaron tu madurez para manejar la prensa sensacionalista.',
           personalityChanges: {
-            charisma: Math.min(100, ctx.player.personality.charisma + 8)
+            charisma: 8
           },
           statChanges: {
             reputation: Math.min(100, ctx.player.stats.reputation + 8),
@@ -2609,7 +2603,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Dejaste callado al piso entero tirando un verso improvisado que se volvió viral de inmediato por la calidad de tus rimas.',
           hypeChange: 20,
           personalityChanges: {
-            skill: Math.min(100, ctx.player.personality.skill + 4)
+            skill: 4
           },
           statChanges: {
             artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 8)
@@ -2639,7 +2633,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Tus respuestas prendieron fuego las redes. Se armó una batalla campal de memes, opiniones y comentarios entre los fanáticos de ambos bandos.',
           hypeChange: 22,
           personalityChanges: {
-            discipline: Math.max(0, ctx.player.personality.discipline - 4)
+            discipline: -4
           },
           ecosystemNPCChanges: [
             {
@@ -2693,7 +2687,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'Decidiste no darle entidad ni regalarle reproducciones a tu rival. Tu silencio y tus números demostraron quién está en otro nivel de madurez.',
           personalityChanges: {
-            discipline: Math.min(100, ctx.player.personality.discipline + 6)
+            discipline: 6
           },
           statChanges: {
             artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 6)
@@ -2730,7 +2724,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
             'Cobraste el cheque multimillonario. Ahora disponés de un patrimonio importante, pero cediste los derechos de tus canciones fundacionales para siempre.',
           fundsChange: 250000,
           personalityChanges: {
-            independence: Math.max(0, ctx.player.personality.independence - 15)
+            independence: -15
           },
           statChanges: {
             artisticCredibility: Math.max(0, ctx.player.stats.artisticCredibility - 10)
@@ -2751,7 +2745,7 @@ export const CORE_EVENT_TEMPLATES: EventDefinition[] = [
           narrativeText:
             'Rechazaste la oferta corporativa. Tus canciones siguen siendo 100% tuyas, un hito celebrado por todos los puristas de la industria musical.',
           personalityChanges: {
-            independence: Math.min(100, ctx.player.personality.independence + 15)
+            independence: 15
           },
           statChanges: {
             artisticCredibility: Math.min(100, ctx.player.stats.artisticCredibility + 12),

@@ -12,12 +12,12 @@ export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Contenedor Reactivo de Cristal (GlassCard)
- * - Tarjeta central con soporte reactivo para 'card-success-pulse' y 'card-error-shake'
- * - Iluminación reactiva al cursor (Spotlight Glass Borders con variables --mouse-x y --mouse-y)
- * - Pulso esmeralda/dorado en aciertos
- * - Vibración horizontal corta y destello rojo translúcido en errores
- * - Accesibilidad: respeta estrictamente prefers-reduced-motion
+ * Contenedor Reactivo de Estudio (GlassCard)
+ * - Superficie mate sólida para level-1 (#18181C) y level-2 (#111114)
+ * - Vitrina óptica .lg-hero-glass para level-3
+ * - Iluminación reactiva al cursor (Spotlight Borders con --mouse-x y --mouse-y)
+ * - Pulso esmeralda/ámbar en aciertos y vibración horizontal en errores
+ * - Accesibilidad: respeta prefers-reduced-motion
  */
 export const GlassCard = forwardRef<GlassCardHandle, GlassCardProps>(
   (
@@ -70,10 +70,10 @@ export const GlassCard = forwardRef<GlassCardHandle, GlassCardProps>(
 
     const variantStyles =
       variant === 'level-1'
-        ? 'glass-level-1'
+        ? 'glass-level-1 bg-[#18181C] border-[#2A2A32]'
         : variant === 'level-3'
-        ? 'glass-level-3'
-        : 'glass-level-2';
+        ? 'lg-hero-glass'
+        : 'glass-level-2 bg-[#111114] border-[#242429]';
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       spotlightMouseMove(e);
@@ -93,11 +93,11 @@ export const GlassCard = forwardRef<GlassCardHandle, GlassCardProps>(
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className={`relative rounded-[4px] border border-white/10 bg-[#0E0F17]/80 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 spotlight-border ${variantStyles} ${reactiveClass} ${className}`}
+        className={`relative rounded-[8px] border shadow-[0_10px_28px_rgba(0,0,0,0.42)] overflow-hidden transition-all duration-200 spotlight-border ${variantStyles} ${reactiveClass} ${className}`}
         {...rest}
       >
         {/* Sutil haz especular en el borde superior */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
         {children}
       </div>
     );

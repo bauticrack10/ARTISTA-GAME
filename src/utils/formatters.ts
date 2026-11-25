@@ -1,4 +1,5 @@
 import { MusicRegion } from '../types';
+import { INITIAL_ARTISTS } from '../data/initialArtists';
 
 /**
  * Utilities for String Formatting, Typography Sanitation, Regional Names and Financial Values
@@ -54,8 +55,8 @@ export function sanitizeString(text: string): string {
     .replace(/\s*\/\s*mes\b/gi, '/mes')
     // Normaliza signos más con espacios antes de números: "+ 0 Calidad" -> "+0 Calidad", "+ 0" -> "+0"
     .replace(/\+\s+([0-9]+)/g, '+$1')
-    // Normaliza barras oblicuas en conteos: "1 /3" o "1 / 3" -> "1/3"
-    .replace(/\s*\/\s*/g, '/')
+    // Normaliza barras oblicuas solo en conteos numéricos: "1 /3" o "1 / 3" -> "1/3"
+    .replace(/(\d)\s*\/\s*(\d)/g, '$1/$2')
     // Limpia espacios duplicados consecutivos
     .replace(/[ \t]{2,}/g, ' ')
     .trim();
@@ -147,8 +148,24 @@ export function cleanQuotes(text: string): string {
  */
 export function formatMoney(amount: number | string | undefined | null): string {
   if (amount === undefined || amount === null) return '$0';
-  const num = typeof amount === 'string' ? parseFloat(amount.replace(/[^0-9.-]+/g, '')) : amount;
-  const safeAmount = isNaN(num) ? 0 : Math.round(num);
+  let num: number;
+  if (typeof amount === 'string') {
+    let cleaned = amount.replace(/[^0-9.,-]+/g, '');
+    if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(cleaned)) {
+      cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+    } else if (/^-?\d+(,\d+)$/.test(cleaned)) {
+      cleaned = cleaned.replace(',', '.');
+    } else {
+      cleaned = cleaned.replace(/,/g, '');
+    }
+    num = parseFloat(cleaned);
+  } else {
+    num = amount;
+  }
+  const safeAmount = Number.isFinite(num) ? Math.round(num) : 0;
+  if (safeAmount < 0) {
+    return `-$${Math.abs(safeAmount).toLocaleString('es-AR')}`;
+  }
   return `$${safeAmount.toLocaleString('es-AR')}`;
 }
 
@@ -156,19 +173,19 @@ export function formatMoney(amount: number | string | undefined | null): string 
  * Formatea un número en notación compacta (1.2k, 3.4M, 1.1B) con manejo de negativos y ceros
  */
 export function formatCompactNumber(num: number | undefined | null): string {
-  if (num === undefined || num === null || isNaN(num) || num === 0) return '0';
+  if (num === undefined || num === null || !Number.isFinite(num) || num === 0) return '0';
   const sign = num < 0 ? '-' : '';
   const abs = Math.abs(num);
-  if (abs >= 1_000_000_000) {
+  if (abs >= 999_950_000) {
     return `${sign}${(abs / 1_000_000_000).toFixed(2).replace(/\.00$/, '')}B`;
   }
-  if (abs >= 1_000_000) {
+  if (abs >= 999_950) {
     return `${sign}${(abs / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
   }
   if (abs >= 1_000) {
     return `${sign}${(abs / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
   }
-  return `${sign}${abs.toLocaleString('es-AR')}`;
+  return `${sign}${Math.round(abs).toLocaleString('es-AR')}`;
 }
 
 /**
@@ -872,11 +889,25 @@ export const REGIONAL_NAME_POOLS: Record<string, RegionalNameData> = {
 /**
  * Genera nombres realistas y artísticos contextualizados por país y ciudad
  */
+const KNOWN_NPC_STAGE_NAMES = new Set(
+  Object.values(INITIAL_ARTISTS)
+    .map((a) => a.name?.trim().toLowerCase())
+    .filter((n): n is string => Boolean(n))
+);
+
 export function generateArtistName(country = 'Argentina', _city?: string): { stageName: string; realName: string } {
   const pool = REGIONAL_NAME_POOLS[country] || REGIONAL_NAME_POOLS['Argentina'];
-  const stageName = pool.stageNames[Math.floor(Math.random() * pool.stageNames.length)];
   const firstName = pool.firstNames[Math.floor(Math.random() * pool.firstNames.length)];
   const lastName = pool.lastNames[Math.floor(Math.random() * pool.lastNames.length)];
+
+  const safeStageNames = pool.stageNames.filter(
+    (name) => !KNOWN_NPC_STAGE_NAMES.has(name.trim().toLowerCase())
+  );
+  const candidates = safeStageNames.length > 0 ? safeStageNames : pool.stageNames;
+  let stageName = candidates[Math.floor(Math.random() * candidates.length)];
+  if (KNOWN_NPC_STAGE_NAMES.has(stageName.trim().toLowerCase())) {
+    stageName = `${firstName} ${lastName.slice(0, 1)}.`;
+  }
 
   return {
     stageName,

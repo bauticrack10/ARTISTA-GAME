@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Artist, WorldState, EcosystemNPC, BeefState, InteractionResult, ArtistRelationship, SocialActionResult, CareerStage } from '../types';
+import { useScrollToTop } from '../hooks/useScrollToTop';
+import { Artist, WorldState, EcosystemNPC, BeefState, InteractionResult, ArtistRelationship, SocialActionResult, CareerStage, IncomingCollabOffer, CollabPact } from '../types';
 import { RelationshipEngine } from '../systems/RelationshipEngine';
+import { SectionSubNav } from './ui/SectionSubNav';
+import { showToast } from '../utils/toastBus';
 import {
   Network,
   Heart,
@@ -9,7 +12,6 @@ import {
   Swords,
   UserCheck,
   ShieldCheck,
-  User,
   Radio,
   Volume2,
   AlertTriangle,
@@ -18,21 +20,20 @@ import {
   DollarSign,
   Lock,
   Clock,
-  Newspaper,
   TrendingUp,
   X,
-  CheckCircle2,
   Search,
-  SlidersHorizontal,
   Info,
-  Globe,
   Disc3,
   RotateCcw,
-  Filter
+  Check,
+  Handshake,
+  Sliders,
+  Mic2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { playSound } from '../utils/audioSystem';
-import { formatCompactNumber, cleanQuotes, sanitizeString } from '../utils/formatters';
+import { formatCompactNumber, formatMoney, cleanQuotes } from '../utils/formatters';
 
 export const COUNTRY_FLAG_MAP: Record<string, string> = {
   Argentina: '🇦🇷',
@@ -204,6 +205,9 @@ interface RelationshipsViewProps {
   onOpenCollabModal?: (artistId: string) => void;
   onInteractEcosystemNPC?: (npcId: string, action: 'collab_beat' | 'buy_exclusive' | 'hang_out' | 'call_out') => void;
   onInteractBeef?: (targetName: string, targetId: string, action: 'respond_social' | 'drop_diss' | 'ignore') => void;
+  onNavigate?: (tab: string) => void;
+  onAcceptCollabOffer?: (offerId: string) => void;
+  onDeclineCollabOffer?: (offerId: string) => void;
 }
 
 export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
@@ -212,7 +216,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   onInteract,
   onOpenCollabModal,
   onInteractEcosystemNPC,
-  onInteractBeef
+  onInteractBeef,
+  onNavigate,
+  onAcceptCollabOffer,
+  onDeclineCollabOffer
 }) => {
   const [filter, setFilter] = useState<'all' | 'friends' | 'collabs' | 'rivals' | 'feuds' | 'ecosystem'>('all');
   const [regionFilter, setRegionFilter] = useState<string>('all');
@@ -220,12 +227,25 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   const [stageFilter, setStageFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<'active' | 'collab_available' | 'retired' | 'all'>('active');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  useScrollToTop([filter, regionFilter, genreFilter, stageFilter, statusFilter, searchQuery]);
   const [activeModalResult, setActiveModalResult] = useState<InteractionResult | null>(null);
 
   const allArtists = Object.values(world?.artists || {}) as Artist[];
   const otherArtists = allArtists.filter(a => a.id !== player?.id);
   const ecosystemContacts = Object.values(world?.ecosystemContacts || {}) as EcosystemNPC[];
   const activeBeefs = Object.values(world?.activeBeefs || {}) as BeefState[];
+
+  const pendingCollabOffers = useMemo(() => {
+    return (Array.isArray(world?.pendingCollabOffers) ? world.pendingCollabOffers : []).filter(
+      (o): o is IncomingCollabOffer => Boolean(o && (!o.status || o.status === 'pending'))
+    );
+  }, [world?.pendingCollabOffers]);
+
+  const activeCollabPacts = useMemo(() => {
+    return (Array.isArray(world?.activeCollabPacts) ? world.activeCollabPacts : []).filter(
+      (p): p is CollabPact => Boolean(p && p.status === 'active')
+    );
+  }, [world?.activeCollabPacts]);
 
   // Trigger celebration confetti on triumphant interaction results
   useEffect(() => {
@@ -290,13 +310,13 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       };
     }
 
-    // Amistad (REC Red #FF2A4B)
+    // Amistad (Signal Orange #FF4F00)
     if (rel.relationType === 'friend' || rel.affinity >= 35) {
       return {
         key: 'friend',
         label: 'Amistad',
-        className: 'bg-[#FF2A4B]/10 text-[#FF2A4B] border border-[#FF2A4B]/40 font-sans font-bold',
-        dotClass: 'bg-[#FF2A4B]'
+        className: 'bg-[#FF4F00]/10 text-[#FF4F00] border border-[#FF4F00]/40 font-sans font-bold',
+        dotClass: 'bg-[#FF4F00]'
       };
     }
 
@@ -305,7 +325,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       return {
         key: 'respect',
         label: 'Respeto Mutuo',
-        className: 'bg-[#1C1C21] text-[#F4F0EA] border border-[#26262B] font-sans font-bold',
+        className: 'bg-[#18181C] text-[#F4F0EA] border border-[#242429] font-sans font-bold',
         dotClass: 'bg-[#F4F0EA]'
       };
     }
@@ -314,7 +334,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     return {
       key: 'neutral',
       label: 'Neutral',
-      className: 'bg-[#1C1C21] text-[#8E8E99] border border-[#26262B] font-sans',
+      className: 'bg-[#18181C] text-[#8E8E99] border border-[#242429] font-sans',
       dotClass: 'bg-[#52525B]'
     };
   };
@@ -328,9 +348,9 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       case 'critico_hater':
         return { label: 'Crítica / Prensa Hostil', color: 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/40' };
       case 'rival_escena':
-        return { label: 'Rival Directo de Escena', color: 'bg-[#FF2A4B]/10 text-[#FF2A4B] border-[#FF2A4B]/40' };
+        return { label: 'Rival Directo de Escena', color: 'bg-[#FF4F00]/10 text-[#FF4F00] border-[#FF4F00]/40' };
       default:
-        return { label: 'Contacto Urbano', color: 'bg-[#1C1C21] text-[#F4F0EA] border-[#26262B]' };
+        return { label: 'Contacto Urbano', color: 'bg-[#18181C] text-[#F4F0EA] border-[#242429]' };
     }
   };
 
@@ -339,7 +359,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       case 'tension':
         return { label: 'Tensión Creciente', color: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/40' };
       case 'social_beef':
-        return { label: 'Cruce en Redes', color: 'bg-[#FF2A4B]/10 text-[#FF2A4B] border-[#FF2A4B]/40' };
+        return { label: 'Cruce en Redes', color: 'bg-[#FF4F00]/10 text-[#FF4F00] border-[#FF4F00]/40' };
       case 'diss_tracks':
         return { label: 'Guerra de Tiraderas', color: 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/40 font-bold' };
       case 'all_out_war':
@@ -347,7 +367,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       case 'settled':
         return { label: 'Tregua / Resuelto', color: 'bg-[#10B981]/10 text-[#10B981] border-[#10B981]/40' };
       default:
-        return { label: 'Activo', color: 'bg-[#1C1C21] text-[#F4F0EA] border-[#26262B]' };
+        return { label: 'Activo', color: 'bg-[#18181C] text-[#F4F0EA] border-[#242429]' };
     }
   };
 
@@ -368,14 +388,14 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
     if (actionType === 'shoutout') {
       const check = RelationshipEngine.canSendShoutout(player, targetArtist, world.currentYear, world.currentMonth);
       if (!check.canPerform && !check.canSend) {
-        alert(check.reason || 'Acción en cooldown');
+        showToast(check.reason || 'Acción en cooldown', 'warning');
         return;
       }
       playSound('release');
     } else if (actionType === 'diss') {
       const check = RelationshipEngine.canSendDiss(player, targetArtist, world.currentYear, world.currentMonth);
       if (!check.canPerform && !check.canSend) {
-        alert(check.reason || 'Acción en cooldown');
+        showToast(check.reason || 'Acción en cooldown', 'warning');
         return;
       }
       playSound('chart_no1');
@@ -499,13 +519,182 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
   }, [otherArtists, player, filter, regionFilter, genreFilter, stageFilter, statusFilter, searchQuery, world.genres]);
 
   return (
-    <div className="space-y-6 pb-16 text-[#F4F0EA]">
+    <div className="space-y-5 pb-16 text-[#F4F0EA] font-sans">
+      <SectionSubNav
+        hub="escena"
+        activeTab="relations"
+        onNavigate={onNavigate}
+        pendingCollabCount={pendingCollabOffers.length}
+      />
+
+      {/* PANEL SUPERIOR: Ofertas Pendientes & Pactos Activos */}
+      <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#242429] pb-3">
+          <div className="flex items-center gap-2">
+            <Handshake className="w-4 h-4 text-[#FF4F00]" strokeWidth={1.75} />
+            <h2 className="font-display text-sm sm:text-base font-bold text-[#F4F0EA]">
+              Ofertas Pendientes & Pactos Activos
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 text-xs tabular-nums">
+            <span className="px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#FF4F00] font-bold">
+              {pendingCollabOffers.length} Ofertas
+            </span>
+            <span className="px-2 py-0.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#10B981] font-bold">
+              {activeCollabPacts.length} Pactos
+            </span>
+          </div>
+        </div>
+
+        {pendingCollabOffers.length === 0 && activeCollabPacts.length === 0 ? (
+          <div className="bg-[#18181C] border border-[#242429] rounded-[6px] p-3.5 text-xs text-[#8E8E99] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span>No tienes propuestas entrantes ni pactos de colaboración activos en este momento.</span>
+            {onOpenCollabModal && (
+              <button
+                type="button"
+                onClick={() => {
+                  playSound('click');
+                  onOpenCollabModal(otherArtists[0]?.id || '');
+                }}
+                disabled={otherArtists.length === 0}
+                className="px-3 py-1.5 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white font-bold text-xs cursor-pointer shrink-0 disabled:opacity-50"
+              >
+                Proponer Colaboración
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Ofertas Entrantes */}
+            {pendingCollabOffers.map((offer) => {
+              const isProd = offer.senderRole === 'producer';
+              return (
+                <div
+                  key={offer.id}
+                  className="bg-[#18181C] border border-[#FF4F00]/45 rounded-[6px] p-4 space-y-3 flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="inline-flex items-center gap-1.5 text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#111114] border border-[#242429] text-[#FF4F00]">
+                        {isProd ? <Sliders className="w-3 h-3" /> : <Mic2 className="w-3 h-3" />}
+                        {isProd ? 'Productor' : 'Artista Colega'}
+                      </span>
+                      <span className="text-2xs text-[#F59E0B] font-semibold tabular-nums">
+                        Expira M{offer.expiresMonth}/{offer.expiresYear}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-bold text-[#F4F0EA]">
+                        {offer.senderName} — "{offer.proposedTitle}"
+                      </h3>
+                      <p className="text-xs text-[#8E8E99] italic mt-1 line-clamp-2">
+                        "{offer.pitchMessage}"
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs tabular-nums pt-1">
+                      <span className="text-[#10B981] font-bold">{offer.royaltySplitPct}% Split</span>
+                      <span className="text-[#52525B]">•</span>
+                      <span className="text-[#F4F0EA] font-semibold">
+                        {offer.budgetOffered > 0 ? `+${formatMoney(offer.budgetOffered)}` : 'Sin anticipo'}
+                      </span>
+                      <span className="text-[#52525B]">•</span>
+                      <span className="text-[#8E8E99]">{world.genres[offer.genreId]?.name || offer.genreId}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#242429]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playSound('click');
+                        if (onDeclineCollabOffer) {
+                          onDeclineCollabOffer(offer.id);
+                          showToast(`Propuesta de ${offer.senderName} rechazada.`, 'info');
+                        } else {
+                          showToast('Usa la tarjeta de notificación flotante para responder esta oferta.', 'info');
+                        }
+                      }}
+                      className="flex-1 py-2 px-3 rounded-[4px] bg-[#111114] hover:bg-[#242429] border border-[#242429] text-xs font-semibold text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
+                    >
+                      Rechazar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playSound('money');
+                        if (onAcceptCollabOffer) {
+                          onAcceptCollabOffer(offer.id);
+                          showToast(`Pacto firmado con ${offer.senderName}. Úsalo en el Estudio.`, 'success');
+                        } else {
+                          showToast('Acepta la propuesta desde la notificación flotante.', 'info');
+                        }
+                      }}
+                      className="flex-1 py-2 px-3 rounded-[4px] bg-[#FF4F00] hover:bg-[#E04500] text-white text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Aceptar</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Pactos Activos */}
+            {activeCollabPacts.map((pact) => {
+              const partnerName = pact.targetArtistId
+                ? (world.artists?.[pact.targetArtistId]?.name || 'Artista')
+                : pact.targetProducerId
+                ? (world.producers?.[pact.targetProducerId]?.name || 'Productor')
+                : 'Colaborador';
+
+              return (
+                <div
+                  key={pact.id}
+                  className="bg-[#18181C] border border-[#10B981]/40 rounded-[6px] p-4 flex flex-col justify-between gap-3"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded-[4px] bg-[#10B981]/15 border border-[#10B981]/35 text-[#10B981]">
+                        Pacto Activo
+                      </span>
+                      <span className="text-2xs text-[#8E8E99] tabular-nums">
+                        Vigente hasta {pact.expiresYear}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-bold text-[#F4F0EA]">{partnerName}</h3>
+                    <p className="text-xs text-[#8E8E99] tabular-nums">
+                      Formato: <strong className="text-[#F4F0EA]">{pact.format}</strong> • Presupuesto acordado: <strong className="text-[#10B981]">{formatMoney(pact.agreedBudget || 0)}</strong>
+                      {pact.producerDiscountPct ? ` • -${pact.producerDiscountPct}% costo` : ''}
+                    </p>
+                  </div>
+
+                  {onNavigate && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playSound('click');
+                        onNavigate('studio');
+                      }}
+                      className="w-full py-2 px-3 rounded-[4px] bg-[#111114] hover:bg-[#242429] border border-[#242429] text-xs font-bold text-[#F4F0EA] transition-colors cursor-pointer"
+                    >
+                      Ir al Estudio para Grabar →
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       {/* Unified Compact Control Bar */}
-      <div className="liquid-glass-card p-5 space-y-4">
+      <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-5 space-y-4">
         {/* Row 1: Title & View Filter Pills */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-[4px] liquid-glass-pill text-[#FF4F00]">
+            <div className="p-1.5 rounded-[4px] bg-[#18181C] border border-[#242429] text-[#FF4F00]">
               <Network className="w-4 h-4" strokeWidth={1.75} />
             </div>
             <h1 className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#F4F0EA]">
@@ -517,13 +706,13 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
           </div>
 
           {/* View Pills */}
-          <div className="flex items-center gap-1 liquid-glass-pill p-1 text-xs font-sans font-bold overflow-x-auto">
+          <div className="flex items-center gap-1 bg-[#18181C] border border-[#242429] rounded-[6px] p-1 text-xs font-sans font-bold overflow-x-auto">
             <button
               onClick={() => { playSound('click'); setFilter('all'); }}
               className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer whitespace-nowrap tabular-nums ${
                 filter === 'all'
-                  ? 'bg-[#FF4F00] text-[#F4F0EA] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-white/5'
+                  ? 'bg-[#FF4F00] text-white'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#111114]'
               }`}
             >
               Todos ({otherArtists.length})
@@ -532,8 +721,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               onClick={() => { playSound('click'); setFilter('friends'); }}
               className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 filter === 'friends'
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                  ? 'bg-[#FF4F00] text-white'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#111114]'
               }`}
             >
               <Heart className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -543,8 +732,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               onClick={() => { playSound('click'); setFilter('collabs'); }}
               className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 filter === 'collabs'
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                  ? 'bg-[#FF4F00] text-white'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#111114]'
               }`}
             >
               <Disc3 className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -554,8 +743,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               onClick={() => { playSound('click'); setFilter('rivals'); }}
               className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 filter === 'rivals'
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                  ? 'bg-[#FF4F00] text-white'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#111114]'
               }`}
             >
               <Flame className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -565,8 +754,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               onClick={() => { playSound('click'); setFilter('feuds'); }}
               className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 tabular-nums ${
                 filter === 'feuds'
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                  ? 'bg-[#FF4F00] text-white'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#111114]'
               }`}
             >
               <Swords className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -576,8 +765,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               onClick={() => { playSound('click'); setFilter('ecosystem'); }}
               className={`px-3 py-1 rounded-[4px] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 tabular-nums ${
                 filter === 'ecosystem'
-                  ? 'bg-[#FF2A4B] text-[#F4F0EA]'
-                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#1C1C21]'
+                  ? 'bg-[#FF4F00] text-white'
+                  : 'text-[#8E8E99] hover:text-[#F4F0EA] hover:bg-[#111114]'
               }`}
             >
               <UserCheck className="w-3.5 h-3.5" strokeWidth={1.75} />
@@ -587,7 +776,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
         </div>
 
         {/* Row 2: Inline Search & Compact Selectors (Región, Género, Estado) */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#26262B] font-sans text-xs">
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#242429] font-sans text-xs">
           {/* Search Input */}
           <div className="relative flex-1 min-w-[200px]">
             <Search className="w-3.5 h-3.5 text-[#8E8E99] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" strokeWidth={1.75} />
@@ -596,7 +785,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               placeholder="Buscar artista, país o género..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#0B0B0C] border border-[#26262B] rounded-[4px] pl-8 pr-7 py-1.5 text-xs font-sans text-[#F4F0EA] placeholder-[#52525B] focus:outline-none focus:border-[#FF2A4B] transition-colors"
+              className="w-full bg-[#18181C] border border-[#242429] rounded-[4px] pl-8 pr-7 py-1.5 text-xs font-sans text-[#F4F0EA] placeholder-[#52525B] focus:outline-none focus:border-[#FF4F00] transition-colors"
             />
             {searchQuery && (
               <button
@@ -614,12 +803,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             aria-label="Región"
             value={regionFilter}
             onChange={(e) => setRegionFilter(e.target.value)}
-            className={`bg-[#0B0B0C] border rounded-[4px] px-2.5 py-1.5 text-xs text-[#F4F0EA] focus:outline-none focus:border-[#FF2A4B] cursor-pointer transition-colors ${
-              regionFilter !== 'all' ? 'border-[#10B981] text-[#10B981] font-bold' : 'border-[#26262B]'
+            className={`bg-[#18181C] border rounded-[4px] px-2.5 py-1.5 text-xs text-[#F4F0EA] focus:outline-none focus:border-[#FF4F00] cursor-pointer transition-colors ${
+              regionFilter !== 'all' ? 'border-[#10B981] text-[#10B981] font-bold' : 'border-[#242429]'
             }`}
           >
             {REGION_FILTER_OPTIONS.map((opt) => (
-              <option key={opt.id} value={opt.id} className="bg-[#141417] text-[#F4F0EA]">
+              <option key={opt.id} value={opt.id} className="bg-[#18181C] text-[#F4F0EA]">
                 {opt.id === 'my_scene'
                   ? `Mi Escena (${player.country || 'Local'})`
                   : opt.label}
@@ -632,12 +821,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             aria-label="Género"
             value={genreFilter}
             onChange={(e) => setGenreFilter(e.target.value)}
-            className={`bg-[#0B0B0C] border rounded-[4px] px-2.5 py-1.5 text-xs text-[#F4F0EA] focus:outline-none focus:border-[#FF2A4B] cursor-pointer transition-colors ${
-              genreFilter !== 'all' ? 'border-[#FF2A4B] text-[#FF2A4B] font-bold' : 'border-[#26262B]'
+            className={`bg-[#18181C] border rounded-[4px] px-2.5 py-1.5 text-xs text-[#F4F0EA] focus:outline-none focus:border-[#FF4F00] cursor-pointer transition-colors ${
+              genreFilter !== 'all' ? 'border-[#FF4F00] text-[#FF4F00] font-bold' : 'border-[#242429]'
             }`}
           >
             {GENRE_FILTER_OPTIONS.map((opt) => (
-              <option key={opt.id} value={opt.id} className="bg-[#141417] text-[#F4F0EA]">
+              <option key={opt.id} value={opt.id} className="bg-[#18181C] text-[#F4F0EA]">
                 {opt.label}
               </option>
             ))}
@@ -648,12 +837,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             aria-label="Estado"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className={`bg-[#0B0B0C] border rounded-[4px] px-2.5 py-1.5 text-xs text-[#F4F0EA] focus:outline-none focus:border-[#FF2A4B] cursor-pointer transition-colors ${
-              statusFilter !== 'active' ? 'border-[#10B981] text-[#10B981] font-bold' : 'border-[#26262B]'
+            className={`bg-[#18181C] border rounded-[4px] px-2.5 py-1.5 text-xs text-[#F4F0EA] focus:outline-none focus:border-[#FF4F00] cursor-pointer transition-colors ${
+              statusFilter !== 'active' ? 'border-[#10B981] text-[#10B981] font-bold' : 'border-[#242429]'
             }`}
           >
             {STATUS_FILTER_OPTIONS.map((opt) => (
-              <option key={opt.id} value={opt.id} className="bg-[#141417] text-[#F4F0EA]">
+              <option key={opt.id} value={opt.id} className="bg-[#18181C] text-[#F4F0EA]">
                 {opt.label}
               </option>
             ))}
@@ -690,11 +879,11 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={beef.id}
-                  className="liquid-glass-subcard border-[#EF4444]/40 rounded-[12px] p-4 space-y-3.5 relative overflow-hidden"
+                  className="bg-[#111114] border border-[#EF4444]/40 rounded-[8px] p-4 space-y-3.5 relative overflow-hidden"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-[4px] bg-[#1C1C21] text-[#EF4444] flex items-center justify-center font-sans font-bold text-xs border border-[#EF4444]/40 shrink-0">
+                      <div className="w-9 h-9 rounded-[4px] bg-[#18181C] text-[#EF4444] flex items-center justify-center font-sans font-bold text-xs border border-[#EF4444]/40 shrink-0">
                         VS
                       </div>
                       <div>
@@ -702,8 +891,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           {beef.targetName}
                         </h3>
                         <span className="text-xs text-[#8E8E99] flex items-center gap-1 mt-0.5 font-sans tabular-nums">
-                          <TrendingUp className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
-                          Hype: <strong className="text-[#FF2A4B] font-semibold">+{beef.hypeGenerated || 25}</strong>
+                          <TrendingUp className="w-3 h-3 text-[#FF4F00]" strokeWidth={1.75} />
+                          Hype: <strong className="text-[#FF4F00] font-semibold">+{beef.hypeGenerated || 25}</strong>
                         </span>
                       </div>
                     </div>
@@ -714,12 +903,12 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   </div>
 
                   {/* Tension Meter */}
-                  <div className="space-y-1.5 bg-[#0B0B0C] p-2.5 rounded-[4px] border border-[#26262B]">
+                  <div className="space-y-1.5 bg-[#18181C] p-2.5 rounded-[4px] border border-[#242429]">
                     <div className="flex justify-between text-xs">
                       <span className="text-[#8E8E99]">Tensión</span>
                       <span className="font-sans tabular-nums font-bold text-[#EF4444]">{beef.tensionLevel || 50}/100</span>
                     </div>
-                    <div className="w-full bg-[#1C1C21] h-1.5 rounded-[2px] overflow-hidden">
+                    <div className="w-full bg-[#111114] h-1.5 rounded-[2px] overflow-hidden">
                       <div
                         className="h-full bg-[#EF4444] rounded-[2px] transition-all duration-500"
                         role="progressbar"
@@ -734,7 +923,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* Diss Tracks Exchanged */}
                   {beef.dissTracksExchanged && beef.dissTracksExchanged.length > 0 && (
-                    <div className="text-xs text-[#8E8E99] space-y-1 bg-[#0B0B0C] p-2.5 rounded-[4px] border border-[#26262B]">
+                    <div className="text-xs text-[#8E8E99] space-y-1 bg-[#18181C] p-2.5 rounded-[4px] border border-[#242429]">
                       <span className="font-semibold text-[#F4F0EA] flex items-center gap-1">
                         <Radio className="w-3 h-3 text-[#EF4444]" strokeWidth={1.75} />
                         Historial de Tiraderas:
@@ -749,16 +938,16 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* Interactive Beef Action Buttons */}
                   {onInteractBeef && beef.stage !== 'settled' && (
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#26262B]">
+                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#242429]">
                       <button
                         onClick={() => {
                           playSound('click');
                           onInteractBeef(beef.targetName, beef.targetId, 'respond_social');
                         }}
-                        className="bg-[#1C1C21] hover:bg-[#26262B] text-[#F4F0EA] border border-[#26262B] hover:border-[#3F3F46] py-2 px-2 text-xs font-semibold rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
+                        className="bg-[#18181C] hover:bg-[#242429] text-[#F4F0EA] border border-[#242429] hover:border-[#3F3F46] py-2 px-2 text-xs font-semibold rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Responder en Redes (+Hype, chicana pública)"
                       >
-                        <MessageSquare className="w-3.5 h-3.5 text-[#FF2A4B]" strokeWidth={1.75} />
+                        <MessageSquare className="w-3.5 h-3.5 text-[#FF4F00]" strokeWidth={1.75} />
                         <span>Chicana</span>
                       </button>
 
@@ -767,10 +956,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           playSound('chart_no1');
                           onInteractBeef(beef.targetName, beef.targetId, 'drop_diss');
                         }}
-                        className="bg-[#EF4444] hover:bg-[#DC2626] text-[#F4F0EA] font-bold py-2 px-2 text-xs rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
+                        className="bg-[#EF4444] hover:bg-[#DC2626] text-white font-bold py-2 px-2 text-xs rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Lanzar Diss Track demoledor en plataformas"
                       >
-                        <Swords className="w-3.5 h-3.5 text-[#F4F0EA]" strokeWidth={1.75} />
+                        <Swords className="w-3.5 h-3.5 text-white" strokeWidth={1.75} />
                         <span>Diss Track</span>
                       </button>
 
@@ -779,7 +968,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           playSound('click');
                           onInteractBeef(beef.targetName, beef.targetId, 'ignore');
                         }}
-                        className="bg-[#1C1C21] hover:bg-[#26262B] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#26262B] py-2 px-2 text-xs font-semibold rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
+                        className="bg-[#18181C] hover:bg-[#242429] text-[#8E8E99] hover:text-[#F4F0EA] border border-[#242429] py-2 px-2 text-xs font-semibold rounded-[4px] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Ignorar provocaciones (+Disciplina, +Credibilidad)"
                       >
                         <ShieldCheck className="w-3.5 h-3.5 text-[#8E8E99]" strokeWidth={1.75} />
@@ -798,7 +987,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       {(filter === 'all' || filter === 'ecosystem') && ecosystemContacts.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-[#FF2A4B]" strokeWidth={1.75} />
+            <UserCheck className="w-4 h-4 text-[#FF4F00]" strokeWidth={1.75} />
             <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#F4F0EA] tabular-nums">
               Contactos del Ecosistema ({ecosystemContacts.length})
             </h2>
@@ -812,11 +1001,11 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               return (
                 <div
                   key={npc.id}
-                  className="liquid-glass-subcard rounded-[12px] p-4 space-y-3 flex flex-col justify-between hover:border-white/28 transition-all group"
+                  className="bg-[#111114] border border-[#242429] hover:border-[#3F3F46] rounded-[8px] p-4 space-y-3 flex flex-col justify-between transition-all group"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-[4px] bg-[#1C1C21] text-[#F4F0EA] font-sans font-bold text-sm flex items-center justify-center shrink-0 border border-[#26262B]">
+                      <div className="w-9 h-9 rounded-[4px] bg-[#18181C] text-[#F4F0EA] font-sans font-bold text-sm flex items-center justify-center shrink-0 border border-[#242429]">
                         {npc.name.charAt(0)}
                       </div>
                       <div className="min-w-0">
@@ -835,7 +1024,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                   </div>
 
                   {/* Meters: Afinidad, Lealtad, Tensión */}
-                  <div className="space-y-1 bg-[#0B0B0C] p-2.5 rounded-[4px] border border-[#26262B] text-xs font-sans tabular-nums">
+                  <div className="space-y-1 bg-[#18181C] p-2.5 rounded-[4px] border border-[#242429] text-xs font-sans tabular-nums">
                     <div className="flex justify-between">
                       <span className="text-[#8E8E99]">Afinidad</span>
                       <span className={`font-semibold ${npc.affinity > 0 ? 'text-[#10B981]' : npc.affinity < 0 ? 'text-[#EF4444]' : 'text-[#F4F0EA]'}`}>
@@ -856,20 +1045,20 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
                   {/* NPC Interaction Actions */}
                   {onInteractEcosystemNPC && (
-                    <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-[#26262B]">
+                    <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-[#242429]">
                       {role === 'beatmaker_barrio' && (
                         <>
                           <button
                             onClick={() => { playSound('click'); onInteractEcosystemNPC(npc.id, 'collab_beat'); }}
-                            className="bg-[#1C1C21] hover:bg-[#26262B] text-[#F4F0EA] border border-[#26262B] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#F4F0EA] border border-[#242429] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Producir beat"
                           >
-                            <Volume2 className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
+                            <Volume2 className="w-3 h-3 text-[#FF4F00]" strokeWidth={1.75} />
                             <span>Sesión Beat</span>
                           </button>
                           <button
                             onClick={() => { playSound('money'); onInteractEcosystemNPC(npc.id, 'buy_exclusive'); }}
-                            className="bg-[#1C1C21] hover:bg-[#26262B] text-[#10B981] border border-[#10B981]/30 hover:border-[#10B981]/60 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#10B981] border border-[#10B981]/30 hover:border-[#10B981]/60 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Comprar instrumental exclusiva ($500)"
                           >
                             <DollarSign className="w-3 h-3 text-[#10B981]" strokeWidth={1.75} />
@@ -882,15 +1071,15 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => { playSound('click'); onInteractEcosystemNPC(npc.id, 'hang_out'); }}
-                            className="bg-[#1C1C21] hover:bg-[#26262B] text-[#F4F0EA] border border-[#26262B] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#F4F0EA] border border-[#242429] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Reunión"
                           >
-                            <Coffee className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
+                            <Coffee className="w-3 h-3 text-[#FF4F00]" strokeWidth={1.75} />
                             <span>Reunión</span>
                           </button>
                           <button
                             onClick={() => { playSound('click'); onInteractEcosystemNPC(npc.id, 'call_out'); }}
-                            className="bg-[#1C1C21] hover:bg-[#26262B] text-[#EF4444] border border-[#EF4444]/30 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#EF4444] border border-[#EF4444]/30 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Auditar finanzas"
                           >
                             <AlertTriangle className="w-3 h-3 text-[#EF4444]" strokeWidth={1.75} />
@@ -902,10 +1091,10 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       {role === 'critico_hater' && (
                         <button
                           onClick={() => { playSound('chart_no1'); onInteractEcosystemNPC(npc.id, 'call_out'); }}
-                          className="bg-[#1C1C21] hover:bg-[#26262B] text-[#FF2A4B] border border-[#FF2A4B]/40 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer col-span-2 active:translate-y-[1px]"
+                          className="bg-[#18181C] hover:bg-[#242429] text-[#FF4F00] border border-[#FF4F00]/40 py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer col-span-2 active:translate-y-[1px]"
                           title="Desafiar en redes públicas (+Hype)"
                         >
-                          <Zap className="w-3 h-3 text-[#FF2A4B]" strokeWidth={1.75} />
+                          <Zap className="w-3 h-3 text-[#FF4F00]" strokeWidth={1.75} />
                           <span>Desafiar en Redes</span>
                         </button>
                       )}
@@ -914,18 +1103,18 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                         <>
                           <button
                             onClick={() => { playSound('click'); onInteractBeef(npc.name, npc.id, 'respond_social'); }}
-                            className="bg-[#1C1C21] hover:bg-[#26262B] text-[#F4F0EA] border border-[#26262B] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                            className="bg-[#18181C] hover:bg-[#242429] text-[#F4F0EA] border border-[#242429] hover:border-[#3F3F46] py-1.5 px-2 text-2xs font-semibold rounded-[4px] flex items-center justify-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                             title="Responder chicanas en redes"
                           >
-                            <MessageSquare className="w-3.5 h-3.5 text-[#FF2A4B]" strokeWidth={1.75} />
+                            <MessageSquare className="w-3.5 h-3.5 text-[#FF4F00]" strokeWidth={1.75} />
                             <span>Chicana</span>
                           </button>
                           <button
                             onClick={() => { playSound('chart_no1'); onInteractBeef(npc.name, npc.id, 'drop_diss'); }}
-                            className="bg-[#EF4444] hover:bg-[#DC2626] text-[#F4F0EA] font-bold py-1.5 px-2 text-2xs rounded-[4px] flex items-center justify-center gap-1 cursor-pointer transition-all active:translate-y-[1px]"
+                            className="bg-[#EF4444] hover:bg-[#DC2626] text-white font-bold py-1.5 px-2 text-2xs rounded-[4px] flex items-center justify-center gap-1 cursor-pointer transition-all active:translate-y-[1px]"
                             title="Tiradera Lírica"
                           >
-                            <Swords className="w-3 h-3 text-[#F4F0EA]" strokeWidth={1.75} />
+                            <Swords className="w-3 h-3 text-white" strokeWidth={1.75} />
                             <span>Tiradera</span>
                           </button>
                         </>
@@ -943,7 +1132,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       {filter !== 'ecosystem' && (
         <div className="space-y-3">
           {filteredArtists.length === 0 ? (
-            <div className="bg-[#141417] border border-[#26262B] rounded-[6px] p-8 text-center space-y-2">
+            <div className="bg-[#111114] border border-[#242429] rounded-[8px] p-8 text-center space-y-2">
               <Info className="w-7 h-7 text-[#52525B] mx-auto" strokeWidth={1.75} />
               <p className="text-sm font-semibold text-[#F4F0EA]">No se encontraron artistas para este filtro</p>
               <p className="text-xs text-[#8E8E99]">Probá cambiando la categoría o limpiando los filtros.</p>
@@ -967,13 +1156,13 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 return (
                   <div
                     key={artist.id}
-                    className="liquid-glass-subcard rounded-[12px] p-4 space-y-3.5 flex flex-col justify-between hover:border-white/28 transition-all group"
+                    className="bg-[#111114] border border-[#242429] hover:border-[#3F3F46] rounded-[8px] p-4 space-y-3.5 flex flex-col justify-between transition-all group"
                   >
                     {/* Header Info & State Badge */}
                     <div className="space-y-2.5">
                       <div className="flex items-start justify-between gap-2.5">
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-10 h-10 rounded-[4px] bg-[#0B0B0C] border border-[#26262B] flex items-center justify-center text-[#F4F0EA] font-sans font-bold text-sm shrink-0">
+                          <div className="w-10 h-10 rounded-[4px] bg-[#18181C] border border-[#242429] flex items-center justify-center text-[#F4F0EA] font-sans font-bold text-sm shrink-0">
                             {artist.name.charAt(0)}
                           </div>
                           <div className="min-w-0">
@@ -998,7 +1187,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       </div>
 
                       {/* Stat Metrics Bar */}
-                      <div className="flex items-center justify-between text-xs text-[#8E8E99] font-sans tabular-nums bg-[#0B0B0C] px-3 py-1.5 rounded-[4px] border border-[#26262B]">
+                      <div className="flex items-center justify-between text-xs text-[#8E8E99] font-sans tabular-nums bg-[#18181C] px-3 py-1.5 rounded-[4px] border border-[#242429]">
                         <span>Pop: <strong className="text-[#F4F0EA] font-semibold">{artist.stats.popularity}</strong></span>
                         <span>Oyentes: <strong className="text-[#F4F0EA] font-semibold">{formatCompactNumber(artist.stats.monthlyListeners)}</strong></span>
                         <span>Etapa: <strong className="text-[#8E8E99]">{artist.careerStage}</strong></span>
@@ -1006,7 +1195,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                     </div>
 
                     {/* Relationship Meters: Afinidad & Respeto */}
-                    <div className="space-y-2 bg-[#0B0B0C] p-2.5 rounded-[4px] border border-[#26262B] text-xs font-sans tabular-nums">
+                    <div className="space-y-2 bg-[#18181C] p-2.5 rounded-[4px] border border-[#242429] text-xs font-sans tabular-nums">
                       <div>
                         <div className="flex justify-between text-xs mb-1">
                           <span className="text-[#8E8E99]">Afinidad</span>
@@ -1014,9 +1203,9 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                             {rel.affinity > 0 ? `+${rel.affinity}` : rel.affinity}
                           </span>
                         </div>
-                        <div className="w-full bg-[#1C1C21] h-1.5 rounded-[2px] overflow-hidden">
+                        <div className="w-full bg-[#111114] h-1.5 rounded-[2px] overflow-hidden">
                           <div
-                            className={`h-full rounded-[2px] ${rel.affinity < 0 ? 'bg-[#EF4444]' : 'bg-[#FF2A4B]'}`}
+                            className={`h-full rounded-[2px] ${rel.affinity < 0 ? 'bg-[#EF4444]' : 'bg-[#FF4F00]'}`}
                             role="progressbar"
                             aria-label="Afinidad mutua"
                             aria-valuemin={-100}
@@ -1032,7 +1221,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                           <span className="text-[#8E8E99]">Respeto</span>
                           <span className="font-semibold text-[#10B981] font-sans tabular-nums">{rel.respect}%</span>
                         </div>
-                        <div className="w-full bg-[#1C1C21] h-1.5 rounded-[2px] overflow-hidden">
+                        <div className="w-full bg-[#111114] h-1.5 rounded-[2px] overflow-hidden">
                           <div
                             className="bg-[#10B981] h-full rounded-[2px]"
                             role="progressbar"
@@ -1046,27 +1235,27 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       </div>
 
                       {rel.history && rel.history.length > 0 && (
-                        <div className="pt-1.5 border-t border-[#26262B] text-2xs text-[#8E8E99] italic line-clamp-1">
+                        <div className="pt-1.5 border-t border-[#242429] text-2xs text-[#8E8E99] italic line-clamp-1">
                           Último: "{cleanQuotes(rel.history[rel.history.length - 1])}"
                         </div>
                       )}
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-[#26262B]">
+                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-[#242429]">
                       <button
                         onClick={() => handleExecuteInteraction(artist, 'collab_request')}
-                        className="bg-[#FF2A4B] hover:bg-[#E01E3D] text-[#F4F0EA] py-2 px-2 text-xs font-bold rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                        className="bg-[#FF4F00] hover:bg-[#E04500] text-white py-2 px-2 text-xs font-bold rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                         title="Proponer Colaboración Musical (Single, EP o Álbum)"
                       >
-                        <Disc3 className="w-3.5 h-3.5 text-[#F4F0EA]" strokeWidth={1.75} />
+                        <Disc3 className="w-3.5 h-3.5 text-white" strokeWidth={1.75} />
                         <span>Colab</span>
                       </button>
 
                       {shoutoutCheck.canPerform || shoutoutCheck.canSend ? (
                         <button
                           onClick={() => handleExecuteInteraction(artist, 'shoutout')}
-                          className="bg-[#1C1C21] hover:bg-[#26262B] text-[#10B981] border border-[#10B981]/30 hover:border-[#10B981]/60 py-2 px-2 text-xs font-medium rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                          className="bg-[#18181C] hover:bg-[#242429] text-[#10B981] border border-[#10B981]/30 hover:border-[#10B981]/60 py-2 px-2 text-xs font-medium rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                           title={shoutoutCheck.probableConsequence || 'Elogio Público (+Afinidad, +Respeto)'}
                         >
                           <Heart className="w-3.5 h-3.5 text-[#10B981]" strokeWidth={1.75} />
@@ -1075,7 +1264,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       ) : (
                         <button
                           disabled
-                          className="bg-[#0B0B0C] text-[#52525B] border border-[#26262B] py-2 px-2 text-2xs font-sans tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
+                          className="bg-[#18181C] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-sans tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
                           title={`Disponible en Año ${shoutoutCheck.availableYear} • Mes ${shoutoutCheck.availableMonth}`}
                         >
                           <Clock className="w-3.5 h-3.5 text-[#52525B]" strokeWidth={1.75} />
@@ -1086,7 +1275,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       {dissCheck.canPerform || dissCheck.canSend ? (
                         <button
                           onClick={() => handleExecuteInteraction(artist, 'diss')}
-                          className="bg-[#1C1C21] hover:bg-[#26262B] text-[#EF4444] border border-[#EF4444]/30 hover:border-[#EF4444]/60 py-2 px-2 text-xs font-medium rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
+                          className="bg-[#18181C] hover:bg-[#242429] text-[#EF4444] border border-[#EF4444]/30 hover:border-[#EF4444]/60 py-2 px-2 text-xs font-medium rounded-[4px] flex flex-col items-center gap-1 transition-all cursor-pointer active:translate-y-[1px]"
                           title={dissCheck.probableConsequence || 'Tiradera / Diss Track'}
                         >
                           <Swords className="w-3.5 h-3.5 text-[#EF4444]" strokeWidth={1.75} />
@@ -1095,7 +1284,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                       ) : (
                         <button
                           disabled
-                          className="bg-[#0B0B0C] text-[#52525B] border border-[#26262B] py-2 px-2 text-2xs font-sans tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
+                          className="bg-[#18181C] text-[#52525B] border border-[#242429] py-2 px-2 text-2xs font-sans tabular-nums font-medium rounded-[4px] flex flex-col items-center gap-1 opacity-60 cursor-not-allowed"
                           title={`Disponible en Año ${dissCheck.availableYear} • Mes ${dissCheck.availableMonth}`}
                         >
                           <Lock className="w-3.5 h-3.5 text-[#52525B]" strokeWidth={1.75} />
@@ -1114,11 +1303,11 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
       {/* MODAL DE RESULTADO NARRATIVO DE INTERACCIÓN */}
       {activeModalResult && (
         <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
-          <div className="bg-[#141417] border border-[#26262B] max-w-2xl w-full rounded-[6px] flex flex-col overflow-hidden text-[#F4F0EA] shadow-2xl relative my-auto max-h-[92vh]">
-            <div className="px-6 py-4 border-b border-[#26262B] bg-[#141417] flex items-center justify-between">
+          <div className="lg-modal bg-[#111114] border border-[#242429] max-w-2xl w-full rounded-[6px] flex flex-col overflow-hidden text-[#F4F0EA] shadow-2xl relative my-auto max-h-[92vh]">
+            <div className="px-6 py-4 border-b border-[#242429] bg-[#111114] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div
-                  className={`p-2 rounded-[4px] bg-[#1C1C21] border shrink-0 ${
+                  className={`p-2 rounded-[4px] bg-[#18181C] border shrink-0 ${
                     activeModalResult.actionType === 'diss'
                       ? 'border-[#EF4444]/50 text-[#EF4444]'
                       : 'border-[#10B981]/50 text-[#10B981]'
@@ -1143,7 +1332,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
 
               <button
                 onClick={() => { playSound('click'); setActiveModalResult(null); }}
-                className="p-1.5 rounded-[4px] hover:bg-[#1C1C21] text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
+                className="p-1.5 rounded-[4px] hover:bg-[#18181C] text-[#8E8E99] hover:text-[#F4F0EA] transition-colors cursor-pointer"
                 title="Cerrar ventana"
               >
                 <X className="w-5 h-5" strokeWidth={1.75} />
@@ -1151,7 +1340,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
             </div>
 
             <div className="p-6 overflow-y-auto space-y-5 flex-1">
-              <div className="rounded-[6px] p-4 border border-[#26262B] bg-[#1C1C21] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="rounded-[6px] p-4 border border-[#242429] bg-[#18181C] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="space-y-1">
                   <h3 className="font-display text-lg font-bold tracking-tight text-[#F4F0EA]">
                     {activeModalResult.title}
@@ -1164,34 +1353,32 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 <span
                   className={`text-xs font-sans font-bold uppercase tracking-wider px-3 py-1 rounded-[4px] border ${
                     activeModalResult.badge.variant === 'danger'
-                      ? 'bg-[#141417] text-[#EF4444] border-[#EF4444]/40'
-                      : activeModalResult.badge.variant === 'warning'
-                      ? 'bg-[#141417] text-[#F59E0B] border-[#F59E0B]/40'
-                      : activeModalResult.badge.variant === 'purple'
-                      ? 'bg-[#141417] text-[#FF2A4B] border-[#FF2A4B]/40'
-                      : 'bg-[#141417] text-[#10B981] border-[#10B981]/40'
+                      ? 'bg-[#111114] text-[#EF4444] border-[#EF4444]/40'
+                      : activeModalResult.badge.variant === 'warning' || activeModalResult.badge.variant === 'purple'
+                      ? 'bg-[#111114] text-[#F59E0B] border-[#F59E0B]/40'
+                      : 'bg-[#111114] text-[#10B981] border-[#10B981]/40'
                   }`}
                 >
                   {activeModalResult.badge.label}
                 </span>
               </div>
 
-              <div className="bg-[#0B0B0C] p-4 rounded-[4px] border border-[#26262B] text-xs sm:text-sm text-[#F4F0EA] leading-relaxed">
+              <div className="bg-[#18181C] p-4 rounded-[4px] border border-[#242429] text-xs sm:text-sm text-[#F4F0EA] leading-relaxed">
                 {activeModalResult.narrativeText}
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {activeModalResult.statDeltas.hype !== undefined && (
-                  <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B] text-center space-y-0.5">
+                  <div className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
                     <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Hype</span>
-                    <span className="font-sans tabular-nums font-bold text-sm text-[#FF2A4B]">
+                    <span className="font-sans tabular-nums font-bold text-sm text-[#FF4F00]">
                       {activeModalResult.statDeltas.hype > 0 ? `+${activeModalResult.statDeltas.hype}` : activeModalResult.statDeltas.hype}
                     </span>
                   </div>
                 )}
 
                 {activeModalResult.statDeltas.affinity !== undefined && (
-                  <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B] text-center space-y-0.5">
+                  <div className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
                     <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Afinidad</span>
                     <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.affinity > 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
                       {activeModalResult.statDeltas.affinity > 0 ? `+${activeModalResult.statDeltas.affinity}` : activeModalResult.statDeltas.affinity}
@@ -1200,7 +1387,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 )}
 
                 {activeModalResult.statDeltas.respect !== undefined && (
-                  <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B] text-center space-y-0.5">
+                  <div className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
                     <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Respeto</span>
                     <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.respect > 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
                       {activeModalResult.statDeltas.respect > 0 ? `+${activeModalResult.statDeltas.respect}` : activeModalResult.statDeltas.respect}
@@ -1209,7 +1396,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 )}
 
                 {activeModalResult.statDeltas.credibility !== undefined && (
-                  <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B] text-center space-y-0.5">
+                  <div className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
                     <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Credibilidad</span>
                     <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.credibility >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
                       {activeModalResult.statDeltas.credibility >= 0 ? `+${activeModalResult.statDeltas.credibility}` : activeModalResult.statDeltas.credibility}
@@ -1218,7 +1405,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 )}
 
                 {activeModalResult.statDeltas.discipline !== undefined && (
-                  <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B] text-center space-y-0.5">
+                  <div className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
                     <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Disciplina</span>
                     <span className={`font-sans tabular-nums font-bold text-sm ${activeModalResult.statDeltas.discipline >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
                       {activeModalResult.statDeltas.discipline >= 0 ? `+${activeModalResult.statDeltas.discipline}` : activeModalResult.statDeltas.discipline}
@@ -1227,7 +1414,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 )}
 
                 {activeModalResult.statDeltas.energy !== undefined && (
-                  <div className="bg-[#0B0B0C] p-3 rounded-[4px] border border-[#26262B] text-center space-y-0.5">
+                  <div className="bg-[#18181C] p-3 rounded-[4px] border border-[#242429] text-center space-y-0.5">
                     <span className="text-2xs text-[#8E8E99] uppercase tracking-wider block font-sans">Energía</span>
                     <span className="font-sans tabular-nums font-bold text-sm text-[#8E8E99]">
                       {activeModalResult.statDeltas.energy}
@@ -1236,8 +1423,8 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
                 )}
               </div>
 
-              <div className="bg-[#0B0B0C] border border-[#26262B] rounded-[6px] p-4 space-y-1.5">
-                <div className="flex items-center justify-between text-2xs text-[#8E8E99] pb-1.5 border-b border-[#26262B] font-sans tabular-nums">
+              <div className="bg-[#18181C] border border-[#242429] rounded-[6px] p-4 space-y-1.5">
+                <div className="flex items-center justify-between text-2xs text-[#8E8E99] pb-1.5 border-b border-[#242429] font-sans tabular-nums">
                   <span className="font-bold uppercase tracking-wider text-[#10B981]">
                     PRENSA MUSICAL • Año {world.currentYear} Mes {world.currentMonth}
                   </span>
@@ -1251,7 +1438,7 @@ export const RelationshipsView: React.FC<RelationshipsViewProps> = ({
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-[#26262B] bg-[#141417] flex items-center justify-end">
+            <div className="px-6 py-4 border-t border-[#242429] bg-[#111114] flex items-center justify-end">
               <button
                 onClick={() => { playSound('click'); setActiveModalResult(null); }}
                 className="w-full sm:w-auto bg-[#F4F0EA] hover:bg-white text-[#0B0B0C] font-bold py-2 px-5 rounded-[4px] text-xs transition-all cursor-pointer active:translate-y-[1px]"

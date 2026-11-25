@@ -1,3 +1,4 @@
+import type React from 'react';
 import { useCallback, useRef } from 'react';
 
 export interface UseSpotlightReturn<T extends HTMLElement = HTMLElement> {

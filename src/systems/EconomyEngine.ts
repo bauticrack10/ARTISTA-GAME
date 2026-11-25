@@ -1,4 +1,4 @@
-import { Artist, RecordLabel, Manager } from '../types';
+import { Artist, RecordLabel, Manager, WorldState } from '../types';
 import { LIFESTYLE_ITEMS } from '../data/lifestyleItems';
 
 export class EconomyEngine {
@@ -139,11 +139,28 @@ export class EconomyEngine {
 
   static getOperatingCostsEstimate(
     artist: Artist,
-    totalMonthlyStreams: number,
-    label: RecordLabel | undefined,
-    manager: Manager | undefined
+    totalMonthlyStreamsOrWorld: number | WorldState = 0,
+    label?: RecordLabel,
+    manager?: Manager
   ) {
-    const monthly = this.calculateMonthlyFinances(artist, totalMonthlyStreams, label, manager);
+    let totalMonthlyStreams = 0;
+    let resolvedLabel = label;
+    let resolvedManager = manager;
+
+    if (typeof totalMonthlyStreamsOrWorld === 'object' && totalMonthlyStreamsOrWorld !== null) {
+      const world = totalMonthlyStreamsOrWorld as WorldState;
+      const artistSongs = Object.values(world.songs || {}).filter(s => s && s.artistId === artist.id);
+      totalMonthlyStreams = artistSongs.reduce((sum, s) => sum + (s.streamsLastMonth || 0), 0);
+      if (totalMonthlyStreams === 0 && (artist.stats?.monthlyListeners || 0) > 0) {
+        totalMonthlyStreams = Math.floor((artist.stats.monthlyListeners || 0) * 3.1);
+      }
+      resolvedLabel = artist.labelId ? world.labels?.[artist.labelId] : undefined;
+      resolvedManager = artist.managerId ? world.managers?.[artist.managerId] : undefined;
+    } else {
+      totalMonthlyStreams = Number(totalMonthlyStreamsOrWorld) || 0;
+    }
+
+    const monthly = this.calculateMonthlyFinances(artist, totalMonthlyStreams, resolvedLabel, resolvedManager);
     const semestralMonths = 6;
 
     const livingCostSemestral = monthly.baseLivingExpenses * semestralMonths;

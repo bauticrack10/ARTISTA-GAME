@@ -1,3 +1,4 @@
+import type React from 'react';
 import confetti from 'canvas-confetti';
 
 export type HudTarget = 'money' | 'energy' | 'fans' | 'points';
@@ -18,6 +19,23 @@ class GameJuiceManager {
   private hudListeners: Set<HudImpactListener> = new Set();
   private floatingListeners: Set<FloatingItemsListener> = new Set();
   private activeFloatingItems: FloatingItem[] = [];
+  private classTimers: WeakMap<HTMLElement, ReturnType<typeof setTimeout>> = new WeakMap();
+  private hudTimers: Map<HudTarget, ReturnType<typeof setTimeout>> = new Map();
+
+  private resolveElement(elementOrId?: HTMLElement | string | null): HTMLElement | null {
+    if (typeof document === 'undefined' || !elementOrId) return null;
+    if (typeof elementOrId !== 'string') return elementOrId;
+    const byId = document.getElementById(elementOrId);
+    if (byId) return byId;
+    if (elementOrId.startsWith('#') || elementOrId.startsWith('.')) {
+      try {
+        return document.querySelector(elementOrId);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 
   /**
    * Suscribirse a impactos en el HUD (Navbar) para activar el pop reactivo
@@ -59,36 +77,40 @@ class GameJuiceManager {
   public triggerConfetti(
     originTarget?: HTMLElement | MouseEvent | React.MouseEvent | { x: number; y: number } | null
   ): void {
+    if (typeof window === 'undefined') return;
     let originX = 0.5;
     let originY = 0.5;
 
     if (originTarget) {
       if ('clientX' in originTarget && 'clientY' in originTarget) {
-        originX = originTarget.clientX / window.innerWidth;
-        originY = originTarget.clientY / window.innerHeight;
+        originX = originTarget.clientX / Math.max(1, window.innerWidth);
+        originY = originTarget.clientY / Math.max(1, window.innerHeight);
       } else if ('getBoundingClientRect' in originTarget) {
         const rect = (originTarget as HTMLElement).getBoundingClientRect();
-        originX = (rect.left + rect.width / 2) / window.innerWidth;
-        originY = (rect.top + rect.height / 2) / window.innerHeight;
+        originX = (rect.left + rect.width / 2) / Math.max(1, window.innerWidth);
+        originY = (rect.top + rect.height / 2) / Math.max(1, window.innerHeight);
       } else if ('x' in originTarget && 'y' in originTarget) {
-        originX = originTarget.x > 1 ? originTarget.x / window.innerWidth : originTarget.x;
-        originY = originTarget.y > 1 ? originTarget.y / window.innerHeight : originTarget.y;
+        originX = originTarget.x > 1 ? originTarget.x / Math.max(1, window.innerWidth) : originTarget.x;
+        originY = originTarget.y > 1 ? originTarget.y / Math.max(1, window.innerHeight) : originTarget.y;
       }
     }
 
-    // Ráfaga ligera, limpia y optimizada (Game Juice sin saturar)
-    confetti({
-      particleCount: 28,
-      spread: 55,
-      origin: { x: Math.max(0.05, Math.min(0.95, originX)), y: Math.max(0.05, Math.min(0.95, originY)) },
-      colors: ['#00E599', '#FF4F00', '#00D2FF', '#FFFFFF', '#F59E0B'],
-      startVelocity: 24,
-      ticks: 90,
-      gravity: 1.15,
-      scalar: 0.85,
-      shapes: ['circle', 'square'],
-      disableForReducedMotion: true
-    });
+    try {
+      confetti({
+        particleCount: 24,
+        spread: 52,
+        origin: { x: Math.max(0.05, Math.min(0.95, originX)), y: Math.max(0.05, Math.min(0.95, originY)) },
+        colors: ['#FF4F00', '#10B981', '#F59E0B', '#38BDF8', '#F4F0EA'],
+        startVelocity: 22,
+        ticks: 85,
+        gravity: 1.15,
+        scalar: 0.85,
+        shapes: ['circle', 'square'],
+        disableForReducedMotion: true
+      });
+    } catch {
+      // ignore canvas errors in headless environments
+    }
   }
 
   /**
@@ -100,6 +122,7 @@ class GameJuiceManager {
     type?: FloatingItem['type'];
     targetHud?: HudTarget;
   }): void {
+    if (typeof window === 'undefined') return;
     let x = window.innerWidth / 2;
     let y = window.innerHeight / 2;
 
@@ -117,7 +140,6 @@ class GameJuiceManager {
       }
     }
 
-    // Leve offset aleatorio para que múltiples números flotantes no se superpongan exactamente
     const offsetSpread = (Math.random() - 0.5) * 36;
     const item: FloatingItem = {
       id: `float_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
@@ -131,24 +153,25 @@ class GameJuiceManager {
     this.activeFloatingItems.push(item);
     this.notifyFloating();
 
-    // Cuando el número viaja hacia el HUD (450ms), hacer el pop reactivo en el HUD
     if (params.targetHud) {
-      setTimeout(() => {
-        this.triggerHudPop(params.targetHud!);
-      }, 450);
+      const targetHud = params.targetHud;
+      const prevTimer = this.hudTimers.get(targetHud);
+      if (prevTimer) clearTimeout(prevTimer);
+      this.hudTimers.set(
+        targetHud,
+        setTimeout(() => {
+          this.hudTimers.delete(targetHud);
+          this.triggerHudPop(targetHud);
+        }, 450)
+      );
     }
 
-    // Limpieza automática tras concluir la animación
     setTimeout(() => {
       this.activeFloatingItems = this.activeFloatingItems.filter((f) => f.id !== item.id);
       this.notifyFloating();
     }, 1000);
   }
 
-  /**
-   * Pulso verde esmeralda / dorado en el borde de la tarjeta con partículas suaves luminosas,
-   * y texto flotante "+Puntos" en fuente JetBrains Mono que viaja hacia el HUD superior con pop de escala.
-   */
   public triggerSuccess(
     elementOrId?: HTMLElement | string | null,
     options?: {
@@ -156,25 +179,25 @@ class GameJuiceManager {
       targetHud?: HudTarget;
     }
   ): void {
-    let el: HTMLElement | null = null;
-    if (typeof elementOrId === 'string') {
-      el = document.getElementById(elementOrId) || document.querySelector(elementOrId);
-    } else if (elementOrId) {
-      el = elementOrId;
-    }
+    const el = this.resolveElement(elementOrId);
 
     if (el) {
+      const prevTimer = this.classTimers.get(el);
+      if (prevTimer) clearTimeout(prevTimer);
       el.classList.remove('card-success-pulse');
       void el.offsetWidth;
       el.classList.add('card-success-pulse');
-      setTimeout(() => {
-        el?.classList.remove('card-success-pulse');
-      }, 1200);
+      this.classTimers.set(
+        el,
+        setTimeout(() => {
+          el.classList.remove('card-success-pulse');
+          this.classTimers.delete(el);
+        }, 1200)
+      );
     }
 
     this.triggerConfetti(el);
 
-    // Texto flotante hacia el HUD ("+Puntos" en JetBrains Mono por defecto)
     const pointsText = options?.pointsText || '+Puntos';
     const targetHud = options?.targetHud || 'points';
 
@@ -186,27 +209,24 @@ class GameJuiceManager {
     });
   }
 
-  /**
-   * Vibración horizontal corta y elegante (shake) acompañada de destello rojo translúcido
-   */
   public triggerError(elementOrId?: HTMLElement | string | null): void {
-    let el: HTMLElement | null = null;
-    if (typeof elementOrId === 'string') {
-      el = document.getElementById(elementOrId) || document.querySelector(elementOrId);
-    } else if (elementOrId) {
-      el = elementOrId;
-    }
-
+    const el = this.resolveElement(elementOrId);
     if (!el) return;
 
+    const prevTimer = this.classTimers.get(el);
+    if (prevTimer) clearTimeout(prevTimer);
     el.classList.remove('card-error-shake');
     el.classList.remove('kit-shake');
     void el.offsetWidth;
     el.classList.add('card-error-shake');
 
-    setTimeout(() => {
-      el?.classList.remove('card-error-shake');
-    }, 450);
+    this.classTimers.set(
+      el,
+      setTimeout(() => {
+        el.classList.remove('card-error-shake');
+        this.classTimers.delete(el);
+      }, 450)
+    );
   }
 
   /**

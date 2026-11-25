@@ -153,7 +153,7 @@ export class PhoneMessageEngine {
         text: `La gente de una bebida energética puso $${brandReward.toLocaleString('es-AR')} arriba de la mesa. Piden tres historias en Instagram y que la lata se vea cuatro segundos en tu próximo corte. ¿Firmamos o los mando a volar?`,
         choices: [
           {
-            label: `Aceptar patrocinio (+$$${brandReward.toLocaleString('es-AR')}, +8 Hype, -6 Energía)`,
+            label: `Aceptar patrocinio (+$${brandReward.toLocaleString('es-AR')}, +8 Hype, -6 Energía)`,
             replyText: 'Cerremos trato. El dinero nos sirve para financiar las próximas grabaciones.',
             effects: {
               fundsDelta: brandReward,
@@ -163,7 +163,7 @@ export class PhoneMessageEngine {
             }
           },
           {
-            label: 'Rechazar para cuidar la imagen artística (+5 Credibilidad)',
+            label: 'Rechazar para cuidar la imagen artística (-2 Hype)',
             replyText: 'Paso. No quiero que mi perfil parezca una tanda publicitaria.',
             effects: {
               hypeDelta: -2
@@ -185,7 +185,7 @@ export class PhoneMessageEngine {
         text: `Salió un privado en Puerto Madero para el sábado: 40 minutos con pista o guitarra para el cumpleaños de un empresario. Pagan $${privateShowFee.toLocaleString('es-AR')} en mano al bajar del escenario, celulares afuera en puerta.`,
         choices: [
           {
-            label: `Agarrar la plata fácil (+$$${privateShowFee.toLocaleString('es-AR')}, -12 Energía)`,
+            label: `Agarrar la plata fácil (+$${privateShowFee.toLocaleString('es-AR')}, -12 Energía)`,
             replyText: 'Contá conmigo. Voy, canto 45 minutos y me llevo el maletín.',
             effects: {
               fundsDelta: privateShowFee,
@@ -193,7 +193,7 @@ export class PhoneMessageEngine {
             }
           },
           {
-            label: 'Declinar: los shows son para la gente (+10 Fans)',
+            label: 'Declinar: los shows son para la gente (+2.500 Fans, +5 Energía)',
             replyText: 'No hago shows a puertas cerradas para chetos. Mi música es del público.',
             effects: {
               fansDelta: 2500,
@@ -259,6 +259,9 @@ export class PhoneMessageEngine {
         ]
       };
     } else {
+      const sessionCost = player.stats.funds >= 4500
+        ? 4500
+        : Math.max(800, Math.min(2500, Math.floor(player.stats.funds * 0.45)));
       return {
         id: `phone_prod_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
         senderId,
@@ -269,20 +272,20 @@ export class PhoneMessageEngine {
         sentYear: year,
         sentMonth: month,
         isRead: false,
-        text: `Se cayó una reserva en el estudio grande del centro y me dejaron el turno de trasnoche a $4.500 con técnico incluido. Tienen la consola Neve 8014 andando y dos compresores ópticos recién calibrados.`,
+        text: `Se cayó una reserva en el estudio grande del centro y me dejaron el turno de trasnoche a $${sessionCost.toLocaleString('es-AR')} con técnico incluido. Tienen la consola Neve 8014 andando y dos compresores ópticos recién calibrados.`,
         choices: [
           {
-            label: 'Reservar la sesión analógica (-$4.500, +20 Hype, +2.500 Fans)',
+            label: `Reservar la sesión analógica (-$${sessionCost.toLocaleString('es-AR')}, +20 Hype, +2.500 Fans, -8 Energía)`,
             replyText: 'Cerralo. Llevo los discos duros a las diez para pasar las voces por esa mesa.',
             effects: {
-              fundsDelta: -4500,
+              fundsDelta: -sessionCost,
               hypeDelta: 20,
               fansDelta: 2500,
               energyDelta: -8
             }
           },
           {
-            label: 'Seguir en nuestro home studio austero ($0 costo)',
+            label: 'Seguir en nuestro home studio austero (+2 Hype)',
             replyText: 'No hace falta gastar tanto. El hit está en la vibra y en las barras, no en la mesa.',
             effects: {
               hypeDelta: 2
@@ -339,7 +342,7 @@ export class PhoneMessageEngine {
         text: `Hola ${player.name}. Sé que hemos tenido nuestros roces, pero tengo que ser sincero: lo que hiciste con tu último lanzamiento fue de otro planeta. Respeto donde hay respeto.`,
         choices: [
           {
-            label: 'Agradecer con humildad (+15 Afinidad, +10 Respeto, +8 Hype)',
+            label: 'Agradecer con humildad (+15 Afinidad, +8 Hype)',
             replyText: 'Gracias bro. La competencia nos hace mejores a todos. Un abrazo.',
             effects: {
               hypeDelta: 8,
@@ -380,7 +383,7 @@ export class PhoneMessageEngine {
         text: `Vi tus números de este mes... parece que el público se aburrió de la misma fórmula de siempre. Si querés te doy un par de tips de cómo hacer música de verdad, fantasma.`,
         choices: [
           {
-            label: 'Responder con picardía en Twitter/IG (+25 Hype, -20 Afinidad, Polémica)',
+            label: 'Responder con picardía en Twitter/IG (+25 Hype, -20 Afinidad, -5 Energía)',
             replyText: 'Preocupate por llenar tu próximo show antes de hablar de mis números.',
             effects: {
               hypeDelta: 25,
@@ -390,7 +393,7 @@ export class PhoneMessageEngine {
             }
           },
           {
-            label: 'Clavar visto y responder con música (+5 Disciplina)',
+            label: 'Clavar visto y enfocarse en la música (+2 Hype, +2 Energía)',
             replyText: '(Leíste el mensaje y decidiste no responder)',
             effects: {
               hypeDelta: 2,
@@ -422,7 +425,7 @@ export class PhoneMessageEngine {
 
     if (roll < 0.35) {
       // Pedido de dinero
-      const loanAmount = Math.max(1500, Math.floor(player.stats.funds * 0.05));
+      const loanAmount = Math.min(Math.max(400, Math.floor(player.stats.funds * 0.05)), Math.max(400, player.stats.funds));
       return {
         id: `phone_fam_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
         senderId,
@@ -436,7 +439,7 @@ export class PhoneMessageEngine {
         text: `Hola amigo querido, perdón que te joda con esto, pero se me complicó la mano con unos arreglos del auto y el alquiler. ¿Habrá chance de que me prestes $${loanAmount.toLocaleString('es-AR')}? Te lo devuelvo ni bien cobre.`,
         choices: [
           {
-            label: `Transferirle sin vueltas (-$${loanAmount.toLocaleString('es-AR')}, +15 Paz mental)`,
+            label: `Transferirle sin vueltas (-$${loanAmount.toLocaleString('es-AR')}, +10 Energía)`,
             replyText: 'Ya te lo pasé por transferencia amigo, no te preocupes ni me devuelvas nada. Cuidate.',
             effects: {
               fundsDelta: -loanAmount,
@@ -467,7 +470,7 @@ export class PhoneMessageEngine {
         text: `¡Qué onda bro! ¿Che, te sobrarán 4 entradas VIP y acceso a camarines para tu próxima fecha? Unos primos míos son re fanáticos y quieren conocerte.`,
         choices: [
           {
-            label: 'Anotarlos en la lista de invitados VIP (-$800 costos, +6 Hype)',
+            label: 'Anotarlos en la lista de invitados VIP (-$800, +6 Hype, +4 Energía)',
             replyText: 'Pasame nombres y DNI que los mando a la lista de producción con pulsera.',
             effects: {
               fundsDelta: -800,
@@ -476,7 +479,7 @@ export class PhoneMessageEngine {
             }
           },
           {
-            label: 'Decir que la lista está completa',
+            label: 'Decir que la lista está completa (Sin efecto)',
             replyText: 'Uh amigo, la productora me recortó los cupos de invitados al mínimo. No me quedó ni una.',
             effects: {}
           }
@@ -556,7 +559,7 @@ export class PhoneMessageEngine {
             }
           },
           {
-            label: 'Rechazar para mantener el enigma y la exclusividad (+4 Credibilidad)',
+            label: 'Rechazar para mantener el enigma y la exclusividad (-2 Hype)',
             replyText: 'Agradezco el interés, pero prefiero que la música hable por mí sin tantas notas.',
             effects: {
               hypeDelta: -2
@@ -587,7 +590,7 @@ export class PhoneMessageEngine {
             }
           },
           {
-            label: 'Publicar desmentida formal y pacífica (+10 Fans, -$1.000 de prensa)',
+            label: 'Publicar desmentida formal y pacífica (-$1.000, +1.500 Fans, -2 Energía)',
             replyText: 'Ese material está sacado de contexto. Mi enfoque siempre estuvo en sumar y construir.',
             effects: {
               fundsDelta: -1000,

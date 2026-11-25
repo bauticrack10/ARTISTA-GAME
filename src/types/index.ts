@@ -242,6 +242,40 @@ export interface Artist {
   unreadPhoneCount?: number;
   officialCertifications?: OfficialCertification[];
   retirementMonth?: number;
+  monthlyActionsUsed?: number;
+  lastActionYear?: number;
+  lastActionMonth?: number;
+  activeCreativeBuffs?: {
+    nextTrackQuality?: number;
+    nextShowBonus?: number;
+    nextPromoBoost?: number;
+  };
+  completedGoalIds?: string[];
+  claimedGoalIds?: string[];
+  lastTourYear?: number;
+  lastTourMonth?: number;
+  playedFestivalsByYear?: Record<number, string[]>;
+  achievedMilestones?: string[];
+  yearStartFans?: number;
+  yearStartTotalStreams?: number;
+}
+
+export interface CareerGoal {
+  id: string;
+  title: string;
+  description: string;
+  stage: CareerStage;
+  progress: number;
+  target: number;
+  unit: string;
+  completed: boolean;
+  claimed: boolean;
+  rewardLabel: string;
+  rewardFunds?: number;
+  rewardHype?: number;
+  rewardReputation?: number;
+  rewardLegacy?: number;
+  ctaTab?: string;
 }
 
 export type TransactionCategory =
@@ -389,10 +423,10 @@ export interface EditorialPlaylist {
   curator: string;
   description: string;
   followers: number;
-  genreFilter: string;
+  genreFilter?: string;
   streamMultiplier: number;
   coverGradient: string;
-  tracks: Array<{
+  tracks?: Array<{
     songId: string;
     artistId: string;
     addedMonth: number;
@@ -415,6 +449,7 @@ export interface FanComment {
   likes: number;
   timestamp: string;
   isPinned?: boolean;
+  likedByArtist?: boolean;
   sentiment: 'rave' | 'praise' | 'funny' | 'debate' | 'critical';
   songId: string;
 }
@@ -465,7 +500,7 @@ export type TikTokSnippetConcept =
 export type TikTokInfluencerTier = 'micro' | 'macro' | 'mega';
 
 export interface SnippetCampaignConfig {
-  songId: string;
+  songId?: string;
   budget: number;
   concept: TikTokSnippetConcept | string;
   influencerTier?: TikTokInfluencerTier;
@@ -559,6 +594,11 @@ export interface ReleaseConfirmationData {
   criticalScore?: number;
   criticalReviewText?: string;
   firstWeekSales?: number;
+  impactBreakdown?: Array<{
+    label: string;
+    value: string;
+    tone?: 'positive' | 'neutral' | 'gold';
+  }>;
 }
 
 export type GenreLifecycle = 'underground' | 'surging' | 'mainstream' | 'oversaturated' | 'reviving' | 'niche' | 'classic';
@@ -634,6 +674,7 @@ export interface LabelContract {
   durationYears: number;
   signedYear: number;
   isDistributor?: boolean;
+  isArtistOwned?: boolean;
   annualFee?: number;
 }
 
@@ -778,10 +819,10 @@ export interface FestivalInvitation {
   year: number;
   month: number;
   slot: FestivalSlot;
-  basePay: number;
-  minPopularity: number;
-  expiresMonth: number;
-  expiresYear: number;
+  basePay?: number;
+  minPopularity?: number;
+  expiresMonth?: number;
+  expiresYear?: number;
   accepted?: boolean;
   rejected?: boolean;
   festivalName?: string;
@@ -813,6 +854,7 @@ export interface StageProductionConfig {
   visuals: StageVisualTier;
   pyro: StagePyroTier;
   crew: StageCrewTier;
+  guestArtistIds?: string[];
 }
 
 export interface LiveShowDilemmaOptionEffect {
@@ -866,9 +908,9 @@ export type LiveShowDilemmaCategory =
 export interface LiveShowDilemma {
   id: string;
   title: string;
-  situation: string;
-  category: 'sound_failure' | 'crowd_surge' | 'weather' | 'guest_cameo' | 'unrehearsed_song' | 'mic_drop';
-  options: LiveShowDilemmaOption[];
+  situation?: string;
+  category?: 'sound_failure' | 'crowd_surge' | 'weather' | 'guest_cameo' | 'unrehearsed_song' | 'mic_drop';
+  options?: LiveShowDilemmaOption[];
   contextDescription?: string;
   condition?: (artist: Artist, slot: FestivalSlot) => boolean;
   choices?: LiveShowDilemmaChoice[];
@@ -1386,6 +1428,9 @@ export interface GameSaveState {
   savedAt: string;
   playerId: string;
   world: WorldState;
+  currentEvent?: EventDefinition | null;
+  eventQueue?: EventDefinition[];
+  activeGalaCeremony?: AwardCeremony | null;
 }
 
 
